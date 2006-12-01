@@ -1,0 +1,5 @@
+PRIMER_SEQUENCE_ID=zero min size
+SEQUENCE=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+PRIMER_MIN_SIZE=0
+PRIMER_ERROR=INCLUDED_REGION length < min PRIMER_PRODUCT_SIZE_RANGE; PRIMER_MIN_SIZE must be >= 1
+=

@@ -1,0 +1,12 @@
+We request but do not require that use of this software be cited in
+publications as
+
+Steve Rozen and Helen J. Skaletsky (2000)
+Primer3 on the WWW for general users and for biologist programmers.
+In: Krawetz S, Misener S (eds)
+Bioinformatics Methods and Protocols: Methods in Molecular Biology.
+Humana Press, Totowa, NJ, pp 365-386
+
+Source code available at http://fokker.wi.mit.edu/primer3/.
+The paper above is available at
+http://jura.wi.mit.edu/rozen/papers/rozen-and-skaletsky-2000-primer3.pdf

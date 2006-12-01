@@ -1,0 +1,124 @@
+# ======================================================================
+# (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006 Whitehead
+# Institute for Biomedical Research, Steve Rozen, and Helen Skaletsky
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+# 
+#    * Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above
+# copyright notice, this list of conditions and the following disclaimer
+# in the documentation and/or other materials provided with the
+# distribution.
+#    * Neither the names of the copyright holders nor contributors may
+# be used to endorse or promote products derived from this software
+# without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNERS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# ======================================================================
+
+# ======================================================================
+# CITING PRIMER3
+# 
+# Steve Rozen and Helen J. Skaletsky (2000) Primer3 on the WWW for
+# general users and for biologist programmers. In: Krawetz S, Misener S
+# (eds) Bioinformatics Methods and Protocols: Methods in Molecular
+# Biology. Humana Press, Totowa, NJ, pp 365-386.  Source code available
+# at http://fokker.wi.mit.edu/primer3/.
+# ======================================================================
+
+MAX_PRIMER_LENGTH = 36
+
+LDLIBS = -lm
+CC      = gcc
+O_OPTS  = -O2
+#WHITEHEAD_SPECIFIC_HACK = -include /usr/include/sys/types.h
+WHITEHEAD_SPECIFIC_HACK= 
+CC_OPTS = -g -Wall -D__USE_FIXED_PROTOTYPES__ $(WHITEHEAD_SPECIFIC_HACK)
+P_DEFINES = -DDPAL_MAX_ALIGN=$(MAX_PRIMER_LENGTH) -DMAX_PRIMER_LENGTH=$(MAX_PRIMER_LENGTH)
+
+CFLAGS  = $(CC_OPTS) $(O_OPTS)
+LDFLAGS = -g
+
+# ======================================================================
+# IMPORTANT: on MacOS X and some other Unix/Linux systems where
+# static libraries are not routinely available, -static has to
+# be removed.
+LIBOPTS ='-static'
+
+PRIMER_EXE = primer3_core
+
+PRIMER_OBJECTS=primer3_main.o\
+               primer3.o\
+               oligotm.o\
+               dpal_primer.o\
+               format_output.o\
+               boulder_input.o
+
+EXES=$(PRIMER_EXE) ntdpal oligotm long_seq_tm_test
+
+all: $(EXES)
+
+clean:
+	-rm *.o $(EXES) *~
+
+$(PRIMER_EXE): $(PRIMER_OBJECTS)
+	$(CC) $(LDFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
+
+# For use with the "testcenter" testing program (CenterLine Software
+# Inc, http://www.centerline.com)
+$(PRIMER_EXE).tc: $(PRIMER_OBJECTS) /usr/lib/debug/malloc.o
+	proof $(CC) $(CFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
+
+ntdpal: ntdpal_main.o dpal.o
+	$(CC) $(LDFLAGS) -o $@ ntdpal_main.o dpal.o
+
+oligotm: oligotm_main.c oligotm.o
+	$(CC) $(CFLAGS) -o $@ oligotm_main.c oligotm.o $(LIBOPTS) $(LDLIBS)
+
+long_seq_tm_test: long_seq_tm_test_main.c oligotm.o
+	$(CC) $(CFLAGS) -o $@ long_seq_tm_test_main.c oligotm.o $(LIBOPTS) $(LDLIBS)
+
+boulder_input.o: boulder_input.c boulder_input.h primer3.h primer3_release.h dpal.h
+	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ boulder_input.c
+
+dpal.o: dpal.c dpal.h primer3_release.h
+	$(CC) -c $(CFLAGS) -o $@ dpal.c
+
+dpal_primer.o: dpal.c dpal.h primer3_release.h
+	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ dpal.c
+
+format_output.o: format_output.c primer3_release.h format_output.h primer3.h dpal.h
+	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ format_output.c
+
+ntdpal_main.o: ntdpal_main.c dpal.h
+	$(CC) -c $(CC_OPTS) -o $@ ntdpal_main.c
+# We use CC_OPTS above rather than CFLAGS because
+# gcc 2.7.2 crashes while compiling ntdpal_main.c with -O2
+
+oligotm_main.o: oligotm_main.c oligotm.h
+	$(CC) -c $(CFLAGS) -o $@ ntdpal_main.c
+
+oligotm.o: oligotm.c oligotm.h primer3_release.h
+
+primer3.o: primer3.c primer3.h primer3_release.h
+	$(CC) -c $(CFLAGS) $(P_DEFINES) primer3.c
+
+primer3_main.o: primer3_main.c primer3.h primer3_release.h dpal.h oligotm.h format_output.h
+	$(CC) -c $(CFLAGS) $(P_DEFINES) primer3_main.c
+
+primer_test: $(PRIMER_EXE)
+	cd ../test; primer_test.pl

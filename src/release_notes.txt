@@ -1,0 +1,197 @@
+release 1.0a  9/06 ==================================================
+
+  No new functionality (bug fixes and minor code cleanup only)
+
+  Bug fixes:
+
+    * Corrected calculation of ..._TEMPLATE_MISPRIMING when
+      INCLUDED_REGION was set (thanks to Tomoaki Nishiyama, Advanced
+      Sciences Research Center, Kanazawa University, Japan).
+
+    * Corrected error that caused crash when
+      PRIMER_WT_TEMPLATE_MISPRIMING was set (thanks to Peng Yu,
+      Functional Genomics Group II, Chinese National Human Genome
+      Center, Beijing).
+
+    * Added olgiotm_main.c (for executable oligotm)
+
+release 1.0   6/04 ==================================================
+
+  Added ability to search source sequence (template) for
+  mispriming or mishybing sites.
+
+  Added _experimental_ facility to calculate Tm on long
+  oligos using a GC% based formula.
+
+  Miscellaneous fixes and cleanup, including:
+
+    * Avoiding closing NULL file handles when a mispriming or mishyb
+      library is missing
+
+    * Correction to long_seq_tm() in oligotm.c plus addition of
+      related tests.
+
+    * Gave user the ability to _not_ treat IUB/IUPAC ambiguity
+      codes as a consensus while matching against mispriming
+      or mishyb libraries.  Inability to turn off this "feature"
+      caused severe problems when libraries contained strings
+      of N's:  NNNNNNNNN, since if N is treated as a consensus,
+      any base matches.
+
+release 0.9  9/98 ==================================================
+
+  Corrected errors in calculation of amplicon Tm.
+
+release 0.8  6/98 ==================================================
+
+  Added flexible objective function.  Various tags governing
+  the penalty weights are not fully documented in this
+  release.
+  
+  Added much changed web interface.
+
+  Added ability to select only a single
+  left or right primer or hyb probe.
+
+  Made it possible to continue even if 
+  PRIMER_{LEFT,RIGHT,INTERNAL_OLIGO}_INPUT is
+  not legal.
+
+  Added PRIMER_{LEFT,RIGHT,INTERNAL_OLIGO}_GC_PERCENT
+  output tags.
+
+release 0.7  5/98   ==================================================
+
+  Fixed the 'case problem' for
+  PRIMER_{LEFT,RIGHT,INTERNAL_OLIGO}_INPUT (and at the
+  same time a related bug).
+
+  Added experimental PRIMER_START_CODON_POSITION tag
+  and related outputs.  This feature should still be
+  considered experimental and the user should scrutinize
+  the output.
+
+  Added PRIMER_PRODUCT_{MAX,MIN}_TM and related outputs.
+
+release 0.6   ==================================================
+
+  Bug fixes (most introduced as part of 0.5 enhancements).
+
+release 0.5   ==================================================
+
+  ** Non-Backward compatible change:
+  Fixed inconsistency in output format;
+  PRIMER_INTERNAL_n_OLIGO_SEQUENCE
+  -> PRIMER_INTERNAL_OLIGO_n_SEQUENCE.
+  The old format can be preserved by
+  compiling with the precompiler
+  symbol USE_OLD_FORMAT_MISTAKE defined.
+
+  Added end-anchored local alignment option to dpal.
+
+  Removed some un-needed dpal implementations.
+
+  Added end-anchored local alignments for checking
+  mispriming libraries.
+
+  Added mispriming estimates for primer _pairs_
+  (see PRIMER_PAIR_MISPRIMING_LIBRARY),
+  with related new output tags.  Trivial change
+  in maximum allowable library sequence weight.
+
+  Added an experimental primer position component to
+  the objective function (PRIMER_{IN,OUT}SIDE_PENALTY),
+  with related new output tags.
+
+  Added sequence quality scores as constraints
+  in primer picking (PRIMER_MIN_{,END_}_QUALITY,
+  PRIMER_QUALITY_RANGE_{MIN,MAX}) with related
+  new output tags.
+
+  Added more error reporting to primer3.cgi when primer3
+  exits with a non-0 termination status.
+
+  Fixed bug when non-0, non-1 value was supplied
+  for pick internal oligos.
+
+  Added PRIMER_{LEFT,RIGHT,INTERNAL_OLIGO}_INPUT
+  for checking or for designing around existing primers or
+  internal oligos.
+
+  Added error checking for duplicates of certain
+  tags, such as SEQUENCE.
+
+  Added PRIMER_MAX_END_STABILITY and related changes
+  to output.
+
+release 0.4b   ==================================================
+
+  Corrected bug in parsing of INCLUDED_REGION tag.
+
+release 0.4   ==================================================
+
+  Added optional check of oligos against "mispriming" or
+  "mishyb" libraries  with related changes to formated output
+  and to the contents of primer list files.
+
+  Modified search algorithm to compute complementarity/
+  similarity measures as late as possible.
+
+  Got rid of quotes (") around error and warning strings.
+
+  Fixed numerical overflow on input sequences longer than
+  MAX_SHRT.  (Thanks to Pete Young for finding this one.)
+
+release 0.3   ==================================================
+
+  Changes to dpal to make it substantially faster on the maxgap=1
+  case for local and end-anchored complementarity measures.
+
+  Removed restriction on maximum sequence length (by removing
+  ftar, fexcl, fexcl_int, fnn, fn, fgc arrays, which necessitated
+  internal changes to methods for calculating overlap with
+  excluded regions and targets and to calculate spanning of
+  targets.
+
+  Modified 'primer list' format (clean up and hopefully got rid
+  of spurious regression test discrepancy on some systems due to
+  differences in rounding).
+
+  Exit codes for some errors changed.
+
+  Text of error messages for PRIMER_PRODUCT_SIZE -> PRIMER_PRODUCT_SIZE_RANGE.
+
+  Some errors that should have been global (fatal) were not.
+  These were fixed and error handling rationalized somewhat.
+  
+  An error in the display of the start position of targets, and
+  excluded regions in formated output was corrected.
+
+  An error in which overlapping product size ranges caused
+  primer3 to return duplicate primer pairs was corrected.
+
+  Made regression tests more complete.
+  
+  Made the maximum number of primer pairs to return a 
+  parameter (PRIMER_NUM_RETURN).
+
+  Added optional n-based indexing in input and output
+  (PRIMER_FIRST_BASE_INDEX=n).  Has not been tested
+  for n < 0.
+
+release 0.2b (10/11/96)  ==================================================
+  Added PRIMER_WARNING tag.
+
+  Made it legal for excluded regions and targets to lie outside
+  of included region.  Documentation fixes (especially to
+  PRIMER_DNA_CONC).
+
+release 0.2a ==================================================
+  Tweaks to formated output to make it more complete
+  (included complementarity measures);  adjusted tests.
+
+release 0.2 ==================================================
+  Made 0-length excluded region legal, and adjusted tests.
+  Tweaked error reporting of negative-length excluded regions,
+  internal oligo excluded regions, and target.
+
