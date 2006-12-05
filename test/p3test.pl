@@ -24,7 +24,7 @@ $exe = $ARGV[0] if defined $ARGV[0];
 $p1 =  "../src/$exe";
 $EXIT_STAT = 0;
 
-#die "Cannot execute $p1" unless -x $p1;
+die "Cannot execute $p1" unless -x $p1;
 
 print STDERR "\n\n$0: testing $p1\n\nSTART, ", scalar(localtime), "\n";
 
@@ -156,7 +156,7 @@ exit ($EXIT_STAT);
 sub test_fatal_errors {
     my $exe = $_[0];
     my $skip_stderr = 0;
-    if ($exe ne '..\\src\\primer3_core') {
+    if ($exe ne '../src/primer3_core') {
 	print STDERR "Skipping comparisons of stderr because ",
 	"executable is not ../src/primer3_core";
 	$skip_stderr = 1;
@@ -168,7 +168,7 @@ sub test_fatal_errors {
     print STDERR "\ntesting fatal errors...";
     for (@inputs) {
 	($root) = /(.*)\.in$/;
-	$cmd = "$exe <$_ > $root.tmp 2&> $root.tmp2";
+	$cmd = "$exe <$_ > $root.tmp 2> $root.tmp2";
 	$ENV{TC_COMMENT} = $cmd;
 	system $cmd;
 	$ENV{TC_COMMENT} = '';

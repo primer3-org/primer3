@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-#die "Cannot execute ../src/ntdpal" unless -x '../src/ntdpal';
+die "Cannot execute ../src/ntdpal" unless -x '../src/ntdpal';
 $ENV{TC_SILENT} = '1';
 
 # Test error handling on over-long input sequence:
