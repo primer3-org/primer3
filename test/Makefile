@@ -37,6 +37,7 @@ test: $(PRIMER_EXE)
 clean:
 	-rm -rf primer_list_tmp/*
 	-rm -rf primer1_list_tmp/*
+	-rm primer_global_err/*.tmp primer_global_err/*.tmp2
 	-rm -f *.tmp *~
 	-rm hyb_probe_only.for hyb_probe_only.int 
 	-rm right_only.for right_only.rev left_only.for

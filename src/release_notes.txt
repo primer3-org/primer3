@@ -2,6 +2,8 @@ release 1.0.2 XXXXX ==================================================
 
  Cleaned up Makefile, and created Makefile for the test
    directory with target to clean up after tests
+ Most (but not all) temporary files created by the
+   tests now end in .tmp or .tmp2
  Tried to create more informative test for 
    MAX_PRIMER_LENGTH > DPAL_MAX_ALIGN in primer3_main.c
 
