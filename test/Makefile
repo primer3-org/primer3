@@ -39,6 +39,6 @@ clean:
 	-rm -rf primer1_list_tmp/*
 	-rm -f *.tmp *~
 	-rm hyb_probe_only.for hyb_probe_only.int 
-	-rm right_only.for right_only.rev right_only.int   left_only.for
+	-rm right_only.for right_only.rev left_only.for
 	-rm pcr_primers_and_io.int pcr_primers_and_io.rev pcr_primers_and_io.for
 	-rm pcr_primers.rev pcr_primers.for
