@@ -1,2 +1,1 @@
-'..\src\2' is not recognized as an internal or external command,
-operable program or batch file.
+../src/primer3_core: Optimum primer Tm lower than minimum or higher than maximum

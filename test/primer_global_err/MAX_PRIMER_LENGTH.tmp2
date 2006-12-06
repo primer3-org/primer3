@@ -1,2 +1,1 @@
-'..\src\2' is not recognized as an internal or external command,
-operable program or batch file.
+../src/primer3_core: PRIMER_MAX_SIZE exceeds built-in maximum of 36

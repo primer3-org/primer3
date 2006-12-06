@@ -1,2 +1,1 @@
-'..\src\2' is not recognized as an internal or external command,
-operable program or batch file.
+../src/primer3_core: Product temperature is part of objective function while optimum temperature is not defined
