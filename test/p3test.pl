@@ -90,12 +90,6 @@ for $test (
 	# We need to chdir below because primer3 puts the 'list' files
         # in the current working directory.  Therefore we adjust
 	# the TestCenter result directory.
-	if (!-e $list_tmp ) {
-	    mkdir $list_tmp, 0777 or die "mkdir $list_tmp, 0777";
-	}
-	if (!-e "$list_tmp/.svn") {
-	    mkdir "$list_tmp/.svn", 0777 or die "mkdir $list_tmp/.svn, 0777";
-	} 
 	$cmd = "rm -f $list_tmp/*; "
 	    . "cd $list_tmp; ../$p1 -strict_tags <../$input >../$tmp";
 	$ENV{TC_COMMENT} = $cmd;
