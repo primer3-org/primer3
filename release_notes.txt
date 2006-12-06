@@ -1,4 +1,20 @@
-release 1.0a  9/06 ==================================================
+release 1.0.2 XXXXX ==================================================
+
+ Cleaned up Makefile, and created Makefile for the test
+   directory with target to clean up after tests
+ Tried to create more informative test for 
+   MAX_PRIMER_LENGTH > DPAL_MAX_ALIGN in primer3_main.c
+
+release 1.0.1 11/06 ==================================================
+
+ Identical to 1.0b except for release number
+
+release 1.0b 11/06 ==================================================
+
+  Corrected bug involving check for template mispriming
+  Minor code cleanup
+
+release 1.0a   9/06 ==================================================
 
   No new functionality (bug fixes and minor code cleanup only)
 

@@ -45,19 +45,16 @@ MAX_PRIMER_LENGTH = 36
 LDLIBS = -lm
 CC      = gcc
 O_OPTS  = -O2
-#WHITEHEAD_SPECIFIC_HACK = -include /usr/include/sys/types.h
-WHITEHEAD_SPECIFIC_HACK= 
-CC_OPTS = -g -Wall -D__USE_FIXED_PROTOTYPES__ $(WHITEHEAD_SPECIFIC_HACK)
+CC_OPTS = -g -Wall -D__USE_FIXED_PROTOTYPES__
 P_DEFINES = -DDPAL_MAX_ALIGN=$(MAX_PRIMER_LENGTH) -DMAX_PRIMER_LENGTH=$(MAX_PRIMER_LENGTH)
 
 CFLAGS  = $(CC_OPTS) $(O_OPTS)
 LDFLAGS = -g
 
 # ======================================================================
-# IMPORTANT: on MacOS X and some other Unix/Linux systems where
-# static libraries are not routinely available, -static has to
-# be removed.
-LIBOPTS ='-static'
+# If have trouble with library skew when moving primer3  executables
+# between system, set LIBOPTS to -static
+LIBOPTS =
 
 PRIMER_EXE = primer3_core
 
@@ -72,8 +69,11 @@ EXES=$(PRIMER_EXE) ntdpal oligotm long_seq_tm_test
 
 all: $(EXES)
 
-clean:
+clean_src:
 	-rm *.o $(EXES) *~
+
+clean: clean_src
+	cd ../test/; make clean
 
 $(PRIMER_EXE): $(PRIMER_OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
@@ -120,5 +120,7 @@ primer3.o: primer3.c primer3.h primer3_release.h
 primer3_main.o: primer3_main.c primer3.h primer3_release.h dpal.h oligotm.h format_output.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) primer3_main.c
 
-primer_test: $(PRIMER_EXE)
-	cd ../test; primer_test.pl
+primer_test: test
+
+test: $(PRIMER_EXE) ntdpal
+	cd ../test; make test
