@@ -17,42 +17,42 @@ print STDERR
 runtest('Default implementations + alignment',
 	"perl dpal_gen.pl '../src/ntdpal' <dpal_input",
 	'dpal_output');
-system "cat dpal_tmp > dpal_output1";
+system "cat dpal_tmp > dpal_output1.tmp";
 
 runtest('Default implementations + NO alignment 1',
 	"perl dpal_gen.pl '../src/ntdpal -s' <dpal_input",
 	'dpal_score_output');
-system "cat dpal_tmp > dpal_score_output1";
+system "cat dpal_tmp > dpal_score_output1.tmp";
 
 runtest('Default implementations + NO alignment 2',
 	"perl dpal_gen.pl '../src/ntdpal -s' <dpal_long_input",
 	'dpal_long_score_output');
-system "cat dpal_tmp > dpal_long_score_output1";
+system "cat dpal_tmp > dpal_long_score_output1.tmp";
 
 runtest('Force _dpal_generic',
 	"perl dpal_gen.pl '../src/ntdpal -s -f1' <dpal_input",
 	'dpal_score_output');
-system "cat dpal_tmp > dpal_score_output4";
+system "cat dpal_tmp > dpal_score_output4.tmp";
 
 runtest('Force _dpal_long_nopath_generic 1',
 	"perl dpal_gen.pl '../src/ntdpal -s -f2' <dpal_input",
 	'dpal_score_output');
-system "cat dpal_tmp > dpal_score_output2";
+system "cat dpal_tmp > dpal_score_output2.tmp";
 
 runtest('Force _dpal_long_nopath_generic 2',
 	"perl dpal_gen.pl '../src/ntdpal -s -f2' <dpal_long_input",
 	'dpal_long_score_output');
-system "cat dpal_tmp > dpal_long_score_output2";
+system "cat dpal_tmp > dpal_long_score_output2.tmp";
 
 runtest('Force long maxgap1 functions 1',
 	"perl dpal_gen.pl '../src/ntdpal -s -f3' <dpal_input",
 	'dpal_score_output');
-system "cat dpal_tmp > dpal_score_output3";
+system "cat dpal_tmp > dpal_score_output3.tmp";
 
 runtest('Force long maxgap1 functions 2',
 	"perl dpal_gen.pl '../src/ntdpal -s -f3' <dpal_long_input",
 	'dpal_long_score_output');
-system "cat dpal_tmp > dpal_long_score_output3";
+system "cat dpal_tmp > dpal_long_score_output3.tmp";
 
 exit;
 

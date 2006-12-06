@@ -79,7 +79,7 @@ for $test (
     $testx =~ s/_formatted$//;
     $input = $testx . '_input';
     $output = $test . '_output';
-    $tmp = $test . '_tmp';
+    $tmp = $test . '.tmp';
     if ($test ne 'primer_ch') {
 	die "Cannot read $input"  unless -r $input;
 	die "Cannot read $output"  unless -r $output;
@@ -90,7 +90,13 @@ for $test (
 	# We need to chdir below because primer3 puts the 'list' files
         # in the current working directory.  Therefore we adjust
 	# the TestCenter result directory.
-	$cmd = "rm -f $list_tmp/*.*; "
+	if (!-e $list_tmp ) {
+	    mkdir $list_tmp, 0777 or die "mkdir $list_tmp, 0777";
+	}
+	if (!-e "$list_tmp/.svn") {
+	    mkdir "$list_tmp/.svn", 0777 or die "mkdir $list_tmp/.svn, 0777";
+	} 
+	$cmd = "rm -f $list_tmp/*; "
 	    . "cd $list_tmp; ../$p1 -strict_tags <../$input >../$tmp";
 	$ENV{TC_COMMENT} = $cmd;
 	# Reset the TestCenter result directory.

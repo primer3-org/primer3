@@ -35,7 +35,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <math.h>
 #include <signal.h>
 #include <unistd.h>
-#include <errno.h>
 #include <float.h>
 #include "primer3_release.h"
 #include "format_output.h"
@@ -44,7 +43,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "primer3.h"
 #include "boulder_input.h"
 
-/* Type definitions. */
 /* #define's */
 
 /* 
@@ -54,13 +52,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define OOM_MESSAGE      ": out of memory\n"
 #define OOM_MESSAGE_LEN  16
 #define OOM_STMT1 write(2, pr_program_name, pr_program_name_len)
-#define OOM_STMT2 write(2, OOM_MESSAGE, OOM_MESSAGE_LEN), exit(ENOMEM)
+#define OOM_STMT2 write(2, OOM_MESSAGE, OOM_MESSAGE_LEN), exit(-2)
 #define OOM_ERROR OOM_STMT1, OOM_STMT2
 
 #ifndef MAX_PRIMER_LENGTH
-#error "Important note: MAX_PRIMER_LENGTH must be defined in
-the makefile, because its value must be <= the
-value of DPAL_MAX_ALIGN."
+#error "Define MAX_PRIMER_LENGTH in Makefile..."
+  /* to ensure that MAX_PRIMER_LENGTH <= DPAL_MAX_ALIGN. */
+#endif
+#if (MAX_PRIMER_LENGTH > DPAL_MAX_ALIGN) 
+#error "MAX_PRIMER_LENGTH must be <= DPAL_MAX_ALIGN"
 #endif
 
 #define MAX_NN_TM_LENGTH 36 /* The maxium length for which to use the
@@ -295,13 +295,11 @@ main(argc,argv)
 	input_found = 1;
 
 	*lib_local_dpal_args = *local_args;
-	/* NEW */
 	if (pa->lib_ambiguity_codes_consensus) {
 	  PR_ASSERT(dpal_set_ambiguity_code_matrix(lib_local_dpal_args));
 	}
 
 	*lib_local_end_dpal_args = *local_end_args;
-	/* NEW */
 	if (pa->lib_ambiguity_codes_consensus) {
 	  PR_ASSERT(dpal_set_ambiguity_code_matrix(lib_local_end_dpal_args));
 	}

@@ -1,8 +1,7 @@
 #!/usr/local/bin/perl
 
-# Script for checking output of executable src/long_seq_tm_test
-# To make long_seq_tm_test go to ../src, and do
-# make long_seq_tm_test
+# Script that re-implements the calculation for long sequences.
+# Compare output to that of long_seq_tm_test.pl
 
 my ($seq, $start, $len) = @ARGV;
 my $s = substr($seq, $start, $len);
