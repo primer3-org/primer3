@@ -52,7 +52,7 @@ CFLAGS  = $(CC_OPTS) $(O_OPTS)
 LDFLAGS = -g
 
 # ======================================================================
-# If have trouble with library skew when moving primer3  executables
+# If you have trouble with library skew when moving primer3  executables
 # between system, set LIBOPTS to -static
 LIBOPTS =
 
