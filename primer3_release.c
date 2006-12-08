@@ -1,0 +1,51 @@
+#include "primer3_release.h"
+
+const char *pr_release(void) {
+    return PR_RELEASE;
+}
+
+const char *pr_copyright(void) {
+    return
+	"\n"
+	"Copyright (c) 1996, 1997\n"
+	"        Whitehead Institute for Biomedical Research. All rights reserved.\n"
+	"\n"
+	"Redistribution and use in source and binary forms, with or without\n"
+	"modification, are permitted provided that the following conditions are met:\n"
+	"\n"
+	"1.      Redistributions must reproduce the above copyright notice, this\n"
+	"list of conditions and the following disclaimer in the  documentation\n"
+	"and/or other materials provided with the distribution.  Redistributions of\n"
+	"source code must also reproduce this information in the source code itself.\n"
+	"\n"
+	"2.      If the program is modified, redistributions must include a notice\n"
+	"(in the same places as above) indicating that the redistributed program is\n"
+	"not identical to the version distributed by Whitehead Institute.\n"
+	"\n"
+	"3.      All advertising materials mentioning features or use of this\n"
+	"software  must display the following acknowledgment:\n"
+	"        This product includes software developed by the\n"
+	"        Whitehead Institute for Biomedical Research.\n"
+	"\n"
+	"4.      The name of the Whitehead Institute may not be used to endorse or\n"
+	"promote products derived from this software without specific prior written\n"
+	"permission.\n"
+	"\n"
+	"We also request that use of this software be cited in publications as \n"
+	"\n"
+	"Steve Rozen, Helen J. Skaletsky (1996)\n"
+	"   Primer3. Code available at\n"
+	"   http://www-genome.wi.mit.edu/genome_software/other/primer3.html\n"
+	"\n"
+	"THIS SOFTWARE IS PROVIDED BY THE WHITEHEAD INSTITUTE ``AS IS'' AND  ANY\n"
+	"EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE  IMPLIED\n"
+	"WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE  ARE\n"
+	"DISCLAIMED. IN NO EVENT SHALL THE WHITEHEAD INSTITUTE BE LIABLE  FOR ANY\n"
+	"DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL  DAMAGES\n"
+	"(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS  OR\n"
+	"SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)  HOWEVER\n"
+	"CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT\n"
+	"LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY\n"
+	"OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF\n"
+	"SUCH DAMAGE.\n";
+}
