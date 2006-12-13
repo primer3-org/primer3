@@ -45,9 +45,9 @@
 MAX_PRIMER_LENGTH = 36
 
 LDLIBS = -lm
-CC      = cc
+CC      = gcc
 O_OPTS  = 
-CC_OPTS = -g
+CC_OPTS = -g -fPIC
 P_DEFINES = -DDPAL_MAX_ALIGN=$(MAX_PRIMER_LENGTH) -DMAX_PRIMER_LENGTH=$(MAX_PRIMER_LENGTH)
 
 CFLAGS  = $(CC_OPTS) $(O_OPTS)
@@ -78,6 +78,7 @@ clean:
 $(PRIMER_LIB): $(PRIMER_LIBOBJECTS)
 	ar rv $@ $(PRIMER_LIBOBJECTS)
 	$(RANLIB) $@
+	gcc -shared -Wl,-soname,libprimer.so.1 -o libprimer.so.1.0.1 $(PRIMER_LIBOBJECTS)
 
 $(PRIMER_EXE): $(PRIMER_OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
@@ -124,5 +125,5 @@ primer_test: $(PRIMER_EXE)
 	cd ../test; primer_test.pl
 
 backup:
-	tar cvf backup.tar Makefile *.[ch] FUNCTIONS TODO
+	tar cvf backup.tar Makefile *.[ch] FUNCTIONS
 	gzip backup.tar

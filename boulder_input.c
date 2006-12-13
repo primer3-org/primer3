@@ -37,6 +37,7 @@ static double parse_seq_name(char *);
 static void   reverse_complement_seq_lib(primer_error *, seq_lib *);
 static int    parse_seq_quality(char *, int **);
 
+
 /* 
  * Hack to support old SunOS headers.  (We do not try to declare _all_
  * undeclared functions; only those with non-int return types.)
