@@ -1,0 +1,36 @@
+This is the swig (www.swig.org) interface defenition file used to generated foreign-function interface for libprimer3.
+
+You need to install swig first and have the swig executable in your path, if necessary. After that it's just a matter
+of calling swig with the your choice of language. Input language defaults to Standard C, libprimer is in stdc.
+
+WARNING: please backup any hand-tweaked wrappers you might have lying around. By default, Perl and Common Lisp (CLISP)
+wrappers are included and they're in clisp/ and perl5/ directories respectively. Don't overwrite those unless you know
+what you're doing, or you will Lose.
+
+ usage: swig [language-choice] swig.i
+    where language choice is one of the following:
+              -allegrocl      - for ALLEGROCL wrappers
+	      -chicken        - for CHICKEN wrappers
+	      -clisp          - for CLISP wrappers
+	      -cffi           - for CFFI wrappers
+	      -csharp         - for C# wrappers
+	      -guile          - for Guile wrappers
+	      -java           - for Java wrappers
+	      -lua            - for Lua wrappers
+	      -modula3        - for Modula 3 wrappers
+	      -mzscheme       - for Mzscheme wrappers
+	      -ocaml          - for Ocaml wrappers
+	      -perl           - for Perl wrappers
+	      -php4           - for PHP4 wrappers
+	      -php5           - for PHP5 wrappers
+	      -pike           - for Pike wrappers
+	      -python         - for Python wrappers
+	      -ruby           - for Ruby wrappers
+	      -sexp           - for Lisp S-Expressions wrappers
+	      -tcl            - for Tcl wrappers
+	      -uffi           - for Common Lisp / UFFI wrappers
+	      -xml            - for XML wrappers
+	      -r              - for R (aka GNU S) wrappers
+
+    For details on how to compile the output files, please see http://www.swig.org
+

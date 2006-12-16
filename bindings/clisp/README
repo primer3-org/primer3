@@ -1,0 +1,5 @@
+Clisp binding for libprimer3, based on Swig.
+
+Please don't overwrite this file with a newly generated one. Swig support for clisp is not in good shape
+and there are a few bugs. This file is *heavily* edited and hand tweaked for hours.
+

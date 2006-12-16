@@ -1,0 +1,28 @@
+Please see the swig tutorial on how to build this: http://www.swig.org/tutorial.html
+
+I don't know my Perl foreign-function interface so I couldn't get this to work, but then I haven't tried hard if at all.
+
+Roughly, it should be as follows:
+
+1)   unix % swig -perl5 swig.i
+
+To generate the files swig_wrap.c and libprimer3.pm.
+
+2) Add swig_wrap to the libprimer build procedure, somewhere, maybe even add these line to project Makefile
+   BINDING_WRAP=swig_wrap.o
+   BINGING_ARGS=`perl -MExtUtils::Embed -e ccopts`
+
+   then
+
+   unix % gcc -c $(LIBPRIMER) swig_wrap.c \
+        `perl -MExtUtils::Embed -e ccopts`
+ unix % ld -G $(LIBPRIMEROBJECTS) example_wrap.o -o libprimer3.so
+
+3) You can then use it from perl:
+ 
+    unix % perl
+    use libprimer3;
+    my $primer = primer3_create ();
+  
+    etc.
+

@@ -1,0 +1,557 @@
+/** Swig interface defenition for libprimer3   Kumi (kkhawi@gmail.com) Dec-16-2006
+    usage: swig [language-choice] swig.i
+    where language choice is one of the following:
+              -allegrocl      - for ALLEGROCL wrappers
+	      -chicken        - for CHICKEN wrappers
+	      -clisp          - for CLISP wrappers
+	      -cffi           - for CFFI wrappers
+	      -csharp         - for C# wrappers
+	      -guile          - for Guile wrappers
+	      -java           - for Java wrappers
+	      -lua            - for Lua wrappers
+	      -modula3        - for Modula 3 wrappers
+	      -mzscheme       - for Mzscheme wrappers
+	      -ocaml          - for Ocaml wrappers
+	      -perl           - for Perl wrappers
+	      -php4           - for PHP4 wrappers
+	      -php5           - for PHP5 wrappers
+	      -pike           - for Pike wrappers
+	      -python         - for Python wrappers
+	      -ruby           - for Ruby wrappers
+	      -sexp           - for Lisp S-Expressions wrappers
+	      -tcl            - for Tcl wrappers
+	      -uffi           - for Common Lisp / UFFI wrappers
+	      -xml            - for XML wrappers
+	      -r              - for R (aka GNU S) wrappers
+
+    For details on how to compile the output files, please see http://www.swig.org
+*/
+
+%module libprimer3
+
+int PR_MAX_INTERVAL_ARRAY = 200;
+
+typedef int interval_array_t[PR_MAX_INTERVAL_ARRAY][2];
+
+
+typedef struct program_args {
+  char format_output;
+  char twox_compat;
+  char strict_tags;
+} program_args;
+
+typedef struct seq_lib {
+    char **names;         /* An array of sequence names. */
+    char **seqs;          /* An array of sequences. */
+    char **rev_compl_seqs;/* An array of reversed-complemented sequences. */
+    double *weight;       /* An array of weights. */
+    char   *repeat_file;  /* The path of the file containing the library. */
+    pr_append_str error;  /* Global error message if any.  */
+    pr_append_str warning;/* Warning message. */
+    int seq_num;          /* The number of names, sequences, and weights. */
+} seq_lib;
+
+typedef struct oligo_weigts {
+    double temp_gt;
+    double temp_lt;
+    double gc_content_gt;
+    double gc_content_lt;
+    double compl_any;
+    double compl_end;
+    double repeat_sim;
+    double length_lt;
+    double length_gt;
+    double seq_quality;
+    double end_quality;
+    double pos_penalty;
+    double end_stability;
+    double num_ns;
+} oligo_weights;
+
+typedef struct pair_weights {
+    double primer_quality;
+    double io_quality;
+    double diff_tm;
+    double compl_any;
+    double compl_end;
+    double product_tm_lt;
+    double product_tm_gt;
+    double product_size_lt;
+    double product_size_gt;
+    double repeat_sim;
+} pair_weights;
+
+
+typedef enum task { pick_pcr_primers = 0,
+		    pick_pcr_primers_and_hyb_probe = 1,
+		    pick_left_only = 2,
+                    pick_right_only = 3,
+                    pick_hyb_probe_only =4,
+} task;
+
+
+typedef struct primargs {
+  int    pr_min[PR_MAX_INTERVAL_ARRAY]; /* Minimum product sizes. */
+  int    pr_max[PR_MAX_INTERVAL_ARRAY]; /* Maximum product sizes. */
+  seq_lib repeat_lib;  /* Library of sequences to avoid. */
+
+  seq_lib io_mishyb_library;
+
+  oligo_weights primer_weights;
+  oligo_weights io_weights;
+  pair_weights  pr_pair_weights;
+
+  pr_append_str glob_err;
+
+  double opt_tm;
+  double min_tm;
+  double max_tm;
+  double max_diff_tm;
+  double opt_gc_content;
+  double max_gc;
+  double min_gc;
+  double salt_conc;
+  double dna_conc;
+
+  double io_opt_tm;
+  double io_min_tm;
+  double io_max_tm;
+  double io_opt_gc_content;
+  double io_max_gc;
+  double io_min_gc;
+  double io_salt_conc;
+  double io_dna_conc;
+
+  double outside_penalty; /* Multiply this value times the number of NTs
+			   * from the 3' end to the the (unique) target to
+			   * get the 'position penalty'.
+			   * Meaningless if there are multiple targets
+			   * or if the primer cannot be part of a pair
+			   * that spans the target.
+			   */
+
+  double inside_penalty;  /* Multiply this value times the number of NT
+			   * positions by which the primer overlaps
+			   * the (unique) target to the 'position penalty'.
+			   * Meaningless if there are multiple targets
+			   * or if the primer cannot be part of a pair
+			   * that spans the target.
+			   */
+
+  double product_max_tm;
+  double product_min_tm;
+  double product_opt_tm;
+  double max_end_stability;
+  /* The maximum value allowed for the delta
+   * G of disruption for the 5 3' bases of
+   * a primer.
+   */
+  int    num_intervals;         /* 
+				 * Number of product size intervals
+				 * (i.e. number of elements in pr_min and
+				 * pr_max)
+				 */
+  int    num_ns_accepted;
+  task   primer_task;          /* 2 if left primer only, 3 if right primer only,
+				* 4 if internal oligo only.    */
+
+  int    file_flag;
+  int    explain_flag;
+  int    primer_opt_size;
+  int    primer_min_size;
+  int    primer_max_size;
+  int    product_opt_size;
+
+  /*internal oligo*/
+  int    io_num_ns_accepted;
+  int    io_primer_opt_size;
+  int    io_primer_min_size;
+  int    io_primer_max_size;
+
+  int    gc_clamp;              /* Required number of GCs at *3' end. */
+   
+
+  int    liberal_base;   /* 
+			  * If non-0 then turn characters other than
+			  * [ATGCNatgcn] into N.
+			  */
+
+  int    max_poly_x;      /* 
+			   * Maximum length of mononucleotide sequence in an
+			   * oligo.
+			   */
+  int    io_max_poly_x;
+
+
+  int    first_base_index;  /* 
+			     * The index of the first base in the input
+			     * sequence.  This parameter is ignored within
+			     * primer3_choose; caller must assure that
+			     * all indexes are 0-based.  However, this
+			     * parameter should used by output routines to
+			     * adjust base indexes.
+			     */
+  int    num_return; /* The number of best primer pairs to return. */
+  int    min_quality;       /* Minimum quality permitted for oligo sequence.*/
+  int    min_end_quality;   /* Minimum quality permitted at 3' end. */
+  int    quality_range_min;
+  int    quality_range_max;
+
+  int    io_min_quality;
+  int    io_min_end_quality;
+
+  int    pick_anyway;    /* Pick even if input primer or oligos
+			    violate constraints. */
+                                
+
+  short  repeat_compl;   /* 
+			  * Acceptable complementarity with repeat
+			  * sequences.
+			  */
+  short  io_repeat_compl;
+
+  short  pair_repeat_compl;
+
+  short  self_any;  
+  short  self_end;
+
+  short  io_self_any;  
+  short  io_self_end;
+
+  short  pair_compl_any;
+  short  pair_compl_end;
+} primer_args;
+
+typedef struct pair_stats {
+    int considered;         /* Total number of pairs or triples tested.      */
+    int product;            /* Pairs providing incorrect product size.       */
+    int target;             /* Pairs without any target between primers.     */
+    int temp_diff;          /* Melting temperature difference too high.      */
+    int compl_any;          /* Pairwise complementarity larger than allowed. */
+    int compl_end;          /* The same for 3' end complementarity.          */
+    int internal;           /* Internal oligo was not found.                 */
+    int repeat_sim;         /* Complementarity with repeat sequence too high.*/
+    int high_tm;            /* Product Tm too high.                          */
+    int low_tm;             /* Product Tm too low.                           */
+    int ok;                 /* Number that were ok.                          */
+} pair_stats;
+
+
+typedef struct oligo_stats {
+    int considered;         /* Total number of tested oligos of given type   */
+    int ns;                 /* Number of oligos rejected because of Ns       */
+    int target;             /* Overlapping targets.                          */
+    int excluded;           /* Overlapping excluded regions.                 */
+    int gc;                 /* Unappropriate GC content.                     */
+    int gc_clamp;           /* Don't have required number of GCs at 3' end.  */
+    int temp_min;           /* Melting temperature below t_min.              */
+    int temp_max;           /* Melting temperature more than t_max.          */
+    int compl_any;          /* Self-complementarity too high.                */
+    int compl_end;          /* Self-complementarity at 3' end too high.      */
+    int repeat;             /* Complementarity with repeat sequence too hign.*/
+    int poly_x;             /* Long mononucleotide sequence inside.          */
+    int seq_quality;        /* Low quality of bases included.                */
+    int stability;          /* Stability of 5 3' bases too high.             */
+    int no_orf;             /* Would not amplify any of the specified orf
+                               (valid for left primers only).                 */
+    int ok;                 /* Number of acceptable oligos in this category. */
+} oligo_stats;
+
+
+typedef struct seqargs {
+  pr_append_str error;    /* Error messages. */
+  pr_append_str warning;  /* Warning messages. */
+  int num_targets;        /* The number of targets. */
+  interval_array_t tar;   /*
+			   * The targets themselves; tar[i][0] is the start
+			   * of the ith target, tar[i][1] its length.  These
+			   * are presented as indexes within the sequence
+			   * slot, but during the execution of choice() they
+			   * are recalculated to be indexes within
+			   * trimmed_seq.
+			   */
+  int num_excl;           /* The number of excluded regions.  */
+  interval_array_t excl;  /* The same as for targets.
+			   * These are presented as indexes within
+			   * the sequence slot, but during the
+			   * execution of choice() they are recalculated
+			   * to be indexes within trimmed_seq.
+			   */
+  int num_internal_excl;  /* Number of excluded regions for internal oligo.*/
+  interval_array_t excl_internal;
+  /* Similar to excl. */
+  int incl_s;             /* The 0-based start of included region. */
+  int incl_l;             /* 
+			   * The length of the included region, which is
+			   * also the length of the trimmed_seq field.
+			   */
+  int  start_codon_pos;   /* Index of first base of the start codon. */
+  int  stop_codon_pos;    /* 
+			   * An optional _output_, meaninful if a
+			   * start_codon_pos is "not nul".  The position of
+			   * the intial base of the leftmost stop codon that
+			   * is to the right of sa->start_codon_pos.
+			   */
+  int  *quality;          /* Vector of quality scores. */
+  char *sequence;         /* The sequence itself. */
+  char *sequence_name;    /* An identifier for the sequence. */
+  char *sequence_file;    /* Another identifer for the sequence. */
+
+  char *trimmed_seq;      /* The included region only. */
+  char *left_input;       /* A left primer to check or design around. */
+  char *right_input;      /* A right primer to check or design around. */
+  char *internal_input;   /* An internal oligo to check or design around. */
+
+  oligo_stats left_expl;  /* Left primers statistics. */
+  oligo_stats right_expl; /* Right primers statistics. */
+  oligo_stats intl_expl;  /* Internal oligos statistics. */
+  pair_stats  pair_expl;  /* Pair statistics. */
+} seq_args;
+
+typedef int dpal_ssm[UCHAR_MAX + 1][UCHAR_MAX + 1];
+
+typedef struct {
+  int check_chars;        /* 
+			   * If non-0, check for and raise an error on an
+			   * illegal character in the input strings.
+			   */
+  int debug;              /* 
+			   * If non-0, print debugging information to
+			   * stderr.
+			   */
+  int fail_stop;           /* Exit with -1 on error. */
+  int flag;                /* 
+			    * One of DPAL_GLOBAL, DPAL_LOCAL,
+			    * DPAL_GLOBAL_END, DPAL_LOCAL_END
+			    */
+  int force_generic;      /* Force the use of the generic function. */
+  int force_long_generic; /* 
+			   * Force the use of the long generic no-path
+			   * function.
+			   */
+  int force_long_maxgap1; /* Force the use of the long maxgap 1 functions. */
+  int gap;                 /* The "gap opening" penalty. */
+  int gapl;                /* The "gap extension" penalty. */
+  int max_gap;             /* 
+			    * The maximum allowable size for a gap. -1
+			    * indicates that the gap can be of any size.
+			    */
+  int score_max;           /* If greater than 0 stop search as soon as
+			    * score > score_max.
+			    */
+  int score_only;          /* 
+			    * If non-0, only print the score on
+			    * stdout. (Incompatible with debug.)
+			    */
+  dpal_ssm ssm;            /* The scoring system matrix. */
+} dpal_args;
+
+
+typedef struct primpair {
+  double pair_quality;
+  double compl_measure; /* 
+			 * A measure of self-complementarity of left and right
+			 * primers in the pair, as well as complementarity
+			 * between left and right primers.  The function
+			 * choice returns pairs with the minimal value for
+			 * this field when 2 pairs have the same
+			 * pair_quality.
+			 */
+  double diff_tm;       /* Absolute value of the difference between melting
+			 * temperatures for left and right primers. 
+			 */
+  double product_tm;    /* Estimated melting temperature of the product. */
+
+  double product_tm_oligo_tm_diff;
+                        /* Difference in Tm between the primer with lowest Tm
+			   the product Tm. */
+
+  double t_opt_a;
+
+  int    compl_any;     /* 
+			 * Local complementarity score between left and right
+			 * primers (* 100).
+			 */
+  int    compl_end;     /* 
+		         * 3'-anchored global complementatory score between *
+		         * left and right primers (* 100).
+			 */
+
+  short  repeat_sim;    /* Maximum total similarity of both primers to the
+			 * sequence from given file in fasta format.
+			 */
+  primer_rec *left;     /* Left primer. */
+  primer_rec *right;    /* Right primer. */
+  primer_rec *intl;     /* Internal oligo. */
+
+  int    product_size;  /* Product size. */
+  int    target;        /* 
+			 * 1 if there is a target between the right and left
+			 * primers.
+			 */
+  char   *rep_name;
+} primer_pair;
+
+
+typedef struct pair_array_t {
+    int         storage_size;
+    int         num_pairs;
+    primer_pair *pairs;
+} pair_array_t;
+
+
+typedef struct primer_state {
+  /* Alignment arguments */
+  dpal_args local_args;		/* local, noends, noambig */
+  dpal_args local_end_args;		/* local,   ends, noambig */
+  dpal_args end_args;			/* global,  ends, noambig */
+  dpal_args local_args_ambig;		/* local, noends,   ambig */
+  dpal_args local_end_args_ambig;	/* local,   ends,   ambig */
+
+  /* Primer info */
+  primer_rec *f, *r, *mid;	/* The primers */
+  int n_f, n_r, n_m;		/* Number of elements in f, r and mid */
+  int f_len, r_len, mid_len;	/* and their lengths */
+  pair_array_t best_pairs;	/* The best primer pairs */
+
+  primer_error err;		/* Error handling */
+} primer_state;
+
+typedef enum primer_errno {
+    PR_ERR_NONE = 0,
+    PR_ERR_OUT_OF_MEMORY = 1,
+    PR_ERR_CANNOT_OPEN_FILE = 2,
+    PR_ERR_ALIGNMENT_FAILED = 3
+} primer_errno;
+ 
+typedef struct primer_error {
+  /* public: */
+  int system_errno;			/* A copy of the system 'errno' */
+  primer_errno local_errno;		/* Primer3 error code */
+  char *error_msg;			/* text version of local_errno */
+  /* private: */
+  jmp_buf jmpenv;			/* errors caught in API funcs */
+} primer_error;
+
+typedef enum oligo_violation { OV_UNINITIALIZED = -1,
+			       OV_OK=0, 
+			       OV_TOO_MANY_NS=1, 
+			       OV_INTERSECT_TARGET=2,
+                               OV_GC_CONTENT=3, 
+			       OV_TM_LOW=4, 
+			       OV_TM_HIGH=5, 
+			       OV_SELF_ANY=6,
+                               OV_SELF_END=7,
+			       OV_EXCL_REGION=8,
+                               OV_GC_CLAMP=9,
+			       OV_END_STAB=10, 
+			       OV_POLY_X=11,
+			       OV_SEQ_QUALITY=12,
+                               OV_LIB_SIM=13
+} oligo_violation;
+
+typedef struct rep_sim {
+  char *name;      /* Name of the sequence from given file in fasta
+		    * format with maximum similarity to the oligo.
+		    */
+  short min;       /* 
+                    * The minimum score in slot 'score' (below).
+                    * (Used when the objective function involves
+                    * minimization of mispriming possibilities.)
+                    */
+  short max;       /* The maximum score in slot 'score' (below). */
+  short *score;    /* 
+                    * Array of similarity (i.e. false-priming) scores,
+                    * one for each entry in the 'repeat_lib' slot
+                    * of the primargs struct. 
+                    */
+} rep_sim;
+
+typedef struct primrec {
+  rep_sim repeat_sim; /* Name of the sequence from given file in fasta
+		       * format with maximum similarity to the oligo
+		       * and corresponding alignment score.
+		       */
+  double temp;     /* 
+		    * The oligo melting temperature calculated for the
+		    * primer.
+		    */
+  double gc_content;
+  double position_penalty; 
+                  /*
+                   * Penalty for distance from "ideal" position as specified
+	           * by inside_penalty and outside_penalty.
+                   */
+  double quality;  /* Part of objective function due to this primer. */
+  double end_stability; /* Delta G of disription of 5 3' bases. */
+  int    start;    /* The 0-based index of the leftmost base of the primer. */
+  int    seq_quality; /* Minimum quality score of bases included. */   
+  short  self_any; /* Self complementarity as local alignment * 100. */
+  short  self_end; /* Self complementarity at 3' end * 100. */
+  char   target;   /* 
+		    * 0 if this primer does not overlap any target, 1 if it
+		    * does.
+		    */
+  char   excl;     /* 
+		    * 0 if does not overlap any excluded region, 1 if it
+		    * does.
+		    */
+  oligo_violation ok;
+  char   length;   /* Length of the oligo. */
+  char   num_ns;   /* Number of Ns in the oligo. */
+  char   position_penalty_infinite; 
+                   /* Non-0 if the position penalty is infinite. */
+  char   must_use; /* Non-0 if the oligo must be used even if it is illegal. */
+} primer_rec;
+
+
+
+void set_default_global_primer_args(primer_args *a);
+
+primer_state *primer3_create(void);
+
+int read_record(const program_args *prog_args,
+		primer_args *pa,
+		seq_args *sa);
+
+int primer3_choose(primer_state *state,
+		   primer_args *pa,
+		   seq_args *sa);
+
+
+typedef struct pr_append_str {
+    int storage_size;
+    char *data;
+} pr_append_str;
+
+int pr_append_new_chunk(pr_append_str *x, const char *s);
+
+int format_pairs(FILE *f,
+		 const primer_args *pa,
+		 const seq_args *sa,
+		 const pair_array_t *best_pairs);
+
+void boulder_print_pairs(const program_args *prog_args,
+			 const primer_args *pa,
+			 const seq_args *sa,
+			 const pair_array_t *best_pairs);
+
+int format_oligos(FILE *f,
+		  const primer_args *pa,
+		  const seq_args    *sa,
+		  primer_rec  *h,
+		  int n,
+		  oligo_type l);
+
+typedef enum oligo_type { OT_LEFT = 0, OT_RIGHT = 1, OT_INTL = 2 } oligo_type;
+
+
+void boulder_print_oligos(const primer_args *pa,
+			  const seq_args *sa,
+			  int n,
+			  oligo_type l,
+			  primer_state *state);
+
+void free_record(seq_args *sa); 
+
+void primer3_destroy(primer_state *state);
