@@ -1,4 +1,5 @@
-primer3 release 1.0.1  (This version identical to 1.0b except version number.)
+primer3 release 1.1.0
+---------------------
 
 Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006
 Whitehead Institute for Biomedical Research, Steve Rozen
@@ -50,23 +51,33 @@ some are specifiable as terms in an objective function that
 characterizes an optimal primer pair.
 
 Whitehead Institute for Biomedical Research provides a web-based
-front end to Primer3 at
+front end to primer3 at
 http://fokker.wi.mit.edu/cgi-bin/primer3/primer3_www.cgi
+
 
 CITING PRIMER3
 --------------
 We request but do not require that use of this software be cited in
 publications as
 
-Steve Rozen and Helen J. Skaletsky (2000)
-Primer3 on the WWW for general users and for biologist programmers.
-In: Krawetz S, Misener S (eds)
-Bioinformatics Methods and Protocols: Methods in Molecular Biology.
-Humana Press, Totowa, NJ, pp 365-386
+Steve Rozen and Helen J. Skaletsky (2000) Primer3 on the WWW for
+general users and for biologist programmers.
+In: Krawetz S, Misener S (eds) Bioinformatics Methods and
+Protocols: Methods in Molecular Biology.  Humana Press, Totowa,
+NJ, pp 365-386
+Source code available at http://sourceforge.net/projects/primer3/
 
-Source code available at http://fokker.wi.mit.edu/primer3/.
 The paper above is available at
 http://jura.wi.mit.edu/rozen/papers/rozen-and-skaletsky-2000-primer3.pdf
+
+
+REPORTING BUGS AND PROBLEMS AND SUGGESTING ENHANCEMENTS
+-------------------------------------------------------
+
+For error reports or requests for enhancements, please send e-mail
+to primer3-mail (at) lists.sourceforge.net after replacing (at)
+with @.
+
 
 INSTALLATION INSTRUCTIONS
 -------------------------
@@ -99,39 +110,75 @@ called perl5) you will have to modify the internals of the test
 scripts).
 
 ntdpal (NucleoTide Dynamic Programming ALignment) is a
-stand-alone program that provides Primer3's alignment
+stand-alone program that provides primer3's alignment
 functionality (local, a.k.a. Smith-Waterman, global,
 a.k.a. Needleman-Wunsch, plus "half global").  It is provided
 strictly as is; for further documentation please see the code.
 
+
 SYSTEM REQUIREMENTS
 -------------------
-Primer3 has been successfully installed and tested on the
-following systems
 
-     o Sparc running SunOS 4.1 (gcc 2.7.0)
-     o Alpha running DEC Unix 3.2 (gcc 2.7.0 and DEC cc)
-     o Pentium running Linux 1.2 (Red Hat) (gcc 2.7.0)
+Please see http://sourceforge.net/projects/primer3/ for up-to-date
+information.  Primer3 should compile on any Linux/Unix system
+including MacOS 10 and on other systems with POSIX C
+(e.g. MSWindows).  The Makefile may need to be modified for
+compilation with C compilers other than gcc.  Our hope is to
+distribute binarie for SourceForge in the near future.  Primer3
+still uses many Kernighan-&-Richie-style function headers, so
+you might have to force your compiler to accept them.
 
-Primer3 will likely compile and run on other POSIX architectures with
-ANSI C compilers.
+
+INVOKING primer3_core
+---------------------
+
+By default, the executable program produced by the Makefile is
+called primer3_core.  This is the C program that does the heavy
+lifting of primer picking.  There is also a more user-friendly
+web interface (distributed separately).
+
+The command line for primer3 is:
+
+primer3_core [ -format_output ] [ -strict_tags ] [ -recommended_default ] < input_file.txt
+
+-format_output indicates that primer3_core should generate
+   user-oriented (rather than program-oriented) output.
+
+-strict_tags indicates that primer3_core should generate
+   a fatal error if there is any tag in the input that
+   it does not recognize (see INPUT AND OUTPUT CONVENTIONS).
+
+-recommended_default indicates that primer3_core should use
+   what we think are the best defaults, rather than the
+   backward compatible defaults.  WARNING: the recommended defaults
+   may change in future releases.
+
+WARNING: primer3_core only reads its input on stdin, so the usual
+unix convention of
+
+primer3_core input_file.txt
+
+*will not work*.  Primer3_core will just sit there forever
+waiting for its input on stdin.
+
+Note: The old flag -2x_compat is no longer supported.
 
 
 INPUT AND OUTPUT CONVENTIONS
 ----------------------------
 
-By default, Primer3 accepts input and produces output in
-Boulder-io format, a pre-XML text-based input/output format
-for program-to-program data interchange format.  When run
-with the -format_output command-line flag, Primer3 prints a
-more user-oriented report for each sequence.  Additional
-command-line flags include -2x_compat (which causes Primer3
-to print its output using Primer v2 compatible tag names),
-and -strict_tags (both discussed below).  Primer3 exits with
-0 status if it operates correctly.  See EXIT STATUS CODES
-below for additional information.
+By default, primer3 accepts input in Boulder-io format, a
+pre-XML, pre-RDF, text-based input/output format for
+program-to-program data interchange.  By default, primer3 also
+produces output in the same format.  
 
-The syntax of the version of Boulder-io recognized by Primer3 is
+When run with the -format_output command-line flag, primer3
+prints a more user-oriented report for each sequence.
+
+Primer3 exits with 0 status if it operates correctly.  See EXIT
+STATUS CODES below for additional information.
+
+The syntax of the version of Boulder-io recognized by primer3 is
 as follows:
 
   o Input consists of a sequence of RECORDs.
@@ -178,10 +225,10 @@ errors, resource errors (such out-of-memory errors), and detected
 programming errors by a message on stderr and a non-zero exit
 status.
 
-Below is the list of input tags that Primer3 recognizes.
+Below is the list of input tags that primer3 recognizes.
 Primer3 echos and ignores any tags it does not recognize, unless
 the -strict_tags flag is set on the command line, in which case
-Primer3 prints an error in the PRIMER_ERROR output tag (see
+primer3 prints an error in the PRIMER_ERROR output tag (see
 below), and prints additional information on stdout; this option
 can be useful for debugging systems that incorporate primer.
 
@@ -190,15 +237,16 @@ only ONCE in any given input record.  This restriction is not
 systematically checked in this beta release: use care.
 
 There are 2 major classes of input tags.  "Sequence" input tags
-describe a particular input sequence to Primer3, and are reset
+describe a particular input sequence to primer3, and are reset
 after every boulder record.  "Global" input tags describe the
-general parameters that Primer3 should use in its searches, and
+general parameters that primer3 should use in its searches, and
 the values of these tags persist between input boulder records
 until or unless they are explicitly reset.  Errors in "Sequence"
-input tags invalidate the current record, but Primer3 will
+input tags invalidate the current record, but primer3 will
 continue to process additional records.  Errors in "Global" input
 tags are fatal because they invalidate the basic conditions under
 which primers are being picked.
+
 
 "Sequence" Input Tags
 ---------------------
@@ -246,7 +294,7 @@ polymorphism.  The value should be a space-separated list of
 pairs where <start> is the index of the first base of a
 Target, and <length> is its length.
 
-For backward compatibility Primer3 accepts (but ignores)
+For backward compatibility primer3 accepts (but ignores)
 a trailing ,<description> for each element of this argument.
 
 EXCLUDED_REGION (interval list, default empty)
@@ -298,23 +346,24 @@ PRIMER_START_CODON_POSITION (int, default -1000000)
 
 This parameter should be considered EXPERIMENTAL at this point.
 Please check the output carefully; some erroneous inputs might
-cause an error in Primer3.
+cause an error in primer3.
 
 Index of the first base of a start codon.  This parameter allows
-Primer3 to select primer pairs to create in-frame amplicons
+primer3 to select primer pairs to create in-frame amplicons
 e.g. to create a template for a fusion protein.  Primer3 will
 attempt to select an in-frame left primer, ideally starting at or
 to the left of the start codon, or to the right if necessary.
 Negative values of this parameter are legal if the actual start
 codon is to the left of available sequence. If this parameter is
-non-negative Primer3 signals an error if the codon at the
+non-negative primer3 signals an error if the codon at the
 position specified by this parameter is not an ATG.  A value less
-than or equal to -10^6 indicates that Primer3 should ignore this
+than or equal to -10^6 indicates that primer3 should ignore this
 parameter.
 
 Primer3 selects the position of the right primer by scanning
 right from the left primer for a stop codon.  Ideally the right
 primer will end at or after the stop codon.
+
 
 "Global" Input Tags
 -------------------
@@ -333,7 +382,7 @@ possibly the sequences of genes in a gene family that should
 not be amplified.)  The file must be in (a slightly restricted)
 FASTA format (W. B. Pearson and D.J. Lipman, PNAS 85:8 pp
 2444-2448 [1988]); we briefly discuss the organization of this
-file below.  If this parameter is specified then Primer3 locally
+file below.  If this parameter is specified then primer3 locally
 aligns each candidate primer against each library sequence and
 rejects those primers for which the local alignment score times a
 specified weight (see below) exceeds PRIMER_MAX_MISPRIMING.
@@ -341,7 +390,7 @@ specified weight (see below) exceeds PRIMER_MAX_MISPRIMING.
 
 Each sequence entry in the FASTA-format file must begin with an
 "id line" that starts with '>'.  The contents of the id line is
-"slightly restricted" in that Primer3 parses everything after any
+"slightly restricted" in that primer3 parses everything after any
 optional asterisk ('*') as a floating point number to use as the
 weight mentioned above.  If the id line contains no asterisk then
 the weight defaults to 1.0.  The alignment scoring system used is
@@ -368,7 +417,7 @@ Repbase (J. Jurka, A.F.A. Smit, C. Pethiyagoda, and
 others, 1995-1996, ftp://ncbi.nlm.nih.gov/repository/repbase)
 is an excellent source of repeat sequences and pointers to the
 literature. (The Repbase files need to be converted to Fasta
-format before they can be used by Primer3.)
+format before they can be used by primer3.)
 
 
 PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS (boolean, default 1)
@@ -456,7 +505,7 @@ PRIMER_EXPLAIN_FLAG (boolean, default 0)
 If this flag is non-0, produce PRIMER_LEFT_EXPLAIN,
 PRIMER_RIGHT_EXPLAIN, and PRIMER_INTERNAL_OLIGO_EXPLAIN output
 tags, which are intended to provide information on the number of
-oligos and primer pairs that Primer3 examined, and statistics on
+oligos and primer pairs that primer3 examined, and statistics on
 the number discarded for various reasons.  If -format_output is
 set similar information is produced in the user-oriented output.
 
@@ -479,11 +528,11 @@ Primer3 favors ranges to the left side of the parameter string.
 Primer3 will return legal primers pairs in the first range
 regardless the value of the objective function for these pairs.
 Only if there are an insufficient number of primers in the first
-range will Primer3 return primers in a subsequent range.
+range will primer3 return primers in a subsequent range.
 
 PRIMER_PICK_INTERNAL_OLIGO (boolean, default 0)
 
-If the associated value is non-0, then Primer3 will attempt to
+If the associated value is non-0, then primer3 will attempt to
 pick an internal oligo (hybridization probe to detect the PCR
 product).  This tag is maintained for backward compatibility.
 Use PRIMER_TASK.
@@ -513,33 +562,113 @@ PRIMER_MAX_SIZE (int, default 27)
 
 Maximum acceptable length (in bases) of a primer.  Currently this
 parameter cannot be larger than 35.  This limit is governed by
-maximum oligo size for which Primer3's melting-temperature is
+maximum oligo size for which primer3's melting-temperature is
 valid.
 
 PRIMER_OPT_TM (float, default 60.0C)
 
 Optimum melting temperature(Celsius) for a primer oligo. Primer3
 will try to pick primers with melting temperatures are close to
-this temperature.  The oligo melting temperature formula in
-Primer3 is that given in Rychlik, Spencer and Rhoads, Nucleic
-Acids Research, 18(21): 6409-6412 and Breslauer,
-Frank, Bloeker and Marky, PNAS, 83: 3746-3750.
-Please refer to the former paper for background discussion.
+this temperature.  The oligo melting temperature formula used can
+be specified by user. Please see PRIMER_TM_SANTALUCIA for more
+information.
+
 
 PRIMER_MIN_TM (float, default 57.0C)
 
 Minimum acceptable melting temperature(Celsius) for a primer
 oligo.
 
+
 PRIMER_MAX_TM (float, default 63.0C)
 
 Maximum acceptable melting temperature(Celsius) for a primer
 oligo.
 
+
 PRIMER_MAX_DIFF_TM (float, default 100.0C)
 
 Maximum acceptable (unsigned) difference between the melting
 temperatures of the left and right primers.
+
+
+PRIMER_TM_SANTALUCIA (int, default 0, 
+                     --> if -recommended_default,  1)
+
+Specifies details of melting temperature calculation.
+
+A value of 1 directs primer3 to use the table of thermodynamic
+values and the method for melting temperature calculation
+suggested in the paper [SantaLucia JR (1998) "A unified view of
+polymer, dumbbell and oligonucleotide DNA nearest-neighbor
+thermodynamics", Proc Natl Acad Sci 95:1460-65
+http://dx.doi.org/10.1073/pnas.95.4.1460].
+
+A value of 0 directs primer3 to a backward compatible calculation
+(in other words, the only calculation availble in previous
+version of primer3).
+
+This backward compatible calculation uses the table of
+thermodynamic parameters in the paper [Breslauer KJ, Frank R,
+Blöcker H and Marky LA (1986) "Predicting DNA duplex stability
+from the base sequence" Proc Natl Acad Sci 83:4746-50
+http://dx.doi.org/10.1073/pnas.83.11.3746],
+and the method in the paper [Rychlik W, Spencer WJ and Rhoads
+RE (1990) "Optimization of the annealing temperature for DNA
+amplification in vitro", Nucleic Acids Res 18:6409-12
+http://www.pubmedcentral.nih.gov/articlerender.fcgi?tool=pubmed&pubmedid=2243783].
+
+Use tag PRIMER_SALT_CORRECTIONS, to specify the salt correction
+method for melting temperature calculation.
+
+
+PRIMER_SALT_CONC (float, default 50.0 mM)
+
+The millimolar concentration of salt (usually KCl) in the PCR.
+Primer3 uses this argument to calculate oligo and primer melting
+temperatures.
+
+
+PRIMER_SALT_CORRECTIONS (int, default 0,
+                        --> if -recommended_default, 1)
+
+Specifies the salt correction formula for the melting temperature
+calculation.
+
+A value of 1 directs primer3 to use the salt correction formula
+in the paper [SantaLucia JR (1998) "A unified view of polymer,
+dumbbell and oligonucleotide DNA nearest-neighbor
+thermodynamics", Proc Natl Acad Sci 95:1460-65
+http://dx.doi.org/10.1073/pnas.95.4.1460]
+
+A value of 0 directs primer3 to use the the salt correction
+formula in the paper [Schildkraut, C, and Lifson, S (1965)
+"Dependence of the melting temperature of DNA on salt
+concentration", Biopolymers 3:195-208 (not available on-line)].
+This was the formula used in previous version of primer3.
+
+A value of 2 directs primer3 to use the salt correction formula
+in the paper [Owczarzy R, You Y, Moreira BG, Manthey JA, Huang L,
+Behlke MA and Walder JA (2004) "Effects of sodium ions on DNA
+duplex oligomers: Improved predictions of melting temperatures",
+Biochemistry 43:3537-54 http://dx.doi.org/10.1021/bi034621r].
+
+PRIMER_LOWERCASE_MASKING (int, default 0)  XXXXXX
+
+This option allows for intelligent design of primers in sequence
+in which masked regions (for example repeat-masked regions) are
+lower-cased.
+
+A value of 1 directs primer3 to reject primers overlapping
+lowercase a base exactly at the 3' end.
+
+This property relies on the assumption that masked features
+(e.g. repeats) can partly overlap primer, but they cannot overlap
+the 3'-end of the primer.  In other words, lowercase bases at
+other positions in the primer are accepted, assuming that the
+masked features do not influence the primer performance if they
+do not overlap the 3'-end of primer.
+
 
 PRIMER_MIN_GC (float, default 20.0%)
 
@@ -555,12 +684,6 @@ PRIMER_MAX_GC (float, default 80.0%)
 Maximum allowable percentage of Gs and Cs in any primer generated
 by Primer.
 
-PRIMER_SALT_CONC (float, default 50.0 mM)
-
-The millimolar concentration of salt (usually KCl) in the PCR.
-Primer3 uses this argument to calculate oligo melting
-temperatures.
-
 PRIMER_DNA_CONC (float, default 50.0 nM)
 
 The nanomolar concentration of annealing oligos in the PCR.
@@ -572,16 +695,20 @@ primer oligo in a 20 microliter reaction with 10 nanograms
 template, 0.025 units/microliter Taq polymerase in 0.1 mM each
 dNTP, 1.5mM MgCl2, 50mM KCl, 10mM Tris-HCL (pH 9.3) using 35
 cycles with an annealing temperature of 56 degrees Celsius.  This
-parameter corresponds to 'c' in Rychlik, Spencer and Rhoads'
-equation (ii) (Nucleic Acids Research, 18(21): 6409-6412)
-where a suitable value (for a lower initial concentration of template)
-is "empirically determined".  The value of this parameter is less
-than the actual concentration of oligos in the reaction because
-it is the concentration of annealing oligos, which in turn
-depends on the amount of template (including PCR product) in a
-given cycle.  This concentration increases a great deal during a
-PCR; fortunately PCR seems quite robust for a variety of oligo
-melting temperatures.
+parameter corresponds to 'c' in equation (ii) of the paper
+[Rychlik W, Spencer WJ and Rhoads
+RE (1990) "Optimization of the annealing temperature for DNA
+amplification in vitro", Nucleic Acids Res 18:6409-12
+http://www.pubmedcentral.nih.gov/articlerender.fcgi?tool=pubmed&pubmedid=2243783],
+where a suitable value (for a
+lower initial concentration of template) is "empirically
+determined".  The value of this parameter is less than the actual
+concentration of oligos in the reaction because it is the
+concentration of annealing oligos, which in turn depends on the
+amount of template (including PCR product) in a given cycle.
+This concentration increases a great deal during a PCR;
+fortunately PCR seems quite robust for a variety of oligo melting
+temperatures.
 
 See ADVICE FOR PICKING PRIMERS.
 
@@ -654,13 +781,13 @@ for v2 compatibility.
 
 PRIMER_FILE_FLAG (boolean, default 0)
 
-If the associated value is non-0, then Primer3 creates two output
+If the associated value is non-0, then primer3 creates two output
 files for each input SEQUENCE.  File <sequence_id>.for lists all
 acceptable left primers for <sequence_id>, and <sequence_id>.rev
 lists all acceptable right primers for <sequence_id>, where
 <sequence_id> is the value of the PRIMER_SEQUENCE_ID tag (which
 must be supplied).  In addition, if the input tag
-PRIMER_PICK_INTERNAL_OLIGO is non-0, Primer3 produces a file
+PRIMER_PICK_INTERNAL_OLIGO is non-0, primer3 produces a file
 <sequence_id>.int, which lists all acceptable internal oligos.
 
 PRIMER_MAX_POLY_X (int, default 5)
@@ -670,7 +797,7 @@ for example AAAAAA.
 
 PRIMER_LIBERAL_BASE (boolean, default 0)
 
-This parameter provides a quick-and-dirty way to get Primer3 to
+This parameter provides a quick-and-dirty way to get primer3 to
 accept IUB / IUPAC codes for ambiguous bases (i.e. by changing
 all unrecognized bases to N).  If you wish to include an
 ambiguous
@@ -722,40 +849,39 @@ of PRIMER_MIN_QUALITY and PRIMER_MIN_END_QUALITY).
 
 PRIMER_INSIDE_PENALTY (float, default -1.0)
 
-This experimental parameter might not be maintained in this form
-in the next release.  Non-default values valid only for sequences
-with 0 or 1 target regions.  If the primer is part of a pair that
-spans a target and overlaps the target, then multiply this value
-times the number of nucleotide positions by which the primer
-overlaps the (unique) target to get the 'position penalty'.  The
-effect of this parameter is to allow Primer3 to include overlap
-with the target as a term in the objective function.
+Non-default values are valid only for sequences with 0 or 1
+target regions.  If the primer is part of a pair that spans a
+target and overlaps the target, then multiply this value times
+the number of nucleotide positions by which the primer overlaps
+the (unique) target to get the 'position penalty'.  The effect of
+this parameter is to allow primer3 to include overlap with the
+target as a term in the objective function.
 
 PRIMER_OUTSIDE_PENALTY (float, default 0.0)
 
-This experimental parameter might not be maintained in this form
-in the next release.  Non-default values valid only for sequences
-with 0 or 1 target regions.  If the primer is part of a pair that
-spans a target and does not overlap the target, then multiply
-this value times the number of nucleotide positions from the 3'
-end to the (unique) target to get the 'position penalty'.
-The effect of this parameter is to allow Primer3 to include
-nearness to the target as a term in the objective function.
+Non-default values are valid only for sequences with 0 or 1
+target regions.  If the primer is part of a pair that spans a
+target and does not overlap the target, then multiply this value
+times the number of nucleotide positions from the 3' end to the
+(unique) target to get the 'position penalty'.  The effect of
+this parameter is to allow primer3 to include nearness to the
+target as a term in the objective function.
 
 PRIMER_MAX_END_STABILITY (float 999.9999, default 100.0)
 
-The maximum stability for the five 3' bases of a left or right
-primer.  Bigger numbers mean more stable 3' ends.  The value is
-the maximum delta G for duplex disruption for the five 3' bases
-as calculated using the nearest neighbor parameters published in
-Breslauer, Frank, Bloeker and Marky, Proc. Natl. Acad. Sci. USA,
-vol 83, pp 3746-3750.  Primer3 uses a completely permissive
-default value for backward compatibility (which we may change in
-the next release).  Rychlik recommends a maximum value of 9
-(Wojciech Rychlik, "Selection of Primers for Polymerase Chain
-Reaction" in BA White, Ed., "Methods in Molecular Biology,
-Vol. 15: PCR Protocols: Current Methods and Applications", 1993,
-pp 31-40, Humana Press, Totowa NJ).
+The maximum stability for the last five 3' bases of a left or
+right primer.  Bigger numbers mean more stable 3' ends.  The
+value is the maximum delta G (kcal/mol) for duplex disruption for
+the five 3' bases as calculated using the nearest-neighbor
+parameter values specified by PRIMER_TM_SANTALUCIA.
+
+If PRIMER_TM_SANTALUCIA=1, then delta G for the most stable 5-mer
+duplex GCGCG is 6.86 kcal/mol, and delta G for the most labile
+5-mer (TATAT) is 0.86 kcal/mol.
+
+If PRIMER_TM_SANTALUCIA=0, then delta G for the most stable 5-mer
+duplex (GCGCG) is 13.4 kcal/mol, and delta G for the most labile
+5-mer duplex (TATAC) is 4.6 kcal/mol.
 
 PRIMER_PRODUCT_OPT_TM (float, default 0.0)
 
@@ -772,7 +898,7 @@ PRIMER_PAIR_WT_PRODUCT_SIZE_LT is non-0.
 
 PRIMER_TASK (string, default pick_pcr_primers)
 
-Tell Primer3 what task to perform. Legal values are pick_pcr_primers,
+Tell primer3 what task to perform. Legal values are pick_pcr_primers,
 pick_pcr_primers_and_hyb_probe, pick_left_only, pick_right_only,
 pick_hyb_probe_only.  The tasks should be self explanatory, except
 that we note that pick_pcr_primers_and_hyb_probe is
@@ -840,6 +966,7 @@ For example, the melting temperature of an oligo
 used for hybridization might be considerably lower
 than that used as a PCR primer.
 
+
 Internal Oligo "Sequence" Input Tags
 ------------------------------------
 
@@ -858,6 +985,7 @@ PRIMER_INTERNAL_OLIGO_INPUT (nucleotide sequence, default empty)
 
 The sequence of an internal oligo to check and around which to
 design left and right primers.  Must be a substring of SEQUENCE.
+
 
 Internal Oligo "Global" Input Tags
 ----------------------------------
@@ -917,13 +1045,14 @@ PRIMER_IO_WT_REP_SIM (float, default 0.0)
 PRIMER_IO_WT_SEQ_QUAL (float, default 0.0)
 PRIMER_IO_WT_END_QUAL (float, default 0.0)
 
+
 AN EXAMPLE
 ----------
 One might be interested in performing PCR on an STS with a CA
 repeat in the middle of it. Primers need to be chosen based on
 the criteria of the experiment.
 
-We need to come up with a boulder-io record to send to Primer3 via
+We need to come up with a boulder-io record to send to primer3 via
 stdin. There are lots of ways to accomplish this. We could save
 the record into a text file called 'input', and then type the
 UNIX command 'primer3 < input'. 
@@ -950,30 +1079,30 @@ is below:
 PRIMER_SEQUENCE_ID=example
 
 The main intent of this tag is to provide an identifier for the
-sequence that is meaningful to the user, for example when Primer3
+sequence that is meaningful to the user, for example when primer3
 processes multiple records, and by default this tag is optional.
 However, this tag is _required_ when PRIMER_FILE_FLAG is non-0
 Because it provides the names of the files that contain lists
-of oligos that Primer3 considered.
+of oligos that primer3 considered.
 
 SEQUENCE=GTAGTCAGTAGACNATGACNACTGACGATGCAGACNACACACACACACACAGCACACAGGTATTAGTGGGCCATTCGATCCCGACCCAAATCGATAGCTACGATGACG
 
-The SEQUENCE tag is of ultimate importance. Without it, Primer3
+The SEQUENCE tag is of ultimate importance. Without it, primer3
 has no idea what to do. This sequence is 92 bases long. Note that
 there is no newline until the sequence terminates completely.
 
 TARGET=37,21
 
 There is a simple sequence repeat in our sequence, which starts
-at base 37, and has a length of 21 bases. We want Primer3 to
-choose primers which flank the repeat site, so we let Primer3 know
+at base 37, and has a length of 21 bases. We want primer3 to
+choose primers which flank the repeat site, so we let primer3 know
 that we consider this site to be important.
 
 PRIMER_OPT_SIZE=18
 
 Since our sequence length is rather small (only 92 bases
 long), we lower the PRIMER_OPT_SIZE from 20 to 18. It's
-more likely that Primer3 will succeed if it shoots for smaller
+more likely that primer3 will succeed if it shoots for smaller
 primers with such a small sequence.
 
 PRIMER_MIN_SIZE=15
@@ -986,14 +1115,14 @@ PRIMER_NUM_NS_ACCEPTED=1
 
 Again, since we've got such a small sequence with a
 non-negligible amount of unknown bases (N's) in it, let's make
-Primer3's job easier by allowing it to pick primers that have
+primer3's job easier by allowing it to pick primers that have
 at most 1 unknown base.
 
 PRIMER_PRODUCT_SIZE_RANGE=75-100
 
 We reduce the product size range from the default of 100-300
 because our source sequence is only 108 base pairs long.  If we
-insisted on a product size of 100 base pairs Primer3 would have
+insisted on a product size of 100 base pairs primer3 would have
 few possibilities to choose from.
 
 PRIMER_FILE_FLAG=1
@@ -1019,7 +1148,7 @@ is the TARGET) from consideration for the middle oligo.
 PRIMER_EXPLAIN_FLAG=1
 
 We want to see statistics about the oligos and oligo triples
-(left primer, internal oligo, right primer) that Primer3
+(left primer, internal oligo, right primer) that primer3
 examined.
 
 =
@@ -1108,7 +1237,7 @@ PRIMER_PAIR_EXPLAIN=considered 81, unacceptable product size 49, no internal oli
 
 All the categories are exclusive, except the 'considered' category.
 
-In some cases Primer3 will examine a primer pair before it
+In some cases primer3 will examine a primer pair before it
 discovers that one of the primers in the pair violates specified
 constraints.  In this case PRIMER_PAIR_EXPLAIN might have a non-0
 number 'considered', even though one or more of
@@ -1176,8 +1305,11 @@ input tags have defined values.
 
 PRIMER_PRODUCT_TM=f
 
-f is the melting temperature of the product. Calculated using equation (iii)
-from Rychlik, Spencer and Rhoads, Nucleic Acids Research 18(21) pg. 6410.
+f is the melting temperature of the product. Calculated using
+equation (iii) from the paper [Rychlik W, Spencer WJ and Rhoads
+RE (1990) "Optimization of the annealing temperature for DNA
+amplification in vitro", Nucleic Acids Res 18:6409-12
+http://www.pubmedcentral.nih.gov/articlerender.fcgi?tool=pubmed&pubmedid=2243783].
 Printed only if a non-default value of PRIMER_MAX_PRODUCT_TM or
 PRIMER_MIN_PRODUCT_TM is specified.
 
@@ -1190,9 +1322,13 @@ specified.
 
 PRIMER_PAIR_T_OPT_A=f
 
-f is T sub a super OPT from equation (i) in Rychlik, Spencer, and
-Rhoads, Nucleic Acids Research 18(21), page 6410.  Printed only if
-PRIMER_MAX_PRODUCT_TM or PRIMER_MIN_PRODUCT_TM is specified.
+f is T sub a super OPT from equation (i) in [Rychlik W, Spencer
+WJ and Rhoads RE (1990) "Optimization of the annealing
+temperature for DNA amplification in vitro", Nucleic Acids Res
+18:6409-12
+http://www.pubmedcentral.nih.gov/articlerender.fcgi?tool=pubmed&pubmedid=2243783].
+Printed only if PRIMER_MAX_PRODUCT_TM or PRIMER_MIN_PRODUCT_TM is
+specified.
 
 PRIMER_INTERNAL_OLIGO_MISHYB_SCORE=f, s
 
@@ -1216,9 +1352,10 @@ primer.
 PRIMER_STOP_CODON_POSITION=i
 
 i is the position of the first base of the stop codon,
-if Primer3 found one, or -1 if Primer3 did not.  Printed
+if primer3 found one, or -1 if primer3 did not.  Printed
 only if the input tag PRIMER_START_CODON_POSITION with a
 non-default value is supplied.
+
 
 EXAMPLE OUTPUT
 --------------
@@ -1228,16 +1365,16 @@ directory as input.
 
 ADVICE FOR PICKING PRIMERS
 --------------------------
-We suggest referring to: Wojciech Rychlik, "Selection of Primers
-for Polymerase Chain Reaction" in BA White, Ed., "Methods in
-Molecular Biology, Vol. 15: PCR Protocols: Current Methods and
-Applications", 1993, pp 31-40, Humana Press, Totowa NJ
+We suggest consulting: Wojciech Rychlik (1993) "Selection of
+Primers for Polymerase Chain Reaction" in BA White, Ed., "Methods
+in Molecular Biology, Vol. 15: PCR Protocols: Current Methods and
+Applications", pp 31-40, Humana Press, Totowa NJ.
 
 
-Cautions
+CAUTIONS
 --------
 Some of the most important issues in primer picking can be
-addressed only before using Primer3.  These are sequence quality
+addressed only before using primer3.  These are sequence quality
 (including making sure the sequence is not vector and not
 chimeric) and avoiding repetitive elements.
 
@@ -1249,7 +1386,7 @@ repeats.  Repbase (J. Jurka, A.F.A. Smit, C. Pethiyagoda, and
 others, 1995-1996, ftp://ncbi.nlm.nih.gov/repository/repbase)
 is an excellent source of repeat sequences and pointers to the
 literature.  (The Repbase files need to be converted to Fasta format
-before they can be used by Primer3.) Primer3 now allows you to screen
+before they can be used by primer3.) Primer3 now allows you to screen
 candidate oligos against a Mispriming Library (or a Mishyb Library in
 the case of internal oligos).
 
@@ -1262,19 +1399,16 @@ problematic because of primer peaks, and the end of the read
 often contains many low-quality or even meaningless called bases.
 Therefore when picking primers from single-pass sequence it is
 often best to use the INCLUDED_REGION parameter to ensure that
-Primer3 chooses primers in the high quality region of the read.
+primer3 chooses primers in the high quality region of the read.
 
-In addition, Primer3 takes as input a Sequence Quality list for
+In addition, primer3 takes as input a Sequence Quality list for
 use with those base calling programs 
 
 (e.g. Phred, Bass/Grace, Trout) that output this information.
 
 
-
-
-
-What to do if Primer3 cannot find a primers?
---------------------------------------------
+WHAT TO DO IF PRIMER3 CANNOT FIND ANY PRIMERS?
+----------------------------------------------
 Try relaxing various parameters, including the
 self-complementarity parameters and max and min oligo melting
 temperatures.  For example, for very A-T-rich regions you might
@@ -1289,60 +1423,11 @@ at that position.
 
 Try setting the PRIMER_EXPLAIN_FLAG input tag.
 
+
 DIFFERENCES FROM EARLIER VERSIONS
 ---------------------------------
 
 See the file release_notes.txt in this directory.
-
-Compared to 0.5
----------------
-Completely different input format.  
-
-It has been reported the 0.5 deleted Ns when they occurred in
-primers.  
-
-More stringent self-complementarity defaults.
-
-Primer3 selects internal oligos on request (and produces .int
-files if requested).
-
-Compared to both 0.5 and v2
----------------------------
-The format of the contents of .for, .rev (and .int) files is
-different.
-
-Primer3 returns a user-specifiable number of primer pairs (or
-triples) sorted by "goodness".
-
-Primer3 will find a primer pair if any acceptable pair exists.
-
-Optional n-based indexing into source sequence.
-
-Use of sequence quality and 3' stability as constraints in primer
-picking.  Optional positional component to objective function.
-
-Compared to v2
--------------
-Tag name changes.  However, Primer3 should understand most or
-all Primer v2 input tags, and should produce v2-compatible output
-tag names when the -v2_compat command-line switch is used.
-
-The one exception is that the PRIMER_RECOMMEND tag is no longer
-produced. Instead Primer3 produces the PRIMER_x_EXPLAIN output
-tags.  The format of the data in this tags is different from the
-data in v2's PRIMER_RECOMMEND output tag.
-
-Numerous fixes.
-
-Uses the PRIMER_SELF_ANY and PRIMER_SELF_END parameters to govern
-maximum allowable complementarity between left and right primers,
-as well as complementarity between copies of a single oligo or
-within a single oligo.  This behaviour is very close to that of
-primer 0.5; self complementarity calculations in v2 were
-unreliable.
-
-Primer3 produces much more output information, including the TMs
-and self complementarity measures of selected primers.
 
 
 EXIT STATUS CODES
@@ -1367,97 +1452,40 @@ stderr.
 
 In all of the error cases above Primer3 prints a message to stderr.
 
-THE NEW PRIMER3 WWW INTERFACE
+
+THE PRIMER3 WWW INTERFACE
 -----------------------------
-This distribution does not contain the Primer3 WWW interface.  A
-snapshot of the interface used at Whitehead Institute may be available
-strictly 'AS-IS' and without support by e-mail request to
-primer3(at)wi.mit.edu, replacing (at) with @.
-
-The remainder of this section is out-of-date.
-
-The web interface consists of:
-
-primer3_www.cgi              (the user input screen)
-primer3_www_help.html        (user help for the input screen)
-primer3_www_results.cgi      (the results screen)
-primer3_www_results_help.cgi (user help for the results screen)
-
-To use this interface you will need perl5 and the perl5
-module CGI.pm.  Refer to your perl book to locate the perl5
-distribution.  CGI.pm was written by Lincoln D. Stein and is
-available from CPAN (www.cpan.org). You will also need to
-know enough about your operating system and web server to
-install a new CGI script, and enough about perl5 to read the
-script and figure out how it does what it does.
-
-You will have to make some modifications to primer3_www.cgi and
-to primer_www_results.cgi:
-
-1. Correct the path to perl5 on the first line of each .cgi file,
-since this path varies from system to system.
-
-2. Change the value of the $MAINTAINER variable near the top of
-both .cgi files so that they address the person maintaining your
-installation of the primer WWW interface.
-
-3. Specify available mispriming libraries.  In primer3_www.cgi
-modify the variable $SELECT_SEQ_LIBRARY as necessary and in
-primer3_www_results modify the value of %SEQ_LIBRARY in a
-corresponding way.
-
-4. Depending on your primer picking application you might want to
-change defaults; many of these are set in primer3_www.cgi, but
-there are some subtleties dealing with the interpretation of
-empty input fields.  You have to read the code to really
-understand what is going on.
-
-5. If primer3_www_help.html is not in the same directory as
-primer3_www.cgi fix $DOC_URL in primer3_www.cgi.
-
-6. If primer3_www_results.cgi is not in the same directory as
-primer3_www.cgi fix $PROCESS_INPUT_URL in primer3_www.cgi.
-
-7. If primer3_core is not in same directory as
-primer3_www_results.cgi, fix $PRIMER_BIN in
-primer3_www_results.cgi.
- 
-8. If primer3_www_results_help.html is not in the same directory
-as primer3_www_results.cgi fix $DOC_URL in
-primer3_www_results.cgi.
+This distribution does not contain the Primer3 WWW interface.
+Web interface code is likely available at (or linked to from)
+http://sourceforge.net/projects/primer3/.
 
 
 ACKNOWLEDGMENTS
 ---------------
 
-The development of Primer3 was funded by Howard Hughes Medical
-Institute and by the National Institutes of Health, National
-Human Genome Research Institute under grants R01-HG00257 (to
-David C. Page) and P50-HG00098 (to Eric S. Lander).
+The initial development of Primer3 was funded by Howard Hughes
+Medical Institute and by the National Institutes of Health,
+National Human Genome Research Institute under grants R01-HG00257
+(to David C. Page) and P50-HG00098 (to Eric S. Lander).
 
-We gratefully acknowledge the support of Digital Equipment
-Corporation, which provided the Alphas which were used for most
-of the development of Primer3, and of Centerline Software, Inc.,
-whose TestCenter memory-error, -leak, and test-coverage checker
+Primer3 was originally written by Helen J. Skaletsky (Howard
+Hughes Medical Institute, Whitehead Institute) and Steve Rozen
+(Whitehead Institute/MIT Center for Genome Research), based on
+the design of earlier versions: Primer 0.5 (Steve Lincoln, Mark
+Daly, and Eric S. Lander) and Primer v2 (Richard Resnick).  This
+initial version of this documentation was written by Richard
+Resnick and Steve Rozen, and the original web interface was
+designed by Richard Resnick.  Lincoln Stein championed the use of
+the Boulder-IO format and the idea of making primer3 a software
+component.  In addition, among others, Ernst Molitor, Carl
+Foeller, and James Bonefield contributed to the early design of
+primer3. We also thank Centerline Software, Inc., for uses of its
+TestCenter memory-error, -leak, and test-coverage checker, which
 helped us discover and correct a number of otherwise latent
 errors in Primer3.
 
-Primer3 was written by Helen J. Skaletsky (Howard Hughes Medical
-Institute, Whitehead Institute) and Steve Rozen (Whitehead
-Institute/MIT Center for Genome Research), based on the design of
-earlier versions: Primer 0.5 (Steve Lincoln, Mark Daly, and Eric
-S. Lander) and Primer v2 (Richard Resnick).  This documentation
-was written by Richard Resnick and Steve Rozen.  The original web
-interface was designed by Richard Resnick.  Lincoln Stein 
-championed the use of the Boulder-IO format and the idea of
-making Primer3 a software component.
-
-In addition, following is a partial list of people who kindly
-contributed to the design of Primer3
-
-Ernst Molitor
-Carl Foeller
-
-The authors of the current version would be pleased to receive
-error reports or requests for enhancements.  Please send e-mail
-to primer3(at)wi.mit.edu after replacing (at) with @.
+Primer3 is now operating as open software development 
+project hosted on SourceForge, and we are working
+out how to acknowledge all who have contributed to
+its enahancement.  Current active developers include
+can be found http://sourceforge.net/projects/primer3/.
