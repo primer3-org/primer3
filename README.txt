@@ -876,7 +876,7 @@ the five 3' bases as calculated using the nearest-neighbor
 parameter values specified by PRIMER_TM_SANTALUCIA.
 
 If PRIMER_TM_SANTALUCIA=1, then delta G for the most stable 5-mer
-duplex GCGCG is 6.86 kcal/mol, and delta G for the most labile
+duplex (GCGCG) is 6.86 kcal/mol, and delta G for the most labile
 5-mer (TATAT) is 0.86 kcal/mol.
 
 If PRIMER_TM_SANTALUCIA=0, then delta G for the most stable 5-mer
@@ -1463,29 +1463,27 @@ http://sourceforge.net/projects/primer3/.
 ACKNOWLEDGMENTS
 ---------------
 
-The initial development of Primer3 was funded by Howard Hughes
-Medical Institute and by the National Institutes of Health,
-National Human Genome Research Institute under grants R01-HG00257
-(to David C. Page) and P50-HG00098 (to Eric S. Lander).
+Initial development of Primer3 was funded by Howard Hughes Medical
+Institute and by the National Institutes of Health, National Human
+Genome Research Institute under grants R01-HG00257 (to David C. Page)
+and P50-HG00098 (to Eric S. Lander).
 
-Primer3 was originally written by Helen J. Skaletsky (Howard
-Hughes Medical Institute, Whitehead Institute) and Steve Rozen
-(Whitehead Institute/MIT Center for Genome Research), based on
-the design of earlier versions: Primer 0.5 (Steve Lincoln, Mark
-Daly, and Eric S. Lander) and Primer v2 (Richard Resnick).  This
-initial version of this documentation was written by Richard
-Resnick and Steve Rozen, and the original web interface was
-designed by Richard Resnick.  Lincoln Stein championed the use of
-the Boulder-IO format and the idea of making primer3 a software
-component.  In addition, among others, Ernst Molitor, Carl
-Foeller, and James Bonefield contributed to the early design of
-primer3. We also thank Centerline Software, Inc., for uses of its
-TestCenter memory-error, -leak, and test-coverage checker, which
-helped us discover and correct a number of otherwise latent
+Primer3 was originally written by Helen J. Skaletsky (Howard Hughes
+Medical Institute, Whitehead Institute) and Steve Rozen (Whitehead
+Institute/MIT Center for Genome Research), based on the design of
+earlier versions: Primer 0.5 (Steve Lincoln, Mark Daly, and Eric
+S. Lander) and Primer v2 (Richard Resnick).  This initial version of
+this documentation was written by Richard Resnick and Steve Rozen, and
+the original web interface was designed by Richard Resnick.  Lincoln
+Stein championed the use of the Boulder-IO format and the idea of
+making primer3 a software component.  In addition, among others, Ernst
+Molitor, Carl Foeller, and James Bonfield contributed to the early
+design of primer3. We also thank Centerline Software, Inc., for uses
+of its TestCenter memory-error, -leak, and test-coverage checker,
+which helped us discover and correct a number of otherwise latent
 errors in Primer3.
 
-Primer3 is now operating as open software development 
-project hosted on SourceForge, and we are working
-out how to acknowledge all who have contributed to
-its enahancement.  Current active developers include
-can be found http://sourceforge.net/projects/primer3/.
+Primer3 is now operating as open software development project hosted
+on SourceForge, and we are working out how to acknowledge all who have
+contributed to its enahancement.  Current active developers can be
+found at http://sourceforge.net/projects/primer3/.
