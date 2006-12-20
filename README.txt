@@ -139,7 +139,7 @@ web interface (distributed separately).
 
 The command line for primer3 is:
 
-primer3_core [ -format_output ] [ -strict_tags ] [ -recommended_default ] < input_file.txt
+primer3_core [ -format_output ] [ -strict_tags ] < input_file.txt
 
 -format_output indicates that primer3_core should generate
    user-oriented (rather than program-oriented) output.
@@ -147,11 +147,6 @@ primer3_core [ -format_output ] [ -strict_tags ] [ -recommended_default ] < inpu
 -strict_tags indicates that primer3_core should generate
    a fatal error if there is any tag in the input that
    it does not recognize (see INPUT AND OUTPUT CONVENTIONS).
-
--recommended_default indicates that primer3_core should use
-   what we think are the best defaults, rather than the
-   backward compatible defaults.  WARNING: the recommended defaults
-   may change in future releases.
 
 WARNING: primer3_core only reads its input on stdin, so the usual
 unix convention of
@@ -592,15 +587,14 @@ Maximum acceptable (unsigned) difference between the melting
 temperatures of the left and right primers.
 
 
-PRIMER_TM_SANTALUCIA (int, default 0, 
-                     --> if -recommended_default,  1)
+PRIMER_TM_SANTALUCIA (int, default 0)
 
 Specifies details of melting temperature calculation.
 
-A value of 1 directs primer3 to use the table of thermodynamic
-values and the method for melting temperature calculation
-suggested in the paper [SantaLucia JR (1998) "A unified view of
-polymer, dumbbell and oligonucleotide DNA nearest-neighbor
+A value of 1 (recommended) directs primer3 to use the table of
+thermodynamic values and the method for melting temperature
+calculation suggested in the paper [SantaLucia JR (1998) "A unified
+view of polymer, dumbbell and oligonucleotide DNA nearest-neighbor
 thermodynamics", Proc Natl Acad Sci 95:1460-65
 http://dx.doi.org/10.1073/pnas.95.4.1460].
 
@@ -629,16 +623,15 @@ Primer3 uses this argument to calculate oligo and primer melting
 temperatures.
 
 
-PRIMER_SALT_CORRECTIONS (int, default 0,
-                        --> if -recommended_default, 1)
+PRIMER_SALT_CORRECTIONS (int, default 0)
 
 Specifies the salt correction formula for the melting temperature
 calculation.
 
-A value of 1 directs primer3 to use the salt correction formula
-in the paper [SantaLucia JR (1998) "A unified view of polymer,
-dumbbell and oligonucleotide DNA nearest-neighbor
-thermodynamics", Proc Natl Acad Sci 95:1460-65
+A value of 1 (recommended) directs primer3 to use the salt correction
+formula in the paper [SantaLucia JR (1998) "A unified view of polymer,
+dumbbell and oligonucleotide DNA nearest-neighbor thermodynamics",
+Proc Natl Acad Sci 95:1460-65
 http://dx.doi.org/10.1073/pnas.95.4.1460]
 
 A value of 0 directs primer3 to use the the salt correction
@@ -653,7 +646,7 @@ Behlke MA and Walder JA (2004) "Effects of sodium ions on DNA
 duplex oligomers: Improved predictions of melting temperatures",
 Biochemistry 43:3537-54 http://dx.doi.org/10.1021/bi034621r].
 
-PRIMER_LOWERCASE_MASKING (int, default 0)  XXXXXX
+PRIMER_LOWERCASE_MASKING (int, default 0)
 
 This option allows for intelligent design of primers in sequence
 in which masked regions (for example repeat-masked regions) are
