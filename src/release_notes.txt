@@ -1,5 +1,10 @@
-release 1.0.2 XXXXX ==================================================
+release 1.1.0 XXXXX ==================================================
 
+ Added tags PRIMER_TM_SANTALUCIA, PRIMER_SALT_CORRECTIONS,
+   and PRIMER_LOWERCASE_MASKING. See the README for
+   details of these tags do.  Briefly, the first two
+   tags allow the use of modern melting temperature 
+   calculations.
  Cleaned up Makefile, and created Makefile for the test
    directory with target to clean up after tests
  Most (but not all) temporary files created by the
@@ -213,3 +218,57 @@ release 0.2 ==================================================
   Tweaked error reporting of negative-length excluded regions,
   internal oligo excluded regions, and target.
 
+
+==============================================================
+==============================================================
+Compared to non-primer3 progenitors:
+
+Compared to primer 0.5
+---------------
+Completely different input format.  
+
+It has been reported the 0.5 deleted Ns when they occurred in
+primers.  
+
+More stringent self-complementarity defaults.
+
+Primer3 selects internal oligos on request (and produces .int
+files if requested).
+
+Compared to both primer 0.5 and primer v2
+---------------------------
+The format of the contents of .for, .rev (and .int) files is
+different.
+
+Primer3 returns a user-specifiable number of primer pairs (or
+triples) sorted by "goodness".
+
+Primer3 will find a primer pair if any acceptable pair exists.
+
+Optional n-based indexing into source sequence.
+
+Use of sequence quality and 3' stability as constraints in primer
+picking.  Optional positional component to objective function.
+
+Compared to primer v2
+-------------
+Tag name changes.  However, primer3 should understand most or
+all Primer v2 input tags, and should produce v2-compatible output
+tag names when the -v2_compat command-line switch is used.
+
+The one exception is that the PRIMER_RECOMMEND tag is no longer
+produced. Instead primer3 produces the PRIMER_x_EXPLAIN output
+tags.  The format of the data in this tags is different from the
+data in v2's PRIMER_RECOMMEND output tag.
+
+Numerous fixes.
+
+Uses the PRIMER_SELF_ANY and PRIMER_SELF_END parameters to govern
+maximum allowable complementarity between left and right primers,
+as well as complementarity between copies of a single oligo or
+within a single oligo.  This behaviour is very close to that of
+primer 0.5; self complementarity calculations in v2 were
+unreliable.
+
+Primer3 produces much more output information, including the TMs
+and self complementarity measures of selected primers.
