@@ -1,34 +1,32 @@
 # Regression test driver for primer3 executable.
 #
-# Usage: perl primer_test.pl [<primer3>]
+# Usage: perl p3test.pl [<primer3>]
 #
-# <primer3> defaults to primer3_core, in which case the executable
-# run is ../src/primer3_core.
+# <primer3> defaults to ../src/ primer3_core
 #
 # If <primer3> is specified, the executable run is 
-# ../src/<primer3>.
+# <primer3>.
 #
 # Stderr difference tests for fatal errors are performed only
-# if <primer3> is 'primer3_core' (because the executable name
+# if <primer3> is '<any dir>/primer3_core' (because the executable name
 # is part of the text written to stderr).
 
-$ENV{TC_SILENT} = '1';	# TestCenter proofed executables will not 
+# $ENV{TC_SILENT} = '1';	# TestCenter proofed executables will not 
                         # write extra stuff to std{err,out}, and
                         # consequently will not cause spurious diff's.
 
-$ENV{TC_RESULTDIR} = './tc_results'; # Directory for testcenter results.
+# $ENV{TC_RESULTDIR} = './tc_results'; # Directory for testcenter results.
     
 
-$exe = 'primer3_core';
+$exe = '../src/primer3_core';
 $exe = $ARGV[0] if defined $ARGV[0];
-$p1 =  "../src/$exe";
 $EXIT_STAT = 0;
 
-die "Cannot execute $p1" unless -x $p1;
+die "Cannot execute $exe" unless -x $exe;
 
-print STDERR "\n\n$0: testing $p1\n\nSTART, ", scalar(localtime), "\n";
+print STDERR "\n\n$0: testing $exe\n\nSTART, ", scalar(localtime), "\n";
 
-test_fatal_errors($p1);
+test_fatal_errors($exe);
 
 my $cmd;
 for $test (
@@ -62,11 +60,13 @@ for $test (
            'primer_mispriming_long_lib',
            'primer_rat',
            'primer_human',
-           'primer_ch',
            'long_seq',
            'primer_position_penalty',
            'primer_position_penalty_formatted',
 	   'p3-tmpl-mispriming',
+	   'primer_tm_lc_masking',
+	   'primer_tm_lc_masking_formatted',
+	   # Put primer_lib_amb_codes last -- it is slow
 	   'primer_lib_amb_codes',
 	   ) {
     print STDERR "$test...";
@@ -91,27 +91,27 @@ for $test (
         # in the current working directory.  Therefore we adjust
 	# the TestCenter result directory.
 	$cmd = "rm -f $list_tmp/*; "
-	    . "cd $list_tmp; ../$p1 -strict_tags <../$input >../$tmp";
-	$ENV{TC_COMMENT} = $cmd;
+	    . "cd $list_tmp; ../$exe -strict_tags <../$input >../$tmp";
+
+	# $ENV{TC_COMMENT} = $cmd; OLD CODE
 	# Reset the TestCenter result directory.
-	$save_results = $ENV{TC_RESULTDIR};
-	$ENV{TC_RESULTDIR} = "../$save_results";
+	# $save_results = $ENV{TC_RESULTDIR};
+	# $ENV{TC_RESULTDIR} = "../$save_results";
+
 	$r = system $cmd;
-	$ENV{TC_RESULTDIR} = $save_results;
-	$ENV{TC_COMMENT} = '';
+
+	# $ENV{TC_RESULTDIR} = $save_results;
+	# $ENV{TC_COMMENT} = '';
     } elsif ($test =~ /formatted$/) {
-	$cmd = "$p1 -strict_tags -format_output <$input >$tmp";
-	$ENV{TC_COMMENT} = $cmd;
+	$cmd = "$exe -strict_tags -format_output <$input >$tmp";
+	# $ENV{TC_COMMENT} = $cmd;
 	$r = system $cmd;
-	$ENV{TC_COMMENT} = '';
+	# $ENV{TC_COMMENT} = '';
     } else {
-	# We do not distribute primer_ch_input.
-	unless ($test eq 'primer_ch' && !-e 'primer_ch_input') {
-	    $cmd = "$p1 -strict_tags <$input >$tmp";
-	    $ENV{TC_COMMENT} = $cmd;
-	    $r = system $cmd;
-	    $ENV{TC_COMMENT} = '';
-	}
+	$cmd = "$exe -strict_tags <$input >$tmp";
+	# $ENV{TC_COMMENT} = $cmd;
+	$r = system $cmd;
+	# $ENV{TC_COMMENT} = '';
     }
 
     unless ($r == 0) {
@@ -169,9 +169,9 @@ sub test_fatal_errors {
     for (@inputs) {
 	($root) = /(.*)\.in$/;
 	$cmd = "$exe <$_ > $root.tmp 2> $root.tmp2";
-	$ENV{TC_COMMENT} = $cmd;
+	# $ENV{TC_COMMENT} = $cmd;
 	system $cmd;
-	$ENV{TC_COMMENT} = '';
+	# $ENV{TC_COMMENT} = '';
 	if ($? == 0) {
 	    $r = $? >> 8;
 	    print STDERR "\nErroneous 0 exit status ($?) from command $cmd\n";

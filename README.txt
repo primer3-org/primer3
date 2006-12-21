@@ -589,7 +589,8 @@ temperatures of the left and right primers.
 
 PRIMER_TM_SANTALUCIA (int, default 0)
 
-Specifies details of melting temperature calculation.
+Specifies details of melting temperature calculation.  (New in
+v. 1.1.0, added by Maido Remm and Triinu Koressaar.)
 
 A value of 1 (recommended) directs primer3 to use the table of
 thermodynamic values and the method for melting temperature
@@ -626,7 +627,8 @@ temperatures.
 PRIMER_SALT_CORRECTIONS (int, default 0)
 
 Specifies the salt correction formula for the melting temperature
-calculation.
+calculation.  (New in v. 1.1.0, added by Maido Remm and Triinu
+Koressaar)
 
 A value of 1 (recommended) directs primer3 to use the salt correction
 formula in the paper [SantaLucia JR (1998) "A unified view of polymer,
@@ -648,9 +650,10 @@ Biochemistry 43:3537-54 http://dx.doi.org/10.1021/bi034621r].
 
 PRIMER_LOWERCASE_MASKING (int, default 0)
 
-This option allows for intelligent design of primers in sequence
-in which masked regions (for example repeat-masked regions) are
-lower-cased.
+This option allows for intelligent design of primers in sequence in
+which masked regions (for example repeat-masked regions) are
+lower-cased.  (New in v. 1.1.0, added by Maido Remm and Triinu
+Koressaar)
 
 A value of 1 directs primer3 to reject primers overlapping
 lowercase a base exactly at the 3' end.
