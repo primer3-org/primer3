@@ -102,7 +102,8 @@ typedef enum oligo_violation { OV_UNINITIALIZED = -1,
 			       OV_POLY_X=11,
 			       OV_SEQ_QUALITY=12,
                                OV_LIB_SIM=13,
-			       OV_TEMPLATE_MISPRIMING=14
+			       OV_TEMPLATE_MISPRIMING=14,
+                               OV_GMASKED=14 /* edited by T. Koressaar for lowercase masking */ 
 } oligo_violation;
 
 typedef struct rep_sim {
@@ -192,6 +193,7 @@ typedef struct primpair {
   double diff_tm;       /* Absolute value of the difference between melting
 			 * temperatures for left and right primers. 
 			 */
+   
   double product_tm;    /* Estimated melting temperature of the product. */
 
   double product_tm_oligo_tm_diff;
@@ -334,7 +336,10 @@ typedef struct primargs {
     double io_min_gc;
     double io_salt_conc;
     double io_dna_conc;
-
+   int tm_santalucia;  /* added by T.Koressaar table of thermodynamic parameters of SantaLucia 1998 */
+   int salt_corrections; /* added by T.Koressaar salt correction formula for Tm calculation */
+   int lowercase_masking; /* added by T.Koressaar for primer design from lowercase masked template */
+   
     double outside_penalty; /* Multiply this value times the number of NTs
                              * from the 3' end to the the (unique) target to
                              * get the 'position penalty'.
@@ -482,6 +487,7 @@ typedef struct oligo_stats {
 			     (valid for left primers only).                 */
   int template_mispriming; /* Template mispriming score too high.           */
   int ok;                  /* Number of acceptable oligos.                  */
+   int gmasked;            /* edited by T. Koressaar, number of gmasked oligo*/
 } oligo_stats;
 
 /*
@@ -524,13 +530,20 @@ typedef struct seqargs {
 			     * is to the right of sa->start_codon_pos.
 			     */
     int  *quality;          /* Vector of quality scores. */
-    char *sequence;         /* The sequence itself. */
+    char *sequence;         /* The template sequence itself as input, 
+			       not trimmed, not up-cased. */
     char *sequence_name;    /* An identifier for the sequence. */
     char *sequence_file;    /* Another identifer for the sequence. */
+    char *trimmed_seq;      /* The included region only, _UPCASED_. */
 
-    char *trimmed_seq;      /* The included region only. */
-    char *upcased_seq;      /* Upper case version of sequence. */
-    char *upcased_seq_r;    /* Upper case version of sequence, other strand. */
+    /* Element add by T. Koressaar support lowercase masking: */
+    char *trimmed_orig_seq; /* Trimmed version of the original,
+			       mixed-case sequence. */
+
+    char *upcased_seq;      /* Upper case version of sequence
+			       (_not_ trimmed). */
+    char *upcased_seq_r;    /* Upper case version of sequence, 
+			       other strand (_not_ trimmed). */
     char *left_input;       /* A left primer to check or design around. */
     char *right_input;      /* A right primer to check or design around. */
     char *internal_input;   /* An internal oligo to check or design around. */

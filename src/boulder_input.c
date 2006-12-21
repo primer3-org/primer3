@@ -219,7 +219,13 @@ read_record(prog_args, pa, sa)
 	    COMPARE_FLOAT("PRIMER_MIN_TM", pa->min_tm);
 	    COMPARE_FLOAT("PRIMER_MAX_TM", pa->max_tm);
 	    COMPARE_FLOAT("PRIMER_MAX_DIFF_TM", pa->max_diff_tm);
-	    COMPARE_FLOAT("PRIMER_MIN_GC", pa->min_gc);
+
+	    COMPARE_INT("PRIMER_TM_SANTALUCIA",
+			pa->tm_santalucia);    /* added by T.Koressaar */
+	    COMPARE_INT("PRIMER_SALT_CORRECTIONS",
+			pa->salt_corrections); /* added by T.Koressaar */
+
+ 	    COMPARE_FLOAT("PRIMER_MIN_GC", pa->min_gc);
 	    COMPARE_FLOAT("PRIMER_MAX_GC", pa->max_gc);
 	    COMPARE_FLOAT("PRIMER_SALT_CONC", pa->salt_conc);
 	    COMPARE_FLOAT("PRIMER_DNA_CONC", pa->dna_conc);
@@ -264,7 +270,6 @@ read_record(prog_args, pa, sa)
 	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_NUM_NS", pa->io_num_ns_accepted);
 	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_MIN_QUALITY", pa->io_min_quality);
 
-
 	    COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_SELF_ANY",
 				pa->io_self_any);
 	    COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_SELF_END", 
@@ -276,7 +281,6 @@ read_record(prog_args, pa, sa)
 	    COMPARE_ALIGN_SCORE("PRIMER_PAIR_MAX_MISPRIMING",
 				pa->pair_repeat_compl);
 
-	    /* NEW */
 	    /* Mispriming / mishybing in the template. */
 	    COMPARE_ALIGN_SCORE("PRIMER_MAX_TEMPLATE_MISPRIMING",
 				pa->max_template_mispriming);
@@ -285,7 +289,6 @@ read_record(prog_args, pa, sa)
 	    COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_MAX_TEMPLATE_MISHYB",
 				pa->io_max_template_mishyb);
 
-            /* NEW */
             /* Control interpretation of ambiguity codes in mispriming
                and mishyb libraries. */
 	    COMPARE_INT("PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS",
@@ -321,8 +324,10 @@ read_record(prog_args, pa, sa)
 	    if (COMPARE("PRIMER_COMMENT") || COMPARE("COMMENT")) continue;
 	    COMPARE_FLOAT("PRIMER_MAX_END_STABILITY", pa->max_end_stability);
 
-	    /* weights for objective functions  */
+	    COMPARE_INT("PRIMER_LOWERCASE_MASKING",
+			pa->lowercase_masking); /* added by T. Koressaar */
 
+	    /* weights for objective functions  */
             /* CHANGE TEMP/temp -> TM/tm */
 	    COMPARE_FLOAT("PRIMER_WT_TM_GT", pa->primer_weights.temp_gt);
 	    COMPARE_FLOAT("PRIMER_WT_TM_LT", pa->primer_weights.temp_lt);
@@ -339,7 +344,6 @@ read_record(prog_args, pa, sa)
 	    COMPARE_FLOAT("PRIMER_WT_POS_PENALTY", pa->primer_weights.pos_penalty);
 	    COMPARE_FLOAT("PRIMER_WT_END_STABILITY",
 			  pa->primer_weights.end_stability);
-	    /* NEW */
 	    COMPARE_FLOAT("PRIMER_WT_TEMPLATE_MISPRIMING",
 			  pa->primer_weights.template_mispriming);
 
@@ -355,7 +359,6 @@ read_record(prog_args, pa, sa)
 	    COMPARE_FLOAT("PRIMER_IO_WT_REP_SIM", pa->io_weights.repeat_sim);
 	    COMPARE_FLOAT("PRIMER_IO_WT_SEQ_QUAL", pa->io_weights.seq_quality);
 	    COMPARE_FLOAT("PRIMER_IO_WT_END_QUAL", pa->io_weights.end_quality);
-	    /* NEW */
 	    COMPARE_FLOAT("PRIMER_IO_WT_TEMPLATE_MISHYB",
 			  pa->io_weights.template_mispriming);
 
@@ -382,7 +385,6 @@ read_record(prog_args, pa, sa)
 	    COMPARE_FLOAT("PRIMER_PAIR_WT_REP_SIM",
 					   pa->pr_pair_weights.repeat_sim);
 
-	    /* NEW */
 	    COMPARE_FLOAT("PRIMER_PAIR_WT_TEMPLATE_MISPRIMING",
 			  pa->pr_pair_weights.template_mispriming);
 	}

@@ -150,12 +150,20 @@ static double p_obj_fn(const primer_args *, primer_rec *, int );
 static void   oligo_compl(primer_rec *, const primer_args *, seq_args *,
 			  oligo_type, const dpal_args *, 
 			  const dpal_args*, const dpal_args *);
-static void   oligo_mispriming(primer_rec *, const primer_args *, seq_args *,
-			       oligo_type, const dpal_args *);
+static void   oligo_mispriming(primer_rec *,
+			       const primer_args *,
+			       seq_args *,
+			       oligo_type, 
+			       const dpal_args *);
 static int    pair_repeat_sim(primer_pair *, const primer_args *);
 static void   boulder_print_oligos(const primer_args *, 
-					 const seq_args *, int, oligo_type);
+				   const seq_args *, int, oligo_type);
 static void   free_repeat_sim_score(int, int, int);
+
+/* edited by T. Koressaar for lowercase masking:  */
+static void   check_if_lowercase_masked(const int position,
+					const char *sequence,
+					primer_rec *h);
 
 /* Global static variables. */
 static const char * copyright[] = {
@@ -347,7 +355,12 @@ main(argc,argv)
 	if (NULL != sa->sequence) free(sa->sequence);
 	if (NULL != sa->quality)  free(sa->quality);
 	if (NULL != sa->trimmed_seq) free(sa->trimmed_seq);
+
+	/* edited by T. Koressaar for lowercase masking */
+	if (NULL != sa->trimmed_orig_seq) free(sa->trimmed_orig_seq);
+
 	if (NULL != sa->upcased_seq) free(sa->upcased_seq);
+	if (NULL != sa->upcased_seq_r) free(sa->upcased_seq_r);
 	if (NULL != sa->sequence_name) free(sa->sequence_name);
 	if (NULL != sa->error.data) free(sa->error.data);
 	if (NULL != sa->warning.data) free(sa->warning.data);
@@ -503,6 +516,10 @@ add_must_use_warnings(sa, text, stats)
   if (stats->seq_quality) pr_append_w_sep(&s, sep, "Low sequence quality");
   if (stats->stability) pr_append_w_sep(&s, sep, "High 3' stability");
   if (stats->no_orf) pr_append_w_sep(&s, sep, "Would not amplify any ORF");
+
+  /* edited by T. Koressaar for lowercase masking: */
+  if (stats->gmasked)
+    pr_append_w_sep(&s, sep, "Masked with lowercase letter");
 
   if (s.data) {
     pr_append_new_chunk(&sa->warning, text);
@@ -834,7 +851,6 @@ oligo_param(pa, h, l, local_args, end_args, local_end_args, sa, stats)
     h->ok = OV_UNINITIALIZED;
     h->target = h->gc_content = h->num_ns=h->excl=0;
 
-    /* NEW */
     h->template_mispriming = h->template_mispriming_r = ALIGN_SCORE_UNDEF;
 
     PR_ASSERT(OT_LEFT == l || OT_RIGHT == l || OT_INTL == l);
@@ -844,6 +860,21 @@ oligo_param(pa, h, l, local_args, end_args, local_end_args, sa, stats)
 
     PR_ASSERT(k >= 0);
     PR_ASSERT(k < TRIMMED_SEQ_LEN(sa));
+   
+    /* edited by T. Koressaar for lowercase masking */
+    if(pa->lowercase_masking==1) {
+      if(l==OT_LEFT) {
+	 check_if_lowercase_masked(k, sa->trimmed_orig_seq,h);
+      }
+      if(l==OT_RIGHT) {
+	 check_if_lowercase_masked(j, sa->trimmed_orig_seq,h);
+      }
+      if(h->ok==OV_GMASKED) {
+	 stats->gmasked++;
+	 if (!must_use) return;
+      }
+    }
+    /* end T. Koressar's changes */
 
     gc_and_n_content(j, k-j+1, sa->trimmed_seq, h);
 
@@ -921,18 +952,18 @@ oligo_param(pa, h, l, local_args, end_args, local_end_args, sa, stats)
     }
     if(pa->gc_clamp != 0){
        if(OT_LEFT == l){
-	   for(i=k-pa->gc_clamp+1; i<= k; i++)if(seq[i] !='G'&&seq[i] !='C'){
-	       h->ok = OV_GC_CLAMP;
-	       stats->gc_clamp++;
-	       if (!must_use) return; else break;
-           }
+	 for(i=k-pa->gc_clamp+1; i<= k; i++)if(seq[i] !='G'&&seq[i] !='C'){
+	   h->ok = OV_GC_CLAMP;
+	   stats->gc_clamp++;
+	   if (!must_use) return; else break;
+	 }
        }
        if(OT_RIGHT == l){
-	   for(i=j; i<j+pa->gc_clamp; i++)if(seq[i] != 'G' && seq[i] != 'C'){
-	       h->ok = OV_GC_CLAMP;
-	       stats->gc_clamp++;
-	       if (!must_use) return; else break;
-           }
+	 for(i=j; i<j+pa->gc_clamp; i++)if(seq[i] != 'G' && seq[i] != 'C'){
+	   h->ok = OV_GC_CLAMP;
+	   stats->gc_clamp++;
+	   if (!must_use) return; else break;
+	 }
        }
     }
             
@@ -975,10 +1006,19 @@ oligo_param(pa, h, l, local_args, end_args, local_end_args, sa, stats)
      }
 
     _pr_substr(seq,j,k-j+1,s1);
+                   
     if(OT_LEFT == l || OT_RIGHT == l) 
-      h->temp = seqtm(s1, pa->dna_conc, pa->salt_conc, MAX_NN_TM_LENGTH);
+      h->temp 
+	= seqtm(s1, pa->dna_conc, pa->salt_conc, 
+		MAX_NN_TM_LENGTH,
+		pa->tm_santalucia,
+		pa->salt_corrections);
     else
-      h->temp = seqtm(s1, pa->io_dna_conc, pa->io_salt_conc, MAX_NN_TM_LENGTH);
+      h->temp
+	= seqtm(s1, pa->io_dna_conc, pa->io_salt_conc,
+		MAX_NN_TM_LENGTH,
+		pa->tm_santalucia,
+		pa->salt_corrections);
     if (((l == OT_LEFT || l == OT_RIGHT) && h->temp < pa->min_tm)
 	|| (l==OT_INTL && h->temp<pa->io_min_tm)) {
 	h->ok = OV_TM_LOW;
@@ -992,7 +1032,8 @@ oligo_param(pa, h, l, local_args, end_args, local_end_args, sa, stats)
 	if (!must_use) return;
     }
     if (OT_LEFT == l) {
-      if ((h->end_stability = end_oligodg(s1, 5))
+      if ((h->end_stability = end_oligodg(s1, 5,
+					  pa->tm_santalucia))
 	  > pa->max_end_stability) {
 	h->ok = OV_END_STAB;
 	stats->stability++;
@@ -1000,7 +1041,8 @@ oligo_param(pa, h, l, local_args, end_args, local_end_args, sa, stats)
       }
     } else if (OT_RIGHT == l) {
       _pr_reverse_complement(s1, s1_rev);
-      if ((h->end_stability = end_oligodg(s1_rev, 5))
+      if ((h->end_stability = end_oligodg(s1_rev, 5,
+					  pa->tm_santalucia))
 	  > pa->max_end_stability) {
 	  h->ok = OV_END_STAB;
 	  stats->stability++;
@@ -2073,7 +2115,6 @@ boulder_print_pairs(prog_args, pa, sa, best_pairs)
 	printf("PRIMER_RIGHT%s_END_STABILITY=%.4f\n",
 	       suffix, rev->end_stability);
 
-	/* NEW */
 	if (oligo_max_template_mispriming(fwd) != ALIGN_SCORE_UNDEF)
 	  printf("PRIMER_LEFT%s_TEMPLATE_MISPRIMING=%.4f\n", suffix,
 		 oligo_max_template_mispriming(fwd)
@@ -2200,7 +2241,6 @@ boulder_print_oligos(pa, sa, n, l)
 	    printf("%s%s_END_STABILITY=%.4f\n", type, suffix,
 		    oligo[i].end_stability);
 
-	/* NEW */
 	if (oligo_max_template_mispriming(&oligo[i]) != ALIGN_SCORE_UNDEF)
 	  printf("%s%s_TEMPLATE_MISPRIMING=%.2f\n", type, suffix,
 		 oligo_max_template_mispriming(&oligo[i])
@@ -2297,7 +2337,9 @@ print_explain(stat, l)
     if (stat->stability) printf(",high 3' stability %d", stat->stability);
     if (stat->template_mispriming) printf(",high template mispriming score %d",
 					  stat->template_mispriming);
-
+    /* edited by T. Koressaar for lowercase masking */
+    if(stat->gmasked) printf(",lowercase masking of 3' end %d",stat->gmasked);
+   
     printf(", ok %d\n", stat->ok);
 }
 
@@ -2380,17 +2422,17 @@ set_dpal_args(a)
     memset(a, 0, sizeof(*a));
     for (i = 0; i <= UCHAR_MAX; i++)
 	for (j = 0; j <= UCHAR_MAX; j++)
-	    if (('A' == i || 'C' == i || 'G' == i || 'T' == i || 'N' == i)
-		&& ('A' == j || 'C' == j || 'G' == j || 'T' == j 
-		    || 'N' == j)) {
-		    if (i == 'N' || j == 'N') 
-			a->ssm[i][j] = -25;
-		    else if (i == j)
-			a->ssm[i][j] = 100;
-		    else 
-			a->ssm[i][j] = -100;
-		} else
-		    a->ssm[i][j] = INT_MIN;
+	  if (('A' == i || 'C' == i || 'G' == i || 'T' == i || 'N' == i)
+	      && ('A' == j || 'C' == j || 'G' == j || 'T' == j 
+		  || 'N' == j)) {
+	    if (i == 'N' || j == 'N') 
+	      a->ssm[i][j] = -25;
+	    else if (i == j)
+	      a->ssm[i][j] = 100;
+	    else 
+	      a->ssm[i][j] = -100;
+	  } else
+	    a->ssm[i][j] = INT_MIN;
 
     a->gap                = -200;
     a->gapl               = -200;
@@ -2572,14 +2614,6 @@ oligo_mispriming(h, pa, sa, l, align_args)
     ? h->start + h->length - 1
     : h->start;
 
-  /* NOT USED
-  if (pa->short_match && pa->short_match < h->length) {
-    match_length = pa->short_match;
-    if (!warned) 
-      fprintf(stderr, "Using short_match of %d\n", pa->short_match);
-    warned = 1;
-  } else
-  */
   match_length = h->length;
 
   _pr_substr(sa->trimmed_seq, first, h->length, s_tmp);
@@ -2693,7 +2727,7 @@ oligo_mispriming(h, pa, sa, l, align_args)
 
     /* 4. Align to the reverse strand of the template. */
     h->template_mispriming_r
-      = align(oseq, target_r, align_args); /* lib_local_end_dpal_args); */
+      = align(oseq, target_r, align_args);
 
     if (debug)
       fprintf(stderr, "other strand Score %d aligning %s against %s\n\n", 
@@ -2803,43 +2837,8 @@ find_stop_codon(s, start, direction)
   return -1;
 }
 
-/* =========================================================== */
-/* Various fail-stop wrappers for standard library functions.  */
-
-void *
-pr_safe_malloc(x)
-    size_t x;
-{
-    void *r = malloc(x);
-    if (NULL == r) OOM_ERROR;
-    return r;
-}
-
-void *
-pr_safe_realloc(p, x)
-    void *p;
-    size_t x;
-{
-    void *r = realloc(p, x);
-    if (NULL == r) OOM_ERROR;
-    return r;
-}
-
-static FILE *
-safe_fopen(path, mode)
-    const char *path, *mode;
-{
-    FILE *r = fopen(path, mode);
-    if (NULL == r) {
-	fprintf(stderr, "%s: unable to open file %s:",
-		pr_program_name, path);
-	perror("");
-	exit (-1);
-    }
-    return r;
-}
-
-int strcmp_nocase(s1, s2)
+int
+strcmp_nocase(s1, s2)
 char *s1, *s2;
 {
    static char M[UCHAR_MAX];
@@ -2898,5 +2897,57 @@ int n_f, n_r, n_m;
      { free(mid[i].repeat_sim.score); mid[i].repeat_sim.score = NULL; }
 }
 
+/*  Edited by T. Koressaar for lowercase masking. This function checks
+ if the 3' end of the primer has been masked by lowercase letter.
+ Function created/Added by Eric Reppo, July 9, 2002
+ */
+static void
+check_if_lowercase_masked(position, sequence, h)
+     const int position;
+     const char *sequence;
+     primer_rec *h;
+{   
+   const char* p = &sequence[position];
+   if ('a' == *p || 'c' == *p ||'g' == *p || 't' == *p) {
+      h->ok=OV_GMASKED;
+   }
+}
 
+/* =========================================================== */
+/* Various fail-stop wrappers for standard library functions.  */
+
+void *
+pr_safe_malloc(x)
+    size_t x;
+{
+    void *r = malloc(x);
+    if (NULL == r) OOM_ERROR;
+    return r;
+}
+
+void *
+pr_safe_realloc(p, x)
+    void *p;
+    size_t x;
+{
+    void *r = realloc(p, x);
+    if (NULL == r) OOM_ERROR;
+    return r;
+}
+
+static FILE *
+safe_fopen(path, mode)
+    const char *path, *mode;
+{
+    FILE *r = fopen(path, mode);
+    if (NULL == r) {
+	fprintf(stderr, "%s: unable to open file %s:",
+		pr_program_name, path);
+	perror("");
+	exit (-1);
+    }
+    return r;
+}
+
+/* End of fail-stop wrappers. */
 /* =========================================================== */

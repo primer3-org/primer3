@@ -57,7 +57,7 @@ static void print_seq(FILE *, const primer_args *, const seq_args *,
 			    primer_rec *h, const pair_array_t *, int);
 static void print_seq_lines(FILE *, const char *s, const char *n, int, int,
 			    int, const primer_args *);
-static void print_stat_line(FILE *, const char *, oligo_stats s, int);
+static void print_stat_line(FILE *, const char *, oligo_stats s, int, int);
 static void print_summary(FILE *, const primer_args *, 
 			  const seq_args *, const pair_array_t *, int);
 static void print_oligo_summary(FILE *, const primer_args *, 
@@ -455,9 +455,21 @@ print_explain(f, pa, sa, print_lib_sim)
     int print_lib_sim;
 {
   const pair_stats *x;
-  const char *format = print_lib_sim
-    ? "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s\n"
-    : "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s\n";
+  char *format;
+
+  if (print_lib_sim) {
+    if (pa->lowercase_masking) {
+      format = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s\n";
+    } else {
+      format = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s\n";
+    }
+  } else {
+    if (pa->lowercase_masking) {
+      format = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s\n";
+    } else {
+      format = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s\n";
+    }
+  }
 
   fprintf(f, "\nStatistics\n");
 
@@ -474,31 +486,61 @@ print_explain(f, pa, sa, print_lib_sim)
 	      && sa->internal_input))) {
 
     if (print_lib_sim) {
-      fprintf(f, format,
-	      "", "con", "too",  "in",  "in",  "",    "no",
-	      "tm",  "tm",  "high", "high", "high",
-	      "", "high", "");
-      fprintf(f, format,
-	      "", "sid", "many", "tar", "excl", "bad","GC",
-	      "too", "too", "any",  "3'", "lib",
-	      "poly", "end", "");
-      fprintf(f, format,
-	      "", "ered","Ns",   "get", "reg",  "GC%", "clamp",
-	      "low", "high","compl", "compl", "sim",
-	      "X",  "stab", "ok");
+      if (pa->lowercase_masking) {
+	fprintf(f, format,
+		"", "con", "too",  "in",  "in",  "",    "no",
+		"tm",  "tm",  "high", "high", "high",
+		"", "high", " lower", "");
+	fprintf(f, format,
+		"", "sid", "many", "tar", "excl", "bad","GC",
+		"too", "too", "any",  "3'", "lib",
+		"poly", "end", " case", "");
+	fprintf(f, format,
+		"", "ered","Ns",   "get", "reg",  "GC%", "clamp",
+		"low", "high","compl", "compl", "sim",
+		"X",  "stab", " end", "ok  ");
+      } else {
+	fprintf(f, format,
+		"", "con", "too",  "in",  "in",  "",    "no",
+		"tm",  "tm",  "high", "high", "high",
+		"", "high", "");
+	fprintf(f, format,
+		"", "sid", "many", "tar", "excl", "bad","GC",
+		"too", "too", "any",  "3'", "lib",
+		"poly", "end", "");
+	fprintf(f, format,
+		"", "ered","Ns",   "get", "reg",  "GC%", "clamp",
+		"low", "high","compl", "compl", "sim",
+		"X",  "stab", "ok");
+      }
     } else {
-      fprintf(f, format,
-	      "", "con", "too",  "in",  "in",  "",    "no",
-	      "tm",  "tm",  "high", "high",
-	      "", "high", "");
-      fprintf(f, format,
-	      "", "sid", "many", "tar", "excl", "bad","GC",
-	      "too", "too", "any",  "3'",
-	      "poly", "end", "");
-      fprintf(f, format,
-	      "", "ered","Ns",   "get", "reg",  "GC%", "clamp",
-	      "low", "high","compl", "compl",
-	      "X", "stab", "ok");
+      if (pa->lowercase_masking) {
+	fprintf(f, format,
+		"", "con", "too",  "in",  "in",  "",    "no",
+		"tm",  "tm",  "high", "high",
+		"", "high", " lower", "");
+	fprintf(f, format,
+		"", "sid", "many", "tar", "excl", "bad","GC",
+		"too", "too", "any",  "3'",
+		"poly", "end", " case", "");
+	fprintf(f, format,
+		"", "ered","Ns",   "get", "reg",  "GC%", "clamp",
+		"low", "high","compl", "compl",
+		"X", "stab", " end", "ok  ");
+      } else {
+	fprintf(f, format,
+		"", "con", "too",  "in",  "in",  "",    "no",
+		"tm",  "tm",  "high", "high",
+		"", "high", "");
+	fprintf(f, format,
+		"", "sid", "many", "tar", "excl", "bad","GC",
+		"too", "too", "any",  "3'",
+		"poly", "end", "");
+	fprintf(f, format,
+		"", "ered","Ns",   "get", "reg",  "GC%", "clamp",
+		"low", "high","compl", "compl",
+		"X", "stab", "ok");
+      }
     }
 
   }
@@ -507,18 +549,21 @@ print_explain(f, pa, sa, print_lib_sim)
        || pick_left_only == pa->primer_task
        || pick_pcr_primers_and_hyb_probe == pa->primer_task)
       && !(pa->pick_anyway && sa->left_input))
-    print_stat_line(f, "Left", sa->left_expl, print_lib_sim);
+    print_stat_line(f, "Left", sa->left_expl, 
+		    print_lib_sim, pa->lowercase_masking);
 
   if ((pick_pcr_primers == pa->primer_task
        || pick_right_only  == pa->primer_task
        || pick_pcr_primers_and_hyb_probe == pa->primer_task)
       && !(pa->pick_anyway && sa->right_input))
-    print_stat_line(f, "Right", sa->right_expl, print_lib_sim);
+    print_stat_line(f, "Right", sa->right_expl,
+		    print_lib_sim, pa->lowercase_masking);
 
   if ((pick_pcr_primers_and_hyb_probe == pa->primer_task
        || pick_hyb_probe_only == pa->primer_task)
       && !(pa->pick_anyway && sa->internal_input))
-    print_stat_line(f, "Intl", sa->intl_expl, print_lib_sim);
+    print_stat_line(f, "Intl", sa->intl_expl, 
+		    print_lib_sim, pa->lowercase_masking);
 
   if (pick_pcr_primers == pa->primer_task
       || pick_pcr_primers_and_hyb_probe == pa->primer_task) {
@@ -530,28 +575,47 @@ print_explain(f, pa, sa, print_lib_sim)
 }
 
 static void
-print_stat_line(f, t, s, print_lib_sim)
+print_stat_line(f, t, s, print_lib_sim, lowercase_masking)
     FILE *f;
     const char *t;
     oligo_stats s;
     int print_lib_sim;
+    int lowercase_masking;
 {
-    const char *format = print_lib_sim
-	? "%-6s%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d\n"
-	: "%-6s%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d\n";
-
-    if (print_lib_sim)
-	fprintf(f, format,
+  /* Modified by T. Koressaar to output statistics
+     for lowercase masking. */
+  if (print_lib_sim)
+    if (lowercase_masking) {
+      fprintf(f,
+	      "%-6s%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d\n",
+	      t, s.considered, s.ns, s.target, s.excluded,
+	      s.gc, s.gc_clamp, s.temp_min, s.temp_max,
+	      s.compl_any, s.compl_end, s.repeat_score,
+	      s.poly_x, s.stability, s.gmasked, s.ok);
+    } else {
+      fprintf(f,
+	      "%-6s%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d\n",
+	      t, s.considered, s.ns, s.target, s.excluded,
+	      s.gc, s.gc_clamp, s.temp_min, s.temp_max,
+	      s.compl_any, s.compl_end, s.repeat_score,
+	      s.poly_x, s.stability, s.ok);
+    } else {
+      if (lowercase_masking) {
+	fprintf(f,
+		"%-6s%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d\n",
 		t, s.considered, s.ns, s.target, s.excluded,
 		s.gc, s.gc_clamp, s.temp_min, s.temp_max,
-		s.compl_any, s.compl_end, s.repeat_score,
-		s.poly_x, s.stability, s.ok);
-    else 
-	fprintf(f, format,
+		s.compl_any, s.compl_end, s.poly_x, s.stability, s.gmasked, s.ok);
+      } else {
+	fprintf(f,
+		"%-6s%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d%6d\n",
 		t, s.considered, s.ns, s.target, s.excluded,
 		s.gc, s.gc_clamp, s.temp_min, s.temp_max,
 		s.compl_any, s.compl_end, s.poly_x, s.stability, s.ok);
+      }
+    }
 }
+
 
 /* 
  * Return true iff a check for library similarity has been specified for
