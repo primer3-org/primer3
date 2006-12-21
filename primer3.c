@@ -53,6 +53,62 @@ static char   *strstr_nocase(char *, char *);
 #define MIN_TM             57.0
 #define MAX_TM             63.0
 #define MAX_DIFF_TM       100.0
+
+
+/* 
+Added by T.Koressaar for updated table thermodynamics.  Specifies
+details of melting temperature calculation.  (New in v. 1.1.0, added
+by Maido Remm and Triinu Koressaar.)
+
+A value of 1 (recommended) directs primer3 to use the table of
+thermodynamic values and the method for melting temperature
+calculation suggested in the paper [SantaLucia JR (1998) "A unified
+view of polymer, dumbbell and oligonucleotide DNA nearest-neighbor
+thermodynamics", Proc Natl Acad Sci 95:1460-65
+http://dx.doi.org/10.1073/pnas.95.4.1460].
+
+A value of 0 directs primer3 to a backward compatible calculation
+(in other words, the only calculation availble in previous
+version of primer3).
+
+This backward compatible calculation uses the table of
+thermodynamic parameters in the paper [Breslauer KJ, Frank R,
+Blöcker H and Marky LA (1986) "Predicting DNA duplex stability
+from the base sequence" Proc Natl Acad Sci 83:4746-50
+http://dx.doi.org/10.1073/pnas.83.11.3746],
+and the method in the paper [Rychlik W, Spencer WJ and Rhoads
+RE (1990) "Optimization of the annealing temperature for DNA
+amplification in vitro", Nucleic Acids Res 18:6409-12
+http://www.pubmedcentral.nih.gov/articlerender.fcgi?tool=pubmed&pubmedid=2243783].
+
+The default value is 0 only for backward compatibility.
+*/
+#define TM_SANTALUCIA       0
+
+/* 
+Added by T.Koressaar for salt correction for Tm calculation.
+A value of 1 (recommended) directs primer3 to use the salt
+correction formula in the paper [SantaLucia JR (1998) "A unified view
+of polymer, dumbbell and oligonucleotide DNA nearest-neighbor
+thermodynamics", Proc Natl Acad Sci 95:1460-65
+http://dx.doi.org/10.1073/pnas.95.4.1460]
+
+A value of 0 directs primer3 to use the the salt correction
+formula in the paper [Schildkraut, C, and Lifson, S (1965)
+"Dependence of the melting temperature of DNA on salt
+concentration", Biopolymers 3:195-208 (not available on-line)].
+This was the formula used in previous version of primer3.
+
+A value of 2 directs primer3 to use the salt correction formula
+in the paper [Owczarzy R, You Y, Moreira BG, Manthey JA, Huang L,
+Behlke MA and Walder JA (2004) "Effects of sodium ions on DNA
+duplex oligomers: Improved predictions of melting temperatures",
+Biochemistry 43:3537-54 http://dx.doi.org/10.1021/bi034621r].
+
+The default is 0 only for backward compatibility.
+*/
+#define SALT_CORRECTIONS    0
+
 #define DEFAULT_OPT_GC_PERCENT PR_UNDEFINED_INT_OPT
 #define MIN_GC             20.0
 #define MAX_GC             80.0
@@ -87,12 +143,27 @@ static char   *strstr_nocase(char *, char *);
 #define INTERNAL_OLIGO_REPEAT_SIMILARITY 1200
 #define REPEAT_SIMILARITY                1200
 #define PAIR_REPEAT_SIMILARITY           2400
-#define FIRST_BASE_INDEX            0
-#define NUM_RETURN                  5
-#define MIN_QUALITY                 0
-#define QUALITY_RANGE_MIN           0
-#define QUALITY_RANGE_MAX         100
-#define DEFAULT_MAX_END_STABILITY    100.0
+#define FIRST_BASE_INDEX                    0
+#define NUM_RETURN                          5
+#define MIN_QUALITY                         0
+#define QUALITY_RANGE_MIN                   0
+#define QUALITY_RANGE_MAX                 100
+#define DEFAULT_MAX_END_STABILITY         100.0
+
+/* 
+Added by T.Koressaar. Enables design of primers from lowercase masked
+template.  A value of 1 directs primer3 to reject primers overlapping
+lowercase a base exactly at the 3' end.
+
+This property relies on the assumption that masked features
+(e.g. repeats) can partly overlap primer, but they cannot overlap the
+3'-end of the primer.  In other words, lowercase bases at other
+positions in the primer are accepted, assuming that the masked
+features do not influence the primer performance if they do not
+overlap the 3'-end of primer.
+*/
+#define LOWERCASE_MASKING                   0
+
 #define PRIMER_PRODUCT_OPT_SIZE      PR_UNDEFINED_INT_OPT
 #define PRIMER_PRODUCT_OPT_TM        PR_UNDEFINED_DBL_OPT
 #define MAX_TEMPLATE_MISPRIMING      PR_UNDEFINED_ALIGN_OPT
@@ -158,6 +229,8 @@ pr_set_default_global_args(a)
     a->min_tm           = MIN_TM;
     a->max_tm           = MAX_TM;
     a->max_diff_tm      = MAX_DIFF_TM;
+    a->tm_santalucia    = TM_SANTALUCIA; /* added by T.Koressaar */
+    a->salt_corrections = SALT_CORRECTIONS; /* added by T.Koressaar */
     a->min_gc           = MIN_GC;
     a->opt_gc_content   = DEFAULT_OPT_GC_PERCENT;
     a->max_gc           = MAX_GC;
@@ -188,6 +261,7 @@ pr_set_default_global_args(a)
     a->outside_penalty   = PR_DEFAULT_OUTSIDE_PENALTY;
     a->inside_penalty    = PR_DEFAULT_INSIDE_PENALTY;
     a->max_end_stability = DEFAULT_MAX_END_STABILITY;
+    a->lowercase_masking = LOWERCASE_MASKING; /* added by T.Koressaar */
     a->product_max_tm    = PR_DEFAULT_PRODUCT_MAX_TM;
     a->product_min_tm    = PR_DEFAULT_PRODUCT_MIN_TM;
     a->product_opt_tm    = PRIMER_PRODUCT_OPT_TM;
@@ -264,7 +338,7 @@ pr_set_default_global_args(a)
 
 /*
  * Return 1 on error, 0 on success.  Set sa->trimmed_seq and possibly modify
- * sa->tar.  Upcase and check all bases in sa->trimmed_seq.
+ * sa->tar.  Upcase and check all bases in sa->trimmed_seq
  */
 int
 _pr_data_control(pa, sa)
@@ -419,12 +493,15 @@ _pr_data_control(pa, sa)
 
     sa->trimmed_seq = pr_safe_malloc(sa->incl_l + 1);
     _pr_substr(sa->sequence, sa->incl_s, sa->incl_l, sa->trimmed_seq);
-
+   
+    /* edited by T. Koressaar for lowercase masking */
+    sa->trimmed_orig_seq = pr_safe_malloc(sa->incl_l + 1);
+    _pr_substr(sa->sequence, sa->incl_s, sa->incl_l, sa->trimmed_orig_seq);
+   
     sa->upcased_seq = pr_safe_malloc(strlen(sa->sequence) + 1);
     strcpy(sa->upcased_seq, sa->sequence);
     if ((offending_char = dna_to_upper(sa->upcased_seq, 1))) {
       offending_char = '\0';
-      /* NEW */
       /* TODO add warning or error (depending on liberal base)
          here. */
     }
