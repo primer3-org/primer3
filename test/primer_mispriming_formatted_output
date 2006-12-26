@@ -64,7 +64,7 @@ Left     877     1     0    91     7     0     2   399     0     0     0     0  
 Right   1012    19     0    58    25     0     0   702     0     0     0     0     0   208
 Pair Stats:
 considered 23, unacceptable product size 17, ok 6
-primer3 release 1.0.1
+primer3 release 1.1.0
 
 
 PRIMER PICKING RESULTS FOR exon2
@@ -130,7 +130,7 @@ Left     728     0     0    69     2     0   126     0     0     0     1    23  
 Right    827     0     0    72   314     0   236     0     0     0     0     0     0   205
 Pair Stats:
 considered 14, unacceptable product size 8, ok 6
-primer3 release 1.0.1
+primer3 release 1.1.0
 
 
 PRIMER PICKING RESULTS FOR exon2
@@ -204,7 +204,7 @@ Right    827     0     0    72   314     0   236     0     0     0     0     0  
 Intl    3079     0     0     0   316     0   517   178     0     0     0    23     0  2045
 Pair Stats:
 considered 14, unacceptable product size 8, ok 6
-primer3 release 1.0.1
+primer3 release 1.1.0
 
 
 PRIMER PICKING RESULTS FOR exon1
@@ -281,7 +281,7 @@ Right   1012    19     0    58    25     0     0   702     0     0     0     0  
 Intl    3237    27     0     0    32     0    23  1880     0     0     0     0     0  1275
 Pair Stats:
 considered 29, unacceptable product size 18, high mispriming library similarity 2, ok 9
-primer3 release 1.0.1
+primer3 release 1.1.0
 
 
 PRIMER PICKING RESULTS FOR exon2
@@ -355,7 +355,7 @@ Right    827     0     0    72   314     0   236     0     0     0    10     0  
 Intl    3079     0     0     0   316     0   517   178     0     0     0    23     0  2045
 Pair Stats:
 considered 116, unacceptable product size 66, tm diff too large 5, high mispriming library similarity 38, ok 7
-primer3 release 1.0.1
+primer3 release 1.1.0
 
 
 PRIMER PICKING RESULTS FOR exon2
@@ -401,6 +401,6 @@ Right    827     0     0    72   314     0   236     0     0     0   176     0  
 Intl    3079     0     0     0   316     0   517   178     0     0     0    23     0  2045
 Pair Stats:
 considered 12459, unacceptable product size 6872, tm diff too large 4075, high mispriming library similarity 1512, ok 0
-primer3 release 1.0.1
+primer3 release 1.1.0
 
 

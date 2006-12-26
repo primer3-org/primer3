@@ -32,7 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 USAGE: ../src/primer3_core [-format_output] [-2x_compat] [-strict_tags]
-This is primer3 (primer3 release 1.0.1)
+This is primer3 (primer3 release 1.1.0)
 Input must be provided on standard input.
 For example:
 $ primer3_core < my_input_file

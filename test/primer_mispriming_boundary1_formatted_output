@@ -39,7 +39,7 @@ Right     83     0     0     0     0     0     0     0     0     0    71     0  
 Intl     163     0     0     0     0     0     0     0     0     0   121     0     0    42
 Pair Stats:
 considered 381, unacceptable product size 369, no internal oligo 11, ok 1
-primer3 release 1.0.1
+primer3 release 1.1.0
 
 
 PRIMER PICKING RESULTS FOR pair_0
@@ -67,7 +67,7 @@ Right     64     0     0     0     0     0     0     0     0     0     0     0  
 Intl     144     0     0     0     0     0     0     0     0     0     0     0     0   144
 Pair Stats:
 considered 32, unacceptable product size 32, ok 0
-primer3 release 1.0.1
+primer3 release 1.1.0
 
 
 PRIMER PICKING RESULTS FOR pair_1
@@ -111,6 +111,6 @@ Right     83     0     0     0     0     0     0     0     0     0     0     0  
 Intl     163     0     0     0     0     0     0     0     0     0   121     0     0    42
 Pair Stats:
 considered 6889, unacceptable product size 3403, no internal oligo 11, high mispriming library similarity 3474, ok 1
-primer3 release 1.0.1
+primer3 release 1.1.0
 
 
