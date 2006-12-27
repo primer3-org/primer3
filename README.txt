@@ -616,6 +616,26 @@ http://www.pubmedcentral.nih.gov/articlerender.fcgi?tool=pubmed&pubmedid=2243783
 Use tag PRIMER_SALT_CORRECTIONS, to specify the salt correction
 method for melting temperature calculation.
 
+Example of calculateing the melting temperature of an oligo if
+PRIMER_TM_SANTALUCIA=1 and PRIMER_SALT_CORRECTIONS=1 (recommended values):
+primer: CGTGACGTGACGGACT
+default salt concentration, default DNA concentration
+Tm=deltaH/(deltaS + R*ln(C/4)), where R is the gas constant
+(1.987 cal/K mol) and C is the DNA concentration
+
+deltaH(predicted) = dH(CG) + dH(GT) + dH(TG) + .. + dH(CT) + dH(init.w/term
+GC) + dH(init.w/term AT) = -10.6 + (-8.4) + (-8.5) + .. + (-7.8) + 0.1 + 2.3
+= -128.8 kcal/mol
+
+deltaS(predicted) = dS(CG) + dS(GT) + dS(TG) + .. + dS(CT) + dS(init.w/term
+GC) + dS(init.w/term AT) = -27.2 + (-22.4) + (-22.7) + .. + (-21.0) + (-2.8)
++ 4.1 = -345.2 cal/k*mol
+
+deltaS(salt corrected) = deltaS(predicted) + 0.368*15(NN
+pairs)*ln(0.05M monovalent cations) = -361.736
+
+Tm=-128,800/(-361.736+1.987*ln((5*10^(-8))/4))=323.704 K
+Tm(C) = 323.704 - 273.15 = 50.554 C
 
 PRIMER_SALT_CONC (float, default 50.0 mM)
 
