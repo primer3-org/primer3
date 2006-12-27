@@ -616,7 +616,7 @@ http://www.pubmedcentral.nih.gov/articlerender.fcgi?tool=pubmed&pubmedid=2243783
 Use tag PRIMER_SALT_CORRECTIONS, to specify the salt correction
 method for melting temperature calculation.
 
-Example of calculateing the melting temperature of an oligo if
+Example of calculating the melting temperature of an oligo if
 PRIMER_TM_SANTALUCIA=1 and PRIMER_SALT_CORRECTIONS=1 (recommended values):
 primer: CGTGACGTGACGGACT
 default salt concentration, default DNA concentration
