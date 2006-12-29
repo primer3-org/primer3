@@ -592,7 +592,7 @@ PRIMER_TM_SANTALUCIA (int, default 0)
 Specifies details of melting temperature calculation.  (New in
 v. 1.1.0, added by Maido Remm and Triinu Koressaar.)
 
-A value of 1 (recommended) directs primer3 to use the table of
+A value of 1 (*RECOMMENDED*) directs primer3 to use the table of
 thermodynamic values and the method for melting temperature
 calculation suggested in the paper [SantaLucia JR (1998) "A unified
 view of polymer, dumbbell and oligonucleotide DNA nearest-neighbor
@@ -656,6 +656,7 @@ Tm = -128.800/(-361.736+1.987*ln((5*10^(-8))/4))
 
 Tm(C) = 323.704 - 273.15 = 50.554 C
 
+
 PRIMER_SALT_CONC (float, default 50.0 mM)
 
 The millimolar concentration of salt (usually KCl) in the PCR.
@@ -669,7 +670,7 @@ Specifies the salt correction formula for the melting temperature
 calculation.  (New in v. 1.1.0, added by Maido Remm and Triinu
 Koressaar)
 
-A value of 1 (recommended) directs primer3 to use the salt correction
+A value of 1 (*RECOMMENDED*) directs primer3 to use the salt correction
 formula in the paper [SantaLucia JR (1998) "A unified view of polymer,
 dumbbell and oligonucleotide DNA nearest-neighbor thermodynamics",
 Proc Natl Acad Sci 95:1460-65
@@ -686,6 +687,7 @@ in the paper [Owczarzy R, You Y, Moreira BG, Manthey JA, Huang L,
 Behlke MA and Walder JA (2004) "Effects of sodium ions on DNA
 duplex oligomers: Improved predictions of melting temperatures",
 Biochemistry 43:3537-54 http://dx.doi.org/10.1021/bi034621r].
+
 
 PRIMER_LOWERCASE_MASKING (int, default 0)
 
@@ -709,15 +711,18 @@ PRIMER_MIN_GC (float, default 20.0%)
 
 Minimum allowable percentage of Gs and Cs in any primer.
 
+
 PRIMER_OPT_GC_PERCENT (float, default 50.0%)
 
 Optimum GC percent.  This parameter influences primer selection only if
 PRIMER_WT_GC_PERCENT_GT or PRIMER_WT_GC_PERCENT_LT are non-0.
 
+
 PRIMER_MAX_GC (float, default 80.0%)
 
 Maximum allowable percentage of Gs and Cs in any primer generated
 by Primer.
+
 
 PRIMER_DNA_CONC (float, default 50.0 nM)
 
