@@ -35,7 +35,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <math.h>
 #include <string.h>
 #include "oligotm.h"
-#include "primer3_release.h"
 
 #define A_CHAR 'A'
 #define G_CHAR 'G'
@@ -318,6 +317,7 @@ oligotm(s, DNA_nM, K_mM, tm_santalucia, salt_corrections)
     return OLIGOTM_ERROR;
 
   len = (strlen(s)-1);
+
   sym = symmetry(s); /*Add symmetry correction if seq is symmetrical*/
   if( tm_santalucia == TM_METHOD_BRESLAUER ) {
     ds=108;

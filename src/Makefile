@@ -56,38 +56,46 @@ LDFLAGS = -g
 # between system, set LIBOPTS to -static
 LIBOPTS =
 
-PRIMER_EXE = primer3_core
+PRIMER_EXE  = primer3_core
+OLIGOTM_LIB = liboligotm.a
+LIBRARIES   = $(OLIGOTM_LIB)
+RANLIB      = ranlib
 
 PRIMER_OBJECTS=primer3_main.o\
                primer3.o\
-               oligotm.o\
                dpal_primer.o\
                format_output.o\
-               boulder_input.o
+               boulder_input.o\
+               $(OLIGOTM_LIB)
 
 EXES=$(PRIMER_EXE) ntdpal oligotm long_seq_tm_test
 
-all: $(EXES)
+all: $(EXES) $(LIBRARIES)
 
 clean_src:
-	-rm *.o $(EXES) *~
+	-rm *.o $(EXES) *~ $(LIBRARIES)
 
 clean: clean_src
 	cd ../test/; make clean
+
+$(OLIGOTM_LIB): oligotm.o
+	ar rv $@ oligotm.o
+	$(RANLIB) $@
+	gcc -shared -W1,-soname,liboligotm.so.1 -o liboligotm.so.1.2.0 oligotm.o
 
 $(PRIMER_EXE): $(PRIMER_OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
 
 # For use with the "testcenter" testing program (CenterLine Software
 # Inc, http://www.centerline.com)
-$(PRIMER_EXE).tc: $(PRIMER_OBJECTS) /usr/lib/debug/malloc.o
-	proof $(CC) $(CFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
+# $(PRIMER_EXE).tc: $(PRIMER_OBJECTS) /usr/lib/debug/malloc.o
+#	proof $(CC) $(CFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
 
 ntdpal: ntdpal_main.o dpal.o
 	$(CC) $(LDFLAGS) -o $@ ntdpal_main.o dpal.o
 
-oligotm: oligotm_main.c oligotm.o
-	$(CC) $(CFLAGS) -o $@ oligotm_main.c oligotm.o $(LIBOPTS) $(LDLIBS)
+oligotm: oligotm_main.c oligotm.h $(OLIGOTM_LIB)
+	$(CC) $(CFLAGS) -o $@ oligotm_main.c $(OLIGOTM_LIB) $(LIBOPTS) $(LDLIBS)
 
 long_seq_tm_test: long_seq_tm_test_main.c oligotm.o
 	$(CC) $(CFLAGS) -o $@ long_seq_tm_test_main.c oligotm.o $(LIBOPTS) $(LDLIBS)
@@ -108,9 +116,6 @@ ntdpal_main.o: ntdpal_main.c dpal.h
 	$(CC) -c $(CC_OPTS) -o $@ ntdpal_main.c
 # We use CC_OPTS above rather than CFLAGS because
 # gcc 2.7.2 crashes while compiling ntdpal_main.c with -O2
-
-oligotm_main.o: oligotm_main.c oligotm.h
-	$(CC) -c $(CFLAGS) -o $@ ntdpal_main.c
 
 oligotm.o: oligotm.c oligotm.h primer3_release.h
 

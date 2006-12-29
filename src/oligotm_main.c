@@ -37,6 +37,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "oligotm.h"
 
 /* Print the melting temperature of an oligo on stdout. */
+/* This program provides a command line interface to
+   the function oligotm() in oligtm.c
+*/
 int
 main(argc, argv)
     int argc;
@@ -45,21 +48,36 @@ main(argc, argv)
   double tm;
 
   char *msg = "USAGE: %s OPTIONS oligo\n"
-    "OPTIONS:\n"
-    "-k  salt_conc     - concentration of monovalent cations in mM, by default 50mM\n"
-    "-d  dna_conc      - concentration of DNA strands in nM, by default 50nM\n"
-    "-ts tm_santalucia - option for the table of thermodynamic parameters and\n"
-    "                     for the method of melting temperature calculation:\n"
-    "                     1 - Breslauer et al., 1986 and Rychlik et al., 1990\n"
-    "                         (used by primer3 until version 1.1.0)\n"
-    "                     2 - SantaLucia 1998, by default\n"
-    "-sc salt_correct - option for salt correction formula for the melting temperature calculation\n"
-    "                     1 - Schildkraut and Lifson 1965 (used by primer3 until version 1.1.0)\n"
-    "                     2 - SantaLucia 1998, by default\n"
-    "                     3 - Owczarzy et al., 2004\n\n"
-    "-i               - prints references to publications which were used for thermodynamic calculations\n"
-    "oligo            - oligonucleotide sequence of between 2 and 36 bases\n"
-    "                   (bases must be uppercase)\n"
+    "\n"
+    "where oligo is a DNA sequence of between 2 and 36 bases\n (DOES THIS REALLY HAVE TO BE UPPERCASE?)"
+    "\n"
+    "and\n"
+    "\n"
+    "OPTIONS can include any of the the following:\n"
+    "\n"
+    "-k  salt_conc - concentration of monovalent cations in mM, by default 50mM\n"
+    "\n"
+    "-d  dna_conc  - concentration of DNA strands in nM, by default 50nM\n"
+    "\n"
+
+    "-ts [0|1]     - Specifies the table of thermodynamic parameters and\n"
+    "                the method of melting temperature calculation:\n"
+    "                 0  Breslauer et al., 1986 and Rychlik et al., 1990\n"
+    "                    (used by primer3 up to and including release 1.1.0).\n"
+    "                    This is the default, but _not_ the recommended value.\n"
+    "                 1  Use nearest neighbor parameters from SantaLucia 1998\n"
+    "                    *THIS IS THE RECOMMENDED VALUE*\n"
+    "\n"
+    "-sc [0..2]    - Specifies salt correction formula for the melting \n"
+    "                 temperature calculation\n"
+    "                  0  Schildkraut and Lifson 1965, used by primer3 up to \n"
+    "                     and including release 1.1.0.\n"
+    "                     This is the default but _not_ the recommended value.\n"
+    "                  1  SantaLucia 1998\n"
+    "                     *THIS IS THE RECOMMENDED VAULE*\n"
+    "                  2  Owczarzy et al., 2004\n\n"
+    "-i             - prints references to publications which were used for thermodynamic calculations\n"
+    "\n\n"
     "Prints oligo's melting temperature on stdout.\n";
    
   char *info = "1. Breslauer KJ, Frank R, Blöcker H and Marky LA. (1986) Predicting DNA duplex stability from the base sequence. Proc. Natl. Acad. Sci., 83, 4746-50.\n\n"
@@ -70,7 +88,7 @@ main(argc, argv)
 
   char *endptr;
   long k = 50, d = 50;
-  int tm_santalucia=2, salt_corrections=2;
+  int tm_santalucia=0, salt_corrections=0;
   int i;
    
   if (argc < 2 || argc > 10) {
@@ -118,25 +136,6 @@ main(argc, argv)
       break;		/* all args processed. go on to sequences. */
   }
    
-  /* added by T.Koressaar, start */
-  if (tm_santalucia==1) {
-    tm_santalucia=0;
-  } else if (tm_santalucia==2) {
-    tm_santalucia=1;
-  } else {
-    tm_santalucia=1;
-  }
-   
-  if (salt_corrections==1) {
-    salt_corrections=0;
-  } else if (salt_corrections==2) {
-    salt_corrections=1;
-  } else if (salt_corrections==3) {
-    salt_corrections=2;
-  } else {
-    salt_corrections=1;
-  }
-  /* added by T.Koressaar, end */
   if(!argv[i]) { /* if no oligonucleotide sequence is specified */
     fprintf(stderr, msg, argv[0]);
     exit(-1);
