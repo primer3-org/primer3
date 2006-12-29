@@ -68,11 +68,13 @@ double long_seq_tm(const char *seq, int start, int length, double salt_conc);
    For olgigotm() and seqtm()
 
    Both functions return the melting temperature of the given oligo
-   calculated as specified by user, but oligotm can only be used on
+   calculated as specified by user, but oligotm _should_ only be used on
    DNA sequences of length <= MAX_PRIMER_LENGTH (which is defined
    elsewhere).  seqtm uses oligotm for sequences of length <=
    MAX_PRIMER_LENGTH, and a different, G+C% based formula for longer
-   sequences.
+   sequences.  For oligotm(), no error is generated on sequences
+   longer than MAX_PRIMER_LENGTH, but the formula becomes less
+   accurate as the sequence grows longer.  Caveat emptor.
 
    We use the folowing defines:
 */
@@ -166,7 +168,6 @@ double seqtm(const  char *seq,  /* The sequence. */
 double oligodg(const char *seq, 
 	       int tm_santalucia /* See description above. */
 	       );
-
 
 /* Returns 1 if the sequence is self-complementary or symmetrical; 0
    otherwise
