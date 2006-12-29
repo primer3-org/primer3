@@ -629,29 +629,32 @@ Tm = deltaH/(deltaS + R*ln(C/4)),
 where R is the gas constant (1.987 cal/K mol)
 and C is the DNA concentration.
 
-deltaH(predicted) 
+deltaH(predicted) =
 
-  = dH(CG) + dH(GT) + dH(TG) + .. + dH(CT) 
-     + dH(init.w/term GC) + dH(init.w/term AT) 
+  = dH(CG) + dH(GT) + dH(TG) + .. + dH(CT) +
+     + dH(init.w/term GC) + dH(init.w/term AT) =
 
-  = -10.6 + (-8.4) + (-8.5) + .. + (-7.8) + 0.1 + 2.3
+  = -10.6 + (-8.4) + (-8.5) + .. + (-7.8) + 0.1 + 2.3  =
 
   = -128.8 kcal/mol
 
-deltaS(predicted) 
+where 'init.w/term GC' and 'init.w/term AT' are two initiation parameters
+for duplex formation: 'initiation with terminal GC' and 'initiation with terminal AT'
 
-  = dS(CG) + dS(GT) + dS(TG) + .. + dS(CT)
-    + dS(init.w/term GC) + dS(init.w/term AT) 
+deltaS(predicted) =
 
-  = -27.2 + (-22.4) + (-22.7) + .. + (-21.0) + (-2.8) + 4.1 
+  = dS(CG) + dS(GT) + dS(TG) + .. + dS(CT) +
+    + dS(init.w/term GC) + dS(init.w/term AT) =
+
+  = -27.2 + (-22.4) + (-22.7) + .. + (-21.0) + (-2.8) + 4.1 =
  
   = -345.2 cal/k*mol
 
-deltaS(salt corrected) 
-  = deltaS(predicted) + 0.368*15(NN pairs)*ln(0.05M monovalent cations)
+deltaS(salt corrected) = 
+  = deltaS(predicted) + 0.368*15(NN pairs)*ln(0.05M monovalent cations) =
   = -361.736
 
-Tm = -128.800/(-361.736+1.987*ln((5*10^(-8))/4))
+Tm = -128.800/(-361.736+1.987*ln((5*10^(-8))/4)) =
    = 323.704 K
 
 Tm(C) = 323.704 - 273.15 = 50.554 C
