@@ -83,6 +83,218 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
    goto DONE; \
    else goto ERROR \
 
+/*
+ * Two tables of nearest-neighbor parameters for di-nucleotide
+ * base pairs.
+ *
+ * These are included in this file because they are not needed by
+ * clients (callers) of oligtm().
+ */
+
+/* Table 1 (old parameters):
+ * See table 2 in the paper [Breslauer KJ, Frank R, Blöcker H and
+ * Marky LA (1986) "Predicting DNA duplex stability from the base
+ * sequence" Proc Natl Acad Sci 83:4746-50
+ * http://dx.doi.org/10.1073/pnas.83.11.3746]
+ */
+
+#define S_A_A 240
+#define S_A_C 173
+#define S_A_G 208
+#define S_A_T 239
+#define S_A_N 215
+
+#define S_C_A 129
+#define S_C_C 266
+#define S_C_G 278
+#define S_C_T 208
+#define S_C_N 220
+
+#define S_G_A 135
+#define S_G_C 267
+#define S_G_G 266
+#define S_G_T 173
+#define S_G_N 210
+
+#define S_T_A 169
+#define S_T_C 135
+#define S_T_G 129
+#define S_T_T 240
+#define S_T_N 168
+
+#define S_N_A 168
+#define S_N_C 210
+#define S_N_G 220
+#define S_N_T 215
+#define S_N_N 203
+
+
+#define H_A_A  91
+#define H_A_C  65
+#define H_A_G  78
+#define H_A_T  86
+#define H_A_N  80
+
+#define H_C_A  58
+#define H_C_C 110
+#define H_C_G 119
+#define H_C_T  78
+#define H_C_N  91
+
+#define H_G_A  56
+#define H_G_C 111
+#define H_G_G 110
+#define H_G_T  65
+#define H_G_N  85
+
+#define H_T_A  60
+#define H_T_C  56
+#define H_T_G  58
+#define H_T_T  91
+#define H_T_N  66
+
+#define H_N_A  66
+#define H_N_C  85
+#define H_N_G  91
+#define H_N_T  80
+#define H_N_N  80
+
+/* Delta G's of disruption * 1000. */
+#define G_A_A  1900
+#define G_A_C  1300
+#define G_A_G  1600
+#define G_A_T  1500
+#define G_A_N  1575
+
+#define G_C_A  1900
+#define G_C_C  3100
+#define G_C_G  3600
+#define G_C_T  1600
+#define G_C_N  2550
+
+#define G_G_A  1600
+#define G_G_C  3100
+#define G_G_G  3100
+#define G_G_T  1300
+#define G_G_N  2275
+
+#define G_T_A   900
+#define G_T_C  1600
+#define G_T_G  1900
+#define G_T_T  1900
+#define G_T_N  1575
+
+#define G_N_A  1575
+#define G_N_C  2275
+#define G_N_G  2550
+#define G_N_T  1575
+#define G_N_N  1994
+
+/* Table 2, new parameters:
+ * Tables of nearest-neighbor thermodynamics for DNA bases, from the
+ * paper [SantaLucia JR (1998) "A unified view of polymer, dumbbell
+ * and oligonucleotide DNA nearest-neighbor thermodynamics", Proc Natl
+ * Acad Sci 95:1460-65 http://dx.doi.org/10.1073/pnas.95.4.1460]
+ */
+
+#define DS_A_A 222
+#define DS_A_C 224
+#define DS_A_G 210
+#define DS_A_T 204
+#define DS_A_N 224
+
+#define DS_C_A 227
+#define DS_C_C 199
+#define DS_C_G 272
+#define DS_C_T 210
+#define DS_C_N 272
+
+#define DS_G_A 222
+#define DS_G_C 244
+#define DS_G_G 199
+#define DS_G_T 224
+#define DS_G_N 244
+
+#define DS_T_A 213
+#define DS_T_C 222
+#define DS_T_G 227
+#define DS_T_T 222
+#define DS_T_N 227
+
+#define DS_N_A 168
+#define DS_N_C 210
+#define DS_N_G 220
+#define DS_N_T 215
+#define DS_N_N 220
+
+
+#define DH_A_A  79
+#define DH_A_C  84
+#define DH_A_G  78
+#define DH_A_T  72
+#define DH_A_N  72
+
+#define DH_C_A  85
+#define DH_C_C  80
+#define DH_C_G 106
+#define DH_C_T  78
+#define DH_C_N  78
+
+#define DH_G_A  82
+#define DH_G_C  98
+#define DH_G_G  80
+#define DH_G_T  84
+#define DH_G_N  80
+
+#define DH_T_A  72
+#define DH_T_C  82
+#define DH_T_G  85
+#define DH_T_T  79
+#define DH_T_N  72
+
+#define DH_N_A  72
+#define DH_N_C  80
+#define DH_N_G  78
+#define DH_N_T  72
+#define DH_N_N  72
+
+/* Delta G's of disruption * 1000. */
+#define DG_A_A  1000
+#define DG_A_C  1440
+#define DG_A_G  1280
+#define DG_A_T  880
+#define DG_A_N  880
+
+#define DG_C_A  1450
+#define DG_C_C  1840
+#define DG_C_G  2170
+#define DG_C_T  1280
+#define DG_C_N  1450
+
+#define DG_G_A  1300
+#define DG_G_C  2240
+#define DG_G_G  1840
+#define DG_G_T  1440
+#define DG_G_N  1300
+
+#define DG_T_A   580
+#define DG_T_C  1300
+#define DG_T_G  1450
+#define DG_T_T  1000
+#define DG_T_N   580
+
+#define DG_N_A   580
+#define DG_N_C  1300
+#define DG_N_G  1280
+#define DG_N_T   880
+#define DG_N_N   580
+
+/* End of tables nearest-neighbor parameter. */
+
+
+/* Calculate the melting temperature of oligo s.  See
+   oligotm.h for documentation of arguments.
+*/
 double 
 oligotm(s, DNA_nM, K_mM, tm_santalucia, salt_corrections)
      const  char *s;
@@ -91,131 +303,148 @@ oligotm(s, DNA_nM, K_mM, tm_santalucia, salt_corrections)
      int tm_santalucia;
      int salt_corrections;
 {
-   register int dh = 0, ds = 0;
-   register char c;
-   double delta_H, delta_S;
-   int len, sym;
-   const char* d = s;
-   len = (strlen(s)-1);
-   sym=Symmetry(s); /*Add symmetry correction if seq is symmetrical*/
-   if(tm_santalucia==0) {
-      ds=108;
-   }
-   else {
-      if(sym==1) {
-	 ds+=14;
-      }
+  register int dh = 0, ds = 0;
+  register char c;
+  double delta_H, delta_S;
+  int len, sym;
+  const char* d = s;
+
+  if (tm_santalucia != TM_METHOD_BRESLAUER
+      && tm_santalucia != TM_METHOD_SANTALUCIA)
+    return OLIGOTM_ERROR;
+  if (salt_corrections != SALT_CORRECTION_SCHILDKRAUT
+      && salt_corrections != SALT_CORRECTION_SANTALUCIA
+      && salt_corrections != SALT_CORRECTION_OWCZARZY)
+    return OLIGOTM_ERROR;
+
+  len = (strlen(s)-1);
+  sym = symmetry(s); /*Add symmetry correction if seq is symmetrical*/
+  if( tm_santalucia == TM_METHOD_BRESLAUER ) {
+    ds=108;
+  }
+  else {
+    if(sym == 1) {
+      ds+=14;
+    }
 	 
-      /** Terminal AT penalty **/
+    /** Terminal AT penalty **/
       
-      if(strncmp("A", s, 1)==0 || strncmp("T", s, 1)==0 || strncmp("a", s, 1)==0 || strncmp("t", s, 1)==0)  {
-	   ds += -41;
-	   dh += -23;
-	} else if(strncmp("C", s, 1)==0 || strncmp("G", s, 1)==0 || strncmp("c", s, 1)==0 || strncmp("g", s, 1)==0) {
-	   ds += 28;
-	   dh += -1;
-	}
-      s+=len;
-      if(strncmp("T", s, 1)==0 || strncmp("A", s, 1)==0 || strncmp("t", s, 1)==0 || strncmp("a", s, 1)==0) {
-	 ds += -41;
-	 dh += -23;
-      } else if (strncmp("C", s, 1)==0 || strncmp("G", s, 1)==0 || strncmp("c", s, 1)==0 || strncmp("g", s, 1)==0) {
-	 ds += 28;
-	 dh += -1;
-      }
-      s-=len;
-   }
-   /* Use a finite-state machine (DFA) to calucluate dh and ds for s. */
-   c = *s; s++;
-   if(tm_santalucia==0) {
-      if ((c == 'A')||(c=='a')) goto A_STATE;
-      else if ((c == 'G')||(c=='g')) goto G_STATE;
-      else if ((c == 'T')||(c=='t')) goto T_STATE;
-      else if ((c == 'C') ||(c=='c')) goto C_STATE;
-      else if ((c == 'N') ||(c=='n')) goto N_STATE;
-      else goto ERROR;
-      STATE(A);
-      STATE(T);
-      STATE(G);
-      STATE(C);
-      STATE(N);
-   } else {
-      if ((c == 'A')||(c=='a')) goto A_STATE2;
-      else if ((c == 'G')||(c=='g')) goto G_STATE2;
-      else if ((c == 'T')||(c=='t')) goto T_STATE2;
-      else if ((c == 'C') ||(c=='c')) goto C_STATE2;
-      else if ((c == 'N') ||(c=='n')) goto N_STATE2;
-      else goto ERROR;
-      STATE2(A);
-      STATE2(T);
-      STATE2(G);
-      STATE2(C);
-      STATE2(N);
-   }
+    if(strncmp("A", s, 1)==0
+       || strncmp("T", s, 1)==0 
+       || strncmp("a", s, 1)==0 
+       || strncmp("t", s, 1)==0)  {
+      ds += -41;
+      dh += -23;
+    } else if (strncmp("C", s, 1)==0 
+	       || strncmp("G", s, 1)==0 
+	       || strncmp("c", s, 1)==0 
+	       || strncmp("g", s, 1)==0) {
+      ds += 28;
+      dh += -1;
+    }
+    s+=len;
+    if(strncmp("T", s, 1)==0 
+       || strncmp("A", s, 1)==0 
+       || strncmp("t", s, 1)==0 
+       || strncmp("a", s, 1)==0) {
+      ds += -41;
+      dh += -23;
+    } else if (strncmp("C", s, 1)==0 
+	       || strncmp("G", s, 1)==0 
+	       || strncmp("c", s, 1)==0 
+	       || strncmp("g", s, 1)==0) {
+      ds += 28;
+      dh += -1;
+    }
+    s-=len;
+  }
+  /* Use a finite-state machine (DFA) to calucluate dh and ds for s. */
+  c = *s; s++;
+  if (tm_santalucia == TM_METHOD_BRESLAUER) {
+    if ((c == 'A')||(c=='a')) goto A_STATE;
+    else if ((c == 'G')||(c=='g')) goto G_STATE;
+    else if ((c == 'T')||(c=='t')) goto T_STATE;
+    else if ((c == 'C') ||(c=='c')) goto C_STATE;
+    else if ((c == 'N') ||(c=='n')) goto N_STATE;
+    else goto ERROR;
+    STATE(A);
+    STATE(T);
+    STATE(G);
+    STATE(C);
+    STATE(N);
+  } else {
+    if ((c == 'A')||(c=='a')) goto A_STATE2;
+    else if ((c == 'G')||(c=='g')) goto G_STATE2;
+    else if ((c == 'T')||(c=='t')) goto T_STATE2;
+    else if ((c == 'C') ||(c=='c')) goto C_STATE2;
+    else if ((c == 'N') ||(c=='n')) goto N_STATE2;
+    else goto ERROR;
+    STATE2(A);
+    STATE2(T);
+    STATE2(G);
+    STATE2(C);
+    STATE2(N);
+  }
    
    
  DONE:  /* dh and ds are now computed for the given sequence. */
-    delta_H = dh * -100.0;  /* 
-			     * Nearest-neighbor thermodynamic values for dh
-			     * are given in 100 cal/mol of interaction.
-			     */
-    delta_S = ds * -0.1;     /*
-			      * Nearest-neighbor thermodynamic values for ds
-			      * are in in .1 cal/K per mol of interaction.
-			      */
-
-    /* Tm calculation: tm_santalucia
-     * 
-     * 0 - See Rychlik, Spencer, Rhoads, "Optimization of the annealing temperature for
-     *     DNA amplification in vitro."  Nucleic Acids Research, vol 18, no 21, page 6409 (1990).
-     *     Article free at 
-     *     http://www.pubmedcentral.nih.gov/articlerender.fcgi?tool=pubmed&pubmedid=2243783 See eqn (ii)
-     *     Until Primer3 version 1.0.1 (including the version 1.0.1)
-     * 1 - SantaLucia, Biochemistry vol 95, 1998 for Tm calculations
-     * 
-     * Salt correction formulas: salt_corrections
-     * 
-     * 0 - Schildkraut, C, and Lifson, S. (1965) Biopolymers, 3, 195-208. (until Primer3 version 1.0.1 (including the version 1.0.1))
-     * 1 - SantaLucia98: See SantaLucia, Biochemistry vol 95, 1998
-     * 2 - Owczarzy04: See Owczarzy, et al., Biochemistry vol 43, 2004
-     */ 
-   double Tm=0;
-   len=len+1;
-   if (salt_corrections==0) {
-      double correction=- 273.15 + 16.6 * log10(K_mM/1000.0);
-      Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/4000000000.0)) + correction;
-   } else if (salt_corrections==1) {
-      delta_S = delta_S + 0.368 * (len - 1) * log(K_mM / 1000.0 );
-      if(sym==1) { /* primer is symmetrical */
-	 Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/1000000000.0)) - 273.15;
-      } else {
-	 Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/4000000000.0)) - 273.15;
-      }      
-   } else if (salt_corrections==2) {
-      double gcPercent=0;
-      int i;
-      for(i=0; i<=len && d != NULL && d != '\0';) {
-	 if(*d == 'C' || *d == 'G' || *d == 'c' || *d == 'g') {
-	    gcPercent++;
-	 }
-	 *d++;
-	 i++;
-      }      
-      gcPercent = (double)gcPercent/((double)len);
-      double correction = (((4.29 * gcPercent) - 3.95) * pow(10,-5) * log(K_mM / 1000.0)) + (9.40 * pow(10,-6) * (pow(log(K_mM / 1000.0),2)));
-      if(sym==1) { /* primer is symmetrical */
-	 Tm = (1/((1/(delta_H / (delta_S + 1.9872 * log(DNA_nM/1000000000.0)))) + correction))-273.15;
-      } else {
-	 Tm = (1/((1/(delta_H / (delta_S + 1.9872 * log(DNA_nM/4000000000.0)))) + correction))-273.15;
+  delta_H = dh * -100.0;  /* 
+			   * Nearest-neighbor thermodynamic values for dh
+			   * are given in 100 cal/mol of interaction.
+			   */
+  delta_S = ds * -0.1;     /*
+			    * Nearest-neighbor thermodynamic values for ds
+			    * are in in .1 cal/K per mol of interaction.
+			    */
+  double Tm=0;  /* Melting temperature */
+  len=len+1;
+  if (salt_corrections == SALT_CORRECTION_SCHILDKRAUT) {
+    double correction=- 273.15 + 16.6 * log10(K_mM/1000.0);
+    Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/4000000000.0)) + correction;
+  } else if (salt_corrections== SALT_CORRECTION_SANTALUCIA) {
+    delta_S = delta_S + 0.368 * (len - 1) * log(K_mM / 1000.0 );
+    if(sym == 1) { /* primer is symmetrical */
+      /* Equation A */
+      Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/1000000000.0)) - 273.15;
+    } else {
+      /* Equation B */
+      Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/4000000000.0)) - 273.15;
+    }      
+  } else if (salt_corrections== SALT_CORRECTION_OWCZARZY) {
+    double gcPercent=0;
+    int i;
+    for(i=0; i<=len && d != NULL && d != '\0';) {
+      if(*d == 'C' || *d == 'G' || *d == 'c' || *d == 'g') {
+	gcPercent++;
       }
+      *d++;
+      i++;
+    }      
+    gcPercent = (double)gcPercent/((double)len);
+
+    double correction 
+      = (((4.29 * gcPercent) - 3.95) * pow(10,-5) * log(K_mM / 1000.0))
+      + (9.40 * pow(10,-6) * (pow(log(K_mM / 1000.0),2)));
+
+    if (sym == 1) { /* primer is symmetrical */
+      /* Equation A */
+      Tm 
+	= (1/((1/(delta_H / (delta_S + 1.9872 * log(DNA_nM/1000000000.0)))) + correction))
+	- 273.15;
+    } else {
+      /* Equation B */
+      Tm 
+	= (1/((1/(delta_H / (delta_S + 1.9872 * log(DNA_nM/4000000000.0)))) + correction))
+	- 273.15;
+    }
             
-	}
-   return Tm;
+  }
+  return Tm;
  ERROR:  /* 
 	  * length of s was less than 2 or there was an illegal character in
 	  * s.
 	  */
-    return OLIGOTM_ERROR;
+  return OLIGOTM_ERROR;
 }
 #undef DO_PAIR
 #undef DO_PAIR2
@@ -239,9 +468,14 @@ oligodg(s, tm_santalucia)
 {
    register int dg = 0;
    register char c;
+
+  if (tm_santalucia != TM_METHOD_BRESLAUER
+      && tm_santalucia != TM_METHOD_SANTALUCIA)
+    return OLIGOTM_ERROR;
+
    /* Use a finite-state machine (DFA) to calucluate dg s. */
    c = *s; s++;
-   if(tm_santalucia!=0) {      
+   if(tm_santalucia != TM_METHOD_BRESLAUER) {      
       dg=-1960; /* Initial dG */
       if(c == 'A' || c == 'T' || c == 'a' || c == 't')  {
 	 dg += -50; /* terminal AT penalty */
@@ -272,13 +506,13 @@ oligodg(s, tm_santalucia)
 
      }
 DONE:  /* dg is now computed for the given sequence. */
-   if(tm_santalucia!=0) {
+   if(tm_santalucia != TM_METHOD_BRESLAUER) {
       int sym;
       --s; --s; c = *s;
       if(c == 'A' || c == 'T' || c == 'a' || c == 't')  {
 	 dg += -50; /* terminal AT penalty */
       }
-      sym=Symmetry(s);
+      sym = symmetry(s);
       if(sym==1)   {
 	 dg +=-430; /* symmetry correction for dG */
       }
@@ -298,10 +532,20 @@ double end_oligodg(s, len, tm_santalucia)
   int tm_santalucia;
 {
   int x = strlen(s);
-  return x < len ? oligodg(s,tm_santalucia) : oligodg(s + (x - len),tm_santalucia);
+
+  if (tm_santalucia != TM_METHOD_BRESLAUER
+      && tm_santalucia != TM_METHOD_SANTALUCIA)
+    return OLIGOTM_ERROR;
+
+  return 
+    x < len 
+    ? oligodg(s,tm_santalucia) :
+    oligodg(s + (x - len),tm_santalucia);
 }
 
-double seqtm(seq, dna_conc, salt_conc, nn_max_len, tm_santalucia, salt_corrections)
+/* See oligotm.h for documentation of arguments. */
+double seqtm(seq, dna_conc, salt_conc, nn_max_len,
+	     tm_santalucia, salt_corrections)
   const  char *seq;
   double dna_conc;
   double salt_conc;
@@ -310,8 +554,18 @@ double seqtm(seq, dna_conc, salt_conc, nn_max_len, tm_santalucia, salt_correctio
   int salt_corrections;
 {
   int len = strlen(seq);
+
+  if (tm_santalucia != TM_METHOD_BRESLAUER
+      && tm_santalucia != TM_METHOD_SANTALUCIA)
+    return OLIGOTM_ERROR;
+  if (salt_corrections != SALT_CORRECTION_SCHILDKRAUT
+      && salt_corrections != SALT_CORRECTION_SANTALUCIA
+      && salt_corrections != SALT_CORRECTION_OWCZARZY)
+    return OLIGOTM_ERROR;
+
   return (len > nn_max_len)
-    ? long_seq_tm(seq, 0, len, salt_conc) : oligotm(seq, dna_conc, salt_conc, tm_santalucia, salt_corrections);
+    ? long_seq_tm(seq, 0, len, salt_conc) 
+    : oligotm(seq, dna_conc, salt_conc, tm_santalucia, salt_corrections);
 }
 
 /* See oligotm.h for documentation on this function and the formula it
@@ -325,7 +579,8 @@ long_seq_tm(s, start, len, salt_conc)
   int GC_count = 0;
   const char *p, *end;
 
-  if(start + len > strlen(s) || start < 0 || len <= 0) return OLIGOTM_ERROR;
+  if(start + len > strlen(s) || start < 0 || len <= 0)
+    return OLIGOTM_ERROR;
   end = &s[start + len];
   /* Length <= 0 is nonsensical. */
   for (p = &s[start]; p < end; p++) {
@@ -341,7 +596,7 @@ long_seq_tm(s, start, len, salt_conc)
 
 }
 
-int Symmetry(const char* seq) { /* for testing if string is symmetrical*/ 
+int symmetry(const char* seq) { /* for testing if string is symmetrical*/ 
    register char s;
    register char e;
    const char *seq_end=seq;
@@ -357,10 +612,24 @@ int Symmetry(const char* seq) { /* for testing if string is symmetrical*/
       i++;
       s=*seq;
       e=*seq_end;
-      if((s=='A' && e!='T') || (s=='T' && e!='A') || (e=='A' && s!='T') || (e=='T' && s!='A') || (s=='a' && e!='t') || (s=='t' && e!='a') || (e=='a' && s!='t') || (e=='t' && s!='a')) {
+      if ((s=='A' && e!='T') 
+	  || (s=='T' && e!='A') 
+	  || (e=='A' && s!='T') 
+	  || (e=='T' && s!='A') 
+	  || (s=='a' && e!='t') 
+	  || (s=='t' && e!='a') 
+	  || (e=='a' && s!='t') 
+	  || (e=='t' && s!='a')) {
 	 return 0;
       }
-      if((s=='C' && e!='G') || (s=='G' && e!='C') || (e=='C' && s!='G') || (e=='G' && s!='C') || (s=='c' && e!='g') || (s=='g' && e!='c') || (e=='c' && s!='g') || (e=='g' && s!='c')) {
+      if ((s=='C' && e!='G')
+	  || (s=='G' && e!='C')
+	  || (e=='C' && s!='G')
+	  || (e=='G' && s!='C')
+	  || (s=='c' && e!='g')
+	  || (s=='g' && e!='c')
+	  || (e=='c' && s!='g')
+	  || (e=='g' && s!='c')) {
 	 return 0;
       }
       seq++;
