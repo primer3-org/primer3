@@ -632,19 +632,20 @@ and C is the DNA concentration.
 deltaH(predicted) =
 
   = dH(CG) + dH(GT) + dH(TG) + .. + dH(CT) +
-     + dH(init.w/term GC) + dH(init.w/term AT) =
+     + dH(init.w.term.GC) + dH(init.w.term.AT) =
 
   = -10.6 + (-8.4) + (-8.5) + .. + (-7.8) + 0.1 + 2.3  =
 
   = -128.8 kcal/mol
 
-where 'init.w/term GC' and 'init.w/term AT' are two initiation parameters
-for duplex formation: 'initiation with terminal GC' and 'initiation with terminal AT'
+where 'init.w.term GC' and 'init.w.term AT' are two
+initiation parameters for duplex formation: 'initiation with
+terminal GC' and 'initiation with terminal AT'
 
 deltaS(predicted) =
 
   = dS(CG) + dS(GT) + dS(TG) + .. + dS(CT) +
-    + dS(init.w/term GC) + dS(init.w/term AT) =
+    + dS(init.w.term.GC) + dS(init.w.term.AT) =
 
   = -27.2 + (-22.4) + (-22.7) + .. + (-21.0) + (-2.8) + 4.1 =
  
