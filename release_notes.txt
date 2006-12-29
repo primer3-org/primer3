@@ -4,7 +4,11 @@ release 1.1.0 XXXXX ==================================================
    and PRIMER_LOWERCASE_MASKING. See the README for
    details of what these tags do.  Briefly, the first two
    tags allow the use of modern melting temperature 
-   calculations.
+   calculations.  New tests for this functionality
+   were added to the tests/ subdirectory
+
+ NOTE: The oligotm executable now takes additional
+   arguments.
 
  Cleaned up Makefile, and created Makefile for the test
    directory with a target to clean up after tests
@@ -15,8 +19,8 @@ release 1.1.0 XXXXX ==================================================
  Tried to create more informative test for 
    MAX_PRIMER_LENGTH > DPAL_MAX_ALIGN in primer3_main.c
 
- NOTE: The oligotm executable now takes additional
-   arguments.
+ NOTE: The oligtotm() function is now provided as
+   a library, liboligotm.
 
  NOTE: non-backward compatible change: removed support of
    flag -2x_compat.
