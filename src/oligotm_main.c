@@ -34,6 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "oligotm.h"
 
 /* Print the melting temperature of an oligo on stdout. */
@@ -43,13 +44,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 int
 main(argc, argv)
     int argc;
-    const char **argv;
+    char **argv;
 {
   double tm;
 
   char *msg = "USAGE: %s OPTIONS oligo\n"
     "\n"
-    "where oligo is a DNA sequence of between 2 and 36 bases\n (DOES THIS REALLY HAVE TO BE UPPERCASE?)"
+    "where oligo is a DNA sequence of between 2 and 36 bases\n"
     "\n"
     "and\n"
     "\n"
@@ -60,7 +61,7 @@ main(argc, argv)
     "-d  dna_conc  - concentration of DNA strands in nM, by default 50nM\n"
     "\n"
 
-    "-ts [0|1]     - Specifies the table of thermodynamic parameters and\n"
+    "-tp [0|1]     - Specifies the table of thermodynamic parameters and\n"
     "                the method of melting temperature calculation:\n"
     "                 0  Breslauer et al., 1986 and Rychlik et al., 1990\n"
     "                    (used by primer3 up to and including release 1.1.0).\n"
@@ -111,7 +112,7 @@ main(argc, argv)
 	exit(-1);
       }
       i++;
-    } else if (!strncmp("-ts", argv[i], 3)) { /* added by T.Koressaar */
+    } else if (!strncmp("-tp", argv[i], 3)) { /* added by T.Koressaar */
       tm_santalucia = atoi(argv[i+1]);
       if (!tm_santalucia || '0' == tm_santalucia) {	      
 	fprintf(stderr, msg, argv[0]);
@@ -140,9 +141,14 @@ main(argc, argv)
     fprintf(stderr, msg, argv[0]);
     exit(-1);
   }
-   
-  tm = oligotm(argv[i], d, k, tm_santalucia, salt_corrections);
-  if (OLIGOTM_ERROR == tm) {
+   /* input sequence to uppercase */
+   int j,len;
+   char *seq = argv[i];
+   len=strlen(seq);
+   for(j=0;j<len;j++) seq[j]=toupper(seq[j]);
+
+   tm = oligotm(seq, d, k, tm_santalucia, salt_corrections);
+   if (OLIGOTM_ERROR == tm) {
     fprintf(stderr,
 	    "%s: length of %s is less than 2 or it contains an illegal character\n",
 	    argv[0], argv[i]);
