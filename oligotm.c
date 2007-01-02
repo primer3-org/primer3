@@ -330,29 +330,21 @@ oligotm(s, DNA_nM, K_mM, tm_santalucia, salt_corrections)
     /** Terminal AT penalty **/
       
     if(strncmp("A", s, 1)==0
-       || strncmp("T", s, 1)==0 
-       || strncmp("a", s, 1)==0 
-       || strncmp("t", s, 1)==0)  {
+       || strncmp("T", s, 1)==0)  {
       ds += -41;
       dh += -23;
     } else if (strncmp("C", s, 1)==0 
-	       || strncmp("G", s, 1)==0 
-	       || strncmp("c", s, 1)==0 
-	       || strncmp("g", s, 1)==0) {
+	       || strncmp("G", s, 1)==0) {
       ds += 28;
       dh += -1;
     }
     s+=len;
     if(strncmp("T", s, 1)==0 
-       || strncmp("A", s, 1)==0 
-       || strncmp("t", s, 1)==0 
-       || strncmp("a", s, 1)==0) {
+       || strncmp("A", s, 1)==0) {
       ds += -41;
       dh += -23;
     } else if (strncmp("C", s, 1)==0 
-	       || strncmp("G", s, 1)==0 
-	       || strncmp("c", s, 1)==0 
-	       || strncmp("g", s, 1)==0) {
+	       || strncmp("G", s, 1)==0) {
       ds += 28;
       dh += -1;
     }
@@ -361,11 +353,11 @@ oligotm(s, DNA_nM, K_mM, tm_santalucia, salt_corrections)
   /* Use a finite-state machine (DFA) to calucluate dh and ds for s. */
   c = *s; s++;
   if (tm_santalucia == TM_METHOD_BRESLAUER) {
-    if ((c == 'A')||(c=='a')) goto A_STATE;
-    else if ((c == 'G')||(c=='g')) goto G_STATE;
-    else if ((c == 'T')||(c=='t')) goto T_STATE;
-    else if ((c == 'C') ||(c=='c')) goto C_STATE;
-    else if ((c == 'N') ||(c=='n')) goto N_STATE;
+    if (c == 'A') goto A_STATE;
+    else if (c == 'G') goto G_STATE;
+    else if (c == 'T') goto T_STATE;
+    else if (c == 'C') goto C_STATE;
+    else if (c == 'N') goto N_STATE;
     else goto ERROR;
     STATE(A);
     STATE(T);
@@ -373,11 +365,11 @@ oligotm(s, DNA_nM, K_mM, tm_santalucia, salt_corrections)
     STATE(C);
     STATE(N);
   } else {
-    if ((c == 'A')||(c=='a')) goto A_STATE2;
-    else if ((c == 'G')||(c=='g')) goto G_STATE2;
-    else if ((c == 'T')||(c=='t')) goto T_STATE2;
-    else if ((c == 'C') ||(c=='c')) goto C_STATE2;
-    else if ((c == 'N') ||(c=='n')) goto N_STATE2;
+    if (c == 'A') goto A_STATE2;
+    else if (c == 'G') goto G_STATE2;
+    else if (c == 'T') goto T_STATE2;
+    else if (c == 'C') goto C_STATE2;
+    else if (c == 'N') goto N_STATE2;
     else goto ERROR;
     STATE2(A);
     STATE2(T);
@@ -414,7 +406,7 @@ oligotm(s, DNA_nM, K_mM, tm_santalucia, salt_corrections)
     double gcPercent=0;
     int i;
     for(i=0; i<=len && d != NULL && d != '\0';) {
-      if(*d == 'C' || *d == 'G' || *d == 'c' || *d == 'g') {
+      if(*d == 'C' || *d == 'G') {
 	gcPercent++;
       }
       *d++;
@@ -477,14 +469,14 @@ oligodg(s, tm_santalucia)
    c = *s; s++;
    if(tm_santalucia != TM_METHOD_BRESLAUER) {      
       dg=-1960; /* Initial dG */
-      if(c == 'A' || c == 'T' || c == 'a' || c == 't')  {
+      if(c == 'A' || c == 'T')  {
 	 dg += -50; /* terminal AT penalty */
       }
-      if ((c == 'A')||(c=='a')) goto A_STATE2;
-      else if ((c == 'G')||(c=='g')) goto G_STATE2;
-      else if ((c == 'T')||(c=='t')) goto T_STATE2;
-      else if ((c == 'C') ||(c=='c')) goto C_STATE2;
-      else if ((c == 'N') ||(c=='n')) goto N_STATE2;
+      if (c == 'A') goto A_STATE2;
+      else if (c == 'G') goto G_STATE2;
+      else if (c == 'T') goto T_STATE2;
+      else if (c == 'C') goto C_STATE2;
+      else if (c == 'N') goto N_STATE2;
       else goto ERROR;
       STATE2(A);
       STATE2(T);
@@ -492,11 +484,11 @@ oligodg(s, tm_santalucia)
       STATE2(C);
       STATE2(N);
      } else {
-    if ((c == 'A') || (c == 'a')) goto A_STATE;
-    else if ((c == 'G') || (c == 'g')) goto G_STATE;
-    else if ((c == 'T') || (c == 't')) goto T_STATE;
-    else if ((c == 'C') || (c == 'c')) goto C_STATE;
-    else if ((c == 'N') || (c == 'n')) goto N_STATE;
+    if (c == 'A') goto A_STATE;
+    else if (c == 'G') goto G_STATE;
+    else if (c == 'T') goto T_STATE;
+    else if (c == 'C') goto C_STATE;
+    else if (c == 'N') goto N_STATE;
     else goto ERROR;
     STATE(A);
     STATE(T);
@@ -509,7 +501,7 @@ DONE:  /* dg is now computed for the given sequence. */
    if(tm_santalucia != TM_METHOD_BRESLAUER) {
       int sym;
       --s; --s; c = *s;
-      if(c == 'A' || c == 'T' || c == 'a' || c == 't')  {
+      if(c == 'A' || c == 'T')  {
 	 dg += -50; /* terminal AT penalty */
       }
       sym = symmetry(s);
@@ -554,8 +546,7 @@ double seqtm(seq, dna_conc, salt_conc, nn_max_len,
   int salt_corrections;
 {
   int len = strlen(seq);
-
-  if (tm_santalucia != TM_METHOD_BRESLAUER
+   if (tm_santalucia != TM_METHOD_BRESLAUER
       && tm_santalucia != TM_METHOD_SANTALUCIA)
     return OLIGOTM_ERROR;
   if (salt_corrections != SALT_CORRECTION_SCHILDKRAUT
@@ -584,7 +575,7 @@ long_seq_tm(s, start, len, salt_conc)
   end = &s[start + len];
   /* Length <= 0 is nonsensical. */
   for (p = &s[start]; p < end; p++) {
-    if ('G' == *p || 'g' == *p || 'C' == *p || 'c' == *p)
+    if ('G' == *p || 'C' == *p)
       GC_count++;
   }
 
@@ -615,21 +606,13 @@ int symmetry(const char* seq) { /* for testing if string is symmetrical*/
       if ((s=='A' && e!='T') 
 	  || (s=='T' && e!='A') 
 	  || (e=='A' && s!='T') 
-	  || (e=='T' && s!='A') 
-	  || (s=='a' && e!='t') 
-	  || (s=='t' && e!='a') 
-	  || (e=='a' && s!='t') 
-	  || (e=='t' && s!='a')) {
+	  || (e=='T' && s!='A')) {
 	 return 0;
       }
       if ((s=='C' && e!='G')
 	  || (s=='G' && e!='C')
 	  || (e=='C' && s!='G')
-	  || (e=='G' && s!='C')
-	  || (s=='c' && e!='g')
-	  || (s=='g' && e!='c')
-	  || (e=='c' && s!='g')
-	  || (e=='g' && s!='c')) {
+	  || (e=='G' && s!='C')) {
 	 return 0;
       }
       seq++;
