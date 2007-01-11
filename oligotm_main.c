@@ -53,13 +53,17 @@ main(argc, argv)
     "where oligo is a DNA sequence of between 2 and 36 bases\n"
     "\n"
     "and\n"
-    "\n"
-    "OPTIONS can include any of the the following:\n"
-    "\n"
-    "-k  salt_conc - concentration of monovalent cations in mM, by default 50mM\n"
-    "\n"
-    "-d  dna_conc  - concentration of DNA strands in nM, by default 50nM\n"
-    "\n"
+     "\n"
+     "OPTIONS can include any of the the following:\n"
+     "\n"
+     "-mv monovalent_conc - concentration of monovalent cations in mM, by default 50mM\n"
+     "\n"
+     "-dv divalent_conc   - concentration of divalent cations in mM, by default 0mM\n"
+     "\n"
+     "-n  dNTP_conc       - concentration of deoxynycleotide triphosphate in mM, by default 0mM\n"
+     "\n"
+     "-d  dna_conc        - concentration of DNA strands in nM, by default 50nM\n"
+     "\n"
 
     "-tp [0|1]     - Specifies the table of thermodynamic parameters and\n"
     "                the method of melting temperature calculation:\n"
@@ -86,53 +90,67 @@ main(argc, argv)
     "3. SantaLucia JR. (1998). A unified view of polymer, dumbbell and oligonucleotide DNA nearest-neighbor thermodynamics. Proc. Natl. Acad. Sci., 95, 1460-65.\n\n"
     "4. Schildkraut, C, and Lifson, S. (1965) Dependence of the melting temperature of DNA on salt concentration. Biopolymers, 3, 195-208.\n\n"
     "5. Owczarzy R, You Y, Moreira BG, Manthey JA, Huang L, Behlke MA and Walder JA. (2004) Effects of Sodium Ions on DNA Duplex Oligomers: Improved Predictions of Melting Temperatures. Biochemistry, 43, 3537-54.\n";
-
-  char *endptr;
-  long k = 50, d = 50;
-  int tm_santalucia=0, salt_corrections=0;
-  int i;
    
-  if (argc < 2 || argc > 10) {
+   char *endptr;
+   long mv = 50, d = 50;
+   double dv = 0, n = 0;
+   int tm_santalucia=0, salt_corrections=0;
+   int i;
+  if (argc < 2 || argc > 14) {
     fprintf(stderr, msg, argv[0]);       
     return -1;
   }
 
   for (i=1; i < argc; ++i) {
-    if (!strncmp("-k", argv[i], 2)) {
-      k = strtol(argv[i+1], &endptr, 10);
+    if (!strncmp("-mv", argv[i], 3)) { /* conc of monovalent cations */
+      mv = strtol(argv[i+1], &endptr, 10);
       if ('\0' != *endptr) {
 	fprintf(stderr, msg, argv[0]);
 	exit(-1);
       }
       i++;
+    } else if (!strncmp("-dv", argv[i], 3)) { /* conc of divalent cations; added by T.Koressaar */
+       dv = strtod(argv[i+1], &endptr);
+       if('\0' != *endptr) {
+	  fprintf(stderr, msg, argv[0]);
+	  exit(-1);
+       }
+       i++;
+    } else if (!strncmp("-n", argv[i], 2)) { /* conc of dNTP; added by T.Koressaar */
+       n = strtod(argv[i+1], &endptr);
+       if('\0' != *endptr) {
+	  fprintf(stderr, msg, argv[0]);
+	  exit(-1);
+       }
+       i++;
     } else if (!strncmp("-d", argv[i], 2)) {
-      d = strtol(argv[i+1], &endptr, 10);
-      if ('\0' != *endptr) {
-	fprintf(stderr, msg, argv[0]);
-	exit(-1);
-      }
-      i++;
+       d = strtol(argv[i+1], &endptr, 10);
+       if ('\0' != *endptr) {
+	  fprintf(stderr, msg, argv[0]);
+	  exit(-1);
+       }
+       i++;
     } else if (!strncmp("-tp", argv[i], 3)) { /* added by T.Koressaar */
-      tm_santalucia = atoi(argv[i+1]);
-      if (!tm_santalucia || '0' == tm_santalucia) {	      
-	fprintf(stderr, msg, argv[0]);
-	exit(-1);
-      }
-      i++;
+       tm_santalucia = (int)strtol(argv[i+1], &endptr, 10);
+       if ('\0' != *endptr || tm_santalucia<0 || tm_santalucia>1) {	  
+	  fprintf(stderr, msg, argv[0]);
+	  exit(-1);
+       }
+       i++;
     } else if (!strncmp("-sc", argv[i], 3)) { /* added by T.Koressaar */
-      salt_corrections = atoi(argv[i+1]);
-      if (!salt_corrections || '0' == salt_corrections) {
-	fprintf(stderr, msg, argv[0]);
-	exit(-1);
+       salt_corrections = (int)strtol(argv[i+1], &endptr, 10);
+       if ('\0' != *endptr || salt_corrections<0 || salt_corrections>2) {
+	 fprintf(stderr, msg, argv[0]);
+	 exit(-1);
       }
-      i++;
+       i++;
     } else if (!strncmp("-i", argv[i], 2)) {
-      fprintf(stderr, info, argv[0]);
-      exit(-1);
+       fprintf(stderr, info, argv[0]);
+       exit(-1);	    
     } else if (!strncmp("-", argv[i], 1)) {
-      /* Unknown option. */
-      fprintf(stderr, msg, argv[0]);
-      exit(-1);
+       /* Unknown option. */
+       fprintf(stderr, msg, argv[0]);
+       exit(-1);
     } else
       break;		/* all args processed. go on to sequences. */
   }
@@ -146,8 +164,12 @@ main(argc, argv)
    char *seq = argv[i];
    len=strlen(seq);
    for(j=0;j<len;j++) seq[j]=toupper(seq[j]);
-
-   tm = oligotm(seq, d, k, tm_santalucia, salt_corrections);
+   
+   if(dv > 0 && n>=0) {
+      tm = oligotm(seq, d, mv + divalent_to_monovalent(dv,n), tm_santalucia, salt_corrections);
+   } else {
+      tm = oligotm(seq, d, mv, tm_santalucia, salt_corrections);
+   }
    if (OLIGOTM_ERROR == tm) {
     fprintf(stderr,
 	    "%s: length of %s is less than 2 or it contains an illegal character\n",

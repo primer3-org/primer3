@@ -174,4 +174,8 @@ double oligodg(const char *seq,
 */
 int symmetry(const char *seq);
 
+/* Converts divalent salt concentration to monovalent salt concentration */
+
+double divalent_to_monovalent(double divalent, double dntp);
+
 #endif

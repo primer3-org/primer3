@@ -113,6 +113,19 @@ The default is 0 only for backward compatibility.
 #define MIN_GC             20.0
 #define MAX_GC             80.0
 #define SALT_CONC          50.0
+
+/*
+ DIVALENT_CONC and DNTP_CONC are both needed for enabling to use divalent cations for 
+ calculation of melting temperature of short and long oligos. 
+ The formula for converting the divalent cations to monovalent cations is in the paper 
+ [Ahsen von N, Wittwer CT, Schutz E (2001) "Oligonucleotide Melting Temperatures under PCR Conditions:
+ Nearest-Neighbor Corrections for Mg^2+, Deoxynucleotide Triphosphate, and Dimethyl Sulfoxide Concentrations
+ with Comparision to Alternative Empirical Formulas", Clinical Chemistry 47:1956-61 
+ http://www.clinchem.org/cgi/content/full/47/11/1956]
+ The default is 0. (New in v. 1.1.0, added by Maido Remm and Triinu Koressaar.)
+ */
+#define DIVALENT_CONC       0.0
+#define DNTP_CONC           0.0
 #define DNA_CONC           50.0
 #define NUM_NS_ACCEPTED       0
 #define MAX_POLY_X            5
@@ -135,6 +148,8 @@ The default is 0 only for backward compatibility.
 #define INTERNAL_OLIGO_MIN_GC     20.0
 #define INTERNAL_OLIGO_MAX_GC     80.0
 #define INTERNAL_OLIGO_SALT_CONC         50.0
+#define INTERNAL_OLIGO_DIVALENT_CONC      0.0
+#define INTERNAL_OLIGO_DNTP_CONC          0.0
 #define INTERNAL_OLIGO_DNA_CONC          50.0
 #define INTERNAL_OLIGO_NUM_NS               0
 #define INTERNAL_OLIGO_MAX_POLY_X           5 
@@ -235,6 +250,8 @@ pr_set_default_global_args(a)
     a->opt_gc_content   = DEFAULT_OPT_GC_PERCENT;
     a->max_gc           = MAX_GC;
     a->salt_conc        = SALT_CONC;
+    a->divalent_conc    = DIVALENT_CONC;
+    a->dntp_conc        = DNTP_CONC;
     a->dna_conc         = DNA_CONC;
     a->num_ns_accepted  = NUM_NS_ACCEPTED;
     a->self_any         = SELF_ANY;
@@ -282,6 +299,8 @@ pr_set_default_global_args(a)
     a->io_max_gc          = INTERNAL_OLIGO_MAX_GC;
     a->io_max_poly_x      = INTERNAL_OLIGO_MAX_POLY_X;
     a->io_salt_conc       = INTERNAL_OLIGO_SALT_CONC;
+    a->io_divalent_conc   = INTERNAL_OLIGO_DIVALENT_CONC;
+    a->io_dntp_conc       = INTERNAL_OLIGO_DNTP_CONC;
     a->io_dna_conc        = INTERNAL_OLIGO_DNA_CONC;
     a->io_num_ns_accepted = INTERNAL_OLIGO_NUM_NS;
     a->io_self_any        = INTERNAL_OLIGO_SELF_ANY;
@@ -614,11 +633,22 @@ _pr_data_control(pa, sa)
 	      "Illegal value for primer salt or dna concentration");
 	  return 1;
     }
-    if(pa->io_salt_conc<=0||pa->io_dna_conc<=0){
+   if(((pa->dntp_conc<0 || pa->divalent_conc<pa->dntp_conc) && pa->divalent_conc!=0)||pa->divalent_conc<0){ /* added by T.Koressaar */
+      pr_append_new_chunk(&sa->error, "Illegal value for primer divalent salt or dNTP concentration");
+      return 1;
+   }
+   
+    if(pa->io_salt_conc<=0||pa->io_dna_conc<=0){ 
 	  pr_append_new_chunk(&pa->glob_err,
 	      "Illegal value for internal oligo salt or dna concentration");
 	  return 1;
     }
+   if(((pa->io_dntp_conc<0 || pa->io_divalent_conc<pa->io_dntp_conc) && pa->io_divalent_conc!=0)||pa->io_divalent_conc<0) { /* added by T.Koressaar */
+      pr_append_new_chunk(&sa->error,
+			  "Illegal value for internal oligo divalent salt or dNTP concentration");
+      return 1;
+   }
+   
     if (!_PR_DEFAULT_POSITION_PENALTIES(pa) && sa->num_targets > 1) {
       pr_append_new_chunk(&sa->error,
 			  "Non-default inside penalty or outside penalty ");
