@@ -663,10 +663,36 @@ Tm(C) = 323.704 - 273.15 = 50.554 C
 
 PRIMER_SALT_CONC (float, default 50.0 mM)
 
-The millimolar concentration of salt (usually KCl) in the PCR.
+The millimolar concentration of monovalent salt cations (usually KCl) in the PCR.
 Primer3 uses this argument to calculate oligo and primer melting
-temperatures.
+temperatures. Use tag PRIMER_DIVALENT_CONC to specify the concentration
+of divalent cations (in this case you also should use tag PRIMER_DNTP_CONC).
 
+PRIMER_DIVALENT_CONC (float, default 0.0 mM)
+
+The millimolar concentration of divalent salt cations (usually MgCl^(2+)) in
+the PCR. (New in v. 1.1.0, added by Maido Remm and Triinu Koressaar) 
+
+Primer3 converts concentration of divalent cations to concentration
+of monovalent cations using formula suggested in the paper [Ahsen von N,
+Wittwer CT, Schutz E (2001) "Oligonucleotide Melting Temperatures under PCR
+Conditions: Nearest-Neighbor Corrections for Mg^(2+), Deoxynucleotide Triphosphate,
+and Dimethyl Sulfoxide Concentrations with Comparision to Alternative Empirical 
+Formulas", Clinical Chemistry 47:1956-61 http://www.clinchem.org/cgi/content/full/47/11/1956].
+
+[Monovalent cations] = [Monovalent cations] + 120*(([divalent cations] - [dNTP])^0.5)
+
+According to the formula concentration of desoxynucleotide triphosphate
+[dNTP] must be smaller than concentration of divalent cations. The
+concentration of dNTPs is included to the formula beacause of some magnesium is bound by the
+dNTP. Attained concentration of monovalent cations is used to calculate oligo/primer
+melting temperature. Use tag PRIMER_DNTP_CONC to specify the concentration of dNTPs.
+
+PRIMER_DNTP_CONC (float, default 0.0 mM)
+
+The millimolar concentration of deoxyribonucleotide triphosphate. This
+argument is considered only if PRIMER_DIVALENT_CONC is specified. See
+PRIMER_DIVALENT_CONC.
 
 PRIMER_SALT_CORRECTIONS (int, default 0)
 
@@ -1052,6 +1078,8 @@ PRIMER_INTERNAL_OLIGO_MAX_TM (float, default 63.0 degrees C)
 PRIMER_INTERNAL_OLIGO_MIN_GC (float, default 20.0%)
 PRIMER_INTERNAL_OLIGO_MAX_GC (float, default 80.0%)
 PRIMER_INTERNAL_OLIGO_SALT_CONC (float, default 50.0 mM)
+PRIMER_INTERNAL_OLIGO_DIVALENT_CONC (float, default 0.0 mM)
+PRIMER_INTERNAL_OLIGO_DNTP_CONC (float, default 0.0 mM)
 PRIMER_INTERNAL_OLIGO_DNA_CONC (float, default 50.0 nM)
 PRIMER_INTERNAL_OLIGO_SELF_ANY (decimal 9999.99, default 12.00)
 PRIMER_INTERNAL_OLIGO_MAX_POLY_X (int, default 5)

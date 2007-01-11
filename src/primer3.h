@@ -318,24 +318,28 @@ typedef struct primargs {
 
     pr_append_str glob_err;
 
-    double opt_tm;
-    double min_tm;
-    double max_tm;
-    double max_diff_tm;
-    double opt_gc_content;
-    double max_gc;
-    double min_gc;
-    double salt_conc;
-    double dna_conc;
+   double opt_tm;
+   double min_tm;
+   double max_tm;
+   double max_diff_tm;
+   double opt_gc_content;
+   double max_gc;
+   double min_gc;
+   double salt_conc;
+   double divalent_conc; /* added by T.Koressaar, divalent salt concentration mmol/l */
+   double dntp_conc; /* added by T.Koressaar, for considering divalent salt concentration */
+   double dna_conc;
 
-    double io_opt_tm;
-    double io_min_tm;
-    double io_max_tm;
-    double io_opt_gc_content;
-    double io_max_gc;
-    double io_min_gc;
-    double io_salt_conc;
-    double io_dna_conc;
+   double io_opt_tm;
+   double io_min_tm;
+   double io_max_tm;
+   double io_opt_gc_content;
+   double io_max_gc;
+   double io_min_gc;
+   double io_salt_conc;
+   double io_divalent_conc; /* added by T.Koressaar, divalent salt concentration mmol/l */
+   double io_dntp_conc; /* added by T.Koressaar, for considering divalent salt concentration */
+   double io_dna_conc;
    int tm_santalucia;  /* added by T.Koressaar table of thermodynamic parameters of SantaLucia 1998 */
    int salt_corrections; /* added by T.Koressaar salt correction formula for Tm calculation */
    int lowercase_masking; /* added by T.Koressaar for primer design from lowercase masked template */

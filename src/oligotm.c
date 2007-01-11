@@ -620,3 +620,10 @@ int symmetry(const char* seq) { /* for testing if string is symmetrical*/
    }
    return 1;
 }
+
+double divalent_to_monovalent(double divalent, double dntp){ /* converting divalent salt concentration to monovalent */
+   if(divalent<dntp) { /* according to theory melting temperature doesn't depend on divalent cations */
+      divalent=dntp;
+   }   
+   return 120*(sqrt(divalent-dntp));
+}

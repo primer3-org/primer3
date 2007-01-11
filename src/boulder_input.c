@@ -224,10 +224,11 @@ read_record(prog_args, pa, sa)
 			pa->tm_santalucia);    /* added by T.Koressaar */
 	    COMPARE_INT("PRIMER_SALT_CORRECTIONS",
 			pa->salt_corrections); /* added by T.Koressaar */
-
- 	    COMPARE_FLOAT("PRIMER_MIN_GC", pa->min_gc);
+	   COMPARE_FLOAT("PRIMER_MIN_GC", pa->min_gc);
 	    COMPARE_FLOAT("PRIMER_MAX_GC", pa->max_gc);
 	    COMPARE_FLOAT("PRIMER_SALT_CONC", pa->salt_conc);
+	   COMPARE_FLOAT("PRIMER_DIVALENT_CONC", pa->divalent_conc); /* added by T.Koressaar */
+	   COMPARE_FLOAT("PRIMER_DNTP_CONC", pa->dntp_conc); /* added by T.Koressaar */
 	    COMPARE_FLOAT("PRIMER_DNA_CONC", pa->dna_conc);
 	    COMPARE_INT("PRIMER_NUM_NS_ACCEPTED", pa->num_ns_accepted);
 	    COMPARE_INT("PRIMER_PRODUCT_OPT_SIZE", pa->product_opt_size);
@@ -266,7 +267,9 @@ read_record(prog_args, pa, sa)
 	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MIN_GC", pa->io_min_gc);
             COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MAX_GC", pa->io_max_gc);
 	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_SALT_CONC",pa->io_salt_conc);
-            COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DNA_CONC", pa->io_dna_conc);
+           COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DIVALENT_CONC",pa->io_divalent_conc);
+	   COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DNTP_CONC",pa->io_dntp_conc); /* added by T.Koressaar */
+	   COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DNA_CONC", pa->io_dna_conc); /* added by T.Koressaar */
 	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_NUM_NS", pa->io_num_ns_accepted);
 	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_MIN_QUALITY", pa->io_min_quality);
 
