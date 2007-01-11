@@ -1,7 +1,8 @@
 release 1.1.0 XXXXX ==================================================
 
  Added tags PRIMER_TM_SANTALUCIA, PRIMER_SALT_CORRECTIONS,
-   and PRIMER_LOWERCASE_MASKING. See the README for
+   PRIMER_LOWERCASE_MASKING, PRIMER_DIVALENT_CONC,
+   and PRIMER_DNTP_CONC.  See the README for
    details of what these tags do.  Briefly, the first two
    tags allow the use of modern melting temperature 
    calculations.  New tests for this functionality
