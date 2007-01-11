@@ -1,4 +1,3 @@
-#!/usr/bin/perl -w
 
 use constant EPSILON => 1e-5;
 $nr=1;
@@ -8,7 +7,7 @@ die "Cannot execute ../src/oligotm" unless -x '../src/oligotm';
 
 print STDERR "Tests nr $nr-";
 
-open F, "./oligotm.txt" or die "Can't open oligotm.txt\n";
+open F, "./oligotm.txt" or die "Cannot open oligotm.txt\n";
 while(<F>){
     chomp;
     next if $. == 1;
@@ -19,10 +18,13 @@ while(<F>){
     chomp $tm;
     close(CMD);
     if($tm){
-	$failure++ if(($tm-$tmp[6])>EPSILON);
-    }
-    else{
+	if(($tm-$tmp[6])>EPSILON) {
+	    $failure++;
+	    print STDERR "$cmd FAILED (expected $tm, got $tmp[6])\n";
+	}
+    } else {
 	$failure++;
+	print STDERR  "$cmd FAILED (no output)\n";
     }
     $nr++;
 }

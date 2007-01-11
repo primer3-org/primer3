@@ -30,16 +30,18 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # ======================================================================
 
-test: $(PRIMER_EXE)
-	perl dpal_test.pl; perl p3test.pl
-
+test: 
+	cd ../src; make
+	echo 'Testing Tm calcs'; perl oligotm_test.pl;
+	echo 'Testing alignment calcs'; perl dpal_test.pl; 
+	echo 'Testing primer3_core'; perl p3test.pl
 
 clean:
 	-rm -rf primer_list_tmp/*
 	-rm -rf primer1_list_tmp/*
-	-rm primer_global_err/*.tmp primer_global_err/*.tmp2 primer_global_err/*.bak
+	-rm -f primer_global_err/*.tmp primer_global_err/*.tmp2 primer_global_err/*.bak
 	-rm -f *.tmp *.bak *~
-	-rm hyb_probe_only.for hyb_probe_only.int 
-	-rm right_only.for right_only.rev left_only.for
-	-rm pcr_primers_and_io.int pcr_primers_and_io.rev pcr_primers_and_io.for
-	-rm pcr_primers.rev pcr_primers.for
+	-rm -f hyb_probe_only.for hyb_probe_only.int 
+	-rm -f right_only.for right_only.rev left_only.for
+	-rm -f pcr_primers_and_io.int pcr_primers_and_io.rev pcr_primers_and_io.for
+	-rm -f pcr_primers.rev pcr_primers.for
