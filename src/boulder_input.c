@@ -224,11 +224,11 @@ read_record(prog_args, pa, sa)
 			pa->tm_santalucia);    /* added by T.Koressaar */
 	    COMPARE_INT("PRIMER_SALT_CORRECTIONS",
 			pa->salt_corrections); /* added by T.Koressaar */
-	   COMPARE_FLOAT("PRIMER_MIN_GC", pa->min_gc);
+	    COMPARE_FLOAT("PRIMER_MIN_GC", pa->min_gc);
 	    COMPARE_FLOAT("PRIMER_MAX_GC", pa->max_gc);
 	    COMPARE_FLOAT("PRIMER_SALT_CONC", pa->salt_conc);
-	   COMPARE_FLOAT("PRIMER_DIVALENT_CONC", pa->divalent_conc); /* added by T.Koressaar */
-	   COMPARE_FLOAT("PRIMER_DNTP_CONC", pa->dntp_conc); /* added by T.Koressaar */
+	    COMPARE_FLOAT("PRIMER_DIVALENT_CONC", pa->divalent_conc); /* added by T.Koressaar */
+	    COMPARE_FLOAT("PRIMER_DNTP_CONC", pa->dntp_conc); /* added by T.Koressaar */
 	    COMPARE_FLOAT("PRIMER_DNA_CONC", pa->dna_conc);
 	    COMPARE_INT("PRIMER_NUM_NS_ACCEPTED", pa->num_ns_accepted);
 	    COMPARE_INT("PRIMER_PRODUCT_OPT_SIZE", pa->product_opt_size);
