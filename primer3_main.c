@@ -1007,41 +1007,19 @@ oligo_param(pa, h, l, local_args, end_args, local_end_args, sa, stats)
 
     _pr_substr(seq,j,k-j+1,s1);
                    
-    if(OT_LEFT == l || OT_RIGHT == l) {
-       if(pa->divalent_conc > 0 && pa->divalent_conc >= pa->dntp_conc) { 
-	  /* if divalent salt concentration is specified and
-	   there is free divalent cations in the buffer (pa->divalent_conc >= pa->dntp_conc) */
-	  h->temp 
-	    = seqtm(s1, pa->dna_conc, pa->salt_conc + divalent_to_monovalent(pa->divalent_conc, pa->dntp_conc), 
-		    MAX_NN_TM_LENGTH,
-		    pa->tm_santalucia,
-		    pa->salt_corrections); 
-       }
-       else {
-	  h->temp
-	    = seqtm(s1, pa->dna_conc, pa->salt_conc,
-		    MAX_NN_TM_LENGTH,
-		    pa->tm_santalucia,
-		    pa->salt_corrections);
-       }
-    }
-   else {
-      if(pa->io_divalent_conc > 0 && pa->io_divalent_conc >= pa->io_dntp_conc) {
-	 h->temp
-	   = seqtm(s1, pa->io_dna_conc, pa->io_salt_conc + divalent_to_monovalent(pa->io_divalent_conc, pa->io_dntp_conc),
-		   MAX_NN_TM_LENGTH,
-		   pa->tm_santalucia,
-		   pa->salt_corrections);
-      }
-      else {
-	 h->temp
-	   = seqtm(s1, pa->io_dna_conc, pa->io_salt_conc,
-		   MAX_NN_TM_LENGTH,
-		   pa->tm_santalucia,
-		       pa->salt_corrections);
-      }
-   }
-   
+   if(OT_LEFT == l || OT_RIGHT == l)
+     h->temp 
+     = seqtm(s1, pa->dna_conc, pa->salt_conc, pa->divalent_conc, pa->dntp_conc, 
+	     MAX_NN_TM_LENGTH,
+	     pa->tm_santalucia,
+	     pa->salt_corrections); 
+   else
+     h->temp
+     = seqtm(s1, pa->io_dna_conc, pa->io_salt_conc, pa->io_divalent_conc, pa->io_dntp_conc,
+	     MAX_NN_TM_LENGTH,
+	     pa->tm_santalucia,
+	     pa->salt_corrections);
+         
     if (((l == OT_LEFT || l == OT_RIGHT) && h->temp < pa->min_tm)
 	|| (l==OT_INTL && h->temp<pa->io_min_tm)) {
 	h->ok = OV_TM_LOW;
@@ -1698,17 +1676,10 @@ pair_param(pa, sa, m, n, int_num, h, local_args, end_args, local_end_args)
     }
 
     /* Compute product Tm and related parameters; check constraints. */
-   if(pa->divalent_conc>0) { /* if concentration of divalent cations is specified; added by T.Koressaar*/
-	h->product_tm 
-	  = long_seq_tm(sa->trimmed_seq, h->left->start,
-			h->right->start - h->left->start + 1, pa->salt_conc + divalent_to_monovalent(pa->divalent_conc, pa->dntp_conc));
-     }
-   else{
-      h->product_tm
-	= long_seq_tm(sa->trimmed_seq, h->left->start,
-		      h->right->start - h->left->start + 1, pa->salt_conc);
-   }
-   
+   h->product_tm 
+     = long_seq_tm(sa->trimmed_seq, h->left->start,
+		   h->right->start - h->left->start + 1, pa->salt_conc, pa->divalent_conc, pa->dntp_conc);
+      
     PR_ASSERT(h->product_tm != OLIGOTM_ERROR);
 
     min_oligo_tm 

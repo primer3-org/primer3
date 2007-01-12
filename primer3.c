@@ -633,8 +633,8 @@ _pr_data_control(pa, sa)
 	      "Illegal value for primer salt or dna concentration");
 	  return 1;
     }
-   if(((pa->dntp_conc<0 || pa->divalent_conc<pa->dntp_conc) && pa->divalent_conc!=0)||pa->divalent_conc<0){ /* added by T.Koressaar */
-      pr_append_new_chunk(&sa->error, "Illegal value for primer divalent salt or dNTP concentration");
+   if((pa->dntp_conc<0 && pa->divalent_conc!=0)||pa->divalent_conc<0){ /* added by T.Koressaar */
+      pr_append_new_chunk(&pa->glob_err, "Illegal value for primer divalent salt or dNTP concentration");
       return 1;
    }
    
@@ -643,8 +643,8 @@ _pr_data_control(pa, sa)
 	      "Illegal value for internal oligo salt or dna concentration");
 	  return 1;
     }
-   if(((pa->io_dntp_conc<0 || pa->io_divalent_conc<pa->io_dntp_conc) && pa->io_divalent_conc!=0)||pa->io_divalent_conc<0) { /* added by T.Koressaar */
-      pr_append_new_chunk(&sa->error,
+   if((pa->io_dntp_conc<0 && pa->io_divalent_conc!=0)||pa->io_divalent_conc<0) { /* added by T.Koressaar */
+      pr_append_new_chunk(&pa->glob_err,
 			  "Illegal value for internal oligo divalent salt or dNTP concentration");
       return 1;
    }
