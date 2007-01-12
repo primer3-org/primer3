@@ -54,7 +54,7 @@ in ../test/long_seq_tm_test.pl.
 #include <string.h>
 #include <math.h>
 
-double long_seq_tm(const char* s, int start, int len, double salt_conc);
+double long_seq_tm(const char* s, int start, int len, double salt_conc, double divalent_conc, double dntp_conc);
 
 int
 main(argc, argv)
@@ -63,6 +63,8 @@ main(argc, argv)
 {
   const char *s;
   double salt_conc = 50;
+  double divalent_conc = 0;
+  double dntp_conc = 0;
   double tm;
   int start, len;
   char *endptr;
@@ -77,7 +79,7 @@ main(argc, argv)
   len = strtol(argv[3], &endptr, 10);
   printf("s=%s, start=%d, length=%d\n", s, start, len);
   
-  tm = long_seq_tm(s, start, len, salt_conc);
+  tm = long_seq_tm(s, start, len, salt_conc, divalent_conc, dntp_conc);
   printf("tm = %f\n", tm);
   return 0;
 }

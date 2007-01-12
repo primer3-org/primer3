@@ -295,10 +295,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
    oligotm.h for documentation of arguments.
 */
 double 
-oligotm(s, DNA_nM, K_mM, tm_santalucia, salt_corrections)
+oligotm(s, DNA_nM, K_mM, divalent_conc, dntp_conc, tm_santalucia, salt_corrections)
      const  char *s;
      double DNA_nM;
      double K_mM;
+     double divalent_conc;
+     double dntp_conc;
      int tm_santalucia;
      int salt_corrections;
 {
@@ -307,7 +309,9 @@ oligotm(s, DNA_nM, K_mM, tm_santalucia, salt_corrections)
   double delta_H, delta_S;
   int len, sym;
   const char* d = s;
-
+   if(divalent_to_monovalent(divalent_conc, dntp_conc) == OLIGOTM_ERROR) return OLIGOTM_ERROR;
+   
+   K_mM = K_mM + divalent_to_monovalent(divalent_conc, dntp_conc);
   if (tm_santalucia != TM_METHOD_BRESLAUER
       && tm_santalucia != TM_METHOD_SANTALUCIA)
     return OLIGOTM_ERROR;
@@ -536,14 +540,16 @@ double end_oligodg(s, len, tm_santalucia)
 }
 
 /* See oligotm.h for documentation of arguments. */
-double seqtm(seq, dna_conc, salt_conc, nn_max_len,
+double seqtm(seq, dna_conc, salt_conc, divalent_conc, dntp_conc, nn_max_len,
 	     tm_santalucia, salt_corrections)
   const  char *seq;
   double dna_conc;
   double salt_conc;
+  double divalent_conc;
+  double dntp_conc;
   int    nn_max_len;
-  int tm_santalucia;
-  int salt_corrections;
+  int    tm_santalucia;
+  int    salt_corrections;
 {
   int len = strlen(seq);
    if (tm_santalucia != TM_METHOD_BRESLAUER
@@ -555,19 +561,24 @@ double seqtm(seq, dna_conc, salt_conc, nn_max_len,
     return OLIGOTM_ERROR;
 
   return (len > nn_max_len)
-    ? long_seq_tm(seq, 0, len, salt_conc) 
-    : oligotm(seq, dna_conc, salt_conc, tm_santalucia, salt_corrections);
+    ? long_seq_tm(seq, 0, len, salt_conc, divalent_conc, dntp_conc) 
+    : oligotm(seq, dna_conc, salt_conc, divalent_conc, dntp_conc, tm_santalucia, salt_corrections);
 }
 
 /* See oligotm.h for documentation on this function and the formula it
    uses. */
 double
-long_seq_tm(s, start, len, salt_conc)
+long_seq_tm(s, start, len, salt_conc, divalent_conc, dntp_conc)
   const char *s;
   int start, len;
   double salt_conc;
+  double divalent_conc;
+  double dntp_conc;
 {
-  int GC_count = 0;
+   if(divalent_to_monovalent(divalent_conc, dntp_conc) == OLIGOTM_ERROR) return OLIGOTM_ERROR;
+   
+   salt_conc = salt_conc + divalent_to_monovalent(divalent_conc, dntp_conc);
+   int GC_count = 0;
   const char *p, *end;
 
   if(start + len > strlen(s) || start < 0 || len <= 0)
@@ -622,8 +633,9 @@ int symmetry(const char* seq) { /* for testing if string is symmetrical*/
 }
 
 double divalent_to_monovalent(double divalent, double dntp){ /* converting divalent salt concentration to monovalent */
-   if(divalent<dntp) { /* according to theory melting temperature doesn't depend on divalent cations */
-      divalent=dntp;
-   }   
+   if(divalent==0) dntp=0;
+   if(divalent<0 || dntp<0) return OLIGOTM_ERROR;
+   if(divalent<dntp) /* according to theory melting temperature doesn't depend on divalent cations */
+     divalent=dntp;  
    return 120*(sqrt(divalent-dntp));
 }

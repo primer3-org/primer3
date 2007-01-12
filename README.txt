@@ -683,7 +683,9 @@ Formulas", Clinical Chemistry 47:1956-61 http://www.clinchem.org/cgi/content/ful
 [Monovalent cations] = [Monovalent cations] + 120*(([divalent cations] - [dNTP])^0.5)
 
 According to the formula concentration of desoxynucleotide triphosphate
-[dNTP] must be smaller than concentration of divalent cations. The
+[dNTP] must be smaller than concentration of divalent cations. If the
+specified concentration of dNTPs is larger than specified concentration of
+divalent cations then the effect of divalent cations is not considered. The
 concentration of dNTPs is included to the formula beacause of some magnesium is bound by the
 dNTP. Attained concentration of monovalent cations is used to calculate oligo/primer
 melting temperature. Use tag PRIMER_DNTP_CONC to specify the concentration of dNTPs.

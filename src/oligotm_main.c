@@ -165,14 +165,13 @@ main(argc, argv)
    len=strlen(seq);
    for(j=0;j<len;j++) seq[j]=toupper(seq[j]);
    
-   if(dv > 0 && n>=0) {
-      tm = oligotm(seq, d, mv + divalent_to_monovalent(dv,n), tm_santalucia, salt_corrections);
-   } else {
-      tm = oligotm(seq, d, mv, tm_santalucia, salt_corrections);
-   }
+   tm = oligotm(seq, d, mv, dv, n, tm_santalucia, salt_corrections);
    if (OLIGOTM_ERROR == tm) {
     fprintf(stderr,
-	    "%s: length of %s is less than 2 or it contains an illegal character\n",
+	    "%s ERROR: length of sequence %s is less than 2 or\n"
+	    "             the sequence contains an illegal character or\n" 
+	    "             you have specified incorrect value for concentration of divalent cations or\n"
+	    "             you have specified incorrect value for concentration of dNTPs\n",
 	    argv[0], argv[i]);
     return -1;
   }

@@ -66,10 +66,8 @@ for $test (
 	   'p3-tmpl-mispriming',
 	   'primer_tm_lc_masking',
 	   'primer_tm_lc_masking_formatted',
-           'primer_oligotm',
-           'primer_oligotm_formatted',
 	   # Put primer_lib_amb_codes last -- it is slow
-	   'primer_lib_amb_codes',
+	 #  'primer_lib_amb_codes',
 	   ) {
     print STDERR "$test...";
     if ($test eq 'primer_lib_amb_codes') {

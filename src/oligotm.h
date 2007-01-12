@@ -62,7 +62,7 @@ double end_oligodg(const char *oligo, int len, int tm_santalucia);
    since mM is the usual units in PCR applications.
 
  */
-double long_seq_tm(const char *seq, int start, int length, double salt_conc);
+double long_seq_tm(const char *seq, int start, int length, double salt_conc, double divalent_conc, double dntp_conc);
 
 /* 
    For olgigotm() and seqtm()
@@ -133,11 +133,13 @@ double long_seq_tm(const char *seq, int start, int length, double salt_conc);
 
  */
 
-double oligotm(const  char *seq,    /* The sequence. */
-               double dna_conc,     /* DNA concentration (nanomolar). */
-               double salt_conc,    /* Salt concentration (millimolar). */
-	       int tm_santalucia,   /* See description above. */
-	       int salt_corrections /* See description above. */
+double oligotm(const  char *seq,     /* The sequence. */
+               double dna_conc,      /* DNA concentration (nanomolar). */
+               double salt_conc,     /* Salt concentration (millimolar). */
+	       double divalent_conc, /* Concentration of divalent cations (millimolar) */
+	       double dntp_conc,     /* Concentration of dNTPs (millimolar) */
+	       int tm_santalucia,    /* See description above. */
+	       int salt_corrections  /* See description above. */
 	       );
 
 /* Return the melting temperature of a given sequence, 'seq', of any
@@ -145,8 +147,9 @@ double oligotm(const  char *seq,    /* The sequence. */
 */
 double seqtm(const  char *seq,  /* The sequence. */
              double dna_conc,   /* DNA concentration (nanomolar). */
-             double salt_conc,  /* Salt concentration (millimolar). */
-
+             double salt_conc,  /* Concentration of divalent cations (millimolar). */
+	     double divalent_conc, /* Concentration of divalent cations (millimolar) */
+	     double dntp_conc,     /* Concentration of dNTPs (millimolar) */
              int    nn_max_len,  /* The maximum sequence length for
 				    using the nearest neighbor model
 				    (as implemented in oligotm.  For

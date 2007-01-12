@@ -267,9 +267,9 @@ read_record(prog_args, pa, sa)
 	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MIN_GC", pa->io_min_gc);
             COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MAX_GC", pa->io_max_gc);
 	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_SALT_CONC",pa->io_salt_conc);
-           COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DIVALENT_CONC",pa->io_divalent_conc);
+           COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DIVALENT_CONC",pa->io_divalent_conc); /* added by T.Koressaar */
 	   COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DNTP_CONC",pa->io_dntp_conc); /* added by T.Koressaar */
-	   COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DNA_CONC", pa->io_dna_conc); /* added by T.Koressaar */
+	   COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DNA_CONC", pa->io_dna_conc);
 	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_NUM_NS", pa->io_num_ns_accepted);
 	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_MIN_QUALITY", pa->io_min_quality);
 
