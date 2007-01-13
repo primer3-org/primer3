@@ -54,7 +54,8 @@ in ../test/long_seq_tm_test.pl.
 #include <string.h>
 #include <math.h>
 
-double long_seq_tm(const char* s, int start, int len, double salt_conc, double divalent_conc, double dntp_conc);
+#include "oligotm.h"
+  /* double long_seq_tm(const char* s, int start, int len, double salt_conc, double divalent_conc, double dntp_conc); */
 
 int
 main(argc, argv)

@@ -37,7 +37,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <unistd.h>
 #include "dpal.h"
-#include "primer3_release.h"
 
 /* 
  * Panic messages for when the program runs out of memory.

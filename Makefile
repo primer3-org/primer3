@@ -52,21 +52,24 @@ CFLAGS  = $(CC_OPTS) $(O_OPTS)
 LDFLAGS = -g
 
 # ======================================================================
-# If you have trouble with library skew when moving primer3  executables
-# between system, set LIBOPTS to -static
+# If you have trouble with library skew when moving primer3 executables
+# between systems, you might want to set LIBOPTS to -static
 LIBOPTS =
 
-PRIMER_EXE  = primer3_core
-OLIGOTM_LIB = liboligotm.a
-LIBRARIES   = $(OLIGOTM_LIB)
-RANLIB      = ranlib
+PRIMER_EXE      = primer3_core
+OLIGOTM_LIB     = liboligotm.a
+OLIGOTM_DYN_LIB = liboligotm.so.1.2.0
+LIBRARIES       = $(OLIGOTM_LIB)
+RANLIB          = ranlib
 
-PRIMER_OBJECTS=primer3_main.o\
-               primer3.o\
-               dpal_primer.o\
-               format_output.o\
-               boulder_input.o\
-               $(OLIGOTM_LIB)
+PRIMER_OBJECTS1=primer3_main.o\
+                primer3.o\
+                dpal_primer.o\
+                format_output.o\
+                boulder_input.o\
+
+PRIMER_OBJECTS=$(PRIMER_OBJECTS1) $(OLIGOTM_LIB)
+PRIMER_DYN_OBJECTS=$(PRIMER_OBJECTS1) $(OLIGOTM_DYN_LIB)
 
 EXES=$(PRIMER_EXE) ntdpal oligotm long_seq_tm_test
 
@@ -81,15 +84,18 @@ clean: clean_src
 $(OLIGOTM_LIB): oligotm.o
 	ar rv $@ oligotm.o
 	$(RANLIB) $@
-	gcc -shared -W1,-soname,liboligotm.so.1 -o liboligotm.so.1.2.0 oligotm.o
+
+$(OLIGOTM_DYN_LIB): oligotm.o
+	gcc -shared -W1,-soname,liboligotm.so.1 -o $(OLIGOTM_DYN_LIB) oligotm.o
 
 $(PRIMER_EXE): $(PRIMER_OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
 
-# For use with the "testcenter" testing program (CenterLine Software
-# Inc, http://www.centerline.com)
-# $(PRIMER_EXE).tc: $(PRIMER_OBJECTS) /usr/lib/debug/malloc.o
-#	proof $(CC) $(CFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
+# For use with valgrind, which requires at lease one
+# dynamically linked library.  Automatic testing with
+# valgrind is not implemented at this point.
+$(PRIMER_EXE).dyn: $(PRIMER_DYN_OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(PRIMER_DYN_OBJECTS) $(LIBOPTS) $(LDLIBS)
 
 ntdpal: ntdpal_main.o dpal.o
 	$(CC) $(LDFLAGS) -o $@ ntdpal_main.o dpal.o
