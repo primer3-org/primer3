@@ -76,7 +76,7 @@ EXES=$(PRIMER_EXE) ntdpal oligotm long_seq_tm_test
 all: $(EXES) $(LIBRARIES)
 
 clean_src:
-	-rm *.o $(EXES) *~ $(LIBRARIES)
+	-rm -f *.o $(EXES) $(PRIMER_EXE).dyn *~ $(LIBRARIES)
 
 clean: clean_src
 	cd ../test/; make clean
