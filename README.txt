@@ -6,6 +6,8 @@ Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
 
+Most of primer3 is released under the following _new_ BSD license:
+
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
 met:
@@ -32,6 +34,8 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+The oligtm library and tests are released under the GPL.  See
+file src/gpl.txt or go to http://www.gnu.org/licenses/gpl.txt.
 
 INTRODUCTION
 ------------
