@@ -1,4 +1,4 @@
-release 1.1.0 XXXXX ==================================================
+release 1.1.0 1/17/2007 ==================================================
 
  Added tags PRIMER_TM_SANTALUCIA, PRIMER_SALT_CORRECTIONS,
    PRIMER_LOWERCASE_MASKING, PRIMER_DIVALENT_CONC,
