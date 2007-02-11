@@ -119,6 +119,39 @@ functionality (local, a.k.a. Smith-Waterman, global,
 a.k.a. Needleman-Wunsch, plus "half global").  It is provided
 strictly as is; for further documentation please see the code.
 
+BUILDING OSX UNIVERSAL BINARY
+-----------------------------
+
+** To build a processor-native, non-universal binary of primer3, 
+the following is unneccesary**.  
+
+The instructions above should be sufficient.
+
+A pre-compiled, universal binary download for OSX is available from 
+http://sourceforge.net/projects/primer3/ for the current release.
+
+These instructions assume you want to build binaries compatible 
+with *both* of the current processor architectures used by the Apple
+platform (i,e. the binaries will be run on both PPC and intel platforms).
+
+Provided you have the OS X developer tools installed
+(you can download from http://developer.apple.com after
+registering for a free account), you can compile a universal
+build (intel and PPC native) of primer3.
+
+o you must be running OS X > 10.4 and should have the most
+	recent version of XCode
+o replace the `Makefile` with Makefile.OSX (remove the '.OSX')
+o run `make all` in the src directory as directed above
+o run the tests as directed above
+
+Additional instructions for 'installing' the binaries may be found in
+the README.OSX.txt.
+
+You should be able to compile a 3-way binary which includes PPC64 support 
+(intel, PPC, PPC64) by adding the `-arch ppc64` flag to the 
+end of both the CFLAGS and LDFLAGS lines at the top of Makefile.OSX.  
+This has not been tested.
 
 SYSTEM REQUIREMENTS
 -------------------
