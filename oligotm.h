@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
@@ -54,7 +54,12 @@ double end_oligodg(const char *oligo, int len, int tm_santalucia);
    since mM is the usual units in PCR applications.
 
  */
-double long_seq_tm(const char *seq, int start, int length, double salt_conc, double divalent_conc, double dntp_conc);
+double long_seq_tm(const char *seq, 
+		   int start, 
+		   int length, 
+		   double salt_conc, 
+		   double divalent_conc, 
+		   double dntp_conc);
 
 /* 
    For olgigotm() and seqtm()
@@ -153,7 +158,6 @@ double seqtm(const  char *seq,  /* The sequence. */
 	     int tm_santalucia,   /* See description above. */
 	     int salt_corrections /* See description above. */
 	     );
-
 
 /* Return the delta G of disruption of oligo using the nearest neighbor model.
    The length of seq should be relatively short, 

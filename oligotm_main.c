@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
@@ -34,9 +34,7 @@ All rights reserved.
    the function oligotm() in oligtm.c
 */
 int
-main(argc, argv)
-    int argc;
-    char **argv;
+main(int argc, char **argv)
 {
   double tm;
 
@@ -107,83 +105,82 @@ main(argc, argv)
 "    if not, write to the Free Software Foundation, Inc.,\n"
 "    51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA\n";
 
-   char *endptr;
+   char *endptr, *seq;
    long mv = 50, d = 50;
    double dv = 0, n = 0;
    int tm_santalucia=0, salt_corrections=0;
-   int i;
-  if (argc < 2 || argc > 14) {
-    fprintf(stderr, msg, argv[0]);       
-    fprintf(stderr, copyright);
-    return -1;
-  }
+   int i, j, len;
+   if (argc < 2 || argc > 14) {
+     fprintf(stderr, msg, argv[0]);       
+     fprintf(stderr, copyright);
+     return -1;
+   }
 
-  for (i=1; i < argc; ++i) {
-    if (!strncmp("-mv", argv[i], 3)) { /* conc of monovalent cations */
-      mv = strtol(argv[i+1], &endptr, 10);
-      if ('\0' != *endptr) {
-	fprintf(stderr, msg, argv[0]);
-	exit(-1);
-      }
-      i++;
-    } else if (!strncmp("-dv", argv[i], 3)) { /* conc of divalent cations; added by T.Koressaar */
+   for (i=1; i < argc; ++i) {
+     if (!strncmp("-mv", argv[i], 3)) { /* conc of monovalent cations */
+       mv = strtol(argv[i+1], &endptr, 10);
+       if ('\0' != *endptr) {
+	 fprintf(stderr, msg, argv[0]);
+	 exit(-1);
+       }
+       i++;
+     } else if (!strncmp("-dv", argv[i], 3)) { /* conc of divalent cations; added by T.Koressaar */
        dv = strtod(argv[i+1], &endptr);
        if('\0' != *endptr) {
-	  fprintf(stderr, msg, argv[0]);
-	  exit(-1);
+	 fprintf(stderr, msg, argv[0]);
+	 exit(-1);
        }
        i++;
-    } else if (!strncmp("-n", argv[i], 2)) { /* conc of dNTP; added by T.Koressaar */
+     } else if (!strncmp("-n", argv[i], 2)) { /* conc of dNTP; added by T.Koressaar */
        n = strtod(argv[i+1], &endptr);
        if('\0' != *endptr) {
-	  fprintf(stderr, msg, argv[0]);
-	  exit(-1);
+	 fprintf(stderr, msg, argv[0]);
+	 exit(-1);
        }
        i++;
-    } else if (!strncmp("-d", argv[i], 2)) {
+     } else if (!strncmp("-d", argv[i], 2)) {
        d = strtol(argv[i+1], &endptr, 10);
        if ('\0' != *endptr) {
-	  fprintf(stderr, msg, argv[0]);
-	  exit(-1);
+	 fprintf(stderr, msg, argv[0]);
+	 exit(-1);
        }
        i++;
-    } else if (!strncmp("-tp", argv[i], 3)) { /* added by T.Koressaar */
+     } else if (!strncmp("-tp", argv[i], 3)) { /* added by T.Koressaar */
        tm_santalucia = (int)strtol(argv[i+1], &endptr, 10);
        if ('\0' != *endptr || tm_santalucia<0 || tm_santalucia>1) {	  
-	  fprintf(stderr, msg, argv[0]);
-	  exit(-1);
+	 fprintf(stderr, msg, argv[0]);
+	 exit(-1);
        }
        i++;
-    } else if (!strncmp("-sc", argv[i], 3)) { /* added by T.Koressaar */
+     } else if (!strncmp("-sc", argv[i], 3)) { /* added by T.Koressaar */
        salt_corrections = (int)strtol(argv[i+1], &endptr, 10);
        if ('\0' != *endptr || salt_corrections<0 || salt_corrections>2) {
 	 fprintf(stderr, msg, argv[0]);
 	 exit(-1);
-      }
+       }
        i++;
-    } else if (!strncmp("-i", argv[i], 2)) {
+     } else if (!strncmp("-i", argv[i], 2)) {
        fprintf(stderr, info, argv[0]);
        exit(-1);	    
-    } else if (!strncmp("-", argv[i], 1)) {
+     } else if (!strncmp("-", argv[i], 1)) {
        /* Unknown option. */
        fprintf(stderr, msg, argv[0]);
        exit(-1);
-    } else
-      break;		/* all args processed. go on to sequences. */
-  }
+     } else
+       break;		/* all args processed. go on to sequences. */
+   }
    
   if(!argv[i]) { /* if no oligonucleotide sequence is specified */
     fprintf(stderr, msg, argv[0]);
     exit(-1);
   }
-   /* input sequence to uppercase */
-   int j,len;
-   char *seq = argv[i];
-   len=strlen(seq);
-   for(j=0;j<len;j++) seq[j]=toupper(seq[j]);
+  /* input sequence to uppercase */
+  seq = argv[i];
+  len=strlen(seq);
+  for(j=0;j<len;j++) seq[j]=toupper(seq[j]);
    
-   tm = oligotm(seq, d, mv, dv, n, tm_santalucia, salt_corrections);
-   if (OLIGOTM_ERROR == tm) {
+  tm = oligotm(seq, d, mv, dv, n, tm_santalucia, salt_corrections);
+  if (OLIGOTM_ERROR == tm) {
     fprintf(stderr,
 	    "%s ERROR: length of sequence %s is less than 2 or\n"
 	    "             the sequence contains an illegal character or\n" 

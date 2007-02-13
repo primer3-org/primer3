@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
@@ -299,6 +299,8 @@ oligotm(s, DNA_nM, K_mM, divalent_conc, dntp_conc, tm_santalucia, salt_correctio
   register int dh = 0, ds = 0;
   register char c;
   double delta_H, delta_S;
+  double Tm; /* Melting temperature */
+  double correction;
   int len, sym;
   const char* d = s;
    if(divalent_to_monovalent(divalent_conc, dntp_conc) == OLIGOTM_ERROR) return OLIGOTM_ERROR;
@@ -384,7 +386,7 @@ oligotm(s, DNA_nM, K_mM, divalent_conc, dntp_conc, tm_santalucia, salt_correctio
 			    * Nearest-neighbor thermodynamic values for ds
 			    * are in in .1 cal/K per mol of interaction.
 			    */
-  double Tm=0;  /* Melting temperature */
+  Tm=0;  /* Melting temperature */
   len=len+1;
   if (salt_corrections == SALT_CORRECTION_SCHILDKRAUT) {
     double correction=- 273.15 + 16.6 * log10(K_mM/1000.0);
@@ -405,12 +407,12 @@ oligotm(s, DNA_nM, K_mM, divalent_conc, dntp_conc, tm_santalucia, salt_correctio
       if(*d == 'C' || *d == 'G') {
 	gcPercent++;
       }
-      *d++;
+      *d++;  /* WARNING -- compiler says value not  used */
       i++;
     }      
     gcPercent = (double)gcPercent/((double)len);
 
-    double correction 
+    /* double */ correction 
       = (((4.29 * gcPercent) - 3.95) * pow(10,-5) * log(K_mM / 1000.0))
       + (9.40 * pow(10,-6) * (pow(log(K_mM / 1000.0),2)));
 
@@ -567,11 +569,12 @@ long_seq_tm(s, start, len, salt_conc, divalent_conc, dntp_conc)
   double divalent_conc;
   double dntp_conc;
 {
+  int GC_count = 0;
+  const char *p, *end;
+
    if(divalent_to_monovalent(divalent_conc, dntp_conc) == OLIGOTM_ERROR) return OLIGOTM_ERROR;
    
    salt_conc = salt_conc + divalent_to_monovalent(divalent_conc, dntp_conc);
-   int GC_count = 0;
-  const char *p, *end;
 
   if(start + len > strlen(s) || start < 0 || len <= 0)
     return OLIGOTM_ERROR;
@@ -590,7 +593,8 @@ long_seq_tm(s, start, len, salt_conc, divalent_conc, dntp_conc)
 
 }
 
-int symmetry(const char* seq) { /* for testing if string is symmetrical*/ 
+ /* Return 1 if string is symmetrical, 0 otherwise. */ 
+int symmetry(const char* seq) {
    register char s;
    register char e;
    const char *seq_end=seq;
@@ -624,10 +628,14 @@ int symmetry(const char* seq) { /* for testing if string is symmetrical*/
    return 1;
 }
 
-double divalent_to_monovalent(double divalent, double dntp){ /* converting divalent salt concentration to monovalent */
+/* Convert divalent salt concentration to monovalent */
+double divalent_to_monovalent(double divalent, 
+			      double dntp)
+{
    if(divalent==0) dntp=0;
    if(divalent<0 || dntp<0) return OLIGOTM_ERROR;
-   if(divalent<dntp) /* according to theory melting temperature doesn't depend on divalent cations */
+   if(divalent<dntp) 
+     /* According to theory, melting temperature doesn't depend on divalent cations */
      divalent=dntp;  
    return 120*(sqrt(divalent-dntp));
 }
