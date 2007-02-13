@@ -100,18 +100,18 @@ If you do not use gcc, modify the makefile to
   compile and link flags.
 
 $ make all
+
 # Warnings about pr_release being unused are harmless.
 # You should have created executables primer3_core, ntdpal,
 #  olgotm, and long_seq_tm_test
 
-$ cd ../test
-$ perl -w p3test.pl
-$ perl -w dpal_test.pl
+$ make test
+
 # You should not see 'FAILED' during the tests.
 
 If your perl command is not called perl (for example, if it is
-called perl5) you will have to modify the internals of the test
-scripts).
+called perl5) you will have to modify the 
+Makefile in the test/ directory.
 
 ntdpal (NucleoTide Dynamic Programming ALignment) is a
 stand-alone program that provides primer3's alignment
