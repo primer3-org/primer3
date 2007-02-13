@@ -141,8 +141,7 @@ build (intel and PPC native) of primer3.
 
 o you must be running OS X > 10.4 and should have the most
 	recent version of XCode
-o replace the `Makefile` with Makefile.OSX (remove the '.OSX')
-o run `make all` in the src directory as directed above
+o then run `make -f Makefile.OSXUniversal all`
 o run the tests as directed above
 
 Additional instructions for 'installing' the binaries may be found in
