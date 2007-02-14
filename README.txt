@@ -46,9 +46,11 @@ o oligonucleotide melting temperature, size, GC content,
 
 o PCR product size,
 
-o positional constraints within the source sequence, and
+o positional constraints within the source (template) sequence, and
 
-o miscellaneous other constraints.
+o possibilities for ectopic priming (amplifying the wrong sequence)
+
+o many other constraints.
 
 All of these criteria are user-specifiable as constraints, and
 some are specifiable as terms in an objective function that
@@ -560,6 +562,12 @@ Primer3 will return legal primers pairs in the first range
 regardless the value of the objective function for these pairs.
 Only if there are an insufficient number of primers in the first
 range will primer3 return primers in a subsequent range.
+
+For those with primarily a computational background,
+the PCR product size is size (in base pairs) 
+of the DNA fragment that would be produced by the
+PCR reaction on the given sequence template.  This
+would, of course, include the primers themselves.
 
 PRIMER_PICK_INTERNAL_OLIGO (boolean, default 0)
 
@@ -1299,21 +1307,18 @@ s describes user-correctible errors detected in the input
 errors.
 
 PRIMER_LEFT=i,n
-(FORWARD_PRIMER if -v2_compat is set)
 
 The selected left primer (the primer to the left in the input
 sequence).  i is the 0-based index of the start base of the
 primer, and n is t its length.
 
 PRIMER_RIGHT=i,n
-(REVERSE_PRIMER if -v2_compat is set)
 
 The selected right primer (the primer to the right in the input
 sequence).  i is the 0-based index of the last base of the
 primer, and n is its length.
 
 PRIMER_INTERNAL_OLIGO=i,n
-(MIDDLE_OLIGO if -v2_compat is set)
 
 The selected internal oligo. Primer3 outputs this tag if
 PRIMER_PICK_INTERNAL_OLIGO was non-0.  If primer3 fails to pick a
@@ -1322,7 +1327,6 @@ middle oligo upon request, this tag will not be output.  i is the
 length.
 
 PRIMER_PRODUCT_SIZE=x
-(PRODUCT_SIZE if -v2_compat is set)
 
 x is the product size of the PCR product.
 
