@@ -407,7 +407,7 @@ oligotm(s, DNA_nM, K_mM, divalent_conc, dntp_conc, tm_santalucia, salt_correctio
       if(*d == 'C' || *d == 'G') {
 	gcPercent++;
       }
-      *d++;  /* WARNING -- compiler says value not  used */
+      d++; 
       i++;
     }      
     gcPercent = (double)gcPercent/((double)len);
