@@ -536,15 +536,26 @@ oligo_pair_seen(pair, retpair)
     const primer_pair *pair;
     const pair_array_t *retpair;
 {
-    const primer_pair *q = &retpair->pairs[0], 
-		      *stop = &retpair->pairs[retpair->num_pairs];
-    for (; q < stop; q++) {
-	if (q->left->start == pair->left->start
-	    && q->left->length == pair->left->length
-	    && q->right->start == pair->right->start
-	    && q->right->length == pair->right->length) return 1;
-    }
+  const primer_pair *q, *stop;
+
+  /* OLD CODE: const primer_pair *q = &retpair->pairs[0], 
+   *stop = &retpair->pairs[retpair->num_pairs]; */
+
+  /* retpair might not have any pairs in it yet (add_pair
+     allocates memory for retpair->pairs. */
+  if (retpair->num_pairs == 0)
     return 0;
+
+  q = &retpair->pairs[0];
+  stop = &retpair->pairs[retpair->num_pairs];  
+  
+  for (; q < stop; q++) {
+    if (q->left->start == pair->left->start
+	&& q->left->length == pair->left->length
+	&& q->right->start == pair->right->start
+	&& q->right->length == pair->right->length) return 1;
+  }
+  return 0;
 }
 
 /* Add 'pair' to 'retpair'. */
