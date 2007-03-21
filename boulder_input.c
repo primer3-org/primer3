@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
@@ -1035,7 +1035,7 @@ parse_seq_quality(s, num)
 
    p = q = s;
    k = strlen(s);
-   g = *num = malloc(sizeof(int)*k);
+   g = *num = pr_safe_malloc(sizeof(int)*k);
    while(*p == ' ' || *p == '\t'){
       p++;
       if(*p == '\0' || *p == '\n') return 0;
@@ -1050,4 +1050,3 @@ parse_seq_quality(s, num)
    }
    return i;
 }
-
