@@ -1052,11 +1052,16 @@ _dpal_long_nopath_maxgap1_local_end(X, Y, xlen, ylen, in, out)
     fprintf(stderr, "_dpal_long_nopath_maxgap1_local_end called\n");
 #endif
 
+    if (ylen < 3) {
+      fprintf(stderr, "_dpal_long_nopath_maxgap1_local_end requires ylen >= 3\n");
+      abort();
+    }
+
     P0 = malloc(sizeof(int)*ylen);
     if (!P0) { DPAL_OOM_ERROR; }
     P1 = malloc(sizeof(int)*ylen);
     if (!P1) { DPAL_OOM_ERROR; }
-    P2 = malloc(sizeof(int)*ylen);
+    P2 = malloc(sizeof(int)*ylen);  /* Memory was allocated here. */
     if (!P2) { DPAL_OOM_ERROR; }
 
     S0 = P0; S1 = P1; S2 = P2;
