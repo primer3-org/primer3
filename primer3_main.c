@@ -2712,7 +2712,11 @@ oligo_mispriming(h, pa, sa, l, align_args)
     tmp_char = target[first_untrimmed];
     target[first_untrimmed] = '\0';
 
-    tmp_score = align(oseq, target, align_args);
+    if (strlen(target) < 3) {
+      tmp_score = 3;
+    } else {
+      tmp_score = align(oseq, target, align_args);
+    }
 
     if (debug) {
       if (l == OT_LEFT) fprintf(stderr, "\n************ OLIGO = LEFT\n");

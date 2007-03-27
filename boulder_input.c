@@ -864,8 +864,8 @@ read_seq_lib(lib, filename, errfrag)
 	pr_append_new_chunk(&lib->error, "Empty ");
 	goto ERROR;
     }
-    else if(strlen(lib->seqs[i]) == 0) {
-	pr_append_new_chunk(&lib->error, "Empty sequence in ");
+    else if(strlen(lib->seqs[i]) < 3) {
+	pr_append_new_chunk(&lib->error, "Sequence length < 3 in ");
 	goto ERROR;
     }
     tmp = upcase_and_check_char(lib->seqs[i]);
