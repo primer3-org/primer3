@@ -429,12 +429,17 @@ weight mentioned above.  If the id line contains no asterisk then
 the weight defaults to 1.0.  The alignment scoring system used is
 the same as for calculating complementarity among oligos (e.g.
 PRIMER_SELF_ANY), except for the handling of IUB/IUPAC ambiguity
-codes (discussed below).  The remainder of an entry contains the
-sequence as lines following the id line up until a line starting
-with '>' or the end of the file.  Whitespace and newlines are
-ignored.  Characters 'A', 'T', 'G', 'C', 'a', 't', 'g', 'c' 
-and IUB/IUPAC 'ambiguity' codes ('R, 'Y', 'K', 'M', 'S', 'W', 'N',
-including lower case) are retained. 
+codes (discussed below).  
+
+The remainder of an entry contains the sequence as lines
+following the id line up until a line starting with '>' or
+the end of the file.  Whitespace and newlines are ignored.
+Characters 'A', 'T', 'G', 'C', 'a', 't', 'g', 'c' and
+IUB/IUPAC 'ambiguity' codes ('R, 'Y', 'K', 'M', 'S', 'W',
+'N', including lower case) are retained. For technical
+reasons the length of the sequence must be >= 3. Of course,
+sequences of length < 10 or so are probably useless, but
+will be accepted without complaint.
 
 WARNING: always set PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS=0
 if any sequence in the library contains strings of 'N's:
