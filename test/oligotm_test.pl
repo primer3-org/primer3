@@ -1,5 +1,5 @@
 # Copyright (c) 2007
-# Triinu Koressaar an Maido Remm
+# Triinu Koressaar and Maido Remm
 # All rights reserved.
 # 
 #     This file is part of the oligotm library.
