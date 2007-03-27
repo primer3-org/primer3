@@ -22,7 +22,7 @@ $exe = '../src/primer3_core';
 $exe = $ARGV[0] if defined $ARGV[0];
 $EXIT_STAT = 0;
 
-die "Cannot execute $exe" unless -x $exe;
+# die "Cannot execute $exe" unless -x $exe;
 
 print STDERR "\n\n$0: testing $exe\n\nSTART, ", scalar(localtime), "\n";
 
