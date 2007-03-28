@@ -34,6 +34,4 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef RELEASE_H
 #define RELEASE_H 1
 static const char * pr_release = "primer3 release 1.1.1";
-/* This is a beta release, identical to release 1.0b
-   except for version number */
 #endif
