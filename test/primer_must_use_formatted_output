@@ -34,7 +34,7 @@ Left      10     0     0     0     0     0     7     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.0
+primer3 release 1.1.1
 
 
 PRIMER PICKING RESULTS FOR high_tm
@@ -74,7 +74,7 @@ Statistics
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.0
+primer3 release 1.1.1
 
 
 PRIMER PICKING RESULTS FOR high_tm_and_self_any
@@ -114,7 +114,7 @@ Statistics
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.0
+primer3 release 1.1.1
 
 
 PRIMER PICKING RESULTS FOR high_tm_and_self_any_and_target
@@ -154,7 +154,7 @@ Statistics
 Right      3     0     0     0     0     0     0     2     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.0
+primer3 release 1.1.1
 
 
 PRIMER PICKING RESULTS FOR high_tm_and_self_any_and_excl_region
@@ -196,7 +196,7 @@ Statistics
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.0
+primer3 release 1.1.1
 
 
 PRIMER PICKING RESULTS FOR high_tm_and_self_any_and_incl_region
@@ -236,7 +236,7 @@ KEYS (in order of precedence):
 Statistics
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.0
+primer3 release 1.1.1
 
 
 PRIMER PICKING RESULTS FOR left_high_tm_and_self_any_and_right_bad_gc
@@ -272,7 +272,7 @@ KEYS (in order of precedence):
 Statistics
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.0
+primer3 release 1.1.1
 
 
 PRIMER PICKING RESULTS FOR left_high_tm_and_self_any_and_right_bad_gc_and_target
@@ -308,7 +308,7 @@ KEYS (in order of precedence):
 Statistics
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.0
+primer3 release 1.1.1
 
 
 PRIMER PICKING RESULTS FOR internal_too_short
@@ -351,7 +351,7 @@ KEYS (in order of precedence):
 Statistics
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.0
+primer3 release 1.1.1
 
 
 PRIMER PICKING RESULTS FOR internal_too_cold
@@ -390,7 +390,7 @@ KEYS (in order of precedence):
 Statistics
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.0
+primer3 release 1.1.1
 
 
 PRIMER PICKING RESULTS FOR internal_too_cold2
@@ -433,7 +433,7 @@ Statistics
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.0
+primer3 release 1.1.1
 
 
 PRIMER PICKING RESULTS FOR mispriming
@@ -476,6 +476,6 @@ Statistics
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.0
+primer3 release 1.1.1
 
 
