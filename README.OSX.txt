@@ -1,4 +1,4 @@
-OS X (10.4) Universal Binary Installation Instructions (bcf; 2/6/2006:1200)
+OS X (10.4) Universal Binary Installation Instructions (bcf; 3/27/2006;23:33)
 
 
 How to install this software
@@ -12,7 +12,6 @@ How to install this software
 
 4.  (Optional) Within this folder run:
 	a. perl -w p3test.pl
-	b. perl -w dpal_test.pl
 	
 5.  (Optional) You should not see 'FAILED' during the tests.
 
