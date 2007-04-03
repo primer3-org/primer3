@@ -1,10 +1,10 @@
-Windows Installation Instructions (bcf; 3/20/2006:1200)
+Windows Installation Instructions (bcf; 4/3/2006:0945)
 ---------------------
 
-primer3 release 1.1.0
+primer3 release 1.1.1
 ---------------------
 
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
@@ -13,13 +13,45 @@ How to install this software
 ============================
 
 1. Unzip the '.zip' file downloaded from SourceForge.net
-2. You will create a primer3-1.1.0-beta folder in the location where the file was unzipped
-3. You may move this folder to a location of your choice
+2. You will create a primer3-1.1.1 folder in the location where the file was unzipped
+3. You may copy the files from the 'bin' directory of the primer3-1.1.1 folder to a
+location of your choice.  The exact same files are located within the 'src' folder so that
+the tests may be run (windows does not allow relative paths in shortcuts).
+
+Running the tests
+=================
+We are working on integrating the test suite to windows.  However, substantial differences
+between windows and Unix/Linux require some differences in the test script.  
+
+You must also install a perl distribution to run the windows tests.  
+
+We *strongly* recommend you install ActiveState perl (http://www.activestate.com/products/activeperl/) 
+as this was used to test our primer3 builds, and it is known to work.
+
+***The perl test script for windows has a different name, at the moment, than that for the
+unix/linux versions. See below.***
+
+1. Click on 'Start > Run...'
+2. Type 'cmd' into the space provided
+3. Hit enter (or select 'OK')
+4. Navigate to the location of the tests:
+    
+    A. if you put it in C:/Documents and Settings/YourName/primer3-1.1.1/test/,
+    you would type 'cd c:/Documents and Settings/YourName/primer3-1.1.1/test/'
+    
+    B. you can also type 'cd ' (don't forget the space after cd) 
+    and drag the primer3-1.1.1 folder onto the command-line window from 
+    windows explorer, this will fill in the location for you
+
+5. On the command line, run 'perl p3testz.pl -w' in this directory
+6. You should see [OK] for all of the tests.
 
 Running the software
 ====================
 
-To run the program, you must do so from the MS-DOS command-line.  The intricacies of the DOS commandline are beyond the scope of this document.  Google for more information, if needed.  Here is a quick summary:
+To run the program, you must do so from the MS-DOS command-line.  The intricacies of the 
+DOS commandline are beyond the scope of this document.  Google for more information, if 
+needed.  Here is a quick summary:
 
 1. Click on 'Start > Run...'
 2. Type 'cmd' into the space provided
