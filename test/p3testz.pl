@@ -14,7 +14,9 @@ use Getopt::Long;
 sub perldiff($$);
 sub test_fatal_errors($$);
 sub main();
-sub _nowarn_system($); # Call system() with warnings turned off; need for MS Windows.
+
+# Call system() with warnings turned off; needed for ActiveState / MS Windows.
+sub _nowarn_system($); 
 
 our $def_executable = "../src/primer3_core";
 our $exe = '../src/primer3_core';
@@ -25,6 +27,9 @@ main();
 sub main() {
     my %args;
 
+    # This handles various abbreviations and formats,
+    # such as  -e ../src/primer3_core, --exe ../src/primer3_core, 
+    # --exe=.../src/primer3_core
     if (!GetOptions(\%args,
 		    'valgrind',
 		    'windows',
@@ -43,7 +48,8 @@ sub main() {
 
     if ($winFlag) {
 	$exe = '..\\src\\primer3_core.exe';
-	$def_executable = $exe; # keep things happy @ line 237
+	# $def_executable = $exe; # keep things happy @ line 237 Brant probably not necessary any more
+                                  # Also, line numbers of particular statements are not very stable.
     }
 
     my $exit_stat = 0;
