@@ -1,54 +1,49 @@
 # Regression test driver for the primer3_core executable.
 #
-# Usage: perl p3test.pl [<primer3>] [-w|--windows] [-v|--valgrind]
+# Usage: perl p3test.pl [-executable <primer3 executable>] [-w|--windows] [-v|--valgrind]
 #
-# <primer3> defaults to ../src/primer3_core
-#
-# If <primer3> is specified, the executable run is <primer3>.
-#
-# Stderr difference tests for fatal errors are performed only if
-# <primer3> is '<any dir>/primer3_core' (because the executable
-# name is part of the text written to stderr).
+# <primer3 executable> defaults to ../src/primer3_core for
+# unless -w or --windows is specified, in which case
+# it defaults to ../src/primer3_core.exe
 
-#use warnings 'all';
+use warnings 'all';
 use strict;
 use Cwd;
+use Getopt::Long;
 
 sub perldiff($$);
 sub test_fatal_errors($$);
 sub main();
+sub _nowarn_system($); # Call system() with warnings turned off; need for MS Windows.
 
 our $def_executable = "../src/primer3_core";
 our $exe = '../src/primer3_core';
+our $verbose;
 
 main();
 
 sub main() {
+    my %args;
 
-    $exe = $ARGV[0] if defined $ARGV[0];
+    if (!GetOptions(\%args,
+		    'valgrind',
+		    'windows',
+		    'verbose',
+		    'executable=s',
+		    )) {
+	print STDERR "Usage: $0 [--executable <primer3 executable>] [ --valgrind ] [  --verbose ] [--windows]\n";
+    }
 
-    my ($winFlag, $valgrind_prefix) = (0, '');
+    $exe = $args{'executable'} if defined$ args{'executable'};
+    my $winFlag = defined $args{'windows'};
+    $verbose = defined $args{'verbose'};
+    my $valgrind_prefix = $args{valgrind} ? 
+	"valgrind --leak-check=yes --show-reachable=yes --logfile=p3vg "
+	: '';
 
-    # catch ARGV for windows/valgrind commands...
-    for my $arg (@ARGV) {
-	if ($arg eq "--windows" || $arg eq "-w") {
-	    # need to automatically get absolute path to windows executable
-	    #my $winPath = getcwd();
-	    # find where path ends with "something/something/test[/]"
-	    #my $regex = "test[/]*\$";
-	    # replace this with "/src/primer3_core.exe"
-	    #$winPath =~ s/$regex/src\/primer3_core\.exe/g;
-	    my $winPath = "..\\src\\primer3_core\.exe";
-	    # shove this into the $exe variable
-	    $exe = $winPath;
-	    $def_executable = $winPath; # keep things happy @ line 237
-	    # set a binary windows flag to 1 (used later - keeps from calling @ARGV again)
-	    $winFlag = 1;
-	}
-	elsif ($arg eq "--valgrind" || $arg eq "-v") {
-	    $valgrind_prefix = 
-		"valgrind --leak-check=yes --show-reachable=yes --logfile=p3vg ";
-	}
+    if ($winFlag) {
+	$exe = '..\\src\\primer3_core.exe';
+	$def_executable = $exe; # keep things happy @ line 237
     }
 
     my $exit_stat = 0;
@@ -57,6 +52,7 @@ sub main() {
 
     print STDERR 
 	"\n\n$0: testing $valgrind_prefix$exe\n\nSTART, ", scalar(localtime), "\n";
+    print STDERR "verbose mode\n" if $verbose;
 
     test_fatal_errors($winFlag, $valgrind_prefix);
 
@@ -139,15 +135,16 @@ sub main() {
 	    }  else {
 		$tmpCmd = "../$exe -strict_tags <../$input >../$tmp";
 	    }
-	    $r = system $tmpCmd;
+
+	    $r = _nowarn_system($tmpCmd);
 	    # back to main directory
 	    chdir "../";
 	} elsif ($test =~ /formatted$/) {
 	    my $cmd = "$valgrind_prefix$exe -strict_tags -format_output <$input >$tmp";
-	    $r = system $cmd;
+	    $r = _nowarn_system($cmd);
 	} else {
 	    my $cmd = "$valgrind_prefix$exe -strict_tags <$input >$tmp";
-	    $r = system $cmd;
+	    $r = _nowarn_system($cmd);
 	}
 
 	unless ($r == 0) {
@@ -187,7 +184,6 @@ sub main() {
 	    }
 	}
     }
-
     unlink("./core") if -e "./core";
     print STDERR "DONE ", scalar(localtime), "\n";
     exit $exit_stat;
@@ -202,8 +198,9 @@ sub perldiff($$) {
     open F2, $f2 or die "open $f2: $!";
     my @f1 = <F1>;
     my @f2 = <F2>;
-    # check for line number differences - if so, return FAIL
+    # If different number of lines, return FAIL.
     if (@f1 != @f2) {
+	print STDERR "Different number of lines\n";
         return 1;
     }
     # check for differences on the lines, themselves
@@ -211,18 +208,47 @@ sub perldiff($$) {
     my $line_end_diff = 0;
     # iterate using lines in file1
     while (@f1) {
+	$linenumber++;
+
 	# get the lines from each respective file
 	my $l1 = shift @f1;
 	my $l2 = shift @f2;
+	my $l1_orig = $l1;
+	my $l2_orig = $l2;
 
-	# strip out directory goofiness containing executable name
-	# (remove up to and including the colon from each file being compared)
+	# Handle the diff in empty_1.{out2,tmp2} due to
+	# different executable names.
+	if ($exe ne $def_executable && $l1 =~/^USAGE:\s+\S+/) {
+	    $l1 =~ s/^USAGE:\s+\S+/USAGE: ... /i;
+	    $l2 =~ s/^USAGE:\s+\S+/USAGE: ... /i;
+	    if ($verbose) {
+		print STDERR "removing executable name from\n",
+		"$l1_orig\n$l2_orig\n";
+	    }
+	}
+
+	# Remove everything up to and including the first
+	# colon, which removes the executable name.
+        # This substitution must follow the USAGE
+	# substitution, above
 	my $regex = "[^:]+:";
-        $l1 =~ s/$regex//g;
-        $l2 =~ s/$regex//g;
+
+	my $quoteexe = quotemeta($def_executable);
+
+	if ($exe ne $def_executable && ($l1 =~ /$quoteexe/ || $l2  =~ /$quoteexe/)) {
+	    $l1 =~ s/$regex//g;
+	    $l2 =~ s/$regex//g;
+	    if ($verbose) {
+		print STDERR "removing <executable>: from\n",
+		"$l1_orig\n$l2_orig\n";
+	    }
+	}
+
         $linenumber++;
 	# check for differences in edited lines (line by line)
 	if ($l1 ne $l2) {
+	    print STDERR 
+		"Difference found at line $linenumber:\n<  $l1_orig\n>  $l2_orig\n";
 	    return 1;
 	}
     }
@@ -243,10 +269,10 @@ sub test_fatal_errors($$) {
                                    # an array context.
 	my $cmd = "$valgrind_prefix$exe <$_ > $root.tmp 2> $root.tmp2";
 	if ($winFlag) {
-	    system $cmd;
+	    _nowarn_system($cmd);
 	}
 	else {
-	    system $cmd;
+	    _nowarn_system($cmd);
 	}
 	if ($? == 0) {
 	    my $r = $? >> 8;
@@ -266,4 +292,10 @@ sub test_fatal_errors($$) {
 	}
     }
     print STDERR $problem ? "[FAILED]" : "[OK]" ,"\n";
+}
+
+sub _nowarn_system($) {
+    my $cmd = shift;
+    no warnings 'all';
+    system $cmd;
 }
