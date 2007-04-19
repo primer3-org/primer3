@@ -6,13 +6,29 @@
 # unless -w or --windows is specified, in which case
 # it defaults to ../src/primer3_core.exe
 
+# NOTES FIX ME -- valgrind flagged leaks,  etc,
+# are not not checked for at the end....
+# The code would go something like this....
+#
+# grep ERROR *vg.pid* */*vg.pid | grep -v 'ERROR SUMMARY: 0 errors'
+#            primer1_list_tmp/*vg.pid*
+#            *vg.pid*
+# grep 'definitely lost' *vg.pid* */*vg.pid | grep -v '0 bytes'
+# grep 'possibly lost' *vg.pid* */*vg.pid | grep -v '0 bytes'
+#
+# valgrind 2.0.0 seems to be abnormally exiting on some tests,
+# but the specific tests vary from run to run.... Perhaps
+# valgrind's exit is arbitrary.  Run diffs
+# even if exit is non-0.  (Steve looking into upgrading to
+# a current rev.
+
 use warnings 'all';
 use strict;
 use Cwd;
 use Getopt::Long;
 
 sub perldiff($$);
-sub test_fatal_errors($$);
+sub test_fatal_errors();
 sub main();
 
 # Call system() with warnings turned off; needed for ActiveState / MS Windows.
@@ -20,14 +36,18 @@ sub _nowarn_system($);
 
 our $def_executable = "../src/primer3_core";
 our $exe = '../src/primer3_core';
-our $verbose;
+our ($verbose, $do_valgrind, $winFlag);
+
+# Old release 2.2.0 of valgrind at Whitehead:
+our $valgrind_format = "valgrind --leak-check=yes --show-reachable=yes --logfile=%s.vg ";
+
 
 main();
 
 sub main() {
     my %args;
 
-    # This handles various abbreviations and formats,
+    # GetOptions handles various flag abbreviations and formats,
     # such as  -e ../src/primer3_core, --exe ../src/primer3_core, 
     # --exe=.../src/primer3_core
     if (!GetOptions(\%args,
@@ -37,14 +57,17 @@ sub main() {
 		    'executable=s',
 		    )) {
 	print STDERR "Usage: $0 [--executable <primer3 executable>] [ --valgrind ] [  --verbose ] [--windows]\n";
+	exit -1;
     }
 
     $exe = $args{'executable'} if defined$ args{'executable'};
-    my $winFlag = defined $args{'windows'};
+    $winFlag = defined $args{'windows'};
     $verbose = defined $args{'verbose'};
-    my $valgrind_prefix = $args{valgrind} ? 
-	"valgrind --leak-check=yes --show-reachable=yes --logfile=p3vg "
-	: '';
+    $do_valgrind = $args{'valgrind'};
+    if ($winFlag && $do_valgrind) {
+	print STDERR "$0: Cannot specify both --valgrind and --windows\n";
+	exit -1;
+    }
 
     if ($winFlag) {
 	$exe = '..\\src\\primer3_core.exe';
@@ -57,10 +80,12 @@ sub main() {
     die "Cannot execute $exe" unless -x $exe;
 
     print STDERR 
-	"\n\n$0: testing $valgrind_prefix$exe\n\nSTART, ", scalar(localtime), "\n";
+	"\n\n$0: testing $exe\n\n",
+	"START, ", scalar(localtime), "\n";
     print STDERR "verbose mode\n" if $verbose;
+    print STDERR "valgrind mode\n" if $do_valgrind;
 
-    test_fatal_errors($winFlag, $valgrind_prefix);
+    test_fatal_errors;
 
     for my $test (
 		  'primer_boundary', # Put the quickest tests first.
@@ -104,10 +129,14 @@ sub main() {
 		  ) {
 	print STDERR "$test...";
 	if ($test eq 'primer_lib_amb_codes') {
-	    print STDERR "\nNOTE: this test takes _much_ longer than the others ";
-	    print STDERR "(10 to 20 minutes or more).\n";
-	    print STDERR "starting $test at ", scalar(localtime), "...";
+	    print STDERR 
+		"\nNOTE: this test takes _much_ longer than the others ",
+		"(10 to 20 minutes or more).\n",
+		"starting $test at ", scalar(localtime), "...";
 	}
+	my $valgrind_prefix
+	    = $do_valgrind ? sprintf $valgrind_format, $test : '';
+
 	my $testx = $test;
 	$testx =~ s/_formatted$//;
 	my $input = $testx . '_input';
@@ -133,13 +162,13 @@ sub main() {
 	    chdir $list_tmp;
 
 	    my $tmpCmd;
-	    # generate the necc. files; If winFlag is 
-	    # set, run command with absolute
-	    # path to primer3_core.exe
+	    # generate the necc. files; If $winFlag is 
+	    # set, run command with Windows backslashes
+	    # in path.
 	    if ($winFlag) {
 	        $tmpCmd = "..\\$exe -strict_tags <../$input >../$tmp";
 	    }  else {
-		$tmpCmd = "../$exe -strict_tags <../$input >../$tmp";
+		$tmpCmd = "$valgrind_prefix ../$exe -strict_tags <../$input >../$tmp";
 	    }
 
 	    $r = _nowarn_system($tmpCmd);
@@ -261,24 +290,27 @@ sub perldiff($$) {
     return 0;
 }
 
-sub test_fatal_errors($$) {
-    my ($winFlag, $valgrind_prefix) = @_;
+sub test_fatal_errors() {
 
     # Get all the files that match primer_global_err/*.in:
     my @inputs = glob("./primer_global_err/*.in");
     my $r;
     my $problem = 0;
-    print STDERR "\ntesting fatal errors...";
+    print STDERR "\ntesting fatal errors...\n";
     for (@inputs) {
         my ($root) = /(.*)\.in$/;  # Hint, the parens around $root give
                                    # the result of the match in
                                    # an array context.
+	print STDERR "  $root\n";
+	my $valgrind_prefix
+	    = $do_valgrind ? sprintf $valgrind_format, $root : '';
+
 	my $cmd = "$valgrind_prefix$exe <$_ > $root.tmp 2> $root.tmp2";
 	if ($winFlag) {
-	    _nowarn_system($cmd);
+	    $r = _nowarn_system($cmd);  # FIX ME --- both branches are the same
 	}
 	else {
-	    _nowarn_system($cmd);
+	    $r = _nowarn_system($cmd);
 	}
 	if ($? == 0) {
 	    my $r = $? >> 8;
