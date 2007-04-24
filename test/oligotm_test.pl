@@ -19,9 +19,23 @@
 #     distribution); if not, write to the Free Software
 #     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+use strict;
+use warnings 'all';
+use Getopt::Long;
 use constant EPSILON => 1e-5;
-$nr=1;
-$failure=0;
+
+my $do_valgrind;
+
+if (!GetOptions('valgrind', \$do_valgrind)) {
+    print STDERR "Usage: $0 [ --valgrind ]\n";
+    exit -1;
+}
+my $valgrind_format
+    = "/usr/local/bin/valgrind --leak-check=yes "
+    . " --show-reachable=yes --log-file-exactly=oligotm.%0.3d.valg ";
+
+my $nr=1;
+my $failure=0;
 
 die "Cannot execute ../src/oligotm" unless -x '../src/oligotm';
 
@@ -31,10 +45,14 @@ open F, "./oligotm.txt" or die "Cannot open oligotm.txt\n";
 while(<F>){
     chomp;
     next if $. == 1;
-    @tmp=split(/\t/);
-    $cmd="../src/oligotm -tp $tmp[1] -sc $tmp[2] -mv $tmp[3] -dv $tmp[4] -n $tmp[5] $tmp[0] |";
+    my @tmp=split(/\t/);
+    my $valgrind_prefix = $do_valgrind ? sprintf($valgrind_format, $nr) : '';
+    my $cmd = 
+	"$valgrind_prefix "
+	. " ../src/oligotm -tp $tmp[1] -sc $tmp[2] -mv $tmp[3] "
+	. " -dv $tmp[4] -n $tmp[5] $tmp[0] |";
     open(CMD, $cmd); # execute the command and take the output
-    $tm=<CMD>;
+    my $tm=<CMD>;
     chomp $tm;
     close(CMD);
     if($tm){
@@ -51,6 +69,16 @@ while(<F>){
 close F;
 
 $nr--;
+
+if ($do_valgrind) {
+    my $r = system "grep ERROR *.valg | grep -v 'ERROR SUMMARY: 0 errors'";
+    if (!$r) { 
+	# !$r because grep returns 0 if something is found,
+	# and if something is found, we have a problem.
+	print STDERR "valgrind found errors\n";
+    }
+}
+
 if(!$failure){
     print STDERR "$nr: OK\n";
 }
