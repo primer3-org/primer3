@@ -1,27 +1,7 @@
 # Regression test driver for the primer3_core executable.
 #
-# Usage: perl p3test.pl [-executable <primer3 executable>] [-w|--windows] [-v|--valgrind]
+# For usage, see the usage statement in the code, below.
 #
-# <primer3 executable> defaults to ../src/primer3_core for
-# unless -w or --windows is specified, in which case
-# it defaults to ../src/primer3_core.exe
-
-# NOTES FIX ME -- valgrind flagged leaks,  etc,
-# are not not checked for at the end....
-# The code would go something like this....
-#
-# grep ERROR *vg.pid* */*vg.pid | grep -v 'ERROR SUMMARY: 0 errors'
-#            primer1_list_tmp/*vg.pid*
-#            *vg.pid*
-# grep 'definitely lost' *vg.pid* */*vg.pid | grep -v '0 bytes'
-# grep 'possibly lost' *vg.pid* */*vg.pid | grep -v '0 bytes'
-#
-# valgrind 2.0.0 seems to be abnormally exiting on some tests,
-# but the specific tests vary from run to run.... Perhaps
-# valgrind's exit is arbitrary.  Run diffs
-# even if exit is non-0.  (Steve looking into upgrading to
-# a current rev.
-
 use warnings 'all';
 use strict;
 use Cwd;
@@ -38,9 +18,10 @@ our $def_executable = "../src/primer3_core";
 our $exe = '../src/primer3_core';
 our ($verbose, $do_valgrind, $winFlag);
 
-# Old release 2.2.0 of valgrind at Whitehead:
-our $valgrind_format = "valgrind --leak-check=yes --show-reachable=yes --logfile=%s.vg ";
-
+# The following format works with valgrind-3.2.3:
+our $valgrind_format  = "/usr/local/bin/valgrind "
+		   . " --leak-check=yes --show-reachable=yes "
+		   . " --log-file-exactly=%s.vg ";
 
 main();
 
@@ -220,6 +201,23 @@ sub main() {
 	}
     }
     unlink("./core") if -e "./core";
+    if ($do_valgrind) {
+	# Assume this is Unix/Linux envrionment, so
+	# we have grep.
+	my $r = system "grep ERROR *.vg */*.vg | grep -v 'ERROR SUMMARY: 0 errors'";
+	if (!$r) { # !$r because grep returns 0 if something is found,
+	           # and if something is found, we have a problem.
+	    $exit_stat = -1;
+	}
+	$r = system "grep 'definitely lost' *.vg */*.vg | grep -v '0 bytes'";
+	if (!$r) {
+	    $exit_stat = -1;
+	}
+	$r = system "grep 'possibly lost' *.vg */*.vg   | grep -v '0 bytes'";
+	if (!$r) {
+	    $exit_stat = -1;
+	}
+    }
     print STDERR "DONE ", scalar(localtime), "\n";
     exit $exit_stat;
 }
