@@ -1,5 +1,5 @@
 # ======================================================================
-# (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006 Whitehead
+# (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006,2007 Whitehead
 # Institute for Biomedical Research, Steve Rozen, and Helen Skaletsky
 # All rights reserved.
 # 
@@ -30,11 +30,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # ======================================================================
 
+VALGRIND_FLAG = 
+
 test: 
 	cd ../src; make
-	echo 'Testing Tm calcs'; perl oligotm_test.pl;
-	echo 'Testing alignment calcs'; perl dpal_test.pl; 
-	echo 'Testing primer3_core'; perl p3test.pl
+	echo 'Testing Tm calcs'; perl oligotm_test.pl $(VALGRIND_FLAG);
+	echo 'Testing alignment calcs'; perl dpal_test.pl $(VALGRIND_FLAG); 
+	echo 'Testing primer3_core'; perl p3test.pl $(VALGRIND_FLAG)
 
 clean:
 	-rm -rf primer_list_tmp/*
@@ -45,3 +47,6 @@ clean:
 	-rm -f right_only.for right_only.rev left_only.for
 	-rm -f pcr_primers_and_io.int pcr_primers_and_io.rev pcr_primers_and_io.for
 	-rm -f pcr_primers.rev pcr_primers.for
+	-rm -f oligotm.*.valg  # valgrind output from oligotm_test.pl --valgrind
+	-rm -f ntdpal.*.valg   # valgrind output from dpal_test.pl --valgrind
+	-rm -f *.vg */*.vg     # valgrind output from p3test{,z}.pl --valgrind
