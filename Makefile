@@ -1,5 +1,5 @@
 # ======================================================================
-# (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006 Whitehead
+# (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006,2007 Whitehead
 # Institute for Biomedical Research, Steve Rozen, and Helen Skaletsky
 # All rights reserved.
 # 
