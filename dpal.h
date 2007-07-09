@@ -35,6 +35,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _DPAL_H
 #include <limits.h>
 
+#define DPAL_ERROR_SCORE INT_MIN
+
+#define DPAL_EXIT_ON_ERROR 0
+  /* 0 means do not exit on error. */
+
 #ifndef DPAL_MAX_ALIGN
 #define DPAL_MAX_ALIGN   1600 /* 
 			       * The maximum size of a string that can be
@@ -135,9 +140,10 @@ void dpal_set_h_nt_matrix(dpal_args *);
 int dpal_set_ambiguity_code_matrix(dpal_args *);
 
 /* 
- * Align the first 2 arguments, using the scoring matix mat and the additional
- * arguments supplied in the align_args.  Return the results in the
- * align_results struct.
+ * Align the first 2 arguments, using the scoring
+ * matix and other arguments supplied in the dpal_args
+ * argument.  Return results in the
+ * dpal_results argument (a struct).
  */
 void dpal(const unsigned char *, const unsigned char*,
 	  const dpal_args *, dpal_results *);
