@@ -32,11 +32,17 @@
 
 VALGRIND_FLAG = 
 
-test: 
+test: makeexes testtm testdpal
+	-echo 'Testing primer3_core'; perl p3test.pl $(VALGRIND_FLAG)
+
+testdpal:
+	-echo 'Testing alignment calcs'; perl dpal_test.pl $(VALGRIND_FLAG); 
+
+testtm:
+	-echo 'Testing Tm calcs'; perl oligotm_test.pl $(VALGRIND_FLAG);
+
+makeexes:
 	cd ../src; make
-	echo 'Testing Tm calcs'; perl oligotm_test.pl $(VALGRIND_FLAG);
-	echo 'Testing alignment calcs'; perl dpal_test.pl $(VALGRIND_FLAG); 
-	echo 'Testing primer3_core'; perl p3test.pl $(VALGRIND_FLAG)
 
 clean:
 	-rm -rf primer_list_tmp/*
