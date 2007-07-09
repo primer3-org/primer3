@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include <limits.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -43,11 +44,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #define DPAL_OOM_MESSAGE "Out of memory in function defined in dpal.c\n"
 #define DPAL_OOM_LEN  44
-#define DPAL_OOM_ERROR write(2, DPAL_OOM_MESSAGE, DPAL_OOM_LEN), exit(-2)
+#define DPAL_OOM_ERROR {write(2, DPAL_OOM_MESSAGE, DPAL_OOM_LEN); errno=ENOMEM; goto FAIL; }
 
 /*
  * We should probably remove the DPAL_FORGET_PATH compile-time option.
- * Efficiency now derives primarily for specialized versions of _dpal* for
+ * Efficiency now derives primarily from specialized versions of _dpal* for
  * particular parameter values.
  */
 #ifndef DPAL_FORGET_PATH
@@ -131,7 +132,7 @@ dpal_set_default_nt_args(a)
 
     a->check_chars        = 1;
     a->debug              = 0;
-    a->fail_stop          = 1;
+    a->fail_stop          = DPAL_EXIT_ON_ERROR;
     a->flag               = DPAL_LOCAL;
     a->force_generic      = 0;
     a->force_long_generic = 0;
@@ -239,6 +240,10 @@ xlate_ambiguity_code(c)
   else return NULL; /* Error condition */
 }
 
+/* This macro requires that the output argument is
+   always called 'out', and that out->score has
+   already been set to INT_MIN.
+ */
 #define CHECK_ERROR(COND,MSG) if (COND) { out->msg = MSG; goto FAIL; }
 
 void
@@ -250,7 +255,7 @@ dpal(X, Y, in, out)
     int xlen, ylen;
     char msg[] = "Illegal character in input: ?";
 
-    out->score = INT_MIN;
+    out->score = DPAL_ERROR_SCORE;
     out->path_length = 0;
     out->msg = NULL;
 
@@ -335,21 +340,28 @@ _dpal_generic(X, Y, xlen, ylen, in, out)
 
 #if NEW_TEST
     static int * S[DPAL_MAX_ALIGN] = NULL;
-    if (NULL == S) 
-      S = safe_malloc(ylen * sizeof(int) * DPAL_MAX_ALIGN);
-    else
-      S = safe_realloc(ylen * sizeof(int) * DPAL_MAX_ALIGN);
+    if (NULL == S) {
+      S = malloc(ylen * sizeof(int) * DPAL_MAX_ALIGN);
+      if (!S) { DPAL_OOM_ERROR; }
+    } else {
+      S = realloc(ylen * sizeof(int) * DPAL_MAX_ALIGN);
+      if (!S) { DPAL_OOM_ERROR; }
+    }
 #endif
 
 #if NEW_TEST2
     static int ** S = NULL;
-    if (NULL == S) 
-      S = safe_malloc(xlen * sizeof(int *));
-    else {
-      S = safe_realloc(xlen * sizeof(int *));
+    if (NULL == S) {
+      S = malloc(xlen * sizeof(int *));
+      if (!S) { DPAL_OOM_ERROR; }
+    } else {
+      S = realloc(xlen * sizeof(int *));
+      if (!S) { DPAL_OOM_ERROR; }
     }
-    for (i = 0; i < xlen; i++)
-      S[i] = safe_malloc(ylen * sizeof(int));
+    for (i = 0; i < xlen; i++) {
+      S[i] = malloc(ylen * sizeof(int));
+      if (!S[i]) { DPAL_OOM_ERROR; }
+    }
     /* Add free at end of function. */
 #endif
 
@@ -598,7 +610,7 @@ _dpal_long_nopath_generic(X, Y, xlen, ylen, in, out)
     fprintf(stderr, "_dpal_long_nopath_generic called\n");
 #endif
 
-    out->score = INT_MIN;
+    out->score = DPAL_ERROR_SCORE;
     out->path_length = 0;
     out->msg = NULL;
 
@@ -734,6 +746,12 @@ _dpal_long_nopath_generic(X, Y, xlen, ylen, in, out)
     for(i=0; i< max_gap + 2; i++) free(P[i]);
     free(S);
     free(P);
+    return;
+ FAIL:
+    if (in->fail_stop) {
+	fprintf(stderr, "\n%s\n", out->msg);
+	exit(-1);
+    }
 } /* _dpal_long_nopath_generic */
 
 static void
@@ -757,6 +775,10 @@ _dpal_long_nopath_maxgap1_local(X, Y, xlen, ylen, in, out)
 #ifdef DPAL_PRINT_COVERAGE
     fprintf(stderr, "_dpal_long_nopath_maxgap1_local called\n");
 #endif
+
+    CHECK_ERROR(ylen < 3,
+		"_dpal_long_nopath_maxgap1_local requires ylen >= 3\n");
+    /* Note: S2[0] and S2[1] do not get initialized in this case. */
 
     P0 = malloc(sizeof(int)*ylen);
     if (!P0) { DPAL_OOM_ERROR; }
@@ -819,6 +841,12 @@ _dpal_long_nopath_maxgap1_local(X, Y, xlen, ylen, in, out)
     out->score = smax;
     out->path_length=0;
     free(P0); free(P1); free(P2);
+    return;
+ FAIL:
+    if (in->fail_stop) {
+	fprintf(stderr, "\n%s\n", out->msg);
+	exit(-1);
+    }
 } /* _dpal_long_nopath_maxgap1_local */
 
 static void
@@ -919,6 +947,12 @@ _dpal_long_nopath_maxgap1_global_end(X, Y, xlen, ylen, in, out)
     free(P0); free(P1); free(P2);
     out->score = smax;
     out->path_length=0;
+    return;
+ FAIL:
+    if (in->fail_stop) {
+	fprintf(stderr, "\n%s\n", out->msg);
+	exit(-1);
+    }
 } /* _dpal_long_nopath_maxgap_global_end */
 
 
@@ -1011,7 +1045,7 @@ print_align(X,Y,P,I,J, dargs)
 		fprintf(stderr, "\n");
 		j +=70;
 	}
-}
+}  /* print_align(X,Y,P,I,J, dargs) */
 #endif
 
 static int
@@ -1052,10 +1086,9 @@ _dpal_long_nopath_maxgap1_local_end(X, Y, xlen, ylen, in, out)
     fprintf(stderr, "_dpal_long_nopath_maxgap1_local_end called\n");
 #endif
 
-    if (ylen < 3) {
-      fprintf(stderr, "_dpal_long_nopath_maxgap1_local_end requires ylen >= 3\n");
-      abort();
-    }
+    CHECK_ERROR(ylen < 3,
+		"_dpal_long_nopath_maxgap1_local_end requires ylen >= 3\n");
+    /* Note: S2[0] and S2[1] do not get initialized in this case. */
 
     P0 = malloc(sizeof(int)*ylen);
     if (!P0) { DPAL_OOM_ERROR; }
@@ -1134,4 +1167,10 @@ _dpal_long_nopath_maxgap1_local_end(X, Y, xlen, ylen, in, out)
     out->score = smax;
     out->path_length=0;
     free(P0); free(P1); free(P2);
+    return;
+ FAIL:
+    if (in->fail_stop) {
+	fprintf(stderr, "\n%s\n", out->msg);
+	exit(-1);
+    }
 } /* _dpal_long_nopath_maxgap1_local */
