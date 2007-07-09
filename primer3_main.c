@@ -31,6 +31,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <errno.h>
 #include <stdio.h>
 #include <math.h>
 #include <signal.h>
@@ -2420,12 +2421,37 @@ align(s1, s2, a)
     const dpal_args *a;
 {
     dpal_results r;
+
+    if(a->flag == DPAL_LOCAL || a->flag == DPAL_LOCAL_END) {
+      if (strlen(s2) < 3) {
+	/* For extremely short alignments we simply
+	   max out the score, because the dpal subroutines
+           for these cannot handle this case. 
+           FIX: this can probably be corrected in dpal. */
+	return (short) (100 * strlen(s2));
+      }
+    }
     dpal(s1, s2, a, &r);
     PR_ASSERT(r.score <= SHRT_MAX);
+    if (r.score == DPAL_ERROR_SCORE) {
+      /* There was an error. */
+      if (errno == ENOMEM) {
+	OOM_ERROR;
+      } else {
+	fprintf(stderr, r.msg);
+	/* Fix this later, when error handling
+	   in "primer_choice" is updated to
+	   no longer exit. */
+	PR_ASSERT(r.score != DPAL_ERROR_SCORE);
+      }
+    }
     return ((r.score<0) ? 0 : (short)r.score);
 }
 
 /* Set dpal args to appropriate values for primer picking. */
+/* IMPORTANT -- if the scoring system changes, then
+   the value returned by align() for short target sequences
+   must be adjusted. */
 static void
 set_dpal_args(a)
     dpal_args *a;
@@ -2712,11 +2738,11 @@ oligo_mispriming(h, pa, sa, l, align_args)
     tmp_char = target[first_untrimmed];
     target[first_untrimmed] = '\0';
 
-    if (strlen(target) < 3) {
+    /* if (strlen(target) < 3) {
       tmp_score = 3;
-    } else {
-      tmp_score = align(oseq, target, align_args);
-    }
+      } else {   2007-07-06, fix was moved to the function align() in this file. */
+    tmp_score = align(oseq, target, align_args);
+      /* } */
 
     if (debug) {
       if (l == OT_LEFT) fprintf(stderr, "\n************ OLIGO = LEFT\n");
