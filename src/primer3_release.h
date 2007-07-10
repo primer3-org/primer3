@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
@@ -33,5 +33,5 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifndef RELEASE_H
 #define RELEASE_H 1
-static const char * pr_release = "primer3 release 1.1.1";
+static const char * pr_release = "primer3 release 1.1.2";
 #endif
