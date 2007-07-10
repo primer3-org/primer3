@@ -268,6 +268,7 @@ sub perldiff($$) {
 
 	my $quoteexe = quotemeta($def_executable);
 
+	# Edit executable name
 	if ($exe ne $def_executable && ($l1 =~ /$quoteexe/ || $l2  =~ /$quoteexe/)) {
 	    $l1 =~ s/$regex//g;
 	    $l2 =~ s/$regex//g;
@@ -277,8 +278,17 @@ sub perldiff($$) {
 	    }
 	}
 
+	# Edit release number
+	if ($l1 ne $l2) {
+	    if ($l1 =~ /primer3 release \d+\.\d+\.\d+/
+		&& $l2 =~ /primer3 release \d+\.\d+\.\d+/) {
+		$l1 =~ s/primer3 release \d+\.\d+\.\d+//;
+		$l2 =~ s/primer3 release \d+\.\d+\.\d+//;
+	    }
+	}
+
         $linenumber++;
-	# check for differences in edited lines (line by line)
+	# Check for difference between two edited lines (line by line)
 	if ($l1 ne $l2) {
 	    print STDERR 
 		"Difference found at line $linenumber:\n<  $l1_orig\n>  $l2_orig\n";
