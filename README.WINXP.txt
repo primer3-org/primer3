@@ -1,7 +1,7 @@
 Windows Installation Instructions (bcf; 4/3/2006:0945)
 ---------------------
 
-primer3 release 1.1.1
+primer3 release 1.1.2
 ---------------------
 
 Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
