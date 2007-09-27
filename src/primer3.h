@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
@@ -50,7 +50,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* Undefined value for alignment score (meaning do not check) used for maximum
    template mispriming or mishyb. */
 #define PR_UNDEFINED_ALIGN_OPT        -100
-
+#define ALIGN_SCORE_UNDEF             SHRT_MIN
 
 #define PR_POSITION_PENALTY_IS_NULL(PA) \
 (PR_DEFAULT_INSIDE_PENALTY == (PA)->inside_penalty \
@@ -617,6 +617,8 @@ void pr_choice(primer_args *, seq_args *, const dpal_args *,
 void pr_print_pair_explain(FILE *, const seq_args *);
 
 int    strcmp_nocase(char *, char *);
+
+short  oligo_max_template_mispriming(const primer_rec *);
 
 /* The following are _temporarily_ exposed symbols. */
 int  _pr_data_control(primer_args *, seq_args *);
