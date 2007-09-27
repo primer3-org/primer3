@@ -67,6 +67,7 @@ PRIMER_OBJECTS1=primer3_main.o\
                 dpal_primer.o\
                 format_output.o\
                 boulder_input.o\
+                print_boulder.o\
 
 PRIMER_OBJECTS=$(PRIMER_OBJECTS1) $(OLIGOTM_LIB)
 PRIMER_DYN_OBJECTS=$(PRIMER_OBJECTS1) $(OLIGOTM_DYN_LIB)
@@ -111,6 +112,9 @@ long_seq_tm_test: long_seq_tm_test_main.c oligotm.o
 boulder_input.o: boulder_input.c boulder_input.h primer3.h primer3_release.h dpal.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ boulder_input.c
 
+print_boulder.o: print_boulder.c print_boulder.h primer3.h
+	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ print_boulder.c
+
 dpal.o: dpal.c dpal.h primer3_release.h
 	$(CC) -c $(CFLAGS) -o $@ dpal.c
 
@@ -130,7 +134,7 @@ oligotm.o: oligotm.c oligotm.h primer3_release.h
 primer3.o: primer3.c primer3.h primer3_release.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) primer3.c
 
-primer3_main.o: primer3_main.c primer3.h primer3_release.h dpal.h oligotm.h format_output.h
+primer3_main.o: primer3_main.c primer3.h primer3_release.h dpal.h oligotm.h format_output.h print_boulder.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) primer3_main.c
 
 primer_test: test

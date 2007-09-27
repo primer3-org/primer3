@@ -1,7 +1,7 @@
 release 1.1.2 2007-06-10 ================================================
 
  Updates to dpal.c so that no error forces an exit.
- Adpatation in primer3_main.c and ntdpal_main.c to 
+ Adaptation in primer3_main.c and ntdpal_main.c to 
    updated error handling in dpal().
  Arranged for primer3_main.c align() to check for
    and circumvent local alignments to "targets" < nucleotides
