@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
@@ -141,6 +141,45 @@ dpal_set_default_nt_args(a)
     a->gapl               = -100;
     a->max_gap            = 3;
     a->score_only         = 0;
+}
+
+/**** FIX ME -- HOW IS THIS DIFFERENT FROM THE FN ABOVE? -- */
+/* Set dpal args to appropriate values for primer picking. */
+/* IMPORTANT -- if the scoring system changes, then
+   the value returned by align() for short target sequences
+   must be adjusted. */
+void
+set_dpal_args(a)
+    dpal_args *a;
+{
+    unsigned int i, j;
+
+    memset(a, 0, sizeof(*a));
+    for (i = 0; i <= UCHAR_MAX; i++)
+	for (j = 0; j <= UCHAR_MAX; j++)
+	  if (('A' == i || 'C' == i || 'G' == i || 'T' == i || 'N' == i)
+	      && ('A' == j || 'C' == j || 'G' == j || 'T' == j 
+		  || 'N' == j)) {
+	    if (i == 'N' || j == 'N') 
+	      a->ssm[i][j] = -25;
+	    else if (i == j)
+	      a->ssm[i][j] = 100;
+	    else 
+	      a->ssm[i][j] = -100;
+	  } else
+	    a->ssm[i][j] = INT_MIN;
+
+    a->gap                = -200;
+    a->gapl               = -200;
+    a->flag               = DPAL_LOCAL;
+    a->max_gap            = 1;
+    a->fail_stop          = 1;
+    a->check_chars        = 0;
+    a->debug              = 0;
+    a->score_only         = 1;
+    a->force_generic      = 0;
+    a->force_long_generic = 0;
+    a->force_long_maxgap1 = 0;
 }
 
 void
@@ -1174,3 +1213,4 @@ _dpal_long_nopath_maxgap1_local_end(X, Y, xlen, ylen, in, out)
 	exit(-1);
     }
 } /* _dpal_long_nopath_maxgap1_local */
+
