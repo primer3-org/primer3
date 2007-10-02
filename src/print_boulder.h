@@ -33,8 +33,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifndef BOULDER_OUTPUT_H
 #define BOULDER_OUTPUT_H 1
-#include "primer3.h"
-#include "boulder_input.h"
+#include "libprimer3.h"
+#include "read_boulder.h"
 
 void   boulder_print_pairs(const program_args *, const primer_args *, 
 			   const seq_args *, const pair_array_t *);

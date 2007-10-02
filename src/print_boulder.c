@@ -31,7 +31,10 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <string.h> /* strcpy */
 #include "print_boulder.h"
+
+static char *pr_program_name = "Program name is probably primer3_core";
 
 static void   print_all_explain(const primer_args *, const seq_args *);
 static void   print_explain(const oligo_stats *, oligo_type);
@@ -359,37 +362,6 @@ print_all_explain(pa, sa)
       pr_print_pair_explain(stdout, sa);
     }
   }
-}
-
-void
-pr_print_pair_explain(f, sa)
-  FILE *f;
-  const seq_args *sa;
-{
-    fprintf(f, "considered %d",sa->pair_expl.considered);
-    if (sa->pair_expl.target)
-      fprintf(f, ", no target %d", sa->pair_expl.target);
-    if (sa->pair_expl.product)
-      fprintf(f, ", unacceptable product size %d", sa->pair_expl.product);
-    if (sa->pair_expl.low_tm)
-      fprintf(f, ", low product Tm %d", sa->pair_expl.low_tm);
-    if (sa->pair_expl.high_tm)
-      fprintf(f, ", high product Tm %d", sa->pair_expl.high_tm);
-    if (sa->pair_expl.temp_diff) 
-      fprintf(f, ", tm diff too large %d",sa->pair_expl.temp_diff);
-    if (sa->pair_expl.compl_any) 
-      fprintf(f, ", high any compl %d", sa->pair_expl.compl_any);
-    if (sa->pair_expl.compl_end) 
-      fprintf(f, ", high end compl %d", sa->pair_expl.compl_end);
-    if (sa->pair_expl.internal) 
-      fprintf(f, ", no internal oligo %d", sa->pair_expl.internal);
-    if (sa->pair_expl.repeat_sim)
-      fprintf(f, ", high mispriming library similarity %d",
-	      sa->pair_expl.repeat_sim);
-    if (sa->pair_expl.template_mispriming)
-      fprintf(f, ", high template mispriming score %d",
-	      sa->pair_expl.template_mispriming);
-    fprintf(f, ", ok %d\n", sa->pair_expl.ok);
 }
 
 static void
