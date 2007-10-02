@@ -35,9 +35,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include "format_output.h"
 #include "primer3_release.h"
+#include "libprimer3.h"
 
 #define FORWARD 1
 #define REVERSE -1
+
+static char *pr_program_name = "Program name is probably primer3_core";
 
 static int lib_sim_specified(const primer_args *);
 static void print_explain(FILE *, const primer_args *,
