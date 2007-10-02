@@ -34,8 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef PR_FORMAT_OUTPUT_H
 #define PR_FORMAT_OUTPUT_H 1
 
-#include "primer3.h"
-
+#include "libprimer3.h"
 /* 
  * Format the pair in p (plus the middle oligo if appropriate)
  * on f.  If p->product_size = 0 then primer choice failed.
