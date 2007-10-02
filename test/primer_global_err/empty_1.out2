@@ -1,5 +1,5 @@
 
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
@@ -31,8 +31,8 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-USAGE: ../src/primer3_core [-format_output] [-2x_compat] [-strict_tags]
-This is primer3 (primer3 release 1.1.1)
+USAGE: ../src/primer3_core [-format_output] [-strict_tags]
+This is primer3 (primer3 release 1.1.2)
 Input must be provided on standard input.
 For example:
 $ primer3_core < my_input_file
