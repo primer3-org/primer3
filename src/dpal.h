@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
@@ -126,6 +126,7 @@ typedef struct {
 
 /* Initialize the argument to the default matrix for nucleotide matches. */
 void dpal_set_default_nt_args(dpal_args *);
+
 /* Routine primarily for testing: sets CC & GG matches to 3, AA & TT 
    matches to 2. */
 void dpal_set_h_nt_matrix(dpal_args *);
@@ -147,4 +148,6 @@ int dpal_set_ambiguity_code_matrix(dpal_args *);
  */
 void dpal(const unsigned char *, const unsigned char*,
 	  const dpal_args *, dpal_results *);
+
+void set_dpal_args(dpal_args *);
 #endif
