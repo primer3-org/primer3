@@ -62,11 +62,11 @@ OLIGOTM_DYN_LIB = liboligotm.so.1.2.0
 LIBRARIES       = $(OLIGOTM_LIB)
 RANLIB          = ranlib
 
-PRIMER_OBJECTS1=primer3_main.o\
-                primer3.o\
+PRIMER_OBJECTS1=primer3_boulder_main.o\
+	        libprimer3.o\
                 dpal_primer.o\
                 format_output.o\
-                boulder_input.o\
+                read_boulder.o\
                 print_boulder.o\
 
 PRIMER_OBJECTS=$(PRIMER_OBJECTS1) $(OLIGOTM_LIB)
@@ -79,7 +79,7 @@ EXES=$(PRIMER_EXE) ntdpal oligotm long_seq_tm_test
 all: $(EXES) $(LIBRARIES)
 
 clean_src:
-	-rm -f *.o $(EXES) $(PRIMER_EXE).dyn *~ $(LIBRARIES) $(example_files)
+	-rm -f *.o $(EXES) *~ $(LIBRARIES) $(example_files)
 
 clean: clean_src
 	cd ../test/; make clean
@@ -95,10 +95,13 @@ $(PRIMER_EXE): $(PRIMER_OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
 
 # For use with valgrind, which requires at lease one
-# dynamically linked library.  Automatic testing with
-# valgrind is not implemented at this point.
-$(PRIMER_EXE).dyn: $(PRIMER_DYN_OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(PRIMER_DYN_OBJECTS) $(LIBOPTS) $(LDLIBS)
+# dynamically linked library.  See the VALGRIND_FLAG
+# option in ../test/Makefile
+# $(PRIMER_EXE).dyn: $(PRIMER_DYN_OBJECTS)
+#	$(CC) $(CFLAGS) -o $@ $(PRIMER_DYN_OBJECTS) $(LIBOPTS) $(LDLIBS)
+
+libprimer3.o: libprimer3.c libprimer3.h
+	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ libprimer3.c
 
 ntdpal: ntdpal_main.o dpal.o
 	$(CC) $(LDFLAGS) -o $@ ntdpal_main.o dpal.o
@@ -109,10 +112,10 @@ oligotm: oligotm_main.c oligotm.h $(OLIGOTM_LIB)
 long_seq_tm_test: long_seq_tm_test_main.c oligotm.o
 	$(CC) $(CFLAGS) -o $@ long_seq_tm_test_main.c oligotm.o $(LIBOPTS) $(LDLIBS)
 
-boulder_input.o: boulder_input.c boulder_input.h primer3.h primer3_release.h dpal.h
-	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ boulder_input.c
+read_boulder.o: read_boulder.c read_boulder.h libprimer3.h primer3_release.h dpal.h
+	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ read_boulder.c
 
-print_boulder.o: print_boulder.c print_boulder.h primer3.h
+print_boulder.o: print_boulder.c print_boulder.h libprimer3.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ print_boulder.c
 
 dpal.o: dpal.c dpal.h primer3_release.h
@@ -121,7 +124,7 @@ dpal.o: dpal.c dpal.h primer3_release.h
 dpal_primer.o: dpal.c dpal.h primer3_release.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ dpal.c
 
-format_output.o: format_output.c primer3_release.h format_output.h primer3.h dpal.h
+format_output.o: format_output.c primer3_release.h format_output.h libprimer3.h dpal.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ format_output.c
 
 ntdpal_main.o: ntdpal_main.c dpal.h
@@ -131,11 +134,11 @@ ntdpal_main.o: ntdpal_main.c dpal.h
 
 oligotm.o: oligotm.c oligotm.h primer3_release.h
 
-primer3.o: primer3.c primer3.h primer3_release.h
-	$(CC) -c $(CFLAGS) $(P_DEFINES) primer3.c
+# primer3.o: primer3.c primer3.h primer3_release.h
+# 	$(CC) -c $(CFLAGS) $(P_DEFINES) primer3.c
 
-primer3_main.o: primer3_main.c primer3.h primer3_release.h dpal.h oligotm.h format_output.h print_boulder.h
-	$(CC) -c $(CFLAGS) $(P_DEFINES) primer3_main.c
+primer3_boulder_main.o: primer3_boulder_main.c libprimer3.h primer3_release.h dpal.h oligotm.h format_output.h print_boulder.h
+	$(CC) -c $(CFLAGS) $(P_DEFINES) primer3_boulder_main.c
 
 primer_test: test
 
