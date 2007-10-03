@@ -239,15 +239,6 @@ static const char * copyright[] = {
 NULL
 };
 
-/* Primer lists and their lengths. */
-
-/* static primer_rec *f   = NULL;  */
-/* static primer_rec *r   = NULL; */
-/* FIX ME */
-/* static primer_rec *mid = NULL; */
-
-/* static int f_len=0, r_len=0, mid_len=0; */
-
 /* Other global variables. */
 const char *pr_program_name;
 int pr_program_name_len;
@@ -1857,7 +1848,8 @@ choose_internal_oligo(p3state, left, right, nm, sa, pa, dpal_arg_to_use)
 
    i = -1;
 
-   for(k=0; k < p3state->n_m; k++){
+   for (k=0; k < p3state->n_m; k++) {
+
      if ((p3state->mid[k].start > (left->start + (left->length-1))) 
 	&& ((p3state->mid[k].start + (p3state->mid[k].length-1))
 	    < (right->start-right->length+1)) 
@@ -1877,8 +1869,10 @@ choose_internal_oligo(p3state, left, right, nm, sa, pa, dpal_arg_to_use)
 
        min = p3state->mid[k].quality;
        i=k;
-     }    
-   }
+
+     } /* if ((p3state->mid[k].start.... */
+
+   }  /* for (k=0;..... */
 
    *nm = i;
    if(*nm < 0) return 1;
@@ -2041,7 +2035,7 @@ pair_param(p3state, pa, sa, m, n, int_num, h, dpal_arg_to_use)
 
 
     /* ============================================================= */
-    /* Secondary structure, mispriming, and primer-dimer. */
+    /* Secondary structure and primer-dimer. */
 
     /* s1 is the forward oligo. */
     _pr_substr(sa->trimmed_seq,
@@ -2068,6 +2062,21 @@ pair_param(p3state, pa, sa, m, n, int_num, h, dpal_arg_to_use)
 
     }
 
+    if(p3state->r[n].self_any == ALIGN_SCORE_UNDEF){
+      oligo_compl(&p3state->r[n], pa, sa, OT_RIGHT, 
+		  dpal_arg_to_use);
+       if (!OK_OR_MUST_USE(&p3state->r[n])) {
+	  sa->pair_expl.considered--;
+	  return PAIR_FAILED;
+       }
+    }
+
+    /* End of secondary structure and primer-dimer. */
+    /* ============================================================= */
+
+
+    /* ============================================================= */
+    /* Mispriming to template and mispriming to repeat libraries. */
 
     if (p3state->f[m].repeat_sim.score == NULL) {
       /* We have not yet checked the olgio against the repeat library. */
@@ -2077,15 +2086,6 @@ pair_param(p3state, pa, sa, m, n, int_num, h, dpal_arg_to_use)
        if (!OK_OR_MUST_USE(&p3state->f[m])) {
 	   sa->pair_expl.considered--;
 	   return PAIR_FAILED;
-       }
-    }
-
-    if(p3state->r[n].self_any == ALIGN_SCORE_UNDEF){
-      oligo_compl(&p3state->r[n], pa, sa, OT_RIGHT, 
-		  dpal_arg_to_use);
-       if (!OK_OR_MUST_USE(&p3state->r[n])) {
-	  sa->pair_expl.considered--;
-	  return PAIR_FAILED;
        }
     }
 
@@ -2130,15 +2130,17 @@ pair_param(p3state, pa, sa, m, n, int_num, h, dpal_arg_to_use)
 	}
 	h->compl_end = compl_end;
     }
+
     h->compl_measure = 	
 	(h->right->self_end  + h->left->self_end + h->compl_end) * 1.1
 	    + h->right->self_any + h->left->self_any + h->compl_any;
+
     if((h->repeat_sim = pair_repeat_sim(h, pa)) > pa->pair_repeat_compl){
 	 sa->pair_expl.repeat_sim++;
 	 return PAIR_FAILED;
     }
 
-    if (!_pr_need_pair_template_mispriming(pa))
+    if (!_pr_need_pair_template_mispriming(pa))  /* FIX ME -- this belongs above.... */
       h->template_mispriming = ALIGN_SCORE_UNDEF;
     else {
       PR_ASSERT(h->left->template_mispriming != ALIGN_SCORE_UNDEF);
@@ -2516,18 +2518,19 @@ oligo_compl(h, ha, sa, l, dpal_arg_to_use)
     }
 }
 
-/* FIX ME - put a call to this into oligo_mispriming. */
-static void oligo_mispriming_to_template(primer_rec *h,
-					 const primer_args *pa,
-					 seq_args *sa,
-					 oligo_type l,
-					 int first,
-					 int last, 
-					 const char *s,   /* The oligo sequence. */
-					 const char *s_r, /* s reverse complemented. */
-					 const dpal_args *align_args
-
-					 ) {
+static void 
+primer_mispriming_to_template(primer_rec *h,
+			      const primer_args *pa,
+			      seq_args *sa,
+			      oligo_type l,
+			      int first,
+			      int last, 
+			      /* The oligo sequence: */
+			      const char *s, 
+			      /* s reverse complemented: */
+			      const char *s_r,
+			      const dpal_args *align_args
+			      ) {
   const char *oseq;
   char *target, *target_r;
   int tmp, seqlen;
@@ -2570,11 +2573,7 @@ static void oligo_mispriming_to_template(primer_rec *h,
   tmp_char = target[first_untrimmed];
   target[first_untrimmed] = '\0';
 
-  /* if (strlen(target) < 3) {
-     tmp_score = 3;
-     } else {   2007-07-06, fix was moved to the function align() in this file. */
   tmp_score = align(oseq, target, align_args);
-  /* } */
 
   if (debug) {
     if (l == OT_LEFT) fprintf(stderr, "\n************ OLIGO = LEFT\n");
@@ -2618,12 +2617,12 @@ static void oligo_mispriming_to_template(primer_rec *h,
       sa->right_expl.template_mispriming++;
       sa->right_expl.ok--;
     } else PR_ASSERT(0); /* Should not get here. */
-    if (!h->must_use) return;
   }
 }
 
-static void 
-oligo_mispriming(h, pa, sa, l, align_args,  dpal_arg_to_use)
+static void  /* FIX ME, split this into two, slot in... 
+		move primer update outside... */
+primer_mispriming_to_library(h, pa, sa, l, align_args,  dpal_arg_to_use)
    primer_rec *h;
    const primer_args *pa;
    seq_args *sa;
@@ -2636,22 +2635,14 @@ oligo_mispriming(h, pa, sa, l, align_args,  dpal_arg_to_use)
     s_tmp[MAX_PRIMER_LENGTH+1], /* Scratch buffer. */
     s_r[MAX_PRIMER_LENGTH+1];   /* Will contain s reverse complemented. */
 
-  char *oseq, *target, *target_r;
   double w;
   const seq_lib *lib;
   int i;
   int first, last; /* Indexes of first and last bases of the oligo in sa->trimmed_seq,
 		     that is, WITHIN THE INCLUDED REGION. */
-  int first_untrimmed, last_untrimmed;  
-                  /* Indexes of first and last bases of the oligo in sa->seq,
-		     that is, WITHIN THE TOTAL SEQUENCE INPUT. */
-  int min, max, tmp;
-  int seqlen;
-  int debug = 0;
+  int min, max;
   int match_length;
   short  lib_compl;
-  short  tmp_score;
-  char   tmp_char;
 
   if (OT_INTL == l) {
     lib = &(pa->io_mishyb_library);
@@ -2679,6 +2670,116 @@ oligo_mispriming(h, pa, sa, l, align_args,  dpal_arg_to_use)
    * Calculate maximum similarity to sequences from user defined repeat
    * library. Compare it with maximum allowed repeat similarity.
    */
+
+  if(lib->seq_num > 0) {
+    h->repeat_sim.score = 
+      pr_safe_malloc(lib->seq_num * sizeof(short));
+    h->repeat_sim.max = h->repeat_sim.min = 0;
+    max = min = 0;
+    h->repeat_sim.name = lib->names[0];
+    for(i = 0; i < lib->seq_num; i++){
+      if (OT_LEFT == l)
+	w = lib->weight[i] *
+	  align(s, lib->seqs[i], 
+		(pa->lib_ambiguity_codes_consensus
+		 ? dpal_arg_to_use->local_end_ambig
+		 : dpal_arg_to_use->local_end));
+
+      else if (OT_INTL == l)
+	w = lib->weight[i] *
+	  align(s, lib->seqs[i], 
+		(pa->lib_ambiguity_codes_consensus
+		 ? dpal_arg_to_use->local_ambig
+		 : dpal_arg_to_use->local));
+
+      else 
+	w = lib->weight[i] *
+	  align(s_r, lib->rev_compl_seqs[i], 
+		(pa->lib_ambiguity_codes_consensus
+		 ? dpal_arg_to_use->local_end_ambig
+		 : dpal_arg_to_use->local));
+
+      h->repeat_sim.score[i] = w;
+      if(w > max){
+	max = w;
+	h->repeat_sim.max = i;
+	h->repeat_sim.name = lib->names[i];
+      }
+      if(w < min){
+	min = w;
+	h->repeat_sim.min = i;
+      }
+      if (w > lib_compl) {
+	h->ok = OV_LIB_SIM;
+	if (OT_LEFT  == l) {
+	  sa->left_expl.repeat_score++;
+	  sa->left_expl.ok--;
+	}
+	else if (OT_RIGHT == l) {
+	  sa->right_expl.repeat_score++;
+	  sa->right_expl.ok--;
+	}
+	else {
+	  sa->intl_expl.repeat_score++;
+	  sa->intl_expl.ok--;
+	}
+	if (!h->must_use) return;
+      }
+    }
+  }
+}
+
+
+static void 
+oligo_mispriming(h, pa, sa, l, align_args,  dpal_arg_to_use)
+   primer_rec *h;
+   const primer_args *pa;
+   seq_args *sa;
+   oligo_type l;
+   const dpal_args *align_args;
+   const dpal_arg_holder *dpal_arg_to_use;
+{
+  char 
+    s[MAX_PRIMER_LENGTH+1],     /* Will contain the oligo sequence. */
+    s_tmp[MAX_PRIMER_LENGTH+1], /* Scratch buffer. */
+    s_r[MAX_PRIMER_LENGTH+1];   /* Will contain s reverse complemented. */
+
+  double w;
+  const seq_lib *lib;
+  int i;
+  int first, last; /* Indexes of first and last bases of the oligo in sa->trimmed_seq,
+		     that is, WITHIN THE INCLUDED REGION. */
+  int min, max;
+  int match_length;
+  short  lib_compl;
+
+  if (OT_INTL == l) {
+    lib = &(pa->io_mishyb_library);
+    lib_compl = pa->io_repeat_compl;
+  } else {
+    lib = &(pa->repeat_lib);
+    lib_compl = pa->repeat_compl;
+  }
+
+  first =  (OT_LEFT == l || OT_INTL == l)
+    ? h->start 
+    : h->start - h->length + 1;
+  last  =  (OT_LEFT == l || OT_INTL == l)
+    ? h->start + h->length - 1
+    : h->start;
+
+  match_length = h->length;
+
+  _pr_substr(sa->trimmed_seq, first, h->length, s_tmp);
+  _pr_substr(s_tmp, 0, match_length, s);
+  _pr_reverse_complement(s, s_tmp);  /* FIX ME -- is s_tmp needed? */
+  _pr_substr(s_tmp, 0, match_length, s_r);
+
+  /*
+   * Calculate maximum similarity to sequences from user defined repeat
+   * library. Compare it with maximum allowed repeat similarity.
+   */
+
   if(lib->seq_num > 0) {
     h->repeat_sim.score = 
       pr_safe_malloc(lib->seq_num * sizeof(short));
@@ -2738,86 +2839,8 @@ oligo_mispriming(h, pa, sa, l, align_args,  dpal_arg_to_use)
 
   if (_pr_need_template_mispriming(pa) && (l == OT_RIGHT || l == OT_LEFT)) {
     /* Calculate maximum similarity to ectopic sites in the template. */
+    primer_mispriming_to_template(h, pa, sa, l, first, last, s, s_r, align_args);
 
-    seqlen = strlen(sa->upcased_seq);
-    first_untrimmed = sa->incl_s + first;
-    last_untrimmed = sa->incl_s + last;
-
-    if (l == OT_LEFT) {
-      oseq = &s[0];
-      target = &sa->upcased_seq[0];
-      target_r = &sa->upcased_seq_r[0];
-    } else {  /* l == OT_RIGHT */
-      if (debug) 
-	fprintf(stderr, "first_untrimmed = %d, last_untrimmed = %d\n",
-		first_untrimmed, last_untrimmed);
-      oseq = &s_r[0];
-      target = &sa->upcased_seq_r[0];
-      target_r = &sa->upcased_seq[0];
-      /* We need to adjust first_untrimmed and last_untrimmed so that
-	 they are correct in the reverse-complemented
-	 sequence.
-      */
-      tmp = (seqlen - last_untrimmed) - 1;
-      last_untrimmed  = (seqlen - first_untrimmed) - 1;
-      first_untrimmed = tmp;
-    }
-
-    /* 1. Align to the template 5' of the oligo. */
-    tmp_char = target[first_untrimmed];
-    target[first_untrimmed] = '\0';
-
-    /* if (strlen(target) < 3) {
-      tmp_score = 3;
-      } else {   2007-07-06, fix was moved to the function align() in this file. */
-    tmp_score = align(oseq, target, align_args);
-      /* } */
-
-    if (debug) {
-      if (l == OT_LEFT) fprintf(stderr, "\n************ OLIGO = LEFT\n");
-      else fprintf(stderr,              "\n************ OLIGO = RIGHT\n");
-      fprintf(stderr, "first_untrimmed = %d, last_untrimmed = %d\n",
-	      first_untrimmed, last_untrimmed);
-			
-      fprintf(stderr, "5' of oligo: Score %d aligning %s against %s\n\n", tmp_score,
-	      oseq, target);
-    }
-
-    target[first_untrimmed] = tmp_char;
-
-    /* 2. Align to the template 3' of the oligo. */
-    h->template_mispriming
-      = align(oseq, &target[0] + last_untrimmed + 1, align_args);
-
-    if (debug)
-      fprintf(stderr, "3' of oligo Score %d aligning %s against %s\n\n",
-	      h->template_mispriming, oseq, &target[0] + last_untrimmed + 1);
-
-    /* 3. Take the max of 1. and 2. */
-    if (tmp_score > h->template_mispriming)
-      h->template_mispriming = tmp_score;
-
-    /* 4. Align to the reverse strand of the template. */
-    h->template_mispriming_r
-      = align(oseq, target_r, align_args);
-
-    if (debug)
-      fprintf(stderr, "other strand Score %d aligning %s against %s\n\n", 
-	      h->template_mispriming_r, oseq, target_r);
-
-
-    if (pa->max_template_mispriming >= 0 
-	 && oligo_max_template_mispriming(h) > pa->max_template_mispriming) {
-      h->ok = OV_TEMPLATE_MISPRIMING;
-      if (OT_LEFT == l) {
-	sa->left_expl.template_mispriming++;
-	sa->left_expl.ok--;
-      } else if (OT_RIGHT == l) {
-	sa->right_expl.template_mispriming++;
-	sa->right_expl.ok--;
-      } else PR_ASSERT(0); /* Should not get here. */
-      if (!h->must_use) return;
-    }
   }
 }
 

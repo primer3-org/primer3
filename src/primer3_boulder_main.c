@@ -31,32 +31,19 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <errno.h>
-#include <stdio.h>
-#include <math.h>
 #include <signal.h>
-#include <string.h>
+#include <string.h> /* strlen, memset, strcmp */
 #include <stdlib.h> /* free */
-#include <unistd.h>
-#include <float.h>
 #include "primer3_release.h"
 #include "format_output.h"
-#include "dpal.h"
-#include "oligotm.h"
 #include "libprimer3.h"
 #include "read_boulder.h"
 #include "print_boulder.h"
 
-#ifndef MAX_PRIMER_LENGTH
-#error "Define MAX_PRIMER_LENGTH in Makefile..."
-  /* to ensure that MAX_PRIMER_LENGTH <= DPAL_MAX_ALIGN. */
-#endif
-#if (MAX_PRIMER_LENGTH > DPAL_MAX_ALIGN) 
-#error "MAX_PRIMER_LENGTH must be <= DPAL_MAX_ALIGN"
-#endif
-
 static void   print_usage();
 static void   sig_handler(int);
+
+/* FIX ME -- deal with program name. */
 
 /* Global static variables. */
 static const char * copyright[] = {
@@ -97,11 +84,6 @@ NULL
 /* Other global variables. */
 const char *pr_program_name;
 int pr_program_name_len;
-
-typedef struct oligo_array {
-  int len;
-  primer_rec *data;
-} oligo_array;
 
 int
 main(argc,argv)
@@ -156,6 +138,9 @@ main(argc,argv)
    * there are no errors.
    */
   while (1) {
+
+    /* Values for sa (seq_args *) are _not_ retained across different
+       input records. */
     sa = pr_safe_malloc(sizeof(*sa));
 
     if (read_record(&prog_args, global_pa, sa) <= 0) {

@@ -48,7 +48,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define PR_DEFAULT_PRODUCT_MAX_TM     1000000.0
 #define PR_DEFAULT_PRODUCT_MIN_TM     -1000000.0
 
-/*  Exposed in the boulder input routine.... */
+/*  Exposed in the read_boulder input routine.... */
 #define PR_NULL_START_CODON_POS       -1000000
 #define PR_DEFAULT_START_CODON_POS    PR_NULL_START_CODON_POS
 #define PR_START_CODON_POS_IS_NULL(SA) ((SA)->start_codon_pos <= PR_NULL_START_CODON_POS)
@@ -84,6 +84,7 @@ typedef struct pr_append_str {
 } pr_append_str;
 
 /* The seq_lib struct represents a library of sequences. */
+/* Clients do not need to know the details of this structure. */
 typedef struct seq_lib {
     char **names;         /* An array of sequence names. */
     char **seqs;          /* An array of sequences. */
@@ -97,7 +98,6 @@ typedef struct seq_lib {
     pr_append_str warning;/* Warning message. */
     int seq_num;          /* The number of names, sequences, and weights. */
 } seq_lib;
-
 
 /* Maxima needed for interface data structures. */
 #define PR_MAX_INTERVAL_ARRAY 200 /* 
@@ -388,8 +388,8 @@ typedef struct primrec {
 } primer_rec;
 
 /* 
- * The structure for a pair of primers. (So that we can have a function which
- * returns a pair of primers.)
+ * The structure for a pair of primers. (So that we can have a function 
+ * that returns a pair of primers.)
  */
 typedef struct primpair {
   double pair_quality;
@@ -489,9 +489,8 @@ typedef struct pair_stats {
 } pair_stats;
 
 /*
- * Arguments relating to a particular source sequence for which
- * we will pick primers.  Values for seq_args are _not_ retained
- * across different input records.
+ * Arguments relating to a single particular source sequence (for which
+ * we will pick primer(s), etc.
  */
 typedef struct seqargs {
     pr_append_str error;    /* Error messages. */
