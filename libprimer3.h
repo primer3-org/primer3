@@ -76,7 +76,6 @@ typedef enum task { pick_pcr_primers = 0,
                     pick_hyb_probe_only =4,
                 } task;
 
-
 /* pr_append_str is an append-only string ADT. */
 typedef struct pr_append_str {
     int storage_size;
@@ -144,155 +143,155 @@ typedef struct pair_weights {
 } pair_weights;
 
 typedef struct primargs {
-    int    pr_min[PR_MAX_INTERVAL_ARRAY]; /* Minimum product sizes. */
-    int    pr_max[PR_MAX_INTERVAL_ARRAY]; /* Maximum product sizes. */
-    seq_lib repeat_lib;  /* Library of sequences to avoid. */
+  int    pr_min[PR_MAX_INTERVAL_ARRAY]; /* Minimum product sizes. */
+  int    pr_max[PR_MAX_INTERVAL_ARRAY]; /* Maximum product sizes. */
+  seq_lib *repeat_lib;  /* Library of sequences to avoid. */
 
-    seq_lib io_mishyb_library;
+  seq_lib *io_mishyb_library;
 
-    oligo_weights primer_weights;
-    oligo_weights io_weights;
-    pair_weights  pr_pair_weights;
+  oligo_weights primer_weights;
+  oligo_weights io_weights;
+  pair_weights  pr_pair_weights;
 
-    pr_append_str glob_err;
+  pr_append_str glob_err;
 
-   double opt_tm;
-   double min_tm;
-   double max_tm;
-   double max_diff_tm;
-   double opt_gc_content;
-   double max_gc;
-   double min_gc;
-   double salt_conc;
-   double divalent_conc; /* added by T.Koressaar, divalent salt concentration mmol/l */
-   double dntp_conc; /* added by T.Koressaar, for considering divalent salt concentration */
-   double dna_conc;
+  double opt_tm;
+  double min_tm;
+  double max_tm;
+  double max_diff_tm;
+  double opt_gc_content;
+  double max_gc;
+  double min_gc;
+  double salt_conc;
+  double divalent_conc; /* added by T.Koressaar, divalent salt concentration mmol/l */
+  double dntp_conc; /* added by T.Koressaar, for considering divalent salt concentration */
+  double dna_conc;
 
-   double io_opt_tm;
-   double io_min_tm;
-   double io_max_tm;
-   double io_opt_gc_content;
-   double io_max_gc;
-   double io_min_gc;
-   double io_salt_conc;
-   double io_divalent_conc; /* added by T.Koressaar, divalent salt concentration mmol/l */
-   double io_dntp_conc; /* added by T.Koressaar, for considering divalent salt concentration */
-   double io_dna_conc;
-   int tm_santalucia;  /* added by T.Koressaar table of thermodynamic parameters of SantaLucia 1998 */
-   int salt_corrections; /* added by T.Koressaar salt correction formula for Tm calculation */
-   int lowercase_masking; /* added by T.Koressaar for primer design from lowercase masked template */
+  double io_opt_tm;
+  double io_min_tm;
+  double io_max_tm;
+  double io_opt_gc_content;
+  double io_max_gc;
+  double io_min_gc;
+  double io_salt_conc;
+  double io_divalent_conc; /* added by T.Koressaar, divalent salt concentration mmol/l */
+  double io_dntp_conc; /* added by T.Koressaar, for considering divalent salt concentration */
+  double io_dna_conc;
+  int tm_santalucia;  /* added by T.Koressaar table of thermodynamic parameters of SantaLucia 1998 */
+  int salt_corrections; /* added by T.Koressaar salt correction formula for Tm calculation */
+  int lowercase_masking; /* added by T.Koressaar for primer design from lowercase masked template */
    
-    double outside_penalty; /* Multiply this value times the number of NTs
-                             * from the 3' end to the the (unique) target to
-                             * get the 'position penalty'.
-                             * Meaningless if there are multiple targets
-                             * or if the primer cannot be part of a pair
-                             * that spans the target.
-			     */
+  double outside_penalty; /* Multiply this value times the number of NTs
+			   * from the 3' end to the the (unique) target to
+			   * get the 'position penalty'.
+			   * Meaningless if there are multiple targets
+			   * or if the primer cannot be part of a pair
+			   * that spans the target.
+			   */
 
-    double inside_penalty;  /* Multiply this value times the number of NT
-                             * positions by which the primer overlaps
-                             * the (unique) target to the 'position penalty'.
-                             * Meaningless if there are multiple targets
-                             * or if the primer cannot be part of a pair
-                             * that spans the target.
-                             */
+  double inside_penalty;  /* Multiply this value times the number of NT
+			   * positions by which the primer overlaps
+			   * the (unique) target to the 'position penalty'.
+			   * Meaningless if there are multiple targets
+			   * or if the primer cannot be part of a pair
+			   * that spans the target.
+			   */
 
-    double product_max_tm;
-    double product_min_tm;
-    double product_opt_tm;
-    double max_end_stability;
-                            /* The maximum value allowed for the delta
-                             * G of disruption for the 5 3' bases of
-                             * a primer.
-                             */
-    int    num_intervals;         /* 
-				   * Number of product size intervals
-				   * (i.e. number of elements in pr_min and
-				   * pr_max)
-                                   */
-    int    num_ns_accepted;
-    task   primer_task;          /* 2 if left primer only, 3 if right primer only,
-				   * 4 if internal oligo only.    */
+  double product_max_tm;
+  double product_min_tm;
+  double product_opt_tm;
+  double max_end_stability;
+  /* The maximum value allowed for the delta
+   * G of disruption for the 5 3' bases of
+   * a primer.
+   */
+  int    num_intervals;         /* 
+				 * Number of product size intervals
+				 * (i.e. number of elements in pr_min and
+				 * pr_max)
+				 */
+  int    num_ns_accepted;
+  task   primer_task;          /* 2 if left primer only, 3 if right primer only,
+				* 4 if internal oligo only.    */
 
-    int    file_flag;
-    int    explain_flag;
-    int    primer_opt_size;
-    int    primer_min_size;
-    int    primer_max_size;
-    int    product_opt_size;
+  int    file_flag;
+  int    explain_flag;
+  int    primer_opt_size;
+  int    primer_min_size;
+  int    primer_max_size;
+  int    product_opt_size;
 
   /*internal oligo*/
-    int    io_num_ns_accepted;
-    int    io_primer_opt_size;
-    int    io_primer_min_size;
-    int    io_primer_max_size;
+  int    io_num_ns_accepted;
+  int    io_primer_opt_size;
+  int    io_primer_min_size;
+  int    io_primer_max_size;
 
-    int    gc_clamp;              /* Required number of GCs at *3' end. */
+  int    gc_clamp;              /* Required number of GCs at *3' end. */
    
 
-    int    liberal_base;   /* 
-			    * If non-0 then turn characters other than
-			    * [ATGCNatgcn] into N.
-			    */
+  int    liberal_base;   /* 
+			  * If non-0 then turn characters other than
+			  * [ATGCNatgcn] into N.
+			  */
 
-    int    max_poly_x;      /* 
-			     * Maximum length of mononucleotide sequence in an
-			     * oligo.
+  int    max_poly_x;      /* 
+			   * Maximum length of mononucleotide sequence in an
+			   * oligo.
+			   */
+  int    io_max_poly_x;
+
+
+  int    first_base_index;  /* 
+			     * The index of the first base in the input
+			     * sequence.  This parameter is ignored within
+			     * pr_choice; pr_choice's caller must assure that
+			     * all indexes are 0-based.  However, this
+			     * parameter should used by output routines to
+			     * adjust base indexes.
 			     */
-    int    io_max_poly_x;
+  int    num_return; /* The number of best primer pairs to return. */
+  int    min_quality;       /* Minimum quality permitted for oligo sequence.*/
+  int    min_end_quality;   /* Minimum quality permitted at 3' end. */
+  int    quality_range_min;
+  int    quality_range_max;
 
+  int    io_min_quality;
+  int    io_min_end_quality;
 
-    int    first_base_index;  /* 
-			       * The index of the first base in the input
-			       * sequence.  This parameter is ignored within
-			       * pr_choice; pr_choice's caller must assure that
-			       * all indexes are 0-based.  However, this
-			       * parameter should used by output routines to
-			       * adjust base indexes.
-			       */
-    int    num_return; /* The number of best primer pairs to return. */
-    int    min_quality;       /* Minimum quality permitted for oligo sequence.*/
-    int    min_end_quality;   /* Minimum quality permitted at 3' end. */
-    int    quality_range_min;
-    int    quality_range_max;
+  int    pick_anyway;    /* Pick even if input primer or oligos
+			    violate constraints. */
 
-    int    io_min_quality;
-    int    io_min_end_quality;
+  int    lib_ambiguity_codes_consensus;
+  /* If non-0, treat ambiguity codes in a mispriming/mishyb
+     library as representing a consensus.  So, for example,
+     S would match C or G.  N would match any nucleotide.
+     It turns out that this _not_ what one normally wants,
+     since many libraries contain strings of N, which then
+     match every oligo (very bad).
+  */
 
-    int    pick_anyway;    /* Pick even if input primer or oligos
-                              violate constraints. */
+  short  max_template_mispriming;
+  short  pair_max_template_mispriming;
 
-    int    lib_ambiguity_codes_consensus;
-       /* If non-0, treat ambiguity codes in a mispriming/mishyb
-          library as representing a consensus.  So, for example,
-          S would match C or G.  N would match any nucleotide.
-          It turns out that this _not_ what one normally wants,
-          since many libraries contain strings of N, which then
-          match every oligo (very bad).
-       */
+  short  io_max_template_mishyb;
 
-    short  max_template_mispriming;
-    short  pair_max_template_mispriming;
+  short  repeat_compl;   /* 
+			  * Acceptable complementarity with repeat
+			  * sequences.
+			  */
+  short  io_repeat_compl;
 
-    short  io_max_template_mishyb;
+  short  pair_repeat_compl;
 
-    short  repeat_compl;   /* 
-			    * Acceptable complementarity with repeat
-			    * sequences.
-			    */
-    short  io_repeat_compl;
+  short  self_any;  
+  short  self_end;
 
-    short  pair_repeat_compl;
+  short  io_self_any;  
+  short  io_self_end;
 
-    short  self_any;  
-    short  self_end;
-
-    short  io_self_any;  
-    short  io_self_end;
-
-    short  pair_compl_any;
-    short  pair_compl_end;
+  short  pair_compl_any;
+  short  pair_compl_end;
 } primer_args;
 
 typedef enum oligo_type { OT_LEFT = 0, OT_RIGHT = 1, OT_INTL = 2 }
@@ -612,9 +611,31 @@ short  oligo_max_template_mispriming(const primer_rec *);
 
 int  strcmp_nocase(char *, char *);
 
+/* ======================================================= */
+/* Functions for creating and destroying a seq_lib object. */
+/* ======================================================= */
+
+seq_lib *
+read_and_create_seq_lib(const char *filename, const char* errfrag);
+
+
+void
+destroy_seq_lib(seq_lib *lib);
+
+/* number of sequences in a seq_lib* */
+int
+seq_lib_num_seq(const seq_lib* lib);
+
+char *
+seq_lib_warning_data(const seq_lib *lib);
+
+
+
+/* ======================================================= */
 /* The remaining functions will be replaced. */
 void *pr_safe_malloc(size_t);
 void *pr_safe_realloc(void *, size_t x);
 FILE *safe_fopen(const char*, const char*);
+/* ======================================================= */
 
 #endif
