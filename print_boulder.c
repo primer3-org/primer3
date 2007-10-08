@@ -159,7 +159,7 @@ boulder_print_pairs(prog_args, pa, sa, best_pairs)
 	if ( pa->primer_task == pick_pcr_primers_and_hyb_probe)
 	    printf("PRIMER_INTERNAL_OLIGO%s_SELF_END=%.2f\n", suffix,
 		   intl->self_end / PR_ALIGN_SCORE_PRECISION);
-        if (pa->repeat_lib.seq_num > 0) {
+        if (seq_lib_num_seq(pa->repeat_lib) > 0) {
 	    printf("PRIMER_LEFT%s_MISPRIMING_SCORE=%.2f, %s\n", suffix,
 		   fwd->repeat_sim.score[fwd->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
 		   fwd->repeat_sim.name);
@@ -171,7 +171,7 @@ boulder_print_pairs(prog_args, pa, sa, best_pairs)
 		   best_pairs->pairs[i].rep_name);
         }
 	if ( pa->primer_task == pick_pcr_primers_and_hyb_probe
-	    && pa->io_mishyb_library.seq_num > 0)
+	    && seq_lib_num_seq(pa->io_mishyb_library) > 0)
 	    printf("PRIMER_INTERNAL_OLIGO%s_MISHYB_SCORE=%.2f, %s\n", suffix,
 		   intl->repeat_sim.score[intl->repeat_sim.max]
 		   / PR_ALIGN_SCORE_PRECISION,
@@ -307,11 +307,11 @@ boulder_print_oligos(pa, sa, n, l, f, r, mid)
 		       oligo[i].self_any / PR_ALIGN_SCORE_PRECISION);
         printf("%s%s_SELF_END=%.2f\n", type, suffix,
 		       oligo[i].self_end / PR_ALIGN_SCORE_PRECISION);
-        if ((l == OT_LEFT || l == OT_RIGHT) && pa->repeat_lib.seq_num > 0 ) 
+        if ((l == OT_LEFT || l == OT_RIGHT) && seq_lib_num_seq(pa->repeat_lib) > 0 )
 	    printf("%s%s_MISPRIMING_SCORE=%.2f, %s\n", type, suffix,
 		    oligo[i].repeat_sim.score[oligo[i].repeat_sim.max] /PR_ALIGN_SCORE_PRECISION,
 		    oligo[i].repeat_sim.name);
-        if (l == OT_INTL && pa->io_mishyb_library.seq_num > 0)
+        if (l == OT_INTL && seq_lib_num_seq(pa->io_mishyb_library) > 0)
 	    printf("%s%s_MISHYB_SCORE=%.2f,%s\n", type, suffix,
 	           oligo[i].repeat_sim.score[oligo[i].repeat_sim.max]/ PR_ALIGN_SCORE_PRECISION,
                    oligo[i].repeat_sim.name);
