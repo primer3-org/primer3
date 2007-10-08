@@ -209,11 +209,11 @@ sub main() {
 	           # and if something is found, we have a problem.
 	    $exit_stat = -1;
 	}
-	$r = system "grep 'definitely lost' *.vg */*.vg | grep -v '0 bytes'";
+	$r = system "grep 'definitely lost' *.vg */*.vg | grep -v ' 0 bytes'";
 	if (!$r) {
 	    $exit_stat = -1;
 	}
-	$r = system "grep 'possibly lost' *.vg */*.vg   | grep -v '0 bytes'";
+	$r = system "grep 'possibly lost' *.vg */*.vg   | grep -v ' 0 bytes'";
 	if (!$r) {
 	    $exit_stat = -1;
 	}
