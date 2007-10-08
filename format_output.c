@@ -49,7 +49,7 @@ static void print_pair_info(FILE *, const primer_pair *,
 			    const primer_args *);
 static void print_oligo(FILE *, const char *, const seq_args *,
 			const primer_rec *, int, const primer_args *, 
-			const seq_lib, int);
+			const seq_lib*, int);
 static void print_oligo_header(FILE *, const char *, const int);
 static void print_pair_array(FILE *, const char*, int,
 			     const interval_array_t, 
@@ -90,16 +90,16 @@ format_pairs(f, pa, sa, best_pairs)
     if (sa->error.data != NULL) 
 	fprintf(f, "INPUT PROBLEM: %s\n\n", sa->error.data);
     else {
-	if (pa->repeat_lib.repeat_file != NULL)
+	if (pa->repeat_lib != NULL)
 	    fprintf(f, "Using mispriming library %s\n",
-		    pa->repeat_lib.repeat_file);
+		    pa->repeat_lib->repeat_file);
 	else
 	    fprintf(f, "No mispriming library specified\n");
 
 	if ( pa->primer_task == 1) {
-	  if (pa->io_mishyb_library.repeat_file != NULL)
+	  if (pa->io_mishyb_library != NULL)
 	    fprintf(f, "Using internal oligo mishyb library %s\n",
-		    pa->io_mishyb_library.repeat_file);
+		    pa->io_mishyb_library->repeat_file);
 	  else
 	    fprintf(f, "No internal oligo mishyb library specified\n");
 	}
@@ -143,12 +143,15 @@ print_summary(f, pa, sa, best_pairs, num)
 	 * print_oligo.
 	 */
 	print_oligo_header(f, "OLIGO", print_lib_sim);
-	print_oligo(f, "LEFT PRIMER", sa, p->left, FORWARD, pa, pa->repeat_lib,
+	print_oligo(f, "LEFT PRIMER", sa, p->left, FORWARD, pa,
+		    pa->repeat_lib,
 		    print_lib_sim);
-	print_oligo(f, "RIGHT PRIMER", sa, p->right, REVERSE, pa, pa->repeat_lib,
+	print_oligo(f, "RIGHT PRIMER", sa, p->right, REVERSE, pa,
+		    pa->repeat_lib,
 		    print_lib_sim);
 	if ( pa->primer_task == 1)
-	    print_oligo(f, "INTERNAL OLIGO", sa, p->intl, FORWARD, pa, pa->io_mishyb_library,
+	    print_oligo(f, "INTERNAL OLIGO", sa, p->intl, FORWARD,
+			pa, pa->io_mishyb_library,
 			print_lib_sim);
     }
     fprintf(f, "SEQUENCE SIZE: %d\n", seq_len);
@@ -174,15 +177,14 @@ print_oligo_header(f, s, print_lib_sim)
 }
 
 static void
-print_oligo(f, title, sa, o, dir, pa, seqlib, print_lib_sim)
-    FILE *f;
-    const char *title;
-    const seq_args *sa;
-    const primer_rec *o;
-    int dir;
-    const primer_args *pa;
-    const seq_lib seqlib;
-    int print_lib_sim;
+print_oligo(FILE *f,
+	    const char *title,
+	    const seq_args *sa,
+	    const primer_rec *o,
+	    int dir,
+	    const primer_args *pa,
+	    const seq_lib *seqlib,
+	    int print_lib_sim)
 {
     const char *format1 = "%-16s %5d %4d %7.2f %7.2f %5.2f %5.2f ";
     char *seq = (FORWARD == dir) 
@@ -194,7 +196,7 @@ print_oligo(f, title, sa, o, dir, pa, seqlib, print_lib_sim)
 	    0.01 * o->self_end);
 
     if (print_lib_sim) {
-	if (seqlib.repeat_file) 
+	if (seqlib != NULL) 
 	    fprintf(f, "%5.2f ",  0.01 * o->repeat_sim.score[o->repeat_sim.max]);
 	else 
 	    fprintf(f, "%5s ", "");
@@ -624,12 +626,9 @@ print_stat_line(f, t, s, print_lib_sim, lowercase_masking)
  * Return true iff a check for library similarity has been specified for
  * either the primer pair or the internal oligo.
  */
-
 static int
-lib_sim_specified(pa)
-  const primer_args *pa;
-{
-  return (pa->repeat_lib.repeat_file || pa->io_mishyb_library.repeat_file);
+lib_sim_specified(const primer_args *pa) {
+  return (pa->repeat_lib || pa->io_mishyb_library);
 }
 
 void format_oligos(f, pa, sa, h, n, l)
@@ -659,16 +658,16 @@ void format_oligos(f, pa, sa, h, n, l)
     fprintf(f, "INPUT PROBLEM: %s\n\n", sa->error.data);
   else {
     if (l != OT_INTL ) {
-      if (pa->repeat_lib.repeat_file != NULL)
+      if (pa->repeat_lib != NULL)
 	fprintf(f, "Using mispriming library %s\n",
-		pa->repeat_lib.repeat_file);
+		pa->repeat_lib->repeat_file);
       else
 	fprintf(f, "No mispriming library specified\n");
     } else {
       if ( pa->primer_task == 1) {
-	if (pa->io_mishyb_library.repeat_file != NULL)
+	if (pa->io_mishyb_library->repeat_file != NULL)
 	  fprintf(f, "Using internal oligo mishyb library %s\n",
-		  pa->io_mishyb_library.repeat_file);
+		  pa->io_mishyb_library->repeat_file);
 	else
 	  fprintf(f, "No internal oligo mishyb library specified\n");
       }
@@ -693,16 +692,19 @@ void format_oligos(f, pa, sa, h, n, l)
     if(n > 1) {
       fprintf(f, "ADDITIONAL OLIGOS\n");
       fprintf(f, "   "); print_oligo_header(f, "", print_lib_sim);
-      for(i = 1; i < pa->num_return; i++) {
+      for (i = 1; i < pa->num_return; i++) {
 	if(i > n-1) break;
 	p = h + i;
 	fprintf(f, "%2d ", i);
-	if(OT_LEFT == l || OT_INTL == l)
-	  print_oligo(f, type, sa, p, FORWARD,pa, pa->repeat_lib, print_lib_sim);
-        else   print_oligo(f, type, sa, p, REVERSE,pa, pa->repeat_lib, print_lib_sim);
+	if (OT_LEFT == l || OT_INTL == l)
+	  print_oligo(f, type, sa, p, FORWARD, pa,
+		      pa->repeat_lib, print_lib_sim);
+        else 
+	  print_oligo(f, type, sa, p, REVERSE, pa, 
+		      pa->repeat_lib, print_lib_sim);
       }
     }
-    if(pa->explain_flag) print_explain(f, pa, sa, print_lib_sim);
+    if (pa->explain_flag) print_explain(f, pa, sa, print_lib_sim);
     fprintf(f, "\n\n");
     if (fflush(f) == EOF) {
       perror("fflush(f) failed");
