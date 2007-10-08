@@ -39,13 +39,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <unistd.h>
 #include <float.h>
 #include <string.h>
-  /* #include "primer3_release.h" */
-  /* #include "format_output.h" */
+#include <ctype.h> /* toupper */
 #include "dpal.h"
 #include "oligotm.h"
 #include "libprimer3.h"
-  /* #include "boulder_input.h" */
-  /* #include "print_boulder.h" */
 
 /* #define's */
 
@@ -571,7 +568,10 @@ pr_set_default_global_args(a)
 /* ------------------------------------------------------------------------ */
 /* The main primer3 interface */
 
-/* Allocate a new primer3 state */
+/* Allocate a new primer3 state. Return NULL if out of memory. Assuming
+   malloc sets errno to ENOMEM according to Unix98, set errno to ENOMEM
+   on out-of-memory error. */
+
 primer3_state *
 create_primer3_state(void)
 {
@@ -741,7 +741,7 @@ choose_primers(primer3_state *p3state,
 	|| pa->primer_task == pick_pcr_primers_and_hyb_probe) {
 
       /* Look for pa->num_return best primer pairs. */
-      for(int_num=0; int_num < pa->num_intervals; int_num++) {
+      for (int_num=0; int_num < pa->num_intervals; int_num++) {
 	if(choose_pair(p3state, pa, sa, dpal_arg_to_use, int_num, &p)!=0)
 	  continue;
 
@@ -1617,17 +1617,17 @@ print_list(p3state, sa, pa)
 
     if(pa->primer_task != pick_right_only && pa->primer_task != pick_hyb_probe_only)
        create_and_print_file(sa, p3state->n_f, p3state->f, OT_LEFT, first_base_index, 
-			  NULL != pa->repeat_lib.repeat_file, ".for");
+			  NULL != pa->repeat_lib, ".for");
 
     if(pa->primer_task != pick_left_only && pa->primer_task != pick_hyb_probe_only)
        create_and_print_file(sa, p3state->n_r, p3state->r, OT_RIGHT, first_base_index,
-			  NULL != pa->repeat_lib.repeat_file, ".rev");
+			  NULL != pa->repeat_lib, ".rev");
 
     if ( pa->primer_task == pick_pcr_primers_and_hyb_probe 
 				|| pa->primer_task == pick_hyb_probe_only)
       create_and_print_file(sa, p3state->n_m, p3state->mid, OT_INTL,
 			    first_base_index,
-			    NULL != pa->io_mishyb_library.repeat_file,
+			    NULL != pa->io_mishyb_library,
 			    ".int");
 }
 
@@ -2302,28 +2302,25 @@ obj_fn(pa, h)
 }
 
 char *
-pr_gather_warnings(sa, pa)
-    const seq_args *sa;
-    const primer_args *pa;
-{
-    pr_append_str warning;
+pr_gather_warnings(const seq_args *sa, const primer_args *pa) {
+  pr_append_str warning;
 
-    PR_ASSERT(NULL != sa);
-    PR_ASSERT(NULL != pa);
+  PR_ASSERT(NULL != sa);
+  PR_ASSERT(NULL != pa);
 
-    warning.data = NULL;
-    warning.storage_size = 0;
+  warning.data = NULL;
+  warning.storage_size = 0;
 
-    if (pa->repeat_lib.warning.data)
-	pr_append_new_chunk(&warning, pa->repeat_lib.warning.data);
+  if (seq_lib_warning_data(pa->repeat_lib))
+    pr_append_new_chunk(&warning, seq_lib_warning_data(pa->repeat_lib));
 
-    if(pa->io_mishyb_library.warning.data != NULL) {
-	pr_append_new_chunk(&warning, pa->io_mishyb_library.warning.data); 
-	pr_append(&warning, " (for internal oligo)");
-    }
+  if(seq_lib_warning_data(pa->io_mishyb_library)) {
+    pr_append_new_chunk(&warning, seq_lib_warning_data(pa->io_mishyb_library));
+    pr_append(&warning, " (for internal oligo)");
+  }
 
-    if (sa->warning.data) pr_append_new_chunk(&warning, sa->warning.data);
-    return pr_is_empty(&warning) ? NULL : warning.data;
+  if (sa->warning.data) pr_append_new_chunk(&warning, sa->warning.data);
+  return pr_is_empty(&warning) ? NULL : warning.data;
 }
 
 void
@@ -2645,10 +2642,10 @@ primer_mispriming_to_library(h, pa, sa, l, align_args,  dpal_arg_to_use)
   short  lib_compl;
 
   if (OT_INTL == l) {
-    lib = &(pa->io_mishyb_library);
+    lib = pa->io_mishyb_library;
     lib_compl = pa->io_repeat_compl;
   } else {
-    lib = &(pa->repeat_lib);
+    lib = pa->repeat_lib;
     lib_compl = pa->repeat_compl;
   }
 
@@ -2754,10 +2751,10 @@ oligo_mispriming(h, pa, sa, l, align_args,  dpal_arg_to_use)
   short  lib_compl;
 
   if (OT_INTL == l) {
-    lib = &(pa->io_mishyb_library);
+    lib = pa->io_mishyb_library;
     lib_compl = pa->io_repeat_compl;
   } else {
-    lib = &(pa->repeat_lib);
+    lib = pa->repeat_lib;
     lib_compl = pa->repeat_compl;
   }
 
@@ -2780,7 +2777,7 @@ oligo_mispriming(h, pa, sa, l, align_args,  dpal_arg_to_use)
    * library. Compare it with maximum allowed repeat similarity.
    */
 
-  if(lib->seq_num > 0) {
+  if (seq_lib_num_seq(lib) > 0) {
     h->repeat_sim.score = 
       pr_safe_malloc(lib->seq_num * sizeof(short));
     h->repeat_sim.max = h->repeat_sim.min = 0;
@@ -2856,14 +2853,14 @@ pair_repeat_sim(h, pa)
   rev = h->right;
 
   max = 0;
-  n = pa->repeat_lib.seq_num;
+  n = seq_lib_num_seq(pa->repeat_lib);
   if(n == 0) return 0;
-  h->rep_name =  pa->repeat_lib.names[0] ;
+  h->rep_name =  pa->repeat_lib->names[0] ;
   for(i = 0; i < n; i++) {
     if((w=(fw->repeat_sim.score[i] +
 	   rev->repeat_sim.score[i])) > max) {
       max = w;
-      h->rep_name =  pa->repeat_lib.names[i] ;
+      h->rep_name =  pa->repeat_lib->names[i] ;
     }
   }
   return max;
@@ -3416,19 +3413,19 @@ _pr_data_control(pa, sa)
        return 1;
     }
 
-    if (pa->primer_weights.repeat_sim && (!pa->repeat_lib.seq_num)) {
+    if (pa->primer_weights.repeat_sim && (!seq_lib_num_seq(pa->repeat_lib))) {
        pr_append_new_chunk(&pa->glob_err,
 	  "Mispriming score is part of objective function, but mispriming library is not defined");
        return 1;
     }
 
-    if(pa->io_weights.repeat_sim && (!pa->io_mishyb_library.seq_num)){
+    if (pa->io_weights.repeat_sim && (!seq_lib_num_seq(pa->io_mishyb_library))) {
       pr_append_new_chunk(&pa->glob_err,
       "Internal oligo mispriming score is part of objective function while mishyb library is not defined");
       return 1;
     }
 
-    if(pa->pr_pair_weights.repeat_sim && (!pa->repeat_lib.seq_num)){
+    if (pa->pr_pair_weights.repeat_sim && (!(seq_lib_num_seq(pa->repeat_lib)))) {
       pr_append_new_chunk(&pa->glob_err,
 	"Mispriming score is part of objective function, but mispriming library is not defined");
       return 1;
@@ -3673,9 +3670,341 @@ libprimer3_release(void) {
   return "libprimer3 release 2.0.0";
 }
 
+
+/* ======================================================== */
+/* Routines for creating and reading and destroying seq_lib
+   objects. */
+/* ======================================================== */
+
+#define INIT_BUF_SIZE 1024
+#define INIT_LIB_SIZE  500
+#define PR_MAX_LIBRARY_WT 100.0
+
+/* 
+ * Removes spaces and "end-of-line" characters
+ * from the sequence, replaces all other
+ * characters except A, T, G, C and IUB/IUPAC
+ * codes with N.  Returns 0 if there were no such
+ * replacements and the first non-ACGT IUB
+ * character otherwise. 
+ */
+static char
+upcase_and_check_char(s)
+    char *s;
+{
+    int i, j, n, m;
+
+    j = 0; m = 0;
+    n = strlen(s);
+    for(i=0; i<n; i++){
+      
+	switch(s[i])
+	{
+	case 'a' : s[i-j] = 'A'; break;
+	case 'g' : s[i-j] = 'G'; break;
+	case 'c' : s[i-j] = 'C'; break;
+	case 't' : s[i-j] = 'T'; break;
+	case 'n' : s[i-j] = 'N'; break;
+	case 'A' : s[i-j] = 'A'; break;
+	case 'G' : s[i-j] = 'G'; break;
+	case 'C' : s[i-j] = 'C'; break;
+	case 'T' : s[i-j] = 'T'; break;
+	case 'N' : s[i-j] = 'N'; break;
+
+        case 'b' : case 'B': 
+        case 'd' : case 'D':
+        case 'h' : case 'H':
+        case 'v' : case 'V':
+        case 'r' : case 'R':
+        case 'y' : case 'Y':
+        case 'k' : case 'K':
+        case 'm' : case 'M':
+	case 's' : case 'S':
+	case 'w' : case 'W':
+	  s[i-j] = toupper(s[i]); break;
+
+	case '\n': j++;          break;
+	case ' ' : j++;          break;
+	case '\t': j++;          break;
+	case '\r': j++;          break;
+	default  : if (!m) m = s[i]; s[i-j] = 'N'; 
+	}
+    }
+    s[n-j] = '\0';
+    return m;
+}
+
+static double
+parse_seq_name(s)
+char *s;
+{
+    char *p, *q;
+    double n;
+
+    p = s;
+    while( *p != '*' && *p != '\0' ) p++;
+    if (*p == '\0' ) return 1;
+    else {
+	 p++;
+	 n = strtod( p, &q );
+	 if( q == p ) return -1;
+    }
+    if(n > PR_MAX_LIBRARY_WT) return -1;
+
+    return n;
+}
+
+static void
+reverse_complement_seq_lib(lib)
+seq_lib  *lib;
+{
+    int i, n, k;
+    if((n = lib->seq_num) == 0) return;
+    else {
+	lib->names = pr_safe_realloc(lib->names, 2*n*sizeof(*lib->names));
+	lib->seqs = pr_safe_realloc(lib->seqs, 2*n*sizeof(*lib->seqs));
+	lib->weight = pr_safe_realloc(lib->weight, 2*n*sizeof(*lib->weight));
+	lib->rev_compl_seqs = pr_safe_malloc(2*n*sizeof(*lib->seqs));
+
+	lib->seq_num *= 2;
+	for(i=n; i<lib->seq_num; i++){
+	    k = strlen(lib->names[i-n]);
+	    lib->names[i] = pr_safe_malloc(k + 9);
+	    strcpy(lib->names[i], "reverse ");
+	    strcat(lib->names[i], lib->names[i-n]);
+	    lib->seqs[i] = pr_safe_malloc(strlen(lib->seqs[i-n]) + 1);
+	    _pr_reverse_complement(lib->seqs[i-n], lib->seqs[i]);
+	    lib->weight[i] = lib->weight[i-n];
+	    lib->rev_compl_seqs[i-n] = lib->seqs[i];
+	    lib->rev_compl_seqs[i] = lib->seqs[i-n];
+       }
+    }
+    return;
+}
+
+/* 
+ * Read a line of any length from file.  Return NULL on end of file,
+ * otherwise return a pointer to static storage containing the line.  Any
+ * trailing newline is stripped off.
+ */
+static char*
+_pr_read_line(file)
+FILE *file;
+{
+    static size_t ssz;
+    static char *s = NULL;
+
+    size_t remaining_size;
+    char *p, *n;
+
+    if (NULL == s) {
+	ssz = INIT_BUF_SIZE;
+	s = pr_safe_malloc(ssz);
+    }
+    p = s;
+    remaining_size = ssz;
+    while (1) {
+	if (fgets(p, remaining_size, file) == NULL) /* End of file. */
+	    return p == s ? NULL : s;
+
+	if ((n = strchr(p, '\n')) != NULL) {
+	    *n = '\0';
+	    return s;
+	}
+
+	/* We did not get the whole line. */
+	
+	/* 
+         * The following assertion is a bit of hack, a at least for 32-bit
+         * machines, because we will usually run out of address space first.
+         * Really we should treat an over-long line as an input error, but
+         * since an over-long line is unlikely and we do want to provide some
+         * protection....
+	 */
+	PR_ASSERT(ssz <= INT_MAX);
+	if (ssz >= INT_MAX / 2)
+	    ssz = INT_MAX;
+	else {
+	    ssz *= 2;
+	}
+	s = pr_safe_realloc(s, ssz);
+	p = strchr(s, '\0');
+	remaining_size = ssz - (p - s);
+    }
+}
+
+
+/*  
+ * Reads any file in fasta format and returns a newly allocated
+ * seq_lib, lib.  Sets lib.error to a non-empty string on any error
+ * other than ENOMEM.  Returns NULL on ENOMEM.
+ */
+seq_lib *
+read_and_create_seq_lib(const char * filename, const char *errfrag)
+{
+    char  *p;
+    FILE *file;
+    int i, m, k;
+    size_t j, n;
+    char buf[2];
+    char offender = '\0', tmp;
+    seq_lib *lib = malloc(sizeof(* lib));
+
+    if (lib == NULL) return NULL;
+    memset(lib, 0, sizeof(*lib));
+    
+
+    PR_ASSERT(NULL != filename);
+
+    lib->repeat_file = pr_safe_malloc(strlen(filename) + 1);
+    strcpy(lib->repeat_file, filename);
+
+    if((file = fopen(lib->repeat_file,"r")) == NULL) {
+	pr_append_new_chunk(&lib->error,
+			    "Cannot open ");
+	goto ERROR;
+    }
+
+    j = INIT_BUF_SIZE;
+    n = INIT_LIB_SIZE;
+    lib->names = pr_safe_malloc(INIT_LIB_SIZE*sizeof(*lib->names));
+    lib->seqs  = pr_safe_malloc(INIT_LIB_SIZE*sizeof(*lib->seqs));
+    lib->weight= pr_safe_malloc(INIT_LIB_SIZE*sizeof(*lib->weight));
+    lib->seq_num = 0;
+
+    i = -1;  m = 0; k = 0;
+    while((p = _pr_read_line(file))) {
+	if(*p == '>'){
+	    i++;
+	    if(i >= n) {
+		n += INIT_LIB_SIZE;
+		lib->names = pr_safe_realloc(lib->names,n*sizeof(*lib->names));
+		lib->seqs  = pr_safe_realloc(lib->seqs ,n*sizeof(*lib->seqs));
+		lib->weight= pr_safe_realloc(lib->weight,
+					     n*sizeof(*lib->weight));
+	    }
+	    p++;
+	    lib->names[i] = pr_safe_malloc(strlen(p) + 1);
+	    strcpy(lib->names[i],p);
+	    lib->weight[i] = parse_seq_name(lib->names[i]);
+	    lib->seqs[i] = pr_safe_malloc(INIT_BUF_SIZE);
+	    lib->seqs[i][0] = '\0';
+	    lib->seq_num = i+1;
+	    if(lib->weight[i] < 0) {
+		pr_append_new_chunk(&lib->error, "Illegal weight in ");
+		goto ERROR;
+	    }
+	    j = INIT_BUF_SIZE;
+	    k = 0;
+	    if(i > 0) {
+		/* We are actually testing the previous sequence. */
+		if(strlen(lib->seqs[i-1]) == 0) {
+		    pr_append_new_chunk(&lib->error, "Empty sequence in ");
+		    goto ERROR;
+		}
+		tmp = upcase_and_check_char(lib->seqs[i-1]);
+		m += tmp;
+		if (tmp && '\0' == offender) offender = tmp;
+	    }
+	    p--;
+	}
+	else {
+	    if(i < 0){ 
+		pr_append_new_chunk(&lib->error,
+				    "Missing id line (expected '>') in ");
+		goto ERROR;
+	    } else {
+		if(k+strlen(p) > j-2){
+		    while(j-2 < k+ strlen(p))j += INIT_BUF_SIZE;
+		    lib->seqs[i] = pr_safe_realloc(lib->seqs[i], j);
+
+		}
+		strcat(lib->seqs[i], p);
+		k += strlen(p);
+	    }
+	}
+    }
+    if(i < 0) {
+	pr_append_new_chunk(&lib->error, "Empty ");
+	goto ERROR;
+    }
+    else if(strlen(lib->seqs[i]) < 3) {
+	pr_append_new_chunk(&lib->error, "Sequence length < 3 in ");
+	goto ERROR;
+    }
+    tmp = upcase_and_check_char(lib->seqs[i]);
+    m += tmp;
+    if (tmp && '\0' == offender) offender = tmp;
+    if (offender) {
+	pr_append_new_chunk(&lib->warning,
+			    "Unrecognized character (");
+	buf[0] = offender;
+	buf[1] = '\0';
+	pr_append(&lib->warning, buf);
+	pr_append(&lib->warning, ") in ");
+	pr_append(&lib->warning, errfrag);
+	pr_append(&lib->warning, " ");
+	pr_append(&lib->warning, lib->repeat_file);
+    }
+    if (file) fclose(file);
+    reverse_complement_seq_lib(lib);
+    return lib;
+
+ ERROR:
+    pr_append(&lib->error, errfrag);
+    pr_append(&lib->error, " ");
+    pr_append(&lib->error, lib->repeat_file);
+    if (file) fclose(file);
+    return lib;
+}
+
+/* 
+ * Free exogenous storage associated with a seq_lib (but not the seq_lib
+ * itself).  Silently ignore NULL p.  Set *p to 0 bytes.
+ */
+void
+destroy_seq_lib(p)
+    seq_lib *p;
+{
+    int i;
+    if (NULL == p) return;
+
+    if ( NULL != p->repeat_file) free(p->repeat_file);
+    if (NULL != p->seqs) { 
+	for(i = 0; i < p->seq_num; i++)
+	    if (NULL != p->seqs[i]) free(p->seqs[i]);
+	free(p->seqs);
+    }
+    if (NULL != p->names) {
+	for(i = 0; i < p->seq_num; i++)
+	    if (NULL != p->names[i]) free(p->names[i]);
+	free(p->names);
+    }
+    if (NULL != p->weight) free(p->weight);
+    if (NULL != p->error.data) free(p->error.data);
+    if (NULL != p->warning.data) free(p->warning.data);
+    if (NULL != p->rev_compl_seqs) free(p->rev_compl_seqs);
+    free(p);
+}
+
+int
+seq_lib_num_seq(const seq_lib* lib) {
+  if (NULL == lib) return 0;
+  else return lib->seq_num;
+}
+
+char *
+seq_lib_warning_data(const seq_lib *lib) {
+  if (NULL == lib) return NULL;
+  else return lib->warning.data;
+}
+
+/* =========================================================== */
+/* =========================================================== */
+/* =========================================================== */
 /* =========================================================== */
 /* Various fail-stop wrappers for standard library functions.  */
-
+/* =========================================================== */
 void *
 pr_safe_malloc(x)
     size_t x;
