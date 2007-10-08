@@ -57,11 +57,10 @@ static void   parse_interval_list(const char *, const char *, int*,
 static void   parse_product_size(const char *, char *, primer_args *,
 				 pr_append_str *);
 static void   tag_syntax_error(const char *, const char *,  pr_append_str *);
-static void   read_seq_lib(seq_lib *, const char *, const char *);
-static char   upcase_and_check_char(char *);
+/* static char   upcase_and_check_char(char *); */
 static char*  read_line(FILE *);
-static double parse_seq_name(char *);
-static void   reverse_complement_seq_lib(seq_lib *);
+/* static double parse_seq_name(char *); */
+/* static void   reverse_complement_seq_lib(seq_lib *); */ 
 static int    parse_seq_quality(char *, int **);
 
 /* 
@@ -447,13 +446,17 @@ read_record(prog_args, pa, sa)
      */
 
     if (NULL != repeat_file) {
+      destroy_seq_lib(pa->repeat_lib);
       if ('\0' == *repeat_file) {
-	free_seq_lib(&pa->repeat_lib);
+	/* Input now specifies no repeat library. */
+	pa->repeat_lib = NULL;
       }
       else {
-	read_seq_lib(&pa->repeat_lib, repeat_file, "mispriming library");
-	if(pa->repeat_lib.error.data != NULL) {
-	  pr_append_new_chunk(&pa->glob_err, pa->repeat_lib.error.data);
+	pa->repeat_lib
+	  = read_and_create_seq_lib(repeat_file, 
+				    "mispriming library");
+	if(pa->repeat_lib->error.data != NULL) {
+	  pr_append_new_chunk(&pa->glob_err, pa->repeat_lib->error.data);
 	}
       }
       free(repeat_file);
@@ -461,14 +464,17 @@ read_record(prog_args, pa, sa)
     }
 
     if (NULL != int_repeat_file) {
+      destroy_seq_lib(pa->io_mishyb_library);
       if ('\0' == *int_repeat_file) {
-	free_seq_lib(&pa->io_mishyb_library);
+	/* Input now specifies no mishybridization library. */
+	pa->io_mishyb_library = NULL;
       }
       else {
-	read_seq_lib(&pa->io_mishyb_library, int_repeat_file,
-		     "internal oligo mishyb library");
-	if(pa->io_mishyb_library.error.data != NULL) {
-	  pr_append_new_chunk(&pa->glob_err, pa->io_mishyb_library.error.data);
+	pa->io_mishyb_library = 
+	  read_and_create_seq_lib(int_repeat_file,
+				  "internal oligo mishyb library");
+	if(pa->io_mishyb_library->error.data != NULL) {
+	  pr_append_new_chunk(&pa->glob_err, pa->io_mishyb_library->error.data);
 	}
       }
       free(int_repeat_file);
@@ -514,7 +520,7 @@ adjust_base_index_interval_list(intervals, num, first_index)
 }
 
 /* 
- * Read a line of any length from stdin.  Return NULL on end of file,
+ * Read a line of any length from file.  Return NULL on end of file,
  * otherwise return a pointer to static storage containing the line.  Any
  * trailing newline is stripped off.
  */
@@ -773,7 +779,8 @@ parse_product_size(tag_name, in, pa, err)
     pa->num_intervals = i;
 }
 
-/* 
+#ifdef FOOBAR
+/*  
  * Reads any file in fasta format and fills in *lib.  Sets lib->error to a
  * non-empty string on error.
  */
@@ -1026,6 +1033,8 @@ seq_lib  *lib;
     }
     return;
 }
+
+#endif
 
 static int
 parse_seq_quality(s, num)

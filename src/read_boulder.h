@@ -43,7 +43,7 @@ typedef struct program_args {
 
 int read_record(const program_args *, primer_args *, /*primer_args *,*/
 		seq_args *);
-void   free_seq_lib( seq_lib *);
+/* void   free_seq_lib( seq_lib *); ... replaced by destroy_seq_lib */
 #endif
 
 
