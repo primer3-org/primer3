@@ -491,7 +491,7 @@ typedef struct pair_stats {
  * Arguments relating to a single particular source sequence (for which
  * we will pick primer(s), etc.
  */
-typedef struct seqargs {
+typedef struct seq_args {
     pr_append_str error;    /* Error messages. */
     pr_append_str warning;  /* Warning messages. */
     int num_targets;        /* The number of targets. */
