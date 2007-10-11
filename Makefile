@@ -79,7 +79,7 @@ EXES=$(PRIMER_EXE) ntdpal oligotm long_seq_tm_test
 all: $(EXES) $(LIBRARIES)
 
 clean_src:
-	-rm -f *.o $(EXES) *~ $(LIBRARIES) $(example_files)
+	-rm -f *.o $(EXES) *~ $(LIBRARIES) $(OLIGOTM_DYN_LIB) $(example_files) core
 
 clean: clean_src
 	cd ../test/; make clean
