@@ -160,12 +160,12 @@ static void   oligo_param(const primer_args *pa,
 			  const dpal_arg_holder*,
 			  seq_args *, oligo_stats *);
 
-static int    pair_param(primer3_state *p,
-			 const primer_args *,
-			 seq_args *,
-			 int, int, int,
-			 primer_pair *,
-			 const dpal_arg_holder*);
+static int    characterize_pair(primer3_state *p,
+				const primer_args *,
+				seq_args *,
+				int, int, int,
+				primer_pair *,
+				const dpal_arg_holder*);
 
 static int    pair_spans_target(const primer_pair *, const seq_args *);
 static void   pr_append_w_sep(pr_append_str *, const char *, const char *);
@@ -1767,7 +1767,7 @@ choose_pair(p3state, pa, sa,  dpal_arg_to_use, int_num, p)
       }
 
       if (PAIR_OK ==
-	  pair_param(p3state, pa, sa, j, i, int_num, &h, dpal_arg_to_use)) {
+	  characterize_pair(p3state, pa, sa, j, i, int_num, &h, dpal_arg_to_use)) {
 
 	if (!pa->pr_pair_weights.io_quality) {
 	  h.pair_quality = obj_fn(pa, &h);
@@ -1949,12 +1949,12 @@ primer_pair_comp(x1, x2)
  * acceptable; PAIR_FAILED otherwise.
  */
 static int
-pair_param(p3state, pa, sa, m, n, int_num, h, dpal_arg_to_use)
+characterize_pair(p3state, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
      primer3_state *p3state;
      const primer_args *pa;
      seq_args *sa;
      int m, n, int_num;
-     primer_pair *h;
+     primer_pair *ppair;
      const dpal_arg_holder *dpal_arg_to_use;
 {
     char s1[MAX_PRIMER_LENGTH+1], s2[MAX_PRIMER_LENGTH+1], 
@@ -1967,28 +1967,29 @@ pair_param(p3state, pa, sa, m, n, int_num, h, dpal_arg_to_use)
 
     int pair_failed_flag = 0;
     double min_oligo_tm;
+    /* primer_pair *h = ppair; */
 
-    h->left = &p3state->f[m];
-    h->right = &p3state->r[n];
-    h->product_size = p3state->r[n].start - p3state->f[m].start+1;
-    h->target = 0;
-    h->compl_any = h->compl_end = 0;
+    ppair->left = &p3state->f[m];
+    ppair->right = &p3state->r[n];
+    ppair->product_size = p3state->r[n].start - p3state->f[m].start+1;
+    ppair->target = 0;
+    ppair->compl_any = ppair->compl_end = 0;
 
     sa->pair_expl.considered++;
 
-    if(h->product_size < pa->pr_min[int_num] || 
-		h->product_size > pa->pr_max[int_num]) {
+    if(ppair->product_size < pa->pr_min[int_num] || 
+		ppair->product_size > pa->pr_max[int_num]) {
 	sa->pair_expl.product++;
-	h->product_size = -1;
+	ppair->product_size = -1;
 	if (!must_use) return PAIR_FAILED;
 	else pair_failed_flag = 1;
     }
 
     if (sa->num_targets > 0) {
-	if (pair_spans_target(h, sa))
-	    h->target = 1;
+	if (pair_spans_target(ppair, sa))
+	    ppair->target = 1;
 	else {
-	    h->target = -1;
+	    ppair->target = -1;
 	    sa->pair_expl.target++;
 	    if (!must_use) return PAIR_FAILED;
 	    else pair_failed_flag = 1;
@@ -1998,33 +1999,33 @@ pair_param(p3state, pa, sa, m, n, int_num, h, dpal_arg_to_use)
     /* ============================================================= */
     /* Compute product Tm and related parameters; check constraints. */
 
-    h->product_tm 
-     = long_seq_tm(sa->trimmed_seq, h->left->start,
-		   h->right->start - h->left->start + 1, pa->salt_conc, pa->divalent_conc, pa->dntp_conc);
+    ppair->product_tm 
+     = long_seq_tm(sa->trimmed_seq, ppair->left->start,
+		   ppair->right->start - ppair->left->start + 1, pa->salt_conc, pa->divalent_conc, pa->dntp_conc);
       
-    PR_ASSERT(h->product_tm != OLIGOTM_ERROR);
+    PR_ASSERT(ppair->product_tm != OLIGOTM_ERROR);
 
     min_oligo_tm 
-      = h->left->temp > h->right->temp ? h->right->temp : h->left->temp;
-    h->product_tm_oligo_tm_diff = h->product_tm - min_oligo_tm;
-    h->t_opt_a  = 0.3 * min_oligo_tm + 0.7 * h->product_tm - 14.9;
+      = ppair->left->temp > ppair->right->temp ? ppair->right->temp : ppair->left->temp;
+    ppair->product_tm_oligo_tm_diff = ppair->product_tm - min_oligo_tm;
+    ppair->t_opt_a  = 0.3 * min_oligo_tm + 0.7 * ppair->product_tm - 14.9;
 
     if (pa->product_min_tm != PR_DEFAULT_PRODUCT_MIN_TM
-	&& h->product_tm < pa->product_min_tm) {
+	&& ppair->product_tm < pa->product_min_tm) {
       sa->pair_expl.low_tm++;
       if (!must_use) return PAIR_FAILED;
       else pair_failed_flag = 1;
     }
 
     if (pa->product_max_tm != PR_DEFAULT_PRODUCT_MAX_TM
-	&& h->product_tm > pa->product_max_tm) {
+	&& ppair->product_tm > pa->product_max_tm) {
       sa->pair_expl.high_tm++;
       if (!must_use) return PAIR_FAILED;
       else pair_failed_flag = 1;
     }
       
-    h->diff_tm = fabs(p3state->f[m].temp - p3state->r[n].temp);
-    if (h->diff_tm > pa->max_diff_tm) {
+    ppair->diff_tm = fabs(p3state->f[m].temp - p3state->r[n].temp);
+    if (ppair->diff_tm > pa->max_diff_tm) {
 	sa->pair_expl.temp_diff++;
 	if (!must_use) return PAIR_FAILED;
 	else pair_failed_flag = 1;
@@ -2076,7 +2077,8 @@ pair_param(p3state, pa, sa, m, n, int_num, h, dpal_arg_to_use)
 
 
     /* ============================================================= */
-    /* Mispriming to template and mispriming to repeat libraries. */
+    /* Mispriming of _indvidiual_ primers to template and mispriming
+       to repeat libraries. */
 
     if (p3state->f[m].repeat_sim.score == NULL) {
       /* We have not yet checked the olgio against the repeat library. */
@@ -2099,17 +2101,23 @@ pair_param(p3state, pa, sa, m, n, int_num, h, dpal_arg_to_use)
        }
     }
 	
+    /* End of mispriming of _indvidiual_ primers to template and
+       mispriming to repeat libraries. */
+    /* ============================================================= */
+
+
+    /* ============================================================= */
     /* 
      * Similarity between s1 and s2 is equivalent to complementarity between
      * s2's complement and s1.  (Both s1 and s2 are taken from the same strand.)
      */
-    h->compl_any = align(s1,s2, dpal_arg_to_use->local);
-    if (h->compl_any > pa->self_any) {
+    ppair->compl_any = align(s1,s2, dpal_arg_to_use->local);
+    if (ppair->compl_any > pa->self_any) {
 	sa->pair_expl.compl_any++;
 	return PAIR_FAILED;
     }
 
-    if ((h->compl_end = align(s1, s2, dpal_arg_to_use->end))
+    if ((ppair->compl_end = align(s1, s2, dpal_arg_to_use->end))
 	> pa->self_end) {
 	    sa->pair_expl.compl_end++;
 	    return PAIR_FAILED;
@@ -2123,44 +2131,53 @@ pair_param(p3state, pa, sa, m, n, int_num, h, dpal_arg_to_use)
     _pr_reverse_complement(s2, s2_rev);
 
     if((compl_end = align(s2_rev, s1_rev, dpal_arg_to_use->end))
-       > h->compl_end)  {
+       > ppair->compl_end)  {
 	if (compl_end > pa->self_end) {
 	    sa->pair_expl.compl_end++;
 	    return PAIR_FAILED;
 	}
-	h->compl_end = compl_end;
+	ppair->compl_end = compl_end;
     }
 
-    h->compl_measure = 	
-	(h->right->self_end  + h->left->self_end + h->compl_end) * 1.1
-	    + h->right->self_any + h->left->self_any + h->compl_any;
+    ppair->compl_measure = 	
+	(ppair->right->self_end  + ppair->left->self_end + ppair->compl_end) * 1.1
+	    + ppair->right->self_any + ppair->left->self_any + ppair->compl_any;
 
-    if((h->repeat_sim = pair_repeat_sim(h, pa)) > pa->pair_repeat_compl){
+    if ((ppair->repeat_sim = pair_repeat_sim(ppair, pa))
+       > pa->pair_repeat_compl) {
 	 sa->pair_expl.repeat_sim++;
 	 return PAIR_FAILED;
     }
+    /* ============================================================= */
 
-    if (!_pr_need_pair_template_mispriming(pa))  /* FIX ME -- this belongs above.... */
-      h->template_mispriming = ALIGN_SCORE_UNDEF;
+
+    /* ============================================================= */
+    /* Calculate _pair_ mispriming, if necessary. */
+
+    if (!_pr_need_pair_template_mispriming(pa))
+      ppair->template_mispriming = ALIGN_SCORE_UNDEF;
     else {
-      PR_ASSERT(h->left->template_mispriming != ALIGN_SCORE_UNDEF);
-      PR_ASSERT(h->left->template_mispriming_r != ALIGN_SCORE_UNDEF);
-      PR_ASSERT(h->right->template_mispriming != ALIGN_SCORE_UNDEF);
-      PR_ASSERT(h->right->template_mispriming_r != ALIGN_SCORE_UNDEF);
-      h->template_mispriming =
-	h->left->template_mispriming + h->right->template_mispriming_r;
-      if ((h->left->template_mispriming_r + h->right->template_mispriming)
-	  > h->template_mispriming)
-      h->template_mispriming 
-	= h->left->template_mispriming_r + h->right->template_mispriming;
+      PR_ASSERT(ppair->left->template_mispriming != ALIGN_SCORE_UNDEF);
+      PR_ASSERT(ppair->left->template_mispriming_r != ALIGN_SCORE_UNDEF);
+      PR_ASSERT(ppair->right->template_mispriming != ALIGN_SCORE_UNDEF);
+      PR_ASSERT(ppair->right->template_mispriming_r != ALIGN_SCORE_UNDEF);
+      ppair->template_mispriming =
+	ppair->left->template_mispriming + ppair->right->template_mispriming_r;
+      if ((ppair->left->template_mispriming_r + ppair->right->template_mispriming)
+	  > ppair->template_mispriming)
+      ppair->template_mispriming 
+	= ppair->left->template_mispriming_r + ppair->right->template_mispriming;
 
       if (pa->pair_max_template_mispriming >= 0.0
-	  && h->template_mispriming > pa->pair_max_template_mispriming) {
+	  && ppair->template_mispriming > pa->pair_max_template_mispriming) {
 	sa->pair_expl.template_mispriming++;
 	return PAIR_FAILED;
       }
 
     }
+    /* End of calculating _pair_ mispriming if necessary. */
+    /* ============================================================= */
+
     return PAIR_OK;
 }
 
