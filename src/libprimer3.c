@@ -2617,116 +2617,6 @@ primer_mispriming_to_template(primer_rec *h,
   }
 }
 
-static void  /* FIX ME, split this into two, slot in... 
-		move primer update outside... */
-primer_mispriming_to_library(h, pa, sa, l, align_args,  dpal_arg_to_use)
-   primer_rec *h;
-   const primer_args *pa;
-   seq_args *sa;
-   oligo_type l;
-   const dpal_args *align_args;
-   const dpal_arg_holder *dpal_arg_to_use;
-{
-  char 
-    s[MAX_PRIMER_LENGTH+1],     /* Will contain the oligo sequence. */
-    s_tmp[MAX_PRIMER_LENGTH+1], /* Scratch buffer. */
-    s_r[MAX_PRIMER_LENGTH+1];   /* Will contain s reverse complemented. */
-
-  double w;
-  const seq_lib *lib;
-  int i;
-  int first, last; /* Indexes of first and last bases of the oligo in sa->trimmed_seq,
-		     that is, WITHIN THE INCLUDED REGION. */
-  int min, max;
-  int match_length;
-  short  lib_compl;
-
-  if (OT_INTL == l) {
-    lib = pa->io_mishyb_library;
-    lib_compl = pa->io_repeat_compl;
-  } else {
-    lib = pa->repeat_lib;
-    lib_compl = pa->repeat_compl;
-  }
-
-  first =  (OT_LEFT == l || OT_INTL == l)
-    ? h->start 
-    : h->start - h->length + 1;
-  last  =  (OT_LEFT == l || OT_INTL == l)
-    ? h->start + h->length - 1
-    : h->start;
-
-  match_length = h->length;
-
-  _pr_substr(sa->trimmed_seq, first, h->length, s_tmp);
-  _pr_substr(s_tmp, 0, match_length, s);
-  _pr_reverse_complement(s, s_tmp);  /* FIX ME -- is s_tmp needed? */
-  _pr_substr(s_tmp, 0, match_length, s_r);
-
-  /*
-   * Calculate maximum similarity to sequences from user defined repeat
-   * library. Compare it with maximum allowed repeat similarity.
-   */
-
-  if(lib->seq_num > 0) {
-    h->repeat_sim.score = 
-      pr_safe_malloc(lib->seq_num * sizeof(short));
-    h->repeat_sim.max = h->repeat_sim.min = 0;
-    max = min = 0;
-    h->repeat_sim.name = lib->names[0];
-    for(i = 0; i < lib->seq_num; i++){
-      if (OT_LEFT == l)
-	w = lib->weight[i] *
-	  align(s, lib->seqs[i], 
-		(pa->lib_ambiguity_codes_consensus
-		 ? dpal_arg_to_use->local_end_ambig
-		 : dpal_arg_to_use->local_end));
-
-      else if (OT_INTL == l)
-	w = lib->weight[i] *
-	  align(s, lib->seqs[i], 
-		(pa->lib_ambiguity_codes_consensus
-		 ? dpal_arg_to_use->local_ambig
-		 : dpal_arg_to_use->local));
-
-      else 
-	w = lib->weight[i] *
-	  align(s_r, lib->rev_compl_seqs[i], 
-		(pa->lib_ambiguity_codes_consensus
-		 ? dpal_arg_to_use->local_end_ambig
-		 : dpal_arg_to_use->local));
-
-      h->repeat_sim.score[i] = w;
-      if(w > max){
-	max = w;
-	h->repeat_sim.max = i;
-	h->repeat_sim.name = lib->names[i];
-      }
-      if(w < min){
-	min = w;
-	h->repeat_sim.min = i;
-      }
-      if (w > lib_compl) {
-	h->ok = OV_LIB_SIM;
-	if (OT_LEFT  == l) {
-	  sa->left_expl.repeat_score++;
-	  sa->left_expl.ok--;
-	}
-	else if (OT_RIGHT == l) {
-	  sa->right_expl.repeat_score++;
-	  sa->right_expl.ok--;
-	}
-	else {
-	  sa->intl_expl.repeat_score++;
-	  sa->intl_expl.ok--;
-	}
-	if (!h->must_use) return;
-      }
-    }
-  }
-}
-
-
 static void 
 oligo_mispriming(h, pa, sa, l, align_args,  dpal_arg_to_use)
    primer_rec *h;
@@ -2738,7 +2628,6 @@ oligo_mispriming(h, pa, sa, l, align_args,  dpal_arg_to_use)
 {
   char 
     s[MAX_PRIMER_LENGTH+1],     /* Will contain the oligo sequence. */
-    s_tmp[MAX_PRIMER_LENGTH+1], /* Scratch buffer. */
     s_r[MAX_PRIMER_LENGTH+1];   /* Will contain s reverse complemented. */
 
   double w;
@@ -2746,16 +2635,15 @@ oligo_mispriming(h, pa, sa, l, align_args,  dpal_arg_to_use)
   int i;
   int first, last; /* Indexes of first and last bases of the oligo in sa->trimmed_seq,
 		     that is, WITHIN THE INCLUDED REGION. */
-  int min, max;
-  int match_length;
-  short  lib_compl;
+  int   min, max;
+  short max_lib_compl;
 
   if (OT_INTL == l) {
     lib = pa->io_mishyb_library;
-    lib_compl = pa->io_repeat_compl;
+    max_lib_compl = pa->io_repeat_compl;
   } else {
     lib = pa->repeat_lib;
-    lib_compl = pa->repeat_compl;
+    max_lib_compl = pa->repeat_compl;
   }
 
   first =  (OT_LEFT == l || OT_INTL == l)
@@ -2765,12 +2653,13 @@ oligo_mispriming(h, pa, sa, l, align_args,  dpal_arg_to_use)
     ? h->start + h->length - 1
     : h->start;
 
-  match_length = h->length;
+  _pr_substr(sa->trimmed_seq, first, h->length, s);  /* New on 2007-10-11 */
+  _pr_reverse_complement(s, s_r);  /* New on 2007-10-11 */
 
-  _pr_substr(sa->trimmed_seq, first, h->length, s_tmp);
-  _pr_substr(s_tmp, 0, match_length, s);
-  _pr_reverse_complement(s, s_tmp);  /* FIX ME -- is s_tmp needed? */
-  _pr_substr(s_tmp, 0, match_length, s_r);
+  /* _pr_substr(sa->trimmed_seq, first, h->length, s_tmp);
+  _pr_substr(s_tmp, 0, h->length, s);
+  _pr_reverse_complement(s, s_tmp); 
+  _pr_substr(s_tmp, 0, h->length, s_r);  */
 
   /*
    * Calculate maximum similarity to sequences from user defined repeat
@@ -2778,12 +2667,15 @@ oligo_mispriming(h, pa, sa, l, align_args,  dpal_arg_to_use)
    */
 
   if (seq_lib_num_seq(lib) > 0) {
+    /* Library exists and is non-empty. */
+
     h->repeat_sim.score = 
       pr_safe_malloc(lib->seq_num * sizeof(short));
     h->repeat_sim.max = h->repeat_sim.min = 0;
     max = min = 0;
     h->repeat_sim.name = lib->names[0];
-    for(i = 0; i < lib->seq_num; i++){
+
+    for (i = 0; i < lib->seq_num; i++) {
       if (OT_LEFT == l)
 	w = lib->weight[i] *
 	  align(s, lib->seqs[i], 
@@ -2815,7 +2707,8 @@ oligo_mispriming(h, pa, sa, l, align_args,  dpal_arg_to_use)
 	min = w;
 	h->repeat_sim.min = i;
       }
-      if (w > lib_compl) {
+
+      if (w > max_lib_compl) {
 	h->ok = OV_LIB_SIM;
 	if (OT_LEFT  == l) {
 	  sa->left_expl.repeat_score++;
@@ -2830,9 +2723,10 @@ oligo_mispriming(h, pa, sa, l, align_args,  dpal_arg_to_use)
 	  sa->intl_expl.ok--;
 	}
 	if (!h->must_use) return;
-      }
-    }
-  }
+      } /* if w > max_lib_compl */
+
+    } /* for */
+  } /* if library exists and is non-empty */
 
   if (_pr_need_template_mispriming(pa) && (l == OT_RIGHT || l == OT_LEFT)) {
     /* Calculate maximum similarity to ectopic sites in the template. */
