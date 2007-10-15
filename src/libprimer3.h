@@ -592,8 +592,12 @@ primer3_state *create_primer3_state(void);
 void destroy_primer3_state(primer3_state *);
 void destroy_seq_args(seq_args *);
 
-/* Choose primer pairs or triples */
-void choose_primers(primer3_state *, primer_args *, seq_args *);
+/* 
+ * Choose individual primers or oligos, or primer pairs,
+ * or primer pairs with internal oligos. On error return
+ * 1 and set sa->error, pa->glob_err, or maybe errno FIX ME .... not  finished.
+ */
+int choose_primers(primer3_state *p3state, primer_args *pa, seq_args *sa);
 
 char *pr_oligo_sequence(const seq_args *, const primer_rec *);
 char *pr_oligo_rev_c_sequence(const seq_args *, const primer_rec *);
@@ -618,7 +622,6 @@ int  strcmp_nocase(char *, char *);
 seq_lib *
 read_and_create_seq_lib(const char *filename, const char* errfrag);
 
-
 void
 destroy_seq_lib(seq_lib *lib);
 
@@ -635,7 +638,6 @@ seq_lib_warning_data(const seq_lib *lib);
 /* The remaining functions will be replaced. */
 void *pr_safe_malloc(size_t);
 void *pr_safe_realloc(void *, size_t x);
-FILE *safe_fopen(const char*, const char*);
 /* ======================================================= */
 
 #endif
