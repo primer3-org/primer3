@@ -38,6 +38,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* 
  * Format the pair in p (plus the middle oligo if appropriate)
  * on f.  If p->product_size = 0 then primer choice failed.
+ * Both functions may exit on error, using the conventions
+ * in primer3_boulder_main.c
  */
 void format_pairs(FILE *f, const primer_args *pa,
 		  const seq_args *sa, 
