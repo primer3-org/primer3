@@ -37,8 +37,11 @@
 # general users and for biologist programmers. In: Krawetz S, Misener S
 # (eds) Bioinformatics Methods and Protocols: Methods in Molecular
 # Biology. Humana Press, Totowa, NJ, pp 365-386.  Source code available
-# at http://fokker.wi.mit.edu/primer3/.
+# from https://sourceforge.net/projects/primer3/
 # ======================================================================
+
+# For VALGRIND -- see end of this makefile for testing primer3_core
+# with valgrind, a leak and memory access checker.
 
 MAX_PRIMER_LENGTH = 36
 
@@ -94,12 +97,6 @@ $(OLIGOTM_DYN_LIB): oligotm.o
 $(PRIMER_EXE): $(PRIMER_OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
 
-# For use with valgrind, which requires at lease one
-# dynamically linked library.  See the VALGRIND_FLAG
-# option in ../test/Makefile
-# $(PRIMER_EXE).dyn: $(PRIMER_DYN_OBJECTS)
-#	$(CC) $(CFLAGS) -o $@ $(PRIMER_DYN_OBJECTS) $(LIBOPTS) $(LDLIBS)
-
 libprimer3.o: libprimer3.c libprimer3.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ libprimer3.c
 
@@ -144,3 +141,45 @@ primer_test: test
 
 test: $(PRIMER_EXE) ntdpal
 	cd ../test; make test
+
+# ======================================================================
+# 
+# VALGRIND INSTRUCTIONS.
+# 
+# These instructions work for linux, and run the 'memcheck'
+# functionality of valgrind.
+# 
+# If necessary, get and install valgrind (should come with most
+# Linux's, but you need valgrind >= 3.2.3)
+# 
+# In the src directory for primer3:
+#  
+# $ make clean
+# 
+# Re-complile without optimization and run the normal tests, does
+# _not_ valgrind them:
+#
+# $ make O_OPTS=-O0 test  # The value of O_OPTS is Minus Oh Zero 
+# 
+# Run valgrind on a small example:
+#
+# $ valgrind --leak-check=yes --show-reachable=yes --logfile=p3vg ./primer3_core < ../example
+#
+# Check output in file p3vg.pid[0-9]+. Valgrind is at /usr/local/bin/valgrind
+# at WI
+# 
+# OK, now for the real tests:
+#
+# $ cd ../test
+# 
+# Check valgrind path in p3test.pl, ntdpal_test.pl, and oligotm_test.pl
+# and correct if necessary.  This code works under valgrind 3.2.3.
+# 
+# $ make VALGRIND_FLAG=--valgrind  # Remember, you have to be in test/
+# 
+# When the --valgrind flag is set, the perl test scripts grep for and
+# display errors and leaks, but you need to ***look at the output** to
+# see these and figure out which test caused the problem, so you can
+# debug it.
+#
+# ======================================================================
