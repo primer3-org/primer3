@@ -132,7 +132,7 @@ static int    choose_internal_oligo(primer3_state *,
 void          compute_position_penalty(const primer_args *, const seq_args *, 
 				       primer_rec *, oligo_type);
 
-static void   create_and_print_file(const seq_args *, int, const primer_rec[],
+static void   create_and_print_file(seq_args *, int, const primer_rec[],
 				    const oligo_type, const int, const int,
 				    const char *);
 static char   dna_to_upper(char *, int);
@@ -173,7 +173,7 @@ static int    pr_is_empty(const pr_append_str *x);
 
 static int    primer_pair_comp(const void *, const void*);
 static int    primer_rec_comp(const void *, const void *);
-static void   print_list(const primer3_state*,  const seq_args *, const primer_args *);
+static void   print_list(const primer3_state*, seq_args *, const primer_args *);
 static void   print_list_header(FILE *, oligo_type, int, int);
 static void   print_oligo(FILE *, const seq_args *, int, const primer_rec *,
 			  oligo_type, int, int);
@@ -199,9 +199,6 @@ static void   free_repeat_sim_score(primer3_state *);
 static void   check_if_lowercase_masked(const int position,
 					const char *sequence,
 					primer_rec *h);
-
-static FILE *safe_fopen(const char*, const char*);
-
 
 
 /* Global static variables. */
@@ -1620,10 +1617,9 @@ oligo_max_template_mispriming(h)
 }
 
 static void
-print_list(p3state, sa, pa)
-     const primer3_state *p3state;
-     const seq_args *sa;
-     const primer_args *pa;
+print_list(const primer3_state *p3state,
+	   seq_args *sa,
+	   const primer_args *pa)
 {
     int first_base_index = pa->first_base_index;
 
@@ -1644,14 +1640,13 @@ print_list(p3state, sa, pa)
 }
 
 static void
-create_and_print_file(sa, n, oligo_arr, o_type,
-		      first_base_index, print_lib_sim, ext)
-    const seq_args *sa;
-    int n;
-    const primer_rec oligo_arr[];
-    const oligo_type o_type;
-    const int first_base_index, print_lib_sim;
-    const char *ext;
+create_and_print_file( seq_args *sa,
+		       int n,
+		       const primer_rec oligo_arr[],
+		       const oligo_type o_type,
+		       const int first_base_index, 
+		       const int print_lib_sim,
+		       const char *ext)
 {
     int i;
     char *file = pr_safe_malloc(strlen(sa->sequence_name) + strlen(ext) + 1);
@@ -1659,7 +1654,14 @@ create_and_print_file(sa, n, oligo_arr, o_type,
 
     strcpy(file, sa->sequence_name);
     strcat(file,ext);
-    fh = safe_fopen(file,"w");
+
+    if (!(fh = fopen(file,"w"))) {
+      pr_append_new_chunk(&sa->error, "Unable to open file ");
+      pr_append(&sa->error, file);
+      pr_append(&sa->error, " for writing");
+      return;
+    }
+    
     print_list_header(fh, o_type, first_base_index, print_lib_sim);
     for(i=0; i<n; i++) 
 	print_oligo(fh, sa, i, &oligo_arr[i], o_type,
@@ -3944,20 +3946,6 @@ pr_safe_realloc(p, x)
 {
     void *r = realloc(p, x);
     if (NULL == r) OOM_ERROR;
-    return r;
-}
-
-FILE *
-safe_fopen(path, mode)
-    const char *path, *mode;
-{
-    FILE *r = fopen(path, mode);
-    if (NULL == r) {
-	fprintf(stderr, "%s: unable to open file %s:",
-		pr_program_name, path);
-	perror("");
-	exit (-1);
-    }
     return r;
 }
 
