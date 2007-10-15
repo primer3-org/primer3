@@ -200,6 +200,10 @@ static void   check_if_lowercase_masked(const int position,
 					const char *sequence,
 					primer_rec *h);
 
+static FILE *safe_fopen(const char*, const char*);
+
+
+
 /* Global static variables. */
 static const char * copyright[] = {
 "",
