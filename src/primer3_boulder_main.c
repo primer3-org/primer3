@@ -112,7 +112,9 @@ main(argc,argv)
    * stack in order to take advantage of testcenter memory access checking
    * during testing.
    */
-  global_pa = pr_safe_malloc(sizeof(*global_pa));
+  if (!(global_pa = malloc(sizeof(*global_pa)))) {
+    exit(-2); /* Out of memory. */
+  }
 
   pr_set_default_global_args(global_pa);
   memset(&prog_args, 0, sizeof(prog_args));
@@ -141,17 +143,26 @@ main(argc,argv)
 
     /* Values for sa (seq_args *) are _not_ retained across different
        input records. */
-    sa = pr_safe_malloc(sizeof(*sa));
+    if (!(sa = malloc(sizeof(*sa)))) {
+      exit(-2); /* Out of memory. */
+    }
 
     if (read_record(&prog_args, global_pa, sa) <= 0) {
-      free(sa);  /* Free ok, because there are no pointers
-		    from sa at this point. */
+      free(sa);  /* free(s) is ok, because a return of 0 
+		    indicates end-of-file, in which
+		    case there are no pointers from sa .*/
       break;
     }
 
-    input_found = 1;
-    p3state = create_primer3_state();
 
+    if (!(p3state = create_primer3_state())) {
+      exit(-2); /* Out of memory. */
+    }
+    input_found = 1;
+
+    /* FIX ME: logically it should be possible to correct
+       errorneous global input in a subsequent record, but
+       this probably does not happen. */
     if (NULL == sa->error.data && NULL == global_pa->glob_err.data) {
       choose_primers(p3state, global_pa, sa);
     }
