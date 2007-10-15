@@ -30,6 +30,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # ======================================================================
 
+# See ../src/Makefile for instructions on how to use VALGRIND_FLAG
+
 VALGRIND_FLAG = 
 
 test: makeexes testtm testdpal
