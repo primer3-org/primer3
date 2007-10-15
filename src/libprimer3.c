@@ -683,11 +683,8 @@ destroy_seq_args(seq_args *sa) {
 static dpal_arg_holder *dpal_arg_to_use = NULL;
 
 
-/* 
- * Find up to pa->num_return primer pairs for the sequence seq with t targets.
- * Set sa->error and return 1 on error; otherwise return 0.
- */
-void
+/* See libprimer3.h for documentation. */
+int
 choose_primers(primer3_state *p3state,
 	       primer_args *pa,
 	       seq_args *sa)
@@ -698,23 +695,34 @@ choose_primers(primer3_state *p3state,
     pair_array_t *best_pairs = &p3state->best_pairs;
 
     PR_ASSERT(NULL != p3state);
+
+    /*
+     * For error catching.
+     * Note that we can only use longjmp to escape from errors that have been
+     * called through primer3_choose, which means if we subsequently update the
+     * static functions here to have external linkage then we need to check
+     * whether they call (or use functions which may in turn call) longjmp.
+     */
+    if (setjmp(p3state->err.jmpenv) != 0)
+	return 1;
+
     PR_ASSERT(NULL != sa);
     PR_ASSERT(NULL != sa);
     
-    if (_pr_data_control(pa, sa) !=0 ) return;
+    if (_pr_data_control(pa, sa) !=0 ) return 1;
 
     if (dpal_arg_to_use == NULL)
       dpal_arg_to_use = create_dpal_arg_holder();
 
     if (make_primer_lists(p3state, pa, sa, dpal_arg_to_use) != 0) {
-	return;
+      return 1;
     }
 
     if ((pa->primer_task == pick_hyb_probe_only 
 	 || pa->primer_task == pick_pcr_primers_and_hyb_probe)
         && make_internal_oligos_list(p3state, pa, sa,
 				     dpal_arg_to_use) != 0)
-	return;
+      return 1;
 
     /* Creates files with left, right, and internal oligos. */
     if (pa->file_flag) print_list(p3state, sa, pa);
@@ -771,7 +779,7 @@ choose_primers(primer3_state *p3state,
     }
 
     if (0 != p.storage_size) free(p.pairs);
-    return;
+    return 0;
 }
 
 /* Call this function only if the 'stat's contains
