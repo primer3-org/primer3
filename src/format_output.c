@@ -56,7 +56,7 @@ static void print_pair_array(FILE *, const char*, int,
 			     const primer_args*, const seq_args*);
 static void print_rest(FILE *, const primer_args *, 
 		       const seq_args *,  const pair_array_t *);
-static void print_seq(FILE *, const primer_args *, const seq_args *, 
+static int  print_seq(FILE *, const primer_args *, const seq_args *, 
 			    primer_rec *h, const pair_array_t *, int);
 static void print_seq_lines(FILE *, const char *s, const char *n, int, int,
 			    int, const primer_args *);
@@ -114,7 +114,7 @@ format_pairs(f, pa, sa, best_pairs)
 	print_summary(f, pa, sa, best_pairs, 0);
 	fprintf(f, "\n");
 
-	print_seq(f, pa, sa, h, best_pairs, 0);
+	if (print_seq(f, pa, sa, h, best_pairs, 0)) exit(-2); /* ENOMEM */
 	if (best_pairs->num_pairs > 1 ) print_rest(f, pa, sa, best_pairs);
 	if (pa->explain_flag) print_explain(f, pa, sa, print_lib_sim);
 	fprintf(f, "\n\n");
@@ -236,7 +236,8 @@ print_pair_array(f, title, num, array, pa, sa)
 #define EXCL_REGION      (1<<5)
 #define INTL_EXCL_REGION (1<<6)
 
-static void
+/* Return 1 on ENOMEM. Otherwise return 0. */
+static int
 print_seq(f, pa, sa, h, best_pairs, num)
     FILE *f;
     const primer_args *pa;
@@ -255,9 +256,9 @@ print_seq(f, pa, sa, h, best_pairs, num)
        pa->primer_task == pick_pcr_primers_and_hyb_probe)
 				      p = best_pairs->pairs + num;
     len = strlen(sa->sequence);
-    notes = pr_safe_malloc(sizeof(*notes) * len);
+    if (!(notes = malloc(sizeof(*notes) * len))) return 1;
     memset(notes, 0, sizeof(*notes) * len);
-    notestr = pr_safe_malloc(len + 1);
+    if (!(notestr = malloc(len + 1))) return 1;
     memset(notestr, ' ', len);
     notestr[len] = '\0';
 
@@ -372,6 +373,7 @@ print_seq(f, pa, sa, h, best_pairs, num)
     if (something_found) fputc('\n', f);
     free(notes);
     free(notestr);
+    return 0;
 }
 
 static void
@@ -687,7 +689,7 @@ void format_oligos(f, pa, sa, h, n, l)
 
     if(n > 0) print_oligo_summary(f, pa, sa, h, l, 0);
     else h = NULL;
-    print_seq(f, pa, sa, h, best_pairs, 0);
+    if (print_seq(f, pa, sa, h, best_pairs, 0)) exit(-2); /* ENOMEM */
     fprintf(f, "\n");
     if(n > 1) {
       fprintf(f, "ADDITIONAL OLIGOS\n");
