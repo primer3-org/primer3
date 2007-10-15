@@ -72,10 +72,7 @@ extern double strtod();
 #endif
 
 /* 
- * Read data from input stream until a "=" line occurs.  Assign parameter
- * values for primer picking and perform primary data control. Return 0 for
- * end of data and 1 otherwise.  If sa->error is not NULL the data is
- * erroneous and should not be processed. Echo the input lines to stdout.
+ * See read_boulder.h for description.
  */
 #define COMPARE(TAG) (!strncmp(s, TAG, tag_len) \
                       && ('=' == s[tag_len] || ' ' == s[tag_len]) \
@@ -118,11 +115,11 @@ extern double strtod();
        continue;                                                 \
    }
 
+/* 
+ * See read_boulder.h for description.
+ */
 int
-read_record(prog_args, pa, sa) 
-    const program_args *prog_args;
-    primer_args *pa;
-    seq_args *sa; 
+read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
 { 
     int line_len, seq_len, n_quality;
     int tag_len, datum_len;
@@ -263,15 +260,20 @@ read_record(prog_args, pa, sa)
 	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_MIN_SIZE", pa->io_primer_min_size);
 	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_MAX_POLY_X", pa->io_max_poly_x);
 	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_OPT_TM", pa->io_opt_tm);
-	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_OPT_GC_PERCENT", pa->io_opt_gc_content);
+	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_OPT_GC_PERCENT",
+			  pa->io_opt_gc_content);
 	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MAX_TM", pa->io_max_tm);
 	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MIN_TM", pa->io_min_tm);
 	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MIN_GC", pa->io_min_gc);
             COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MAX_GC", pa->io_max_gc);
 	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_SALT_CONC",pa->io_salt_conc);
-           COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DIVALENT_CONC",pa->io_divalent_conc); /* added by T.Koressaar */
-	   COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DNTP_CONC",pa->io_dntp_conc); /* added by T.Koressaar */
-	   COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DNA_CONC", pa->io_dna_conc);
+
+	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DIVALENT_CONC",
+			  pa->io_divalent_conc); /* added by T.Koressaar */
+	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DNTP_CONC",
+			  pa->io_dntp_conc); /* added by T.Koressaar */
+
+	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DNA_CONC", pa->io_dna_conc);
 	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_NUM_NS", pa->io_num_ns_accepted);
 	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_MIN_QUALITY", pa->io_min_quality);
 
