@@ -41,9 +41,17 @@ typedef struct program_args {
     char strict_tags;
 } program_args;
 
-int read_record(const program_args *, primer_args *, /*primer_args *,*/
-		seq_args *);
-/* void   free_seq_lib( seq_lib *); ... replaced by destroy_seq_lib */
+
+
+/* 
+ * Read data from stdin until a "=" line occurs.  Assign parameter
+ * values for primer picking to pa and sa. Perform initial data
+ * checking. Return 0 for end of data and 1 otherwise.  If sa->error
+ * is not NULL or sa->glob_err is not NULL then the data is erroneous
+ * and should not be processed. Echo the input lines to stdout.
+ */
+int read_record(const program_args *, primer_args *pa, seq_args *sa);
+
 #endif
 
 
