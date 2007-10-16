@@ -46,6 +46,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* #define's */
 
+#ifdef FOOBAR
 /* 
  * Panic messages for when the program runs out of memory.  pr_program_name and
  * pr_program_name_len must be set at the beginning of main.
@@ -55,6 +56,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define OOM_STMT1 write(2, pr_program_name, pr_program_name_len)
 #define OOM_STMT2 write(2, OOM_MESSAGE, OOM_MESSAGE_LEN), exit(-2)
 #define OOM_ERROR OOM_STMT1, OOM_STMT2
+#endif
 
 #ifndef MAX_PRIMER_LENGTH
 #error "Define MAX_PRIMER_LENGTH in Makefile..."
@@ -98,6 +100,8 @@ typedef struct dpal_arg_holder {
   dpal_args *local, *end, *local_end,
     *local_ambig, *local_end_ambig;
 } dpal_arg_holder;
+
+static jmp_buf _jmp_buf;
 
 /* Function declarations. */
 static int    _pr_data_control(primer_args *,  seq_args *);
@@ -170,6 +174,9 @@ static int    characterize_pair(primer3_state *p,
 static int    pair_spans_target(const primer_pair *, const seq_args *);
 static void   pr_append_w_sep(pr_append_str *, const char *, const char *);
 static int    pr_is_empty(const pr_append_str *x);
+
+static void*  pr_safe_malloc(size_t x);
+static void*  pr_safe_realloc(void *p, size_t x);
 
 static int    primer_pair_comp(const void *, const void*);
 static int    primer_rec_comp(const void *, const void *);
@@ -595,9 +602,9 @@ create_primer3_state(void)
   state->best_pairs.pairs = NULL;
   state->best_pairs.num_pairs = 0;
 
-  state->err.system_errno = 0;
+  /* state->err.system_errno = 0;
   state->err.local_errno = 0;
-  state->err.error_msg = NULL;
+  state->err.error_msg = NULL; */
 
   return state;
 }
@@ -704,13 +711,14 @@ choose_primers(primer3_state *p3state,
      * static functions here to have external linkage then we need to check
      * whether they call (or use functions which may in turn call) longjmp.
      */
-    if (setjmp(p3state->err.jmpenv) != 0)
-	return 1;
+    if (setjmp(_jmp_buf) != 0)
+      return 1;  /* If we get here, that means we returned via a longjmp.
+		    In this case errno should be ENOMEM. */
 
     PR_ASSERT(NULL != sa);
     PR_ASSERT(NULL != sa);
     
-    if (_pr_data_control(pa, sa) !=0 ) return 1;
+    if (_pr_data_control(pa, sa) !=0 ) return 1;  /* FIX ME -- may want have several returns. */
 
     if (dpal_arg_to_use == NULL)
       dpal_arg_to_use = create_dpal_arg_holder();
@@ -2433,7 +2441,7 @@ align(s1, s2, a)
     if (r.score == DPAL_ERROR_SCORE) {
       /* There was an error. */
       if (errno == ENOMEM) {
-	OOM_ERROR;
+	longjmp(_jmp_buf, 1);
       } else {
 	fprintf(stderr, r.msg);
 	/* Fix this later, when error handling
@@ -3773,11 +3781,15 @@ read_and_create_seq_lib(const char * filename, const char *errfrag)
     size_t j, n;
     char buf[2];
     char offender = '\0', tmp;
-    seq_lib *lib = malloc(sizeof(* lib));
+    seq_lib *lib; 
 
-    if (lib == NULL) return NULL;
+    if (setjmp(_jmp_buf) != 0)
+      return NULL; /* If we get here, there was an error in
+		      pr_safe_malloc or pr_safe_realloc. */
+
+    lib =  pr_safe_malloc(sizeof(* lib));
+
     memset(lib, 0, sizeof(*lib));
-    
 
     PR_ASSERT(NULL != filename);
 
@@ -3925,27 +3937,21 @@ seq_lib_warning_data(const seq_lib *lib) {
 }
 
 /* =========================================================== */
+/* Various fail->longjmp wrappers for memory allocation.       */
 /* =========================================================== */
-/* =========================================================== */
-/* =========================================================== */
-/* Various fail-stop wrappers for standard library functions.  */
-/* =========================================================== */
-void *
-pr_safe_malloc(x)
-    size_t x;
+static void *
+pr_safe_malloc(size_t x)
 {
     void *r = malloc(x);
-    if (NULL == r) OOM_ERROR;
+    if (NULL == r) longjmp(_jmp_buf, 1);
     return r;
 }
 
-void *
-pr_safe_realloc(p, x)
-    void *p;
-    size_t x;
+static void *
+pr_safe_realloc(void *p, size_t x)
 {
     void *r = realloc(p, x);
-    if (NULL == r) OOM_ERROR;
+    if (NULL == r) longjmp(_jmp_buf, 1);
     return r;
 }
 

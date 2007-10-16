@@ -550,8 +550,7 @@ typedef struct seq_args {
     pair_stats  pair_expl;  /* Pair statistics. */
 } seq_args;
 
-/* New structures from here down.*/
-
+#ifdef FOOBAR
 typedef enum primer_errno {
     PR_ERR_NONE = 0,
     PR_ERR_OUT_OF_MEMORY = 1,
@@ -571,6 +570,8 @@ typedef struct primer_error {
     jmp_buf jmpenv;			/* errors caught in API funcs */
 } primer_error;
 
+#endif
+
 /*
  * A global 'state' for primer3. All global variables are held within here.
  * Before using primer3 you need to create a new state using primer3_create.
@@ -584,7 +585,7 @@ typedef struct primer3_state {
     int f_len, r_len, mid_len;	/* and their lengths */
     pair_array_t best_pairs;	/* The best primer pairs */
 
-    primer_error err;		/* Error handling */
+  /* primer_error err;		Error handling */
 } primer3_state;
 
 /* Allocate and deallocate a new primer3 state */
@@ -631,13 +632,5 @@ seq_lib_num_seq(const seq_lib* lib);
 
 char *
 seq_lib_warning_data(const seq_lib *lib);
-
-
-
-/* ======================================================= */
-/* The remaining functions will be replaced. */
-void *pr_safe_malloc(size_t);
-void *pr_safe_realloc(void *, size_t x);
-/* ======================================================= */
 
 #endif
