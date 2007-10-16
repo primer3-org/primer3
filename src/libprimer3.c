@@ -573,13 +573,12 @@ pr_set_default_global_args(a)
     a->lib_ambiguity_codes_consensus   = LIB_AMBIGUITY_CODES_CONSENSUS;
 }
 
-/* ------------------------------------------------------------------------ */
+/* ================================================================== */
 /* The main primer3 interface */
 
 /* Allocate a new primer3 state. Return NULL if out of memory. Assuming
    malloc sets errno to ENOMEM according to Unix98, set errno to ENOMEM
    on out-of-memory error. */
-
 primer3_state *
 create_primer3_state(void)
 {
@@ -601,10 +600,6 @@ create_primer3_state(void)
   state->best_pairs.storage_size = 0;
   state->best_pairs.pairs = NULL;
   state->best_pairs.num_pairs = 0;
-
-  /* state->err.system_errno = 0;
-  state->err.local_errno = 0;
-  state->err.error_msg = NULL; */
 
   return state;
 }
@@ -705,20 +700,21 @@ choose_primers(primer3_state *p3state,
     PR_ASSERT(NULL != p3state);
 
     /*
-     * For error catching.
-     * Note that we can only use longjmp to escape from errors that have been
-     * called through primer3_choose, which means if we subsequently update the
-     * static functions here to have external linkage then we need to check
-     * whether they call (or use functions which may in turn call) longjmp.
+     * For error catching.  Note that we can only use longjmp to
+     * escape from errors that have been called through choose_primers
+     * and read_and_create_seq_lib, which means if we subsequently
+     * update other static functions here to have external linkage
+     * then we need to check whether they call (or use functions which
+     * may in turn call) longjmp.
      */
     if (setjmp(_jmp_buf) != 0)
-      return 1;  /* If we get here, that means we returned via a longjmp.
+      return -1;  /* If we get here, that means we returned via a longjmp.
 		    In this case errno should be ENOMEM. */
 
     PR_ASSERT(NULL != sa);
     PR_ASSERT(NULL != sa);
     
-    if (_pr_data_control(pa, sa) !=0 ) return 1;  /* FIX ME -- may want have several returns. */
+    if (_pr_data_control(pa, sa) !=0 ) return 1;
 
     if (dpal_arg_to_use == NULL)
       dpal_arg_to_use = create_dpal_arg_holder();
@@ -3767,11 +3763,7 @@ FILE *file;
 }
 
 
-/*  
- * Reads any file in fasta format and returns a newly allocated
- * seq_lib, lib.  Sets lib.error to a non-empty string on any error
- * other than ENOMEM.  Returns NULL on ENOMEM.
- */
+/* See comments in libprimer3.h */
 seq_lib *
 read_and_create_seq_lib(const char * filename, const char *errfrag)
 {

@@ -588,15 +588,20 @@ typedef struct primer3_state {
   /* primer_error err;		Error handling */
 } primer3_state;
 
-/* Allocate and deallocate a new primer3 state */
+/* Allocate a new primer3 state.  Return NULL on ENOMEM. */
 primer3_state *create_primer3_state(void);
+
+/* Deallocate a primer3 state */
 void destroy_primer3_state(primer3_state *);
+
 void destroy_seq_args(seq_args *);
 
 /* 
  * Choose individual primers or oligos, or primer pairs,
- * or primer pairs with internal oligos. On error return
- * 1 and set sa->error, pa->glob_err, or maybe errno FIX ME .... not  finished.
+ * or primer pairs with internal oligos. On ENOMEM
+ * return -1 and set errno. On other error return
+ * 1 and set sa->error, pa->glob_err. On no error
+ * return 0.
  */
 int choose_primers(primer3_state *p3state, primer_args *pa, seq_args *sa);
 
@@ -620,6 +625,11 @@ int  strcmp_nocase(char *, char *);
 /* Functions for creating and destroying a seq_lib object. */
 /* ======================================================= */
 
+/*  
+ * Reads any file in fasta format and returns a newly allocated
+ * seq_lib, lib.  Sets lib.error to a non-empty string on any error
+ * other than ENOMEM.  Returns NULL on ENOMEM.
+ */
 seq_lib *
 read_and_create_seq_lib(const char *filename, const char* errfrag);
 
