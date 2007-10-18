@@ -109,19 +109,19 @@ oligotm: oligotm_main.c oligotm.h $(OLIGOTM_LIB)
 long_seq_tm_test: long_seq_tm_test_main.c oligotm.o
 	$(CC) $(CFLAGS) -o $@ long_seq_tm_test_main.c oligotm.o $(LIBOPTS) $(LDLIBS)
 
-read_boulder.o: read_boulder.c read_boulder.h libprimer3.h primer3_release.h dpal.h
+read_boulder.o: read_boulder.c read_boulder.h libprimer3.h dpal.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ read_boulder.c
 
 print_boulder.o: print_boulder.c print_boulder.h libprimer3.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ print_boulder.c
 
-dpal.o: dpal.c dpal.h primer3_release.h
+dpal.o: dpal.c dpal.h
 	$(CC) -c $(CFLAGS) -o $@ dpal.c
 
-dpal_primer.o: dpal.c dpal.h primer3_release.h
+dpal_primer.o: dpal.c dpal.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ dpal.c
 
-format_output.o: format_output.c primer3_release.h format_output.h libprimer3.h dpal.h
+format_output.o: format_output.c format_output.h libprimer3.h dpal.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ format_output.c
 
 ntdpal_main.o: ntdpal_main.c dpal.h
@@ -129,12 +129,12 @@ ntdpal_main.o: ntdpal_main.c dpal.h
 # We use CC_OPTS above rather than CFLAGS because
 # gcc 2.7.2 crashes while compiling ntdpal_main.c with -O2
 
-oligotm.o: oligotm.c oligotm.h primer3_release.h
+oligotm.o: oligotm.c oligotm.h
 
-# primer3.o: primer3.c primer3.h primer3_release.h
+# primer3.o: primer3.c primer3.h
 # 	$(CC) -c $(CFLAGS) $(P_DEFINES) primer3.c
 
-primer3_boulder_main.o: primer3_boulder_main.c libprimer3.h primer3_release.h dpal.h oligotm.h format_output.h print_boulder.h
+primer3_boulder_main.o: primer3_boulder_main.c libprimer3.h dpal.h oligotm.h format_output.h print_boulder.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) primer3_boulder_main.c
 
 primer_test: test

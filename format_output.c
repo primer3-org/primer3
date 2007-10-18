@@ -34,7 +34,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <string.h>
 #include "format_output.h"
-#include "primer3_release.h"
+  /* #include "primer3_release.h" */
 #include "libprimer3.h"
 
 #define FORWARD 1
@@ -44,7 +44,7 @@ static char *pr_program_name = "Program name is probably primer3_core";
 
 static int lib_sim_specified(const primer_args *);
 static void print_explain(FILE *, const primer_args *,
-			  const seq_args *, int);
+			  const seq_args *, int, const char *);
 static void print_pair_info(FILE *, const primer_pair *,
 			    const primer_args *);
 static void print_oligo(FILE *, const char *, const seq_args *,
@@ -69,11 +69,11 @@ static void print_oligo_summary(FILE *, const primer_args *,
 
 
 void
-format_pairs(f, pa, sa, best_pairs)
-    FILE *f;
-    const primer_args *pa;
-    const seq_args *sa;
-    const pair_array_t *best_pairs;
+format_pairs(FILE *f,
+	     const primer_args *pa,
+	     const seq_args *sa,
+	     const pair_array_t *best_pairs,
+	     const char *pr_release)
 {
     char *warning;
     int print_lib_sim = lib_sim_specified(pa);
@@ -116,7 +116,8 @@ format_pairs(f, pa, sa, best_pairs)
 
 	if (print_seq(f, pa, sa, h, best_pairs, 0)) exit(-2); /* ENOMEM */
 	if (best_pairs->num_pairs > 1 ) print_rest(f, pa, sa, best_pairs);
-	if (pa->explain_flag) print_explain(f, pa, sa, print_lib_sim);
+	if (pa->explain_flag)
+	  print_explain(f, pa, sa, print_lib_sim, pr_release);
 	fprintf(f, "\n\n");
 	if (fflush(f) == EOF) {
 	  perror("fflush(f) failed");
@@ -455,11 +456,11 @@ print_rest(f, pa, sa, best_pairs)
 
 /* This function does _not_ print out the no_orf statistic. */
 static void
-print_explain(f, pa, sa, print_lib_sim)
-    FILE *f;
-    const primer_args *pa;
-    const seq_args *sa;
-    int print_lib_sim;
+print_explain(FILE *f,
+	      const primer_args *pa,
+	      const seq_args *sa,
+	      int print_lib_sim,
+	      const char *pr_release)
 {
   const pair_stats *x;
   char *format;
@@ -633,13 +634,14 @@ lib_sim_specified(const primer_args *pa) {
   return (pa->repeat_lib || pa->io_mishyb_library);
 }
 
-void format_oligos(f, pa, sa, h, n, l)
-   FILE *f;
-   const primer_args *pa;
-   const seq_args    *sa;
-   primer_rec  *h;
-   int n;
-   oligo_type l;
+void 
+format_oligos(FILE *f,
+	      const primer_args *pa,
+	      const seq_args    *sa,
+	      primer_rec  *h,
+	      int n,
+	      oligo_type l,
+	      const char* pr_release)
 {
   char *warning;
   int print_lib_sim = lib_sim_specified(pa);
@@ -706,7 +708,8 @@ void format_oligos(f, pa, sa, h, n, l)
 		      pa->repeat_lib, print_lib_sim);
       }
     }
-    if (pa->explain_flag) print_explain(f, pa, sa, print_lib_sim);
+    if (pa->explain_flag) 
+      print_explain(f, pa, sa, print_lib_sim, pr_release);
     fprintf(f, "\n\n");
     if (fflush(f) == EOF) {
       perror("fflush(f) failed");
