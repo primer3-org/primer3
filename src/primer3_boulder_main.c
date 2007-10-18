@@ -34,7 +34,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <signal.h>
 #include <string.h> /* strlen, memset, strcmp */
 #include <stdlib.h> /* free */
-#include "primer3_release.h"
 #include "format_output.h"
 #include "libprimer3.h"
 #include "read_boulder.h"
@@ -82,8 +81,9 @@ NULL
 };
 
 /* Other global variables. */
-const char *pr_program_name;
-int pr_program_name_len;
+static const char * pr_release = "primer3 release 1.1.2";
+static const char *pr_program_name;
+static int pr_program_name_len;
 
 int
 main(argc,argv)
@@ -173,24 +173,35 @@ main(argc,argv)
     if (pick_pcr_primers == global_pa->primer_task
 	|| pick_pcr_primers_and_hyb_probe == global_pa->primer_task) {
       if (prog_args.format_output) {
-	format_pairs(stdout, global_pa, sa, &p3state->best_pairs);
+	format_pairs(stdout, global_pa, sa, 
+		     &p3state->best_pairs, pr_release);
       }
       else {
 	boulder_print_pairs(&prog_args, global_pa, sa, &p3state->best_pairs);
       }
     } else if(global_pa->primer_task == pick_left_only) {
       if (prog_args.format_output) 
-	format_oligos(stdout, global_pa, sa, p3state->f, p3state->n_f, OT_LEFT);
-      else boulder_print_oligos(global_pa, sa, p3state->n_f, OT_LEFT, p3state->f, p3state->r, p3state->mid);
+	format_oligos(stdout, global_pa, sa, p3state->f,
+		      p3state->n_f, OT_LEFT, pr_release);
+      else 
+	boulder_print_oligos(global_pa, sa, p3state->n_f, 
+			     OT_LEFT, p3state->f, p3state->r, p3state->mid);
     } else if(global_pa->primer_task == pick_right_only) {
       if (prog_args.format_output) 
-	format_oligos(stdout, global_pa, sa, p3state->r, p3state->n_r, OT_RIGHT);
-      else boulder_print_oligos(global_pa, sa, p3state->n_r, OT_RIGHT, p3state->f, p3state->r, p3state->mid);
+	format_oligos(stdout, global_pa, sa, p3state->r,
+		      p3state->n_r, OT_RIGHT,
+		      pr_release);
+      else 
+	boulder_print_oligos(global_pa, sa, p3state->n_r, OT_RIGHT,
+				p3state->f, p3state->r, p3state->mid);
     }
     else if(global_pa->primer_task == pick_hyb_probe_only) {
       if(prog_args.format_output) 
-	format_oligos(stdout, global_pa, sa, p3state->mid, p3state->n_m, OT_INTL);
-      else boulder_print_oligos(global_pa, sa, p3state->n_m, OT_INTL, p3state->f, p3state->r, p3state->mid);
+	format_oligos(stdout, global_pa, sa, p3state->mid,
+		      p3state->n_m, OT_INTL, pr_release);
+      else 
+	boulder_print_oligos(global_pa, sa, p3state->n_m, 
+			     OT_INTL, p3state->f, p3state->r, p3state->mid);
     }
 
     if (NULL != global_pa->glob_err.data) {
