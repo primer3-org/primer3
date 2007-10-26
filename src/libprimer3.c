@@ -4,19 +4,23 @@ Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
+    This file is part of primer3 and the libprimer3 library.
 
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * Neither the names of the copyright holders nor contributors may
-be used to endorse or promote products derived from this software
-without specific prior written permission.
+    Primer3 and the libprimer3 library are free software;
+    you can redistribute them and/or modify them under the terms
+    of the GNU General Public License as published by the Free
+    Software Foundation; either version 2 of the License, or (at
+    your option) any later version.
+
+    This software is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this software (file gpl-2.0.txt in the source
+    distribution); if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -45,18 +49,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "libprimer3.h"
 
 /* #define's */
-
-#ifdef FOOBAR
-/* 
- * Panic messages for when the program runs out of memory.  pr_program_name and
- * pr_program_name_len must be set at the beginning of main.
- */
-#define OOM_MESSAGE      ": out of memory\n"
-#define OOM_MESSAGE_LEN  16
-#define OOM_STMT1 write(2, pr_program_name, pr_program_name_len)
-#define OOM_STMT2 write(2, OOM_MESSAGE, OOM_MESSAGE_LEN), exit(-2)
-#define OOM_ERROR OOM_STMT1, OOM_STMT2
-#endif
 
 #ifndef MAX_PRIMER_LENGTH
 #error "Define MAX_PRIMER_LENGTH in Makefile..."
@@ -108,6 +100,9 @@ static int    _pr_data_control(primer_args *,  seq_args *);
 static int    _pr_need_pair_template_mispriming(const primer_args *pa);
 static int    _pr_need_template_mispriming(const primer_args *);
 
+static void   _pr_reverse_complement(const char *, char *);
+
+
 static void   _pr_substr(const char *, int, int, char *);
 
 static void   add_must_use_warnings(seq_args *, const char *,
@@ -139,6 +134,7 @@ void          compute_position_penalty(const primer_args *, const seq_args *,
 static void   create_and_print_file(seq_args *, int, const primer_rec[],
 				    const oligo_type, const int, const int,
 				    const char *);
+
 static char   dna_to_upper(char *, int);
 static int    find_stop_codon(const char *, int, int);
 static void   gc_and_n_content(const int, const int, const char *, primer_rec *);
@@ -209,9 +205,9 @@ static void   check_if_lowercase_masked(const int position,
 
 
 /* Global static variables. */
-static const char * copyright[] = {
+static const char *libprimer3_copyright_str[] = {
 "",
-"Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006",
+"Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007",
 "Whitehead Institute for Biomedical Research, Steve Rozen",
 "(http://jura.wi.mit.edu/rozen), and Helen Skaletsky",
 "All rights reserved.",
@@ -3380,7 +3376,7 @@ _pr_substr(const char *seq, int n, int m, char *s)
 }
 
 /* Reverse and complement the sequence seq and put the result in s. */ 
-void
+static void
 _pr_reverse_complement(const char *seq, char *s)
 {
     const char *p = seq;
@@ -3594,11 +3590,15 @@ pr_print_pair_explain(f, sa)
     fprintf(f, ", ok %d\n", sa->pair_expl.ok);
 }
 
-char *
+const char *
 libprimer3_release(void) {
   return "libprimer3 release 2.0.0";
 }
 
+const char **
+libprimer3_copyright(void) {
+  return libprimer3_copyright_str;
+}
 
 /* ======================================================== */
 /* Routines for creating and reading and destroying seq_lib
