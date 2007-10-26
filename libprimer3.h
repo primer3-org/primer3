@@ -4,19 +4,23 @@ Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
+    This file is part of primer3 and the libprimer3 library.
 
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * Neither the names of the copyright holders nor contributors may
-be used to endorse or promote products derived from this software
-without specific prior written permission.
+    Primer3 and the libprimer3 library are free software;
+    you can redistribute them and/or modify them under the terms
+    of the GNU General Public License as published by the Free
+    Software Foundation; either version 2 of the License, or (at
+    your option) any later version.
+
+    This software is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this file (file gpl-2.0.txt in the source
+    distribution); if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -31,8 +35,8 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef PR_PRIMER_LIB_H
-#define PR_PRIMER_LIB_H
+#ifndef LIBPRIMER3_H
+#define LIBPRIMER3_H
 
 #include <setjmp.h>
 #include <stdio.h>
@@ -550,45 +554,26 @@ typedef struct seq_args {
     pair_stats  pair_expl;  /* Pair statistics. */
 } seq_args;
 
-#ifdef FOOBAR
-typedef enum primer_errno {
-    PR_ERR_NONE = 0,
-    PR_ERR_OUT_OF_MEMORY = 1,
-    PR_ERR_CANNOT_OPEN_FILE = 2,
-    PR_ERR_ALIGNMENT_FAILED = 3
-} primer_errno;
-
 /*
- * Error handling information.
- * This contains error codes and string along with a jmp_buf for error
- * recovery.
- */
-typedef struct primer_error {
-    int system_errno;			/* A copy of the system 'errno' */
-    primer_errno local_errno;		/* Primer3 error code */
-    char *error_msg;			/* text version of local_errno */
-    jmp_buf jmpenv;			/* errors caught in API funcs */
-} primer_error;
-
-#endif
-
-/*
- * A global 'state' for primer3. All global variables are held within here.
- * Before using primer3 you need to create a new state using primer3_create.
- * Free the memory after usage with primer3_destroy.
+ * A global 'state' for primer3. All formerly global variables are held here.
+ * Free the memory after usage with destroy_primer3_state.
  */
 typedef struct primer3_state {
+  /* Arrays of oligo (primer) records. */
+  primer_rec *f, *r, *mid;
 
-    /* Primer info */
-    primer_rec *f, *r, *mid;	/* The primers */
-    int n_f, n_r, n_m;		/* Number of elements in f, r and mid */
-    int f_len, r_len, mid_len;	/* and their lengths */
-    pair_array_t best_pairs;	/* The best primer pairs */
+  /* Number of initialized elements in f, r and mid */
+  int n_f, n_r, n_m;		
 
-  /* primer_error err;		Error handling */
+  /* Storage lengths of f, r, mid */
+  int f_len, r_len, mid_len;
+
+  /* Array of best primer pairs */
+  pair_array_t best_pairs;
 } primer3_state;
 
-/* Allocate a new primer3 state.  Return NULL on ENOMEM. */
+/* Allocate and initialize a new primer3 state.  Return NULL on
+   ENOMEM. */
 primer3_state *create_primer3_state(void);
 
 /* Deallocate a primer3 state */
@@ -597,29 +582,33 @@ void destroy_primer3_state(primer3_state *);
 void destroy_seq_args(seq_args *);
 
 /* 
- * Choose individual primers or oligos, or primer pairs,
- * or primer pairs with internal oligos. On ENOMEM
- * return -1 and set errno. On other error return
- * 1 and set sa->error, pa->glob_err. On no error
- * return 0.
+ * Choose individual primers or oligos, or primer pairs, or primer
+ * pairs with internal oligos. On ENOMEM return -1 and set errno. On
+ * other error return 1 and set sa->error and/or pa->glob_err. On no
+ * error return 0.
  */
 int choose_primers(primer3_state *p3state, primer_args *pa, seq_args *sa);
 
-char *pr_oligo_sequence(const seq_args *, const primer_rec *);
-char *pr_oligo_rev_c_sequence(const seq_args *, const primer_rec *);
-void pr_set_default_global_args(primer_args *);
-void pr_append_new_chunk(pr_append_str *, const char *);
-char *pr_gather_warnings(const seq_args *, const primer_args *);
-void  _pr_reverse_complement(const char *, char *);
-void   pr_append(pr_append_str *, const char *);
-void   pr_append_new_chunk(pr_append_str *, const char *);
-void   pr_print_pair_explain(FILE *, const seq_args *);
-char *libprimer3_release(void);
+char  *pr_oligo_sequence(const seq_args *, const primer_rec *);
+
+char  *pr_oligo_rev_c_sequence(const seq_args *, const primer_rec *);
+
+void  pr_set_default_global_args(primer_args *);
+
+char  *pr_gather_warnings(const seq_args *, const primer_args *);
+
+void  pr_append(pr_append_str *, const char *);
+void  pr_append_new_chunk(pr_append_str *, const char *);
+
+void  pr_print_pair_explain(FILE *, const seq_args *);
+
+const char  *libprimer3_release(void);
+const char  **libprimer3_copyright(void);
 
 /* An accessor function for a primer_rec *. */
-short  oligo_max_template_mispriming(const primer_rec *);
+short oligo_max_template_mispriming(const primer_rec *);
 
-int  strcmp_nocase(char *, char *);
+int   strcmp_nocase(char *, char *);
 
 /* ======================================================= */
 /* Functions for creating and destroying a seq_lib object. */
