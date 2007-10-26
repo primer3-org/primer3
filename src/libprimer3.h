@@ -41,8 +41,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <setjmp.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "dpal.h"
+#include <limits.h> /* SHRT_MIN */
 
+/* ALIGN_SCORE_UNDEF is used only libprimer3 and clients, not in dpal */
 #define ALIGN_SCORE_UNDEF             SHRT_MIN
 
 /* These next 5 are exposed for format_output.c -- probabaly should be reviewed. */
