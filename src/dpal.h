@@ -33,7 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifndef _DPAL_H
 #define _DPAL_H
-#include <limits.h>
+#include <limits.h> /* INT_MIN */
 
 #define DPAL_ERROR_SCORE INT_MIN
 
