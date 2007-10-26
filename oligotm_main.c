@@ -17,7 +17,7 @@ All rights reserved.
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with the oligtm library (file gpl.txt in the source
+    along with the oligtm library (file gpl-2.0.txt in the source
     distribution); if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
@@ -100,9 +100,9 @@ main(int argc, char **argv)
 "    GNU General Public License for more details.\n"
 "\n"
 "    You should have received a copy of the GNU General Public License\n"
-"    along with the oligtm library (file gpl.txt in the source\n"
-"    distribution or see http://www.gnu.org/licenses/gpl.txt);\n"
-"    if not, write to the Free Software Foundation, Inc.,\n"
+"    along with the oligtm library (file gpl-2.0.txt in the source\n"
+"    distribution).  If not, see http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt;\n"
+"    or write to the Free Software Foundation, Inc.,\n"
 "    51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA\n";
 
    char *endptr, *seq;
