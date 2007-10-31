@@ -299,13 +299,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
    oligotm.h for documentation of arguments.
 */
 double 
-oligotm(s, DNA_nM, K_mM, divalent_conc, dntp_conc, tm_santalucia, salt_corrections)
+oligotm(s, DNA_nM, K_mM, divalent_conc, dntp_conc, tm_method,
+	salt_corrections)
      const  char *s;
      double DNA_nM;
      double K_mM;
      double divalent_conc;
      double dntp_conc;
-     int tm_santalucia;
+     int tm_method;
      int salt_corrections;
 {
   register int dh = 0, ds = 0;
@@ -315,11 +316,12 @@ oligotm(s, DNA_nM, K_mM, divalent_conc, dntp_conc, tm_santalucia, salt_correctio
   double correction;
   int len, sym;
   const char* d = s;
-   if(divalent_to_monovalent(divalent_conc, dntp_conc) == OLIGOTM_ERROR) return OLIGOTM_ERROR;
+   if(divalent_to_monovalent(divalent_conc, dntp_conc) == OLIGOTM_ERROR)
+     return OLIGOTM_ERROR;
    
    K_mM = K_mM + divalent_to_monovalent(divalent_conc, dntp_conc);
-  if (tm_santalucia != TM_METHOD_BRESLAUER
-      && tm_santalucia != TM_METHOD_SANTALUCIA)
+  if (tm_method != TM_METHOD_BRESLAUER
+      && tm_method != TM_METHOD_SANTALUCIA)
     return OLIGOTM_ERROR;
   if (salt_corrections != SALT_CORRECTION_SCHILDKRAUT
       && salt_corrections != SALT_CORRECTION_SANTALUCIA
@@ -329,7 +331,7 @@ oligotm(s, DNA_nM, K_mM, divalent_conc, dntp_conc, tm_santalucia, salt_correctio
   len = (strlen(s)-1);
 
   sym = symmetry(s); /*Add symmetry correction if seq is symmetrical*/
-  if( tm_santalucia == TM_METHOD_BRESLAUER ) {
+  if( tm_method == TM_METHOD_BRESLAUER ) {
     ds=108;
   }
   else {
@@ -362,7 +364,7 @@ oligotm(s, DNA_nM, K_mM, divalent_conc, dntp_conc, tm_santalucia, salt_correctio
   }
   /* Use a finite-state machine (DFA) to calucluate dh and ds for s. */
   c = *s; s++;
-  if (tm_santalucia == TM_METHOD_BRESLAUER) {
+  if (tm_method == TM_METHOD_BRESLAUER) {
     if (c == 'A') goto A_STATE;
     else if (c == 'G') goto G_STATE;
     else if (c == 'T') goto T_STATE;
@@ -431,12 +433,16 @@ oligotm(s, DNA_nM, K_mM, divalent_conc, dntp_conc, tm_santalucia, salt_correctio
     if (sym == 1) { /* primer is symmetrical */
       /* Equation A */
       Tm 
-	= (1/((1/(delta_H / (delta_S + 1.9872 * log(DNA_nM/1000000000.0)))) + correction))
+	= (1/((1/(delta_H 
+		  / 
+		  (delta_S + 1.9872 * log(DNA_nM/1000000000.0)))) + correction))
 	- 273.15;
     } else {
       /* Equation B */
       Tm 
-	= (1/((1/(delta_H / (delta_S + 1.9872 * log(DNA_nM/4000000000.0)))) + correction))
+	= (1/((1/(delta_H 
+		  / 
+		  (delta_S + 1.9872 * log(DNA_nM/4000000000.0)))) + correction))
 	- 273.15;
     }
             
@@ -464,20 +470,20 @@ oligotm(s, DNA_nM, K_mM, divalent_conc, dntp_conc, tm_santalucia, salt_correctio
 }
 
 double 
-oligodg(s, tm_santalucia)
+oligodg(s, tm_method)
     const char *s;       /* The sequence. */
-    int tm_santalucia; 
+    int tm_method; 
 {
    register int dg = 0;
    register char c;
 
-  if (tm_santalucia != TM_METHOD_BRESLAUER
-      && tm_santalucia != TM_METHOD_SANTALUCIA)
+  if (tm_method != TM_METHOD_BRESLAUER
+      && tm_method != TM_METHOD_SANTALUCIA)
     return OLIGOTM_ERROR;
 
    /* Use a finite-state machine (DFA) to calucluate dg s. */
    c = *s; s++;
-   if(tm_santalucia != TM_METHOD_BRESLAUER) {      
+   if(tm_method != TM_METHOD_BRESLAUER) {      
       dg=-1960; /* Initial dG */
       if(c == 'A' || c == 'T')  {
 	 dg += -50; /* terminal AT penalty */
@@ -508,7 +514,7 @@ oligodg(s, tm_santalucia)
 
      }
 DONE:  /* dg is now computed for the given sequence. */
-   if(tm_santalucia != TM_METHOD_BRESLAUER) {
+   if(tm_method != TM_METHOD_BRESLAUER) {
       int sym;
       --s; --s; c = *s;
       if(c == 'A' || c == 'T')  {
@@ -528,38 +534,38 @@ DONE:  /* dg is now computed for the given sequence. */
     return OLIGOTM_ERROR;
 }
 
-double end_oligodg(s, len, tm_santalucia)
+double end_oligodg(s, len, tm_method)
   const char *s;  
   int len; /* The number of characters to return. */
-  int tm_santalucia;
+  int tm_method;
 {
   int x = strlen(s);
 
-  if (tm_santalucia != TM_METHOD_BRESLAUER
-      && tm_santalucia != TM_METHOD_SANTALUCIA)
+  if (tm_method != TM_METHOD_BRESLAUER
+      && tm_method != TM_METHOD_SANTALUCIA)
     return OLIGOTM_ERROR;
 
   return 
     x < len 
-    ? oligodg(s,tm_santalucia) :
-    oligodg(s + (x - len),tm_santalucia);
+    ? oligodg(s,tm_method) :
+    oligodg(s + (x - len),tm_method);
 }
 
 /* See oligotm.h for documentation of arguments. */
 double seqtm(seq, dna_conc, salt_conc, divalent_conc, dntp_conc, nn_max_len,
-	     tm_santalucia, salt_corrections)
+	     tm_method, salt_corrections)
   const  char *seq;
   double dna_conc;
   double salt_conc;
   double divalent_conc;
   double dntp_conc;
   int    nn_max_len;
-  int    tm_santalucia;
+  int    tm_method;
   int    salt_corrections;
 {
   int len = strlen(seq);
-   if (tm_santalucia != TM_METHOD_BRESLAUER
-      && tm_santalucia != TM_METHOD_SANTALUCIA)
+   if (tm_method != TM_METHOD_BRESLAUER
+      && tm_method != TM_METHOD_SANTALUCIA)
     return OLIGOTM_ERROR;
   if (salt_corrections != SALT_CORRECTION_SCHILDKRAUT
       && salt_corrections != SALT_CORRECTION_SANTALUCIA
@@ -568,7 +574,8 @@ double seqtm(seq, dna_conc, salt_conc, divalent_conc, dntp_conc, nn_max_len,
 
   return (len > nn_max_len)
     ? long_seq_tm(seq, 0, len, salt_conc, divalent_conc, dntp_conc) 
-    : oligotm(seq, dna_conc, salt_conc, divalent_conc, dntp_conc, tm_santalucia, salt_corrections);
+    : oligotm(seq, dna_conc, salt_conc, 
+	      divalent_conc, dntp_conc, tm_method, salt_corrections);
 }
 
 /* See oligotm.h for documentation on this function and the formula it
@@ -584,7 +591,8 @@ long_seq_tm(s, start, len, salt_conc, divalent_conc, dntp_conc)
   int GC_count = 0;
   const char *p, *end;
 
-   if(divalent_to_monovalent(divalent_conc, dntp_conc) == OLIGOTM_ERROR) return OLIGOTM_ERROR;
+   if(divalent_to_monovalent(divalent_conc, dntp_conc) == OLIGOTM_ERROR)
+     return OLIGOTM_ERROR;
    
    salt_conc = salt_conc + divalent_to_monovalent(divalent_conc, dntp_conc);
 
@@ -647,7 +655,8 @@ double divalent_to_monovalent(double divalent,
    if(divalent==0) dntp=0;
    if(divalent<0 || dntp<0) return OLIGOTM_ERROR;
    if(divalent<dntp) 
-     /* According to theory, melting temperature doesn't depend on divalent cations */
+     /* According to theory, melting temperature does not depend on
+	divalent cations */
      divalent=dntp;  
    return 120*(sqrt(divalent-dntp));
 }
