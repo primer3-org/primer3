@@ -29,7 +29,7 @@ All rights reserved.
 
 /* Return the delta G of the last len bases of oligo if oligo is at least len
    bases long; otherwise return the delta G of oligo. */
-double end_oligodg(const char *oligo, int len, int tm_santalucia);
+double end_oligodg(const char *oligo, int len, int tm_method);
 
 /* Calculate the melting temperature of substr(seq, start, length) using the
    formula from Bolton and McCarthy, PNAS 84:1390 (1962) as presented in
@@ -83,7 +83,7 @@ double long_seq_tm(const char *seq,
 #define SALT_CORRECTION_OWCZARZY    2
 
 /* 
-   If tm_santalucia==TM_METHOD_SANTALUCIA, then the table of
+   If tm_method==TM_METHOD_SANTALUCIA, then the table of
    nearest-neighbor thermodynamic parameters and method for Tm
    calculation in the paper [SantaLucia JR (1998) "A unified view of
    polymer, dumbbell and oligonucleotide DNA nearest-neighbor
@@ -92,7 +92,7 @@ double long_seq_tm(const char *seq,
    *THIS IS THE RECOMMENDED VALUE*.
    Added by T. Koressaar
  
-   If tm_santalucia==TM_METHOD_BRESLAUER, then method for Tm
+   If tm_method==TM_METHOD_BRESLAUER, then method for Tm
    calculations in the paper [Rychlik W, Spencer WJ and Rhoads RE
    (1990) "Optimization of the annealing temperature for DNA
    amplification in vitro", Nucleic Acids Res 18:6409-12
@@ -135,7 +135,7 @@ double oligotm(const  char *seq,     /* The sequence. */
                double salt_conc,     /* Salt concentration (millimolar). */
 	       double divalent_conc, /* Concentration of divalent cations (millimolar) */
 	       double dntp_conc,     /* Concentration of dNTPs (millimolar) */
-	       int tm_santalucia,    /* See description above. */
+	       int tm_method,    /* See description above. */
 	       int salt_corrections  /* See description above. */
 	       );
 
@@ -155,7 +155,7 @@ double seqtm(const  char *seq,  /* The sequence. */
 				    in long_seq_tm.
 				 */
 
-	     int tm_santalucia,   /* See description above. */
+	     int tm_method,       /* See description above. */
 	     int salt_corrections /* See description above. */
 	     );
 
@@ -165,7 +165,7 @@ double seqtm(const  char *seq,  /* The sequence. */
    neighbor model.
 */
 double oligodg(const char *seq, 
-	       int tm_santalucia /* See description above. */
+	       int tm_method /* See description above. */
 	       );
 
 /* Returns 1 if the sequence is self-complementary or symmetrical; 0
