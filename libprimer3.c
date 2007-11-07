@@ -112,11 +112,11 @@ static short  align(const char *, const char*, const dpal_args *a);
 static int    check_intervals(const char *, const int,
 			      interval_array_t, const int, seq_args *);
 
-static int    choose_pair(primer3_state *,
-			  const primer_args *,
-			  seq_args *, const dpal_arg_holder *,
-			  int,
-			  pair_array_t *);
+static int    choose_pair_or_triple(primer3_state *,
+				    const primer_args *,
+				    seq_args *, const dpal_arg_holder *,
+				    int,
+				    pair_array_t *);
 
 static void   check_sequence_quality(const primer_args *, primer_rec *,
 				     oligo_type, const seq_args *, int, int,
@@ -144,10 +144,10 @@ static int    make_primer_lists(primer3_state *,
 				seq_args *,
 				const dpal_arg_holder *);
 
-static int    make_internal_oligos_list(primer3_state *,
-					const primer_args *,
-					seq_args *,
-					const dpal_arg_holder *);
+static int    make_internal_oligo_list(primer3_state *,
+				       const primer_args *,
+				       seq_args *,
+				       const dpal_arg_holder *);
 
 static double obj_fn(const primer_args *, primer_pair *);
 
@@ -688,9 +688,9 @@ choose_primers(primer3_state *p3state,
 	       primer_args *pa,
 	       seq_args *sa)
 {
-    int i;       /* Loop index. */
-    int int_num; /* Product size range counter. */
-    pair_array_t p;
+    int          i;               /* Loop index. */
+    int          prod_size_range; /* Product size range indexr. */
+    pair_array_t a_pair_array;
     pair_array_t *best_pairs = &p3state->best_pairs;
 
     PR_ASSERT(NULL != p3state);
@@ -721,8 +721,8 @@ choose_primers(primer3_state *p3state,
 
     if ((pa->primer_task == pick_hyb_probe_only 
 	 || pa->primer_task == pick_pcr_primers_and_hyb_probe)
-        && make_internal_oligos_list(p3state, pa, sa,
-				     dpal_arg_to_use) != 0)
+        && make_internal_oligo_list(p3state, pa, sa,
+				    dpal_arg_to_use) != 0)
       return 1;
 
     /* Creates files with left, right, and internal oligos. */
@@ -745,22 +745,34 @@ choose_primers(primer3_state *p3state,
 	    sizeof(*p3state->mid), 
 	    primer_rec_comp);
 
-    p.storage_size = p.num_pairs = 0;
+    a_pair_array.storage_size = a_pair_array.num_pairs = 0;
+
     if (pa->primer_task == pick_pcr_primers 
 	|| pa->primer_task == pick_pcr_primers_and_hyb_probe) {
 
-      /* Look for pa->num_return best primer pairs. */
-      for (int_num=0; int_num < pa->num_intervals; int_num++) {
-	if(choose_pair(p3state, pa, sa, dpal_arg_to_use, int_num, &p)!=0)
+      /* Iterate over each product-size-range until we
+	 run out of size_ranges or until we get pa->num_return
+	 pairs.  */
+      for (prod_size_range=0; 
+	   prod_size_range < pa->num_intervals;
+	   prod_size_range++) {
+	
+	if (choose_pair_or_triple(p3state, pa, sa, 
+				 dpal_arg_to_use, prod_size_range, 
+				  &a_pair_array)
+	   !=0)
 	  continue;
 
-	for (i = 0; i < p.num_pairs && best_pairs->num_pairs < pa->num_return;
-	     i++)
-	  if (!oligo_pair_seen(&p.pairs[i], best_pairs))
-	    add_pair(&p.pairs[i], best_pairs);
+	for (i = 0;
+	     i < a_pair_array.num_pairs 
+	       && best_pairs->num_pairs < pa->num_return;
+	     i++) {
+	  if (!oligo_pair_seen(&a_pair_array. pairs[i], best_pairs))
+	    add_pair(&a_pair_array.pairs[i], best_pairs);
+	}
 
 	if (pa->num_return == best_pairs->num_pairs) break;
-	p.num_pairs = 0;
+	a_pair_array.num_pairs = 0;
       }
     }
 
@@ -779,7 +791,7 @@ choose_primers(primer3_state *p3state,
       }
     }
 
-    if (0 != p.storage_size) free(p.pairs);
+    if (0 != a_pair_array.storage_size) free(a_pair_array.pairs);
     return 0;
 }
 
@@ -788,10 +800,9 @@ choose_primers(primer3_state *p3state,
    i.e. that primer was supplied by the caller
    and pick_anyway is set. */
 static void
-add_must_use_warnings(sa, text, stats)
-  seq_args *sa;
-  const char* text;
-  const oligo_stats *stats;
+add_must_use_warnings(seq_args *sa,
+		      const char* text,
+		      const oligo_stats *stats)
 {
   const char *sep = "/";
   pr_append_str s;
@@ -829,11 +840,11 @@ add_must_use_warnings(sa, text, stats)
 
 }
 
-/* Return 1 iff pair is already in the first num_pairs elements of retpair. */
+/* Return 1 iff pair is already in the first num_pairs elements of 
+   retpair. */
 static int
-oligo_pair_seen(pair, retpair)
-    const primer_pair *pair;
-    const pair_array_t *retpair;
+oligo_pair_seen(const primer_pair *pair,
+		const pair_array_t *retpair)
 {
   const primer_pair *q, *stop;
 
@@ -856,9 +867,8 @@ oligo_pair_seen(pair, retpair)
 
 /* Add 'pair' to 'retpair'. */
 static void
-add_pair(pair, retpair)
-    const primer_pair *pair;
-    pair_array_t *retpair;
+add_pair(const primer_pair *pair,
+	 pair_array_t *retpair)
 {
     if (0 == retpair->storage_size) {
 	retpair->storage_size = INITIAL_NUM_RETURN;
@@ -874,13 +884,18 @@ add_pair(pair, retpair)
     retpair->num_pairs++;
 }
 
-/* Make lists of acceptable left and right primers. */
+/* 
+ * Make lists of acceptable left and right primers.  After return, the
+ * lists are stored in p3state->f and p3state->r and the coresponding
+ * list sizes are stored in p3state->n_f and p3state->n_r.  Return 1
+ * if one of lists is empty or if leftmost left primer and rightmost
+ * right primer do not provide sufficient product size.
+ */
 static int
-make_primer_lists(p3state, pa, sa, dpal_arg_to_use)
-     primer3_state *p3state;
-     primer_args *pa;
-     seq_args *sa;
-     const dpal_arg_holder *dpal_arg_to_use;
+make_primer_lists(primer3_state *p3state,
+		  primer_args *pa,
+		  seq_args *sa,
+		  const dpal_arg_holder *dpal_arg_to_use)
 {
     int left, right;
     int i,j,n,k,pr_min;
@@ -938,6 +953,7 @@ make_primer_lists(p3state, pa, sa, dpal_arg_to_use)
     k = 0;
     if(pa->primer_task != pick_right_only && pa->primer_task != pick_hyb_probe_only){
     left=n; right=0;
+
     for (i = f_b; i >= pa->primer_min_size - 1; i--) {
 	s[0]='\0';
 	for (j = pa->primer_min_size; j <= pa->primer_max_size; j++) {
@@ -954,12 +970,14 @@ make_primer_lists(p3state, pa, sa, dpal_arg_to_use)
 		h.repeat_sim.score = NULL;
 		_pr_substr(sa->trimmed_seq,h.start,h.length,s);
 
+		/* If the left_input oligo is specified and
+		   this is not it, skip this one. */
 		if (sa->left_input && strcmp_nocase(sa->left_input, s))
 		  continue;
 
 		h.must_use = (sa->left_input && pa->pick_anyway);
 
-		if (pa->explain_flag) sa->left_expl.considered++;
+		sa->left_expl.considered++;
 
 		if (!PR_START_CODON_POS_IS_NULL(sa)
 		/* Make sure the primer would amplify at least part of
@@ -968,7 +986,7 @@ make_primer_lists(p3state, pa, sa, dpal_arg_to_use)
 			|| h.start <= stop_codon1
 			|| (sa->stop_codon_pos != -1 
 			    && h.start >= sa->stop_codon_pos))) {
-		  if (pa->explain_flag) sa->left_expl.no_orf++;
+		  sa->left_expl.no_orf++;
 		  if (!pa->pick_anyway) continue;
 		}
 
@@ -996,7 +1014,6 @@ make_primer_lists(p3state, pa, sa, dpal_arg_to_use)
     }
     p3state->n_f = k;
 
-
     if (pa->primer_task == pick_right_only)
       r_b = 0;
     else if (tar_l+1>pr_min - pa->primer_max_size
@@ -1007,6 +1024,7 @@ make_primer_lists(p3state, pa, sa, dpal_arg_to_use)
     k = 0;
     if(pa->primer_task != pick_left_only 
        && pa->primer_task != pick_hyb_probe_only) {
+
     for(i=r_b; i<=n-pa->primer_min_size; i++) {
 	s[0]='\0';
 	for(j = pa->primer_min_size; j <= pa->primer_max_size; j++) {
@@ -1077,12 +1095,12 @@ make_primer_lists(p3state, pa, sa, dpal_arg_to_use)
 }
 
 /* 
- * Make complete list of acceptable internal oligos in mid.  Place the number
- * of valid elements in mid in *n_m.  Return 1 if there are no acceptable
- * internal oligos; otherwise return 0.
+ * Make complete list of acceptable internal oligos in p3state->mid.
+ * and place the number of valid elements in mid in *n_m.  Return 1 if
+ * there are no acceptable internal oligos; otherwise return 0.
  */
 static int
-make_internal_oligos_list(p3state, pa, sa, dpal_arg_to_use)
+make_internal_oligo_list(p3state, pa, sa, dpal_arg_to_use)
      primer3_state *p3state;
      const primer_args *pa;
      seq_args *sa;
@@ -1693,16 +1711,27 @@ print_list_header(fh, type, first_base_index, print_lib_sim)
 }
 
 static void
-print_oligo(fh, sa, index, h, type, first_base_index, print_lib_sim)
-    FILE *fh;
+print_oligo(FILE *fh,
+	    const seq_args *sa, 
+	    int index, 
+	    const primer_rec *h, 
+	    oligo_type type, 
+	    int first_base_index, 
+	    int print_lib_sim)
+     /*     FILE *fh;
     const seq_args *sa;
     int index;
     const primer_rec *h;
     oligo_type type;
-    int first_base_index, print_lib_sim;
+    int first_base_index, print_lib_sim; */
 {
-    char *p = (OT_RIGHT != type) 
-	? pr_oligo_sequence(sa, h) : pr_oligo_rev_c_sequence(sa, h);
+    char *p =  /* WARNING, *p points to static storage that
+		  is overwritten on next call to pr_oligo_sequence
+		  or pr_oligo_rev_c_sequence. */
+      (OT_RIGHT != type) 
+      ? pr_oligo_sequence(sa, h) 
+      : pr_oligo_rev_c_sequence(sa, h);
+
     if (print_lib_sim)
 	fprintf(fh,
 		"%4d %-30s %5d %2d %2d %5.2f %5.3f %5.2f %5.2f %5.2f %6.3f\n",
@@ -1724,8 +1753,12 @@ print_oligo(fh, sa, index, h, type, first_base_index, print_lib_sim)
 		h->quality);
 }
 
+/* This function requires that p3state->n_f and n_r,
+   and posibly n_m...see choose_internal_oligo().  
+   This function then sorts through the pairs or
+   triples to find pa->nu. */
 static int
-choose_pair(p3state, pa, sa,  dpal_arg_to_use, int_num, p)
+choose_pair_or_triple(p3state, pa, sa,  dpal_arg_to_use, int_num, p)
      primer3_state *p3state;
      const primer_args *pa;
      seq_args *sa;
@@ -1748,7 +1781,7 @@ choose_pair(p3state, pa, sa,  dpal_arg_to_use, int_num, p)
 
   i_worst = 0;
   n_last = p3state->n_f;
-  for(i=0; i<p3state->n_r; i++) {
+  for (i=0; i<p3state->n_r; i++) {
     /* 
      * Make a quick cut based on the the quality of the best left
      * primer.
@@ -1761,7 +1794,7 @@ choose_pair(p3state, pa, sa,  dpal_arg_to_use, int_num, p)
 	    || worst_pair.pair_quality == 0))
       break;
 
-    for(j=0;j<n_last;j++) {
+    for (j=0; j<n_last; j++) {
       /* 
        * Invariant: if 2 pairs in p have the same pair_quality, then the
        * pair discovered second will have a higher index within p.
@@ -1787,7 +1820,6 @@ choose_pair(p3state, pa, sa,  dpal_arg_to_use, int_num, p)
 	  h.pair_quality = obj_fn(pa, &h);
 	  PR_ASSERT(h.pair_quality >= 0.0);
 	}
-
 
 	if ( pa->primer_task == pick_pcr_primers_and_hyb_probe
 	     && choose_internal_oligo(p3state,
@@ -1839,9 +1871,9 @@ choose_pair(p3state, pa, sa,  dpal_arg_to_use, int_num, p)
       }
     }	
   }
-  if(k!=0) qsort(p->pairs, k, sizeof(primer_pair), primer_pair_comp);
+  if (k != 0) qsort(p->pairs, k, sizeof(primer_pair), primer_pair_comp);
   p->num_pairs = k;
-  if (k==0) return 1;
+  if (k == 0) return 1;
   else return 0;
 }
 
@@ -2445,6 +2477,10 @@ align(s1, s2, a)
     return ((r.score<0) ? 0 : (short)r.score);
 }
 
+/* Return the sequence of oligo o in
+   a ****static***** buffer.  The
+   sequence returned is changed at the
+   next call to pr_oligo_sequence. */
 char *
 pr_oligo_sequence(sa, o)
     const seq_args *sa;
