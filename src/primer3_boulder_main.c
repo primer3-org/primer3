@@ -179,8 +179,10 @@ main(argc,argv)
   }
 
   /* To avoid being distracted when looking for leaks: */
-  destroy_seq_lib(global_pa->repeat_lib);
-  destroy_seq_lib(global_pa->io_mishyb_library);
+  /* destroy_seq_lib(global_pa->repeat_lib); */
+  destroy_seq_lib(global_pa->p_args.repeat_lib);
+  /* destroy_seq_lib(global_pa->io_mishyb_library); */
+  destroy_seq_lib(global_pa->o_args.repeat_lib);
   free(global_pa);
     
   if (0 == input_found) {

@@ -4,19 +4,23 @@ Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
+    This file is part of primer3.
 
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * Neither the names of the copyright holders nor contributors may
-be used to endorse or promote products derived from this software
-without specific prior written permission.
+    Primer3 and the libprimer3 library are free software;
+    you can redistribute them and/or modify them under the terms
+    of the GNU General Public License as published by the Free
+    Software Foundation; either version 2 of the License, or (at
+    your option) any later version.
+
+    This software is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this file (file gpl-2.0.txt in the source
+    distribution); if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -29,6 +33,7 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 */
 
 #include <string.h> /* strcpy */
@@ -159,7 +164,7 @@ boulder_print_pairs(prog_args, pa, sa, best_pairs)
 	if ( pa->primer_task == pick_pcr_primers_and_hyb_probe)
 	    printf("PRIMER_INTERNAL_OLIGO%s_SELF_END=%.2f\n", suffix,
 		   intl->self_end / PR_ALIGN_SCORE_PRECISION);
-        if (seq_lib_num_seq(pa->repeat_lib) > 0) {
+        if (seq_lib_num_seq(pa->p_args.repeat_lib) > 0) {
 	    printf("PRIMER_LEFT%s_MISPRIMING_SCORE=%.2f, %s\n", suffix,
 		   fwd->repeat_sim.score[fwd->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
 		   fwd->repeat_sim.name);
@@ -171,7 +176,7 @@ boulder_print_pairs(prog_args, pa, sa, best_pairs)
 		   best_pairs->pairs[i].rep_name);
         }
 	if ( pa->primer_task == pick_pcr_primers_and_hyb_probe
-	    && seq_lib_num_seq(pa->io_mishyb_library) > 0)
+	    && seq_lib_num_seq(pa->o_args.repeat_lib) > 0)
 	    printf("PRIMER_INTERNAL_OLIGO%s_MISHYB_SCORE=%.2f, %s\n", suffix,
 		   intl->repeat_sim.score[intl->repeat_sim.max]
 		   / PR_ALIGN_SCORE_PRECISION,
@@ -307,11 +312,11 @@ boulder_print_oligos(pa, sa, n, l, f, r, mid)
 		       oligo[i].self_any / PR_ALIGN_SCORE_PRECISION);
         printf("%s%s_SELF_END=%.2f\n", type, suffix,
 		       oligo[i].self_end / PR_ALIGN_SCORE_PRECISION);
-        if ((l == OT_LEFT || l == OT_RIGHT) && seq_lib_num_seq(pa->repeat_lib) > 0 )
+        if ((l == OT_LEFT || l == OT_RIGHT) && seq_lib_num_seq(pa->p_args.repeat_lib) > 0 )
 	    printf("%s%s_MISPRIMING_SCORE=%.2f, %s\n", type, suffix,
 		    oligo[i].repeat_sim.score[oligo[i].repeat_sim.max] /PR_ALIGN_SCORE_PRECISION,
 		    oligo[i].repeat_sim.name);
-        if (l == OT_INTL && seq_lib_num_seq(pa->io_mishyb_library) > 0)
+        if (l == OT_INTL && seq_lib_num_seq(pa->o_args.repeat_lib) > 0)
 	    printf("%s%s_MISHYB_SCORE=%.2f,%s\n", type, suffix,
 	           oligo[i].repeat_sim.score[oligo[i].repeat_sim.max]/ PR_ALIGN_SCORE_PRECISION,
                    oligo[i].repeat_sim.name);

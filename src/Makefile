@@ -68,7 +68,7 @@ PRIMER_EXE      = primer3_core
 OLIGOTM_LIB     = liboligotm.a
 OLIGOTM_DYN_LIB = liboligotm.so.1.2.0
 LIBPRIMER3      = libprimer3.a
-LIBPRIMR3_DYN   = libpriemr3.so.1.0.0
+LIBPRIMR3_DYN   = libprimer3.so.1.0.0
 LIBRARIES       = $(OLIGOTM_LIB) $(LIBPRIMER3)
 RANLIB          = ranlib
 
@@ -173,7 +173,7 @@ test: $(PRIMER_EXE) ntdpal
 # 
 # Run valgrind on a small example:
 #
-# $ valgrind --leak-check=yes --show-reachable=yes --logfile=p3vg ./primer3_core < ../example
+# $ valgrind --leak-check=yes --show-reachable=yes --log-file-exactly=p3vg ./primer3_core < ../example
 #
 # Check output in file p3vg.pid[0-9]+. Valgrind is at /usr/local/bin/valgrind
 # at WI
