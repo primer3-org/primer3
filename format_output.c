@@ -90,16 +90,16 @@ format_pairs(FILE *f,
     if (sa->error.data != NULL) 
 	fprintf(f, "INPUT PROBLEM: %s\n\n", sa->error.data);
     else {
-	if (pa->repeat_lib != NULL)
+	if (pa->p_args.repeat_lib != NULL)
 	    fprintf(f, "Using mispriming library %s\n",
-		    pa->repeat_lib->repeat_file);
+		    pa->p_args.repeat_lib->repeat_file);
 	else
 	    fprintf(f, "No mispriming library specified\n");
 
 	if ( pa->primer_task == 1) {
-	  if (pa->io_mishyb_library != NULL)
+	  if (pa->o_args.repeat_lib != NULL)
 	    fprintf(f, "Using internal oligo mishyb library %s\n",
-		    pa->io_mishyb_library->repeat_file);
+		    pa->o_args.repeat_lib->repeat_file);
 	  else
 	    fprintf(f, "No internal oligo mishyb library specified\n");
 	}
@@ -145,14 +145,14 @@ print_summary(f, pa, sa, best_pairs, num)
 	 */
 	print_oligo_header(f, "OLIGO", print_lib_sim);
 	print_oligo(f, "LEFT PRIMER", sa, p->left, FORWARD, pa,
-		    pa->repeat_lib,
+		    pa->p_args.repeat_lib,
 		    print_lib_sim);
 	print_oligo(f, "RIGHT PRIMER", sa, p->right, REVERSE, pa,
-		    pa->repeat_lib,
+		    pa->p_args.repeat_lib,
 		    print_lib_sim);
 	if ( pa->primer_task == 1)
 	    print_oligo(f, "INTERNAL OLIGO", sa, p->intl, FORWARD,
-			pa, pa->io_mishyb_library,
+			pa, pa->o_args.repeat_lib,
 			print_lib_sim);
     }
     fprintf(f, "SEQUENCE SIZE: %d\n", seq_len);
@@ -438,14 +438,14 @@ print_rest(f, pa, sa, best_pairs)
     for (i = 1; i < best_pairs->num_pairs; i++) {
         fprintf(f, "\n%2d ", i);
         print_oligo(f, "LEFT PRIMER", sa, best_pairs->pairs[i].left, FORWARD,
-		    pa, pa->repeat_lib, print_lib_sim);
+		    pa, pa->p_args.repeat_lib, print_lib_sim);
         fprintf(f, "   ");
 	print_oligo(f, "RIGHT PRIMER", sa, best_pairs->pairs[i].right, REVERSE,
-		    pa, pa->repeat_lib, print_lib_sim);
+		    pa, pa->p_args.repeat_lib, print_lib_sim);
 	if ( pa->primer_task == 1) {
             fprintf(f, "   ");
 	    print_oligo(f, "INTERNAL OLIGO", sa, best_pairs->pairs[i].intl,
-			FORWARD, pa, pa->io_mishyb_library, print_lib_sim);
+			FORWARD, pa, pa->o_args.repeat_lib, print_lib_sim);
 	}
         if (best_pairs->pairs[i].product_size > 0) {
 	    fprintf(f, "   ");
@@ -631,7 +631,7 @@ print_stat_line(f, t, s, print_lib_sim, lowercase_masking)
  */
 static int
 lib_sim_specified(const primer_args *pa) {
-  return (pa->repeat_lib || pa->io_mishyb_library);
+  return (pa->p_args.repeat_lib || pa->o_args.repeat_lib);
 }
 
 void 
@@ -662,16 +662,16 @@ format_oligos(FILE *f,
     fprintf(f, "INPUT PROBLEM: %s\n\n", sa->error.data);
   else {
     if (l != OT_INTL ) {
-      if (pa->repeat_lib != NULL)
+      if (pa->p_args.repeat_lib != NULL)
 	fprintf(f, "Using mispriming library %s\n",
-		pa->repeat_lib->repeat_file);
+		pa->p_args.repeat_lib->repeat_file);
       else
 	fprintf(f, "No mispriming library specified\n");
     } else {
       if ( pa->primer_task == 1) {
-	if (pa->io_mishyb_library->repeat_file != NULL)
+	if (pa->o_args.repeat_lib->repeat_file != NULL)
 	  fprintf(f, "Using internal oligo mishyb library %s\n",
-		  pa->io_mishyb_library->repeat_file);
+		  pa->o_args.repeat_lib->repeat_file);
 	else
 	  fprintf(f, "No internal oligo mishyb library specified\n");
       }
@@ -702,10 +702,10 @@ format_oligos(FILE *f,
 	fprintf(f, "%2d ", i);
 	if (OT_LEFT == l || OT_INTL == l)
 	  print_oligo(f, type, sa, p, FORWARD, pa,
-		      pa->repeat_lib, print_lib_sim);
+		      pa->p_args.repeat_lib, print_lib_sim);
         else 
 	  print_oligo(f, type, sa, p, REVERSE, pa, 
-		      pa->repeat_lib, print_lib_sim);
+		      pa->p_args.repeat_lib, print_lib_sim);
       }
     }
     if (pa->explain_flag) 
@@ -743,9 +743,9 @@ print_oligo_summary(f, pa, sa, h, l, num)
 	 */
     print_oligo_header(f, "OLIGO", print_lib_sim);
     if(OT_LEFT == l || OT_INTL == l)
-	    print_oligo(f, type, sa, p, FORWARD, pa, pa->repeat_lib,
+	    print_oligo(f, type, sa, p, FORWARD, pa, pa->p_args.repeat_lib,
 		    print_lib_sim);
-    else print_oligo(f, type, sa, p, REVERSE, pa, pa->repeat_lib,
+    else print_oligo(f, type, sa, p, REVERSE, pa, pa->p_args.repeat_lib,
 		    print_lib_sim);
     
     fprintf(f, "SEQUENCE SIZE: %d\n", seq_len);
