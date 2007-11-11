@@ -157,7 +157,8 @@ test: $(PRIMER_EXE) ntdpal
 # VALGRIND INSTRUCTIONS.
 # 
 # These instructions work for linux, and run the 'memcheck'
-# functionality of valgrind.
+# functionality of valgrind.  Tests will be _much_ slower
+# when running with valgrind checks.
 # 
 # If necessary, get and install valgrind (should come with most
 # Linux's, but you need valgrind >= 3.2.3)
