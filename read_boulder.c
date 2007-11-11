@@ -217,11 +217,11 @@ read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
 				   parse_err);
 		continue;
 	    }
-	    COMPARE_INT("PRIMER_DEFAULT_SIZE", pa->primer_opt_size);
-	    COMPARE_INT("PRIMER_OPT_SIZE", pa->primer_opt_size);
-	    COMPARE_INT("PRIMER_MIN_SIZE", pa->primer_min_size);
-	    COMPARE_INT("PRIMER_MAX_SIZE", pa->primer_max_size);
-	    COMPARE_INT("PRIMER_MAX_POLY_X", pa->max_poly_x);
+	    COMPARE_INT("PRIMER_DEFAULT_SIZE", pa->p_args.opt_size);
+	    COMPARE_INT("PRIMER_OPT_SIZE", pa->p_args.opt_size);
+	    COMPARE_INT("PRIMER_MIN_SIZE", pa->p_args.min_size);
+	    COMPARE_INT("PRIMER_MAX_SIZE", pa->p_args.max_size);
+	    COMPARE_INT("PRIMER_MAX_POLY_X", pa->p_args.max_poly_x);
 	    COMPARE_FLOAT("PRIMER_OPT_TM", pa->p_args.opt_tm);
 	    COMPARE_FLOAT("PRIMER_OPT_GC_PERCENT", pa->p_args.opt_gc_content);
 	    COMPARE_FLOAT("PRIMER_MIN_TM", pa->p_args.min_tm);
@@ -245,8 +245,8 @@ read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
 	    COMPARE_FLOAT("PRIMER_DNA_CONC", pa->p_args.dna_conc);
 	    COMPARE_INT("PRIMER_NUM_NS_ACCEPTED", pa->p_args.num_ns_accepted);
 	    COMPARE_INT("PRIMER_PRODUCT_OPT_SIZE", pa->product_opt_size);
-	    COMPARE_ALIGN_SCORE("PRIMER_SELF_ANY", pa->p_args.self_any);
-	    COMPARE_ALIGN_SCORE("PRIMER_SELF_END", pa->self_end);
+	    COMPARE_ALIGN_SCORE("PRIMER_SELF_ANY", pa->p_args.max_self_any);
+	    COMPARE_ALIGN_SCORE("PRIMER_SELF_END", pa->p_args.max_self_end);
 	    COMPARE_INT("PRIMER_FILE_FLAG", pa->file_flag);
 	    COMPARE_INT("PRIMER_PICK_ANYWAY", pa->pick_anyway);
 	    COMPARE_INT("PRIMER_GC_CLAMP", pa->gc_clamp);
@@ -254,8 +254,8 @@ read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
 	    COMPARE_INT("PRIMER_LIBERAL_BASE", pa->liberal_base);
 	    COMPARE_INT("PRIMER_FIRST_BASE_INDEX", pa->first_base_index);
 	    COMPARE_INT("PRIMER_NUM_RETURN", pa->num_return);
-	    COMPARE_INT("PRIMER_MIN_QUALITY", pa->min_quality);
-	    COMPARE_INT("PRIMER_MIN_END_QUALITY", pa->min_end_quality);
+	    COMPARE_INT("PRIMER_MIN_QUALITY", pa->p_args.min_quality);
+	    COMPARE_INT("PRIMER_MIN_END_QUALITY", pa->p_args.min_end_quality);
 	    COMPARE_INT("PRIMER_QUALITY_RANGE_MIN",
 				   pa->quality_range_min);
             COMPARE_INT("PRIMER_QUALITY_RANGE_MAX",
@@ -292,19 +292,19 @@ read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
 	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_MIN_QUALITY", pa->o_args.min_quality);
 
 	    COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_SELF_ANY",
-				pa->o_args.self_any);
+				pa->o_args.max_self_any);
 	    COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_SELF_END", 
-				pa->o_args.self_end);
+				pa->o_args.max_self_end);
 	    COMPARE_ALIGN_SCORE("PRIMER_MAX_MISPRIMING",
-				pa->repeat_compl);
+				pa->p_args.max_repeat_compl);
 	    COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_MAX_MISHYB",
-				pa->o_args.repeat_compl);
+				pa->o_args.max_repeat_compl);
 	    COMPARE_ALIGN_SCORE("PRIMER_PAIR_MAX_MISPRIMING",
 				pa->pair_repeat_compl);
 
 	    /* Mispriming / mishybing in the template. */
 	    COMPARE_ALIGN_SCORE("PRIMER_MAX_TEMPLATE_MISPRIMING",
-				pa->max_template_mispriming);
+				pa->p_args.max_template_mispriming);
 	    COMPARE_ALIGN_SCORE("PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING",
 				pa->pair_max_template_mispriming);
 	    COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_MAX_TEMPLATE_MISHYB",
@@ -448,12 +448,14 @@ read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
 	     sa->incl_l = seq_len;
 	     sa->incl_s = pa->first_base_index;
 	}
+	/* FIX ME .. This belongs inside libprimer3. */
 	if(n_quality !=0 && n_quality != seq_len)
 	     pr_append_new_chunk(&sa->error, "Error in sequence quality data");
-        if((pa->min_quality != 0 || pa->o_args.min_quality != 0) && n_quality == 0) 
+        if ((pa->p_args.min_quality != 0 || pa->o_args.min_quality != 0) && n_quality == 0) 
 	     pr_append_new_chunk(&sa->error, "Sequence quality data missing");
-	if(pa->min_quality != 0 && pa->min_end_quality < pa->min_quality)
-	     pa->min_end_quality = pa->min_quality;
+	if (pa->p_args.min_quality != 0 
+	    && pa->p_args.min_end_quality < pa->p_args.min_quality)
+	     pa->p_args.min_end_quality = pa->p_args.min_quality;
     }
 
     /* 

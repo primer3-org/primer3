@@ -173,64 +173,95 @@ typedef struct args_for_one_oligo_or_primer {
   int    min_end_quality;
   int    min_quality;       /* Minimum quality permitted for oligo sequence.*/
 
-  short  self_any;  
-  short  self_end;
-  short  repeat_compl;   /* 
-			  * Acceptable complementarity with repeat
-			  * sequences.
-			  */
+  short  max_self_any;  
+  short  max_self_end;
+  short  max_repeat_compl;   /* 
+			      * Acceptable complementarity with repeat
+			      * sequences.
+			      */
 
   short  max_template_mispriming;
 } args_for_one_oligo_or_primer;
 
+
 typedef struct primargs {
-  int    pr_min[PR_MAX_INTERVAL_ARRAY]; /* Minimum product sizes. */
-  int    pr_max[PR_MAX_INTERVAL_ARRAY]; /* Maximum product sizes. */
+  /* ================================================== */
+  /* Arguments that control behavior of choose_primers() */
+  task   primer_task;          /* 2 if left primer only, 3 if right primer only,
+				* 4 if internal oligo only.    */
 
-  args_for_one_oligo_or_primer p_args;
-  args_for_one_oligo_or_primer o_args;
+  int    file_flag;
+  int    explain_flag;
 
-  /* seq_lib *repeat_lib;  *//* Library of sequences to avoid. */
-  /* seq_lib *io_mishyb_library; */
+  int    first_base_index;  /* 
+			     * The index of the first base in the input
+			     * sequence.  This parameter is ignored within
+			     * pr_choice; pr_choice's caller must assure that
+			     * all indexes are 0-based.  However, this
+			     * parameter should used by output routines to
+			     * adjust base indexes.
+			     */
 
-  /* oligo_weights primer_weights; */
-  /* oligo_weights io_weights; */
-  pair_weights  pr_pair_weights;
+  int    liberal_base;   /* 
+			  * If non-0 then turn characters other than
+			  * [ATGCNatgcn] into N.
+			  */
 
+  int    num_return; /* The number of best primer pairs to return. */
+
+  int    pick_anyway;    /* Pick even if input primer or oligos
+			    violate constraints. */
+
+  int    lib_ambiguity_codes_consensus;
+  /* If non-0, treat ambiguity codes in a mispriming/mishyb
+     library as representing a consensus.  So, for example,
+     S would match C or G.  N would match any nucleotide.
+     It turns out that this _not_ what one normally wants,
+     since many libraries contain strings of N, which then
+     match every oligo (very bad).
+  */
+
+  int    quality_range_min;
+  int    quality_range_max;
+
+  /* ================================================== */
+  /* Writable return argument for errors. */
   pr_append_str glob_err;
 
+  /* ================================================== */
+  /* Arguments for individual oligos and/or primers */
+  args_for_one_oligo_or_primer p_args;
+  args_for_one_oligo_or_primer o_args;
+  /* FIXME, the tricky part will 'collapsing'
+     the old code in libprimer3.c. */
 
-    /* FIXME, the tricky part will 'collapsing'
-       the old code. */
-
-  /* double opt_tm; */
-  /* double min_tm; */
-  /* double max_tm; */
-  /* double opt_gc_content; */
-  /* double max_gc; */
-  /* double min_gc; */
-  /* double salt_conc; */
-  /* double divalent_conc; */ /* added by T.Koressaar, divalent salt concentration mmol/l */
-  /* double dntp_conc; */ /* added by T.Koressaar, for considering divalent salt concentration */
-  /* double dna_conc; */
-
-  /*  double io_opt_tm;
-  double io_min_tm;
-  double io_max_tm;
-  double io_opt_gc_content;
-  double io_max_gc;
-  double io_min_gc;
-  double io_salt_conc; */
-  /* double io_divalent_conc; *//* added by T.Koressaar, divalent salt concentration mmol/l */
-  /* double io_dntp_conc; *//* added by T.Koressaar, for considering divalent salt concentration */
-  /* double io_dna_conc; */
+  /* Added by T.Koressaar. Specify the table of thermodynamic
+     parameters to use (Options are ... SantaLucia 1998) */
+  int tm_santalucia;  
 
 
-  int tm_santalucia;  /* added by T.Koressaar table of thermodynamic parameters of SantaLucia 1998 */
-  int salt_corrections; /* added by T.Koressaar salt correction formula for Tm calculation */
-  int lowercase_masking; /* added by T.Koressaar for primer design from lowercase masked template */
-   
+  /* Added by T.Koressaar. Specify the salt correction formula for Tm
+     calculations. (Options are ... */
+  int salt_corrections; 
+
+  /* Arguments for primers that are not applicable to oligos */
   double max_diff_tm; /* Max diff between tm of primer and tm of product (?) */
+  double max_end_stability;
+  /* The maximum value allowed for the delta
+   * G of disruption for the 5 3' bases of
+   * a primer.
+   */
+
+  int    gc_clamp;              /* Required number of GCs at *3' end. */
+
+
+  /* ================================================== */
+  /* Arguments related to primer and/or oligo
+     location in the template. */
+
+  int lowercase_masking; 
+  /* added by T.Koressaar for primer design from lowercase masked
+     template */
 
   double outside_penalty; /* Multiply this value times the number of NTs
 			   * from the 3' end to the the (unique) target to
@@ -248,29 +279,61 @@ typedef struct primargs {
 			   * that spans the target.
 			   */
 
-  double product_max_tm;
-  double product_min_tm;
-  double product_opt_tm;
-  double max_end_stability;
-  /* The maximum value allowed for the delta
-   * G of disruption for the 5 3' bases of
-   * a primer.
-   */
+
+  /* ================================================== */
+  /* Arguments for primer pairs and products. */
+
+  int    pr_min[PR_MAX_INTERVAL_ARRAY]; /* Minimum product sizes. */
+  int    pr_max[PR_MAX_INTERVAL_ARRAY]; /* Maximum product sizes. */
   int    num_intervals;         /* 
 				 * Number of product size intervals
 				 * (i.e. number of elements in pr_min and
 				 * pr_max)
 				 */
-  /* int    num_ns_accepted; */
-  task   primer_task;          /* 2 if left primer only, 3 if right primer only,
-				* 4 if internal oligo only.    */
 
-  int    file_flag;
-  int    explain_flag;
-  int    primer_opt_size;
-  int    primer_min_size;
-  int    primer_max_size;
   int    product_opt_size;
+  double product_max_tm;
+  double product_min_tm;
+  double product_opt_tm;
+  short  pair_max_template_mispriming;
+  short  pair_repeat_compl;
+  short  pair_compl_any;
+  short  pair_compl_end;
+  pair_weights  pr_pair_weights;
+
+} primer_args;
+
+/* STUFF REMOVED FROM PRIMER_ARGS */
+  /* seq_lib *repeat_lib;  *//* Library of sequences to avoid. */
+  /* seq_lib *io_mishyb_library; */
+  /* oligo_weights primer_weights; */
+  /* oligo_weights io_weights; */
+  /* double opt_tm; */
+  /* double min_tm; */
+  /* double max_tm; */
+  /* double opt_gc_content; */
+  /* double max_gc; */
+  /* double min_gc; */
+  /* double salt_conc; */
+  /* double divalent_conc; */ /* added by T.Koressaar, divalent salt concentration mmol/l */
+  /* double dntp_conc; */ /* added by T.Koressaar, for considering divalent salt concentration */
+  /* double dna_conc; */
+  /*  double io_opt_tm;
+  double io_min_tm;
+  double io_max_tm;
+  double io_opt_gc_content;
+  double io_max_gc;
+  double io_min_gc;
+  double io_salt_conc; */
+  /* double io_divalent_conc; *//* added by T.Koressaar, divalent salt concentration mmol/l */
+  /* double io_dntp_conc; *//* added by T.Koressaar, for considering divalent salt concentration */
+  /* double io_dna_conc; */
+  /* int    num_ns_accepted; */
+
+
+  /* int    primer_opt_size; */
+  /* int    primer_min_size; */
+  /* int    primer_max_size; */
 
   /*internal oligo*/
   /* int    io_num_ns_accepted;
@@ -278,72 +341,36 @@ typedef struct primargs {
   int    io_primer_min_size;
   int    io_primer_max_size; */
 
-  int    gc_clamp;              /* Required number of GCs at *3' end. */
-   
-
-  int    liberal_base;   /* 
-			  * If non-0 then turn characters other than
-			  * [ATGCNatgcn] into N.
-			  */
-
-  int    max_poly_x;      /* 
+  /* int    max_poly_x;  */    /* 
 			   * Maximum length of mononucleotide sequence in an
 			   * oligo.
 			   */
   /* int    io_max_poly_x; */
 
-
-  int    first_base_index;  /* 
-			     * The index of the first base in the input
-			     * sequence.  This parameter is ignored within
-			     * pr_choice; pr_choice's caller must assure that
-			     * all indexes are 0-based.  However, this
-			     * parameter should used by output routines to
-			     * adjust base indexes.
-			     */
-  int    num_return; /* The number of best primer pairs to return. */
-  int    min_quality;       /* Minimum quality permitted for oligo sequence.*/
-  int    min_end_quality;   /* Minimum quality permitted at 3' end. */
-  int    quality_range_min;
-  int    quality_range_max;
-
+  /* int    min_quality; */      /* Minimum quality permitted for oligo sequence.*/
+  /* int    min_end_quality; */  /* Minimum quality permitted at 3' end. */ 
   /* int    io_min_quality; */
   /* int    io_min_end_quality;  */
 
-  int    pick_anyway;    /* Pick even if input primer or oligos
-			    violate constraints. */
-
-  int    lib_ambiguity_codes_consensus;
-  /* If non-0, treat ambiguity codes in a mispriming/mishyb
-     library as representing a consensus.  So, for example,
-     S would match C or G.  N would match any nucleotide.
-     It turns out that this _not_ what one normally wants,
-     since many libraries contain strings of N, which then
-     match every oligo (very bad).
-  */
-
-  short  max_template_mispriming;
-  short  pair_max_template_mispriming;
+  /* short  max_template_mispriming; */
 
   /* short  io_max_template_mishyb; */
 
-  short  repeat_compl;   /* 
+  /* short  repeat_compl;  */  /* 
 			  * Acceptable complementarity with repeat
 			  * sequences.
 			  */
   /* short  io_repeat_compl; */
 
-  short  pair_repeat_compl;
 
   /* short  self_any;   */
-  short  self_end;
+  /* short  self_end; */
 
   /* short  io_self_any;   */
   /* short  io_self_end; */
 
-  short  pair_compl_any;
-  short  pair_compl_end;
-} primer_args;
+/* END STUFF REMOVED FROM PRIMER_ARGS */
+
 
 typedef enum oligo_type { OT_LEFT = 0, OT_RIGHT = 1, OT_INTL = 2 }
   oligo_type;
