@@ -249,13 +249,6 @@ typedef struct oligo_array {
   primer_rec *data;
 } oligo_array;
 
-#define FREE_STUFF { \
-    free(sa);  \
-    if (0 != best_pairs.storage_size) free(best_pairs.pairs); \
-    free_seq_lib(&pa->repeat_lib);                            \
-    free_seq_lib(&pa->io_mishyb_library); free(pa);           \
-}
-
 /*
  * ==========================================================================
  * External APIs
@@ -457,21 +450,21 @@ pr_set_default_global_args(a)
     a->primer_opt_size  = OPT_SIZE;
     a->primer_min_size  = MIN_SIZE;
     a->primer_max_size  = MAX_SIZE;
-    a->opt_tm           = OPT_TM;
-    a->min_tm           = MIN_TM;
-    a->max_tm           = MAX_TM;
+    a->p_args.opt_tm           = OPT_TM;
+    a->p_args.min_tm           = MIN_TM;
+    a->p_args.max_tm           = MAX_TM;
     a->max_diff_tm      = MAX_DIFF_TM;
     a->tm_santalucia    = TM_SANTALUCIA; /* added by T.Koressaar */
     a->salt_corrections = SALT_CORRECTIONS; /* added by T.Koressaar */
-    a->min_gc           = MIN_GC;
-    a->opt_gc_content   = DEFAULT_OPT_GC_PERCENT;
-    a->max_gc           = MAX_GC;
-    a->salt_conc        = SALT_CONC;
-    a->divalent_conc    = DIVALENT_CONC;
-    a->dntp_conc        = DNTP_CONC;
-    a->dna_conc         = DNA_CONC;
-    a->num_ns_accepted  = NUM_NS_ACCEPTED;
-    a->self_any         = SELF_ANY;
+    a->p_args.min_gc           = MIN_GC;
+    a->p_args.opt_gc_content   = DEFAULT_OPT_GC_PERCENT;
+    a->p_args.max_gc           = MAX_GC;
+    a->p_args.salt_conc        = SALT_CONC;
+    a->p_args.divalent_conc    = DIVALENT_CONC;
+    a->p_args.dntp_conc        = DNTP_CONC;
+    a->p_args.dna_conc         = DNA_CONC;
+    a->p_args.num_ns_accepted  = NUM_NS_ACCEPTED;
+    a->p_args.self_any         = SELF_ANY;
     a->self_end         = SELF_END;
     a->pair_compl_any   = PAIR_COMPL_ANY;
     a->pair_compl_end   = PAIR_COMPL_END;
@@ -505,56 +498,56 @@ pr_set_default_global_args(a)
     a->pair_max_template_mispriming
                           = PAIR_MAX_TEMPLATE_MISPRIMING;
 
-    a->io_primer_opt_size = INTERNAL_OLIGO_OPT_SIZE;
-    a->io_primer_min_size = INTERNAL_OLIGO_MIN_SIZE;
-    a->io_primer_max_size = INTERNAL_OLIGO_MAX_SIZE;
-    a->io_opt_tm          = INTERNAL_OLIGO_OPT_TM;
-    a->io_min_tm          = INTERNAL_OLIGO_MIN_TM;
-    a->io_max_tm          = INTERNAL_OLIGO_MAX_TM;
-    a->io_min_gc          = INTERNAL_OLIGO_MIN_GC;
-    a->io_opt_gc_content  = DEFAULT_OPT_GC_PERCENT;
-    a->io_max_gc          = INTERNAL_OLIGO_MAX_GC;
-    a->io_max_poly_x      = INTERNAL_OLIGO_MAX_POLY_X;
-    a->io_salt_conc       = INTERNAL_OLIGO_SALT_CONC;
-    a->io_divalent_conc   = INTERNAL_OLIGO_DIVALENT_CONC;
-    a->io_dntp_conc       = INTERNAL_OLIGO_DNTP_CONC;
-    a->io_dna_conc        = INTERNAL_OLIGO_DNA_CONC;
-    a->io_num_ns_accepted = INTERNAL_OLIGO_NUM_NS;
-    a->io_self_any        = INTERNAL_OLIGO_SELF_ANY;
-    a->io_self_end        = INTERNAL_OLIGO_SELF_END;
-    a->io_repeat_compl    = INTERNAL_OLIGO_REPEAT_SIMILARITY;
-    a->io_min_quality     = MIN_QUALITY;
-    a->io_min_end_quality = MIN_QUALITY;
-    a->io_max_template_mishyb
+    a->o_args.opt_size = INTERNAL_OLIGO_OPT_SIZE;
+    a->o_args.min_size = INTERNAL_OLIGO_MIN_SIZE;
+    a->o_args.max_size = INTERNAL_OLIGO_MAX_SIZE;
+    a->o_args.opt_tm          = INTERNAL_OLIGO_OPT_TM;
+    a->o_args.min_tm          = INTERNAL_OLIGO_MIN_TM;
+    a->o_args.max_tm          = INTERNAL_OLIGO_MAX_TM;
+    a->o_args.min_gc          = INTERNAL_OLIGO_MIN_GC;
+    a->o_args.opt_gc_content  = DEFAULT_OPT_GC_PERCENT;
+    a->o_args.max_gc          = INTERNAL_OLIGO_MAX_GC;
+    a->o_args.max_poly_x      = INTERNAL_OLIGO_MAX_POLY_X;
+    a->o_args.salt_conc       = INTERNAL_OLIGO_SALT_CONC;
+    a->o_args.divalent_conc   = INTERNAL_OLIGO_DIVALENT_CONC;
+    a->o_args.dntp_conc       = INTERNAL_OLIGO_DNTP_CONC;
+    a->o_args.dna_conc        = INTERNAL_OLIGO_DNA_CONC;
+    a->o_args.num_ns_accepted = INTERNAL_OLIGO_NUM_NS;
+    a->o_args.self_any        = INTERNAL_OLIGO_SELF_ANY;
+    a->o_args.self_end        = INTERNAL_OLIGO_SELF_END;
+    a->o_args.repeat_compl    = INTERNAL_OLIGO_REPEAT_SIMILARITY;
+    a->o_args.min_quality     = MIN_QUALITY;
+    a->o_args.min_end_quality = MIN_QUALITY;
+    a->o_args.max_template_mispriming
                           = IO_MAX_TEMPLATE_MISHYB;
 
-    a->primer_weights.temp_gt       = PRIMER_WT_TM_GT;
-    a->primer_weights.temp_lt       = PRIMER_WT_TM_LT;
-    a->primer_weights.length_gt     = PRIMER_WT_SIZE_GT;
-    a->primer_weights.length_lt     = PRIMER_WT_SIZE_LT;
-    a->primer_weights.gc_content_gt = PRIMER_WT_GC_PERCENT_GT;
-    a->primer_weights.gc_content_lt = PRIMER_WT_GC_PERCENT_LT;
-    a->primer_weights.compl_any     = PRIMER_WT_COMPL_ANY;
-    a->primer_weights.compl_end     = PRIMER_WT_COMPL_END;
-    a->primer_weights.num_ns        = PRIMER_WT_NUM_NS;
-    a->primer_weights.repeat_sim    = PRIMER_WT_REP_SIM;
-    a->primer_weights.seq_quality   = PRIMER_WT_SEQ_QUAL;
-    a->primer_weights.end_quality   = PRIMER_WT_END_QUAL;
-    a->primer_weights.pos_penalty   = PRIMER_WT_POS_PENALTY;
-    a->primer_weights.end_stability = PRIMER_WT_END_STABILITY;
+    a->p_args.weights.temp_gt       = PRIMER_WT_TM_GT;
+    a->p_args.weights.temp_lt       = PRIMER_WT_TM_LT;
+    a->p_args.weights.length_gt     = PRIMER_WT_SIZE_GT;
+    a->p_args.weights.length_lt     = PRIMER_WT_SIZE_LT;
+    a->p_args.weights.gc_content_gt = PRIMER_WT_GC_PERCENT_GT;
+    a->p_args.weights.gc_content_lt = PRIMER_WT_GC_PERCENT_LT;
+    a->p_args.weights.compl_any     = PRIMER_WT_COMPL_ANY;
+    a->p_args.weights.compl_end     = PRIMER_WT_COMPL_END;
+    a->p_args.weights.num_ns        = PRIMER_WT_NUM_NS;
+    a->p_args.weights.repeat_sim    = PRIMER_WT_REP_SIM;
+    a->p_args.weights.seq_quality   = PRIMER_WT_SEQ_QUAL;
+    a->p_args.weights.end_quality   = PRIMER_WT_END_QUAL;
+    a->p_args.weights.pos_penalty   = PRIMER_WT_POS_PENALTY;
+    a->p_args.weights.end_stability = PRIMER_WT_END_STABILITY;
 
-    a->io_weights.temp_gt     = IO_WT_TM_GT;
-    a->io_weights.temp_lt     = IO_WT_TM_LT;
-    a->io_weights.length_gt   = IO_WT_SIZE_GT;
-    a->io_weights.length_lt   = IO_WT_SIZE_LT;
-    a->io_weights.gc_content_gt = IO_WT_GC_PERCENT_GT;
-    a->io_weights.gc_content_lt = IO_WT_GC_PERCENT_LT;
-    a->io_weights.compl_any   = IO_WT_COMPL_ANY;
-    a->io_weights.compl_end   = IO_WT_COMPL_END;
-    a->io_weights.num_ns      = IO_WT_NUM_NS;
-    a->io_weights.repeat_sim  = IO_WT_REP_SIM;
-    a->io_weights.seq_quality = IO_WT_SEQ_QUAL;
-    a->io_weights.end_quality = IO_WT_END_QUAL;
+    a->o_args.weights.temp_gt     = IO_WT_TM_GT;
+    a->o_args.weights.temp_lt     = IO_WT_TM_LT;
+    a->o_args.weights.length_gt   = IO_WT_SIZE_GT;
+    a->o_args.weights.length_lt   = IO_WT_SIZE_LT;
+    a->o_args.weights.gc_content_gt = IO_WT_GC_PERCENT_GT;
+    a->o_args.weights.gc_content_lt = IO_WT_GC_PERCENT_LT;
+    a->o_args.weights.compl_any   = IO_WT_COMPL_ANY;
+    a->o_args.weights.compl_end   = IO_WT_COMPL_END;
+    a->o_args.weights.num_ns      = IO_WT_NUM_NS;
+    a->o_args.weights.repeat_sim  = IO_WT_REP_SIM;
+    a->o_args.weights.seq_quality = IO_WT_SEQ_QUAL;
+    a->o_args.weights.end_quality = IO_WT_END_QUAL;
 
     a->pr_pair_weights.primer_quality  = PAIR_WT_PRIMER_PENALTY;
     a->pr_pair_weights.io_quality      = PAIR_WT_IO_PENALTY;
@@ -1118,9 +1111,9 @@ make_internal_oligo_list(p3state, pa, sa, dpal_arg_to_use)
 
   n = strlen(sa->trimmed_seq);
   k = 0;
-  for(i = n - 1; i >= pa->io_primer_min_size-1; i--) {
+  for(i = n - 1; i >= pa->o_args.min_size-1; i--) {
     s[0] = '\0';
-    for(j = pa->io_primer_min_size; j <=pa->io_primer_max_size; j++) {
+    for(j = pa->o_args.min_size; j <=pa->o_args.max_size; j++) {
       if(i-j < -1) break;
       if (k >= p3state->mid_len) {
 	p3state->mid_len += (p3state->mid_len >> 1);
@@ -1182,8 +1175,6 @@ oligo_param(pa, h, l, dpal_arg_to_use, sa, stats)
     const char *seq = sa->trimmed_seq;
     char s1[MAX_PRIMER_LENGTH+1], s1_rev[MAX_PRIMER_LENGTH+1];
 
-
-
     h->ok = OV_UNINITIALIZED;
     h->target = h->gc_content = h->num_ns=h->excl=0;
 
@@ -1215,8 +1206,9 @@ oligo_param(pa, h, l, dpal_arg_to_use, sa, stats)
     gc_and_n_content(j, k-j+1, sa->trimmed_seq, h);
 
     if (((OT_LEFT == l || OT_RIGHT == l) && 
-	 h->num_ns > pa->num_ns_accepted) || 
-	(OT_INTL == l && h->num_ns > pa->io_num_ns_accepted) ) {
+	 h->num_ns > pa->p_args.num_ns_accepted)
+	|| 
+	(OT_INTL == l && h->num_ns > pa->o_args.num_ns_accepted) ) {
       h->ok = OV_TOO_MANY_NS;
       stats->ns++;
       if (!must_use) return;
@@ -1280,8 +1272,11 @@ oligo_param(pa, h, l, dpal_arg_to_use, sa, stats)
 	if (!must_use) return;
     }
 
-    if((l<2 && (h->gc_content< pa->min_gc || h->gc_content > pa->max_gc)) ||
-       (l==2 && (h->gc_content< pa->io_min_gc || h->gc_content > pa->io_max_gc))){
+    if( (l < 2
+	 && (h->gc_content< pa->p_args.min_gc
+	     || h->gc_content > pa->p_args.max_gc))
+	||
+	(l==2 && (h->gc_content< pa->o_args.min_gc || h->gc_content > pa->o_args.max_gc))){
 	h->ok = OV_GC_CONTENT;
 	stats->gc++;
 	if (!must_use) return;
@@ -1315,7 +1310,7 @@ oligo_param(pa, h, l, dpal_arg_to_use, sa, stats)
 	if (!must_use) return;
       }
     } else if (OT_INTL == l) {
-      if (min_q < pa->io_min_quality) {
+      if (min_q < pa->o_args.min_quality) {
 	h->ok = OV_SEQ_QUALITY;
 	stats->seq_quality++;
 	if (!must_use) return;
@@ -1324,9 +1319,10 @@ oligo_param(pa, h, l, dpal_arg_to_use, sa, stats)
       PR_ASSERT(0); /* Programming error. */
     }
 
-    if(OT_LEFT == l || OT_RIGHT == l) max_poly_x = pa->max_poly_x;     
-    else max_poly_x = pa->io_max_poly_x;
-    if(max_poly_x > 0) {
+    if (OT_LEFT == l || OT_RIGHT == l) max_poly_x = pa->max_poly_x;     
+    else max_poly_x = pa->o_args.max_poly_x;
+
+    if (max_poly_x > 0) {
           poly_x = 1;
 	  for(i=j+1;i<=k;i++){
                 if(seq[i] == seq[i-1]||seq[i] == 'N'){
@@ -1345,25 +1341,29 @@ oligo_param(pa, h, l, dpal_arg_to_use, sa, stats)
                    
    if(OT_LEFT == l || OT_RIGHT == l)
      h->temp 
-     = seqtm(s1, pa->dna_conc, pa->salt_conc, pa->divalent_conc, pa->dntp_conc, 
+     = seqtm(s1, pa->p_args.dna_conc, 
+	     pa->p_args.salt_conc,
+	     pa->p_args.divalent_conc,
+	     pa->p_args.dntp_conc, 
 	     MAX_NN_TM_LENGTH,
 	     pa->tm_santalucia,
 	     pa->salt_corrections); 
    else
      h->temp
-     = seqtm(s1, pa->io_dna_conc, pa->io_salt_conc, pa->io_divalent_conc, pa->io_dntp_conc,
+     = seqtm(s1, pa->o_args.dna_conc, pa->o_args.salt_conc, 
+	     pa->o_args.divalent_conc, pa->o_args.dntp_conc,
 	     MAX_NN_TM_LENGTH,
 	     pa->tm_santalucia,
 	     pa->salt_corrections);
          
-    if (((l == OT_LEFT || l == OT_RIGHT) && h->temp < pa->min_tm)
-	|| (l==OT_INTL && h->temp<pa->io_min_tm)) {
+    if (((l == OT_LEFT || l == OT_RIGHT) && h->temp < pa->p_args.min_tm)
+	|| (l==OT_INTL && h->temp<pa->o_args.min_tm)) {
 	h->ok = OV_TM_LOW;
 	stats->temp_min++;
 	if (!must_use) return;
     }
-    if (((OT_LEFT == l || OT_RIGHT == l) && h->temp>pa->max_tm) 
-	|| (OT_INTL == l && h->temp>pa->io_max_tm)) {
+    if (((OT_LEFT == l || OT_RIGHT == l) && h->temp > pa->p_args.max_tm) 
+	|| (OT_INTL == l && h->temp>pa->o_args.max_tm)) {
 	h->ok = OV_TM_HIGH;
 	stats->temp_max++;
 	if (!must_use) return;
@@ -1392,9 +1392,9 @@ oligo_param(pa, h, l, dpal_arg_to_use, sa, stats)
 	|| (pa->primer_task != pick_pcr_primers && 
 	    pa->primer_task != pick_pcr_primers_and_hyb_probe)
 	|| ((OT_RIGHT == l || OT_LEFT == l) &&
-	    (pa->primer_weights.compl_any || pa->primer_weights.compl_end))
+	    (pa->p_args.weights.compl_any || pa->p_args.weights.compl_end))
 	|| (OT_INTL == l 
-	    && (pa->io_weights.compl_any || pa->io_weights.compl_end))) {
+	    && (pa->o_args.weights.compl_any || pa->o_args.weights.compl_end))) {
 
       oligo_compl(h, pa, sa, l, dpal_arg_to_use);
 
@@ -1410,10 +1410,10 @@ oligo_param(pa, h, l, dpal_arg_to_use, sa, stats)
 	|| pa->file_flag
 	||(pa->primer_task != pick_pcr_primers && 
 	   pa->primer_task != pick_pcr_primers_and_hyb_probe)
-	|| ((OT_RIGHT == l || OT_LEFT == l) && pa->primer_weights.repeat_sim)
+	|| ((OT_RIGHT == l || OT_LEFT == l) && pa->p_args.weights.repeat_sim)
 	|| ((OT_RIGHT == l || OT_LEFT == l) 
-	    && pa->primer_weights.template_mispriming)
-	|| (OT_INTL == l && pa->io_weights.repeat_sim)) {
+	    && pa->p_args.weights.template_mispriming)
+	|| (OT_INTL == l && pa->o_args.weights.repeat_sim)) {
 
       oligo_mispriming(h, pa, sa, l, 
 		       dpal_arg_to_use->local_end, 
@@ -1447,7 +1447,7 @@ check_sequence_quality(pa, h, l, sa, j, k, r_min_q, r_min_q_end)
       min_q = pa->min_quality;
       min_q_end = pa->min_end_quality;
     }
-    else {min_q = min_q_end = pa->io_min_quality;} 
+    else {min_q = min_q_end = pa->o_args.min_quality;} 
 
     if (OT_LEFT == l || OT_INTL == l) {
 
@@ -1539,32 +1539,32 @@ p_obj_fn(pa, h, j)
 
   sum = 0;
   if (j == OT_LEFT || j == OT_RIGHT) {
-      if(pa->primer_weights.temp_gt && h->temp > pa->opt_tm)
-	   sum += pa->primer_weights.temp_gt * (h->temp - pa->opt_tm);
-      if(pa->primer_weights.temp_lt && h->temp < pa->opt_tm)
-	   sum += pa->primer_weights.temp_lt * (pa->opt_tm - h->temp);
+      if(pa->p_args.weights.temp_gt && h->temp > pa->p_args.opt_tm)
+	   sum += pa->p_args.weights.temp_gt * (h->temp - pa->p_args.opt_tm);
+      if(pa->p_args.weights.temp_lt && h->temp < pa->p_args.opt_tm)
+	   sum += pa->p_args.weights.temp_lt * (pa->p_args.opt_tm - h->temp);
 
-      if(pa->primer_weights.gc_content_gt && h->gc_content > pa->opt_gc_content)
-	   sum += pa->primer_weights.gc_content_gt 
-	     * (h->gc_content - pa->opt_gc_content);
-      if(pa->primer_weights.gc_content_lt && h->gc_content < pa->opt_gc_content)
-	   sum += pa->primer_weights.gc_content_lt 
-	     * (pa->opt_gc_content - h->gc_content);
+      if(pa->p_args.weights.gc_content_gt && h->gc_content > pa->p_args.opt_gc_content)
+	   sum += pa->p_args.weights.gc_content_gt 
+	     * (h->gc_content - pa->p_args.opt_gc_content);
+      if(pa->p_args.weights.gc_content_lt && h->gc_content < pa->p_args.opt_gc_content)
+	   sum += pa->p_args.weights.gc_content_lt 
+	     * (pa->p_args.opt_gc_content - h->gc_content);
 
-      if(pa->primer_weights.length_lt && h->length < pa->primer_opt_size)
-	   sum += pa->primer_weights.length_lt * (pa->primer_opt_size - h->length);
-      if(pa->primer_weights.length_gt && h->length > pa->primer_opt_size)
-	   sum += pa->primer_weights.length_gt * (h->length - pa->primer_opt_size);
-      if(pa->primer_weights.compl_any)
-	   sum += pa->primer_weights.compl_any * h->self_any
+      if(pa->p_args.weights.length_lt && h->length < pa->primer_opt_size)
+	   sum += pa->p_args.weights.length_lt * (pa->primer_opt_size - h->length);
+      if(pa->p_args.weights.length_gt && h->length > pa->primer_opt_size)
+	   sum += pa->p_args.weights.length_gt * (h->length - pa->primer_opt_size);
+      if(pa->p_args.weights.compl_any)
+	   sum += pa->p_args.weights.compl_any * h->self_any
 	     / PR_ALIGN_SCORE_PRECISION;
-      if(pa->primer_weights.compl_end)
-	   sum += pa->primer_weights.compl_end * h->self_end
+      if(pa->p_args.weights.compl_end)
+	   sum += pa->p_args.weights.compl_end * h->self_end
 	     / PR_ALIGN_SCORE_PRECISION;
-      if(pa->primer_weights.num_ns)
-	   sum += pa->primer_weights.num_ns * h->num_ns;
-      if(pa->primer_weights.repeat_sim)
-	   sum += pa->primer_weights.repeat_sim 
+      if(pa->p_args.weights.num_ns)
+	   sum += pa->p_args.weights.num_ns * h->num_ns;
+      if(pa->p_args.weights.repeat_sim)
+	   sum += pa->p_args.weights.repeat_sim 
 	     * h->repeat_sim.score[h->repeat_sim.max]
 	     / PR_ALIGN_SCORE_PRECISION;
       if (!h->target) {
@@ -1572,51 +1572,51 @@ p_obj_fn(pa, h, j)
 	   the client supplied 'pick_anyway' and specified
 	   a primer or oligo. */
 	PR_ASSERT(!h->position_penalty_infinite);
-	if(pa->primer_weights.pos_penalty)
-	  sum += pa->primer_weights.pos_penalty * h->position_penalty;
+	if(pa->p_args.weights.pos_penalty)
+	  sum += pa->p_args.weights.pos_penalty * h->position_penalty;
       }
-      if(pa->primer_weights.end_stability)
-	   sum += pa->primer_weights.end_stability * h->end_stability;
-      if(pa->primer_weights.seq_quality)
-	   sum += pa->primer_weights.seq_quality * 
+      if(pa->p_args.weights.end_stability)
+	   sum += pa->p_args.weights.end_stability * h->end_stability;
+      if(pa->p_args.weights.seq_quality)
+	   sum += pa->p_args.weights.seq_quality * 
 			     (pa->quality_range_max - h->seq_quality);
 
-      if (pa->primer_weights.template_mispriming) {
+      if (pa->p_args.weights.template_mispriming) {
 	PR_ASSERT(oligo_max_template_mispriming(h) != ALIGN_SCORE_UNDEF);
-	sum += pa->primer_weights.template_mispriming * 
+	sum += pa->p_args.weights.template_mispriming * 
 	  oligo_max_template_mispriming(h);
       }
 
       return sum;
   } else if (j == OT_INTL) {
-      if(pa->io_weights.temp_gt && h->temp > pa->io_opt_tm)
-	 sum += pa->io_weights.temp_gt * (h->temp - pa->io_opt_tm);
-      if(pa->io_weights.temp_lt && h->temp < pa->io_opt_tm)
-	 sum += pa->io_weights.temp_lt * (pa->io_opt_tm - h->temp);
+      if(pa->o_args.weights.temp_gt && h->temp > pa->o_args.opt_tm)
+	 sum += pa->o_args.weights.temp_gt * (h->temp - pa->o_args.opt_tm);
+      if(pa->o_args.weights.temp_lt && h->temp < pa->o_args.opt_tm)
+	 sum += pa->o_args.weights.temp_lt * (pa->o_args.opt_tm - h->temp);
 
-      if(pa->io_weights.gc_content_gt && h->gc_content > pa->io_opt_gc_content)
-	   sum += pa->io_weights.gc_content_gt
-	     * (h->gc_content - pa->io_opt_gc_content);
-      if(pa->io_weights.gc_content_lt && h->gc_content < pa->io_opt_gc_content)
-	   sum += pa->io_weights.gc_content_lt
-	     * (pa->io_opt_gc_content - h->gc_content);
+      if(pa->o_args.weights.gc_content_gt && h->gc_content > pa->o_args.opt_gc_content)
+	   sum += pa->o_args.weights.gc_content_gt
+	     * (h->gc_content - pa->o_args.opt_gc_content);
+      if(pa->o_args.weights.gc_content_lt && h->gc_content < pa->o_args.opt_gc_content)
+	   sum += pa->o_args.weights.gc_content_lt
+	     * (pa->o_args.opt_gc_content - h->gc_content);
 
-      if(pa->io_weights.length_lt && h->length < pa->io_primer_opt_size)
-	 sum += pa->io_weights.length_lt * (pa->io_primer_opt_size - h->length);
-      if(pa->io_weights.length_gt && h->length  > pa->io_primer_opt_size)
-	 sum += pa->io_weights.length_gt * (h->length - pa->io_primer_opt_size);
-      if(pa->io_weights.compl_any)
-	 sum += pa->io_weights.compl_any * h->self_any / PR_ALIGN_SCORE_PRECISION;
-      if(pa->io_weights.compl_end)
-	 sum += pa->io_weights.compl_end * h->self_end / PR_ALIGN_SCORE_PRECISION;
-      if(pa->io_weights.num_ns)
-	 sum += pa->io_weights.num_ns * h->num_ns;
-      if(pa->io_weights.repeat_sim)
-	 sum += pa->io_weights.repeat_sim
+      if(pa->o_args.weights.length_lt && h->length < pa->o_args.opt_size)
+	 sum += pa->o_args.weights.length_lt * (pa->o_args.opt_size - h->length);
+      if(pa->o_args.weights.length_gt && h->length  > pa->o_args.opt_size)
+	 sum += pa->o_args.weights.length_gt * (h->length - pa->o_args.opt_size);
+      if(pa->o_args.weights.compl_any)
+	 sum += pa->o_args.weights.compl_any * h->self_any / PR_ALIGN_SCORE_PRECISION;
+      if(pa->o_args.weights.compl_end)
+	 sum += pa->o_args.weights.compl_end * h->self_end / PR_ALIGN_SCORE_PRECISION;
+      if(pa->o_args.weights.num_ns)
+	 sum += pa->o_args.weights.num_ns * h->num_ns;
+      if(pa->o_args.weights.repeat_sim)
+	 sum += pa->o_args.weights.repeat_sim
 	   * h->repeat_sim.score[h->repeat_sim.max]
 	   / PR_ALIGN_SCORE_PRECISION;
-      if(pa->io_weights.seq_quality)
-	 sum += pa->io_weights.seq_quality * 
+      if(pa->o_args.weights.seq_quality)
+	 sum += pa->o_args.weights.seq_quality * 
 		     (pa->quality_range_max - h->seq_quality);
       return sum;
   } else {
@@ -1643,17 +1643,17 @@ print_list(const primer3_state *p3state,
 
     if(pa->primer_task != pick_right_only && pa->primer_task != pick_hyb_probe_only)
        create_and_print_file(sa, p3state->n_f, p3state->f, OT_LEFT, first_base_index, 
-			  NULL != pa->repeat_lib, ".for");
+			  NULL != pa->p_args.repeat_lib, ".for");
 
     if(pa->primer_task != pick_left_only && pa->primer_task != pick_hyb_probe_only)
        create_and_print_file(sa, p3state->n_r, p3state->r, OT_RIGHT, first_base_index,
-			  NULL != pa->repeat_lib, ".rev");
+			  NULL != pa->p_args.repeat_lib, ".rev");
 
     if ( pa->primer_task == pick_pcr_primers_and_hyb_probe 
 				|| pa->primer_task == pick_hyb_probe_only)
       create_and_print_file(sa, p3state->n_m, p3state->mid, OT_INTL,
 			    first_base_index,
-			    NULL != pa->io_mishyb_library,
+			    NULL != pa->o_args.repeat_lib,
 			    ".int");
 }
 
@@ -2047,7 +2047,10 @@ characterize_pair(p3state, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
 
     ppair->product_tm 
      = long_seq_tm(sa->trimmed_seq, ppair->left->start,
-		   ppair->right->start - ppair->left->start + 1, pa->salt_conc, pa->divalent_conc, pa->dntp_conc);
+		   ppair->right->start - ppair->left->start + 1,
+		   pa->p_args.salt_conc,
+		   pa->p_args.divalent_conc,
+		   pa->p_args.dntp_conc);
       
     PR_ASSERT(ppair->product_tm != OLIGOTM_ERROR);
 
@@ -2158,7 +2161,7 @@ characterize_pair(p3state, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
      * s2's complement and s1.  (Both s1 and s2 are taken from the same strand.)
      */
     ppair->compl_any = align(s1,s2, dpal_arg_to_use->local);
-    if (ppair->compl_any > pa->self_any) {
+    if (ppair->compl_any > pa->p_args.self_any) {
 	sa->pair_expl.compl_any++;
 	return PAIR_FAILED;
     }
@@ -2374,11 +2377,11 @@ pr_gather_warnings(const seq_args *sa, const primer_args *pa) {
   warning.data = NULL;
   warning.storage_size = 0;
 
-  if (seq_lib_warning_data(pa->repeat_lib))
-    pr_append_new_chunk(&warning, seq_lib_warning_data(pa->repeat_lib));
+  if (seq_lib_warning_data(pa->p_args.repeat_lib))
+    pr_append_new_chunk(&warning, seq_lib_warning_data(pa->p_args.repeat_lib));
 
-  if(seq_lib_warning_data(pa->io_mishyb_library)) {
-    pr_append_new_chunk(&warning, seq_lib_warning_data(pa->io_mishyb_library));
+  if(seq_lib_warning_data(pa->o_args.repeat_lib)) {
+    pr_append_new_chunk(&warning, seq_lib_warning_data(pa->o_args.repeat_lib));
     pr_append(&warning, " (for internal oligo)");
   }
 
@@ -2531,10 +2534,10 @@ oligo_compl(h, ha, sa, l, dpal_arg_to_use)
     PR_ASSERT(h != NULL);
 
     if (OT_INTL == l) {
-      self_any = ha->io_self_any;
-      self_end = ha->io_self_end;
+      self_any = ha->o_args.self_any;
+      self_end = ha->o_args.self_end;
     } else {
-      self_any = ha->self_any;
+      self_any = ha->p_args.self_any;
       self_end = ha->self_end;
     }
 
@@ -2706,10 +2709,10 @@ oligo_mispriming(h, pa, sa, l, align_args,  dpal_arg_to_use)
   short max_lib_compl;
 
   if (OT_INTL == l) {
-    lib = pa->io_mishyb_library;
-    max_lib_compl = pa->io_repeat_compl;
+    lib = pa->o_args.repeat_lib;
+    max_lib_compl = pa->o_args.repeat_compl;
   } else {
-    lib = pa->repeat_lib;
+    lib = pa->p_args.repeat_lib;
     max_lib_compl = pa->repeat_compl;
   }
 
@@ -2814,14 +2817,14 @@ pair_repeat_sim(h, pa)
   rev = h->right;
 
   max = 0;
-  n = seq_lib_num_seq(pa->repeat_lib);
+  n = seq_lib_num_seq(pa->p_args.repeat_lib);
   if(n == 0) return 0;
-  h->rep_name =  pa->repeat_lib->names[0] ;
+  h->rep_name =  pa->p_args.repeat_lib->names[0] ;
   for(i = 0; i < n; i++) {
     if((w=(fw->repeat_sim.score[i] +
 	   rev->repeat_sim.score[i])) > max) {
       max = w;
-      h->rep_name =  pa->repeat_lib->names[i] ;
+      h->rep_name =  pa->p_args.repeat_lib->names[i] ;
     }
   }
   return max;
@@ -2992,7 +2995,7 @@ _pr_data_control(pa, sa)
     int seq_len = strlen(sa->sequence);
     char offending_char = '\0';
 
-    if (pa->io_max_template_mishyb >= 0)
+    if (pa->o_args.max_template_mispriming >= 0)
       pr_append_new_chunk(&pa->glob_err,
 			  "PRIMER_INTERNAL_OLIGO_MAX_TEMPLATE_MISHYB is not supported");
 
@@ -3018,19 +3021,19 @@ _pr_data_control(pa, sa)
 	return 1;
     }
 
-    if (pa->io_primer_max_size > MAX_PRIMER_LENGTH) {
+    if (pa->o_args.max_size > MAX_PRIMER_LENGTH) {
 	pr_append_new_chunk(&pa->glob_err,
 		  "PRIMER_INTERNAL_OLIGO_MAX_SIZE exceeds built-in maximum");
         return 1;
     }
 
-    if (pa->io_primer_opt_size > pa->io_primer_max_size) {
+    if (pa->o_args.opt_size > pa->o_args.max_size) {
 	pr_append_new_chunk(&pa->glob_err,
 		  "PRIMER_INTERNAL_OLIGO_{OPT,DEFAULT}_SIZE > MAX_SIZE");
         return 1;
     }
 
-    if (pa->io_primer_opt_size < pa->io_primer_min_size) {
+    if (pa->o_args.opt_size < pa->o_args.min_size) {
 	pr_append_new_chunk(&pa->glob_err,
 		  "PRIMER_INTERNAL_OLIGO_{OPT,DEFAULT}_SIZE < MIN_SIZE");
         return 1;
@@ -3073,7 +3076,7 @@ _pr_data_control(pa, sa)
 
     if ((pick_pcr_primers_and_hyb_probe == pa->primer_task 
 	 || pick_hyb_probe_only == pa->primer_task)
-	&& pa->io_primer_max_size > pr_min) {
+	&& pa->o_args.max_size > pr_min) {
 	pr_append_new_chunk(&pa->glob_err,
 		 "PRIMER_INTERNAL_OLIGO_MAX_SIZE > min PRIMER_PRODUCT_SIZE_RANGE");
         return 1;
@@ -3174,12 +3177,12 @@ _pr_data_control(pa, sa)
 	       "PRIMER_MIN_QUALITY > PRIMER_QUALITY_RANGE_MAX");
            return 1;
         }
-	if(pa->io_min_quality != 0 && pa->io_min_quality <pa->quality_range_min) {
+	if(pa->o_args.min_quality != 0 && pa->o_args.min_quality <pa->quality_range_min) {
 	   pr_append_new_chunk(&pa->glob_err,
 	    "PRIMER_INTERNAL_OLIGO_MIN_QUALITY < PRIMER_QUALITY_RANGE_MIN");
            return 1;
         }
-	if(pa->io_min_quality != 0 && pa->io_min_quality > pa->quality_range_max) {
+	if(pa->o_args.min_quality != 0 && pa->o_args.min_quality > pa->quality_range_max) {
 	   pr_append_new_chunk(&pa->glob_err,
 	     "PRIMER_INTERNAL_OLIGO_MIN_QUALITY > PRIMER_QUALITY_RANGE_MAX");
            return 1;
@@ -3193,7 +3196,7 @@ _pr_data_control(pa, sa)
            }
         }
     }
-    else if (pa->primer_weights.seq_quality || pa->io_weights.seq_quality) {
+    else if (pa->p_args.weights.seq_quality || pa->o_args.weights.seq_quality) {
 	 pr_append_new_chunk(&sa->error,
 	      "Sequence quality is part of objective function but sequence quality is not defined");
          return 1;
@@ -3210,63 +3213,71 @@ _pr_data_control(pa, sa)
       }
     }
 
-    if(pa->opt_tm < pa->min_tm || pa->opt_tm > pa->max_tm) {
+    if (pa->p_args.opt_tm < pa->p_args.min_tm || pa->p_args.opt_tm > pa->p_args.max_tm) {
 	 pr_append_new_chunk(&pa->glob_err,
 			     "Optimum primer Tm lower than minimum or higher than maximum");
 	 return 1;
     }
-    if(pa->io_opt_tm < pa->io_min_tm || pa->io_opt_tm > pa->io_max_tm) {
+    if (pa->o_args.opt_tm < pa->o_args.min_tm || pa->o_args.opt_tm > pa->o_args.max_tm) {
 	 pr_append_new_chunk(&pa->glob_err,
 			     "Illegal values for PRIMER_INTERNAL_OLIGO_TM");
 	 return 1;
     }
-    if(pa->min_gc>pa->max_gc||pa->min_gc>100||pa->max_gc<0){
+    if (pa->p_args.min_gc > pa->p_args.max_gc
+       || pa->p_args.min_gc > 100
+       || pa->p_args.max_gc < 0){
 	 pr_append_new_chunk(&pa->glob_err,
 			     "Illegal value for PRIMER_MAX_GC and PRIMER_MIN_GC");
 	 return 1;
     }
-    if(pa->io_min_gc>pa->io_max_gc||pa->io_min_gc>100||pa->io_max_gc<0){
+    if (pa->o_args.min_gc > pa->o_args.max_gc
+       || pa->o_args.min_gc > 100
+       || pa->o_args.max_gc < 0) {
 	 pr_append_new_chunk(&pa->glob_err,
 			     "Illegal value for PRIMER_INTERNAL_OLIGO_GC");
 	 return 1;
     }
-    if(pa->num_ns_accepted<0){
+    if (pa->p_args.num_ns_accepted < 0) {
 	 pr_append_new_chunk(&pa->glob_err,
 			     "Illegal value for PRIMER_NUM_NS_ACCEPTED");
 	 return 1;
     }
-    if(pa->io_num_ns_accepted<0){ 
+    if (pa->o_args.num_ns_accepted < 0){ 
 	 pr_append_new_chunk(&pa->glob_err,
 			     "Illegal value for PRIMER_INTERNAL_OLIGO_NUM_NS");
 	 return 1;
     }
-    if(pa->self_any<0||pa->self_end<0
-		       ||pa->pair_compl_any<0||pa->pair_compl_end<0){
+    if (pa->p_args.self_any < 0 
+	|| pa->self_end < 0
+	|| pa->pair_compl_any<0||pa->pair_compl_end<0){
          pr_append_new_chunk(&pa->glob_err,
 	     "Illegal value for primer complementarity restrictions");
 	 return 1;
     }
-    if(pa->io_self_any<0||pa->io_self_end<0){
+    if( pa->o_args.self_any < 0
+	|| pa->o_args.self_end < 0) {
 	  pr_append_new_chunk(&pa->glob_err,
 	      "Illegal value for internal oligo complementarity restrictions");
 	  return 1;
     }
-    if(pa->salt_conc<=0||pa->dna_conc<=0){
+    if (pa->p_args.salt_conc <= 0 || pa->p_args.dna_conc<=0){
 	  pr_append_new_chunk(&pa->glob_err,
 	      "Illegal value for primer salt or dna concentration");
 	  return 1;
     }
-   if((pa->dntp_conc<0 && pa->divalent_conc!=0)||pa->divalent_conc<0){ /* added by T.Koressaar */
+   if((pa->p_args.dntp_conc < 0 && pa->p_args.divalent_conc !=0 )
+      || pa->p_args.divalent_conc<0){ /* added by T.Koressaar */
       pr_append_new_chunk(&pa->glob_err, "Illegal value for primer divalent salt or dNTP concentration");
       return 1;
    }
    
-    if(pa->io_salt_conc<=0||pa->io_dna_conc<=0){ 
+    if(pa->o_args.salt_conc<=0||pa->o_args.dna_conc<=0){ 
 	  pr_append_new_chunk(&pa->glob_err,
 	      "Illegal value for internal oligo salt or dna concentration");
 	  return 1;
     }
-   if((pa->io_dntp_conc<0 && pa->io_divalent_conc!=0)||pa->io_divalent_conc<0) { /* added by T.Koressaar */
+   if((pa->o_args.dntp_conc<0 && pa->o_args.divalent_conc!=0)
+      || pa->o_args.divalent_conc < 0) { /* added by T.Koressaar */
       pr_append_new_chunk(&pa->glob_err,
 			  "Illegal value for internal oligo divalent salt or dNTP concentration");
       return 1;
@@ -3293,10 +3304,10 @@ _pr_data_control(pa, sa)
 		" but a specific internal oligo is provided");
     }
     if (sa->internal_input) {
-      if (strlen(sa->internal_input) > pa->io_primer_max_size)
+      if (strlen(sa->internal_input) > pa->o_args.max_size)
 	pr_append_new_chunk(&sa->error, "Specified internal oligo too long");
 
-      if (strlen(sa->internal_input) < pa->io_primer_min_size)
+      if (strlen(sa->internal_input) < pa->o_args.min_size)
 	pr_append_new_chunk(&sa->error, "Specified internal oligo too short");
 
       if (!strstr_nocase(sa->sequence, sa->internal_input))
@@ -3350,17 +3361,17 @@ _pr_data_control(pa, sa)
        return 1;
     }
 
-    if ((pa->primer_weights.gc_content_lt || 
-	 pa->primer_weights.gc_content_gt)
-	&& pa->opt_gc_content == DEFAULT_OPT_GC_PERCENT) {
+    if ((pa->p_args.weights.gc_content_lt || 
+	 pa->p_args.weights.gc_content_gt)
+	&& pa->p_args.opt_gc_content == DEFAULT_OPT_GC_PERCENT) {
         pr_append_new_chunk(&pa->glob_err, 
 	   "Primer GC content is part of objective function while optimum gc_content is not defined");
         return 1;
      }
 	
-    if ((pa->io_weights.gc_content_lt || 
-	 pa->io_weights.gc_content_gt)
-	&& pa->io_opt_gc_content == DEFAULT_OPT_GC_PERCENT) {
+    if ((pa->o_args.weights.gc_content_lt || 
+	 pa->o_args.weights.gc_content_gt)
+	&& pa->o_args.opt_gc_content == DEFAULT_OPT_GC_PERCENT) {
         pr_append_new_chunk(&pa->glob_err, 
 	   "Hyb probe GC content is part of objective function while optimum gc_content is not defined");
         return 1;
@@ -3374,19 +3385,19 @@ _pr_data_control(pa, sa)
        return 1;
     }
 
-    if (pa->primer_weights.repeat_sim && (!seq_lib_num_seq(pa->repeat_lib))) {
+    if (pa->p_args.weights.repeat_sim && (!seq_lib_num_seq(pa->p_args.repeat_lib))) {
        pr_append_new_chunk(&pa->glob_err,
 	  "Mispriming score is part of objective function, but mispriming library is not defined");
        return 1;
     }
 
-    if (pa->io_weights.repeat_sim && (!seq_lib_num_seq(pa->io_mishyb_library))) {
+    if (pa->o_args.weights.repeat_sim && (!seq_lib_num_seq(pa->o_args.repeat_lib))) {
       pr_append_new_chunk(&pa->glob_err,
       "Internal oligo mispriming score is part of objective function while mishyb library is not defined");
       return 1;
     }
 
-    if (pa->pr_pair_weights.repeat_sim && (!(seq_lib_num_seq(pa->repeat_lib)))) {
+    if (pa->pr_pair_weights.repeat_sim && (!(seq_lib_num_seq(pa->p_args.repeat_lib)))) {
       pr_append_new_chunk(&pa->glob_err,
 	"Mispriming score is part of objective function, but mispriming library is not defined");
       return 1;
@@ -3472,7 +3483,7 @@ _pr_need_template_mispriming(pa)
 {
   return 
     pa->max_template_mispriming >= 0
-    || pa->primer_weights.template_mispriming > 0.0
+    || pa->p_args.weights.template_mispriming > 0.0
     || _pr_need_pair_template_mispriming(pa);
 }
 
