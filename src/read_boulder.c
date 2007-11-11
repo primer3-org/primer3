@@ -4,19 +4,23 @@ Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
+    This file is part of primer3.
 
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * Neither the names of the copyright holders nor contributors may
-be used to endorse or promote products derived from this software
-without specific prior written permission.
+    Primer3 and the libprimer3 library are free software;
+    you can redistribute them and/or modify them under the terms
+    of the GNU General Public License as published by the Free
+    Software Foundation; either version 2 of the License, or (at
+    your option) any later version.
+
+    This software is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this file (file gpl-2.0.txt in the source
+    distribution); if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -218,25 +222,30 @@ read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
 	    COMPARE_INT("PRIMER_MIN_SIZE", pa->primer_min_size);
 	    COMPARE_INT("PRIMER_MAX_SIZE", pa->primer_max_size);
 	    COMPARE_INT("PRIMER_MAX_POLY_X", pa->max_poly_x);
-	    COMPARE_FLOAT("PRIMER_OPT_TM", pa->opt_tm);
-	    COMPARE_FLOAT("PRIMER_OPT_GC_PERCENT", pa->opt_gc_content);
-	    COMPARE_FLOAT("PRIMER_MIN_TM", pa->min_tm);
-	    COMPARE_FLOAT("PRIMER_MAX_TM", pa->max_tm);
+	    COMPARE_FLOAT("PRIMER_OPT_TM", pa->p_args.opt_tm);
+	    COMPARE_FLOAT("PRIMER_OPT_GC_PERCENT", pa->p_args.opt_gc_content);
+	    COMPARE_FLOAT("PRIMER_MIN_TM", pa->p_args.min_tm);
+	    COMPARE_FLOAT("PRIMER_MAX_TM", pa->p_args.max_tm);
 	    COMPARE_FLOAT("PRIMER_MAX_DIFF_TM", pa->max_diff_tm);
 
 	    COMPARE_INT("PRIMER_TM_SANTALUCIA",
 			pa->tm_santalucia);    /* added by T.Koressaar */
 	    COMPARE_INT("PRIMER_SALT_CORRECTIONS",
 			pa->salt_corrections); /* added by T.Koressaar */
-	    COMPARE_FLOAT("PRIMER_MIN_GC", pa->min_gc);
-	    COMPARE_FLOAT("PRIMER_MAX_GC", pa->max_gc);
-	    COMPARE_FLOAT("PRIMER_SALT_CONC", pa->salt_conc);
-	    COMPARE_FLOAT("PRIMER_DIVALENT_CONC", pa->divalent_conc); /* added by T.Koressaar */
-	    COMPARE_FLOAT("PRIMER_DNTP_CONC", pa->dntp_conc); /* added by T.Koressaar */
-	    COMPARE_FLOAT("PRIMER_DNA_CONC", pa->dna_conc);
-	    COMPARE_INT("PRIMER_NUM_NS_ACCEPTED", pa->num_ns_accepted);
+	    COMPARE_FLOAT("PRIMER_MIN_GC", pa->p_args.min_gc);
+	    COMPARE_FLOAT("PRIMER_MAX_GC", pa->p_args.max_gc);
+	    COMPARE_FLOAT("PRIMER_SALT_CONC", pa->p_args.salt_conc);
+
+	    /* added by T.Koressaar: */
+	    COMPARE_FLOAT("PRIMER_DIVALENT_CONC", pa->p_args.divalent_conc);
+
+	    /* added by T.Koressaar: */
+	    COMPARE_FLOAT("PRIMER_DNTP_CONC", pa->p_args.dntp_conc);
+
+	    COMPARE_FLOAT("PRIMER_DNA_CONC", pa->p_args.dna_conc);
+	    COMPARE_INT("PRIMER_NUM_NS_ACCEPTED", pa->p_args.num_ns_accepted);
 	    COMPARE_INT("PRIMER_PRODUCT_OPT_SIZE", pa->product_opt_size);
-	    COMPARE_ALIGN_SCORE("PRIMER_SELF_ANY", pa->self_any);
+	    COMPARE_ALIGN_SCORE("PRIMER_SELF_ANY", pa->p_args.self_any);
 	    COMPARE_ALIGN_SCORE("PRIMER_SELF_END", pa->self_end);
 	    COMPARE_INT("PRIMER_FILE_FLAG", pa->file_flag);
 	    COMPARE_INT("PRIMER_PICK_ANYWAY", pa->pick_anyway);
@@ -260,36 +269,36 @@ read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
 
 	    COMPARE_AND_MALLOC("PRIMER_TASK", task_tmp);
 
-	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_OPT_SIZE", pa->io_primer_opt_size);
-	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_MAX_SIZE", pa->io_primer_max_size);
-	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_MIN_SIZE", pa->io_primer_min_size);
-	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_MAX_POLY_X", pa->io_max_poly_x);
-	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_OPT_TM", pa->io_opt_tm);
+	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_OPT_SIZE", pa->o_args.opt_size);
+	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_MAX_SIZE", pa->o_args.max_size);
+	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_MIN_SIZE", pa->o_args.min_size);
+	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_MAX_POLY_X", pa->o_args.max_poly_x);
+	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_OPT_TM", pa->o_args.opt_tm);
 	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_OPT_GC_PERCENT",
-			  pa->io_opt_gc_content);
-	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MAX_TM", pa->io_max_tm);
-	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MIN_TM", pa->io_min_tm);
-	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MIN_GC", pa->io_min_gc);
-            COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MAX_GC", pa->io_max_gc);
-	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_SALT_CONC",pa->io_salt_conc);
+			  pa->o_args.opt_gc_content);
+	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MAX_TM", pa->o_args.max_tm);
+	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MIN_TM", pa->o_args.min_tm);
+	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MIN_GC", pa->o_args.min_gc);
+            COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MAX_GC", pa->o_args.max_gc);
+	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_SALT_CONC",  pa->o_args.salt_conc);
 
 	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DIVALENT_CONC",
-			  pa->io_divalent_conc); /* added by T.Koressaar */
+			  pa->o_args.divalent_conc); /* added by T.Koressaar */
 	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DNTP_CONC",
-			  pa->io_dntp_conc); /* added by T.Koressaar */
+			  pa->o_args.dntp_conc); /* added by T.Koressaar */
 
-	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DNA_CONC", pa->io_dna_conc);
-	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_NUM_NS", pa->io_num_ns_accepted);
-	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_MIN_QUALITY", pa->io_min_quality);
+	    COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DNA_CONC", pa->o_args.dna_conc);
+	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_NUM_NS", pa->o_args.num_ns_accepted);
+	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_MIN_QUALITY", pa->o_args.min_quality);
 
 	    COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_SELF_ANY",
-				pa->io_self_any);
+				pa->o_args.self_any);
 	    COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_SELF_END", 
-				pa->io_self_end);
+				pa->o_args.self_end);
 	    COMPARE_ALIGN_SCORE("PRIMER_MAX_MISPRIMING",
 				pa->repeat_compl);
 	    COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_MAX_MISHYB",
-				pa->io_repeat_compl);
+				pa->o_args.repeat_compl);
 	    COMPARE_ALIGN_SCORE("PRIMER_PAIR_MAX_MISPRIMING",
 				pa->pair_repeat_compl);
 
@@ -299,7 +308,7 @@ read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
 	    COMPARE_ALIGN_SCORE("PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING",
 				pa->pair_max_template_mispriming);
 	    COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_MAX_TEMPLATE_MISHYB",
-				pa->io_max_template_mishyb);
+				pa->o_args.max_template_mispriming);
 
             /* Control interpretation of ambiguity codes in mispriming
                and mishyb libraries. */
@@ -341,38 +350,38 @@ read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
 
 	    /* weights for objective functions  */
             /* CHANGE TEMP/temp -> TM/tm */
-	    COMPARE_FLOAT("PRIMER_WT_TM_GT", pa->primer_weights.temp_gt);
-	    COMPARE_FLOAT("PRIMER_WT_TM_LT", pa->primer_weights.temp_lt);
-	    COMPARE_FLOAT("PRIMER_WT_GC_PERCENT_GT", pa->primer_weights.gc_content_gt);
-	    COMPARE_FLOAT("PRIMER_WT_GC_PERCENT_LT", pa->primer_weights.gc_content_lt);
-	    COMPARE_FLOAT("PRIMER_WT_SIZE_LT", pa->primer_weights.length_lt);
-	    COMPARE_FLOAT("PRIMER_WT_SIZE_GT", pa->primer_weights.length_gt);
-	    COMPARE_FLOAT("PRIMER_WT_COMPL_ANY", pa->primer_weights.compl_any);
-	    COMPARE_FLOAT("PRIMER_WT_COMPL_END", pa->primer_weights.compl_end);
-	    COMPARE_FLOAT("PRIMER_WT_NUM_NS", pa->primer_weights.num_ns);
-	    COMPARE_FLOAT("PRIMER_WT_REP_SIM", pa->primer_weights.repeat_sim);
-	    COMPARE_FLOAT("PRIMER_WT_SEQ_QUAL", pa->primer_weights.seq_quality);
-	    COMPARE_FLOAT("PRIMER_WT_END_QUAL", pa->primer_weights.end_quality);
-	    COMPARE_FLOAT("PRIMER_WT_POS_PENALTY", pa->primer_weights.pos_penalty);
+	    COMPARE_FLOAT("PRIMER_WT_TM_GT", pa->p_args.weights.temp_gt);
+	    COMPARE_FLOAT("PRIMER_WT_TM_LT", pa->p_args.weights.temp_lt);
+	    COMPARE_FLOAT("PRIMER_WT_GC_PERCENT_GT", pa->p_args.weights.gc_content_gt);
+	    COMPARE_FLOAT("PRIMER_WT_GC_PERCENT_LT", pa->p_args.weights.gc_content_lt);
+	    COMPARE_FLOAT("PRIMER_WT_SIZE_LT", pa->p_args.weights.length_lt);
+	    COMPARE_FLOAT("PRIMER_WT_SIZE_GT", pa->p_args.weights.length_gt);
+	    COMPARE_FLOAT("PRIMER_WT_COMPL_ANY", pa->p_args.weights.compl_any);
+	    COMPARE_FLOAT("PRIMER_WT_COMPL_END", pa->p_args.weights.compl_end);
+	    COMPARE_FLOAT("PRIMER_WT_NUM_NS", pa->p_args.weights.num_ns);
+	    COMPARE_FLOAT("PRIMER_WT_REP_SIM", pa->p_args.weights.repeat_sim);
+	    COMPARE_FLOAT("PRIMER_WT_SEQ_QUAL", pa->p_args.weights.seq_quality);
+	    COMPARE_FLOAT("PRIMER_WT_END_QUAL", pa->p_args.weights.end_quality);
+	    COMPARE_FLOAT("PRIMER_WT_POS_PENALTY", pa->p_args.weights.pos_penalty);
 	    COMPARE_FLOAT("PRIMER_WT_END_STABILITY",
-			  pa->primer_weights.end_stability);
+			  pa->p_args.weights.end_stability);
 	    COMPARE_FLOAT("PRIMER_WT_TEMPLATE_MISPRIMING",
-			  pa->primer_weights.template_mispriming);
+			  pa->p_args.weights.template_mispriming);
 
-	    COMPARE_FLOAT("PRIMER_IO_WT_TM_GT", pa->io_weights.temp_gt);
-	    COMPARE_FLOAT("PRIMER_IO_WT_TM_LT", pa->io_weights.temp_lt);
-	    COMPARE_FLOAT("PRIMER_IO_WT_GC_PERCENT_GT", pa->io_weights.gc_content_gt);
-	    COMPARE_FLOAT("PRIMER_IO_WT_GC_PERCENT_LT", pa->io_weights.gc_content_lt);
-	    COMPARE_FLOAT("PRIMER_IO_WT_SIZE_LT", pa->io_weights.length_lt);
-	    COMPARE_FLOAT("PRIMER_IO_WT_SIZE_GT", pa->io_weights.length_gt);
-	    COMPARE_FLOAT("PRIMER_IO_WT_COMPL_ANY", pa->io_weights.compl_any);
-	    COMPARE_FLOAT("PRIMER_IO_WT_COMPL_END", pa->io_weights.compl_end);
-	    COMPARE_FLOAT("PRIMER_IO_WT_NUM_NS", pa->io_weights.num_ns);
-	    COMPARE_FLOAT("PRIMER_IO_WT_REP_SIM", pa->io_weights.repeat_sim);
-	    COMPARE_FLOAT("PRIMER_IO_WT_SEQ_QUAL", pa->io_weights.seq_quality);
-	    COMPARE_FLOAT("PRIMER_IO_WT_END_QUAL", pa->io_weights.end_quality);
+	    COMPARE_FLOAT("PRIMER_IO_WT_TM_GT", pa->o_args.weights.temp_gt);
+	    COMPARE_FLOAT("PRIMER_IO_WT_TM_LT", pa->o_args.weights.temp_lt);
+	    COMPARE_FLOAT("PRIMER_IO_WT_GC_PERCENT_GT", pa->o_args.weights.gc_content_gt);
+	    COMPARE_FLOAT("PRIMER_IO_WT_GC_PERCENT_LT", pa->o_args.weights.gc_content_lt);
+	    COMPARE_FLOAT("PRIMER_IO_WT_SIZE_LT", pa->o_args.weights.length_lt);
+	    COMPARE_FLOAT("PRIMER_IO_WT_SIZE_GT", pa->o_args.weights.length_gt);
+	    COMPARE_FLOAT("PRIMER_IO_WT_COMPL_ANY", pa->o_args.weights.compl_any);
+	    COMPARE_FLOAT("PRIMER_IO_WT_COMPL_END", pa->o_args.weights.compl_end);
+	    COMPARE_FLOAT("PRIMER_IO_WT_NUM_NS", pa->o_args.weights.num_ns);
+	    COMPARE_FLOAT("PRIMER_IO_WT_REP_SIM", pa->o_args.weights.repeat_sim);
+	    COMPARE_FLOAT("PRIMER_IO_WT_SEQ_QUAL", pa->o_args.weights.seq_quality);
+	    COMPARE_FLOAT("PRIMER_IO_WT_END_QUAL", pa->o_args.weights.end_quality);
 	    COMPARE_FLOAT("PRIMER_IO_WT_TEMPLATE_MISHYB",
-			  pa->io_weights.template_mispriming);
+			  pa->o_args.weights.template_mispriming);
 
 	    COMPARE_FLOAT("PRIMER_PAIR_WT_PR_PENALTY", 
 					      pa->pr_pair_weights.primer_quality);
@@ -441,7 +450,7 @@ read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
 	}
 	if(n_quality !=0 && n_quality != seq_len)
 	     pr_append_new_chunk(&sa->error, "Error in sequence quality data");
-        if((pa->min_quality != 0 || pa->io_min_quality != 0) && n_quality == 0) 
+        if((pa->min_quality != 0 || pa->o_args.min_quality != 0) && n_quality == 0) 
 	     pr_append_new_chunk(&sa->error, "Sequence quality data missing");
 	if(pa->min_quality != 0 && pa->min_end_quality < pa->min_quality)
 	     pa->min_end_quality = pa->min_quality;
@@ -453,17 +462,17 @@ read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
      */
 
     if (NULL != repeat_file) {
-      destroy_seq_lib(pa->repeat_lib);
+      destroy_seq_lib(pa->p_args.repeat_lib);
       if ('\0' == *repeat_file) {
 	/* Input now specifies no repeat library. */
-	pa->repeat_lib = NULL;
+	pa->p_args.repeat_lib = NULL;
       }
       else {
-	pa->repeat_lib
+	pa->p_args.repeat_lib
 	  = read_and_create_seq_lib(repeat_file, 
 				    "mispriming library");
-	if(pa->repeat_lib->error.data != NULL) {
-	  pr_append_new_chunk(&pa->glob_err, pa->repeat_lib->error.data);
+	if(pa->p_args.repeat_lib->error.data != NULL) {
+	  pr_append_new_chunk(&pa->glob_err, pa->p_args.repeat_lib->error.data);
 	}
       }
       free(repeat_file);
@@ -471,17 +480,17 @@ read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
     }
 
     if (NULL != int_repeat_file) {
-      destroy_seq_lib(pa->io_mishyb_library);
+      destroy_seq_lib(pa->o_args.repeat_lib);
       if ('\0' == *int_repeat_file) {
 	/* Input now specifies no mishybridization library. */
-	pa->io_mishyb_library = NULL;
+	pa->o_args.repeat_lib = NULL;
       }
       else {
-	pa->io_mishyb_library = 
+	pa->o_args.repeat_lib = 
 	  read_and_create_seq_lib(int_repeat_file,
 				  "internal oligo mishyb library");
-	if(pa->io_mishyb_library->error.data != NULL) {
-	  pr_append_new_chunk(&pa->glob_err, pa->io_mishyb_library->error.data);
+	if(pa->o_args.repeat_lib->error.data != NULL) {
+	  pr_append_new_chunk(&pa->glob_err, pa->o_args.repeat_lib->error.data);
 	}
       }
       free(int_repeat_file);
