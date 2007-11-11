@@ -147,23 +147,13 @@ typedef struct pair_weights {
     double template_mispriming;
 } pair_weights;
 
-typedef struct primargs {
-  int    pr_min[PR_MAX_INTERVAL_ARRAY]; /* Minimum product sizes. */
-  int    pr_max[PR_MAX_INTERVAL_ARRAY]; /* Maximum product sizes. */
-  seq_lib *repeat_lib;  /* Library of sequences to avoid. */
-
-  seq_lib *io_mishyb_library;
-
-  oligo_weights primer_weights;
-  oligo_weights io_weights;
-  pair_weights  pr_pair_weights;
-
-  pr_append_str glob_err;
-
+typedef struct args_for_one_oligo_or_primer {
+  seq_lib       *repeat_lib;
+  oligo_weights weights;
   double opt_tm;
   double min_tm;
   double max_tm;
-  double max_diff_tm;
+  /* double max_diff_tm; */
   double opt_gc_content;
   double max_gc;
   double min_gc;
@@ -171,21 +161,77 @@ typedef struct primargs {
   double divalent_conc; /* added by T.Koressaar, divalent salt concentration mmol/l */
   double dntp_conc; /* added by T.Koressaar, for considering divalent salt concentration */
   double dna_conc;
+  int    num_ns_accepted;
+  int    opt_size;
+  int    min_size;
+  int    max_size;
+  int    max_poly_x;      /* 
+			   * Maximum length of mononucleotide sequence in an
+			   * oligo.
+			   */
 
-  double io_opt_tm;
+  int    min_end_quality;
+  int    min_quality;       /* Minimum quality permitted for oligo sequence.*/
+
+  short  self_any;  
+  short  self_end;
+  short  repeat_compl;   /* 
+			  * Acceptable complementarity with repeat
+			  * sequences.
+			  */
+
+  short  max_template_mispriming;
+} args_for_one_oligo_or_primer;
+
+typedef struct primargs {
+  int    pr_min[PR_MAX_INTERVAL_ARRAY]; /* Minimum product sizes. */
+  int    pr_max[PR_MAX_INTERVAL_ARRAY]; /* Maximum product sizes. */
+
+  args_for_one_oligo_or_primer p_args;
+  args_for_one_oligo_or_primer o_args;
+
+  /* seq_lib *repeat_lib;  *//* Library of sequences to avoid. */
+  /* seq_lib *io_mishyb_library; */
+
+  /* oligo_weights primer_weights; */
+  /* oligo_weights io_weights; */
+  pair_weights  pr_pair_weights;
+
+  pr_append_str glob_err;
+
+
+    /* FIXME, the tricky part will 'collapsing'
+       the old code. */
+
+  /* double opt_tm; */
+  /* double min_tm; */
+  /* double max_tm; */
+  /* double opt_gc_content; */
+  /* double max_gc; */
+  /* double min_gc; */
+  /* double salt_conc; */
+  /* double divalent_conc; */ /* added by T.Koressaar, divalent salt concentration mmol/l */
+  /* double dntp_conc; */ /* added by T.Koressaar, for considering divalent salt concentration */
+  /* double dna_conc; */
+
+  /*  double io_opt_tm;
   double io_min_tm;
   double io_max_tm;
   double io_opt_gc_content;
   double io_max_gc;
   double io_min_gc;
-  double io_salt_conc;
-  double io_divalent_conc; /* added by T.Koressaar, divalent salt concentration mmol/l */
-  double io_dntp_conc; /* added by T.Koressaar, for considering divalent salt concentration */
-  double io_dna_conc;
+  double io_salt_conc; */
+  /* double io_divalent_conc; *//* added by T.Koressaar, divalent salt concentration mmol/l */
+  /* double io_dntp_conc; *//* added by T.Koressaar, for considering divalent salt concentration */
+  /* double io_dna_conc; */
+
+
   int tm_santalucia;  /* added by T.Koressaar table of thermodynamic parameters of SantaLucia 1998 */
   int salt_corrections; /* added by T.Koressaar salt correction formula for Tm calculation */
   int lowercase_masking; /* added by T.Koressaar for primer design from lowercase masked template */
    
+  double max_diff_tm; /* Max diff between tm of primer and tm of product (?) */
+
   double outside_penalty; /* Multiply this value times the number of NTs
 			   * from the 3' end to the the (unique) target to
 			   * get the 'position penalty'.
@@ -215,7 +261,7 @@ typedef struct primargs {
 				 * (i.e. number of elements in pr_min and
 				 * pr_max)
 				 */
-  int    num_ns_accepted;
+  /* int    num_ns_accepted; */
   task   primer_task;          /* 2 if left primer only, 3 if right primer only,
 				* 4 if internal oligo only.    */
 
@@ -227,10 +273,10 @@ typedef struct primargs {
   int    product_opt_size;
 
   /*internal oligo*/
-  int    io_num_ns_accepted;
+  /* int    io_num_ns_accepted;
   int    io_primer_opt_size;
   int    io_primer_min_size;
-  int    io_primer_max_size;
+  int    io_primer_max_size; */
 
   int    gc_clamp;              /* Required number of GCs at *3' end. */
    
@@ -244,7 +290,7 @@ typedef struct primargs {
 			   * Maximum length of mononucleotide sequence in an
 			   * oligo.
 			   */
-  int    io_max_poly_x;
+  /* int    io_max_poly_x; */
 
 
   int    first_base_index;  /* 
@@ -261,8 +307,8 @@ typedef struct primargs {
   int    quality_range_min;
   int    quality_range_max;
 
-  int    io_min_quality;
-  int    io_min_end_quality;
+  /* int    io_min_quality; */
+  /* int    io_min_end_quality;  */
 
   int    pick_anyway;    /* Pick even if input primer or oligos
 			    violate constraints. */
@@ -279,21 +325,21 @@ typedef struct primargs {
   short  max_template_mispriming;
   short  pair_max_template_mispriming;
 
-  short  io_max_template_mishyb;
+  /* short  io_max_template_mishyb; */
 
   short  repeat_compl;   /* 
 			  * Acceptable complementarity with repeat
 			  * sequences.
 			  */
-  short  io_repeat_compl;
+  /* short  io_repeat_compl; */
 
   short  pair_repeat_compl;
 
-  short  self_any;  
+  /* short  self_any;   */
   short  self_end;
 
-  short  io_self_any;  
-  short  io_self_end;
+  /* short  io_self_any;   */
+  /* short  io_self_end; */
 
   short  pair_compl_any;
   short  pair_compl_end;
