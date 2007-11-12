@@ -186,7 +186,7 @@ test: $(PRIMER_EXE) ntdpal
 # Check valgrind path in p3test.pl, ntdpal_test.pl, and oligotm_test.pl
 # and correct if necessary.  This code works under valgrind 3.2.3.
 # 
-# $ make VALGRIND_FLAG=--valgrind  # Remember, you have to be in test/
+# $ make VALGRIND=--valgrind  # Remember, you have to be in test/
 # 
 # When the --valgrind flag is set, the perl test scripts grep for and
 # display errors and leaks, but you need to ***look at the output** to
