@@ -1,7 +1,44 @@
+
 # Regression test driver for the primer3_core executable.
 #
 # For usage, see the usage statement in the code, below.
 #
+# ======================================================================
+# (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006,2007 Whitehead
+# Institute for Biomedical Research, Steve Rozen, and Helen Skaletsky
+# All rights reserved.
+# 
+#   This file is part of the primer3 suite and the dpal library.
+#
+#   The primer3 suite is free software; you can
+#   redistribute them and/or modify them under the terms of the GNU
+#   General Public License as published by the Free Software Foundation;
+#   either version 2 of the License, or (at your option) any later
+#   version.
+#
+#   This software is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this file (file gpl-2.0.txt in the source distribution); if
+#   not, write to the Free Software Foundation, Inc., 51 Franklin St,
+#   Fifth Floor, Boston, MA 02110-1301 USA
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# OWNERS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# ======================================================================
+
 use warnings 'all';
 use strict;
 use Cwd;
@@ -28,6 +65,8 @@ main();
 sub main() {
     my %args;
 
+    select STDERR;
+
     # GetOptions handles various flag abbreviations and formats,
     # such as  -e ../src/primer3_core, --exe ../src/primer3_core, 
     # --exe=.../src/primer3_core
@@ -37,7 +76,10 @@ sub main() {
 		    'verbose',
 		    'executable=s',
 		    )) {
-	print STDERR "Usage: $0 [--executable <primer3 executable>] [ --valgrind ] [  --verbose ] [--windows]\n";
+	print "Usage: perl p3test.pl \\\n",
+	"    [--executable <primer3 executable>] [ --valgrind ] [  --verbose ] [--windows]\n",
+	"\n",
+	"    where <primer3 executable> defaults to ../src/primer3_core\n";
 	exit -1;
     }
 
@@ -46,7 +88,7 @@ sub main() {
     $verbose = defined $args{'verbose'};
     $do_valgrind = $args{'valgrind'};
     if ($winFlag && $do_valgrind) {
-	print STDERR "$0: Cannot specify both --valgrind and --windows\n";
+	print "$0: Cannot specify both --valgrind and --windows\n";
 	exit -1;
     }
 
@@ -60,14 +102,16 @@ sub main() {
 
     die "Cannot execute $exe" unless -x $exe;
 
-    print STDERR 
+    print 
 	"\n\n$0: testing $exe\n\n",
 	"START, ", scalar(localtime), "\n";
-    print STDERR "verbose mode\n" if $verbose;
-    print STDERR "valgrind mode\n" if $do_valgrind;
+    print "verbose mode\n" if $verbose;
+    print "valgrind mode\n" if $do_valgrind;
 
-    test_fatal_errors;
+    test_fatal_errors();
 
+    # The range of this for loop is a set of test names
+    # that get translated into file names inside the loop.
     for my $test (
 		  'primer_boundary', # Put the quickest tests first.
 		  'primer_internal',
@@ -108,9 +152,11 @@ sub main() {
 		  # Put primer_lib_amb_codes last because it is slow
 		  'primer_lib_amb_codes',
 		  ) {
-	print STDERR "$test...";
+
+	# We are inside the for loop here....
+	print "$test...";
 	if ($test eq 'primer_lib_amb_codes') {
-	    print STDERR 
+	    print 
 		"\nNOTE: this test takes _much_ longer than the others ",
 		"(10 to 20 minutes or more).\n",
 		"starting $test at ", scalar(localtime), "...";
@@ -118,20 +164,26 @@ sub main() {
 	my $valgrind_prefix
 	    = $do_valgrind ? sprintf $valgrind_format, $test : '';
 
+	# Figure out what the files are called for a particular test
 	my $testx = $test;
 	$testx =~ s/_formatted$//;
 	my $input = $testx . '_input';
 	my $output = $test . '_output';
 	my $tmp = $test . '.tmp';
+
+	# Make sure that needed files are present and readable
 	die "Cannot read $input"  unless -r $input;
 	die "Cannot read $output"  unless -r $output;
 
 	my $r; # Return value for tests
+
 	if ($test eq 'primer' || $test eq 'primer1') {
+	    # These tests generate primer lists, which
+	    # need to be checked separately.
+
 	    my $list_tmp = $test.'_list_tmp';
 	    # We need to chdir below because primer3 puts the 'list' files
-	    # in the current working directory.  Therefore we adjust
-	    # the TestCenter result directory.
+	    # in the current working directory. 
 
 	    # get a list of the files to remove (if any) in this directory 
 	    my @tempList = glob('./' . $test.'_list_tmp/*');
@@ -151,7 +203,6 @@ sub main() {
 	    }  else {
 		$tmpCmd = "$valgrind_prefix ../$exe -strict_tags <../$input >../$tmp";
 	    }
-
 	    $r = _nowarn_system($tmpCmd);
 	    # back to main directory
 	    chdir "../";
@@ -164,7 +215,7 @@ sub main() {
 	}
 
 	unless ($r == 0) {
-	    print STDERR "NON-0 EXIT: $r\n";
+	    print "NON-0 EXIT: $r\n";
 	    $exit_stat = -1;
 	    next;
 	}
@@ -172,9 +223,9 @@ sub main() {
 	$r = perldiff $output, $tmp;
 
 	if ($r == 0) {
-	    print STDERR "[OK]\n";
+	    print "[OK]\n";
 	} else {
-	    print STDERR "[FAILED]\n";
+	    print "[FAILED]\n";
 	    $exit_stat = -1;
 	}
 	if ($test eq 'primer' || $test eq 'primer1') {
@@ -190,17 +241,22 @@ sub main() {
 		$t=~ s/$regex//g;
 		$r = perldiff $list_tmp."/".$t, $list_last."/".$t;
 	    }
-	    print STDERR $test. "_list_files ";
+	    print $test. "_list_files ";
 	    if ($r == 0) {
-		print STDERR "[OK]\n";
+		print "[OK]\n";
 	    } 
 	    else { 
-		print STDERR "[FAILED]\n";
+		print "[FAILED]\n";
 		$exit_stat = -1;
 	    }
 	}
-    }
-    unlink("./core") if -e "./core";
+    }  # End of long for loop, for my $test in (.....) 
+
+    # ================================================== 
+    # If we were running under valgrind to look for memory-related
+    # errors (reading uninitialized memory, writing off the end of
+    # an array, etc) or leaks, then we look through the valgrind
+    # logs to summarize errors and leaks.
     if ($do_valgrind) {
 	# Assume this is Unix/Linux envrionment, so
 	# we have grep.
@@ -218,7 +274,7 @@ sub main() {
 	    $exit_stat = -1;
 	}
     }
-    print STDERR "DONE ", scalar(localtime), "\n";
+    print "DONE ", scalar(localtime), "\n";
     exit $exit_stat;
 }
 
@@ -233,7 +289,7 @@ sub perldiff($$) {
     my @f2 = <F2>;
     # If different number of lines, return FAIL.
     if (@f1 != @f2) {
-	print STDERR "Different number of lines\n";
+	print "Different number of lines\n";
         return 1;
     }
     # check for differences on the lines, themselves
@@ -255,7 +311,7 @@ sub perldiff($$) {
 	    $l1 =~ s/^USAGE:\s+\S+/USAGE: ... /i;
 	    $l2 =~ s/^USAGE:\s+\S+/USAGE: ... /i;
 	    if ($verbose) {
-		print STDERR "removing executable name from\n",
+		print "removing executable name from\n",
 		"$l1_orig\n$l2_orig\n";
 	    }
 	}
@@ -273,7 +329,7 @@ sub perldiff($$) {
 	    $l1 =~ s/$regex//g;
 	    $l2 =~ s/$regex//g;
 	    if ($verbose) {
-		print STDERR "removing <executable>: from\n",
+		print "removing <executable>: from\n",
 		"$l1_orig\n$l2_orig\n";
 	    }
 	}
@@ -290,7 +346,7 @@ sub perldiff($$) {
         $linenumber++;
 	# Check for difference between two edited lines (line by line)
 	if ($l1 ne $l2) {
-	    print STDERR 
+	    print 
 		"Difference found at line $linenumber:\n<  $l1_orig\n>  $l2_orig\n";
 	    return 1;
 	}
@@ -304,12 +360,12 @@ sub test_fatal_errors() {
     my @inputs = glob("./primer_global_err/*.in");
     my $r;
     my $problem = 0;
-    print STDERR "\ntesting fatal errors...\n";
+    print "\ntesting fatal errors...\n";
     for (@inputs) {
         my ($root) = /(.*)\.in$/;  # Hint, the parens around $root give
                                    # the result of the match in
                                    # an array context.
-	print STDERR "  $root\n";
+	print "  $root\n";
 	my $valgrind_prefix
 	    = $do_valgrind ? sprintf $valgrind_format, $root : '';
 
@@ -322,26 +378,27 @@ sub test_fatal_errors() {
 	}
 	if ($? == 0) {
 	    my $r = $? >> 8;
-	    print STDERR
+	    print
 		"\nErroneous 0 exit status ($?) from command $cmd\n";
 	    $problem = 1;
 	}
 	if (perldiff "$root.tmp", "$root.out") {
-	    print STDERR
+	    print
 		"Difference found between $root.out and $root.tmp\nfrom $cmd\n\n";
 	    $problem = 1;
 	}
 	if (perldiff "$root.tmp2", "$root.out2") {
-	    print STDERR 
+	    print 
 		"\nDifference found between $root.out2 and $root.tmp2\nfrom $cmd\n\n";
 	    $problem = 1;
 	}
     }
-    print STDERR $problem ? "[FAILED]" : "[OK]" ,"\n";
+    print $problem ? "[FAILED]" : "[OK]" ,"\n";
 }
 
 sub _nowarn_system($) {
     my $cmd = shift;
+    if ($verbose) { print "\n$cmd\n" }
     no warnings 'all';
     system $cmd;
 }
