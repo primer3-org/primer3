@@ -2977,6 +2977,15 @@ check_if_lowercase_masked(position, sequence, h)
    }
 }
 
+static void
+adjust_base_index_interval_list(intervals, num, first_index)
+    interval_array_t intervals;
+    int num, first_index;
+{
+    int i;
+    for (i = 0; i < num; i++) intervals[i][0] -= first_index;
+}
+
 /*
  * Return 1 on error, 0 on success.  Set sa->trimmed_seq and possibly modify
  * sa->tar.  Upcase and check all bases in sa->trimmed_seq
@@ -2987,9 +2996,43 @@ _pr_data_control(pa, sa)
     seq_args *sa;
 {
     static char s1[MAX_PRIMER_LENGTH+1];
-    int i, pr_min;
-    int seq_len = strlen(sa->sequence);
+    int i, pr_min, seq_len;
     char offending_char = '\0';
+
+    if (NULL == sa->sequence) {
+      pr_append_new_chunk(&sa->error, "Missing SEQUENCE tag");
+      return 1;
+    } 
+
+    seq_len = strlen(sa->sequence);
+   
+    if (sa->incl_l == -1) {
+      sa->incl_l = seq_len;
+      sa->incl_s = pa->first_base_index;
+    }
+
+    /* Adjust base indexes in sa. */
+    sa->incl_s -= pa->first_base_index;
+    sa->start_codon_pos -= pa->first_base_index;
+    adjust_base_index_interval_list(sa->tar, sa->num_targets,
+				    pa->first_base_index);
+    adjust_base_index_interval_list(sa->excl, sa->num_excl,
+				    pa->first_base_index);
+    adjust_base_index_interval_list(sa->excl_internal,
+				    sa->num_internal_excl,
+				    pa->first_base_index);
+    /* End adjust base indexes in sa. */
+
+    if (sa->n_quality !=0 && sa->n_quality != seq_len)
+      pr_append_new_chunk(&sa->error, "Error in sequence quality data");
+
+    if ((pa->p_args.min_quality != 0 || pa->o_args.min_quality != 0) && sa->n_quality == 0) 
+      pr_append_new_chunk(&sa->error, "Sequence quality data missing");
+
+    if (pa->p_args.min_quality != 0 
+	&& pa->p_args.min_end_quality < pa->p_args.min_quality)
+      pa->p_args.min_end_quality = pa->p_args.min_quality;
+
 
     if (pa->o_args.max_template_mispriming >= 0)
       pr_append_new_chunk(&pa->glob_err,
@@ -3162,7 +3205,7 @@ _pr_data_control(pa, sa)
 			seq_len, sa)
 	== 1) return 1;
 
-    if (NULL != sa->quality){
+    if (NULL != sa->quality) {
 	if(pa->p_args.min_quality != 0 && pa->p_args.min_quality < pa->quality_range_min) {
 	   pr_append_new_chunk(&pa->glob_err,
 	       "PRIMER_MIN_QUALITY < PRIMER_QUALITY_RANGE_MIN");
@@ -3192,6 +3235,7 @@ _pr_data_control(pa, sa)
            }
         }
     }
+
     else if (pa->p_args.weights.seq_quality || pa->o_args.weights.seq_quality) {
 	 pr_append_new_chunk(&sa->error,
 	      "Sequence quality is part of objective function but sequence quality is not defined");

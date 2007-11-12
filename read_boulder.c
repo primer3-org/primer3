@@ -4,9 +4,9 @@ Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
 
-    This file is part of primer3.
+    This file is part of primer3 and the primer3 suite.
 
-    Primer3 and the libprimer3 library are free software;
+    Primer3 and the primer3 suite are free software;
     you can redistribute them and/or modify them under the terms
     of the GNU General Public License as published by the Free
     Software Foundation; either version 2 of the License, or (at
@@ -53,7 +53,8 @@ static char *pr_program_name = "Program name is probably primer3_core";
 static void *_rb_safe_malloc(size_t x);
 static void *_rb_safe_realloc(void *p, size_t x);
 
-static void   adjust_base_index_interval_list(interval_array_t, int, int);
+/* static void   adjust_base_index_interval_list(interval_array_t, int, int); */
+
 static void   parse_align_score(const char *, const char *, short *,
 				pr_append_str *);
 static void   parse_double(const char *, const char *, double *,
@@ -66,10 +67,7 @@ static void   parse_interval_list(const char *, const char *, int*,
 static void   parse_product_size(const char *, char *, primer_args *,
 				 pr_append_str *);
 static void   tag_syntax_error(const char *, const char *,  pr_append_str *);
-/* static char   upcase_and_check_char(char *); */
 static char*  read_line(FILE *);
-/* static double parse_seq_name(char *); */
-/* static void   reverse_complement_seq_lib(seq_lib *); */ 
 static int    parse_seq_quality(char *, int **);
 
 /* 
@@ -128,23 +126,31 @@ extern double strtod();
  * See read_boulder.h for description.
  */
 int
-read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
+read_record(const program_args *prog_args, primer_args *pa, seq_args *sa)
 { 
-    int line_len, seq_len, n_quality;
+  int line_len; /* seq_len; n_quality; */
     int tag_len, datum_len;
     int data_found = 0;
     int pick_internal_oligo = 2;
     char *s, *n, *datum, *task_tmp = NULL;
     const char *p;
     pr_append_str *parse_err;
-    char *repeat_file = NULL, *int_repeat_file = NULL;
+    char *repeat_file_path = NULL, *int_repeat_file_path = NULL;
 
-    memset(&sa->error, 0, sizeof(sa->error));
+    /* possible future fix:  can we get away from using pa->glob_err and
+       sa->error in read_record(); only worth doing if
+       we support boulder input beyond the next few releases, or
+       if we pull glob_err and err out of their structs.  */
     memset(&pa->glob_err, 0, sizeof(pa->glob_err));
+    /* FIX ME, provide initialization function for pa and sa structs.*/
+    memset(&sa->error, 0, sizeof(sa->error));
+
     memset(sa, 0, sizeof(*sa));
+
     sa->start_codon_pos = PR_DEFAULT_START_CODON_POS;
     sa->incl_l = -1; /* Indicates logical NULL. */
-    n_quality = 0;
+    sa->n_quality = 0;
+    sa->quality = NULL;
 
     while ((s = read_line(stdin)) != NULL && strcmp(s,"=")) {
 	data_found = 1;
@@ -152,7 +158,7 @@ read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
 	line_len = strlen(s);
 	if ((n=strchr(s,'=')) == NULL) {
 	    /* 
-	     * The input line is illegal, but we still have to read to the end
+	     * The input line is illegal, we still will read to the end
 	     * of the record.
 	     */
 	    pr_append_new_chunk(&pa->glob_err, "Input line with no '=': ");
@@ -168,7 +174,7 @@ read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
 	    parse_err = &sa->error;
 	    COMPARE_AND_MALLOC("SEQUENCE", sa->sequence);
 	    if (COMPARE("PRIMER_SEQUENCE_QUALITY")) {
-	       if((n_quality = parse_seq_quality(datum, &sa->quality)) == 0){
+	       if ((sa->n_quality = parse_seq_quality(datum, &sa->quality)) == 0) {
 		   pr_append_new_chunk(&sa->error, 
 				     "Error in sequence quality data");
 		   continue;
@@ -319,26 +325,26 @@ read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
 	    COMPARE_FLOAT("PRIMER_INSIDE_PENALTY", pa->inside_penalty);
 	    COMPARE_FLOAT("PRIMER_OUTSIDE_PENALTY", pa->outside_penalty);
             if (COMPARE("PRIMER_MISPRIMING_LIBRARY")) {
-		if (repeat_file != NULL) {
+		if (repeat_file_path != NULL) {
 		    pr_append_new_chunk(&pa->glob_err,
 					"Duplicate PRIMER_MISPRIMING_LIBRARY tag");
-		    free(repeat_file);
-		    repeat_file = NULL;
+		    free(repeat_file_path);
+		    repeat_file_path = NULL;
 		} else {
-		    repeat_file = _rb_safe_malloc(strlen(datum) + 1);
-		    strcpy(repeat_file, datum);
+		    repeat_file_path = _rb_safe_malloc(strlen(datum) + 1);
+		    strcpy(repeat_file_path, datum);
 		}
 		continue;
 	    }
             if (COMPARE("PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY")) {
-		if (int_repeat_file != NULL) {
+		if (int_repeat_file_path != NULL) {
 		    pr_append_new_chunk(&pa->glob_err,
 					"Duplicate PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY tag");
-		    free(int_repeat_file);
-		    int_repeat_file = NULL;
+		    free(int_repeat_file_path);
+		    int_repeat_file_path = NULL;
 		} else {
-		    int_repeat_file = _rb_safe_malloc(strlen(datum) + 1);
-		    strcpy(int_repeat_file, datum);
+		    int_repeat_file_path = _rb_safe_malloc(strlen(datum) + 1);
+		    strcpy(int_repeat_file_path, datum);
 		}
 		continue;
 	    }
@@ -414,7 +420,7 @@ read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
 	    pr_append(&pa->glob_err, s);
 	    fprintf(stderr, "Unrecognized tag: %s\n", s);
 	}
-    }
+    }  /* while ((s = read_line(stdin)) != NULL && strcmp(s,"=")) { */
 
     if (NULL == s) { /* End of file. */
 	if (data_found) {
@@ -440,65 +446,50 @@ read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
 	  free(task_tmp);
     }
 
-    if (NULL == sa->sequence)
-	pr_append_new_chunk(&sa->error, "Missing SEQUENCE tag");
-    else {
-	seq_len = strlen(sa->sequence);
-	if (sa->incl_l == -1) {
-	     sa->incl_l = seq_len;
-	     sa->incl_s = pa->first_base_index;
-	}
-	/* FIX ME .. This belongs inside libprimer3. */
-	if(n_quality !=0 && n_quality != seq_len)
-	     pr_append_new_chunk(&sa->error, "Error in sequence quality data");
-        if ((pa->p_args.min_quality != 0 || pa->o_args.min_quality != 0) && n_quality == 0) 
-	     pr_append_new_chunk(&sa->error, "Sequence quality data missing");
-	if (pa->p_args.min_quality != 0 
-	    && pa->p_args.min_end_quality < pa->p_args.min_quality)
-	     pa->p_args.min_end_quality = pa->p_args.min_quality;
-    }
-
     /* 
      * WARNING: read_seq_lib uses read_line, so repeat files cannot be read
      * inside the while ((s = read_line(stdin))...)  loop above.
      */
 
-    if (NULL != repeat_file) {
+    if (NULL != repeat_file_path) {
       destroy_seq_lib(pa->p_args.repeat_lib);
-      if ('\0' == *repeat_file) {
+      if ('\0' == *repeat_file_path) {
 	/* Input now specifies no repeat library. */
 	pa->p_args.repeat_lib = NULL;
       }
       else {
 	pa->p_args.repeat_lib
-	  = read_and_create_seq_lib(repeat_file, 
+	  = read_and_create_seq_lib(repeat_file_path, 
 				    "mispriming library");
 	if(pa->p_args.repeat_lib->error.data != NULL) {
 	  pr_append_new_chunk(&pa->glob_err, pa->p_args.repeat_lib->error.data);
 	}
       }
-      free(repeat_file);
-      repeat_file = NULL;
+      free(repeat_file_path);
+      repeat_file_path = NULL;
     }
 
-    if (NULL != int_repeat_file) {
+    if (NULL != int_repeat_file_path) {
       destroy_seq_lib(pa->o_args.repeat_lib);
-      if ('\0' == *int_repeat_file) {
+      if ('\0' == *int_repeat_file_path) {
 	/* Input now specifies no mishybridization library. */
 	pa->o_args.repeat_lib = NULL;
       }
       else {
 	pa->o_args.repeat_lib = 
-	  read_and_create_seq_lib(int_repeat_file,
+	  read_and_create_seq_lib(int_repeat_file_path,
 				  "internal oligo mishyb library");
 	if(pa->o_args.repeat_lib->error.data != NULL) {
 	  pr_append_new_chunk(&pa->glob_err, pa->o_args.repeat_lib->error.data);
 	}
       }
-      free(int_repeat_file);
-      int_repeat_file = NULL;
+      free(int_repeat_file_path);
+      int_repeat_file_path = NULL;
     }
     
+    /* This next belongs here rather than libprimer3, because it deals
+       with potential incompatibility with old tags (kept for backward
+       compatibility, and new tags.  */
     if((pick_internal_oligo == 1 || pick_internal_oligo == 0) &&
        (pa->primer_task == pick_left_only || 
 	pa->primer_task == pick_right_only ||
@@ -509,17 +500,6 @@ read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
 	  pa->primer_task = 1;
     else if(pick_internal_oligo == 0)pa->primer_task = 0;
 
-
-    /* Adjust base indexes in sa. */
-    sa->incl_s -= pa->first_base_index;
-    sa->start_codon_pos -= pa->first_base_index;
-    adjust_base_index_interval_list(sa->tar, sa->num_targets,
-				    pa->first_base_index);
-    adjust_base_index_interval_list(sa->excl, sa->num_excl,
-				    pa->first_base_index);
-    adjust_base_index_interval_list(sa->excl_internal,
-				    sa->num_internal_excl,
-				    pa->first_base_index);
     return 1;
 }
 #undef COMPARE
@@ -528,6 +508,31 @@ read_record(const program_args *prog_args,  primer_args *pa, seq_args *sa)
 #undef COMPARE_FLOAT
 #undef COMPARE_INTERVAL_LIST
 
+/* Stuff removed from read_record() */
+    /* FIX ME ---- this definitely belongs in libprimer3 */
+
+    /* if (NULL != sa->sequence) { */
+      /* FIX ME .. this belongs inside libprimer3. */
+      /* seq_len = strlen(sa->sequence);
+      if (sa->incl_l == -1) {
+	sa->incl_l = seq_len;
+	sa->incl_s = pa->first_base_index;
+	} */
+      /* Adjust base indexes in sa. */
+      /* sa->incl_s -= pa->first_base_index;
+      sa->start_codon_pos -= pa->first_base_index;
+      adjust_base_index_interval_list(sa->tar, sa->num_targets,
+				      pa->first_base_index);
+      adjust_base_index_interval_list(sa->excl, sa->num_excl,
+				      pa->first_base_index);
+      adjust_base_index_interval_list(sa->excl_internal,
+				      sa->num_internal_excl,
+				      pa->first_base_index);
+      */
+    /* } */
+
+
+/*
 static void
 adjust_base_index_interval_list(intervals, num, first_index)
     interval_array_t intervals;
@@ -536,6 +541,7 @@ adjust_base_index_interval_list(intervals, num, first_index)
     int i;
     for (i = 0; i < num; i++) intervals[i][0] -= first_index;
 }
+*/
 
 /* 
  * Read a line of any length from file.  Return NULL on end of file,
@@ -610,6 +616,7 @@ parse_align_score(tag_name, datum, out, err)
     parse_double(tag_name, datum, &d, err);
     d *= PR_ALIGN_SCORE_PRECISION;
     if (d > SHRT_MAX) {
+      /* FIX ME --> libprimer3.c?  */
 	pr_append_new_chunk(err, "Value too large at tag ");
 	pr_append(err, tag_name);
     } else {
@@ -688,6 +695,7 @@ parse_int_pair(tag_name, datum, sep, out1, out2, err)
     long tlong;
     tlong = strtol(datum, &nptr, 10);
     if (tlong > INT_MAX || tlong < INT_MIN) {
+      /* NOT sure? -> libprimer3.c */
 	tag_syntax_error(tag_name, datum, err);
 	pr_append(err, " (value too large or too small)");
 	return NULL;
@@ -741,6 +749,7 @@ parse_interval_list(tag_name, datum, count, interval_array, err)
     while (' ' == *p || '\t' == *p) p++;
     while (*p != '\0' && *p != '\n') {
 	if (*count >= PR_MAX_INTERVAL_ARRAY) {
+	  /* ? -> libprimer3.c */
 	    pr_append_new_chunk(err, "Too many elements for tag ");
 	    pr_append(err, tag_name);
 	    return;
@@ -797,6 +806,9 @@ parse_product_size(tag_name, in, pa, err)
     pa->num_intervals = i;
 }
 
+/* FIX ME -- TEST THIS A BIT MORE WITH
+   off-by-one errors on length of the 
+   quality score */
 static int
 parse_seq_quality(s, num)
    char *s;
@@ -809,19 +821,23 @@ parse_seq_quality(s, num)
    p = q = s;
    k = strlen(s);
    g = *num = _rb_safe_malloc(sizeof(int)*k);
+   memset(g, 0, k * sizeof(int));
+
+   /* Skip leading blanks or tabs; FIX ME, TEST, probably not needed */
    while(*p == ' ' || *p == '\t'){
       p++;
-      if(*p == '\0' || *p == '\n') return 0;
+      if (*p == '\0' || *p == '\n') return 0;
    }
-   while(*q != '\0' && *q != '\n'){
+
+   while (*q != '\0' && *q != '\n') {
       t = strtol(p, &q, 10);
-      if(q == p) return i;
+      if (q == p) return i;
       p = q;
       *g = t;
       g++;
       i++;
    }
-   return i;
+   return i;  /* FIX ME, is this branch ever taken? */
 }
 
 /* =========================================================== */
