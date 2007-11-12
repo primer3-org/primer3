@@ -1,5 +1,5 @@
 
-# Usage: perl dpal_test.pl
+# Usage: perl dpal_test.pl [ --valgrind ]
 # This is the driver for tests of dpal (dpal.{c,h}, using in the wrapper
 # C program ntdpal (coded in ntdpal_main.c)
 
