@@ -118,15 +118,24 @@ main(argc,argv)
       break;
     }
 
-
+    /* We need to create the p3state even if we are not going to call
+       choose_primers because of user errors discovered in
+       read_record().  This in turn is because (1) we count on
+       boulder_print_pairs to print out the error tag and the final =,
+       and (2) we count on format_output to print the error when
+       prog_args.format_output is set.  We clean this up if we
+       continue to provide boulder IO output and
+       'format_{pairs,oligos}' for more than the next couple of
+       releases. */
     if (!(p3state = create_primer3_state())) {
       exit(-2); /* Out of memory. */
     }
+
     input_found = 1;
 
-    /* FIX ME: logically it should be possible to correct
+    /* Theoretically it would be possible to correct
        errorneous global input in a subsequent record, but
-       this probably does not happen. */
+       way to complicated for the payoff. */
     if (NULL == sa->error.data && NULL == global_pa->glob_err.data) {
       choose_primers(p3state, global_pa, sa);
     }
