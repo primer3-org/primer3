@@ -37,16 +37,16 @@
 
 # See ../src/Makefile for instructions on how to use VALGRIND_FLAG
 
-VALGRIND_FLAG = 
+VALGRIND = 
 
 test: makeexes testtm testdpal
-	-echo 'Testing primer3_core'; perl p3test.pl $(VALGRIND_FLAG)
+	-echo 'Testing primer3_core'; perl p3test.pl $(VALGRIND)
 
 testdpal:
-	-echo 'Testing alignment calcs'; perl dpal_test.pl $(VALGRIND_FLAG); 
+	-echo 'Testing alignment calcs'; perl dpal_test.pl $(VALGRIND); 
 
 testtm:
-	-echo 'Testing Tm calcs'; perl oligotm_test.pl $(VALGRIND_FLAG);
+	-echo 'Testing Tm calcs'; perl oligotm_test.pl $(VALGRIND);
 
 makeexes:
 	cd ../src; make
@@ -63,3 +63,4 @@ clean:
 	-rm -f oligotm.*.valg  # valgrind output from oligotm_test.pl --valgrind
 	-rm -f ntdpal.*.valg   # valgrind output from dpal_test.pl --valgrind
 	-rm -f *.vg */*.vg     # valgrind output from p3test{,z}.pl --valgrind
+	-rm -f ./core # in case we crashed and left a core file
