@@ -227,6 +227,11 @@ typedef struct primargs {
   /* ================================================== */
   /* Writable return argument for errors. */
   pr_append_str glob_err;
+  /* FIX ME glob_err sits astride read_boulder and libprimer3.
+     Most of the error checking in read_bouder should go into
+     libprimer3.
+     Clean this up. */
+
 
   /* ================================================== */
   /* Arguments for individual oligos and/or primers */
@@ -570,62 +575,65 @@ typedef struct pair_stats {
  * we will pick primer(s), etc.
  */
 typedef struct seq_args {
-    pr_append_str error;    /* Error messages. */
-    pr_append_str warning;  /* Warning messages. */
-    int num_targets;        /* The number of targets. */
-    interval_array_t tar;   /*
-			     * The targets themselves; tar[i][0] is the start
-			     * of the ith target, tar[i][1] its length.  These
-			     * are presented as indexes within the sequence
-			     * slot, but during the execution of choice() they
-			     * are recalculated to be indexes within
-			     * trimmed_seq.
-			     */
-    int num_excl;           /* The number of excluded regions.  */
-    interval_array_t excl;  /* The same as for targets.
-			     * These are presented as indexes within
-			     * the sequence slot, but during the
-			     * execution of choice() they are recalculated
-			     * to be indexes within trimmed_seq.
-			     */
-    int num_internal_excl;  /* Number of excluded regions for internal oligo.*/
-    interval_array_t excl_internal;
-                            /* Similar to excl. */
-    int incl_s;             /* The 0-based start of included region. */
-    int incl_l;             /* 
-			     * The length of the included region, which is
-			     * also the length of the trimmed_seq field.
-			     */
-    int  start_codon_pos;   /* Index of first base of the start codon. */
-    int  stop_codon_pos;    /* 
-			     * An optional _output_, meaninful if a
-			     * start_codon_pos is "not nul".  The position of
-			     * the intial base of the leftmost stop codon that
-			     * is to the right of sa->start_codon_pos.
-			     */
-    int  *quality;          /* Vector of quality scores. */
-    char *sequence;         /* The template sequence itself as input, 
-			       not trimmed, not up-cased. */
-    char *sequence_name;    /* An identifier for the sequence. */
-    char *sequence_file;    /* Another identifer for the sequence. */
-    char *trimmed_seq;      /* The included region only, _UPCASED_. */
+  int num_targets;        /* The number of targets. */
+  interval_array_t tar;   /*
+			   * The targets themselves; tar[i][0] is the start
+			   * of the ith target, tar[i][1] its length.  These
+			   * are presented as indexes within the sequence
+			   * slot, but during the execution of choice() they
+			   * are recalculated to be indexes within
+			   * trimmed_seq.
+			   */
+  int num_excl;           /* The number of excluded regions.  */
+  interval_array_t excl;  /* The same as for targets.
+			   * These are presented as indexes within
+			   * the sequence slot, but during the
+			   * execution of choice() they are recalculated
+			   * to be indexes within trimmed_seq.
+			   */
+  int num_internal_excl;  /* Number of excluded regions for internal oligo.*/
+  interval_array_t excl_internal;
+  /* Similar to excl. */
+  int incl_s;             /* The 0-based start of included region. */
+  int incl_l;             /* 
+			   * The length of the included region, which is
+			   * also the length of the trimmed_seq field.
+			   */
+  int  start_codon_pos;   /* Index of first base of the start codon. */
+  int  stop_codon_pos;    /* 
+			   * An optional _output_, meaninful if a
+			   * start_codon_pos is "not nul".  The position of
+			   * the intial base of the leftmost stop codon that
+			   * is to the right of sa->start_codon_pos.
+			   */
+  int  *quality;          /* Vector of quality scores. */
+  int n_quality;          /* Length 'quality' */
+  char *sequence;         /* The template sequence itself as input, 
+			     not trimmed, not up-cased. */
+  char *sequence_name;    /* An identifier for the sequence. */
+  char *sequence_file;    /* Another identifer for the sequence. */
+  char *trimmed_seq;      /* The included region only, _UPCASED_. */
 
-    /* Element add by T. Koressaar support lowercase masking: */
-    char *trimmed_orig_seq; /* Trimmed version of the original,
-			       mixed-case sequence. */
+  /* Element add by T. Koressaar support lowercase masking: */
+  char *trimmed_orig_seq; /* Trimmed version of the original,
+			     mixed-case sequence. */
 
-    char *upcased_seq;      /* Upper case version of sequence
-			       (_not_ trimmed). */
-    char *upcased_seq_r;    /* Upper case version of sequence, 
-			       other strand (_not_ trimmed). */
-    char *left_input;       /* A left primer to check or design around. */
-    char *right_input;      /* A right primer to check or design around. */
-    char *internal_input;   /* An internal oligo to check or design around. */
+  char *upcased_seq;      /* Upper case version of sequence
+			     (_not_ trimmed). */
+  char *upcased_seq_r;    /* Upper case version of sequence, 
+			     other strand (_not_ trimmed). */
+  char *left_input;       /* A left primer to check or design around. */
+  char *right_input;      /* A right primer to check or design around. */
+  char *internal_input;   /* An internal oligo to check or design around. */
 
-    oligo_stats left_expl;  /* Left primers statistics. */
-    oligo_stats right_expl; /* Right primers statistics. */
-    oligo_stats intl_expl;  /* Internal oligos statistics. */
-    pair_stats  pair_expl;  /* Pair statistics. */
+  /*  Output arguments. */  
+  pr_append_str error;    /* Error messages. */
+  pr_append_str warning;  /* Warning messages. */
+  oligo_stats left_expl;  /* Left primers statistics. */
+  oligo_stats right_expl; /* Right primers statistics. */
+  oligo_stats intl_expl;  /* Internal oligos statistics. */
+  pair_stats  pair_expl;  /* Pair statistics. */
+  /*  END Output arguments. */
 } seq_args;
 
 /*
