@@ -74,11 +74,11 @@ if (!(COND)) {                                           \
     abort();                                             \
 }
 
-typedef enum task { pick_pcr_primers = 0,
+typedef enum task { pick_pcr_primers               = 0,
 		    pick_pcr_primers_and_hyb_probe = 1,
-		    pick_left_only = 2,
-                    pick_right_only = 3,
-                    pick_hyb_probe_only =4,
+		    pick_left_only                 = 2,
+                    pick_right_only                = 3,
+                    pick_hyb_probe_only            = 4,
                 } task;
 
 /* pr_append_str is an append-only string ADT. */
@@ -153,13 +153,15 @@ typedef struct args_for_one_oligo_or_primer {
   double opt_tm;
   double min_tm;
   double max_tm;
-  /* double max_diff_tm; */
   double opt_gc_content;
   double max_gc;
   double min_gc;
+
+  /* FIX ME -- skewed -- also used for product Tm */
   double salt_conc;
   double divalent_conc; /* added by T.Koressaar, divalent salt concentration mmol/l */
   double dntp_conc; /* added by T.Koressaar, for considering divalent salt concentration */
+
   double dna_conc;
   int    num_ns_accepted;
   int    opt_size;
@@ -227,38 +229,28 @@ typedef struct primargs {
   /* ================================================== */
   /* Writable return argument for errors. */
   pr_append_str glob_err;
-  /* FIX ME glob_err sits astride read_boulder and libprimer3.
-     Most of the error checking in read_bouder should go into
-     libprimer3.
-     Clean this up. */
-
+  /* FIX ME (maybe) make this a return argument. */
 
   /* ================================================== */
   /* Arguments for individual oligos and/or primers */
   args_for_one_oligo_or_primer p_args;
   args_for_one_oligo_or_primer o_args;
-  /* FIXME, the tricky part will 'collapsing'
-     the old code in libprimer3.c. */
 
   /* Added by T.Koressaar. Specify the table of thermodynamic
      parameters to use (Options are ... SantaLucia 1998) */
   int tm_santalucia;  
 
-
   /* Added by T.Koressaar. Specify the salt correction formula for Tm
      calculations. (Options are ... */
   int salt_corrections; 
 
-  /* Arguments for primers that are not applicable to oligos */
-  double max_diff_tm; /* Max diff between tm of primer and tm of product (?) */
+  /* Arguments applicable to primers but not oligos */
   double max_end_stability;
   /* The maximum value allowed for the delta
    * G of disruption for the 5 3' bases of
    * a primer.
    */
-
   int    gc_clamp;              /* Required number of GCs at *3' end. */
-
 
   /* ================================================== */
   /* Arguments related to primer and/or oligo
@@ -304,78 +296,14 @@ typedef struct primargs {
   short  pair_repeat_compl;
   short  pair_compl_any;
   short  pair_compl_end;
+
+  /* Max diff between tm of primer and tm of product.
+     Cannot be calculated until product is known. */
+  double max_diff_tm; 
+
   pair_weights  pr_pair_weights;
 
 } primer_args;
-
-/* STUFF REMOVED FROM PRIMER_ARGS */
-  /* seq_lib *repeat_lib;  *//* Library of sequences to avoid. */
-  /* seq_lib *io_mishyb_library; */
-  /* oligo_weights primer_weights; */
-  /* oligo_weights io_weights; */
-  /* double opt_tm; */
-  /* double min_tm; */
-  /* double max_tm; */
-  /* double opt_gc_content; */
-  /* double max_gc; */
-  /* double min_gc; */
-  /* double salt_conc; */
-  /* double divalent_conc; */ /* added by T.Koressaar, divalent salt concentration mmol/l */
-  /* double dntp_conc; */ /* added by T.Koressaar, for considering divalent salt concentration */
-  /* double dna_conc; */
-  /*  double io_opt_tm;
-  double io_min_tm;
-  double io_max_tm;
-  double io_opt_gc_content;
-  double io_max_gc;
-  double io_min_gc;
-  double io_salt_conc; */
-  /* double io_divalent_conc; *//* added by T.Koressaar, divalent salt concentration mmol/l */
-  /* double io_dntp_conc; *//* added by T.Koressaar, for considering divalent salt concentration */
-  /* double io_dna_conc; */
-  /* int    num_ns_accepted; */
-
-
-  /* int    primer_opt_size; */
-  /* int    primer_min_size; */
-  /* int    primer_max_size; */
-
-  /*internal oligo*/
-  /* int    io_num_ns_accepted;
-  int    io_primer_opt_size;
-  int    io_primer_min_size;
-  int    io_primer_max_size; */
-
-  /* int    max_poly_x;  */    /* 
-			   * Maximum length of mononucleotide sequence in an
-			   * oligo.
-			   */
-  /* int    io_max_poly_x; */
-
-  /* int    min_quality; */      /* Minimum quality permitted for oligo sequence.*/
-  /* int    min_end_quality; */  /* Minimum quality permitted at 3' end. */ 
-  /* int    io_min_quality; */
-  /* int    io_min_end_quality;  */
-
-  /* short  max_template_mispriming; */
-
-  /* short  io_max_template_mishyb; */
-
-  /* short  repeat_compl;  */  /* 
-			  * Acceptable complementarity with repeat
-			  * sequences.
-			  */
-  /* short  io_repeat_compl; */
-
-
-  /* short  self_any;   */
-  /* short  self_end; */
-
-  /* short  io_self_any;   */
-  /* short  io_self_end; */
-
-/* END STUFF REMOVED FROM PRIMER_ARGS */
-
 
 typedef enum oligo_type { OT_LEFT = 0, OT_RIGHT = 1, OT_INTL = 2 }
   oligo_type;
@@ -626,14 +554,17 @@ typedef struct seq_args {
   char *right_input;      /* A right primer to check or design around. */
   char *internal_input;   /* An internal oligo to check or design around. */
 
-  /*  Output arguments. */  
+  /* ================================================== */
+  /*  Output (writable) arguments. */  
   pr_append_str error;    /* Error messages. */
   pr_append_str warning;  /* Warning messages. */
   oligo_stats left_expl;  /* Left primers statistics. */
   oligo_stats right_expl; /* Right primers statistics. */
   oligo_stats intl_expl;  /* Internal oligos statistics. */
   pair_stats  pair_expl;  /* Pair statistics. */
-  /*  END Output arguments. */
+  /*  END output arguments. */
+  /* ================================================== */
+
 } seq_args;
 
 /*
