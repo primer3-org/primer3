@@ -133,9 +133,9 @@ void dpal_set_default_nt_args(dpal_args *);
 
 /* Routine primarily for testing: sets CC & GG matches to 3, AA & TT 
    matches to 2. */
-void dpal_set_h_nt_matrix(dpal_args *);
+void dpal_set_h_nt_matrix(dpal_args *a);
 
-/* The argument a must be a DNA scoring matrix.  Modifies a so that it for a
+/* The argument, a, must be a DNA scoring matrix.  Modifies a so that it for a
    match between any two ambiguity codes (or between ambiguity code and base),
    e.g. B and S, the score will be the maximum of score between any base in B
    and any base in S, in the example between any pair in {C, G, T} X {C, G}.
