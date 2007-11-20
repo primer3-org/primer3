@@ -569,9 +569,9 @@ typedef struct seq_args {
 
 /*
  * A global 'state' for primer3. All formerly global variables are held here.
- * Free the memory after usage with destroy_primer3_state.
+ * Free the memory after usage with destroy_p3retval
  */
-typedef struct primer3_state {
+typedef struct p3retval {
   /* Arrays of oligo (primer) records. */
   primer_rec *f, *r, *mid;
 
@@ -583,14 +583,17 @@ typedef struct primer3_state {
 
   /* Array of best primer pairs */
   pair_array_t best_pairs;
-} primer3_state;
+
+  /* Temporary */
+  int other_error;
+} p3retval;
 
 /* Allocate and initialize a new primer3 state.  Return NULL on
    ENOMEM. */
-primer3_state *create_primer3_state(void);
+p3retval *create_p3retval(void);
 
 /* Deallocate a primer3 state */
-void destroy_primer3_state(primer3_state *);
+void destroy_p3retval(p3retval *);
 
 void destroy_seq_args(seq_args *);
 
@@ -600,7 +603,7 @@ void destroy_seq_args(seq_args *);
  * other error return 1 and set sa->error and/or pa->glob_err. On no
  * error return 0.
  */
-int choose_primers(primer3_state *p3state, primer_args *pa, seq_args *sa);
+p3retval *choose_primers(p3retval *retval,  primer_args *pa, seq_args *sa);
 
 char  *pr_oligo_sequence(const seq_args *, const primer_rec *);
 

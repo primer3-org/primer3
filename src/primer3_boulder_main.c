@@ -57,7 +57,7 @@ main(argc,argv)
   program_args prog_args;
   primer_args *global_pa;
   seq_args *sa;
-  primer3_state *p3state;
+  p3retval *retval = NULL;
 
   int input_found=0;
 
@@ -118,7 +118,7 @@ main(argc,argv)
       break;
     }
 
-    /* We need to create the p3state even if we are not going to call
+    /* We need to create the retval even if we are not going to call
        choose_primers because of user errors discovered in
        read_record().  This in turn is because (1) we count on
        boulder_print_pairs to print out the error tag and the final =,
@@ -127,17 +127,18 @@ main(argc,argv)
        continue to provide boulder IO output and
        'format_{pairs,oligos}' for more than the next couple of
        releases. */
-    if (!(p3state = create_primer3_state())) {
-      exit(-2); /* Out of memory. */
+    if (!(retval = create_p3retval())) {
+      exit(-2);
     }
 
     input_found = 1;
 
     /* Theoretically it would be possible to correct
        errorneous global input in a subsequent record, but
-       way to complicated for the payoff. */
+       way too complicated for the payoff. */
     if (NULL == sa->error.data && NULL == global_pa->glob_err.data) {
-      choose_primers(p3state, global_pa, sa);
+      retval = choose_primers(retval, global_pa, sa);
+      if (NULL == retval) exit(-2);
     }
 
     if (NULL != global_pa->glob_err.data) 
@@ -147,34 +148,34 @@ main(argc,argv)
 	|| pick_pcr_primers_and_hyb_probe == global_pa->primer_task) {
       if (prog_args.format_output) {
 	format_pairs(stdout, global_pa, sa, 
-		     &p3state->best_pairs, pr_release);
+		     &retval->best_pairs, pr_release);
       }
       else {
-	boulder_print_pairs(&prog_args, global_pa, sa, &p3state->best_pairs);
+	boulder_print_pairs(&prog_args, global_pa, sa, &retval->best_pairs);
       }
     } else if(global_pa->primer_task == pick_left_only) {
       if (prog_args.format_output) 
-	format_oligos(stdout, global_pa, sa, p3state->f,
-		      p3state->n_f, OT_LEFT, pr_release);
+	format_oligos(stdout, global_pa, sa, retval->f,
+		      retval->n_f, OT_LEFT, pr_release);
       else 
-	boulder_print_oligos(global_pa, sa, p3state->n_f, 
-			     OT_LEFT, p3state->f, p3state->r, p3state->mid);
+	boulder_print_oligos(global_pa, sa, retval->n_f, 
+			     OT_LEFT, retval->f, retval->r, retval->mid);
     } else if(global_pa->primer_task == pick_right_only) {
       if (prog_args.format_output) 
-	format_oligos(stdout, global_pa, sa, p3state->r,
-		      p3state->n_r, OT_RIGHT,
+	format_oligos(stdout, global_pa, sa, retval->r,
+		      retval->n_r, OT_RIGHT,
 		      pr_release);
       else 
-	boulder_print_oligos(global_pa, sa, p3state->n_r, OT_RIGHT,
-				p3state->f, p3state->r, p3state->mid);
+	boulder_print_oligos(global_pa, sa, retval->n_r, OT_RIGHT,
+				retval->f, retval->r, retval->mid);
     }
     else if(global_pa->primer_task == pick_hyb_probe_only) {
       if(prog_args.format_output) 
-	format_oligos(stdout, global_pa, sa, p3state->mid,
-		      p3state->n_m, OT_INTL, pr_release);
+	format_oligos(stdout, global_pa, sa, retval->mid,
+		      retval->n_m, OT_INTL, pr_release);
       else 
-	boulder_print_oligos(global_pa, sa, p3state->n_m, 
-			     OT_INTL, p3state->f, p3state->r, p3state->mid);
+	boulder_print_oligos(global_pa, sa, retval->n_m, 
+			     OT_INTL, retval->f, retval->r, retval->mid);
     }
 
     if (NULL != global_pa->glob_err.data) {
@@ -183,14 +184,12 @@ main(argc,argv)
       exit(-4);
     }
 
-    destroy_primer3_state(p3state);
+    destroy_p3retval(retval);
     destroy_seq_args(sa);
   }
 
   /* To avoid being distracted when looking for leaks: */
-  /* destroy_seq_lib(global_pa->repeat_lib); */
   destroy_seq_lib(global_pa->p_args.repeat_lib);
-  /* destroy_seq_lib(global_pa->io_mishyb_library); */
   destroy_seq_lib(global_pa->o_args.repeat_lib);
   free(global_pa);
     
