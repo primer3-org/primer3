@@ -39,7 +39,9 @@
 
 VALGRIND = 
 
-test: makeexes testtm testdpal
+test: makeexes testcore testtm testdpal
+
+testcore:
 	-echo 'Testing primer3_core'; perl p3test.pl $(VALGRIND)
 
 testdpal:
