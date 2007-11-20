@@ -586,6 +586,9 @@ typedef struct p3retval {
 
   /* Temporary */
   int other_error;
+
+
+
 } p3retval;
 
 /* Allocate and initialize a new primer3 state.  Return NULL on
@@ -599,9 +602,9 @@ void destroy_seq_args(seq_args *);
 
 /* 
  * Choose individual primers or oligos, or primer pairs, or primer
- * pairs with internal oligos. On ENOMEM return -1 and set errno. On
- * other error return 1 and set sa->error and/or pa->glob_err. On no
- * error return 0.
+ * pairs with internal oligos. On ENOMEM return NULL and set errno. 
+ * Otherwise return retval (updated).  Errors are returned in 
+ * in sa->error and/or pa->glob_err.
  */
 p3retval *choose_primers(p3retval *retval,  primer_args *pa, seq_args *sa);
 
