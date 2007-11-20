@@ -188,6 +188,7 @@ boulder_print_pairs(prog_args, pa, sa, best_pairs)
 		   rev->seq_quality);
         }
 
+	/* This is for backward compatibility */
 	if (!_PR_DEFAULT_POSITION_PENALTIES(pa)
             || !PR_START_CODON_POS_IS_NULL(sa)) {
 	  printf("PRIMER_LEFT%s_POSITION_PENALTY=%f\n", suffix,
