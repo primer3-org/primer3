@@ -50,9 +50,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* #define's */
 
+/*  FIX ME -- make sure that this change has no performance impact */
 #ifndef MAX_PRIMER_LENGTH
-#error "Define MAX_PRIMER_LENGTH in Makefile..."
-  /* to ensure that MAX_PRIMER_LENGTH <= DPAL_MAX_ALIGN. */
+#define MAX_PRIMER_LENGTH 36
 #endif
 #if (MAX_PRIMER_LENGTH > DPAL_MAX_ALIGN) 
 #error "MAX_PRIMER_LENGTH must be <= DPAL_MAX_ALIGN"
@@ -211,6 +211,8 @@ static void   check_if_lowercase_masked(const int position,
 					primer_rec *h);
 
 
+/* FIX ME -- update to GPL 2 */
+
 /* Global static variables. */
 static const char *libprimer3_copyright_str[] = {
 "",
@@ -261,6 +263,8 @@ typedef struct oligo_array {
  * External APIs
  * ==========================================================================
  */
+
+/* FIX ME -- there is no need to create #defines for these. */
 
 /* Default parameter values.  */
 #define OPT_SIZE            20
@@ -730,7 +734,7 @@ choose_primers(primer3_state *p3state,
       return 1;
 
     /* Creates files with left, right, and internal oligos. */
-    if (pa->file_flag) print_list(p3state, sa, pa);
+    if (pa->file_flag) print_list(p3state, sa, pa); /* FIX ME --Expose print_list, figure out arguments. */
 
     /* We sort _after_ printing lists to maintain the order of test output. */
     if (pa->primer_task != pick_left_only 
@@ -895,6 +899,7 @@ add_pair(const primer_pair *pair,
  * if one of lists is empty or if leftmost left primer and rightmost
  * right primer do not provide sufficient product size.
  */
+/* FIX ME --- simplify this function ? */
 static int
 make_primer_lists(primer3_state *p3state,
 		  primer_args *pa,
@@ -917,6 +922,7 @@ make_primer_lists(primer3_state *p3state,
     primer_rec h;
 
     left = right = 0;
+
     if (!PR_START_CODON_POS_IS_NULL(sa)) {
       stop_codon1 = find_stop_codon(sa->trimmed_seq, 
 				    sa->start_codon_pos, -1);
@@ -926,17 +932,24 @@ make_primer_lists(primer3_state *p3state,
       sa->stop_codon_pos += sa->incl_s;
     }
 
+    /* Set pr_min to the very smallest 
+       allowable product size. */
     pr_min = INT_MAX;
-    for(i=0;i<pa->num_intervals;i++)if(pa->pr_min[i]<pr_min)
-       pr_min= pa->pr_min[i];
+    for (i=0; i < pa->num_intervals; i++) 
+      if(pa->pr_min[i] < pr_min)
+	pr_min = pa->pr_min[i];
 
     PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
+
     tar_r = 0;
     tar_l = n;
-    for(i=0;i<sa->num_targets;i++) {
-	if(sa->tar[i][0]>tar_r)tar_r = sa->tar[i][0];
-	if(sa->tar[i][0]+sa->tar[i][1]-1<tar_l)tar_l=
-	    sa->tar[i][0]+sa->tar[i][1]-1;
+    for (i=0; i < sa->num_targets; i++) {
+
+	if (sa->tar[i][0] > tar_r)
+	  tar_r = sa->tar[i][0];
+
+	if (sa->tar[i][0] + sa->tar[i][1] - 1 < tar_l)
+	  tar_l = sa->tar[i][0] + sa->tar[i][1] - 1;
     }
 
     if (_PR_DEFAULT_POSITION_PENALTIES(pa)) {
@@ -947,6 +960,9 @@ make_primer_lists(primer3_state *p3state,
       tar_l = 0;
     }
 
+    /* We use some global information to restrict the region
+       of the input sequence in which we generate candidate
+       oligos. */
     if (pa->primer_task == pick_left_only)
       f_b = n - 1;
     else if (tar_r - 1 < n - pr_min + pa->p_args.max_size - 1 
@@ -954,11 +970,15 @@ make_primer_lists(primer3_state *p3state,
       f_b=tar_r - 1;
     else 
       f_b = n - pr_min + pa->p_args.max_size-1;
-    k = 0;
-    if(pa->primer_task != pick_right_only && pa->primer_task != pick_hyb_probe_only){
-    left=n; right=0;
 
-    for (i = f_b; i >= pa->p_args.min_size - 1; i--) {
+    k = 0;
+
+    if (pa->primer_task != pick_right_only 
+	&& pa->primer_task != pick_hyb_probe_only) {
+      /* We will need a left primer. */
+      left=n; right=0;
+
+      for (i = f_b; i >= pa->p_args.min_size - 1; i--) {
 	s[0]='\0';
 	for (j = pa->p_args.min_size; j <= pa->p_args.max_size; j++) {
 	    if (i-j > n-pr_min-1 && pick_left_only != pa->primer_task) continue;
@@ -972,7 +992,7 @@ make_primer_lists(primer3_state *p3state,
 		h.start=i-j+1;
 		h.length=j;
 		h.repeat_sim.score = NULL;
-		_pr_substr(sa->trimmed_seq,h.start,h.length,s);
+		_pr_substr(sa->trimmed_seq, h.start, h.length, s);
 
 		/* If the left_input oligo is specified and
 		   this is not it, skip this one. */
@@ -1016,8 +1036,10 @@ make_primer_lists(primer3_state *p3state,
 	    }
 	    else break;
 	}
-    }
-    }
+      }  /*  for (i = f_b; .... */
+    }  /* if (pa->primer_task != pick_right_only ...  (left primer) */
+
+
     p3state->n_f = k;
 
     if (pa->primer_task == pick_right_only)
@@ -1027,11 +1049,15 @@ make_primer_lists(primer3_state *p3state,
       r_b = tar_l+1;
     else 
       r_b = pr_min - pa->p_args.max_size;
+
     k = 0;
+
+
     if(pa->primer_task != pick_left_only 
        && pa->primer_task != pick_hyb_probe_only) {
+      /* We will need a right primer */
 
-    for(i=r_b; i<=n-pa->p_args.min_size; i++) {
+      for (i=r_b; i<=n-pa->p_args.min_size; i++) {
 	s[0]='\0';
 	for(j = pa->p_args.min_size; j <= pa->p_args.max_size; j++) {
 	    if (i+j<pr_min && pa->primer_task != pick_right_only) continue;
@@ -1073,12 +1099,15 @@ make_primer_lists(primer3_state *p3state,
 	    }
 	    else break;
 	}
-    }
-    }
+      } /*  for (i = r_b; .... */
+
+    }  /* if(pa->primer_task != pick_left_only ... (right primer) */
+
     p3state->n_r=k;
 
     /* 
-     * Return 1 if one of lists is empty or if leftmost left primer and
+     * Return 1 if either the left primer list or the right primer
+     * list is empty or if leftmost left primer and
      * rightmost right primer do not provide sufficient product size.
      */
     sa->left_expl.ok = p3state->n_f;
@@ -1098,7 +1127,7 @@ make_primer_lists(primer3_state *p3state,
 	sa->pair_expl.considered = 1;
 	return 1;
     } else return 0;
-}
+} /* make_primer_lists */
 
 /* 
  * Make complete list of acceptable internal oligos in p3state->mid.
@@ -1119,31 +1148,36 @@ make_internal_oligo_list(p3state, pa, sa, dpal_arg_to_use)
 
   if (NULL == p3state->mid) {
     p3state->mid_len = INITIAL_LIST_LEN;
-    p3state->mid = pr_safe_malloc(sizeof(*p3state->mid) * p3state->mid_len);
+    p3state->mid 
+      = pr_safe_malloc(sizeof(*p3state->mid) * p3state->mid_len);
   }
 
   n = strlen(sa->trimmed_seq);
   k = 0;
   for(i = n - 1; i >= pa->o_args.min_size-1; i--) {
     s[0] = '\0';
-    for(j = pa->o_args.min_size; j <=pa->o_args.max_size; j++) {
+    for(j = pa->o_args.min_size; j <= pa->o_args.max_size; j++) {
       if(i-j < -1) break;
       if (k >= p3state->mid_len) {
 	p3state->mid_len += (p3state->mid_len >> 1);
-	p3state->mid = pr_safe_realloc(p3state->mid, p3state->mid_len * sizeof(*p3state->mid));
+	p3state->mid 
+	  = pr_safe_realloc(p3state->mid, 
+			    p3state->mid_len * sizeof(*p3state->mid));
       }
       h.start = i - j +1;
       h.length = j;
       h.repeat_sim.score = NULL;
-      _pr_substr(sa->trimmed_seq, h.start, h.length,s);
+      _pr_substr(sa->trimmed_seq, h.start, h.length, s);
 
       if (sa->internal_input && strcmp_nocase(sa->internal_input, s))
 	continue;
       h.must_use = (sa->internal_input && pa->pick_anyway);
 
       h.repeat_sim.score = NULL;
+
       oligo_param(pa, &h, OT_INTL, dpal_arg_to_use,
 		  sa, &sa->intl_expl);
+
       sa->intl_expl.considered++;
       if (OK_OR_MUST_USE(&h)) {
 	h.quality = p_obj_fn(pa, &h, 2);
@@ -1161,9 +1195,9 @@ make_internal_oligo_list(p3state, pa, sa, dpal_arg_to_use)
   }
   p3state->n_m = k;
   sa->intl_expl.ok = p3state->n_m;
-  if (p3state->n_m==0) return 1;
+  if (p3state->n_m == 0) return 1;
   else return 0;
-}
+} /* make_internal_oligo_list */
 
 /*
  * Compute various characteristics of the oligo, and determine
@@ -1476,7 +1510,7 @@ oligo_param(pa, h, l, dpal_arg_to_use, sa, stats)
     }
 
     if (OV_UNINITIALIZED == h->ok) h->ok = OV_OK;
-}
+} /* oligo_param */
 #undef OUTSIDE_START_WT
 #undef INSIDE_START_WT
 #undef INSIDE_STOP_WT
@@ -1772,12 +1806,6 @@ print_oligo(FILE *fh,
 	    oligo_type type, 
 	    int first_base_index, 
 	    int print_lib_sim)
-     /*     FILE *fh;
-    const seq_args *sa;
-    int index;
-    const primer_rec *h;
-    oligo_type type;
-    int first_base_index, print_lib_sim; */
 {
     char *p =  /* WARNING, *p points to static storage that
 		  is overwritten on next call to pr_oligo_sequence
