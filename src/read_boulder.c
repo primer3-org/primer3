@@ -126,7 +126,10 @@ extern double strtod();
  * See read_boulder.h for description.
  */
 int
-read_record(const program_args *prog_args, primer_args *pa, seq_args *sa)
+read_record(const program_args *prog_args, 
+	    primer_args *pa, 
+	    seq_args *sa, 
+	    pr_append_str *glob_err)
 { 
   int line_len; /* seq_len; n_quality; */
     int tag_len, datum_len;
@@ -137,11 +140,11 @@ read_record(const program_args *prog_args, primer_args *pa, seq_args *sa)
     pr_append_str *parse_err;
     char *repeat_file_path = NULL, *int_repeat_file_path = NULL;
 
-    /* possible future fix:  can we get away from using pa->glob_err and
+    /* possible future fix:  can we get away from using
        sa->error in read_record(); only worth doing if
        we support boulder input beyond the next few releases, or
-       if we pull glob_err and err out of their structs.  */
-    memset(&pa->glob_err, 0, sizeof(pa->glob_err));
+       if we pull error out of sa's defn.  */
+
     /* FIX ME, provide initialization function for pa and sa structs.*/
     memset(&sa->error, 0, sizeof(sa->error));
 
@@ -161,8 +164,8 @@ read_record(const program_args *prog_args, primer_args *pa, seq_args *sa)
 	     * The input line is illegal, we still will read to the end
 	     * of the record.
 	     */
-	    pr_append_new_chunk(&pa->glob_err, "Input line with no '=': ");
-	    pr_append(&pa->glob_err, s);
+	    pr_append_new_chunk(glob_err, "Input line with no '=': ");
+	    pr_append(glob_err, s);
 	} else {	
 	    tag_len = n - s;
 	    datum = n + 1;
@@ -216,7 +219,7 @@ read_record(const program_args *prog_args, primer_args *pa, seq_args *sa)
 	     * "Global" Arguments (those that persist between boulder
 	     * records).
 	     */
-	    parse_err = &pa->glob_err;
+	    parse_err = glob_err;
 	    if (COMPARE("PRIMER_PRODUCT_SIZE_RANGE")
 		|| COMPARE("PRIMER_DEFAULT_PRODUCT")) {
 		parse_product_size("PRIMER_PRODUCT_SIZE_RANGE", datum, pa,
@@ -326,7 +329,7 @@ read_record(const program_args *prog_args, primer_args *pa, seq_args *sa)
 	    COMPARE_FLOAT("PRIMER_OUTSIDE_PENALTY", pa->outside_penalty);
             if (COMPARE("PRIMER_MISPRIMING_LIBRARY")) {
 		if (repeat_file_path != NULL) {
-		    pr_append_new_chunk(&pa->glob_err,
+		    pr_append_new_chunk(glob_err,
 					"Duplicate PRIMER_MISPRIMING_LIBRARY tag");
 		    free(repeat_file_path);
 		    repeat_file_path = NULL;
@@ -338,7 +341,7 @@ read_record(const program_args *prog_args, primer_args *pa, seq_args *sa)
 	    }
             if (COMPARE("PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY")) {
 		if (int_repeat_file_path != NULL) {
-		    pr_append_new_chunk(&pa->glob_err,
+		    pr_append_new_chunk(glob_err,
 					"Duplicate PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY tag");
 		    free(int_repeat_file_path);
 		    int_repeat_file_path = NULL;
@@ -416,15 +419,15 @@ read_record(const program_args *prog_args, primer_args *pa, seq_args *sa)
 			  pa->pr_pair_weights.template_mispriming);
 	}
 	if (1 == prog_args->strict_tags) {
-	    pr_append_new_chunk(&pa->glob_err, "Unrecognized tag: ");
-	    pr_append(&pa->glob_err, s);
+	    pr_append_new_chunk(glob_err, "Unrecognized tag: ");
+	    pr_append(glob_err, s);
 	    fprintf(stderr, "Unrecognized tag: %s\n", s);
 	}
     }  /* while ((s = read_line(stdin)) != NULL && strcmp(s,"=")) { */
 
     if (NULL == s) { /* End of file. */
 	if (data_found) {
-	    pr_append_new_chunk(&pa->glob_err, 
+	    pr_append_new_chunk(glob_err, 
 				"Final record not terminated by '='");
 	    return 1;
 	} else return 0;
@@ -441,7 +444,7 @@ read_record(const program_args *prog_args, primer_args *pa, seq_args *sa)
 	    pa->primer_task = pick_right_only;
           else if (!strcmp_nocase(task_tmp, "pick_hyb_probe_only"))
 	    pa->primer_task = pick_hyb_probe_only;
-          else   pr_append_new_chunk(&pa->glob_err,
+          else   pr_append_new_chunk(glob_err,
 				     "Unrecognized PRIMER_TASK");
 	  free(task_tmp);
     }
@@ -462,7 +465,7 @@ read_record(const program_args *prog_args, primer_args *pa, seq_args *sa)
 	  = read_and_create_seq_lib(repeat_file_path, 
 				    "mispriming library");
 	if(pa->p_args.repeat_lib->error.data != NULL) {
-	  pr_append_new_chunk(&pa->glob_err, pa->p_args.repeat_lib->error.data);
+	  pr_append_new_chunk(glob_err, pa->p_args.repeat_lib->error.data);
 	}
       }
       free(repeat_file_path);
@@ -480,7 +483,7 @@ read_record(const program_args *prog_args, primer_args *pa, seq_args *sa)
 	  read_and_create_seq_lib(int_repeat_file_path,
 				  "internal oligo mishyb library");
 	if(pa->o_args.repeat_lib->error.data != NULL) {
-	  pr_append_new_chunk(&pa->glob_err, pa->o_args.repeat_lib->error.data);
+	  pr_append_new_chunk(glob_err, pa->o_args.repeat_lib->error.data);
 	}
       }
       free(int_repeat_file_path);
@@ -494,11 +497,11 @@ read_record(const program_args *prog_args, primer_args *pa, seq_args *sa)
        (pa->primer_task == pick_left_only || 
 	pa->primer_task == pick_right_only ||
 	pa->primer_task == pick_hyb_probe_only)) 
-	  pr_append_new_chunk(&pa->glob_err, 
+	  pr_append_new_chunk(glob_err, 
 	    "Contradiction in primer_task definition");
-    else if(pick_internal_oligo == 1) 
+    else if (pick_internal_oligo == 1) 
 	  pa->primer_task = 1;
-    else if(pick_internal_oligo == 0)pa->primer_task = 0;
+    else if (pick_internal_oligo == 0) pa->primer_task = 0;
 
     return 1;
 }
@@ -507,41 +510,6 @@ read_record(const program_args *prog_args, primer_args *pa, seq_args *sa)
 #undef COMPARE_INT
 #undef COMPARE_FLOAT
 #undef COMPARE_INTERVAL_LIST
-
-/* Stuff removed from read_record() */
-    /* FIX ME ---- this definitely belongs in libprimer3 */
-
-    /* if (NULL != sa->sequence) { */
-      /* FIX ME .. this belongs inside libprimer3. */
-      /* seq_len = strlen(sa->sequence);
-      if (sa->incl_l == -1) {
-	sa->incl_l = seq_len;
-	sa->incl_s = pa->first_base_index;
-	} */
-      /* Adjust base indexes in sa. */
-      /* sa->incl_s -= pa->first_base_index;
-      sa->start_codon_pos -= pa->first_base_index;
-      adjust_base_index_interval_list(sa->tar, sa->num_targets,
-				      pa->first_base_index);
-      adjust_base_index_interval_list(sa->excl, sa->num_excl,
-				      pa->first_base_index);
-      adjust_base_index_interval_list(sa->excl_internal,
-				      sa->num_internal_excl,
-				      pa->first_base_index);
-      */
-    /* } */
-
-
-/*
-static void
-adjust_base_index_interval_list(intervals, num, first_index)
-    interval_array_t intervals;
-    int num, first_index;
-{
-    int i;
-    for (i = 0; i < num; i++) intervals[i][0] -= first_index;
-}
-*/
 
 /* 
  * Read a line of any length from file.  Return NULL on end of file,

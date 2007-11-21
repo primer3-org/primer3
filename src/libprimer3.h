@@ -228,8 +228,8 @@ typedef struct primer_args {
 
   /* ================================================== */
   /* Writable return argument for errors. */
-  pr_append_str glob_err;
-  /* FIX ME (maybe) make this a return argument. */
+  /* pr_append_str glob_err; */
+  /* This is now part of the return value from choose_primers. */
 
   /* ================================================== */
   /* Arguments for individual oligos and/or primers */
@@ -614,8 +614,13 @@ void  pr_set_default_global_args(primer_args *);
 
 char  *pr_gather_warnings(const seq_args *, const primer_args *);
 
-void  pr_append(pr_append_str *, const char *);
-void  pr_append_new_chunk(pr_append_str *, const char *);
+
+/* Return NULL on ENOMEM */
+pr_append_str *create_pr_append_str();
+void          destroy_pr_append_str(pr_append_str *);
+void          pr_append(pr_append_str *, const char *);
+void          pr_append_new_chunk(pr_append_str *, const char *);
+
 
 void  pr_print_pair_explain(FILE *, const seq_args *);
 

@@ -58,6 +58,7 @@ main(argc,argv)
   program_args prog_args;
   primer_args *global_pa;
   seq_args *sa;
+  pr_append_str *glob_err = NULL;
   p3retval *retval = NULL;
 
   int input_found=0;
@@ -113,21 +114,27 @@ main(argc,argv)
       exit(-2); /* Out of memory. */
     }
 
-    if (read_record(&prog_args, global_pa, sa) <= 0) {
+    glob_err = create_pr_append_str();
+    if (read_record(&prog_args, global_pa, sa, glob_err) <= 0) {
       free(sa);  /* free(s) is ok, because a return of 0 
 		    indicates end-of-file, in which
 		    case there are no pointers from sa .*/
+      destroy_pr_append_str(glob_err);
       break;
     }
-    if (global_pa->glob_err.data != NULL) {
-      printf("PRIMER_ERROR=%s\n=\n", global_pa->glob_err.data);
-      fprintf(stderr, "%s: %s\n", pr_program_name, global_pa->glob_err.data);
+    if (glob_err->data != NULL) {
+      printf("PRIMER_ERROR=%s\n=\n", glob_err->data);
+      fprintf(stderr, "%s: %s\n", pr_program_name, glob_err->data);
+      destroy_pr_append_str(glob_err);
       exit(-4);
     }
 
     input_found = 1;
 
-      /* ?? We need to create the retval even if we are not going to
+      /* ?? FIX ME -- Ifwe move the create_p3reval() call
+	 inside the if (NULL == sa->error.data) ...
+	 We get problems.  Why?
+	 We need to create the retval even if we are not going to
        call choose_primers because of user errors discovered in
        read_record().  This in turn is because (1) we count on
        boulder_print_pairs to print out the error tag and the final =,
@@ -140,7 +147,7 @@ main(argc,argv)
       exit(-2);
     }
 
-    if (NULL == sa->error.data /*  && NULL == global_pa->glob_err.data */ ) {
+    if (NULL == sa->error.data) {
       retval = choose_primers(retval, global_pa, sa);
       if (NULL == retval) exit(-2);
       if (NULL!= retval && NULL != retval->glob_err.data) 
@@ -190,6 +197,7 @@ main(argc,argv)
 
     destroy_p3retval(retval); /* This works fine even if retval is NULL */
     destroy_seq_args(sa);
+    destroy_pr_append_str(glob_err);
   }
 
   /* To avoid being distracted when looking for leaks: */
