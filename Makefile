@@ -154,7 +154,7 @@ ntdpal_main.o: ntdpal_main.c dpal.h
 
 oligotm.o: oligotm.c oligotm.h
 
-primer3_boulder_main.o: primer3_boulder_main.c libprimer3.h dpal.h oligotm.h format_output.h print_boulder.h
+primer3_boulder_main.o: primer3_boulder_main.c libprimer3.h dpal.h oligotm.h format_output.h print_boulder.h read_boulder.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) primer3_boulder_main.c
 
 primer_test: test

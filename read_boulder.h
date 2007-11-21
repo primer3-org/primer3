@@ -45,8 +45,6 @@ typedef struct program_args {
     char strict_tags;
 } program_args;
 
-
-
 /* 
  * Read data from stdin until a "=" line occurs.  Assign parameter
  * values for primer picking to pa and sa. Perform initial data
@@ -54,7 +52,10 @@ typedef struct program_args {
  * is not NULL or sa->glob_err is not NULL then the data is erroneous
  * and should not be processed. Echo the input lines to stdout.
  */
-int read_record(const program_args *, primer_args *pa, seq_args *sa);
+int read_record(const program_args *, 
+		primer_args *pa, 
+		seq_args *sa,
+		pr_append_str *glob_args);
 
 #endif
 
