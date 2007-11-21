@@ -4,19 +4,23 @@ Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
+    This file is part of primer3 and the libprimer3 library.
 
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * Neither the names of the copyright holders nor contributors may
-be used to endorse or promote products derived from this software
-without specific prior written permission.
+    Primer3 and the libprimer3 library are free software;
+    you can redistribute them and/or modify them under the terms
+    of the GNU General Public License as published by the Free
+    Software Foundation; either version 2 of the License, or (at
+    your option) any later version.
+
+    This software is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this software (file gpl-2.0.txt in the source
+    distribution); if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -32,8 +36,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include <signal.h>
-#include <string.h> /* strlen, memset, strcmp */
-#include <stdlib.h> /* free */
+#include <string.h> /* strlen(), memset(), strcmp() */
+#include <stdlib.h> /* free() */
 #include "format_output.h"
 #include "libprimer3.h"
 #include "read_boulder.h"
@@ -42,12 +46,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 static void   print_usage();
 static void   sig_handler(int);
 
-/* FIX ME -- deal with program name. */
-
 /* Other global variables. */
 static const char * pr_release = "primer3 release 1.1.2";
 static const char *pr_program_name;
-static int pr_program_name_len;
 
 int
 main(argc,argv)
@@ -62,7 +63,8 @@ main(argc,argv)
   int input_found=0;
 
   pr_program_name = argv[0];
-  pr_program_name_len = strlen(argv[0]);
+  p3_set_program_name(pr_program_name);
+
   /* 
    * We set up some signal handlers in case someone starts up the program
    * from the command line, wonders why nothing is happening, and then kills
@@ -73,7 +75,7 @@ main(argc,argv)
 
   /* 
    * We allocate the following structures on the heap rather than on the
-   * stack in order to take advantage of testcenter memory access checking
+   * stack in order to take advantage of memory access checking
    * during testing.
    */
   if (!(global_pa = malloc(sizeof(*global_pa)))) {
@@ -89,8 +91,8 @@ main(argc,argv)
       prog_args.format_output = 1;
     else if (!strcmp(*argv, "-2x_compat")) {
       /* prog_args.twox_compat = 1; */
-      pr_append_new_chunk(&global_pa->glob_err, 
-			  "flag -2x_compat is no longer supported");
+      printf( "PRIMER_ERROR=flag -2x_compat is no longer supported\n=\n");
+      exit (-1);
     } else if (!strcmp(*argv, "-strict_tags"))
       prog_args.strict_tags = 1;
     else  {
@@ -117,9 +119,16 @@ main(argc,argv)
 		    case there are no pointers from sa .*/
       break;
     }
+    if (global_pa->glob_err.data != NULL) {
+      printf("PRIMER_ERROR=%s\n=\n", global_pa->glob_err.data);
+      fprintf(stderr, "%s: %s\n", pr_program_name, global_pa->glob_err.data);
+      exit(-4);
+    }
 
-    /* We need to create the retval even if we are not going to call
-       choose_primers because of user errors discovered in
+    input_found = 1;
+
+      /* ?? We need to create the retval even if we are not going to
+       call choose_primers because of user errors discovered in
        read_record().  This in turn is because (1) we count on
        boulder_print_pairs to print out the error tag and the final =,
        and (2) we count on format_output to print the error when
@@ -131,18 +140,12 @@ main(argc,argv)
       exit(-2);
     }
 
-    input_found = 1;
-
-    /* Theoretically it would be possible to correct
-       errorneous global input in a subsequent record, but
-       way too complicated for the payoff. */
-    if (NULL == sa->error.data && NULL == global_pa->glob_err.data) {
+    if (NULL == sa->error.data /*  && NULL == global_pa->glob_err.data */ ) {
       retval = choose_primers(retval, global_pa, sa);
       if (NULL == retval) exit(-2);
+      if (NULL!= retval && NULL != retval->glob_err.data) 
+	pr_append_new_chunk(&sa->error, retval->glob_err.data);
     }
-
-    if (NULL != global_pa->glob_err.data) 
-      pr_append_new_chunk(&sa->error, global_pa->glob_err.data);
 
     if (pick_pcr_primers == global_pa->primer_task
 	|| pick_pcr_primers_and_hyb_probe == global_pa->primer_task) {
@@ -178,13 +181,14 @@ main(argc,argv)
 			     OT_INTL, retval->f, retval->r, retval->mid);
     }
 
-    if (NULL != global_pa->glob_err.data) {
-      fprintf(stderr, "%s: %s\n", pr_program_name, global_pa->glob_err.data);
-      free(global_pa->glob_err.data);
-      exit(-4);
+    if (NULL != retval) {
+      if (NULL != retval->glob_err.data) {
+	fprintf(stderr, "%s: %s\n", pr_program_name, retval->glob_err.data);
+	exit(-4);
+      }
     }
 
-    destroy_p3retval(retval);
+    destroy_p3retval(retval); /* This works fine even if retval is NULL */
     destroy_seq_args(sa);
   }
 

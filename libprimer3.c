@@ -250,8 +250,7 @@ NULL
 };
 
 /* Other global variables. */
-const char *pr_program_name;
-int pr_program_name_len;
+static const char *pr_program_name = "probably primer3_core";
 
 typedef struct oligo_array {
   int len;
@@ -454,6 +453,11 @@ overlap the 3'-end of primer.
 #define PAIR_WT_PRODUCT_SIZE_GT     0
 
 void
+p3_set_program_name(const char *pname) {
+  pr_program_name = pname;
+}
+
+void
 pr_set_default_global_args(a)
     primer_args *a;
 {
@@ -604,7 +608,8 @@ create_p3retval(void)
   state->best_pairs.storage_size = 0;
   state->best_pairs.pairs = NULL;
   state->best_pairs.num_pairs = 0;
-  state->other_error = 1;
+  state->glob_err.data = NULL;
+  state->glob_err.storage_size = 0;
 
   return state;
 }
@@ -626,6 +631,8 @@ destroy_p3retval(p3retval *state)
 	free(state->mid);
     if (state->best_pairs.storage_size != 0 && state->best_pairs.pairs)
 	free(state->best_pairs.pairs);
+
+    if (NULL !=  state->glob_err.data) free(state->glob_err.data);
 
     free(state);
 }
@@ -722,11 +729,11 @@ choose_primers(p3retval *retval,
 
     }
 
-    PR_ASSERT(NULL != sa);
+    PR_ASSERT(NULL != pa);
     PR_ASSERT(NULL != sa);
     
     if (_pr_data_control(pa, sa) !=0 ) {
-      retval->other_error = 1; 
+      retval->glob_err = pa->glob_err;
       return retval;
     }
 
@@ -734,7 +741,7 @@ choose_primers(p3retval *retval,
       dpal_arg_to_use = create_dpal_arg_holder();
 
     if (make_primer_lists(retval, pa, sa, dpal_arg_to_use) != 0) {
-      retval->other_error = 1; 
+      retval->glob_err = pa->glob_err;
       return retval;
     }
 
@@ -743,7 +750,7 @@ choose_primers(p3retval *retval,
         && make_internal_oligo_list(retval, pa, sa,
 				    dpal_arg_to_use) != 0) {
 
-      retval->other_error = 1; 
+      retval->glob_err = pa->glob_err;
       return retval;
     }
 
@@ -814,6 +821,7 @@ choose_primers(p3retval *retval,
     }
 
     if (0 != a_pair_array.storage_size) free(a_pair_array.pairs);
+    retval->glob_err = pa->glob_err;
     return retval;
 }
 
@@ -2507,6 +2515,10 @@ pr_append(x, s)
     const char *s;
 {
     int xlen, slen;
+
+    PR_ASSERT(NULL != s);
+    PR_ASSERT(NULL != x);
+
     if (NULL == x->data) {
 	x->storage_size = 24;
 	x->data = pr_safe_malloc(x->storage_size);
@@ -2526,6 +2538,8 @@ pr_append_new_chunk(x, s)
     pr_append_str *x;
     const char *s;
 {
+  PR_ASSERT(NULL != x)
+  PR_ASSERT(NULL != s)
   pr_append_w_sep(x, "; ", s);
 }
 
@@ -2535,6 +2549,9 @@ pr_append_w_sep(x, sep, s)
     const char *sep;
     const char *s;
 {
+  PR_ASSERT(NULL != x)
+  PR_ASSERT(NULL != s)
+  PR_ASSERT(NULL != sep)
     if (pr_is_empty(x))
 	pr_append(x, s);
     else {
