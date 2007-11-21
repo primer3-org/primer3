@@ -241,7 +241,7 @@ sub main() {
 		$t=~ s/$regex//g;
 		$r = perldiff $list_tmp."/".$t, $list_last."/".$t;
 	    }
-	    print $test. "_list_files ";
+	    print $test. "_list_files...";
 	    if ($r == 0) {
 		print "[OK]\n";
 	    } 
