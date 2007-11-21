@@ -186,7 +186,7 @@ typedef struct args_for_one_oligo_or_primer {
 } args_for_one_oligo_or_primer;
 
 
-typedef struct primargs {
+typedef struct primer_args {
   /* ================================================== */
   /* Arguments that control behavior of choose_primers() */
   task   primer_task;          /* 2 if left primer only, 3 if right primer only,
@@ -344,7 +344,7 @@ typedef struct rep_sim {
                     */
 } rep_sim;
 
-typedef struct primrec {
+typedef struct primer_rec {
 
   rep_sim repeat_sim;
                    /* Name of the sequence from given file in fasta
@@ -401,7 +401,7 @@ typedef struct primrec {
  * The structure for a pair of primers. (So that we can have a function 
  * that returns a pair of primers.)
  */
-typedef struct primpair {
+typedef struct primer_pair {
   double pair_quality;
   double compl_measure; /* 
 			 * A measure of self-complementarity of left and right
@@ -568,8 +568,9 @@ typedef struct seq_args {
 } seq_args;
 
 /*
- * A global 'state' for primer3. All formerly global variables are held here.
- * Free the memory after usage with destroy_p3retval
+ * The retrun value for for primer3. 
+ * Create this with create_p3reval().
+ * Free the memory after usage with destroy_p3retval().
  */
 typedef struct p3retval {
   /* Arrays of oligo (primer) records. */
@@ -584,10 +585,7 @@ typedef struct p3retval {
   /* Array of best primer pairs */
   pair_array_t best_pairs;
 
-  /* Temporary */
-  int other_error;
-
-
+  pr_append_str glob_err;
 
 } p3retval;
 
@@ -650,5 +648,8 @@ seq_lib_num_seq(const seq_lib* lib);
 
 char *
 seq_lib_warning_data(const seq_lib *lib);
+
+void
+p3_set_program_name(const char *name);
 
 #endif
