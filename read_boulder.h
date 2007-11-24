@@ -49,13 +49,13 @@ typedef struct program_args {
  * Read data from stdin until a "=" line occurs.  Assign parameter
  * values for primer picking to pa and sa. Perform initial data
  * checking. Return 0 for end of data and 1 otherwise.  If sa->error
- * is not NULL or sa->glob_err is not NULL then the data is erroneous
+ * is not NULL or fatal_err is not NULL then the data is erroneous
  * and should not be processed. Echo the input lines to stdout.
  */
 int read_record(const program_args *, 
 		primer_args *pa, 
 		seq_args *sa,
-		pr_append_str *glob_args);
+		pr_append_str *fatal_err);
 
 #endif
 
