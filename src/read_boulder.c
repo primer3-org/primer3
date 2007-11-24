@@ -129,7 +129,8 @@ int
 read_record(const program_args *prog_args, 
 	    primer_args *pa, 
 	    seq_args *sa, 
-	    pr_append_str *glob_err)
+	    pr_append_str *glob_err  /* Really should be called fatal_err */
+)
 { 
   int line_len; /* seq_len; n_quality; */
     int tag_len, datum_len;
@@ -138,6 +139,7 @@ read_record(const program_args *prog_args,
     char *s, *n, *datum, *task_tmp = NULL;
     const char *p;
     pr_append_str *parse_err;
+    pr_append_str *non_fatal_err;
     char *repeat_file_path = NULL, *int_repeat_file_path = NULL;
 
     /* possible future fix:  can we get away from using
@@ -154,6 +156,7 @@ read_record(const program_args *prog_args,
     sa->incl_l = -1; /* Indicates logical NULL. */
     sa->n_quality = 0;
     sa->quality = NULL;
+    non_fatal_err = &sa->error;
 
     while ((s = read_line(stdin)) != NULL && strcmp(s,"=")) {
 	data_found = 1;
@@ -161,7 +164,8 @@ read_record(const program_args *prog_args,
 	line_len = strlen(s);
 	if ((n=strchr(s,'=')) == NULL) {
 	    /* 
-	     * The input line is illegal, we still will read to the end
+	     * The input line is illegal because it has no
+	     * "=" in it, but we still will read to the end
 	     * of the record.
 	     */
 	    pr_append_new_chunk(glob_err, "Input line with no '=': ");
@@ -172,13 +176,13 @@ read_record(const program_args *prog_args,
 	    datum_len = line_len - tag_len - 1;
 	    
 	    /* 
-	     * "Sequence" (i.e. Per-Record) Arguments".
+	     * Process "Sequence" (i.e. Per-Record) Arguments".
 	     */
-	    parse_err = &sa->error;
+	    parse_err = non_fatal_err;
 	    COMPARE_AND_MALLOC("SEQUENCE", sa->sequence);
 	    if (COMPARE("PRIMER_SEQUENCE_QUALITY")) {
 	       if ((sa->n_quality = parse_seq_quality(datum, &sa->quality)) == 0) {
-		   pr_append_new_chunk(&sa->error, 
+		 pr_append_new_chunk(parse_err, /*&sa->error, */ 
 				     "Error in sequence quality data");
 		   continue;
                }
@@ -216,10 +220,10 @@ read_record(const program_args *prog_args,
 	    COMPARE_INT("PRIMER_START_CODON_POSITION", sa->start_codon_pos);
 
 	    /* 
-	     * "Global" Arguments (those that persist between boulder
+	     * Process "Global" Arguments (those that persist between boulder
 	     * records).
 	     */
-	    parse_err = glob_err;
+	    parse_err = glob_err;  /* These errors are considered fatal. */
 	    if (COMPARE("PRIMER_PRODUCT_SIZE_RANGE")
 		|| COMPARE("PRIMER_DEFAULT_PRODUCT")) {
 		parse_product_size("PRIMER_PRODUCT_SIZE_RANGE", datum, pa,
