@@ -335,15 +335,18 @@ The default is 0 only for backward compatibility.
 #define SALT_CONC          50.0
 
 /*
- DIVALENT_CONC and DNTP_CONC are both needed for enabling to use divalent cations for 
- calculation of melting temperature of short and long oligos. 
- The formula for converting the divalent cations to monovalent cations is in the paper 
- [Ahsen von N, Wittwer CT, Schutz E (2001) "Oligonucleotide Melting Temperatures under PCR Conditions:
- Nearest-Neighbor Corrections for Mg^2+, Deoxynucleotide Triphosphate, and Dimethyl Sulfoxide Concentrations
- with Comparision to Alternative Empirical Formulas", Clinical Chemistry 47:1956-61 
- http://www.clinchem.org/cgi/content/full/47/11/1956]
- The default is 0. (New in v. 1.1.0, added by Maido Remm and Triinu Koressaar.)
+ DIVALENT_CONC and DNTP_CONC are both needed for enabling use of
+ divalent cations for calculation of melting temperature of short and
+ long oligos.  The formula for converting the divalent cations to
+ monovalent cations is in the paper [Ahsen von N, Wittwer CT, Schutz E
+ (2001) "Oligonucleotide Melting Temperatures under PCR Conditions:
+ Nearest-Neighbor Corrections for Mg^2+, Deoxynucleotide Triphosphate,
+ and Dimethyl Sulfoxide Concentrations with Comparision to Alternative
+ Empirical Formulas", Clinical Chemistry 47:1956-61
+ http://www.clinchem.org/cgi/content/full/47/11/1956] The default
+ is  0. (New in v. 1.1.0, added by Maido Remm and Triinu Koressaar.)
  */
+
 #define DIVALENT_CONC       0.0
 #define DNTP_CONC           0.0
 #define DNA_CONC           50.0
@@ -756,7 +759,8 @@ choose_primers(p3retval *retval,
     }
 
     /* Creates files with left, right, and internal oligos. */
-    if (pa->file_flag) print_list(retval, sa, pa); /* FIX ME --Expose print_list, figure out arguments. */
+    if (pa->file_flag) 
+      print_list(retval, sa, pa); /* FIX ME --Expose print_list, figure out arguments; make sa read only. */
 
     /* We sort _after_ printing lists to maintain the order of test output. */
     if (pa->primer_task != pick_left_only 
@@ -3611,7 +3615,7 @@ _pr_data_control(/* const */ primer_args *pa,
     }
 
     return (NULL == sa->error.data && NULL == /* pa->*/ glob_err->data) ? 0 : 1;
-}
+} /* _pr_data_control */
 
 /* Takes substring of seq starting from n with length m and puts it to s.    */
 void
