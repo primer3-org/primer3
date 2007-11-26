@@ -65,4 +65,5 @@ clean:
 	-rm -f oligotm.*.valg  # valgrind output from oligotm_test.pl --valgrind
 	-rm -f ntdpal.*.valg   # valgrind output from dpal_test.pl --valgrind
 	-rm -f *.vg */*.vg     # valgrind output from p3test{,z}.pl --valgrind
+	-rm -f *.vg.core.*     # core files from crashed valgrind test
 	-rm -f ./core # in case we crashed and left a core file

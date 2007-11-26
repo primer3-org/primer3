@@ -8,7 +8,7 @@
 # Institute for Biomedical Research, Steve Rozen, and Helen Skaletsky
 # All rights reserved.
 # 
-#   This file is part of the primer3 suite and the dpal library.
+#   This file is part of the primer3 suite.
 #
 #   The primer3 suite is free software; you can
 #   redistribute them and/or modify them under the terms of the GNU

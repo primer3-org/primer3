@@ -82,12 +82,8 @@ boulder_print_pairs(prog_args, pa, sa, best_pairs)
     }
     
     if (sa->error.data != NULL) {
-	printf("PRIMER_ERROR=%s\n=\n", sa->error.data);
-	if (fflush(stdout) == EOF) {
-	    perror("fflush(stdout) failed");
-	    exit(-1);
-	}
-	return;
+      boulder_print_error(sa->error.data);
+      return;
     }
 
     if (pa->explain_flag) print_all_explain(pa, sa);
@@ -250,22 +246,32 @@ boulder_print_pairs(prog_args, pa, sa, best_pairs)
     }
 }
 
+void
+boulder_print_error(const char *err) {
+  printf("PRIMER_ERROR=%s\n=\n", err);
+  if (fflush(stdout) == EOF) {
+    perror("fflush(stdout) failed");
+    exit(-1);
+  }
+}
+
 void 
-boulder_print_oligos(pa, sa, n, l, f, r, mid)
-    const primer_args *pa;
-    const seq_args *sa;
-    int n;
-    oligo_type l;
-    primer_rec *f;
+boulder_print_oligos(
+		     const primer_args *pa,
+		     const seq_args *sa,
+		     int n,
+		     oligo_type l,
+		     primer_rec *oligo)
+     /*     primer_rec *f;
     primer_rec *r;
-    primer_rec *mid;
+    primer_rec *mid; */
 {
     char *warning;
     int i, j;
     char suffix [3], type[256];
     /* type must be larger than the length of "PRIMER_INTERNAL_OLIGO". */
 
-    primer_rec *oligo;
+    /* primer_rec *oligo; */
     int incl_s = sa->incl_s;
 
 
@@ -273,13 +279,10 @@ boulder_print_oligos(pa, sa, n, l, f, r, mid)
 	printf("PRIMER_WARNING=%s\n", warning);
 	free(warning);
     }
+
     if (sa->error.data != NULL) {
-	printf("PRIMER_ERROR=%s\n=\n", sa->error.data);
-	if (fflush(stdout) == EOF) {
-	    perror("fflush(stdout) failed");
-	    exit(-1);
-        }
-	return;
+      boulder_print_error(sa->error.data);
+      return;
     }
 
     if(l == OT_LEFT) strcpy(type, "PRIMER_LEFT");
@@ -290,9 +293,10 @@ boulder_print_oligos(pa, sa, n, l, f, r, mid)
 
     i = 0;
     j = (pa->num_return < n) ? pa->num_return : n;
-    if(l == OT_LEFT) oligo = f;
+
+    /* if (l == OT_LEFT) oligo = f;
     else if (l == OT_RIGHT) oligo = r;
-    else  oligo = mid;
+    else  oligo = mid;  */
 
     while(i < j) {
 	if (i == 0) suffix[0] = '\0';

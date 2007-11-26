@@ -46,14 +46,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define INIT_LIB_SIZE  500
 #define PR_MAX_LIBRARY_WT 100.0
 
-/* Used in PR_ASSERT: */
-static char *pr_program_name = "Program name is probably primer3_core";
-
 /* Static functions. */
 static void *_rb_safe_malloc(size_t x);
-static void *_rb_safe_realloc(void *p, size_t x);
-
-/* static void   adjust_base_index_interval_list(interval_array_t, int, int); */
 
 static void   parse_align_score(const char *, const char *, short *,
 				pr_append_str *);
@@ -67,7 +61,6 @@ static void   parse_interval_list(const char *, const char *, int*,
 static void   parse_product_size(const char *, char *, primer_args *,
 				 pr_append_str *);
 static void   tag_syntax_error(const char *, const char *,  pr_append_str *);
-static char*  read_line(FILE *);
 static int    parse_seq_quality(char *, int **);
 
 /* 
@@ -127,9 +120,11 @@ extern double strtod();
  */
 int
 read_record(const program_args *prog_args, 
+	    int   echo_output,
 	    primer_args *pa, 
 	    seq_args *sa, 
-	    pr_append_str *glob_err  /* Really should be called fatal_err */
+	    pr_append_str *glob_err,  /* Really should be called fatal_parse_err */
+	    pr_append_str *nonfatal_parse_err
 )
 { 
   int line_len; /* seq_len; n_quality; */
@@ -148,7 +143,7 @@ read_record(const program_args *prog_args,
        if we pull error out of sa's defn.  */
 
     /* FIX ME, provide initialization function for pa and sa structs.*/
-    memset(&sa->error, 0, sizeof(sa->error));
+    /* memset(&sa->error, 0, sizeof(sa->error)); */
 
     memset(sa, 0, sizeof(*sa));
 
@@ -156,9 +151,9 @@ read_record(const program_args *prog_args,
     sa->incl_l = -1; /* Indicates logical NULL. */
     sa->n_quality = 0;
     sa->quality = NULL;
-    non_fatal_err = &sa->error;
+    non_fatal_err = nonfatal_parse_err;
 
-    while ((s = read_line(stdin)) != NULL && strcmp(s,"=")) {
+    while ((s = p3_read_line(stdin)) != NULL && strcmp(s,"=")) {
 	data_found = 1;
 	if (0 == prog_args->format_output) printf("%s\n", s);
 	line_len = strlen(s);
@@ -427,7 +422,7 @@ read_record(const program_args *prog_args,
 	    pr_append(glob_err, s);
 	    fprintf(stderr, "Unrecognized tag: %s\n", s);
 	}
-    }  /* while ((s = read_line(stdin)) != NULL && strcmp(s,"=")) { */
+    }  /* while ((s = p3_read_line(stdin)) != NULL && strcmp(s,"=")) { */
 
     if (NULL == s) { /* End of file. */
 	if (data_found) {
@@ -437,25 +432,39 @@ read_record(const program_args *prog_args,
 	} else return 0;
     }
 
-    if(task_tmp != NULL) {
-          if (!strcmp_nocase(task_tmp, "pick_pcr_primers"))
-	    pa->primer_task = pick_pcr_primers;
-          else if (!strcmp_nocase(task_tmp, "pick_pcr_primers_and_hyb_probe"))
-	    pa->primer_task = pick_pcr_primers_and_hyb_probe;
-	  else if (!strcmp_nocase(task_tmp, "pick_left_only"))
-	    pa->primer_task = pick_left_only;
-          else if (!strcmp_nocase(task_tmp, "pick_right_only"))
-	    pa->primer_task = pick_right_only;
-          else if (!strcmp_nocase(task_tmp, "pick_hyb_probe_only"))
-	    pa->primer_task = pick_hyb_probe_only;
-          else   pr_append_new_chunk(glob_err,
-				     "Unrecognized PRIMER_TASK");
+    if (task_tmp != NULL) {
+      pa->pick_left_primer = 0;
+      pa->pick_right_primer = 0;
+      pa->pick_internal_oligo = 0;
+      if (!strcmp_nocase(task_tmp, "pick_pcr_primers")) {
+	pa->primer_task = pick_pcr_primers;
+	pa->pick_left_primer = 1;
+	pa->pick_right_primer = 1;
+      } else if (!strcmp_nocase(task_tmp, "pick_pcr_primers_and_hyb_probe")) {
+	pa->primer_task = pick_pcr_primers_and_hyb_probe;
+	pa->pick_left_primer = 1;
+	pa->pick_right_primer = 1;
+	pa->pick_internal_oligo = 1;
+      } else if (!strcmp_nocase(task_tmp, "pick_left_only")) {
+	pa->primer_task = pick_left_only;
+	pa->pick_left_primer = 1;
+      } else if (!strcmp_nocase(task_tmp, "pick_right_only")) {
+	pa->primer_task = pick_right_only;
+	pa->pick_right_primer = 1;
+      } else if (!strcmp_nocase(task_tmp, "pick_hyb_probe_only")) {
+	pa->primer_task = pick_hyb_probe_only;
+	pa->pick_internal_oligo = 1;
+      } else 
+	pr_append_new_chunk(glob_err,
+			    "Unrecognized PRIMER_TASK");
 	  free(task_tmp);
     }
 
-    /* 
-     * WARNING: read_seq_lib uses read_line, so repeat files cannot be read
-     * inside the while ((s = read_line(stdin))...)  loop above.
+   /* 
+     * WARNING: read_seq_lib uses p3_read_line, so repeat files cannot be read
+     * inside the while ((s = p3_read_line(stdin))...)  loop above.
+     * FIX ME, in fact the reading of the library contents probably
+     * belongs inside primer3_boulder_main.c or libprimer3.c.
      */
 
     if (NULL != repeat_file_path) {
@@ -514,57 +523,6 @@ read_record(const program_args *prog_args,
 #undef COMPARE_INT
 #undef COMPARE_FLOAT
 #undef COMPARE_INTERVAL_LIST
-
-/* 
- * Read a line of any length from file.  Return NULL on end of file,
- * otherwise return a pointer to static storage containing the line.  Any
- * trailing newline is stripped off.
- */
-static char*
-read_line(file)
-FILE *file;
-{
-    static size_t ssz;
-    static char *s = NULL;
-
-    size_t remaining_size;
-    char *p, *n;
-
-    if (NULL == s) {
-	ssz = INIT_BUF_SIZE;
-	s = _rb_safe_malloc(ssz);
-    }
-    p = s;
-    remaining_size = ssz;
-    while (1) {
-	if (fgets(p, remaining_size, file) == NULL) /* End of file. */
-	    return p == s ? NULL : s;
-
-	if ((n = strchr(p, '\n')) != NULL) {
-	    *n = '\0';
-	    return s;
-	}
-
-	/* We did not get the whole line. */
-	
-	/* 
-         * The following assertion is a bit of hack, a at least for 32-bit
-         * machines, because we will usually run out of address space first.
-         * Really we should treat an over-long line as an input error, but
-         * since an over-long line is unlikely and we do want to provide some
-         * protection....
-	 */
-	PR_ASSERT(ssz <= INT_MAX);
-	if (ssz >= INT_MAX / 2)
-	    ssz = INT_MAX;
-	else {
-	    ssz *= 2;
-	}
-	s = _rb_safe_realloc(s, ssz);
-	p = strchr(s, '\0');
-	remaining_size = ssz - (p - s);
-    }
-}
 
 static void
 tag_syntax_error(tag_name, datum, err)
@@ -826,14 +784,6 @@ static void *
 _rb_safe_malloc(size_t x)
 {
     void *r = malloc(x);
-    if (NULL == r) OOM_ERROR;
-    return r;
-}
-
-static void *
-_rb_safe_realloc(void *p, size_t x)
-{
-    void *r = realloc(p, x);
     if (NULL == r) OOM_ERROR;
     return r;
 }
