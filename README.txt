@@ -1552,7 +1552,8 @@ See the file release_notes.txt in this directory.
 EXIT STATUS CODES
 -----------------
 
- 0 on normal operation
+ 0 on normal operation (including "per-sequence"
+   user input errors)
 -1 under the following conditions:
    illegal command-line arguments.
    unable to fflush stdout.
@@ -1560,7 +1561,8 @@ EXIT STATUS CODES
      or .int file (probably due to a protection problem).
 -2 on out-of-memory
 -3 empty input
--4 error in a "Global" input tag (message in PRIMER_ERROR).
+-4 error in a "Global" input tag (message printed on stdout
+   along with other output).
 
 Primer3 calls abort() and dumps core (if possible) if a
 programming error is detected by an assertion violation.
