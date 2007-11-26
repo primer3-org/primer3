@@ -53,4 +53,7 @@ void format_pairs(FILE *f, const primer_args *pa,
 void format_oligos(FILE *, const primer_args *, const seq_args *, 
 		   primer_rec *, int, oligo_type,
 		   const char*);
+
+void format_error(FILE *f, const char* seq_name, const char *err);
+
 #endif

@@ -39,7 +39,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define LIBPRIMER3_H
 
 #include <setjmp.h>
-#include <stdio.h>
+#include <stdio.h> /* FILE */
 #include <stdlib.h>
 #include <limits.h> /* SHRT_MIN */
 
@@ -191,6 +191,10 @@ typedef struct primer_args {
   /* Arguments that control behavior of choose_primers() */
   task   primer_task;          /* 2 if left primer only, 3 if right primer only,
 				* 4 if internal oligo only.    */
+
+  int    pick_left_primer;
+  int    pick_right_primer;
+  int    pick_internal_oligo;
 
   int    file_flag;
   int    explain_flag;
@@ -555,8 +559,8 @@ typedef struct seq_args {
   char *internal_input;   /* An internal oligo to check or design around. */
 
   /* ================================================== */
-  /*  Output (writable) arguments. */  
-  pr_append_str error;    /* Error messages. */
+  /*  Output (writable) arguments. */   /* FIX ME, MOVE THESE TO retval */
+  pr_append_str error;  /* Error messages. */
   pr_append_str warning;  /* Warning messages. */
   oligo_stats left_expl;  /* Left primers statistics. */
   oligo_stats right_expl; /* Right primers statistics. */
@@ -587,6 +591,8 @@ typedef struct p3retval {
 
   pr_append_str glob_err;
 
+  pr_append_str per_sequence_err;
+
 } p3retval;
 
 /* Allocate and initialize a new primer3 state.  Return NULL on
@@ -602,7 +608,7 @@ void destroy_seq_args(seq_args *);
  * Choose individual primers or oligos, or primer pairs, or primer
  * pairs with internal oligos. On ENOMEM return NULL and set errno. 
  * Otherwise return retval (updated).  Errors are returned in 
- * in sa->error and/or pa->glob_err.
+ * in retval.
  */
 p3retval *choose_primers(p3retval *retval,  primer_args *pa, seq_args *sa);
 
@@ -617,6 +623,8 @@ char  *pr_gather_warnings(const seq_args *, const primer_args *);
 
 /* Return NULL on ENOMEM */
 pr_append_str *create_pr_append_str();
+void          pr_set_empty(pr_append_str *);
+int           pr_is_empty(const pr_append_str *);
 void          destroy_pr_append_str(pr_append_str *);
 void          pr_append(pr_append_str *, const char *);
 void          pr_append_new_chunk(pr_append_str *, const char *);
@@ -656,5 +664,7 @@ seq_lib_warning_data(const seq_lib *lib);
 
 void
 p3_set_program_name(const char *name);
+
+char* p3_read_line(FILE *file);
 
 #endif

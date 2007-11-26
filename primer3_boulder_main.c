@@ -56,11 +56,17 @@ main(argc,argv)
     char *argv[]; 
 { 
   program_args prog_args;
+  int         format_output = 0;
   primer_args *global_pa;
   seq_args *sa;
-  pr_append_str *glob_err = NULL;
+  pr_append_str *fatal_parse_err = NULL;
+  pr_append_str *nonfatal_parse_err = NULL;
+  pr_append_str *combined_retval_err = NULL;
   p3retval *retval = NULL;
-
+  oligo_type oligot = OT_LEFT; /* Silence warning */
+  int num_oligo = 0;
+  primer_rec *oligo = NULL;
+ 
   int input_found=0;
 
   pr_program_name = argv[0];
@@ -88,10 +94,10 @@ main(argc,argv)
 
   while (--argc > 0) {
     argv++;
-    if (!strcmp(*argv, "-format_output"))
+    if (!strcmp(*argv, "-format_output")) {
       prog_args.format_output = 1;
-    else if (!strcmp(*argv, "-2x_compat")) {
-      /* prog_args.twox_compat = 1; */
+      format_output = 1;
+    }  else if (!strcmp(*argv, "-2x_compat")) {
       printf( "PRIMER_ERROR=flag -2x_compat is no longer supported\n=\n");
       exit (-1);
     } else if (!strcmp(*argv, "-strict_tags"))
@@ -100,6 +106,15 @@ main(argc,argv)
       print_usage();
       exit(-1);
     }
+  }
+
+  fatal_parse_err    = create_pr_append_str();
+  nonfatal_parse_err = create_pr_append_str();
+  combined_retval_err = create_pr_append_str();
+  if (NULL == fatal_parse_err 
+      || NULL == nonfatal_parse_err
+      || NULL == combined_retval_err) {
+    exit(-2); /* Out of memory */
   }
 
   /* 
@@ -114,96 +129,129 @@ main(argc,argv)
       exit(-2); /* Out of memory. */
     }
 
-    glob_err = create_pr_append_str();
-    if (read_record(&prog_args, global_pa, sa, glob_err) <= 0) {
-      free(sa);  /* free(s) is ok, because a return of 0 
-		    indicates end-of-file, in which
-		    case there are no pointers from sa .*/
-      destroy_pr_append_str(glob_err);
+    pr_set_empty(fatal_parse_err);
+    pr_set_empty(nonfatal_parse_err);
+    retval = NULL;
+
+    if (read_record(&prog_args, !format_output, global_pa, sa, 
+		    fatal_parse_err, nonfatal_parse_err)
+	<= 0) {
       break;
     }
-    if (glob_err->data != NULL) {
-      printf("PRIMER_ERROR=%s\n=\n", glob_err->data);
-      fprintf(stderr, "%s: %s\n", pr_program_name, glob_err->data);
-      destroy_pr_append_str(glob_err);
+    input_found = 1;
+
+
+    if (fatal_parse_err->data != NULL) {
+      if (format_output) {
+	format_error(stdout, sa->sequence_name, fatal_parse_err->data);
+      } else {
+	boulder_print_error(fatal_parse_err->data);
+      }
+      fprintf(stderr, "%s: %s\n", 
+	      pr_program_name, fatal_parse_err->data);
       exit(-4);
     }
 
-    input_found = 1;
+    /* FIX ME -- read in mispriming libraries here */
 
-      /* ?? FIX ME -- Ifwe move the create_p3reval() call
-	 inside the if (NULL == sa->error.data) ...
-	 We get problems.  Why?
-	 We need to create the retval even if we are not going to
-       call choose_primers because of user errors discovered in
-       read_record().  This in turn is because (1) we count on
-       boulder_print_pairs to print out the error tag and the final =,
-       and (2) we count on format_output to print the error when
-       prog_args.format_output is set.  We clean this up if we
-       continue to provide boulder IO output and
-       'format_{pairs,oligos}' for more than the next couple of
-       releases. */
+
+    if (!pr_is_empty(nonfatal_parse_err)) {
+      if (format_output) {
+	format_error(stdout, sa->sequence_name, 
+		   nonfatal_parse_err->data);
+      } else {
+	boulder_print_error(nonfatal_parse_err->data);
+      }
+      goto finish_loop;
+    }
+
+    /* FIX ME create retval inside choose_primers */
     if (!(retval = create_p3retval())) {
       exit(-2);
     }
+    retval = choose_primers(retval, global_pa, sa);
+    if (NULL == retval) exit(-2); /* Out of memory. */
 
-    if (NULL == sa->error.data) {
-      retval = choose_primers(retval, global_pa, sa);
-      if (NULL == retval) exit(-2);
-      if (NULL!= retval && NULL != retval->glob_err.data) 
-	pr_append_new_chunk(&sa->error, retval->glob_err.data);
+    if (!pr_is_empty(&retval->glob_err)
+	||
+	!pr_is_empty(&retval->per_sequence_err)
+	/* ||
+	   !pr_is_empty(&sa->error) */ ) {
+      pr_append_new_chunk(combined_retval_err, 
+			  retval->glob_err.data);
+      pr_append_new_chunk(combined_retval_err, 
+			  retval->per_sequence_err.data);
+      /* pr_append_new_chunk(combined_retval_err, 
+	 sa->error.data); */
+      if (format_output) {
+	format_error(stdout, sa->sequence_name,
+		     combined_retval_err->data);
+      } else {
+	boulder_print_error(combined_retval_err->data);
+      }
+      goto finish_loop;
     }
 
-    if (pick_pcr_primers == global_pa->primer_task
-	|| pick_pcr_primers_and_hyb_probe == global_pa->primer_task) {
-      if (prog_args.format_output) {
+    /* PR_ASSERT(pr_is_empty(&sa->error)) */
+    PR_ASSERT(pr_is_empty(&retval->glob_err))
+    PR_ASSERT(pr_is_empty(&retval->per_sequence_err))
+
+    if (global_pa->pick_left_primer && global_pa->pick_right_primer) {
+      if (format_output) {
 	format_pairs(stdout, global_pa, sa, 
-		     &retval->best_pairs, pr_release);
+		     &retval->best_pairs, 
+		     pr_release);
       }
       else {
-	boulder_print_pairs(&prog_args, global_pa, sa, &retval->best_pairs);
+	boulder_print_pairs(&prog_args, global_pa, sa,
+			    &retval->best_pairs);
       }
-    } else if(global_pa->primer_task == pick_left_only) {
-      if (prog_args.format_output) 
-	format_oligos(stdout, global_pa, sa, retval->f,
-		      retval->n_f, OT_LEFT, pr_release);
-      else 
-	boulder_print_oligos(global_pa, sa, retval->n_f, 
-			     OT_LEFT, retval->f, retval->r, retval->mid);
-    } else if(global_pa->primer_task == pick_right_only) {
-      if (prog_args.format_output) 
-	format_oligos(stdout, global_pa, sa, retval->r,
-		      retval->n_r, OT_RIGHT,
-		      pr_release);
-      else 
-	boulder_print_oligos(global_pa, sa, retval->n_r, OT_RIGHT,
-				retval->f, retval->r, retval->mid);
-    }
-    else if(global_pa->primer_task == pick_hyb_probe_only) {
-      if(prog_args.format_output) 
-	format_oligos(stdout, global_pa, sa, retval->mid,
-		      retval->n_m, OT_INTL, pr_release);
-      else 
-	boulder_print_oligos(global_pa, sa, retval->n_m, 
-			     OT_INTL, retval->f, retval->r, retval->mid);
+    } else {
+      if (global_pa->pick_left_primer) {
+	oligot = OT_LEFT;
+	oligo = retval->f;
+	num_oligo = retval->n_f;
+      } else if (global_pa->pick_right_primer) {
+	oligot = OT_RIGHT;
+	oligo = retval->r;
+	num_oligo = retval->n_r;
+      } else if (global_pa->pick_internal_oligo) {
+	oligot = OT_INTL;
+	oligo = retval->mid;
+	num_oligo = retval->n_m;
+      } else {
+	fprintf(stderr, "%s: fatal programming error\n", pr_program_name);
+	abort();
+      }
+
+      if (format_output) {
+	format_oligos(stdout, global_pa, sa, oligo,
+		      num_oligo, oligot, pr_release);
+      } else {
+	boulder_print_oligos(global_pa, sa, num_oligo,
+			     oligot, oligo);
+      }
     }
 
+
+  finish_loop:
     if (NULL != retval) {
       if (NULL != retval->glob_err.data) {
 	fprintf(stderr, "%s: %s\n", pr_program_name, retval->glob_err.data);
 	exit(-4);
       }
     }
-
-    destroy_p3retval(retval); /* This works fine even if retval is NULL */
+    destroy_p3retval(retval); /* This works even if retval is NULL */
     destroy_seq_args(sa);
-    destroy_pr_append_str(glob_err);
-  }
+  } /* while (1) (processing boulder io records) */
 
   /* To avoid being distracted when looking for leaks: */
   destroy_seq_lib(global_pa->p_args.repeat_lib);
   destroy_seq_lib(global_pa->o_args.repeat_lib);
   free(global_pa);
+  destroy_pr_append_str(fatal_parse_err);
+  destroy_pr_append_str(nonfatal_parse_err);
+  destroy_seq_args(sa);
     
   if (0 == input_found) {
     print_usage();

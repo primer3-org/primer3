@@ -1,22 +1,26 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
+    This file is part of primer3 and the libprimer3 library.
 
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * Neither the names of the copyright holders nor contributors may
-be used to endorse or promote products derived from this software
-without specific prior written permission.
+    Primer3 and the libprimer3 library are free software;
+    you can redistribute them and/or modify them under the terms
+    of the GNU General Public License as published by the Free
+    Software Foundation; either version 2 of the License, or (at
+    your option) any later version.
+
+    This software is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this software (file gpl-2.0.txt in the source
+    distribution); if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -34,7 +38,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <string.h>
 #include "format_output.h"
-  /* #include "primer3_release.h" */
 #include "libprimer3.h"
 
 #define FORWARD 1
@@ -67,7 +70,6 @@ static void print_oligo_summary(FILE *, const primer_args *,
 			  const seq_args *, primer_rec *, 
 			  oligo_type, int);
 
-
 void
 format_pairs(FILE *f,
 	     const primer_args *pa,
@@ -75,55 +77,55 @@ format_pairs(FILE *f,
 	     const pair_array_t *best_pairs,
 	     const char *pr_release)
 {
-    char *warning;
-    int print_lib_sim = lib_sim_specified(pa);
-    primer_rec *h;
+  char *warning;
+  int print_lib_sim = lib_sim_specified(pa);
+  primer_rec *h = NULL;
 
-    PR_ASSERT(NULL != f);
-    PR_ASSERT(NULL != pa);
-    PR_ASSERT(NULL != sa);
+  PR_ASSERT(NULL != f);
+  PR_ASSERT(NULL != pa);
+  PR_ASSERT(NULL != sa);
 
-    h = NULL;
-    if (NULL != sa->sequence_name)
-	fprintf(f, "PRIMER PICKING RESULTS FOR %s\n\n", sa->sequence_name);
-
-    if (sa->error.data != NULL) 
-	fprintf(f, "INPUT PROBLEM: %s\n\n", sa->error.data);
-    else {
-	if (pa->p_args.repeat_lib != NULL)
-	    fprintf(f, "Using mispriming library %s\n",
-		    pa->p_args.repeat_lib->repeat_file);
-	else
-	    fprintf(f, "No mispriming library specified\n");
-
-	if ( pa->primer_task == 1) {
-	  if (pa->o_args.repeat_lib != NULL)
-	    fprintf(f, "Using internal oligo mishyb library %s\n",
-		    pa->o_args.repeat_lib->repeat_file);
-	  else
-	    fprintf(f, "No internal oligo mishyb library specified\n");
-	}
-
-	fprintf(f, "Using %d-based sequence positions\n",
-		pa->first_base_index);
-	if (best_pairs->num_pairs == 0) fprintf(f, "NO PRIMERS FOUND\n\n");
-	if ((warning = pr_gather_warnings(sa, pa)) != NULL) {
-	  fprintf(f, "WARNING: %s\n\n", warning);
-	  free(warning);
-	}
-	print_summary(f, pa, sa, best_pairs, 0);
-	fprintf(f, "\n");
-
-	if (print_seq(f, pa, sa, h, best_pairs, 0)) exit(-2); /* ENOMEM */
-	if (best_pairs->num_pairs > 1 ) print_rest(f, pa, sa, best_pairs);
-	if (pa->explain_flag)
-	  print_explain(f, pa, sa, print_lib_sim, pr_release);
-	fprintf(f, "\n\n");
-	if (fflush(f) == EOF) {
-	  perror("fflush(f) failed");
-	  exit(-1);
-	}
+  if (sa->error.data != NULL) {
+    format_error(f, sa->sequence_name, sa->error.data);
+    return;
     }
+
+  if (NULL != sa->sequence_name)
+    fprintf(f, "PRIMER PICKING RESULTS FOR %s\n\n", sa->sequence_name);
+  if (pa->p_args.repeat_lib != NULL)
+    fprintf(f, "Using mispriming library %s\n",
+	    pa->p_args.repeat_lib->repeat_file);
+  else
+    fprintf(f, "No mispriming library specified\n");
+
+  if ( pa->primer_task == 1) {
+    if (pa->o_args.repeat_lib != NULL)
+      fprintf(f, "Using internal oligo mishyb library %s\n",
+	      pa->o_args.repeat_lib->repeat_file);
+    else
+      fprintf(f, "No internal oligo mishyb library specified\n");
+  }
+
+  fprintf(f, "Using %d-based sequence positions\n",
+	  pa->first_base_index);
+  if (best_pairs->num_pairs == 0) fprintf(f, "NO PRIMERS FOUND\n\n");
+  if ((warning = pr_gather_warnings(sa, pa)) != NULL) {
+    fprintf(f, "WARNING: %s\n\n", warning);
+    free(warning);
+  }
+  print_summary(f, pa, sa, best_pairs, 0);
+  fprintf(f, "\n");
+
+  if (print_seq(f, pa, sa, h, best_pairs, 0)) exit(-2); /* ENOMEM */
+  if (best_pairs->num_pairs > 1 ) print_rest(f, pa, sa, best_pairs);
+  if (pa->explain_flag)
+    print_explain(f, pa, sa, print_lib_sim, pr_release);
+  fprintf(f, "\n\n");
+  if (fflush(f) == EOF) {
+    perror("fflush(f) failed");
+    exit(-1);
+  }
+
 }
 
 static void
@@ -634,6 +636,15 @@ lib_sim_specified(const primer_args *pa) {
   return (pa->p_args.repeat_lib || pa->o_args.repeat_lib);
 }
 
+void
+format_error(FILE *f, const char* seq_name, const char *err)
+{
+  if (NULL != seq_name)
+    fprintf(f, "PRIMER PICKING RESULTS FOR %s\n\n", seq_name);
+  if (err != NULL) 
+    fprintf(f, "INPUT PROBLEM: %s\n\n", err);
+}
+
 void 
 format_oligos(FILE *f,
 	      const primer_args *pa,
@@ -655,66 +666,67 @@ format_oligos(FILE *f,
   PR_ASSERT(NULL != sa);
 
   best_pairs = NULL;
+
+  if (sa->error.data != NULL) {
+    format_error(f, sa->sequence_name, sa->error.data);
+    return;
+  }
+
   if (NULL != sa->sequence_name)
     fprintf(f, "PRIMER PICKING RESULTS FOR %s\n\n", sa->sequence_name);
-
-  if (sa->error.data != NULL) 
-    fprintf(f, "INPUT PROBLEM: %s\n\n", sa->error.data);
-  else {
-    if (l != OT_INTL ) {
-      if (pa->p_args.repeat_lib != NULL)
-	fprintf(f, "Using mispriming library %s\n",
-		pa->p_args.repeat_lib->repeat_file);
+  if (l != OT_INTL ) {
+    if (pa->p_args.repeat_lib != NULL)
+      fprintf(f, "Using mispriming library %s\n",
+	      pa->p_args.repeat_lib->repeat_file);
+    else
+      fprintf(f, "No mispriming library specified\n");
+  } else {
+    if ( pa->primer_task == 1) {
+      if (pa->o_args.repeat_lib->repeat_file != NULL)
+	fprintf(f, "Using internal oligo mishyb library %s\n",
+		pa->o_args.repeat_lib->repeat_file);
       else
-	fprintf(f, "No mispriming library specified\n");
-    } else {
-      if ( pa->primer_task == 1) {
-	if (pa->o_args.repeat_lib->repeat_file != NULL)
-	  fprintf(f, "Using internal oligo mishyb library %s\n",
-		  pa->o_args.repeat_lib->repeat_file);
-	else
-	  fprintf(f, "No internal oligo mishyb library specified\n");
-      }
+	fprintf(f, "No internal oligo mishyb library specified\n");
     }
+  }
 
-    if(l == OT_LEFT) strcpy(type, "LEFT_PRIMER");
-    else if(l == OT_RIGHT) strcpy(type, "RIGHT_PRIMER");
-    else strcpy(type, "INTERNAL_OLIGO");
+  if(l == OT_LEFT) strcpy(type, "LEFT_PRIMER");
+  else if(l == OT_RIGHT) strcpy(type, "RIGHT_PRIMER");
+  else strcpy(type, "INTERNAL_OLIGO");
 
-    fprintf(f, "Using %d-based sequence positions\n",
-	    pa->first_base_index);
-    if (n == 0) fprintf(f, "NO OLIGOS FOUND\n\n");
-    if ((warning = pr_gather_warnings(sa, pa)) != NULL) {
-      fprintf(f, "WARNING: %s\n\n", warning);
-      free(warning);
-    }
+  fprintf(f, "Using %d-based sequence positions\n",
+	  pa->first_base_index);
+  if (n == 0) fprintf(f, "NO OLIGOS FOUND\n\n");
+  if ((warning = pr_gather_warnings(sa, pa)) != NULL) {
+    fprintf(f, "WARNING: %s\n\n", warning);
+    free(warning);
+  }
 
-    if(n > 0) print_oligo_summary(f, pa, sa, h, l, 0);
-    else h = NULL;
-    if (print_seq(f, pa, sa, h, best_pairs, 0)) exit(-2); /* ENOMEM */
-    fprintf(f, "\n");
-    if(n > 1) {
-      fprintf(f, "ADDITIONAL OLIGOS\n");
-      fprintf(f, "   "); print_oligo_header(f, "", print_lib_sim);
-      for (i = 1; i < pa->num_return; i++) {
-	if(i > n-1) break;
-	p = h + i;
-	fprintf(f, "%2d ", i);
-	if (OT_LEFT == l || OT_INTL == l)
-	  print_oligo(f, type, sa, p, FORWARD, pa,
-		      pa->p_args.repeat_lib, print_lib_sim);
-        else 
-	  print_oligo(f, type, sa, p, REVERSE, pa, 
-		      pa->p_args.repeat_lib, print_lib_sim);
-      }
+  if(n > 0) print_oligo_summary(f, pa, sa, h, l, 0);
+  else h = NULL;
+  if (print_seq(f, pa, sa, h, best_pairs, 0)) exit(-2); /* ENOMEM */
+  fprintf(f, "\n");
+  if(n > 1) {
+    fprintf(f, "ADDITIONAL OLIGOS\n");
+    fprintf(f, "   "); print_oligo_header(f, "", print_lib_sim);
+    for (i = 1; i < pa->num_return; i++) {
+      if(i > n-1) break;
+      p = h + i;
+      fprintf(f, "%2d ", i);
+      if (OT_LEFT == l || OT_INTL == l)
+	print_oligo(f, type, sa, p, FORWARD, pa,
+		    pa->p_args.repeat_lib, print_lib_sim);
+      else 
+	print_oligo(f, type, sa, p, REVERSE, pa, 
+		    pa->p_args.repeat_lib, print_lib_sim);
     }
-    if (pa->explain_flag) 
-      print_explain(f, pa, sa, print_lib_sim, pr_release);
-    fprintf(f, "\n\n");
-    if (fflush(f) == EOF) {
-      perror("fflush(f) failed");
-      exit(-1);
-    }
+  }
+  if (pa->explain_flag) 
+    print_explain(f, pa, sa, print_lib_sim, pr_release);
+  fprintf(f, "\n\n");
+  if (fflush(f) == EOF) {
+    perror("fflush(f) failed");
+    exit(-1);
   }
 }
 

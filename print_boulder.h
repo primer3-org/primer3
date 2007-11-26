@@ -45,8 +45,10 @@ void   boulder_print_pairs(const program_args *, const primer_args *,
 
 void   boulder_print_oligos(const primer_args *, 
 			    const seq_args *, int, oligo_type,
-			    primer_rec *,  
-			    primer_rec *r,  
-			    primer_rec *mid);
+			    primer_rec *  
+			    /* primer_rec *r,  
+			       primer_rec *mid */);
+
+void   boulder_print_error(const char *err);
 
 #endif
