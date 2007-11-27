@@ -134,6 +134,8 @@ static int    choose_internal_oligo(p3retval *,
 void          compute_position_penalty(const primer_args *, const seq_args *, 
 				       primer_rec *, oligo_type);
 
+static p3retval *create_p3retval(void);
+
 static int    p3_print_one_oligo_list(const seq_args *, 
 				      int, const primer_rec[],
 				      const oligo_type, const int, 
@@ -718,7 +720,7 @@ static dpal_arg_holder *dpal_arg_to_use = NULL;
 
 /* See libprimer3.h for documentation. */
 p3retval *
-choose_primers(p3retval *retval,
+choose_primers(/* p3retval *foo_retval, */
 	       primer_args *pa,
 	       seq_args *sa)
 {
@@ -727,7 +729,7 @@ choose_primers(p3retval *retval,
     pair_array_t a_pair_array;
     pair_array_t *best_pairs;
 
-    /* p3retval *retval = create_p3retval(); */
+    p3retval *retval = create_p3retval();
 
     if (retval == NULL)  return NULL;
     best_pairs = &retval->best_pairs;

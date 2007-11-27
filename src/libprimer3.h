@@ -572,9 +572,8 @@ typedef struct seq_args {
 } seq_args;
 
 /*
- * The retrun value for for primer3. 
- * Create this with create_p3reval().
- * Free the memory after usage with destroy_p3retval().
+ * The return value for for primer3. 
+ * After use, free memory with destroy_p3retval().
  */
 typedef struct p3retval {
   /* Arrays of oligo (primer) records. */
@@ -595,10 +594,6 @@ typedef struct p3retval {
 
 } p3retval;
 
-/* Allocate and initialize a new primer3 state.  Return NULL on
-   ENOMEM. */
-p3retval *create_p3retval(void);
-
 /* Deallocate a primer3 state */
 void destroy_p3retval(p3retval *);
 
@@ -610,7 +605,7 @@ void destroy_seq_args(seq_args *);
  * Otherwise return retval (updated).  Errors are returned in 
  * in retval.
  */
-p3retval *choose_primers(p3retval *retval,  primer_args *pa, seq_args *sa);
+p3retval *choose_primers(/* p3retval *retval,*/  primer_args *pa, seq_args *sa);
 
 char  *pr_oligo_sequence(const seq_args *, const primer_rec *);
 
