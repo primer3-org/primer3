@@ -131,6 +131,7 @@ main(argc,argv)
 
     pr_set_empty(fatal_parse_err);
     pr_set_empty(nonfatal_parse_err);
+    pr_set_empty(combined_retval_err);
     retval = NULL;
 
     if (read_record(&prog_args, !format_output, global_pa, sa, 
@@ -166,10 +167,10 @@ main(argc,argv)
     }
 
     /* FIX ME create retval inside choose_primers */
-    if (!(retval = create_p3retval())) {
+    /* if (!(retval = create_p3retval())) {
       exit(-2);
-    }
-    retval = choose_primers(retval, global_pa, sa);
+    } */
+    retval = choose_primers(/* retval, */ global_pa, sa);
     if (NULL == retval) exit(-2); /* Out of memory. */
 
     if (!pr_is_empty(&retval->glob_err)
@@ -251,6 +252,7 @@ main(argc,argv)
   free(global_pa);
   destroy_pr_append_str(fatal_parse_err);
   destroy_pr_append_str(nonfatal_parse_err);
+  destroy_pr_append_str(combined_retval_err);
   destroy_seq_args(sa);
     
   if (0 == input_found) {
