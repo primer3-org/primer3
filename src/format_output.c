@@ -464,7 +464,8 @@ print_explain(FILE *f,
 	      int print_lib_sim,
 	      const char *pr_release)
 {
-  const pair_stats *x;
+  const pair_stats *pair_stats = &sa->pair_expl;
+
   char *format;
 
   if (print_lib_sim) {
@@ -555,7 +556,9 @@ print_explain(FILE *f,
 
   }
 
-  if ((pick_pcr_primers == pa->primer_task
+  /* FIX ME clean up the conditions in these if stmts */
+
+  if ((pick_pcr_primers == pa->primer_task  
        || pick_left_only == pa->primer_task
        || pick_pcr_primers_and_hyb_probe == pa->primer_task)
       && !(pa->pick_anyway && sa->left_input))
@@ -578,8 +581,7 @@ print_explain(FILE *f,
   if (pick_pcr_primers == pa->primer_task
       || pick_pcr_primers_and_hyb_probe == pa->primer_task) {
     fprintf(f, "Pair Stats:\n");
-    x = &sa->pair_expl;
-    pr_print_pair_explain(f, sa);
+    pr_print_pair_explain(f, pair_stats);
   }
   fprintf(f, "%s\n", pr_release);
 }
