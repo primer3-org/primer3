@@ -186,7 +186,7 @@ typedef struct args_for_one_oligo_or_primer {
 } args_for_one_oligo_or_primer;
 
 
-typedef struct primer_args {
+typedef struct p3_global_settings {
   /* ================================================== */
   /* Arguments that control behavior of choose_primers() */
   task   primer_task;          /* 2 if left primer only, 3 if right primer only,
@@ -307,7 +307,7 @@ typedef struct primer_args {
 
   pair_weights  pr_pair_weights;
 
-} primer_args;
+} p3_global_settings;
 
 typedef enum oligo_type { OT_LEFT = 0, OT_RIGHT = 1, OT_INTL = 2 }
   oligo_type;
@@ -605,15 +605,15 @@ void destroy_seq_args(seq_args *);
  * Otherwise return retval (updated).  Errors are returned in 
  * in retval.
  */
-p3retval *choose_primers(/* p3retval *retval,*/  primer_args *pa, seq_args *sa);
+p3retval *choose_primers(/* p3retval *retval,*/  p3_global_settings *pa, seq_args *sa);
 
 char  *pr_oligo_sequence(const seq_args *, const primer_rec *);
 
 char  *pr_oligo_rev_c_sequence(const seq_args *, const primer_rec *);
 
-void  pr_set_default_global_args(primer_args *);
+void  pr_set_default_global_args(p3_global_settings *);
 
-char  *pr_gather_warnings(const seq_args *, const primer_args *);
+char  *pr_gather_warnings(const seq_args *, const p3_global_settings *);
 
 
 /* Return NULL on ENOMEM */
@@ -625,7 +625,7 @@ void          pr_append(pr_append_str *, const char *);
 void          pr_append_new_chunk(pr_append_str *, const char *);
 
 
-void  pr_print_pair_explain(FILE *, const seq_args *);
+void  pr_print_pair_explain(FILE *, const /* seq_args */ pair_stats *);
 
 const char  *libprimer3_release(void);
 const char  **libprimer3_copyright(void);
@@ -660,6 +660,15 @@ seq_lib_warning_data(const seq_lib *lib);
 void
 p3_set_program_name(const char *name);
 
+/* 
+ * Utility function for C clients -- will not overflow
+ * buffer.  Warning: points to storage that is over-written
+ * on the next call.
+ */
 char* p3_read_line(FILE *file);
+
+
+/* Hack */
+#define primer_args p3_global_settings
 
 #endif

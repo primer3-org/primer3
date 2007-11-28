@@ -346,31 +346,29 @@ boulder_print_oligos(
 }
 
 static void
-print_all_explain(pa, sa)
+print_all_explain(pa, sa) /* FIX ME chance the conditions in the if stmts below */
     const primer_args *pa;
     const seq_args *sa;
 {
-  if (pa->explain_flag) {
-    if (pa->primer_task != pick_right_only
-	&& pa->primer_task != pick_hyb_probe_only
-	&& !(pa->pick_anyway && sa->left_input))
-      print_explain(&sa->left_expl,OT_LEFT);
+  if (pa->primer_task != pick_right_only
+      && pa->primer_task != pick_hyb_probe_only
+      && !(pa->pick_anyway && sa->left_input))
+    print_explain(&sa->left_expl,OT_LEFT);
 
-    if (pa->primer_task != pick_left_only 
-	&& pa->primer_task != pick_hyb_probe_only
-	&& !(pa->pick_anyway && sa->right_input))
-      print_explain(&sa->right_expl,OT_RIGHT);
+  if (pa->primer_task != pick_left_only 
+      && pa->primer_task != pick_hyb_probe_only
+      && !(pa->pick_anyway && sa->right_input))
+    print_explain(&sa->right_expl,OT_RIGHT);
 
-    if ((pa->primer_task == pick_hyb_probe_only
-	 || pa->primer_task == pick_pcr_primers_and_hyb_probe)
-	&& !(pa->pick_anyway && sa->internal_input)) 
-      print_explain(&sa->intl_expl, OT_INTL);
+  if ((pa->primer_task == pick_hyb_probe_only
+       || pa->primer_task == pick_pcr_primers_and_hyb_probe)
+      && !(pa->pick_anyway && sa->internal_input)) 
+    print_explain(&sa->intl_expl, OT_INTL);
 
-    if (pa->primer_task  == pick_pcr_primers
-	|| pa->primer_task == pick_pcr_primers_and_hyb_probe) {
-      printf("PRIMER_PAIR_EXPLAIN=");
-      pr_print_pair_explain(stdout, sa);
-    }
+  if (pa->primer_task  == pick_pcr_primers
+      || pa->primer_task == pick_pcr_primers_and_hyb_probe) {
+    printf("PRIMER_PAIR_EXPLAIN=");
+    pr_print_pair_explain(stdout, &sa->pair_expl);
   }
 }
 

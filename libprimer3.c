@@ -720,8 +720,7 @@ static dpal_arg_holder *dpal_arg_to_use = NULL;
 
 /* See libprimer3.h for documentation. */
 p3retval *
-choose_primers(/* p3retval *foo_retval, */
-	       primer_args *pa,
+choose_primers(primer_args *pa,
 	       seq_args *sa)
 {
     int          i;               /* Loop index. */
@@ -752,7 +751,7 @@ choose_primers(/* p3retval *foo_retval, */
     PR_ASSERT(NULL != pa);
     PR_ASSERT(NULL != sa);
     
-    /* FIX ME -- MOVE THIS TO OUTSIDE libprimer3 */
+    /* FIX ME -- MOVE THIS TO OUTSIDE libprimer3 or make this a warning */
     if (pa->p_args.min_quality != 0 
 	&& pa->p_args.min_end_quality < pa->p_args.min_quality)
       pa->p_args.min_end_quality = pa->p_args.min_quality;
@@ -958,6 +957,8 @@ make_primer_lists(p3retval *retval,
     int left, right;
     int i,j,n,k,pr_min;
     int tar_l, tar_r, f_b, r_b;
+    pair_stats *pair_expl = &sa->pair_expl;
+    oligo_stats *ostats;
 
     /* 
      * The position of the intial base of the rightmost stop codon that is
@@ -1021,9 +1022,10 @@ make_primer_lists(p3retval *retval,
       f_b = n - pr_min + pa->p_args.max_size-1;
 
     k = 0;
-
-    if (pa->primer_task != pick_right_only 
-	&& pa->primer_task != pick_hyb_probe_only) {
+    ostats = &sa->left_expl;
+    if ( /* pa->primer_task != pick_right_only 
+	    && pa->primer_task != pick_hyb_probe_only */
+	pa->pick_left_primer) {
       /* We will need a left primer. */
       left=n; right=0;
 
@@ -1049,8 +1051,7 @@ make_primer_lists(p3retval *retval,
 		  continue;
 
 		h.must_use = (sa->left_input && pa->pick_anyway);
-
-		sa->left_expl.considered++;
+		ostats->considered++;
 
 		if (!PR_START_CODON_POS_IS_NULL(sa)
 		/* Make sure the primer would amplify at least part of
@@ -1059,14 +1060,14 @@ make_primer_lists(p3retval *retval,
 			|| h.start <= stop_codon1
 			|| (sa->stop_codon_pos != -1 
 			    && h.start >= sa->stop_codon_pos))) {
-		  sa->left_expl.no_orf++;
+		  ostats->no_orf++;
 		  if (!pa->pick_anyway) continue;
 		}
 
 		h.repeat_sim.score = NULL;
 
 		oligo_param(pa, &h, OT_LEFT, dpal_arg_to_use, 
-			    sa, &sa->left_expl);
+			    sa, ostats);
 
 		if (OK_OR_MUST_USE(&h)) {
 		  h.quality = p_obj_fn(pa, &h, 0);
@@ -1086,10 +1087,8 @@ make_primer_lists(p3retval *retval,
 	    else break;
 	}
       }  /*  for (i = f_b; .... */
-    }  /* if (pa->primer_task != pick_right_only ...  (left primer) */
-
-
-    retval->n_f = k;
+    }  /* if (pa->pick_left_primer) */
+    ostats->ok = retval->n_f = k;
 
     if (pa->primer_task == pick_right_only)
       r_b = 0;
@@ -1100,12 +1099,12 @@ make_primer_lists(p3retval *retval,
       r_b = pr_min - pa->p_args.max_size;
 
     k = 0;
+    ostats = &sa->right_expl;
+    if ( /* pa->primer_task != pick_left_only 
+	    && pa->primer_task != pick_hyb_probe_only */
+	pa->pick_right_primer ) {
 
-
-    if(pa->primer_task != pick_left_only 
-       && pa->primer_task != pick_hyb_probe_only) {
       /* We will need a right primer */
-
       for (i=r_b; i<=n-pa->p_args.min_size; i++) {
 	s[0]='\0';
 	for(j = pa->p_args.min_size; j <= pa->p_args.max_size; j++) {
@@ -1129,8 +1128,8 @@ make_primer_lists(p3retval *retval,
 
 		h.repeat_sim.score = NULL;
 		oligo_param(pa, &h, OT_RIGHT, dpal_arg_to_use,
-			    sa, &sa->right_expl);
-		sa->right_expl.considered++;
+			    sa, ostats);
+		ostats->considered++;
 		if (OK_OR_MUST_USE(&h)) {
 		  h.quality = p_obj_fn(pa, &h, 0);
 		  retval->r[k] = h;
@@ -1149,32 +1148,23 @@ make_primer_lists(p3retval *retval,
 	    else break;
 	}
       } /*  for (i = r_b; .... */
-
-    }  /* if(pa->primer_task != pick_left_only ... (right primer) */
-
-    retval->n_r=k;
+    } /* if (pa->pick_right_primer) */
+    ostats->ok = retval->n_r = k;
 
     /* 
      * Return 1 if either the left primer list or the right primer
      * list is empty or if leftmost left primer and
      * rightmost right primer do not provide sufficient product size.
      */
-    sa->left_expl.ok = retval->n_f;
-    sa->right_expl.ok = retval->n_r;
-    if ((pa->primer_task != pick_right_only 
-	 && pa->primer_task != pick_hyb_probe_only 
-	 && 0 == retval->n_f)
-	|| 
-	((pa->primer_task != pick_left_only && 
-	  pa->primer_task != pick_hyb_probe_only) 
-	 && 0 == retval->n_r))
+    if ((pa->pick_left_primer && 0 == retval->n_f)
+	|| ((pa->pick_right_primer)  && 0 == retval->n_r)) {
       return 1;
-    else if ((pa->primer_task == pick_pcr_primers || 
-		  pa->primer_task == pick_pcr_primers_and_hyb_probe) 
-		  && right - left < pr_min - 1) {
-	sa->pair_expl.product    = 1;
-	sa->pair_expl.considered = 1;
-	return 1;
+    } else if (pa->pick_left_primer 
+	       && pa->pick_right_primer
+	       && (right - left) < (pr_min - 1)) {
+      pair_expl->product    = 1;
+      pair_expl->considered = 1;
+      return 1;
     } else return 0;
 } /* make_primer_lists */
 
@@ -1966,6 +1956,7 @@ choose_pair_or_triple(retval, pa, sa,  dpal_arg_to_use, int_num, p)
   int i_worst;             /* The index within p of worst_pair. */
 
   primer_pair h;
+  pair_stats *pair_expl = &sa->pair_expl;
 
   k=0; 
 
@@ -2016,10 +2007,10 @@ choose_pair_or_triple(retval, pa, sa,  dpal_arg_to_use, int_num, p)
 				      h.left, h.right,
 				      &n_int, sa, pa, 
 				      dpal_arg_to_use)!=0) {
-	  sa->pair_expl.internal++;
+	  /* sa-> */ pair_expl->internal++;
 	  continue;
 	}
-	sa->pair_expl.ok++;
+	/* sa-> */ pair_expl->ok++;
 	if (k < pa->num_return) {
 	  if ( pa->primer_task == pick_pcr_primers_and_hyb_probe) 
 	    h.intl = &retval->mid[n_int];
@@ -2205,6 +2196,7 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
     char s1[MAX_PRIMER_LENGTH+1], s2[MAX_PRIMER_LENGTH+1], 
     s1_rev[MAX_PRIMER_LENGTH+1], s2_rev[MAX_PRIMER_LENGTH+1];
     short compl_end;
+    pair_stats *pair_expl = &sa->pair_expl;
 
     /* FUTURE CODE: we must use the pair if the caller specifed
        both the left and the right primer. */
@@ -2220,11 +2212,11 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
     ppair->target = 0;
     ppair->compl_any = ppair->compl_end = 0;
 
-    sa->pair_expl.considered++;
+    /* sa-> */ pair_expl->considered++;
 
     if(ppair->product_size < pa->pr_min[int_num] || 
 		ppair->product_size > pa->pr_max[int_num]) {
-	sa->pair_expl.product++;
+      /* sa-> */ pair_expl->product++;
 	ppair->product_size = -1;
 	if (!must_use) return PAIR_FAILED;
 	else pair_failed_flag = 1;
@@ -2235,7 +2227,7 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
 	    ppair->target = 1;
 	else {
 	    ppair->target = -1;
-	    sa->pair_expl.target++;
+	    /* sa-> */ pair_expl->target++;
 	    if (!must_use) return PAIR_FAILED;
 	    else pair_failed_flag = 1;
 	}
@@ -2260,21 +2252,21 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
 
     if (pa->product_min_tm != PR_DEFAULT_PRODUCT_MIN_TM
 	&& ppair->product_tm < pa->product_min_tm) {
-      sa->pair_expl.low_tm++;
+      /* sa-> */ pair_expl->low_tm++;
       if (!must_use) return PAIR_FAILED;
       else pair_failed_flag = 1;
     }
 
     if (pa->product_max_tm != PR_DEFAULT_PRODUCT_MAX_TM
 	&& ppair->product_tm > pa->product_max_tm) {
-      sa->pair_expl.high_tm++;
+      /* sa-> */ pair_expl->high_tm++;
       if (!must_use) return PAIR_FAILED;
       else pair_failed_flag = 1;
     }
       
     ppair->diff_tm = fabs(retval->f[m].temp - retval->r[n].temp);
     if (ppair->diff_tm > pa->max_diff_tm) {
-	sa->pair_expl.temp_diff++;
+      /* sa-> */ pair_expl->temp_diff++;
 	if (!must_use) return PAIR_FAILED;
 	else pair_failed_flag = 1;
     }
@@ -2312,7 +2304,7 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
 		  OT_LEFT, dpal_arg_to_use, s1, s1_rev);
 
       if (!OK_OR_MUST_USE(&retval->f[m])) {
-	sa->pair_expl.considered--;
+	/* sa-> */ pair_expl->considered--;
 	return PAIR_FAILED;
       }
 
@@ -2325,7 +2317,7 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
 		  OT_RIGHT, dpal_arg_to_use, s2_rev, s2);
 
        if (!OK_OR_MUST_USE(&retval->r[n])) {
-	  sa->pair_expl.considered--;
+	 /* sa-> */ pair_expl->considered--;
 	  return PAIR_FAILED;
        }
     }
@@ -2344,7 +2336,7 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
 			dpal_arg_to_use->local_end,
 			dpal_arg_to_use);
        if (!OK_OR_MUST_USE(&retval->f[m])) {
-	   sa->pair_expl.considered--;
+	 /* sa-> */ pair_expl->considered--;
 	   return PAIR_FAILED;
        }
     }
@@ -2354,7 +2346,7 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
 			dpal_arg_to_use->local_end,
 			dpal_arg_to_use);
        if (!OK_OR_MUST_USE(&retval->r[n])) {
-	  sa->pair_expl.considered--;
+	 /* sa-> */ pair_expl->considered--;
 	  return PAIR_FAILED;
        }
     }
@@ -2371,13 +2363,13 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
      */
     ppair->compl_any = align(s1,s2, dpal_arg_to_use->local);
     if (ppair->compl_any > pa->p_args.max_self_any) {
-	sa->pair_expl.compl_any++;
+      /* sa-> */ pair_expl->compl_any++;
 	return PAIR_FAILED;
     }
 
     if ((ppair->compl_end = align(s1, s2, dpal_arg_to_use->end))
 	> pa->p_args.max_self_end) {
-	    sa->pair_expl.compl_end++;
+      /* sa-> */ pair_expl->compl_end++;
 	    return PAIR_FAILED;
     }
 
@@ -2388,7 +2380,7 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
     if((compl_end = align(s2_rev, s1_rev, dpal_arg_to_use->end))
        > ppair->compl_end)  {
 	if (compl_end > pa->p_args.max_self_end) {
-	    sa->pair_expl.compl_end++;
+	    /* sa-> */ pair_expl->compl_end++;
 	    return PAIR_FAILED;
 	}
 	ppair->compl_end = compl_end;
@@ -2400,7 +2392,7 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
 
     if ((ppair->repeat_sim = pair_repeat_sim(ppair, pa))
        > pa->pair_repeat_compl) {
-	 sa->pair_expl.repeat_sim++;
+	 /* sa-> */ pair_expl->repeat_sim++;
 	 return PAIR_FAILED;
     }
     /* ============================================================= */
@@ -2425,7 +2417,7 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
 
       if (pa->pair_max_template_mispriming >= 0.0
 	  && ppair->template_mispriming > pa->pair_max_template_mispriming) {
-	sa->pair_expl.template_mispriming++;
+	/* sa-> */ pair_expl->template_mispriming++;
 	return PAIR_FAILED;
       }
 
@@ -2434,7 +2426,7 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
     /* ============================================================= */
 
     return PAIR_OK;
-}
+} /* characterize_pair */
 
 void
 compute_position_penalty(pa, sa, h, o_type)
@@ -2759,7 +2751,6 @@ pr_oligo_rev_c_sequence(sa, o)
 static void
 oligo_compl(primer_rec *h,
 	    const args_for_one_oligo_or_primer *po_args,
-	    /* const primer_args *ha, */
 	    seq_args *sa,
 	    oligo_type l,
 	    const dpal_arg_holder *dpal_arg_to_use,
@@ -2769,8 +2760,16 @@ oligo_compl(primer_rec *h,
     char s[MAX_PRIMER_LENGTH+1], s1[MAX_PRIMER_LENGTH+1];
     int j;
     short max_self_any, max_self_end;
-
+    oligo_stats *ostats;
     PR_ASSERT(h != NULL);
+
+    if (OT_LEFT == l) {
+      ostats = &sa->left_expl;
+    } else if (OT_RIGHT == l) {
+      ostats = &sa->right_expl;
+    } else {
+      ostats = &sa->intl_expl;
+    }
 
     max_self_any = po_args->max_self_any;
     max_self_end = po_args->max_self_end;
@@ -2784,24 +2783,12 @@ oligo_compl(primer_rec *h,
 
     if (h->self_any > max_self_any) {
 	h->ok = OV_SELF_ANY;
-	if      (OT_LEFT  == l) {
-	     sa->left_expl.compl_any++;
-	     sa->left_expl.ok--;
-        }
-	else if (OT_RIGHT == l) {
-	     sa->right_expl.compl_any++;
-	     sa->right_expl.ok--;
-        }
-	else {
-	     sa->intl_expl.compl_any++;
-	     sa->intl_expl.ok--;
-        }
+	ostats->compl_any++;
+	ostats->ok--;
 	if (!h->must_use) return;
     }
 
-
     if (l == OT_RIGHT) PR_ASSERT(!(strcmp(s, oligo_seq)));
-
 
     h->self_end = (l != OT_RIGHT) 
       ? align(oligo_seq, revc_oligo_seq, dpal_arg_to_use->end)
@@ -2811,18 +2798,8 @@ oligo_compl(primer_rec *h,
 
     if (h->self_end > max_self_end) {
 	h->ok = OV_SELF_END;
-	if      (OT_LEFT  == l) {
-	    sa->left_expl.compl_end++;
-	    sa->left_expl.ok--;
-        }
-	else if (OT_RIGHT == l) {
-	    sa->right_expl.compl_end++;
-	    sa->right_expl.ok--;
-        }
-	else {
-	    sa->intl_expl.compl_end++;
-	    sa->intl_expl.ok--;
-        }
+	ostats->compl_end++;
+	ostats->ok--;
 	return;
     }
 }
@@ -2951,13 +2928,20 @@ oligo_mispriming(h, pa, sa, l, align_args,  dpal_arg_to_use)
 		     that is, WITHIN THE INCLUDED REGION. */
   int   min, max;
   short max_lib_compl;
+  oligo_stats *ostats;
 
   if (OT_INTL == l) {
     lib = pa->o_args.repeat_lib;
     max_lib_compl = pa->o_args.max_repeat_compl;
+    ostats = &sa->intl_expl;
   } else {
     lib = pa->p_args.repeat_lib;
     max_lib_compl = pa->p_args.max_repeat_compl;
+    if (OT_LEFT == l) {
+      ostats = &sa->left_expl;
+    } else {
+      ostats = &sa->right_expl;
+    }
   }
 
   first =  (OT_LEFT == l || OT_INTL == l)
@@ -3019,28 +3003,16 @@ oligo_mispriming(h, pa, sa, l, align_args,  dpal_arg_to_use)
 
       if (w > max_lib_compl) {
 	h->ok = OV_LIB_SIM;
-	if (OT_LEFT  == l) {
-	  sa->left_expl.repeat_score++;
-	  sa->left_expl.ok--;
-	}
-	else if (OT_RIGHT == l) {
-	  sa->right_expl.repeat_score++;
-	  sa->right_expl.ok--;
-	}
-	else {
-	  sa->intl_expl.repeat_score++;
-	  sa->intl_expl.ok--;
-	}
+	ostats->repeat_score++;
+	ostats->ok--;
 	if (!h->must_use) return;
       } /* if w > max_lib_compl */
-
     } /* for */
   } /* if library exists and is non-empty */
 
   if (_pr_need_template_mispriming(pa) && (l == OT_RIGHT || l == OT_LEFT)) {
     /* Calculate maximum similarity to ectopic sites in the template. */
     primer_mispriming_to_template(h, pa, sa, l, first, last, s, s_r, align_args);
-
   }
 }
 
@@ -3891,34 +3863,34 @@ char *s1, *s2;
 }
 
 void
-pr_print_pair_explain(f, sa)
-  FILE *f;
-  const seq_args *sa;
+pr_print_pair_explain(FILE *f,
+		      const pair_stats *pair_expl)
+  /* const seq_args *sa; */
 {
-    fprintf(f, "considered %d",sa->pair_expl.considered);
-    if (sa->pair_expl.target)
-      fprintf(f, ", no target %d", sa->pair_expl.target);
-    if (sa->pair_expl.product)
-      fprintf(f, ", unacceptable product size %d", sa->pair_expl.product);
-    if (sa->pair_expl.low_tm)
-      fprintf(f, ", low product Tm %d", sa->pair_expl.low_tm);
-    if (sa->pair_expl.high_tm)
-      fprintf(f, ", high product Tm %d", sa->pair_expl.high_tm);
-    if (sa->pair_expl.temp_diff) 
-      fprintf(f, ", tm diff too large %d",sa->pair_expl.temp_diff);
-    if (sa->pair_expl.compl_any) 
-      fprintf(f, ", high any compl %d", sa->pair_expl.compl_any);
-    if (sa->pair_expl.compl_end) 
-      fprintf(f, ", high end compl %d", sa->pair_expl.compl_end);
-    if (sa->pair_expl.internal) 
-      fprintf(f, ", no internal oligo %d", sa->pair_expl.internal);
-    if (sa->pair_expl.repeat_sim)
-      fprintf(f, ", high mispriming library similarity %d",
-	      sa->pair_expl.repeat_sim);
-    if (sa->pair_expl.template_mispriming)
-      fprintf(f, ", high template mispriming score %d",
-	      sa->pair_expl.template_mispriming);
-    fprintf(f, ", ok %d\n", sa->pair_expl.ok);
+  fprintf(f, "considered %d", /* sa-> */ pair_expl->considered);
+  if (/* sa-> */ pair_expl->target)
+    fprintf(f, ", no target %d", /* sa-> */ pair_expl->target);
+  if (/* sa-> */ pair_expl->product)
+    fprintf(f, ", unacceptable product size %d", /* sa-> */ pair_expl->product);
+  if (/* sa-> */ pair_expl->low_tm)
+    fprintf(f, ", low product Tm %d", /* sa-> */ pair_expl->low_tm);
+  if (/* sa-> */ pair_expl->high_tm)
+    fprintf(f, ", high product Tm %d", /* sa-> */ pair_expl->high_tm);
+  if (/* sa-> */ pair_expl->temp_diff) 
+    fprintf(f, ", tm diff too large %d",/* sa-> */ pair_expl->temp_diff);
+  if (/* sa-> */ pair_expl->compl_any) 
+    fprintf(f, ", high any compl %d", /* sa-> */ pair_expl->compl_any);
+  if (/* sa-> */ pair_expl->compl_end) 
+    fprintf(f, ", high end compl %d", /* sa-> */ pair_expl->compl_end);
+  if (/* sa-> */ pair_expl->internal) 
+    fprintf(f, ", no internal oligo %d", /* sa-> */ pair_expl->internal);
+  if (/* sa-> */ pair_expl->repeat_sim)
+    fprintf(f, ", high mispriming library similarity %d",
+	    /* sa-> */ pair_expl->repeat_sim);
+  if (/* sa-> */ pair_expl->template_mispriming)
+    fprintf(f, ", high template mispriming score %d",
+	    /* sa-> */ pair_expl->template_mispriming);
+  fprintf(f, ", ok %d\n", /* sa-> */ pair_expl->ok);
 }
 
 const char *
