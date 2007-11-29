@@ -4249,7 +4249,7 @@ seq_lib_warning_data(const seq_lib *lib) {
 }
 
 /* =========================================================== */
-/* Various fail->longjmp wrappers for memory allocation.       */
+/* Malloc and realloc wrappers that longjmp() on failure       */
 /* =========================================================== */
 static void *
 pr_safe_malloc(size_t x)
@@ -4266,6 +4266,5 @@ pr_safe_realloc(void *p, size_t x)
     if (NULL == r) longjmp(_jmp_buf, 1);
     return r;
 }
-
-/* End of fail-stop wrappers. */
+/* End of malloc/realloc wrappers. */
 /* =========================================================== */
