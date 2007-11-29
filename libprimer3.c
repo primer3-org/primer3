@@ -695,6 +695,21 @@ destroy_dpal_arg_holder(dpal_arg_holder *h) {
   free(h);
 }
 
+/* Create and initialize a seq_args data structure */
+seq_args
+*create_seq_arg() {
+  seq_args *r = malloc(sizeof(*r));
+  if (NULL == r) return NULL; /* Out of memory */
+  memset(r, 0, sizeof(*r));
+  r->start_codon_pos = PR_DEFAULT_START_CODON_POS;
+  r->incl_l = -1; /* Indicates logical NULL. */
+  r->n_quality = 0;
+  r->quality = NULL;
+
+  
+  return r;
+}
+
 void
 destroy_seq_args(seq_args *sa) {
   if (NULL != sa->internal_input) free(sa->internal_input);
