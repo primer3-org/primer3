@@ -115,14 +115,8 @@ boulder_print_pairs(prog_args, pa, sa, best_pairs)
 	printf("PRIMER_RIGHT%s_SEQUENCE=%s\n", suffix,
 	       pr_oligo_rev_c_sequence(sa, rev));
 	if( pa->primer_task == pick_pcr_primers_and_hyb_probe)
-#if USE_OLD_FORMAT_MISTAKE
-	    printf("PRIMER_INTERNAL%s_OLIGO_SEQUENCE=%s\n", suffix,
-		   pr_oligo_sequence(sa,intl));
-#else
 	    printf("PRIMER_INTERNAL_OLIGO%s_SEQUENCE=%s\n", suffix,
 		   pr_oligo_sequence(sa,intl));
-#endif
-
 	printf("%s%s=%d,%d\n", left_tag, suffix,
 	       fwd->start + incl_s + pa->first_base_index,
 	       fwd->length);
@@ -350,23 +344,24 @@ print_all_explain(pa, sa) /* FIX ME chance the conditions in the if stmts below 
     const primer_args *pa;
     const seq_args *sa;
 {
-  if (pa->primer_task != pick_right_only
-      && pa->primer_task != pick_hyb_probe_only
+  if (pa->pick_left_primer  /*                pa->primer_task != pick_right_only
+					       && pa->primer_task != pick_hyb_probe_only  */
       && !(pa->pick_anyway && sa->left_input))
     print_explain(&sa->left_expl,OT_LEFT);
 
-  if (pa->primer_task != pick_left_only 
-      && pa->primer_task != pick_hyb_probe_only
+  if (pa->pick_right_primer/*pa->primer_task != pick_left_only 
+			     && pa->primer_task != pick_hyb_probe_only */
       && !(pa->pick_anyway && sa->right_input))
     print_explain(&sa->right_expl,OT_RIGHT);
 
   if ((pa->primer_task == pick_hyb_probe_only
-       || pa->primer_task == pick_pcr_primers_and_hyb_probe)
+       || pa->primer_task == pick_pcr_primers_and_hyb_probe)  /* FIX ME, probably not set correctly when read in */
       && !(pa->pick_anyway && sa->internal_input)) 
     print_explain(&sa->intl_expl, OT_INTL);
 
-  if (pa->primer_task  == pick_pcr_primers
-      || pa->primer_task == pick_pcr_primers_and_hyb_probe) {
+  if /* (pa->primer_task  == pick_pcr_primers 
+	|| pa->primer_task == pick_pcr_primers_and_hyb_probe)  { */
+    (pa->pick_right_primer && pa->pick_left_primer) {
     printf("PRIMER_PAIR_EXPLAIN=");
     pr_print_pair_explain(stdout, &sa->pair_expl);
   }

@@ -58,7 +58,7 @@ static const char *parse_int_pair(const char *, const char *, char, int *, int *
 			    pr_append_str *);
 static void   parse_interval_list(const char *, const char *, int*,
 				  interval_array_t, pr_append_str *);
-static void   parse_product_size(const char *, char *, primer_args *,
+static void   parse_product_size(const char *, char *, p3_global_settings *,
 				 pr_append_str *);
 static void   tag_syntax_error(const char *, const char *,  pr_append_str *);
 static int    parse_seq_quality(char *, int **);
@@ -121,7 +121,7 @@ extern double strtod();
 int
 read_record(const program_args *prog_args, 
 	    int   echo_output,
-	    primer_args *pa, 
+	    p3_global_settings *pa, 
 	    seq_args *sa, 
 	    pr_append_str *glob_err,  /* Really should be called fatal_parse_err */
 	    pr_append_str *nonfatal_parse_err
@@ -145,12 +145,12 @@ read_record(const program_args *prog_args,
     /* FIX ME, provide initialization function for pa and sa structs.*/
     /* memset(&sa->error, 0, sizeof(sa->error)); */
 
-    memset(sa, 0, sizeof(*sa));
+    /*  memset(sa, 0, sizeof(*sa)); */
 
-    sa->start_codon_pos = PR_DEFAULT_START_CODON_POS;
-    sa->incl_l = -1; /* Indicates logical NULL. */
+    /* sa->start_codon_pos = PR_DEFAULT_START_CODON_POS;
+    sa->incl_l = -1; * Indicates logical NULL. *
     sa->n_quality = 0;
-    sa->quality = NULL;
+    sa->quality = NULL; */
     non_fatal_err = nonfatal_parse_err;
 
     while ((s = p3_read_line(stdin)) != NULL && strcmp(s,"=")) {
@@ -697,7 +697,7 @@ static void
 parse_product_size(tag_name, in, pa, err)
     const char *tag_name;
     char *in;
-    primer_args *pa;
+    p3_global_settings *pa;
     pr_append_str *err;
 {
     char *q, *s = in;

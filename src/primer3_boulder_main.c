@@ -125,9 +125,12 @@ main(argc,argv)
 
     /* Values for sa (seq_args *) are _not_ retained across different
        input records. */
-    if (!(sa = malloc(sizeof(*sa)))) {
-      exit(-2); /* Out of memory. */
+    if (!(sa = create_seq_arg())) {
+      exit(-2);
     }
+    /*if (!(sa = malloc(sizeof(*sa)))) {
+      exit(-2);
+    } */
 
     pr_set_empty(fatal_parse_err);
     pr_set_empty(nonfatal_parse_err);

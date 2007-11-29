@@ -597,6 +597,7 @@ typedef struct p3retval {
 /* Deallocate a primer3 state */
 void destroy_p3retval(p3retval *);
 
+seq_args *create_seq_arg();
 void destroy_seq_args(seq_args *);
 
 /* 
@@ -670,5 +671,6 @@ char* p3_read_line(FILE *file);
 
 /* Hack */
 #define primer_args p3_global_settings
+
 
 #endif
