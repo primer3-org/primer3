@@ -597,13 +597,26 @@ typedef struct p3retval {
 /* Deallocate a primer3 state */
 void destroy_p3retval(p3retval *);
 
+/* Functions for seq_args -- create, destroy, set slots */
 seq_args *create_seq_arg();
 void destroy_seq_args(seq_args *);
-int p3_seq_arg_set_sequence(seq_args *sargs, const char *new_seq);
+int p3_set_seq_args_sequence(seq_args *sargs, const char *new_seq);
+int p3_set_seq_args_sequence_name(seq_args *sargs, const char *new_seq);
+int p3_set_seq_args_left_input(seq_args *sargs, const char *new_seq);
+int p3_set_seq_args_right_input(seq_args *sargs, const char *new_seq);
+int p3_set_seq_args_internal_input(seq_args *sargs, const char *new_seq);
+int p3_set_seq_args_start_codon_pos(seq_args *sargs, int codon_start_pos);
+/* FIX ME, we need to deal with interval lists */
 
-
-
+/* Functions for p3_global_settings -- create, destroy, set slots */
 p3_global_settings *p3_create_global_settings();
+void p3_destroy_global_settings(p3_global_settings *);
+
+args_for_one_oligo_or_primer *p3_get_global_setting_p_args(p3_global_settings *);
+args_for_one_oligo_or_primer *p3_get_global_setting_o_args(p3_global_settings *);
+int p3_set_afogop_seq_lib(args_for_one_oligo_or_primer *, seq_lib *);
+int p3_set_afogop_opt_tm(args_for_one_oligo_or_primer *, double);
+
 
 /* 
  * Choose individual primers or oligos, or primer pairs, or primer

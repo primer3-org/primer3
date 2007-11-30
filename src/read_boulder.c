@@ -171,7 +171,7 @@ read_record(const program_args *prog_args,
 		pr_append(parse_err, "SEQUENCE"); 
 	      } else {
 		/* p3_set_seq_arg_sequence */
-		if (p3_seq_arg_set_sequence(sa, datum)) exit(-2);
+		if (p3_set_seq_args_sequence(sa, datum)) exit(-2);
 	      }
 	      continue;
 	    }
