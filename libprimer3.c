@@ -466,6 +466,19 @@ p3_set_program_name(const char *pname) {
   pr_program_name = pname;
 }
 
+p3_global_settings *
+p3_create_global_settings() {
+  p3_global_settings *r;
+
+  if (!(r = malloc(sizeof(*r)))) {
+    return NULL;
+  }
+
+  pr_set_default_global_args(r);
+  
+  return r;
+}
+
 void
 pr_set_default_global_args(a)
     primer_args *a;
@@ -4247,6 +4260,23 @@ seq_lib_warning_data(const seq_lib *lib) {
   if (NULL == lib) return NULL;
   else return lib->warning.data;
 }
+
+int
+_set_string(char **loc, const char *new_string) {
+  if (*loc) {
+    free(*loc);
+  }
+  if (!(*loc = malloc(strlen(new_string) + 1))) return 1; /* ENOMEM */
+  strcpy(*loc, new_string);
+  return 0;
+}
+
+int
+p3_seq_arg_set_sequence(seq_args *sargs, const char *new_seq) {
+  return _set_string(&sargs->sequence, new_seq);
+}
+
+
 
 /* =========================================================== */
 /* Malloc and realloc wrappers that longjmp() on failure       */

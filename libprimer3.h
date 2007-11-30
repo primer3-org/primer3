@@ -599,6 +599,11 @@ void destroy_p3retval(p3retval *);
 
 seq_args *create_seq_arg();
 void destroy_seq_args(seq_args *);
+int p3_seq_arg_set_sequence(seq_args *sargs, const char *new_seq);
+
+
+
+p3_global_settings *p3_create_global_settings();
 
 /* 
  * Choose individual primers or oligos, or primer pairs, or primer
