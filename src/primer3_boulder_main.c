@@ -80,17 +80,13 @@ main(argc,argv)
   signal(SIGINT, sig_handler);
   signal(SIGTERM, sig_handler);
 
-  /* 
-   * We allocate the following structures on the heap rather than on the
-   * stack in order to take advantage of memory access checking
-   * during testing.
-   */
-  if (!(global_pa = malloc(sizeof(*global_pa)))) {
+  global_pa = p3_create_global_settings();
+  if (!global_pa) {
     exit(-2); /* Out of memory. */
   }
 
   pr_set_default_global_args(global_pa);
-  memset(&prog_args, 0, sizeof(prog_args));
+     memset(&prog_args, 0, sizeof(prog_args));
 
   while (--argc > 0) {
     argv++;

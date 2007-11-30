@@ -137,20 +137,8 @@ read_record(const program_args *prog_args,
     pr_append_str *non_fatal_err;
     char *repeat_file_path = NULL, *int_repeat_file_path = NULL;
 
-    /* possible future fix:  can we get away from using
-       sa->error in read_record(); only worth doing if
-       we support boulder input beyond the next few releases, or
-       if we pull error out of sa's defn.  */
+    /* FIX ME call p3_create_seq_args inside read_boulder? */
 
-    /* FIX ME, provide initialization function for pa and sa structs.*/
-    /* memset(&sa->error, 0, sizeof(sa->error)); */
-
-    /*  memset(sa, 0, sizeof(*sa)); */
-
-    /* sa->start_codon_pos = PR_DEFAULT_START_CODON_POS;
-    sa->incl_l = -1; * Indicates logical NULL. *
-    sa->n_quality = 0;
-    sa->quality = NULL; */
     non_fatal_err = nonfatal_parse_err;
 
     while ((s = p3_read_line(stdin)) != NULL && strcmp(s,"=")) {
@@ -174,12 +162,25 @@ read_record(const program_args *prog_args,
 	     * Process "Sequence" (i.e. Per-Record) Arguments".
 	     */
 	    parse_err = non_fatal_err;
-	    COMPARE_AND_MALLOC("SEQUENCE", sa->sequence);
+
+	    /* COMPARE_AND_MALLOC("SEQUENCE", sa->sequence); */
+	    if (COMPARE("SEQUENCE")) {   /* NEW WAY */
+	      if (/* p3_get_seq_arg_sequence(sa) */ sa->sequence) {
+		pr_append_new_chunk(parse_err,
+				    "Duplicate tag: ");
+		pr_append(parse_err, "SEQUENCE"); 
+	      } else {
+		/* p3_set_seq_arg_sequence */
+		if (p3_seq_arg_set_sequence(sa, datum)) exit(-2);
+	      }
+	      continue;
+	    }
+
 	    if (COMPARE("PRIMER_SEQUENCE_QUALITY")) {
 	       if ((sa->n_quality = parse_seq_quality(datum, &sa->quality)) == 0) {
 		 pr_append_new_chunk(parse_err, /*&sa->error, */ 
 				     "Error in sequence quality data");
-		   continue;
+		 continue;  /* FIX ME superfluous ? */
                }
 	       continue;
             }
