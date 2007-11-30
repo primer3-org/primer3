@@ -479,10 +479,14 @@ p3_create_global_settings() {
   return r;
 }
 
+void 
+p3_destroy_global_settings(p3_global_settings *a) {
+  /* FIX ME */
+  fprintf(stderr, "Called p3_destroy_global_settings, a stub\n");
+}
+
 void
-pr_set_default_global_args(a)
-    primer_args *a;
-{
+pr_set_default_global_args(p3_global_settings *a) {
     memset(a, 0, sizeof(*a));  
     a->p_args.opt_size         = OPT_SIZE;
     a->p_args.min_size         = MIN_SIZE;
@@ -4272,11 +4276,29 @@ _set_string(char **loc, const char *new_string) {
 }
 
 int
-p3_seq_arg_set_sequence(seq_args *sargs, const char *new_seq) {
+p3_set_seq_args_sequence(seq_args *sargs, const char *new_seq) {
   return _set_string(&sargs->sequence, new_seq);
 }
 
+int
+p3_set_seq_args_sequence_name(seq_args *sargs, const char *new_seq) {
+  return _set_string(&sargs->sequence_name, new_seq);
+}
 
+int
+p3_set_seq_args_left_input(seq_args *sargs, const char *new_seq) {
+  return _set_string(&sargs->left_input, new_seq);
+}
+
+int
+p3_set_seq_args_right_input(seq_args *sargs, const char *new_seq) {
+  return _set_string(&sargs->right_input, new_seq);
+}
+
+int
+p3_set_seq_args_internal_input(seq_args *sargs, const char *new_seq) {
+  return _set_string(&sargs->internal_input, new_seq);
+}
 
 /* =========================================================== */
 /* Malloc and realloc wrappers that longjmp() on failure       */
