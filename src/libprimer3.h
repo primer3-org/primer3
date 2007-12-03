@@ -600,13 +600,27 @@ void destroy_p3retval(p3retval *);
 /* Functions for seq_args -- create, destroy, set slots */
 seq_args *create_seq_arg();
 void destroy_seq_args(seq_args *);
-int p3_set_seq_args_sequence(seq_args *sargs, const char *new_seq);
-int p3_set_seq_args_sequence_name(seq_args *sargs, const char *new_seq);
-int p3_set_seq_args_left_input(seq_args *sargs, const char *new_seq);
-int p3_set_seq_args_right_input(seq_args *sargs, const char *new_seq);
-int p3_set_seq_args_internal_input(seq_args *sargs, const char *new_seq);
-int p3_set_seq_args_start_codon_pos(seq_args *sargs, int codon_start_pos);
+
+
 /* FIX ME, we need to deal with interval lists */
+
+void p3_set_seq_args_num_targets(seq_args *sargs, int num_targets);
+void p3_set_seq_args_num_internal_excl(seq_args *sargs, int num_internal_excl) ;
+void p3_set_seq_args_incl_s(seq_args *sargs, int incl_s);
+void p3_set_seq_args_incl_l(seq_args *sargs, int incl_l);
+void p3_set_seq_args_start_codon_pos(seq_args *sargs, int start_codon_pos);
+void p3_set_seq_args_stop_codon_pos(seq_args *sargs, int stop_codon_pos);
+void p3_set_seq_args_n_quality(seq_args *sargs, int n_quality);
+int p3_set_seq_args_sequence(seq_args *sargs, const char *sequence);
+int p3_set_seq_args_sequence_name(seq_args *sargs, const char* sequence_name);
+int p3_set_seq_args_sequence_file(seq_args *sargs, const char *sequence_file);
+int p3_set_seq_args_trimmed_sequence(seq_args *sargs, const char *trimmed_sequence);
+int p3_set_seq_args_trimmed_original_sequence(seq_args *sargs, const char *trimmed_original_sequence);
+int p3_set_seq_args_upcased_sequence(seq_args *sargs, const char *upcased_sequencd);
+int p3_set_seq_args_left_input(seq_args *sargs, const char *left_input);
+int p3_set_seq_args_right_input(seq_args *sargs, const char *right_input);
+int p3_set_seq_args_internal_input(seq_args *sargs, const char *internal_input);
+
 
 /* Functions for p3_global_settings -- create, destroy, set slots */
 p3_global_settings *p3_create_global_settings();
@@ -616,7 +630,6 @@ args_for_one_oligo_or_primer *p3_get_global_setting_p_args(p3_global_settings *)
 args_for_one_oligo_or_primer *p3_get_global_setting_o_args(p3_global_settings *);
 int p3_set_afogop_seq_lib(args_for_one_oligo_or_primer *, seq_lib *);
 int p3_set_afogop_opt_tm(args_for_one_oligo_or_primer *, double);
-
 
 /* 
  * Choose individual primers or oligos, or primer pairs, or primer
