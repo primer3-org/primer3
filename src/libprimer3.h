@@ -631,7 +631,7 @@ int p3_set_seq_args_internal_input(seq_args *sargs, const char *internal_input);
 /* Functions for p3_global_settings -- create, destroy, set slots */
 p3_global_settings *p3_create_global_settings();
 void p3_destroy_global_settings(p3_global_settings *);
-
+void p3_set_global_settings_pick_left_primer(p3_global_settings * p , int pick_left_primer);
 args_for_one_oligo_or_primer *p3_get_global_setting_p_args(p3_global_settings *);
 args_for_one_oligo_or_primer *p3_get_global_setting_o_args(p3_global_settings *);
 int p3_set_afogop_seq_lib(args_for_one_oligo_or_primer *, seq_lib *);

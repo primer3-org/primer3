@@ -485,6 +485,12 @@ p3_destroy_global_settings(p3_global_settings *a) {
   fprintf(stderr, "Called p3_destroy_global_settings, a stub\n");
 }
 
+void 
+p3_set_global_settings_pick_left_primer(p3_global_settings *p , int pick_left_primer) {
+  p->pick_left_primer = pick_left_primer ;
+}
+  
+
 void
 pr_set_default_global_args(p3_global_settings *a) {
     memset(a, 0, sizeof(*a));  
