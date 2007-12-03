@@ -465,6 +465,11 @@ typedef struct pair_array_t {
 
 typedef int interval_array_t[PR_MAX_INTERVAL_ARRAY][2];
 
+typedef struct interval_array_t2 {
+  interval_array_t pairs;
+  int              count;
+} interval_array_t2;
+
 typedef struct oligo_stats {
   int considered;          /* Total number of tested oligos of given type   */
   int ns;                  /* Number of oligos rejected because of Ns       */
@@ -602,7 +607,8 @@ seq_args *create_seq_arg();
 void destroy_seq_args(seq_args *);
 
 
-/* FIX ME, we need to deal with interval lists */
+int p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2);
+
 
 void p3_set_seq_args_num_targets(seq_args *sargs, int num_targets);
 void p3_set_seq_args_num_internal_excl(seq_args *sargs, int num_internal_excl) ;
