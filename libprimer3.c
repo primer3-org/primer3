@@ -4275,30 +4275,105 @@ _set_string(char **loc, const char *new_string) {
   return 0;
 }
 
-int
-p3_set_seq_args_sequence(seq_args *sargs, const char *new_seq) {
-  return _set_string(&sargs->sequence, new_seq);
+
+void
+p3_set_seq_args_num_targets(seq_args *sargs, int num_targets) {
+  sargs->num_targets =  num_targets;
+}
+
+void
+p3_set_seq_args_num_excl(seq_args *sargs, int num_excl) {
+  sargs->num_excl = num_excl;
+}
+
+void
+p3_set_seq_args_num_internal_excl(seq_args *sargs, int num_internal_excl) {
+  sargs->num_internal_excl = num_internal_excl;
+}
+
+void
+p3_set_seq_args_incl_s(seq_args *sargs, int incl_s) {
+  sargs->incl_s = incl_s;
+}
+
+void
+p3_set_seq_args_incl_l(seq_args *sargs, int incl_l) {
+  sargs->incl_l = incl_l;
+}
+
+void 
+p3_set_seq_args_start_codon_pos(seq_args *sargs, int start_codon_pos) {
+  sargs->start_codon_pos = start_codon_pos;
+}
+
+void
+p3_set_seq_args_stop_codon_pos(seq_args *sargs, int stop_codon_pos) {
+  sargs->stop_codon_pos = stop_codon_pos;
+}
+
+/* fix me 
+void
+void * p3_set_seq_args_quality(seq_args *sargs, int *quality) {
+  sargs->quality = quality 
+}
+*/
+
+
+void
+p3_set_seq_args_n_quality(seq_args *sargs, int n_quality) {
+  sargs->n_quality = n_quality ;
 }
 
 int
-p3_set_seq_args_sequence_name(seq_args *sargs, const char *new_seq) {
-  return _set_string(&sargs->sequence_name, new_seq);
+p3_set_seq_args_sequence(seq_args *sargs, const char *sequence) {
+  return _set_string(&sargs->sequence, sequence) ;
 }
 
 int
-p3_set_seq_args_left_input(seq_args *sargs, const char *new_seq) {
-  return _set_string(&sargs->left_input, new_seq);
+p3_set_seq_args_sequence_name(seq_args *sargs, const char* sequence_name) {
+ return _set_string(&sargs->sequence_name, sequence_name); 
+}
+
+int 
+p3_set_seq_args_sequence_file(seq_args *sargs, const char *sequence_file) {
+    return _set_string(&sargs->sequence_file, sequence_file)  ;
 }
 
 int
-p3_set_seq_args_right_input(seq_args *sargs, const char *new_seq) {
-  return _set_string(&sargs->right_input, new_seq);
+p3_set_seq_args_trimmed_seq(seq_args *sargs, const char *trimmed_seq) {
+   return _set_string(&sargs->trimmed_seq, trimmed_seq)  ;
+}
+
+int 
+p3_set_seq_args_trimmed_orig_seq(seq_args *sargs, const char *trimmed_orig_seq) {
+   return _set_string(&sargs->trimmed_orig_seq, trimmed_orig_seq) ;
+}
+
+int 
+p3_set_seq_args_upcased_seq(seq_args *sargs, const char *upcased_seq) {
+   return _set_string(&sargs->upcased_seq, upcased_seq)  ;
+}
+
+int 
+p3_set_seq_args_upcased_seq_r(seq_args *sargs, const char *upcased_seq_r) {
+   return _set_string(&sargs->upcased_seq_r, upcased_seq_r)  ;
+}
+
+int 
+p3_set_seq_args_left_input(seq_args *sargs, const char *left_input) {
+   return _set_string(&sargs->left_input, left_input)  ;
+}
+
+int 
+p3_set_seq_args_right_input(seq_args *sargs, const char *right_input) {
+   return _set_string(&sargs->right_input, right_input)  ;
 }
 
 int
-p3_set_seq_args_internal_input(seq_args *sargs, const char *new_seq) {
-  return _set_string(&sargs->internal_input, new_seq);
+p3_set_seq_args_internal_input(seq_args *sargs, const char *internal_input) {
+   return _set_string(&sargs->internal_input, internal_input)  ;
 }
+
 
 /* =========================================================== */
 /* Malloc and realloc wrappers that longjmp() on failure       */
