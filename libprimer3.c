@@ -614,6 +614,17 @@ pr_set_default_global_args(p3_global_settings *a) {
     a->lib_ambiguity_codes_consensus   = LIB_AMBIGUITY_CODES_CONSENSUS;
 }
 
+int
+p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2) 
+{
+  int c = interval_arr->count;
+  if (c >= PR_MAX_INTERVAL_ARRAY) return 1;
+  interval_arr->pairs[c][0] = i1;
+  interval_arr->pairs[c][1] = i2;
+  interval_arr->count++;
+  return  0;
+}
+
 /* ================================================================== */
 /* The main primer3 interface */
 

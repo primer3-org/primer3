@@ -626,7 +626,6 @@ parse_int_pair(tag_name, datum, sep, out1, out2, err)
     long tlong;
     tlong = strtol(datum, &nptr, 10);
     if (tlong > INT_MAX || tlong < INT_MIN) {
-      /* NOT sure? -> libprimer3.c */
 	tag_syntax_error(tag_name, datum, err);
 	pr_append(err, " (value too large or too small)");
 	return NULL;
@@ -669,6 +668,27 @@ parse_int_pair(tag_name, datum, sep, out1, out2, err)
 }
 
 static void
+parse_interval_list2(const char *tag_name,
+		     const char *datum,
+		     interval_array_t2 *interval_arr,
+		     pr_append_str *err)
+{
+  const char *p = datum;
+  int i1, i2;
+  int ret = 0;
+  while (' ' == *p || '\t' == *p) p++;
+  while (*p != '\0' && *p != '\n') {
+    p = parse_int_pair(tag_name, p, ',', &i1, &i2, err);
+    if (NULL == p) return;
+    ret = p3_add_to_interval_array(interval_arr, i1, i2);
+    if (ret) {
+      pr_append_new_chunk(err, "Too many elements for tag ");
+      pr_append(err, tag_name);
+    }
+  }
+}
+
+static void
 parse_interval_list(tag_name, datum, count, interval_array, err)
     const char *tag_name;
     const char *datum;
@@ -680,7 +700,6 @@ parse_interval_list(tag_name, datum, count, interval_array, err)
     while (' ' == *p || '\t' == *p) p++;
     while (*p != '\0' && *p != '\n') {
 	if (*count >= PR_MAX_INTERVAL_ARRAY) {
-	  /* ? -> libprimer3.c */
 	    pr_append_new_chunk(err, "Too many elements for tag ");
 	    pr_append(err, tag_name);
 	    return;
@@ -772,7 +791,7 @@ parse_seq_quality(s, num)
 }
 
 /* =========================================================== */
-/* Fail-stop wrappers for memory allocation.                   */
+/* Fail-stop wrapper for memory allocation.                   */
 /* =========================================================== */
 /* 
  * Panic messages for when the program runs out of memory.
