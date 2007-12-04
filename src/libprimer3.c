@@ -485,12 +485,6 @@ p3_destroy_global_settings(p3_global_settings *a) {
   fprintf(stderr, "Called p3_destroy_global_settings, a stub\n");
 }
 
-void 
-p3_set_global_settings_pick_left_primer(p3_global_settings *p , int pick_left_primer) {
-  p->pick_left_primer = pick_left_primer ;
-}
-  
-
 void
 pr_set_default_global_args(p3_global_settings *a) {
     memset(a, 0, sizeof(*a));  
@@ -637,6 +631,7 @@ p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2)
 /* Allocate a new primer3 state. Return NULL if out of memory. Assuming
    malloc sets errno to ENOMEM according to Unix98, set errno to ENOMEM
    on out-of-memory error. */
+
 p3retval *
 create_p3retval(void)
 {
@@ -4455,6 +4450,125 @@ p3_set_seq_args_right_input(seq_args *sargs, const char *right_input) {
 int
 p3_set_seq_args_internal_input(seq_args *sargs, const char *internal_input) {
    return _set_string(&sargs->internal_input, internal_input)  ;
+}
+
+void p3_set_global_settings_primer_task(p3_global_settings * p , int primer_task){
+
+}
+
+void p3_set_global_settings_pick_left_primer(p3_global_settings * p , int pick_left_primer){
+
+}
+
+void p3_set_global_settings_pick_right_primer(p3_global_settings * p , int pick_right_primer){
+
+}
+
+void p3_set_global_settings_pick_internal_oligo(p3_global_settings * p , int pick_internal_oligo){
+
+}
+
+void p3_set_global_settings_explain_flag(p3_global_settings * p , int explain_flag){
+
+}
+
+void p3_set_global_settings_first_base_index(p3_global_settings * p , int first_base_index){
+
+}
+
+void p3_set_global_settings_liberal_base(p3_global_settings * p , int liberal_base){
+
+}
+
+void p3_set_global_settings_num_return(p3_global_settings * p , int num_return){
+
+}
+
+void p3_set_global_settings_pick_anyway(p3_global_settings * p , int pick_anyway){
+}
+
+void p3_set_global_settings_quality_range_min(p3_global_settings * p , int quality_range_min){
+
+}
+
+void p3_set_global_settings_quality_range_max(p3_global_settings * p , int quality_range_max){
+
+}
+
+void p3_set_global_settings_tm_santalucia(p3_global_settings * p , int tm_santalucia){
+
+}
+
+void p3_set_global_settings_salt_corrections(p3_global_settings * p , int salt_corrections){
+
+}
+
+void p3_set_global_settings_max_end_stability(p3_global_settings * p , int max_end_stability){
+
+}
+
+void p3_set_global_settings_gc_clamp(p3_global_settings * p , int gc_clamp){
+
+}
+
+void p3_set_global_settings_lowercase_masking(p3_global_settings * p , int lowercase_masking){
+
+}
+
+void p3_set_global_settings_outside_penalty(p3_global_settings * p , int outside_penalty){
+
+}
+
+void p3_set_global_settings_inside_penalty(p3_global_settings * p , int inside_penalty){
+
+}
+
+void p3_set_global_settings_prmin (p3_global_settings * p , int *prmin){
+
+}
+
+void p3_set_global_settings_prmax (p3_global_settings * p , int *prmax){
+
+}
+
+void p3_set_global_settings_num_intervals(p3_global_settings * p , int num_intervals){
+
+}
+
+void p3_set_global_settings_product_opt_size(p3_global_settings * p , int product_opt_size){
+
+}
+
+void p3_set_global_settings_product_min_tm(p3_global_settings * p , double product_min_tm){
+
+}
+
+void p3_set_global_settings_product_max_tm(p3_global_settings * p , double product_max_tm){
+
+}
+
+void p3_set_global_settings_product_opt_tm(p3_global_settings * p , double product_opt_tm){
+
+}
+
+void p3_set_global_settings_pair_max_template_mispriming(p3_global_settings * p , short  pair_max_template_mispriming){
+
+}
+
+void p3_set_global_settings_pair_repeat_compl(p3_global_settings * p, short  pair_repeat_compl){ 
+
+}
+
+void p3_set_global_settings_pair_compl_any(p3_global_settings * p , short  pair_compl_any){
+
+}
+
+void p3_set_global_settings_pair_compl_end(p3_global_settings * p , short  pair_compl_end){
+
+}
+
+void p3_set_global_settings_max_diff_tm(p3_global_settings * p , double max_diff_tm){
+
 }
 
 
