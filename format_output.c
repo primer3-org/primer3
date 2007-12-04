@@ -45,34 +45,34 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 static char *pr_program_name = "Program name is probably primer3_core";
 
-static int lib_sim_specified(const primer_args *);
-static void print_explain(FILE *, const primer_args *,
+static int lib_sim_specified(const p3_global_settings *);
+static void print_explain(FILE *, const p3_global_settings *,
 			  const seq_args *, int, const char *);
 static void print_pair_info(FILE *, const primer_pair *,
-			    const primer_args *);
+			    const p3_global_settings *);
 static void print_oligo(FILE *, const char *, const seq_args *,
-			const primer_rec *, int, const primer_args *, 
+			const primer_rec *, int, const p3_global_settings *, 
 			const seq_lib*, int);
 static void print_oligo_header(FILE *, const char *, const int);
 static void print_pair_array(FILE *, const char*, int,
 			     const interval_array_t, 
-			     const primer_args*, const seq_args*);
-static void print_rest(FILE *, const primer_args *, 
+			     const p3_global_settings*, const seq_args*);
+static void print_rest(FILE *, const p3_global_settings *, 
 		       const seq_args *,  const pair_array_t *);
-static int  print_seq(FILE *, const primer_args *, const seq_args *, 
+static int  print_seq(FILE *, const p3_global_settings *, const seq_args *, 
 			    primer_rec *h, const pair_array_t *, int);
 static void print_seq_lines(FILE *, const char *s, const char *n, int, int,
-			    int, const primer_args *);
+			    int, const p3_global_settings *);
 static void print_stat_line(FILE *, const char *, oligo_stats s, int, int);
-static void print_summary(FILE *, const primer_args *, 
+static void print_summary(FILE *, const p3_global_settings *, 
 			  const seq_args *, const pair_array_t *, int);
-static void print_oligo_summary(FILE *, const primer_args *, 
+static void print_oligo_summary(FILE *, const p3_global_settings *, 
 			  const seq_args *, primer_rec *, 
 			  oligo_type, int);
 
 void
 format_pairs(FILE *f,
-	     const primer_args *pa,
+	     const p3_global_settings *pa,
 	     const seq_args *sa,
 	     const pair_array_t *best_pairs,
 	     const char *pr_release)
@@ -131,7 +131,7 @@ format_pairs(FILE *f,
 static void
 print_summary(f, pa, sa, best_pairs, num)
     FILE *f;
-    const primer_args *pa;
+    const p3_global_settings *pa;
     const seq_args *sa;
     const pair_array_t *best_pairs;
     int num;
@@ -185,7 +185,7 @@ print_oligo(FILE *f,
 	    const seq_args *sa,
 	    const primer_rec *o,
 	    int dir,
-	    const primer_args *pa,
+	    const p3_global_settings *pa,
 	    const seq_lib *seqlib,
 	    int print_lib_sim)
 {
@@ -217,7 +217,7 @@ print_pair_array(f, title, num, array, pa, sa)
     const char* title;
     int num;
     const interval_array_t array;
-    const primer_args *pa;
+    const p3_global_settings *pa;
     const seq_args *sa;
 {
     int j;
@@ -243,7 +243,7 @@ print_pair_array(f, title, num, array, pa, sa)
 static int
 print_seq(f, pa, sa, h, best_pairs, num)
     FILE *f;
-    const primer_args *pa;
+    const p3_global_settings *pa;
     const seq_args *sa;
     primer_rec *h;
     const pair_array_t *best_pairs;
@@ -384,7 +384,7 @@ print_seq_lines(f, s, n, seq_size, line_size, something_found, pa)
     FILE *f;
     const char *s, *n;
     int seq_size, line_size, something_found;
-    const primer_args *pa;
+    const p3_global_settings *pa;
 {
     int i = 0;
     while (seq_size > line_size) {
@@ -411,7 +411,7 @@ static void
 print_pair_info(f, p, pa)
     FILE *f;
     const primer_pair *p;
-    const primer_args *pa;
+    const p3_global_settings *pa;
 {
   fprintf(f, "PRODUCT SIZE: %d, ", p->product_size);
   fprintf(f, "PAIR ANY COMPL: %.2f, PAIR 3' COMPL: %.2f\n",
@@ -428,7 +428,7 @@ print_pair_info(f, p, pa)
 static void
 print_rest(f, pa, sa, best_pairs)
     FILE *f;
-    const primer_args *pa;
+    const p3_global_settings *pa;
     const seq_args *sa;
     const pair_array_t *best_pairs;
 {
@@ -459,7 +459,7 @@ print_rest(f, pa, sa, best_pairs)
 /* This function does _not_ print out the no_orf statistic. */
 static void
 print_explain(FILE *f,
-	      const primer_args *pa,
+	      const p3_global_settings *pa,
 	      const seq_args *sa,
 	      int print_lib_sim,
 	      const char *pr_release)
@@ -634,7 +634,7 @@ print_stat_line(f, t, s, print_lib_sim, lowercase_masking)
  * either the primer pair or the internal oligo.
  */
 static int
-lib_sim_specified(const primer_args *pa) {
+lib_sim_specified(const p3_global_settings *pa) {
   return (pa->p_args.repeat_lib || pa->o_args.repeat_lib);
 }
 
@@ -649,7 +649,7 @@ format_error(FILE *f, const char* seq_name, const char *err)
 
 void 
 format_oligos(FILE *f,
-	      const primer_args *pa,
+	      const p3_global_settings *pa,
 	      const seq_args    *sa,
 	      primer_rec  *h,
 	      int n,
@@ -735,7 +735,7 @@ format_oligos(FILE *f,
 static void
 print_oligo_summary(f, pa, sa, h, l, num)
     FILE *f;
-    const primer_args *pa;
+    const p3_global_settings *pa;
     const seq_args *sa;
     primer_rec *h;
     oligo_type l;

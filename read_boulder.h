@@ -54,7 +54,7 @@ typedef struct program_args {
  */
 int read_record(const program_args *, 
 		int         echo_output,
-		primer_args *pa, 
+		p3_global_settings *pa, 
 		seq_args *sa,
 		pr_append_str *fatal_err,
 		pr_append_str *nonfatal_err);
