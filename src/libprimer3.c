@@ -96,9 +96,11 @@ typedef struct dpal_arg_holder {
 static jmp_buf _jmp_buf;
 
 /* Function declarations. */
-static int    _pr_data_control(const primer_args *,  seq_args *, 
+static int    _pr_data_control(const primer_args *,  
+			       seq_args *, 
 			       pr_append_str *glob_err,
 			       pr_append_str *nonfatal_err);
+
 static int    _pr_need_pair_template_mispriming(const primer_args *pa);
 static int    _pr_need_template_mispriming(const primer_args *);
 
@@ -387,7 +389,6 @@ The default is 0 only for backward compatibility.
 #define INTERNAL_OLIGO_REPEAT_SIMILARITY 1200
 #define REPEAT_SIMILARITY                1200
 #define PAIR_REPEAT_SIMILARITY           2400
-#define FIRST_BASE_INDEX                    0
 #define NUM_RETURN                          5
 #define MIN_QUALITY                         0
 #define QUALITY_RANGE_MIN                   0
@@ -532,7 +533,7 @@ pr_set_default_global_args(p3_global_settings *a) {
     a->pick_internal_oligo = 0;
     /* End temporary */
 
-    a->first_base_index  = FIRST_BASE_INDEX;
+    a->first_base_index  = 0;
     a->num_return        = NUM_RETURN;
     a->pr_min[0]         = 100;
     a->pr_max[0]         = 300;
@@ -769,7 +770,7 @@ static dpal_arg_holder *dpal_arg_to_use = NULL;
 
 /* See libprimer3.h for documentation. */
 p3retval *
-choose_primers(primer_args *pa,
+choose_primers(const p3_global_settings *pa,
 	       seq_args *sa)
 {
     int          i;               /* Loop index. */
@@ -800,10 +801,33 @@ choose_primers(primer_args *pa,
     PR_ASSERT(NULL != pa);
     PR_ASSERT(NULL != sa);
     
-    /* FIX ME -- MOVE THIS TO OUTSIDE libprimer3 or make this a warning */
-    if (pa->p_args.min_quality != 0 
+    /* FIX ME -- make this a warning? */
+    /* if (pa->p_args.min_quality != 0 
 	&& pa->p_args.min_end_quality < pa->p_args.min_quality)
-      pa->p_args.min_end_quality = pa->p_args.min_quality;
+	pa->p_args.min_end_quality = pa->p_args.min_quality; */
+
+#if 0
+    /* FIX ME -- temporary */
+    sa->num_targets = sa->tar2.count;
+    for (i = 0; i <PR_MAX_INTERVAL_ARRAY;  i++) {
+      sa->tar[i][0]     = sa->tar2.pairs[i][0];
+      sa->tar[i][1]     = sa->tar2.pairs[i][1];
+    }
+    sa->num_excl = sa->excl2.count;
+    for (i = 0; i <PR_MAX_INTERVAL_ARRAY;  i++) {
+      sa->excl[i][0]     = sa->excl2.pairs[i][0];
+      sa->excl[i][1]     = sa->excl2.pairs[i][1];
+    }
+    sa->num_internal_excl = sa->excl_internal2.count;
+    for (i = 0; i <PR_MAX_INTERVAL_ARRAY;  i++) {
+      sa->excl_internal[i][0]     = sa->excl_internal2.pairs[i][0];
+      sa->excl_internal[i][1]     = sa->excl_internal2.pairs[i][1];
+    }
+#endif 
+    /*     if (1 == p3_adjust_seq_args(pa, sa, &sa->error)) {
+      return retval;
+      } */
+
 
     if (_pr_data_control(pa, sa, &retval->glob_err, &sa->error) !=0 ) {
       return retval;
@@ -3250,6 +3274,66 @@ adjust_base_index_interval_list(intervals, num, first_index)
     for (i = 0; i < num; i++) intervals[i][0] -= first_index;
 }
 
+int
+p3_adjust_seq_args(const p3_global_settings *pa, 
+		   seq_args *sa, 
+		   pr_append_str *nonfatal_err)
+{
+  int seq_len, i;
+
+  if (NULL == sa->sequence) {
+    pr_append_new_chunk(nonfatal_err, "Missing SEQUENCE tag");
+    return 1;
+  } 
+
+    /* FIX ME -- temporary */
+    sa->num_targets = sa->tar2.count;
+    for (i = 0; i <PR_MAX_INTERVAL_ARRAY;  i++) {
+      sa->tar[i][0]     = sa->tar2.pairs[i][0];
+      sa->tar[i][1]     = sa->tar2.pairs[i][1];
+    }
+    sa->num_excl = sa->excl2.count;
+    for (i = 0; i <PR_MAX_INTERVAL_ARRAY;  i++) {
+      sa->excl[i][0]     = sa->excl2.pairs[i][0];
+      sa->excl[i][1]     = sa->excl2.pairs[i][1];
+    }
+    sa->num_internal_excl = sa->excl_internal2.count;
+    for (i = 0; i <PR_MAX_INTERVAL_ARRAY;  i++) {
+      sa->excl_internal[i][0]     = sa->excl_internal2.pairs[i][0];
+      sa->excl_internal[i][1]     = sa->excl_internal2.pairs[i][1];
+    }
+
+  seq_len = strlen(sa->sequence);
+
+  if (sa->incl_l == -1) {
+    sa->incl_l = seq_len;
+    sa->incl_s = pa->first_base_index;
+  }
+
+  sa->incl_s -= pa->first_base_index;
+  sa->start_codon_pos -= pa->first_base_index;
+
+  /*
+    adjust_base_index_interval_list(sa->tar, sa->num_targets,
+    pa->first_base_index);
+    adjust_base_index_interval_list(sa->excl2.pairs, sa->excl2.count,
+    pa->first_base_index);
+    adjust_base_index_interval_list(sa->excl_internal,
+    sa->num_internal_excl,
+    pa->first_base_index);
+  */
+
+  adjust_base_index_interval_list(sa->tar, sa->num_targets,
+				  pa->first_base_index);
+  adjust_base_index_interval_list(sa->excl, sa->num_excl,
+				  pa->first_base_index);
+  adjust_base_index_interval_list(sa->excl_internal,
+				  sa->num_internal_excl,
+				  pa->first_base_index);
+  return 0;
+
+}
+
 /*
  * Return 1 on error, 0 on success.  Set sa->trimmed_seq and possibly modify
  * sa->tar.  Upcase and check all bases in sa->trimmed_seq.  
@@ -3269,26 +3353,9 @@ _pr_data_control(const primer_args *pa,
     if (NULL == sa->sequence) {
       pr_append_new_chunk(nonfatal_err, "Missing SEQUENCE tag");
       return 1;
-    } 
-
-    seq_len = strlen(sa->sequence);
-   
-    if (sa->incl_l == -1) {
-      sa->incl_l = seq_len;
-      sa->incl_s = pa->first_base_index;
     }
 
-    /* Adjust base indexes in sa. */
-    sa->incl_s -= pa->first_base_index;
-    sa->start_codon_pos -= pa->first_base_index;
-    adjust_base_index_interval_list(sa->tar, sa->num_targets,
-				    pa->first_base_index);
-    adjust_base_index_interval_list(sa->excl, sa->num_excl,
-				    pa->first_base_index);
-    adjust_base_index_interval_list(sa->excl_internal,
-				    sa->num_internal_excl,
-				    pa->first_base_index);
-    /* End adjust base indexes in sa. */
+    seq_len = strlen(sa->sequence);
 
     if (sa->n_quality !=0 && sa->n_quality != seq_len)
       pr_append_new_chunk(nonfatal_err, "Error in sequence quality data");
