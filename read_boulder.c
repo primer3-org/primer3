@@ -56,8 +56,16 @@ static void   parse_double(const char *, const char *, double *,
 static void   parse_int(const char *, const char *, int *, pr_append_str *);
 static const char *parse_int_pair(const char *, const char *, char, int *, int *,
 			    pr_append_str *);
-static void   parse_interval_list(const char *, const char *, int*,
-				  interval_array_t, pr_append_str *);
+
+/* static void   parse_interval_list_old(const char *, const char *, int*,
+   interval_array_t, pr_append_str *); */
+
+static void   parse_interval_list(const char *tag_name,
+				   const char *datum,
+				   interval_array_t2 *interval_arr,
+				   pr_append_str *err);
+
+
 static void   parse_product_size(const char *, char *, p3_global_settings *,
 				 pr_append_str *);
 static void   tag_syntax_error(const char *, const char *,  pr_append_str *);
@@ -109,11 +117,20 @@ extern double strtod();
        continue;                               \
    }
 
+#if 0
 #define COMPARE_INTERVAL_LIST(TAG, SIZE, LIST)                   \
    if (COMPARE(TAG)) {                                           \
        parse_interval_list(TAG, datum, &SIZE, LIST, parse_err);  \
        continue;                                                 \
    }
+#endif
+
+#define COMPARE_INTERVAL_LIST(TAG, PLACE)                   \
+   if (COMPARE(TAG)) {                                           \
+       parse_interval_list(TAG, datum, PLACE, parse_err);  \
+       continue;                                                 \
+   }
+
 
 /* 
  * See read_boulder.h for description.
@@ -191,12 +208,11 @@ read_record(const program_args *prog_args,
             COMPARE_AND_MALLOC("PRIMER_RIGHT_INPUT", sa->right_input);
             COMPARE_AND_MALLOC("PRIMER_INTERNAL_OLIGO_INPUT", sa->internal_input);
 
-	    COMPARE_INTERVAL_LIST("TARGET", sa->num_targets, sa->tar) ;
-	    COMPARE_INTERVAL_LIST("EXCLUDED_REGION", sa->num_excl,
-				  sa->excl);
+	    COMPARE_INTERVAL_LIST("TARGET", &sa->tar2);
+	    COMPARE_INTERVAL_LIST("EXCLUDED_REGION", &sa->excl2);
 	    COMPARE_INTERVAL_LIST("PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION",
-				   sa->num_internal_excl,  
-				   sa->excl_internal);
+				  &sa->excl_internal2);
+
 	    if (COMPARE("INCLUDED_REGION")) {
 		p = parse_int_pair("INCLUDED_REGION", datum, ',',
 				   &sa->incl_s, &sa->incl_l, parse_err);
@@ -668,10 +684,10 @@ parse_int_pair(tag_name, datum, sep, out1, out2, err)
 }
 
 static void
-parse_interval_list2(const char *tag_name,
-		     const char *datum,
-		     interval_array_t2 *interval_arr,
-		     pr_append_str *err)
+parse_interval_list(const char *tag_name,
+		    const char *datum,
+		    interval_array_t2 *interval_arr,
+		    pr_append_str *err)
 {
   const char *p = datum;
   int i1, i2;
@@ -688,8 +704,9 @@ parse_interval_list2(const char *tag_name,
   }
 }
 
+#if 0
 static void
-parse_interval_list(tag_name, datum, count, interval_array, err)
+parse_interval_list_old(tag_name, datum, count, interval_array, err)
     const char *tag_name;
     const char *datum;
     int *count;
@@ -712,6 +729,7 @@ parse_interval_list(tag_name, datum, count, interval_array, err)
 	(*count)++;
     }
 }
+#endif
 
 static void
 parse_product_size(tag_name, in, pa, err)

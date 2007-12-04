@@ -55,9 +55,9 @@ main(argc,argv)
     int argc;
     char *argv[]; 
 { 
-  program_args prog_args;
-  int         format_output = 0;
-  primer_args *global_pa;
+  program_args       prog_args;
+  int                format_output = 0;
+  p3_global_settings *global_pa;
   seq_args *sa;
   pr_append_str *fatal_parse_err = NULL;
   pr_append_str *nonfatal_parse_err = NULL;
@@ -155,6 +155,7 @@ main(argc,argv)
     /* FIX ME -- read in mispriming libraries here */
 
 
+    p3_adjust_seq_args(global_pa, sa, nonfatal_parse_err);
     if (!pr_is_empty(nonfatal_parse_err)) {
       if (format_output) {
 	format_error(stdout, sa->sequence_name, 
@@ -165,11 +166,8 @@ main(argc,argv)
       goto finish_loop;
     }
 
-    /* FIX ME create retval inside choose_primers */
-    /* if (!(retval = create_p3retval())) {
-      exit(-2);
-    } */
-    retval = choose_primers(/* retval, */ global_pa, sa);
+
+    retval = choose_primers(global_pa, sa);
     if (NULL == retval) exit(-2); /* Out of memory. */
 
     if (!pr_is_empty(&retval->glob_err)

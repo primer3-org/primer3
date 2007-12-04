@@ -103,13 +103,6 @@ typedef struct seq_lib {
     int seq_num;          /* The number of names, sequences, and weights. */
 } seq_lib;
 
-/* Maxima needed for interface data structures. */
-#define PR_MAX_INTERVAL_ARRAY 200 /* 
-				   * Maximum number of input intervals
-				   * supported; used for targets, excluded
-				   * regions, product-size intervals, etc.
-				   */
-
 /* 
  * Arguments to the primer program as a whole.  Values for these arguments are
  * retained _across_ different input records.  (These are the so-called
@@ -185,6 +178,14 @@ typedef struct args_for_one_oligo_or_primer {
   short  max_template_mispriming;
 } args_for_one_oligo_or_primer;
 
+
+/* Maxima needed for interface data structures. */
+#define PR_MAX_INTERVAL_ARRAY 200 
+/* 
+ * Maximum number of input intervals
+ * supported; used for targets, excluded
+ * regions, product-size intervals, etc.
+ */
 
 typedef struct p3_global_settings {
   /* ================================================== */
@@ -466,9 +467,15 @@ typedef struct pair_array_t {
 typedef int interval_array_t[PR_MAX_INTERVAL_ARRAY][2];
 
 typedef struct interval_array_t2 {
+  int pairs[PR_MAX_INTERVAL_ARRAY][2];
+  int count;
+} interval_array_t2;
+
+
+/* typedef struct interval_array_t2 {
   interval_array_t pairs;
   int              count;
-} interval_array_t2;
+  } interval_array_t2; */
 
 typedef struct oligo_stats {
   int considered;          /* Total number of tested oligos of given type   */
@@ -512,7 +519,10 @@ typedef struct pair_stats {
  * we will pick primer(s), etc.
  */
 typedef struct seq_args {
-  int num_targets;        /* The number of targets. */
+
+  interval_array_t2 tar2;   /* Replacement for tar,  below, FIX ME finish */
+
+  int num_targets;      /* The number of targets. */
   interval_array_t tar;   /*
 			   * The targets themselves; tar[i][0] is the start
 			   * of the ith target, tar[i][1] its length.  These
@@ -521,6 +531,8 @@ typedef struct seq_args {
 			   * are recalculated to be indexes within
 			   * trimmed_seq.
 			   */
+
+  interval_array_t2 excl2;  /* replacement for excl, below, FIX ME finish */
   int num_excl;           /* The number of excluded regions.  */
   interval_array_t excl;  /* The same as for targets.
 			   * These are presented as indexes within
@@ -528,9 +540,12 @@ typedef struct seq_args {
 			   * execution of choice() they are recalculated
 			   * to be indexes within trimmed_seq.
 			   */
+  interval_array_t2 excl_internal2;
+
   int num_internal_excl;  /* Number of excluded regions for internal oligo.*/
   interval_array_t excl_internal;
   /* Similar to excl. */
+
   int incl_s;             /* The 0-based start of included region. */
   int incl_l;             /* 
 			   * The length of the included region, which is
@@ -605,7 +620,9 @@ void destroy_p3retval(p3retval *);
 /* Functions for seq_args -- create, destroy, set slots */
 seq_args *create_seq_arg();
 void destroy_seq_args(seq_args *);
-
+int p3_adjust_seq_args(const p3_global_settings *pa, 
+		       seq_args *sa, 
+		       pr_append_str *nonfatal_err);
 
 int p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2);
 
@@ -644,7 +661,7 @@ int p3_set_afogop_opt_tm(args_for_one_oligo_or_primer *, double);
  * Otherwise return retval (updated).  Errors are returned in 
  * in retval.
  */
-p3retval *choose_primers(/* p3retval *retval,*/  p3_global_settings *pa, seq_args *sa);
+p3retval *choose_primers(const p3_global_settings *pa, seq_args *sa);
 
 char  *pr_oligo_sequence(const seq_args *, const primer_rec *);
 
@@ -664,7 +681,7 @@ void          pr_append(pr_append_str *, const char *);
 void          pr_append_new_chunk(pr_append_str *, const char *);
 
 
-void  pr_print_pair_explain(FILE *, const /* seq_args */ pair_stats *);
+void  pr_print_pair_explain(FILE *, const pair_stats *);
 
 const char  *libprimer3_release(void);
 const char  **libprimer3_copyright(void);

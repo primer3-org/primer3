@@ -765,9 +765,9 @@ print_oligo_summary(f, pa, sa, h, l, num)
     fprintf(f, "SEQUENCE SIZE: %d\n", seq_len);
     fprintf(f, "INCLUDED REGION SIZE: %d\n\n", sa->incl_l);
 
-    print_pair_array(f, "TARGETS", sa->num_targets, sa->tar, pa, sa);
-    print_pair_array(f, "EXCLUDED REGIONS", sa->num_excl, sa->excl, pa, sa);
+    print_pair_array(f, "TARGETS", sa->tar2.count /* num_targets*/, sa->/* tar*/tar2.pairs, pa, sa);
+    print_pair_array(f, "EXCLUDED REGIONS", sa->excl2.count, sa->excl2.pairs, pa, sa);
     print_pair_array(f, "INTERNAL OLIGO EXCLUDED REGIONS",
-		     sa->num_internal_excl, sa->excl_internal, pa, sa);
+		     sa->excl_internal2.count, sa->excl_internal2.pairs, pa, sa);
 }
 
