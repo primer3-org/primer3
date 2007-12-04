@@ -652,21 +652,33 @@ void p3_set_global_settings_first_base_index(p3_global_settings * p , int first_
 void p3_set_global_settings_liberal_base(p3_global_settings * p , int liberal_base);
 void p3_set_global_settings_num_return(p3_global_settings * p , int num_return);
 void p3_set_global_settings_pick_anyway(p3_global_settings * p , int pick_anyway);
-void p3_set_global_settings_quality_range_min(p3_global_settings * p , int quality_range_max);
-args_for_one_oligo_or_primer *p3_get_global_settings_p_args(p3_global_settings *p);
-args_for_one_oligo_or_primer *p3_get_global_settings_o_args(p3_global_settings *p);
+void p3_set_global_settings_quality_range_min(p3_global_settings * p , int quality_range_min);
+void p3_set_global_settings_quality_range_max(p3_global_settings * p , int quality_range_max);
 void p3_set_global_settings_tm_santalucia(p3_global_settings * p , int tm_santalucia);
 void p3_set_global_settings_salt_corrections(p3_global_settings * p , int salt_corrections);
+void p3_set_global_settings_max_end_stability(p3_global_settings * p , int max_end_stability);
 void p3_set_global_settings_gc_clamp(p3_global_settings * p , int gc_clamp);
+void p3_set_global_settings_lowercase_masking(p3_global_settings * p , int lowercase_masking);
+void p3_set_global_settings_outside_penalty(p3_global_settings * p , int outside_penalty);
+void p3_set_global_settings_inside_penalty(p3_global_settings * p , int inside_penalty);
+void p3_set_global_settings_prmin (p3_global_settings * p , int *prmin);
+void p3_set_global_settings_prmax (p3_global_settings * p , int *prmax);
+void p3_set_global_settings_num_intervals(p3_global_settings * p , int num_intervals);
+void p3_set_global_settings_product_opt_size(p3_global_settings * p , int product_opt_size);
+void p3_set_global_settings_product_min_tm(p3_global_settings * p , double product_min_tm);
+void p3_set_global_settings_product_max_tm(p3_global_settings * p , double product_max_tm);
+void p3_set_global_settings_product_opt_tm(p3_global_settings * p , double product_opt_tm);
+void p3_set_global_settings_pair_max_template_mispriming(p3_global_settings * p , short  pair_max_template_mispriming);
+void p3_set_global_settings_pair_repeat_compl(p3_global_settings * p, short  pair_repeat_compl); 
+void p3_set_global_settings_pair_compl_any(p3_global_settings * p , short  pair_compl_any);
+void p3_set_global_settings_pair_compl_end(p3_global_settings * p , short  pair_compl_end);
+void p3_set_global_settings_max_diff_tm(p3_global_settings * p , double max_diff_tm);
+
 int p3_set_afogop_seq_lib(args_for_one_oligo_or_primer *, seq_lib *);
 int p3_set_afogop_opt_tm(args_for_one_oligo_or_primer *, double);
+args_for_one_oligo_or_primer *p3_get_global_settings_p_args(p3_global_settings *p);
+args_for_one_oligo_or_primer *p3_get_global_settings_o_args(p3_global_settings *p);
 
-/* 
- * Choose individual primers or oligos, or primer pairs, or primer
- * pairs with internal oligos. On ENOMEM return NULL and set errno. 
- * Otherwise return retval (updated).  Errors are returned in 
- * in retval.
- */
 p3retval *choose_primers(const p3_global_settings *pa, seq_args *sa);
 
 char  *pr_oligo_sequence(const seq_args *, const primer_rec *);
