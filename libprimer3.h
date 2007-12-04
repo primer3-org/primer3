@@ -643,9 +643,21 @@ int p3_set_seq_args_internal_input(seq_args *sargs, const char *internal_input);
 p3_global_settings *p3_create_global_settings();
 void p3_destroy_global_settings(p3_global_settings *);
 
+void p3_set_global_settings_primer_task(p3_global_settings * p , int primer_task);
 void p3_set_global_settings_pick_left_primer(p3_global_settings * p , int pick_left_primer);
+void p3_set_global_settings_pick_right_primer(p3_global_settings * p , int pick_right_primer);
+void p3_set_global_settings_pick_internal_oligo(p3_global_settings * p , int pick_internal_oligo);
+void p3_set_global_settings_explain_flag(p3_global_settings * p , int explain_flag);
+void p3_set_global_settings_first_base_index(p3_global_settings * p , int first_base_index);
+void p3_set_global_settings_liberal_base(p3_global_settings * p , int liberal_base);
+void p3_set_global_settings_num_return(p3_global_settings * p , int num_return);
+void p3_set_global_settings_pick_anyway(p3_global_settings * p , int pick_anyway);
+void p3_set_global_settings_quality_range_min(p3_global_settings * p , int quality_range_max);
 args_for_one_oligo_or_primer *p3_get_global_settings_p_args(p3_global_settings *p);
 args_for_one_oligo_or_primer *p3_get_global_settings_o_args(p3_global_settings *p);
+void p3_set_global_settings_tm_santalucia(p3_global_settings * p , int tm_santalucia);
+void p3_set_global_settings_salt_corrections(p3_global_settings * p , int salt_corrections);
+void p3_set_global_settings_gc_clamp(p3_global_settings * p , int gc_clamp);
 int p3_set_afogop_seq_lib(args_for_one_oligo_or_primer *, seq_lib *);
 int p3_set_afogop_opt_tm(args_for_one_oligo_or_primer *, double);
 
