@@ -284,7 +284,7 @@ typedef struct p3_global_settings {
 
   /* ================================================== */
   /* Arguments for primer pairs and products. */
-
+  /* FIX ME, repplace this interval_array_t2 structs? */
   int    pr_min[PR_MAX_INTERVAL_ARRAY]; /* Minimum product sizes. */
   int    pr_max[PR_MAX_INTERVAL_ARRAY]; /* Maximum product sizes. */
   int    num_intervals;         /* 
@@ -470,12 +470,6 @@ typedef struct interval_array_t2 {
   int pairs[PR_MAX_INTERVAL_ARRAY][2];
   int count;
 } interval_array_t2;
-
-
-/* typedef struct interval_array_t2 {
-  interval_array_t pairs;
-  int              count;
-  } interval_array_t2; */
 
 typedef struct oligo_stats {
   int considered;          /* Total number of tested oligos of given type   */
@@ -684,6 +678,8 @@ void          pr_append_new_chunk(pr_append_str *, const char *);
 void  pr_print_pair_explain(FILE *, const pair_stats *);
 
 const char  *libprimer3_release(void);
+
+/* FIX ME, make this a print function? or a char * */
 const char  **libprimer3_copyright(void);
 
 /* An accessor function for a primer_rec *. */
