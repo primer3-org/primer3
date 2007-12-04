@@ -4460,119 +4460,118 @@ void p3_set_global_settings_pick_left_primer(p3_global_settings * p , int pick_l
 p->pick_left_primer = pick_left_primer;
 }
 
-/*
 void p3_set_global_settings_pick_right_primer(p3_global_settings * p , int pick_right_primer){
-  -> = ;
+  p->pick_right_primer = pick_right_primer;
 }
 
 void p3_set_global_settings_pick_internal_oligo(p3_global_settings * p , int pick_internal_oligo){
-  -> = ;
+  p->pick_internal_oligo = pick_internal_oligo;
 }
 
 void p3_set_global_settings_explain_flag(p3_global_settings * p , int explain_flag){
-  -> = ;
+  p->explain_flag = explain_flag;
 }
 
 void p3_set_global_settings_first_base_index(p3_global_settings * p , int first_base_index){
-  -> = ;
+  p->first_base_index = first_base_index;
 }
 
 void p3_set_global_settings_liberal_base(p3_global_settings * p , int liberal_base){
-  -> = ;
+  p->liberal_base = liberal_base;
 }
 
 void p3_set_global_settings_num_return(p3_global_settings * p , int num_return){
-  -> = ;
+  p->num_return = num_return; 
 }
 
 void p3_set_global_settings_pick_anyway(p3_global_settings * p , int pick_anyway){
-  -> = ;
+  p->pick_anyway = pick_anyway ;
 }
 
 void p3_set_global_settings_quality_range_min(p3_global_settings * p , int quality_range_min){
-  -> = ;
+  p->quality_range_min = quality_range_min;
 }
 
 void p3_set_global_settings_quality_range_max(p3_global_settings * p , int quality_range_max){
-  -> = ;
+  p->quality_range_max = quality_range_max ;
 }
 
 void p3_set_global_settings_tm_santalucia(p3_global_settings * p , int tm_santalucia){
-  -> = ;
+  p->tm_santalucia = tm_santalucia;
 }
 
 void p3_set_global_settings_salt_corrections(p3_global_settings * p , int salt_corrections){
-  -> = ;
+  p->salt_corrections = salt_corrections;
 }
 
 void p3_set_global_settings_max_end_stability(p3_global_settings * p , int max_end_stability){
-  -> = ;
+  p->max_end_stability = max_end_stability;
 }
 
 void p3_set_global_settings_gc_clamp(p3_global_settings * p , int gc_clamp){
-  -> = ;
+  p->gc_clamp = gc_clamp;
 }
 
 void p3_set_global_settings_lowercase_masking(p3_global_settings * p , int lowercase_masking){
-  -> = ;
+  p->lowercase_masking = lowercase_masking;
 }
 
 void p3_set_global_settings_outside_penalty(p3_global_settings * p , int outside_penalty){
-  -> = ;
+  p->outside_penalty = outside_penalty;
 }
 
 void p3_set_global_settings_inside_penalty(p3_global_settings * p , int inside_penalty){
-  -> = ;
+  p->inside_penalty = inside_penalty;
 }
 
-void p3_set_global_settings_prmin (p3_global_settings * p , int *prmin){
-  -> = ;
+void p3_set_global_settings_pr_min(p3_global_settings * p , int *pr_min){
+  /*  p->pr_min = pr_min;  FIX this */
 }
 
-void p3_set_global_settings_prmax (p3_global_settings * p , int *prmax){
-  -> = ;
+void p3_set_global_settings_pr_max (p3_global_settings * p , int *pr_max){
+  /*  p->pr_max = pr_max;  FIX this */
 }
 
 void p3_set_global_settings_num_intervals(p3_global_settings * p , int num_intervals){
-  -> = ;
+  p->num_intervals = num_intervals;
 }
 
 void p3_set_global_settings_product_opt_size(p3_global_settings * p , int product_opt_size){
-  -> = ;
+  p->product_opt_size = product_opt_size;
 }
 
 void p3_set_global_settings_product_min_tm(p3_global_settings * p , double product_min_tm){
-  -> = ;
+  p->product_min_tm = product_min_tm;
 }
 
 void p3_set_global_settings_product_max_tm(p3_global_settings * p , double product_max_tm){
-  -> = ;
+  p->product_max_tm = product_max_tm;
 }
 
 void p3_set_global_settings_product_opt_tm(p3_global_settings * p , double product_opt_tm){
-  -> = ;
+  p->product_opt_tm = product_opt_tm;
 }
 
 void p3_set_global_settings_pair_max_template_mispriming(p3_global_settings * p , short  pair_max_template_mispriming){
-  -> = ;
+  p->pair_max_template_mispriming = pair_max_template_mispriming;
 }
 
 void p3_set_global_settings_pair_repeat_compl(p3_global_settings * p, short  pair_repeat_compl){ 
-  -> = ;
+  p->pair_repeat_compl = pair_repeat_compl;
 }
 
 void p3_set_global_settings_pair_compl_any(p3_global_settings * p , short  pair_compl_any){
-  -> = ;
+  p->pair_compl_any = pair_compl_any;
 }
 
 void p3_set_global_settings_pair_compl_end(p3_global_settings * p , short  pair_compl_end){
-  -> = ;
+  p->pair_compl_end = pair_compl_end;
 }
 
 void p3_set_global_settings_max_diff_tm(p3_global_settings * p , double max_diff_tm){
-  -> = ;
+  p->max_diff_tm = max_diff_tm;
 }
-*/
+
 
 /* =========================================================== */
 /* Malloc and realloc wrappers that longjmp() on failure       */
