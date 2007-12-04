@@ -558,7 +558,7 @@ int pr_is_empty(const pr_append_str *);
 char *pr_gather_warnings(const seq_args *, const primer_args *);
 
 /* Choose primer pairs or triples */
-int prime3_choose(primer_state *, primer_args *, seq_args *, pair_array_t *);
+int primer3_choose(primer_state *, primer_args *, seq_args *, pair_array_t *);
 
 /* Print an "explanation string" for primer pair search. */
 void pr_print_pair_explain(FILE *, const seq_args *);
