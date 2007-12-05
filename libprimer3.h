@@ -74,12 +74,27 @@ if (!(COND)) {                                           \
     abort();                                             \
 }
 
-typedef enum task { pick_pcr_primers               = 0,
-		    pick_pcr_primers_and_hyb_probe = 1,
-		    pick_left_only                 = 2,
-                    pick_right_only                = 3,
-                    pick_hyb_probe_only            = 4,
-                } task;
+/* Enum to define tasks primer3 can do */
+typedef enum task { 
+  pick_pcr_primers               = 0,
+  pick_pcr_primers_and_hyb_probe = 1,
+  pick_left_only                 = 2,
+  pick_right_only                = 3,
+  pick_hyb_probe_only            = 4,
+  pick_detection_primers         = 5,
+  pick_cloning_primers           = 6,
+  pick_discriminative_primers    = 7,    
+  pick_sequencing_primers        = 8,
+  pick_primer_list               = 9,
+  check_primers                  = 10,
+} task;
+
+/* Enum explaining if output are pairs */
+typedef enum output_format {
+	primer_pairs    = 0,
+	primer_list     = 1,
+} output_format;
+
 
 /* pr_append_str is an append-only string ADT. */
 typedef struct pr_append_str {
@@ -679,6 +694,13 @@ int p3_set_afogop_opt_tm(args_for_one_oligo_or_primer *, double);
 args_for_one_oligo_or_primer *p3_get_global_settings_p_args(p3_global_settings *p);
 args_for_one_oligo_or_primer *p3_get_global_settings_o_args(p3_global_settings *p);
 
+
+/* 
+ * Choose individual primers or oligos, or primer pairs, or primer
+ * pairs with internal oligos. On ENOMEM return NULL and set errno. 
+ * Otherwise return retval (updated).  Errors are returned in 
+ * in retval.
+ */
 p3retval *choose_primers(const p3_global_settings *pa, seq_args *sa);
 
 char  *pr_oligo_sequence(const seq_args *, const primer_rec *);
