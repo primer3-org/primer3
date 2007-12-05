@@ -99,7 +99,8 @@ static jmp_buf _jmp_buf;
 static int    _pr_data_control(const p3_global_settings *,  
 			       seq_args *, 
 			       pr_append_str *glob_err,
-			       pr_append_str *nonfatal_err);
+			       pr_append_str *nonfatal_err,
+			       pr_append_str *warning);
 
 static int    _pr_need_pair_template_mispriming(const p3_global_settings *pa);
 static int    _pr_need_template_mispriming(const p3_global_settings *);
@@ -113,9 +114,17 @@ static void   add_must_use_warnings(seq_args *, const char *,
 				    const oligo_stats *);
 static void   add_pair(const primer_pair *, pair_array_t *);
 static short  align(const char *, const char*, const dpal_args *a);
-static int    _pr_check_intervals(const char *, const int,
-				  interval_array_t, const int, 
-				  pr_append_str *err, seq_args *);
+
+static int    _pr_check_and_adjust_intervals(seq_args *sa, 
+					     int seq_len, 
+					     pr_append_str * nonfatal_err, 
+					     pr_append_str *warning);
+
+
+static int    _pr_check_and_adjust_1_interval(const char *, const int,
+					      interval_array_t, const int, 
+					      pr_append_str *err, seq_args *,
+					      pr_append_str *warning);
 
 static int    choose_pair_or_triple(p3retval *,
 				    const p3_global_settings *,
@@ -800,30 +809,9 @@ choose_primers(const p3_global_settings *pa,
 	&& pa->p_args.min_end_quality < pa->p_args.min_quality)
 	pa->p_args.min_end_quality = pa->p_args.min_quality; */
 
-#if 0
-    /* FIX ME -- temporary */
-    sa->num_targets = sa->tar2.count;
-    for (i = 0; i <PR_MAX_INTERVAL_ARRAY;  i++) {
-      sa->tar[i][0]     = sa->tar2.pairs[i][0];
-      sa->tar[i][1]     = sa->tar2.pairs[i][1];
-    }
-    sa->num_excl = sa->excl2.count;
-    for (i = 0; i <PR_MAX_INTERVAL_ARRAY;  i++) {
-      sa->excl[i][0]     = sa->excl2.pairs[i][0];
-      sa->excl[i][1]     = sa->excl2.pairs[i][1];
-    }
-    sa->num_internal_excl = sa->excl_internal2.count;
-    for (i = 0; i <PR_MAX_INTERVAL_ARRAY;  i++) {
-      sa->excl_internal[i][0]     = sa->excl_internal2.pairs[i][0];
-      sa->excl_internal[i][1]     = sa->excl_internal2.pairs[i][1];
-    }
-#endif 
-    /*     if (1 == p3_adjust_seq_args(pa, sa, &sa->error)) {
-      return retval;
-      } */
-
-
-    if (_pr_data_control(pa, sa, &retval->glob_err, &sa->error /*, FIX me, pass in &sa->warnings HERE */) !=0 ) {
+    if (_pr_data_control(pa, sa, &retval->glob_err, 
+			 &sa->error, 
+			 &sa->warning) !=0 ) {
       return retval;
     }
 
@@ -852,13 +840,13 @@ choose_primers(const p3_global_settings *pa,
 
     /* We sort _after_ printing lists to 
        maintain the order of test output. */
-    if (pa->primer_task != pick_left_only 
-	&& pa->primer_task != pick_hyb_probe_only) 
+    if ( pa->pick_right_primer /* pa->primer_task != pick_left_only 
+				  && pa->primer_task != pick_hyb_probe_only */) 
       qsort(&retval->r[0], retval->n_r, sizeof(*retval->r),
 	    primer_rec_comp);
 
-    if(pa->primer_task != pick_right_only
-       && pa->primer_task != pick_hyb_probe_only) 
+    if( pa->pick_left_primer /* pa->primer_task != pick_right_only
+				&& pa->primer_task != pick_hyb_probe_only */) 
       qsort(&retval->f[0], retval->n_f, sizeof(*retval->f),
 	    primer_rec_comp);
 
@@ -1880,7 +1868,9 @@ p3_print_oligo_lists(const p3retval *retval,
     }
 
     if ( pa->primer_task == pick_pcr_primers_and_hyb_probe 
-	 || pa->primer_task == pick_hyb_probe_only) {
+	 || pa->primer_task == pick_hyb_probe_only /* pa->pick_internal_oligo */) {
+      /* FIX ME, the change above does not work correctly; put a test here and
+	 a breakpoint to debug */
       strcpy(file, sa->sequence_name);
       strcat(file, ".int");
       if (!(fh = fopen(file,"w"))) {
@@ -3324,8 +3314,8 @@ p3_adjust_seq_args(const p3_global_settings *pa,
   adjust_base_index_interval_list(sa->excl_internal,
 				  sa->num_internal_excl,
 				  pa->first_base_index);
-  return 0;
 
+  return 0;
 }
 
 /*
@@ -3338,7 +3328,8 @@ int
 _pr_data_control(const p3_global_settings *pa,
 		 seq_args *sa,
 		 pr_append_str *glob_err,
-		 pr_append_str *nonfatal_err)
+		 pr_append_str *nonfatal_err,
+		 pr_append_str *warning)
 {
     static char s1[MAX_PRIMER_LENGTH+1];
     int i, pr_min, seq_len;
@@ -3361,7 +3352,7 @@ _pr_data_control(const p3_global_settings *pa,
       pr_append_new_chunk(glob_err,
 			  "PRIMER_INTERNAL_OLIGO_MAX_TEMPLATE_MISHYB is not supported");
 
-    if (pa->p_args.min_size < 1)
+     if (pa->p_args.min_size < 1)
       pr_append_new_chunk(glob_err, "PRIMER_MIN_SIZE must be >= 1");
 
     if (pa->p_args.max_size > MAX_PRIMER_LENGTH) {
@@ -3515,20 +3506,26 @@ _pr_data_control(const p3_global_settings *pa,
     sa->upcased_seq_r = pr_safe_malloc(strlen(sa->sequence) + 1);   /* FIX ME write */
     _pr_reverse_complement(sa->upcased_seq, sa->upcased_seq_r);
 
-    if (_pr_check_intervals("TARGET", sa->num_targets, sa->tar, seq_len,
-			nonfatal_err, sa)      /* FIX ME write */
+    if (_pr_check_and_adjust_1_interval("TARGET", sa->num_targets, sa->tar, seq_len,
+			    nonfatal_err, sa, warning)      /* FIX ME write */
 	== 1) return 1;
     sa->start_codon_pos -= sa->incl_s;    /* FIX ME write */
 
-    if (_pr_check_intervals("EXCLUDED_REGION", sa->num_excl, sa->excl,
-			seq_len, nonfatal_err, sa)    /* FIX ME write */
+    if (_pr_check_and_adjust_1_interval("EXCLUDED_REGION", sa->num_excl, sa->excl,
+			seq_len, nonfatal_err, sa, warning)    /* FIX ME write */
 	== 1) return 1;
 
-    if (_pr_check_intervals("PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION",
+    if (_pr_check_and_adjust_1_interval("PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION",
 			sa->num_internal_excl, sa->excl_internal,
-			seq_len, nonfatal_err, sa)    /* FIX ME write */
+			seq_len, nonfatal_err, sa, warning)    /* FIX ME write */
 	== 1) return 1;
 
+
+    /* FIX ME -- new, does not work
+    if (_pr_check_and_adjust_intervals(sa, seq_len, nonfatal_err, warning))
+      return 1;
+    */
+    
     if (NULL != sa->quality) {
 	if(pa->p_args.min_quality != 0 && pa->p_args.min_quality < pa->quality_range_min) {
 	   pr_append_new_chunk(glob_err,
@@ -3568,7 +3565,7 @@ _pr_data_control(const p3_global_settings *pa,
 
     if ((offending_char = dna_to_upper(sa->trimmed_seq, 0))) {
       if (pa->liberal_base) {
-	pr_append_new_chunk(&sa->warning,
+	pr_append_new_chunk(/* &sa->*/ warning,
 			    "Unrecognized base in input sequence");     /* FIX ME write to  warnings */
       }
       else {
@@ -3654,9 +3651,9 @@ _pr_data_control(const p3_global_settings *pa,
 		"is valid only when number of targets <= 1");
     }
     if (!_PR_DEFAULT_POSITION_PENALTIES(pa) && 0 == sa->num_targets) {
-      pr_append_new_chunk(&sa->warning,
+      pr_append_new_chunk(/* &sa-> */ warning,
 			  "Non-default inside penalty or outside penalty ");
-      pr_append(&sa->warning,
+      pr_append(/* &sa-> */warning,
 		"has no effect when number of targets is 0");     /* FIX ME write warning */
     }
     if (pa->primer_task != pick_pcr_primers_and_hyb_probe 
@@ -3777,6 +3774,28 @@ _pr_data_control(const p3_global_settings *pa,
     return (NULL == sa->error.data && NULL == /* pa->*/ glob_err->data) ? 0 : 1;
 } /* _pr_data_control */
 
+
+static int
+_pr_check_and_adjust_intervals(seq_args *sa, int seq_len, pr_append_str * nonfatal_err, pr_append_str *warning) {
+
+    if (_pr_check_and_adjust_1_interval("TARGET", sa->num_targets, sa->tar, seq_len,
+			    nonfatal_err, sa, warning)      /* FIX ME write */
+	== 1) return 1;
+    sa->start_codon_pos -= sa->incl_s;    /* FIX ME write */
+
+    if (_pr_check_and_adjust_1_interval("EXCLUDED_REGION", sa->num_excl, sa->excl,
+			seq_len, nonfatal_err, sa, warning)    /* FIX ME write */
+	== 1) return 1;
+
+    if (_pr_check_and_adjust_1_interval("PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION",
+			sa->num_internal_excl, sa->excl_internal,
+			seq_len, nonfatal_err, sa, warning)    /* FIX ME write */
+	== 1) return 1;
+}
+
+
+
+
 /* 
  * Check intervals, and add any errors to err.
  * Update the start of each interval to
@@ -3784,12 +3803,13 @@ _pr_data_control(const p3_global_settings *pa,
  * 
  */ 
 static int
-_pr_check_intervals(const char *tag_name,
+_pr_check_and_adjust_1_interval(const char *tag_name,
 		    const int num_intervals,
-		    interval_array_t intervals,
+                    		    interval_array_t intervals,
 		    const int seq_len,
 		    pr_append_str *err,
-		    seq_args *sa)
+		    seq_args *sa,
+		    pr_append_str *warning)
 {
     int i;
     int outside_warning_issued = 0;
@@ -3819,7 +3839,7 @@ _pr_check_intervals(const char *tag_name,
 	}
     }
     return 0;
-} /* _pr_check_intervals  */
+} /* _pr_check_and_adjust_intervals  */
 
 /* Put substring of seq starting at n with length m into s. */
 void
