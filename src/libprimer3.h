@@ -701,7 +701,15 @@ args_for_one_oligo_or_primer *p3_get_global_settings_o_args(p3_global_settings *
  * Otherwise return retval (updated).  Errors are returned in 
  * in retval.
  */
+
 p3retval *choose_primers(const p3_global_settings *pa, seq_args *sa);
+
+/* Andreas, this is the idea, argument list will need
+   to be cleaned up */
+int    p3_print_one_oligo_list(const seq_args *, 
+				      int, const primer_rec[],
+				      const oligo_type, const int, 
+				      const int, FILE *);
 
 char  *pr_oligo_sequence(const seq_args *, const primer_rec *);
 

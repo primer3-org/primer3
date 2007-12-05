@@ -147,11 +147,6 @@ void          compute_position_penalty(const p3_global_settings *, const seq_arg
 
 static p3retval *create_p3retval(void);
 
-static int    p3_print_one_oligo_list(const seq_args *, 
-				      int, const primer_rec[],
-				      const oligo_type, const int, 
-				      const int, FILE *);
-
 static char   dna_to_upper(char *, int);
 static int    find_stop_codon(const char *, int, int);
 static void   gc_and_n_content(const int, const int, const char *, primer_rec *);
@@ -1893,7 +1888,7 @@ p3_print_oligo_lists(const p3retval *retval,
 }
 
 /* Return 1 on error, otherwise 0. */
-static int
+int
 p3_print_one_oligo_list(const seq_args *sa,
 			int n,
 			const primer_rec oligo_arr[],
