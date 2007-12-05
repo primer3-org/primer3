@@ -4368,10 +4368,19 @@ _set_string(char **loc, const char *new_string) {
   return 0;
 }
 
+interval_array_t2 *
+p3_get_seq_args_tar2(seq_args *sargs) {
+  return &sargs->tar2 ;
+}
 
-void
-p3_set_seq_args_num_targets(seq_args *sargs, int num_targets) {
-  sargs->num_targets =  num_targets;
+interval_array_t2 *
+p3_get_seq_args_excl2(seq_args *sargs) {
+  return &sargs->excl2 ;
+}
+
+interval_array_t2 *
+p3_get_seq_args_excl_internal2(seq_args *sargs) {
+  return &sargs->excl_internal2 ;
 }
 
 void
@@ -4383,7 +4392,6 @@ void
 p3_set_seq_args_num_internal_excl(seq_args *sargs, int num_internal_excl) {
   sargs->num_internal_excl = num_internal_excl;
 }
-
 void
 p3_set_seq_args_incl_s(seq_args *sargs, int incl_s) {
   sargs->incl_s = incl_s;
