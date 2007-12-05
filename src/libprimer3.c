@@ -4491,6 +4491,9 @@ void p3_set_global_settings_pick_internal_oligo(p3_global_settings * p , int pic
   p->pick_internal_oligo = pick_internal_oligo;
 }
 
+void p3_set_global_settings_file_flag(p3_global_settings * p , int file_flag){
+  p->file_flag = file_flag;
+}
 void p3_set_global_settings_explain_flag(p3_global_settings * p , int explain_flag){
   p->explain_flag = explain_flag;
 }
@@ -4511,12 +4514,24 @@ void p3_set_global_settings_pick_anyway(p3_global_settings * p , int pick_anyway
   p->pick_anyway = pick_anyway ;
 }
 
+void p3_set_global_settings_lib_ambiguity_codes_consensus(p3_global_settings * p , int lib_ambiguity_codes_consensus) {
+  p->lib_ambiguity_codes_consensus = lib_ambiguity_codes_consensus;
+}
+
 void p3_set_global_settings_quality_range_min(p3_global_settings * p , int quality_range_min){
   p->quality_range_min = quality_range_min;
 }
 
 void p3_set_global_settings_quality_range_max(p3_global_settings * p , int quality_range_max){
   p->quality_range_max = quality_range_max ;
+}
+
+args_for_one_oligo_or_primer *p3_get_global_settings_p_args(p3_global_settings * p) {
+  return &p->p_args;
+}
+
+args_for_one_oligo_or_primer *p3_get_global_settings_o_args(p3_global_settings * p) {
+  return &p->o_args;
 }
 
 void p3_set_global_settings_tm_santalucia(p3_global_settings * p , int tm_santalucia){
@@ -4539,15 +4554,15 @@ void p3_set_global_settings_lowercase_masking(p3_global_settings * p , int lower
   p->lowercase_masking = lowercase_masking;
 }
 
-void p3_set_global_settings_outside_penalty(p3_global_settings * p , int outside_penalty){
+void p3_set_global_settings_outside_penalty(p3_global_settings * p , double outside_penalty){
   p->outside_penalty = outside_penalty;
 }
 
-void p3_set_global_settings_inside_penalty(p3_global_settings * p , int inside_penalty){
+void p3_set_global_settings_inside_penalty(p3_global_settings * p , double inside_penalty){
   p->inside_penalty = inside_penalty;
 }
 
-void p3_set_global_settings_pr_min(p3_global_settings * p , int *pr_min){
+void  p3_get_global_settings_pr_min(p3_global_settings * p, int *pr_min){
   /*  p->pr_min = pr_min;  FIX this */
 }
 
