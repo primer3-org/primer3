@@ -530,7 +530,6 @@ typedef struct pair_stats {
 typedef struct seq_args {
 
   interval_array_t2 tar2;   /* Replacement for tar,  below, FIX ME finish */
-
   int num_targets;      /* The number of targets. */
   interval_array_t tar;   /*
 			   * The targets themselves; tar[i][0] is the start
@@ -635,9 +634,16 @@ int p3_adjust_seq_args(const p3_global_settings *pa,
 
 int p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2);
 
+/*
+  use p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2);
 
-void p3_set_seq_args_num_targets(seq_args *sargs, int num_targets);
-void p3_set_seq_args_num_internal_excl(seq_args *sargs, int num_internal_excl) ;
+  to do the sets for tar2, excl2, nd excl_internal2
+*/
+
+interval_array_t2 *p3_get_seq_args_tar2(seq_args *sargs);
+interval_array_t2 *p3_get_seq_args_excl2(seq_args *sargs);
+interval_array_t2 *p3_get_seq_args_excl_internal2(seq_args *sargs);
+
 void p3_set_seq_args_incl_s(seq_args *sargs, int incl_s);
 void p3_set_seq_args_incl_l(seq_args *sargs, int incl_l);
 void p3_set_seq_args_start_codon_pos(seq_args *sargs, int start_codon_pos);
@@ -667,17 +673,24 @@ void p3_set_global_settings_first_base_index(p3_global_settings * p , int first_
 void p3_set_global_settings_liberal_base(p3_global_settings * p , int liberal_base);
 void p3_set_global_settings_num_return(p3_global_settings * p , int num_return);
 void p3_set_global_settings_pick_anyway(p3_global_settings * p , int pick_anyway);
+void p3_set_global_settings_lib_ambiguity_codes_consensus(p3_global_settings * p , int lib_ambiguity_codes_consensus);
 void p3_set_global_settings_quality_range_min(p3_global_settings * p , int quality_range_min);
 void p3_set_global_settings_quality_range_max(p3_global_settings * p , int quality_range_max);
+
+args_for_one_oligo_or_primer *p3_get_global_settings_p_args(p3_global_settings * p);
+args_for_one_oligo_or_primer *p3_get_global_settings_o_args(p3_global_settings * p);
+int p3_set_afogop_seq_lib(args_for_one_oligo_or_primer *, seq_lib *);
+int p3_set_afogop_opt_tm(args_for_one_oligo_or_primer *, double);
+
 void p3_set_global_settings_tm_santalucia(p3_global_settings * p , int tm_santalucia);
 void p3_set_global_settings_salt_corrections(p3_global_settings * p , int salt_corrections);
 void p3_set_global_settings_max_end_stability(p3_global_settings * p , int max_end_stability);
 void p3_set_global_settings_gc_clamp(p3_global_settings * p , int gc_clamp);
 void p3_set_global_settings_lowercase_masking(p3_global_settings * p , int lowercase_masking);
-void p3_set_global_settings_outside_penalty(p3_global_settings * p , int outside_penalty);
-void p3_set_global_settings_inside_penalty(p3_global_settings * p , int inside_penalty);
-void p3_set_global_settings_prmin (p3_global_settings * p , int *prmin);
-void p3_set_global_settings_prmax (p3_global_settings * p , int *prmax);
+void p3_set_global_settings_outside_penalty(p3_global_settings * p , double outside_penalty);
+void p3_set_global_settings_inside_penalty(p3_global_settings * p , double inside_penalty);
+void p3_get_global_settings_prmin (p3_global_settings * p , int *prmin);
+void p3_get_global_settings_prmax (p3_global_settings * p , int *prmax);
 void p3_set_global_settings_num_intervals(p3_global_settings * p , int num_intervals);
 void p3_set_global_settings_product_opt_size(p3_global_settings * p , int product_opt_size);
 void p3_set_global_settings_product_min_tm(p3_global_settings * p , double product_min_tm);
@@ -688,11 +701,6 @@ void p3_set_global_settings_pair_repeat_compl(p3_global_settings * p, short  pai
 void p3_set_global_settings_pair_compl_any(p3_global_settings * p , short  pair_compl_any);
 void p3_set_global_settings_pair_compl_end(p3_global_settings * p , short  pair_compl_end);
 void p3_set_global_settings_max_diff_tm(p3_global_settings * p , double max_diff_tm);
-
-int p3_set_afogop_seq_lib(args_for_one_oligo_or_primer *, seq_lib *);
-int p3_set_afogop_opt_tm(args_for_one_oligo_or_primer *, double);
-args_for_one_oligo_or_primer *p3_get_global_settings_p_args(p3_global_settings *p);
-args_for_one_oligo_or_primer *p3_get_global_settings_o_args(p3_global_settings *p);
 
 
 /* 
