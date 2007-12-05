@@ -66,11 +66,14 @@ main(argc,argv)
   oligo_type oligot = OT_LEFT; /* Silence warning */
   int num_oligo = 0;
   primer_rec *oligo = NULL;
- 
   int input_found=0;
-
   pr_program_name = argv[0];
   p3_set_program_name(pr_program_name);
+
+#if 1
+  /* Example for Andreas */
+  FILE *testfile;
+#endif
 
   /* 
    * We set up some signal handlers in case someone starts up the program
@@ -91,7 +94,6 @@ main(argc,argv)
   while (--argc > 0) {
     argv++;
     if (!strcmp(*argv, "-format_output")) {
-      prog_args.format_output = 1;
       format_output = 1;
     }  else if (!strcmp(*argv, "-2x_compat")) {
       printf( "PRIMER_ERROR=flag -2x_compat is no longer supported\n=\n");
@@ -124,9 +126,6 @@ main(argc,argv)
     if (!(sa = create_seq_arg())) {
       exit(-2);
     }
-    /*if (!(sa = malloc(sizeof(*sa)))) {
-      exit(-2);
-    } */
 
     pr_set_empty(fatal_parse_err);
     pr_set_empty(nonfatal_parse_err);
@@ -140,7 +139,6 @@ main(argc,argv)
     }
     input_found = 1;
 
-
     if (fatal_parse_err->data != NULL) {
       if (format_output) {
 	format_error(stdout, sa->sequence_name, fatal_parse_err->data);
@@ -152,8 +150,7 @@ main(argc,argv)
       exit(-4);
     }
 
-    /* FIX ME -- read in mispriming libraries here */
-
+    /* FIX ME -- read in mispriming libraries here? */
 
     p3_adjust_seq_args(global_pa, sa, nonfatal_parse_err);
     if (!pr_is_empty(nonfatal_parse_err)) {
@@ -166,21 +163,32 @@ main(argc,argv)
       goto finish_loop;
     }
 
-
     retval = choose_primers(global_pa, sa);
     if (NULL == retval) exit(-2); /* Out of memory. */
 
+#if 0
+    /* Example for Andreas -- as usual with C, there is
+     some error, not sure what it is. */
+    if (global_pa->pick_right_primer) {
+      testfile = fopen("example-right-primer-file.txt", "w");
+      if (NULL == testfile) abort();
+      p3_print_one_oligo_list(sa, retval->n_r, retval->r,
+			      OT_RIGHT, global_pa->first_base_index,
+			      NULL != global_pa->p_args.repeat_lib,
+			      testfile);
+      fclose(testfile);
+    }
+#endif
+
+
     if (!pr_is_empty(&retval->glob_err)
 	||
-	!pr_is_empty(&retval->per_sequence_err)
-	/* ||
-	   !pr_is_empty(&sa->error) */ ) {
+	!pr_is_empty(&retval->per_sequence_err)) {
       pr_append_new_chunk(combined_retval_err, 
 			  retval->glob_err.data);
       pr_append_new_chunk(combined_retval_err, 
 			  retval->per_sequence_err.data);
-      /* pr_append_new_chunk(combined_retval_err, 
-	 sa->error.data); */
+
       if (format_output) {
 	format_error(stdout, sa->sequence_name,
 		     combined_retval_err->data);

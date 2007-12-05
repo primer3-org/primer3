@@ -39,8 +39,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define BOULDER_INPUT_H 1
 #include "libprimer3.h"
 
+  /* FIX ME, this does not belong here */
 typedef struct program_args {
-    char format_output;
     char twox_compat;
     char strict_tags;
 } program_args;
@@ -60,6 +60,3 @@ int read_record(const program_args *,
 		pr_append_str *nonfatal_err);
 
 #endif
-
-
-

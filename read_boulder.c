@@ -141,9 +141,7 @@ read_record(const program_args *prog_args,
 	    p3_global_settings *pa, 
 	    seq_args *sa, 
 	    pr_append_str *glob_err,  /* Really should be called fatal_parse_err */
-	    pr_append_str *nonfatal_parse_err
-)
-{ 
+	    pr_append_str *nonfatal_parse_err) { 
   int line_len; /* seq_len; n_quality; */
     int tag_len, datum_len;
     int data_found = 0;
@@ -160,7 +158,7 @@ read_record(const program_args *prog_args,
 
     while ((s = p3_read_line(stdin)) != NULL && strcmp(s,"=")) {
 	data_found = 1;
-	if (0 == prog_args->format_output) printf("%s\n", s);
+	if (echo_output) printf("%s\n", s);
 	line_len = strlen(s);
 	if ((n=strchr(s,'=')) == NULL) {
 	    /* 
