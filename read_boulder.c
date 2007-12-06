@@ -287,10 +287,18 @@ read_record(const int *strict_tags,
 	    COMPARE_FLOAT("PRIMER_PRODUCT_MIN_TM", pa->product_min_tm);
 	    COMPARE_FLOAT("PRIMER_PRODUCT_OPT_TM", pa->product_opt_tm);
 
-	    COMPARE_INT("PRIMER_PICK_INTERNAL_OLIGO", pick_internal_oligo);
 
 	    COMPARE_AND_MALLOC("PRIMER_TASK", task_tmp);
 
+	    if (0 < *io_version) {
+		    COMPARE_INT("PRIMER_PICK_RIGHT_PRIMER", pa->pick_right_primer);
+		    COMPARE_INT("PRIMER_PICK_INTERNAL_OLIGO", pa->pick_internal_oligo);
+		    COMPARE_INT("PRIMER_PICK_LEFT_PRIMER", pa->pick_left_primer);
+	    }
+	    else {
+		    COMPARE_INT("PRIMER_PICK_INTERNAL_OLIGO", pick_internal_oligo);
+	    }
+	    
 	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_OPT_SIZE", pa->o_args.opt_size);
 	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_MAX_SIZE", pa->o_args.max_size);
 	    COMPARE_INT("PRIMER_INTERNAL_OLIGO_MIN_SIZE", pa->o_args.min_size);
@@ -449,33 +457,85 @@ read_record(const int *strict_tags,
 	        return 1;
 	    } else return 0;
     }
-
-    if (task_tmp != NULL) {
-      pa->pick_left_primer = 0;
-      pa->pick_right_primer = 0;
-      pa->pick_internal_oligo = 0;
-      if (!strcmp_nocase(task_tmp, "pick_pcr_primers")) {
-	pa->primer_task = pick_pcr_primers;
-	pa->pick_left_primer = 1;
-	pa->pick_right_primer = 1;
-      } else if (!strcmp_nocase(task_tmp, "pick_pcr_primers_and_hyb_probe")) {
-	pa->primer_task = pick_pcr_primers_and_hyb_probe;
-	pa->pick_left_primer = 1;
-	pa->pick_right_primer = 1;
-	pa->pick_internal_oligo = 1;
-      } else if (!strcmp_nocase(task_tmp, "pick_left_only")) {
-	pa->primer_task = pick_left_only;
-	pa->pick_left_primer = 1;
-      } else if (!strcmp_nocase(task_tmp, "pick_right_only")) {
-	pa->primer_task = pick_right_only;
-	pa->pick_right_primer = 1;
-      } else if (!strcmp_nocase(task_tmp, "pick_hyb_probe_only")) {
-	pa->primer_task = pick_hyb_probe_only;
-	pa->pick_internal_oligo = 1;
-      } else 
-	pr_append_new_chunk(glob_err,
-			    "Unrecognized PRIMER_TASK");
-	  free(task_tmp);
+    
+    /* Figure out the right settings for the tasks*/
+    /* AU: modified to be able to use task in the new way */
+    if (0 == *io_version) {
+    	/*here primer_task for all should be: pick_detection_primers; */
+	    if (task_tmp != NULL) {
+	        pa->pick_left_primer = 0;
+	        pa->pick_right_primer = 0;
+	        pa->pick_internal_oligo = 0;
+	    if (!strcmp_nocase(task_tmp, "pick_pcr_primers")) {
+			pa->primer_task = pick_pcr_primers;
+			pa->pick_left_primer = 1;
+			pa->pick_right_primer = 1;
+	      } else if (!strcmp_nocase(task_tmp, "pick_pcr_primers_and_hyb_probe")) {
+			pa->primer_task = pick_pcr_primers_and_hyb_probe;
+			pa->pick_left_primer = 1;
+			pa->pick_right_primer = 1;
+			pa->pick_internal_oligo = 1;
+	      } else if (!strcmp_nocase(task_tmp, "pick_left_only")) {
+			pa->primer_task = pick_left_only;
+			pa->pick_left_primer = 1;
+	      } else if (!strcmp_nocase(task_tmp, "pick_right_only")) {
+			pa->primer_task = pick_right_only;
+			pa->pick_right_primer = 1;
+	      } else if (!strcmp_nocase(task_tmp, "pick_hyb_probe_only")) {
+			pa->primer_task = pick_hyb_probe_only;
+			pa->pick_internal_oligo = 1;
+	      } else 
+	    	pr_append_new_chunk(glob_err,
+				    "Unrecognized PRIMER_TASK");
+		  free(task_tmp);
+	    }
+    } else {
+    	if (task_tmp != NULL) {
+	      if (!strcmp_nocase(task_tmp, "pick_pcr_primers")) {
+			pa->primer_task = pick_pcr_primers;
+				/* should be pick_detection_primers;*/
+			pa->pick_left_primer = 1;
+			pa->pick_right_primer = 1;
+			pa->pick_internal_oligo = 0;
+	      } else if (!strcmp_nocase(task_tmp, "pick_pcr_primers_and_hyb_probe")) {
+			pa->primer_task = pick_pcr_primers_and_hyb_probe; 
+			    /*should be pick_detection_primers;*/
+			pa->pick_left_primer = 1;
+			pa->pick_right_primer = 1;
+			pa->pick_internal_oligo = 1;
+	      } else if (!strcmp_nocase(task_tmp, "pick_left_only")) {
+			pa->primer_task = pick_detection_primers;
+			pa->pick_left_primer = 1;
+			pa->pick_right_primer = 0;
+			pa->pick_internal_oligo = 0;
+	      } else if (!strcmp_nocase(task_tmp, "pick_right_only")) {
+			pa->primer_task = pick_detection_primers;
+			pa->pick_left_primer = 0;
+			pa->pick_right_primer = 1;
+			pa->pick_internal_oligo = 0;
+	      } else if (!strcmp_nocase(task_tmp, "pick_hyb_probe_only")) {
+			pa->primer_task = pick_detection_primers;
+			pa->pick_left_primer = 0;
+			pa->pick_right_primer = 0;
+			pa->pick_internal_oligo = 1;
+	      } else if (!strcmp_nocase(task_tmp, "pick_detection_primers")) {
+			pa->primer_task = pick_detection_primers;
+	      } else if (!strcmp_nocase(task_tmp, "pick_cloning_primers")) {
+			pa->primer_task = pick_cloning_primers;
+	      } else if (!strcmp_nocase(task_tmp, "pick_discriminative_primers")) {
+			pa->primer_task = pick_discriminative_primers;
+	      } else if (!strcmp_nocase(task_tmp, "pick_sequencing_primers")) {
+			pa->primer_task = pick_sequencing_primers;
+	      } else if (!strcmp_nocase(task_tmp, "pick_primer_list")) {
+			pa->primer_task = pick_primer_list;
+	      } else if (!strcmp_nocase(task_tmp, "check_primers")) {
+			pa->primer_task = check_primers;
+	      } else 
+	    	pr_append_new_chunk(glob_err,
+				    "Unrecognized PRIMER_TASK");
+		  free(task_tmp);
+	    }
+    	
     }
 
    /* WARNING: read_seq_lib uses p3_read_line, so repeat files cannot be read
@@ -505,8 +565,8 @@ read_record(const int *strict_tags,
     if (NULL != int_repeat_file_path) {
       destroy_seq_lib(pa->o_args.repeat_lib);
       if ('\0' == *int_repeat_file_path) {
-	   /* Input now specifies no mishybridization library. */
-	   pa->o_args.repeat_lib = NULL;
+	    /* Input now specifies no mishybridization library. */
+	    pa->o_args.repeat_lib = NULL;
       }
       else {
 	    pa->o_args.repeat_lib = 
@@ -520,19 +580,22 @@ read_record(const int *strict_tags,
       int_repeat_file_path = NULL;
     }
     
-    /* This next belongs here rather than libprimer3, because it deals
-       with potential incompatibility with old tags (kept for backward
-       compatibility, and new tags.  */
-    if((pick_internal_oligo == 1 || pick_internal_oligo == 0) &&
-       (pa->primer_task == pick_left_only || 
-	pa->primer_task == pick_right_only ||
-	pa->primer_task == pick_hyb_probe_only)) 
-	  pr_append_new_chunk(glob_err, 
-	    "Contradiction in primer_task definition");
-    else if (pick_internal_oligo == 1) 
-	  pa->primer_task = 1;
-    else if (pick_internal_oligo == 0) pa->primer_task = 0;
-
+    /* Fix very old tags for backward compatibility */
+    if (0 == *io_version) {
+		/* This next belongs here rather than libprimer3, because it deals
+		   with potential incompatibility with old tags (kept for backward
+		   compatibility, and new tags.  */
+		if((pick_internal_oligo == 1 || pick_internal_oligo == 0) &&
+		   (pa->primer_task == pick_left_only || 
+		pa->primer_task == pick_right_only ||
+		pa->primer_task == pick_hyb_probe_only)) 
+		  pr_append_new_chunk(glob_err, 
+		    "Contradiction in primer_task definition");
+		else if (pick_internal_oligo == 1) 
+		  pa->primer_task = 1;
+		else if (pick_internal_oligo == 0) pa->primer_task = 0;
+    }
+		
     return 1;
 }
 #undef COMPARE
