@@ -45,14 +45,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * Both functions may exit on error, using the conventions
  * in primer3_boulder_main.c
  */
-void format_pairs(FILE *f, const p3_global_settings *pa,
-		  const seq_args *sa, 
-		  const pair_array_t *,
-		  const char *);
 
-void format_oligos(FILE *, const p3_global_settings *, const seq_args *, 
-		   primer_rec *, int, oligo_type,
-		   const char*);
+void print_format_output(FILE *f, const int *io_version, const p3_global_settings *pa,
+		  const seq_args *sa, const p3retval *, const char *);
 
 void format_error(FILE *f, const char* seq_name, const char *err);
 
