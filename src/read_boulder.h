@@ -39,12 +39,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define BOULDER_INPUT_H 1
 #include "libprimer3.h"
 
-  /* FIX ME, this does not belong here */
-typedef struct program_args {
-    char twox_compat;
-    char strict_tags;
-} program_args;
-
 /* 
  * Read data from stdin until a "=" line occurs.  Assign parameter
  * values for primer picking to pa and sa. Perform initial data
@@ -52,7 +46,8 @@ typedef struct program_args {
  * is not NULL or fatal_err->data is not NULL then the data is erroneous
  * and should not be processed. Echo the input lines to stdout.
  */
-int read_record(const program_args *, 
+int read_record(const int *strict_tags,
+		const int * io_version,
 		int         echo_output,
 		p3_global_settings *pa, 
 		seq_args *sa,
