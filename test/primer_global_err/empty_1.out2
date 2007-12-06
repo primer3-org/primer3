@@ -31,7 +31,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-USAGE: ../src/primer3_core [-format_output] [-strict_tags]
+USAGE: ../src/primer3_core [-format_output] [-io_version=xxx] [-strict_tags]
 This is primer3 (primer3 release 1.1.2)
 Input must be provided on standard input.
 For example:
