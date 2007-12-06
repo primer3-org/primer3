@@ -40,7 +40,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <math.h>
 #include <signal.h>
-#include <unistd.h>
+  /*( #include <unistd.h> */
 #include <float.h>
 #include <string.h>
 #include <ctype.h> /* toupper */
@@ -178,6 +178,9 @@ static int    characterize_pair(p3retval *p,
 				int, int, int,
 				primer_pair *,
 				const dpal_arg_holder*);
+
+static void   destroy_pr_append_str_data(const pr_append_str *str);
+static void   init_pr_append_str(pr_append_str *s);
 
 static int    pair_spans_target(const primer_pair *, const seq_args *);
 static void   pr_append_w_sep(pr_append_str *, const char *, const char *);
@@ -658,11 +661,18 @@ create_p3retval(void)
   state->best_pairs.pairs = NULL;
   state->best_pairs.num_pairs = 0;
 
-  state->glob_err.data = NULL;
+  init_pr_append_str(&state->glob_err);
+  init_pr_append_str(&state->per_sequence_err);
+  init_pr_append_str(&state->warnings);
+
+  /* state->glob_err.data = NULL; 
   state->glob_err.storage_size = 0;
 
   state->per_sequence_err.data = NULL;
   state->per_sequence_err.storage_size = 0;
+
+  state->warnings.data = NULL;
+  state->warnings.storage_size = 0; */
 
   return state;
 }
@@ -685,7 +695,14 @@ destroy_p3retval(p3retval *state)
     if (state->best_pairs.storage_size != 0 && state->best_pairs.pairs)
 	free(state->best_pairs.pairs);
 
-    if (NULL !=  state->glob_err.data) free(state->glob_err.data);
+
+    destroy_pr_append_str_data(&state->glob_err);
+    destroy_pr_append_str_data(&state->per_sequence_err);
+    destroy_pr_append_str_data(&state->warnings);
+
+    /* if (NULL != state->glob_err.data) free(state->glob_err.data);
+    if (NULL != state->per_sequence_err.data) free(state->per_sequence_err.data); 
+    if (NULL != state->warnings.data) free(state->warnings.data);  */
 
     free(state);
 }
@@ -777,6 +794,11 @@ choose_primers(const p3_global_settings *pa,
     pair_array_t *best_pairs;
 
     p3retval *retval = create_p3retval();
+    if (pa->pick_left_primer && pa->pick_right_primer) {
+      retval->output_type = primer_pairs;
+    } else {
+      retval->output_type = primer_list;
+    }
 
     if (retval == NULL)  return NULL;
     best_pairs = &retval->best_pairs;
@@ -900,6 +922,32 @@ choose_primers(const p3_global_settings *pa,
     if (0 != a_pair_array.storage_size) free(a_pair_array.pairs);
     return retval;
 }
+
+const pair_array_t *
+p3_get_retval_best_pairs(const p3retval *r) {
+  return &r->best_pairs;
+}
+
+const char *
+p3_get_retval_glob_err(const p3retval *r) {
+  return r->glob_err.data;
+}
+
+const char *
+p3_get_retval_per_sequence_err(const p3retval *r) {
+  return r->per_sequence_err.data;
+}
+
+const char *
+p3_get_retval_warnings(const p3retval *r) {
+  return r->warnings.data;
+}
+
+p3_output_type
+p3_get_retval_output_type(const p3retval *r) {
+  return r->output_type;
+}
+
 
 /* Call this function only if the 'stat's contains
    the _errors_ associated with a given primer
@@ -2639,6 +2687,12 @@ pr_gather_warnings(const seq_args *sa, const p3_global_settings *pa) {
   return pr_is_empty(&warning) ? NULL : warning.data;
 }
 
+static void
+init_pr_append_str(pr_append_str *s) {
+  s->data = NULL;
+  s->storage_size = 0;
+}
+
 pr_append_str *
 create_pr_append_str() {
   /* We cannot use pr_safe_malloc here
@@ -2648,15 +2702,23 @@ create_pr_append_str() {
 
   ret = malloc(sizeof(pr_append_str));
   if (NULL == ret) return NULL;
-  ret->data = NULL;
-  ret->storage_size = 0;
+  init_pr_append_str(ret);
+  /* ret->data = NULL;
+     ret->storage_size = 0;  */
   return ret;
+}
+
+static void
+destroy_pr_append_str_data(const pr_append_str *str) {
+  if (NULL == str) return;
+  if (str->data != NULL) free(str->data);
 }
 
 void
 destroy_pr_append_str(pr_append_str *str) {
   if (str == NULL) return;
-  if (str->data != NULL) free(str->data);
+  destroy_pr_append_str_data(str);
+  /* if (str->data != NULL) free(str->data); */
   free(str);
 }
 
@@ -3501,6 +3563,7 @@ _pr_data_control(const p3_global_settings *pa,
     sa->upcased_seq_r = pr_safe_malloc(strlen(sa->sequence) + 1);   /* FIX ME write */
     _pr_reverse_complement(sa->upcased_seq, sa->upcased_seq_r);
 
+#if 0
     if (_pr_check_and_adjust_1_interval("TARGET", sa->num_targets, sa->tar, seq_len,
 			    nonfatal_err, sa, warning)      /* FIX ME write */
 	== 1) return 1;
@@ -3514,12 +3577,11 @@ _pr_data_control(const p3_global_settings *pa,
 			sa->num_internal_excl, sa->excl_internal,
 			seq_len, nonfatal_err, sa, warning)    /* FIX ME write */
 	== 1) return 1;
+#else
 
-
-    /* FIX ME -- new, does not work
     if (_pr_check_and_adjust_intervals(sa, seq_len, nonfatal_err, warning))
       return 1;
-    */
+#endif
     
     if (NULL != sa->quality) {
 	if(pa->p_args.min_quality != 0 && pa->p_args.min_quality < pa->quality_range_min) {
@@ -3786,9 +3848,8 @@ _pr_check_and_adjust_intervals(seq_args *sa, int seq_len, pr_append_str * nonfat
 			sa->num_internal_excl, sa->excl_internal,
 			seq_len, nonfatal_err, sa, warning)    /* FIX ME write */
 	== 1) return 1;
+    return 0;
 }
-
-
 
 
 /* 
