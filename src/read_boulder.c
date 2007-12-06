@@ -159,47 +159,45 @@ read_record(const int *strict_tags,
 
     while ((s = p3_read_line(stdin)) != NULL && strcmp(s,"=")) {
 	data_found = 1;
+	/* Print out the input */
 	if (echo_output) printf("%s\n", s);
 	line_len = strlen(s);
+	/* If the line has an "=" read the tag in the right place */
 	if ((n=strchr(s,'=')) == NULL) {
-	    /* 
-	     * The input line is illegal because it has no
+	    /* The input line is illegal because it has no
 	     * "=" in it, but we still will read to the end
-	     * of the record.
-	     */
+	     * of the record. */
 	    pr_append_new_chunk(glob_err, "Input line with no '=': ");
 	    pr_append(glob_err, s);
-	} else {	
+	} else {
+	    /* Get the tag and the value pointers */
 	    tag_len = n - s;
 	    datum = n + 1;
 	    datum_len = line_len - tag_len - 1;
 	    
-	    /* 
-	     * Process "Sequence" (i.e. Per-Record) Arguments".
-	     */
+	    /* Process "Sequence" (i.e. Per-Record) Arguments". */
 	    parse_err = non_fatal_err;
 
 	    /* COMPARE_AND_MALLOC("SEQUENCE", sa->sequence); */
 	    if (COMPARE("SEQUENCE")) {   /* NEW WAY */
 	      if (/* p3_get_seq_arg_sequence(sa) */ sa->sequence) {
-		pr_append_new_chunk(parse_err,
-				    "Duplicate tag: ");
-		pr_append(parse_err, "SEQUENCE"); 
+		    pr_append_new_chunk(parse_err, "Duplicate tag: ");
+		    pr_append(parse_err, "SEQUENCE"); 
 	      } else {
-		/* p3_set_seq_arg_sequence */
-		if (p3_set_seq_args_sequence(sa, datum)) exit(-2);
+		    /* p3_set_seq_arg_sequence */
+		    if (p3_set_seq_args_sequence(sa, datum)) exit(-2);
 	      }
 	      continue;
 	    }
 
 	    if (COMPARE("PRIMER_SEQUENCE_QUALITY")) {
 	       if ((sa->n_quality = parse_seq_quality(datum, &sa->quality)) == 0) {
-		 pr_append_new_chunk(parse_err, /*&sa->error, */ 
+		     pr_append_new_chunk(parse_err, /*&sa->error, */ 
 				     "Error in sequence quality data");
-		 continue;  /* FIX ME superfluous ? */
-               }
+		     continue;  /* FIX ME superfluous ? */
+           }
 	       continue;
-            }
+        }
 
 	    COMPARE_AND_MALLOC("PRIMER_SEQUENCE_ID", sa->sequence_name);
 	    COMPARE_AND_MALLOC("MARKER_NAME", sa->sequence_name);
@@ -213,19 +211,19 @@ read_record(const int *strict_tags,
 				  &sa->excl_internal2);
 
 	    if (COMPARE("INCLUDED_REGION")) {
-		p = parse_int_pair("INCLUDED_REGION", datum, ',',
+		    p = parse_int_pair("INCLUDED_REGION", datum, ',',
 				   &sa->incl_s, &sa->incl_l, parse_err);
-		if (NULL == p) /* 
+		    if (NULL == p) /* 
                                 * An error; the message is already
                                 * in parse_err.
                                 */
-		  continue;
+		        continue;
 
-		while (' ' == *p || '\t' == *p) p++;
-		if (*p != '\n' && *p != '\0')
-		    tag_syntax_error("INCLUDED_REGION", datum,
+		    while (' ' == *p || '\t' == *p) p++;
+		    if (*p != '\n' && *p != '\0')
+		       tag_syntax_error("INCLUDED_REGION", datum,
 				     parse_err);
-		continue;
+		    continue;
 	    }
 
 	    COMPARE_INT("PRIMER_START_CODON_POSITION", sa->start_codon_pos);
@@ -237,9 +235,9 @@ read_record(const int *strict_tags,
 	    parse_err = glob_err;  /* These errors are considered fatal. */
 	    if (COMPARE("PRIMER_PRODUCT_SIZE_RANGE")
 		|| COMPARE("PRIMER_DEFAULT_PRODUCT")) {
-		parse_product_size("PRIMER_PRODUCT_SIZE_RANGE", datum, pa,
+		    parse_product_size("PRIMER_PRODUCT_SIZE_RANGE", datum, pa,
 				   parse_err);
-		continue;
+		    continue;
 	    }
 	    COMPARE_INT("PRIMER_DEFAULT_SIZE", pa->p_args.opt_size);
 	    COMPARE_INT("PRIMER_OPT_SIZE", pa->p_args.opt_size);
@@ -408,23 +406,23 @@ read_record(const int *strict_tags,
 			  pa->o_args.weights.template_mispriming);
 
 	    COMPARE_FLOAT("PRIMER_PAIR_WT_PR_PENALTY", 
-					      pa->pr_pair_weights.primer_quality);
-            COMPARE_FLOAT("PRIMER_PAIR_WT_IO_PENALTY",
-					      pa->pr_pair_weights.io_quality);
-            COMPARE_FLOAT("PRIMER_PAIR_WT_DIFF_TM",
-					      pa->pr_pair_weights.diff_tm);
-            COMPARE_FLOAT("PRIMER_PAIR_WT_COMPL_ANY",
-					      pa->pr_pair_weights.compl_any);
-            COMPARE_FLOAT("PRIMER_PAIR_WT_COMPL_END",
-					      pa->pr_pair_weights.compl_end);
+				      pa->pr_pair_weights.primer_quality);
+        COMPARE_FLOAT("PRIMER_PAIR_WT_IO_PENALTY",
+				      pa->pr_pair_weights.io_quality);
+        COMPARE_FLOAT("PRIMER_PAIR_WT_DIFF_TM",
+				      pa->pr_pair_weights.diff_tm);
+        COMPARE_FLOAT("PRIMER_PAIR_WT_COMPL_ANY",
+				      pa->pr_pair_weights.compl_any);
+        COMPARE_FLOAT("PRIMER_PAIR_WT_COMPL_END",
+				      pa->pr_pair_weights.compl_end);
 
 	    COMPARE_FLOAT("PRIMER_PAIR_WT_PRODUCT_TM_LT",
-					      pa->pr_pair_weights.product_tm_lt);
+				      pa->pr_pair_weights.product_tm_lt);
 	    COMPARE_FLOAT("PRIMER_PAIR_WT_PRODUCT_TM_GT",
-					      pa->pr_pair_weights.product_tm_gt);
+				      pa->pr_pair_weights.product_tm_gt);
 	    COMPARE_FLOAT("PRIMER_PAIR_WT_PRODUCT_SIZE_GT",
 					   pa->pr_pair_weights.product_size_gt);
-            COMPARE_FLOAT("PRIMER_PAIR_WT_PRODUCT_SIZE_LT",
+        COMPARE_FLOAT("PRIMER_PAIR_WT_PRODUCT_SIZE_LT",
 					   pa->pr_pair_weights.product_size_lt);
 
 	    COMPARE_FLOAT("PRIMER_PAIR_WT_REP_SIM",
@@ -433,6 +431,9 @@ read_record(const int *strict_tags,
 	    COMPARE_FLOAT("PRIMER_PAIR_WT_TEMPLATE_MISPRIMING",
 			  pa->pr_pair_weights.template_mispriming);
 	}
+	/* End of reading the tags in the right place */
+	
+	/*  Complain about unrecognized tags */
 	if (*strict_tags == 1) {
 	    pr_append_new_chunk(glob_err, "Unrecognized tag: ");
 	    pr_append(glob_err, s);
@@ -440,12 +441,13 @@ read_record(const int *strict_tags,
 	}
     }  /* while ((s = p3_read_line(stdin)) != NULL && strcmp(s,"=")) { */
 
+    /* Check if the record was terminated by "=" */
     if (NULL == s) { /* End of file. */
-	if (data_found) {
-	    pr_append_new_chunk(glob_err, 
-				"Final record not terminated by '='");
-	    return 1;
-	} else return 0;
+	    if (data_found) {
+	        pr_append_new_chunk(glob_err, 
+			    	"Final record not terminated by '='");
+	        return 1;
+	    } else return 0;
     }
 
     if (task_tmp != NULL) {
@@ -476,44 +478,43 @@ read_record(const int *strict_tags,
 	  free(task_tmp);
     }
 
-   /* 
-     * WARNING: read_seq_lib uses p3_read_line, so repeat files cannot be read
-     * inside the while ((s = p3_read_line(stdin))...)  loop above.
-     * FIX ME, in fact the reading of the library contents probably
-     * belongs inside primer3_boulder_main.c or libprimer3.c.
-     */
-
+   /* WARNING: read_seq_lib uses p3_read_line, so repeat files cannot be read
+    * inside the while ((s = p3_read_line(stdin))...)  loop above.
+    * FIX ME, in fact the reading of the library contents probably
+    * belongs inside primer3_boulder_main.c or libprimer3.c. */
+    /* Reading in the repeat libraries */
     if (NULL != repeat_file_path) {
       destroy_seq_lib(pa->p_args.repeat_lib);
       if ('\0' == *repeat_file_path) {
-	/* Input now specifies no repeat library. */
-	pa->p_args.repeat_lib = NULL;
+	    /* Input now specifies no repeat library. */
+	    pa->p_args.repeat_lib = NULL;
       }
       else {
-	pa->p_args.repeat_lib
-	  = read_and_create_seq_lib(repeat_file_path, 
+	    pa->p_args.repeat_lib
+	      = read_and_create_seq_lib(repeat_file_path, 
 				    "mispriming library");
-	if(pa->p_args.repeat_lib->error.data != NULL) {
-	  pr_append_new_chunk(glob_err, pa->p_args.repeat_lib->error.data);
+	    if(pa->p_args.repeat_lib->error.data != NULL) {
+	      pr_append_new_chunk(glob_err, pa->p_args.repeat_lib->error.data);
 	}
       }
       free(repeat_file_path);
       repeat_file_path = NULL;
     }
 
+    /* Reading in the repeat libraries for internal oligo */
     if (NULL != int_repeat_file_path) {
       destroy_seq_lib(pa->o_args.repeat_lib);
       if ('\0' == *int_repeat_file_path) {
-	/* Input now specifies no mishybridization library. */
-	pa->o_args.repeat_lib = NULL;
+	   /* Input now specifies no mishybridization library. */
+	   pa->o_args.repeat_lib = NULL;
       }
       else {
-	pa->o_args.repeat_lib = 
-	  read_and_create_seq_lib(int_repeat_file_path,
+	    pa->o_args.repeat_lib = 
+	    read_and_create_seq_lib(int_repeat_file_path,
 				  "internal oligo mishyb library");
-	if(pa->o_args.repeat_lib->error.data != NULL) {
-	  pr_append_new_chunk(glob_err, pa->o_args.repeat_lib->error.data);
-	}
+	    if(pa->o_args.repeat_lib->error.data != NULL) {
+	       pr_append_new_chunk(glob_err, pa->o_args.repeat_lib->error.data);
+	    }
       }
       free(int_repeat_file_path);
       int_repeat_file_path = NULL;
