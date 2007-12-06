@@ -225,8 +225,8 @@ main(argc,argv)
       }
       /* Use boulder output */
       else {
-	boulder_print_pairs(&io_version, global_pa, sa,
-			    &retval->best_pairs);
+	     boulder_print(&io_version, global_pa, sa, retval);
+
       }
     } else {
       if (global_pa->pick_left_primer) {
@@ -250,8 +250,7 @@ main(argc,argv)
 	format_oligos(stdout, global_pa, sa, oligo,
 		      num_oligo, oligot, pr_release);
       } else {
-	boulder_print_oligos(global_pa, sa, num_oligo,
-			     oligot, oligo);
+    	  boulder_print(&io_version, global_pa, sa, retval);
       }
     }
  
