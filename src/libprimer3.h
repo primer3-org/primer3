@@ -90,10 +90,10 @@ typedef enum task {
 } task;
 
 /* Enum explaining if output are pairs */
-typedef enum output_format {
+typedef enum p3_output_type {
 	primer_pairs    = 0,
 	primer_list     = 1,
-} output_format;
+} p3_output_type;
 
 
 /* pr_append_str is an append-only string ADT. */
@@ -620,10 +620,26 @@ typedef struct p3retval {
 
   pr_append_str per_sequence_err;
 
+  pr_append_str warnings;
+
+  p3_output_type output_type;
+
 } p3retval;
 
 /* Deallocate a primer3 state */
 void destroy_p3retval(p3retval *);
+
+/* get elements of p3retval */
+/* NOTE, we still need to provide accessors for the
+   oligo lists! */
+/* NOTE, we will likely need accessors for the 
+   pair_array_t */
+const pair_array_t *p3_get_retval_best_pairs(const p3retval *r);
+const char *p3_get_retval_glob_err(const p3retval *r);
+const char *p3_get_retval_per_sequence_err(const p3retval *r);
+const char *p3_get_retval_warnings(const p3retval *r);
+p3_output_type p3_get_retval_output_type(const p3retval *r);
+
 
 /* Functions for seq_args -- create, destroy, set slots */
 seq_args *create_seq_arg();
