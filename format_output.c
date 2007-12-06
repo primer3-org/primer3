@@ -45,6 +45,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 static char *pr_program_name = "Program name is probably primer3_core";
 
+static void format_pairs(FILE *f, const p3_global_settings *pa,
+	     const seq_args *sa, const pair_array_t *best_pairs,
+	     const char *pr_release);
+static void format_oligos(FILE *, const p3_global_settings *, const seq_args *, 
+		   primer_rec *, int, oligo_type, const char*);
 static int lib_sim_specified(const p3_global_settings *);
 static void print_explain(FILE *, const p3_global_settings *,
 			  const seq_args *, int, const char *);
@@ -71,12 +76,56 @@ static void print_oligo_summary(FILE *, const p3_global_settings *,
 			  oligo_type, int);
 
 void
+print_format_output(FILE *f,
+		 const int *io_version,
+	     const p3_global_settings *pa,
+	     const seq_args *sa,
+	     const p3retval *retval,
+	     const char *pr_release)
+{
+  /* The variables for primer lists */
+  oligo_type oligot = OT_LEFT; /* Silence warning */
+  int num_oligo = 0;
+  primer_rec *oligo = NULL;
+  
+  /* Print as primer pairs */
+  if (retval->output_type == primer_pairs) {
+    format_pairs(f, pa, sa, &retval->best_pairs, pr_release);
+    
+  /* Print as primer list */
+  }	else {
+	/* Figure out which primer to print */
+    if (pa->pick_left_primer) {
+      oligot = OT_LEFT;
+	  oligo = retval->f;
+	  num_oligo = retval->n_f;
+    } else if (pa->pick_right_primer) {
+	  oligot = OT_RIGHT;
+	  oligo = retval->r;
+	  num_oligo = retval->n_r;
+    } else if (pa->pick_internal_oligo) {
+	  oligot = OT_INTL;
+	  oligo = retval->mid;
+	  num_oligo = retval->n_m;
+    } else {
+	  fprintf(stderr, "%s: fatal programming error\n", pr_program_name);
+	  abort();
+    }
+    /* Call the print primer list function */
+    format_oligos(stdout, pa, sa, oligo, num_oligo,
+    		      oligot, pr_release);
+  }
+	
+}
+
+void
 format_pairs(FILE *f,
 	     const p3_global_settings *pa,
 	     const seq_args *sa,
 	     const pair_array_t *best_pairs,
 	     const char *pr_release)
 {
+  /* Some variables */
   char *warning;
   int print_lib_sim = lib_sim_specified(pa);
   primer_rec *h = NULL;
@@ -84,21 +133,27 @@ format_pairs(FILE *f,
   PR_ASSERT(NULL != f);
   PR_ASSERT(NULL != pa);
   PR_ASSERT(NULL != sa);
-
+  
+  /* If therer are errors, print them and return */
   if (sa->error.data != NULL) {
     format_error(f, sa->sequence_name, sa->error.data);
     return;
     }
-
+  
+  /* Print the sequence name if it is provided */
   if (NULL != sa->sequence_name)
     fprintf(f, "PRIMER PICKING RESULTS FOR %s\n\n", sa->sequence_name);
+  
+  /* Print if a mispriming libraby was used and which one */
   if (pa->p_args.repeat_lib != NULL)
     fprintf(f, "Using mispriming library %s\n",
 	    pa->p_args.repeat_lib->repeat_file);
   else
     fprintf(f, "No mispriming library specified\n");
 
-  if ( pa->primer_task == 1) {
+  /* Print if a mispriming libraby for the internal oligo 
+   * was used and which one */
+  if ( pa->primer_task == pick_pcr_primers_and_hyb_probe ) {
     if (pa->o_args.repeat_lib != NULL)
       fprintf(f, "Using internal oligo mishyb library %s\n",
 	      pa->o_args.repeat_lib->repeat_file);
@@ -106,20 +161,34 @@ format_pairs(FILE *f,
       fprintf(f, "No internal oligo mishyb library specified\n");
   }
 
+  /* Does the sequence start at position 0 or 1 ? */
   fprintf(f, "Using %d-based sequence positions\n",
 	  pa->first_base_index);
+  
+  /* Complain if no primers are in the array */
   if (best_pairs->num_pairs == 0) fprintf(f, "NO PRIMERS FOUND\n\n");
+  
+  /* Print out the warings */
   if ((warning = pr_gather_warnings(sa, pa)) != NULL) {
     fprintf(f, "WARNING: %s\n\n", warning);
     free(warning);
   }
+  
+  /* Print the results for the best pair */
   print_summary(f, pa, sa, best_pairs, 0);
   fprintf(f, "\n");
 
+  /* Print nicely out the sequence with the best pair */
   if (print_seq(f, pa, sa, h, best_pairs, 0)) exit(-2); /* ENOMEM */
+  
+  /* Print out the alternative pairs */
   if (best_pairs->num_pairs > 1 ) print_rest(f, pa, sa, best_pairs);
+  
+  /* Print the primer picking statistics */
   if (pa->explain_flag)
     print_explain(f, pa, sa, print_lib_sim, pr_release);
+  
+  /* Flush the buffers and return */
   fprintf(f, "\n\n");
   if (fflush(f) == EOF) {
     perror("fflush(f) failed");
@@ -128,6 +197,7 @@ format_pairs(FILE *f,
 
 }
 
+/* Prints out the results of a primer pair */
 static void
 print_summary(f, pa, sa, best_pairs, num)
     FILE *f;
@@ -179,6 +249,7 @@ print_oligo_header(f, s, print_lib_sim)
 	    s, print_lib_sim ? "  rep " : "");
 }
 
+/* Print the line with the parameters */
 static void
 print_oligo(FILE *f,
 	    const char *title,
@@ -239,6 +310,7 @@ print_pair_array(f, title, num, array, pa, sa)
 #define EXCL_REGION      (1<<5)
 #define INTL_EXCL_REGION (1<<6)
 
+/* Prints out the asci picture of the sequence */
 /* Return 1 on ENOMEM. Otherwise return 0. */
 static int
 print_seq(f, pa, sa, h, best_pairs, num)
@@ -456,6 +528,7 @@ print_rest(f, pa, sa, best_pairs)
     }
 }
 
+/* Print out the statistics of primer picking */
 /* This function does _not_ print out the no_orf statistic. */
 static void
 print_explain(FILE *f,
@@ -647,6 +720,7 @@ format_error(FILE *f, const char* seq_name, const char *err)
     fprintf(f, "INPUT PROBLEM: %s\n\n", err);
 }
 
+/* Format and print out one oligo */
 void 
 format_oligos(FILE *f,
 	      const p3_global_settings *pa,
@@ -768,6 +842,6 @@ print_oligo_summary(f, pa, sa, h, l, num)
     print_pair_array(f, "TARGETS", sa->tar2.count /* num_targets*/, sa->/* tar*/tar2.pairs, pa, sa);
     print_pair_array(f, "EXCLUDED REGIONS", sa->excl2.count, sa->excl2.pairs, pa, sa);
     print_pair_array(f, "INTERNAL OLIGO EXCLUDED REGIONS",
-		     sa->excl_internal2.count, sa->excl_internal2.pairs, pa, sa);
+    	     sa->excl_internal2.count, sa->excl_internal2.pairs, pa, sa);
 }
 

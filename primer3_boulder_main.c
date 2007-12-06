@@ -219,9 +219,8 @@ main(argc,argv)
     /* Print out the results: */
     if (global_pa->pick_left_primer && global_pa->pick_right_primer) {
       if (format_output) {
-	format_pairs(stdout, global_pa, sa, 
-		     &retval->best_pairs, 
-		     pr_release);
+    	  print_format_output(stdout, &io_version, global_pa,
+	    		 		      sa, retval, pr_release);
       }
       /* Use boulder output */
       else {
@@ -247,8 +246,8 @@ main(argc,argv)
       }
 
       if (format_output) {
-	format_oligos(stdout, global_pa, sa, oligo,
-		      num_oligo, oligot, pr_release);
+    	  print_format_output(stdout, &io_version, global_pa,
+	    		 		        sa, retval, pr_release);
       } else {
     	  boulder_print(&io_version, global_pa, sa, retval);
       }
