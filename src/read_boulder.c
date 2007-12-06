@@ -807,7 +807,7 @@ parse_seq_quality(s, num)
 }
 
 /* =========================================================== */
-/* Fail-stop wrapper for memory allocation.                   */
+/* Fail-stop wrapper for memory allocation.                    */
 /* =========================================================== */
 /* 
  * Panic messages for when the program runs out of memory.
