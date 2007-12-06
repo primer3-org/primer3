@@ -94,6 +94,7 @@ main(argc,argv)
   /* FIX ME: This call is redundant, its part of p3_create_global_settings */
   pr_set_default_global_args(global_pa);
   
+  /* Read in the flags provided with the program call */
   while (--argc > 0) {
     argv++;
     if (!strcmp(*argv, "-format_output")) {
@@ -101,6 +102,21 @@ main(argc,argv)
     } else if (!strcmp(*argv, "-2x_compat")) {
       printf( "PRIMER_ERROR=flag -2x_compat is no longer supported\n=\n");
       exit (-1);
+    }  else if (!strncmp(*argv, "-io_version=", 10)) {
+      /* This reads in the version number required for extended io functions */
+      /* There may be a better way, but it works */
+      char tag2int[20];
+      strncpy (tag2int,*argv,19);
+      int counter = 12;
+      while (isdigit(tag2int[counter])) {
+		  if (isdigit(tag2int[counter])) {
+			  io_version=10*io_version+(tag2int[counter] - '0');
+		  }
+		  if ( counter > 20 ) {
+			  break; /* Just to be save */
+		  }
+     	  counter++;
+      }
     } else if (!strcmp(*argv, "-strict_tags")) {
       strict_tags = 1;
     } else  {
@@ -277,10 +293,8 @@ print_usage()
 {
     const char **p = libprimer3_copyright();
     while (NULL != *p) fprintf(stderr, "%s\n", *p++);
-    fprintf(stderr, 
-	    "\n\nUSAGE: %s %s %s\n", pr_program_name,
-	    "[-format_output]",
-	    "[-strict_tags]");
+    fprintf(stderr, "\n\nUSAGE: %s %s %s %s\n", pr_program_name,
+	    "[-format_output]", "[-io_version=xxx]", "[-strict_tags]");
     fprintf(stderr, "This is primer3 (%s)\n", pr_release);
     fprintf(stderr, "Input must be provided on standard input.\n");
     fprintf(stderr, "For example:\n");
