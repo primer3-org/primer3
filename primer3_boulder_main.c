@@ -58,9 +58,9 @@ main(argc,argv)
     char *argv[]; 
 { 
   /* Setup the input data structures handlers */
-  program_args prog_args;
   int format_output = 0;
-  /* FIX ME: Is it necessary?? Isnt it done in memset?? line 100? */
+  int strict_tags = 0;
+  int io_version = 0;
   primer_args *global_pa;
   seq_args *sa;
   /* Setup the error structures handlers */
@@ -78,11 +78,6 @@ main(argc,argv)
   pr_program_name = argv[0];
   p3_set_program_name(pr_program_name);
 
-#if 1
-  /* Example for Andreas */
-  FILE *testfile;
-#endif
-
   /* 
    * We set up some signal handlers in case someone starts up the program
    * from the command line, wonders why nothing is happening, and then kills
@@ -99,18 +94,16 @@ main(argc,argv)
   /* FIX ME: This call is redundant, its part of p3_create_global_settings */
   pr_set_default_global_args(global_pa);
   
-  /* Read in the prog_args provided with program call */
-  memset(&prog_args, 0, sizeof(prog_args)); /* Set all prog_args to 0 */
   while (--argc > 0) {
     argv++;
     if (!strcmp(*argv, "-format_output")) {
       format_output = 1;
-    }  else if (!strcmp(*argv, "-2x_compat")) {
+    } else if (!strcmp(*argv, "-2x_compat")) {
       printf( "PRIMER_ERROR=flag -2x_compat is no longer supported\n=\n");
       exit (-1);
-    } else if (!strcmp(*argv, "-strict_tags"))
-      prog_args.strict_tags = 1;
-    else  {
+    } else if (!strcmp(*argv, "-strict_tags")) {
+      strict_tags = 1;
+    } else  {
       print_usage();
       exit(-1);
     }
@@ -146,7 +139,7 @@ main(argc,argv)
     /* Read data from stdin until a "=" line occurs.  Assign parameter
      * values for primer picking to pa and sa. Perform initial data
      * checking. */
-    if (read_record(&prog_args, !format_output, global_pa, sa, 
+    if (read_record(&strict_tags, &io_version, !format_output, global_pa, sa, 
 		    fatal_parse_err, nonfatal_parse_err)
 	<= 0) {
       break; /* leave the program loop and complain later */
@@ -183,20 +176,6 @@ main(argc,argv)
     retval = choose_primers(global_pa, sa);
     if (NULL == retval) exit(-2); /* Out of memory. */
 
-#if 0
-    /* Example for Andreas -- as usual with C, there is
-     some error, not sure what it is. */
-    if (global_pa->pick_right_primer) {
-      testfile = fopen("example-right-primer-file.txt", "w");
-      if (NULL == testfile) abort();
-      p3_print_one_oligo_list(sa, retval->n_r, retval->r,
-			      OT_RIGHT, global_pa->first_base_index,
-			      NULL != global_pa->p_args.repeat_lib,
-			      testfile);
-      fclose(testfile);
-    }
-#endif
-
     /* If there are errors, write the proper message
      * and finish this loop */
     if (!pr_is_empty(&retval->glob_err)
@@ -230,7 +209,7 @@ main(argc,argv)
       }
       /* Use boulder output */
       else {
-	boulder_print_pairs(&prog_args, global_pa, sa,
+	boulder_print_pairs(&io_version, global_pa, sa,
 			    &retval->best_pairs);
       }
     } else {

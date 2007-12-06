@@ -136,7 +136,8 @@ extern double strtod();
  * See read_boulder.h for description.
  */
 int
-read_record(const program_args *prog_args, 
+read_record(const int *strict_tags,
+		const int *io_version,
 	    int   echo_output,
 	    p3_global_settings *pa, 
 	    seq_args *sa, 
@@ -432,7 +433,7 @@ read_record(const program_args *prog_args,
 	    COMPARE_FLOAT("PRIMER_PAIR_WT_TEMPLATE_MISPRIMING",
 			  pa->pr_pair_weights.template_mispriming);
 	}
-	if (1 == prog_args->strict_tags) {
+	if (*strict_tags == 1) {
 	    pr_append_new_chunk(glob_err, "Unrecognized tag: ");
 	    pr_append(glob_err, s);
 	    fprintf(stderr, "Unrecognized tag: %s\n", s);

@@ -46,8 +46,8 @@ static void   print_explain(const oligo_stats *, oligo_type);
 
 /* Print the data for chosen primer pairs to stdout in "boulderio" format. */
 void
-boulder_print_pairs(prog_args, pa, sa, best_pairs)
-    const program_args *prog_args;
+boulder_print_pairs(io_version, pa, sa, best_pairs)
+    const int *io_version;
     const primer_args *pa;
     const seq_args *sa;
     const pair_array_t *best_pairs;
@@ -60,20 +60,12 @@ boulder_print_pairs(prog_args, pa, sa, best_pairs)
 
     PR_ASSERT(NULL != pa);
     PR_ASSERT(NULL != sa);
-    PR_ASSERT(NULL != prog_args);
+    PR_ASSERT(NULL != io_version);
 
-    if (0 /* prog_args->twox_compat */) {
-      /* twox_compat no longer supported. */
-	left_tag = "FORWARD_PRIMER";
-	right_tag = "REVERSE_PRIMER";
-	intl_tag = "MIDDLE_OLIGO";
-	prod_size_tag = "PRODUCT_SIZE";
-    } else {
 	left_tag = "PRIMER_LEFT";
 	right_tag = "PRIMER_RIGHT";
 	intl_tag = "PRIMER_INTERNAL_OLIGO";
 	prod_size_tag = "PRIMER_PRODUCT_SIZE";
-    }
 
     if ((warning = pr_gather_warnings(sa, pa)) != NULL) {
       
