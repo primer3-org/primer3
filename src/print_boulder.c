@@ -46,185 +46,331 @@ static void   print_explain(const oligo_stats *, oligo_type);
 
 /* Print the data for chosen primer pairs to stdout in "boulderio" format. */
 void
-boulder_print_pairs(io_version, pa, sa, best_pairs)
+boulder_print(io_version, pa, sa, retval)
     const int *io_version;
     const primer_args *pa;
     const seq_args *sa;
-    const pair_array_t *best_pairs;
+    const p3retval *retval;
+    
 {
-    const char *left_tag, *right_tag, *intl_tag, *prod_size_tag;
+	/* The pointers to warning tag */
     char *warning;
+    /* A small spacer */
     char suffix [3];
+    /* Pointers for the primer set just printing */
     primer_rec *fwd, *rev, *intl;
+    
+    /* Variables only used for Primer Lists */
+    int num_fwd, num_rev, num_int, num_print;
+    int print_fwd = 0;
+    int print_rev = 0;
+    int print_int = 0;
+    
+    /* Switches for printing this primer */
+    int go_fwd = 0;
+    int go_rev = 0;
+    int go_int = 0;
+    
+    /* The number of loop cycles */
+    int loop_max;
+    
+    /* That links to the included region */
     int i, incl_s = sa->incl_s;
-
+    
+    /* Check: are all pointers linked to something*/
     PR_ASSERT(NULL != pa);
     PR_ASSERT(NULL != sa);
     PR_ASSERT(NULL != io_version);
 
-	left_tag = "PRIMER_LEFT";
-	right_tag = "PRIMER_RIGHT";
-	intl_tag = "PRIMER_INTERNAL_OLIGO";
-	prod_size_tag = "PRIMER_PRODUCT_SIZE";
-
-    if ((warning = pr_gather_warnings(sa, pa)) != NULL) {
-      
-	printf("PRIMER_WARNING=%s\n", warning);
-	free(warning);
+    /* Check if there are warnings and print them */
+    if ((warning = pr_gather_warnings(sa, pa)) != NULL) { 
+	  printf("PRIMER_WARNING=%s\n", warning);
+	  free(warning);
     }
-    
+    /* Check if there are errors, print and return */
     if (sa->error.data != NULL) {
       boulder_print_error(sa->error.data);
       return;
     }
-
+    /* Prints out statistics about the primers */
     if (pa->explain_flag) print_all_explain(pa, sa);
-
+    
+    /* Print out the stop codon if a reading frame was specified */
     if (!PR_START_CODON_POS_IS_NULL(sa))
       printf("PRIMER_STOP_CODON_POSITION=%d\n", sa->stop_codon_pos);
+    
+    /* How often has the loop to be done? */
+    if (retval->output_type == primer_list) {
+	    /* For Primer Lists: Figure out how many primers are in
+	     * the array that can be printed. If more than needed,
+	     * set it to the number requested. */
 
-    for(i=0; i<best_pairs->num_pairs; i++) {
-	fwd = best_pairs->pairs[i].left;
-	rev = best_pairs->pairs[i].right;
-	intl = best_pairs->pairs[i].intl;
+	    /* Get how many primers are in the array */
+	    num_fwd = retval->n_f;
+	    num_rev = retval->n_r;
+	    num_int = retval->n_m;
+	    /* Get how may primers should be printed */
+	    num_print = pa->num_return;
+	    /* Set how many primers will be printed */
+	    print_fwd = (num_print < num_fwd) ? num_print : num_fwd;
+	    print_rev = (num_print < num_rev) ? num_print : num_rev;
+	    print_int = (num_print < num_int) ? num_print : num_int;
+	    /* Get which list has to print most primers */
+	    loop_max = 0;
+	    if (loop_max < print_fwd) {
+	    	loop_max = print_fwd;
+	    }
+	    if (loop_max < print_rev) {
+	    	loop_max = print_rev;
+	    }
+	    if (loop_max < print_int) {
+	    	loop_max = print_int;
+	    }
+	    /* Now the vars are there how often we have to go
+	     * through the loop and how many of each primer can
+	     * be printed. */
+    } else {
+    	loop_max = retval->best_pairs.num_pairs;
+    }
+    
+    /* --------------------------------------- */
+    /* Start of the big loop printing all data */
+    for(i=0; i<loop_max; i++) {
+      /* What needs to be printed */
+      /* The conditions for primer lists */
+      if (retval->output_type == primer_list) {
+         /* Attach the selected primers to the pointers */
+  		fwd = &retval->f[i];
+  		rev = &retval->r[i];
+  		intl = &retval->mid[i];
+	    /* Do fwd oligos have to be printed? */
+	    if ((pa->pick_left_primer) && (i < print_fwd)) {
+	    	go_fwd = 1;
+	    } else {
+	    	go_fwd = 0;
+	    }
+	    /* Do rev oligos have to be printed? */
+	    if ((pa->pick_right_primer) && (i < print_rev)) {
+	    	go_rev = 1;
+	    } else {
+	    	go_rev = 0;
+	    }
+	    /* Do int oligos have to be printed? */
+	    if ((pa->pick_internal_oligo) && (i < print_int)) {
+	    	go_int = 1;
+	    } else {
+	    	go_int = 0;
+	    }
+      }
+      /* The conditions for primer pairs */
+      else {
+	    /* Attach the selected pair to the pointers */
+		fwd = retval->best_pairs.pairs[i].left;
+		rev = retval->best_pairs.pairs[i].right;
+		intl = retval->best_pairs.pairs[i].intl;
+		/* Pairs must have fwd and rev primers */
+	    go_fwd = 1;
+	    go_rev = 1;
+	    /* Do hyb oligos have to be printed? */
+	    /* FIX ME: Should be (pa->pick_internal_oligo) && (retval->output_type == primer_pairs) */
+	    /* Strangely this does not work */
+	    if (pa->primer_task == pick_pcr_primers_and_hyb_probe) {
+	    	go_int = 1;
+	    } else {
+	    	go_int = 0;
+	    }
+      }
+      
+	/* Get the number for pimer counting in suffix[0] */
+	if ((i == 0) && (*io_version < 1) ){
+	  suffix[0] = '\0';
+	} else { 
+	  sprintf(suffix, "_%d", i);
+	}
 
-	if (i == 0) suffix[0] = '\0';
-	else sprintf(suffix, "_%d", i);
+	/* Print out the Pair Penalties */
+	if (retval->output_type == primer_pairs) {
+	  if (*io_version < 1) {
+	  	printf("PRIMER_PAIR_PENALTY%s=%.4f\n", suffix,
+				retval->best_pairs.pairs[i].pair_quality);
+	  } else {
+		printf("PRIMER_PAIR%s_PENALTY=%.4f\n", suffix,
+				retval->best_pairs.pairs[i].pair_quality);
+	  }
+	}
+	/* Print single primer penalty */
+	if (go_fwd == 1)
+	  printf("PRIMER_LEFT%s_PENALTY=%f\n", suffix, fwd->quality);
+	if (go_rev == 1)
+	  printf("PRIMER_RIGHT%s_PENALTY=%f\n", suffix, rev->quality);
+	if (go_int == 1)
+	  printf("PRIMER_INTERNAL_OLIGO%s_PENALTY=%f\n", suffix, intl->quality);
 
-	printf("PRIMER_PAIR_PENALTY%s=%.4f\n", suffix,
-	       best_pairs->pairs[i].pair_quality);
-	printf("PRIMER_LEFT%s_PENALTY=%f\n", suffix,
-	       fwd->quality);
-	printf("PRIMER_RIGHT%s_PENALTY=%f\n", suffix,
-		   rev->quality);
-	if ( pa->primer_task == pick_pcr_primers_and_hyb_probe)
-	  printf("PRIMER_INTERNAL_OLIGO%s_PENALTY=%f\n", suffix,
-		 intl->quality);
-
-        /* Print sequences. */
-	printf("PRIMER_LEFT%s_SEQUENCE=%s\n", suffix,
+    /* Print primer sequences. */
+	if (go_fwd == 1)
+	  printf("PRIMER_LEFT%s_SEQUENCE=%s\n", suffix,
 	       pr_oligo_sequence(sa, fwd));
-	printf("PRIMER_RIGHT%s_SEQUENCE=%s\n", suffix,
+	if (go_rev == 1)
+	  printf("PRIMER_RIGHT%s_SEQUENCE=%s\n", suffix,
 	       pr_oligo_rev_c_sequence(sa, rev));
-	if( pa->primer_task == pick_pcr_primers_and_hyb_probe)
+	if(go_int == 1)
 	    printf("PRIMER_INTERNAL_OLIGO%s_SEQUENCE=%s\n", suffix,
 		   pr_oligo_sequence(sa,intl));
-	printf("%s%s=%d,%d\n", left_tag, suffix,
+	
+	/* Print primer start and length */
+	if (go_fwd == 1)
+	  printf("PRIMER_LEFT%s=%d,%d\n", suffix,
 	       fwd->start + incl_s + pa->first_base_index,
 	       fwd->length);
-	printf("%s%s=%d,%d\n", right_tag, suffix,
+	if (go_rev == 1)
+	  printf("PRIMER_RIGHT%s=%d,%d\n", suffix,
 	       rev->start + incl_s + pa->first_base_index,
 	       rev->length);
-	if ( pa->primer_task == pick_pcr_primers_and_hyb_probe)
-	    printf("%s%s=%d,%d\n", intl_tag, suffix,
+	if (go_int == 1)
+	    printf("PRIMER_INTERNAL_OLIGO%s=%d,%d\n", suffix,
 		   intl->start + incl_s + pa->first_base_index,
 		   intl->length);
 
-	printf("PRIMER_LEFT%s_TM=%.3f\n", suffix, fwd->temp);
-	printf("PRIMER_RIGHT%s_TM=%.3f\n", suffix, rev->temp);
-	if ( pa->primer_task == pick_pcr_primers_and_hyb_probe)
+	/* Print primer Tm */
+	if (go_fwd == 1)
+	  printf("PRIMER_LEFT%s_TM=%.3f\n", suffix, fwd->temp);
+	if (go_rev == 1)
+	  printf("PRIMER_RIGHT%s_TM=%.3f\n", suffix, rev->temp);
+	if (go_int == 1)
 	    printf("PRIMER_INTERNAL_OLIGO%s_TM=%.3f\n",suffix, intl->temp);
 
-
-	printf("PRIMER_LEFT%s_GC_PERCENT=%.3f\n", suffix, fwd->gc_content);
-	printf("PRIMER_RIGHT%s_GC_PERCENT=%.3f\n", suffix, rev->gc_content);
-	if ( pa->primer_task == pick_pcr_primers_and_hyb_probe)
-	    printf("PRIMER_INTERNAL_OLIGO%s_GC_PERCENT=%.3f\n",suffix,
+	/* Print primer GC content */
+	if (go_fwd == 1)
+	  printf("PRIMER_LEFT%s_GC_PERCENT=%.3f\n", suffix, fwd->gc_content);
+	if (go_rev == 1)
+	  printf("PRIMER_RIGHT%s_GC_PERCENT=%.3f\n", suffix, rev->gc_content);
+	if (go_int == 1)
+	  printf("PRIMER_INTERNAL_OLIGO%s_GC_PERCENT=%.3f\n",suffix,
 		   intl->gc_content);
 
-	printf("PRIMER_LEFT%s_SELF_ANY=%.2f\n", suffix,
+	/* Print primer self_any */
+	if (go_fwd == 1)
+	  printf("PRIMER_LEFT%s_SELF_ANY=%.2f\n", suffix,
 	       fwd->self_any / PR_ALIGN_SCORE_PRECISION);
-	printf("PRIMER_RIGHT%s_SELF_ANY=%.2f\n", suffix,
+	if (go_rev == 1)
+	  printf("PRIMER_RIGHT%s_SELF_ANY=%.2f\n", suffix,
 	       rev->self_any / PR_ALIGN_SCORE_PRECISION);
-	if ( pa->primer_task == pick_pcr_primers_and_hyb_probe)
+	if (go_int == 1)
 	    printf("PRIMER_INTERNAL_OLIGO%s_SELF_ANY=%.2f\n", suffix,
 		   intl->self_any / PR_ALIGN_SCORE_PRECISION);
-	printf("PRIMER_LEFT%s_SELF_END=%.2f\n", suffix,
+	
+	/* Print primer self_end*/
+	if (go_fwd == 1)
+	  printf("PRIMER_LEFT%s_SELF_END=%.2f\n", suffix,
 	       fwd->self_end / PR_ALIGN_SCORE_PRECISION);
-	printf("PRIMER_RIGHT%s_SELF_END=%.2f\n",
-	       suffix,rev->self_end / PR_ALIGN_SCORE_PRECISION);
-	if ( pa->primer_task == pick_pcr_primers_and_hyb_probe)
+	if (go_rev == 1)
+	  printf("PRIMER_RIGHT%s_SELF_END=%.2f\n", suffix,
+		   rev->self_end / PR_ALIGN_SCORE_PRECISION);
+	if (go_int == 1)
 	    printf("PRIMER_INTERNAL_OLIGO%s_SELF_END=%.2f\n", suffix,
 		   intl->self_end / PR_ALIGN_SCORE_PRECISION);
-        if (seq_lib_num_seq(pa->p_args.repeat_lib) > 0) {
-	    printf("PRIMER_LEFT%s_MISPRIMING_SCORE=%.2f, %s\n", suffix,
-		   fwd->repeat_sim.score[fwd->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
-		   fwd->repeat_sim.name);
-            printf("PRIMER_RIGHT%s_MISPRIMING_SCORE=%.2f, %s\n", suffix,
-		   rev->repeat_sim.score[rev->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
-                   rev->repeat_sim.name);
-            printf("PRIMER_PAIR%s_MISPRIMING_SCORE=%.2f, %s\n", suffix,
-		   best_pairs->pairs[i].repeat_sim / PR_ALIGN_SCORE_PRECISION,
-		   best_pairs->pairs[i].rep_name);
-        }
-	if ( pa->primer_task == pick_pcr_primers_and_hyb_probe
-	    && seq_lib_num_seq(pa->o_args.repeat_lib) > 0)
-	    printf("PRIMER_INTERNAL_OLIGO%s_MISHYB_SCORE=%.2f, %s\n", suffix,
-		   intl->repeat_sim.score[intl->repeat_sim.max]
-		   / PR_ALIGN_SCORE_PRECISION,
-		   intl->repeat_sim.name);
+	
+	/*Print out primer mispriming scores */
+    if (seq_lib_num_seq(pa->p_args.repeat_lib) > 0) {
+      if (go_fwd == 1)
+        printf("PRIMER_LEFT%s_MISPRIMING_SCORE=%.2f, %s\n", suffix,
+	      fwd->repeat_sim.score[fwd->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
+	           fwd->repeat_sim.name);
+      if (go_rev == 1)
+        printf("PRIMER_RIGHT%s_MISPRIMING_SCORE=%.2f, %s\n", suffix,
+	      rev->repeat_sim.score[rev->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
+               rev->repeat_sim.name);
+      if (retval->output_type == primer_pairs)
+        printf("PRIMER_PAIR%s_MISPRIMING_SCORE=%.2f, %s\n", suffix,
+          retval->best_pairs.pairs[i].repeat_sim / PR_ALIGN_SCORE_PRECISION,
+               retval->best_pairs.pairs[i].rep_name);
+    }
+    
+    /* Print out internal oligo mispriming scores */
+	if (go_int == 1 && seq_lib_num_seq(pa->o_args.repeat_lib) > 0)
+	  printf("PRIMER_INTERNAL_OLIGO%s_MISHYB_SCORE=%.2f, %s\n", suffix,
+		intl->repeat_sim.score[intl->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
+		   	   intl->repeat_sim.name);
+
+	/* If a sequence quality was provided, print it*/
 	if (NULL != sa->quality){
-	   printf("PRIMER_LEFT%s_MIN_SEQ_QUALITY=%d\n", suffix,
+	  if (go_fwd == 1)
+	    printf("PRIMER_LEFT%s_MIN_SEQ_QUALITY=%d\n", suffix,
 		   fwd->seq_quality);
-           printf("PRIMER_RIGHT%s_MIN_SEQ_QUALITY=%d\n", suffix,
+	  if (go_rev == 1) 
+        printf("PRIMER_RIGHT%s_MIN_SEQ_QUALITY=%d\n", suffix,
 		   rev->seq_quality);
+	  if (go_int == 1 && (retval->output_type == primer_list)) 
+	  	printf("PRIMER_INTERNAL_OLIGO%s_MIN_SEQ_QUALITY=%d\n", suffix,
+	  	   intl->seq_quality);
+	      /* Has to be here and in primer pairs for backward compatibility */
         }
-
-	/* This is for backward compatibility */
+	
+	/* Print position penalty, this is for backward compatibility */
 	if (!_PR_DEFAULT_POSITION_PENALTIES(pa)
-            || !PR_START_CODON_POS_IS_NULL(sa)) {
+            || !PR_START_CODON_POS_IS_NULL(sa)){
 	  printf("PRIMER_LEFT%s_POSITION_PENALTY=%f\n", suffix,
-		 fwd->position_penalty);
+		   fwd->position_penalty);
 	  printf("PRIMER_RIGHT%s_POSITION_PENALTY=%f\n", suffix,
-		 rev->position_penalty);
+		   rev->position_penalty);
 	}
-
-	printf("PRIMER_LEFT%s_END_STABILITY=%.4f\n",
+	
+	/* Print primer end stability */
+	if (go_fwd == 1)
+	  printf("PRIMER_LEFT%s_END_STABILITY=%.4f\n",
 	       suffix, fwd->end_stability);
-	printf("PRIMER_RIGHT%s_END_STABILITY=%.4f\n",
+	if (go_rev == 1)
+	  printf("PRIMER_RIGHT%s_END_STABILITY=%.4f\n",
 	       suffix, rev->end_stability);
 
-	if (oligo_max_template_mispriming(fwd) != ALIGN_SCORE_UNDEF)
+	/* Print primer template mispriming */
+	if ( (go_fwd == 1) && 
+		 (oligo_max_template_mispriming(fwd) != ALIGN_SCORE_UNDEF))
 	  printf("PRIMER_LEFT%s_TEMPLATE_MISPRIMING=%.4f\n", suffix,
-		 oligo_max_template_mispriming(fwd)
-		 / PR_ALIGN_SCORE_PRECISION);
-
-	if (oligo_max_template_mispriming(rev) != ALIGN_SCORE_UNDEF)
+		 oligo_max_template_mispriming(fwd) / PR_ALIGN_SCORE_PRECISION);
+	if ( (go_rev == 1) && 
+		 (oligo_max_template_mispriming(rev) != ALIGN_SCORE_UNDEF))
 	  printf("PRIMER_RIGHT%s_TEMPLATE_MISPRIMING=%.4f\n", suffix,
-		 oligo_max_template_mispriming(rev)
-		 / PR_ALIGN_SCORE_PRECISION);
+		 oligo_max_template_mispriming(rev) / PR_ALIGN_SCORE_PRECISION);
 
-
-	if ( pa->primer_task == pick_pcr_primers_and_hyb_probe
-	    && NULL != sa->quality)
-	   printf("PRIMER_INTERNAL_OLIGO%s_MIN_SEQ_QUALITY=%d\n",
+    /* Print the pair parameters*/
+	if (retval->output_type == primer_pairs) {
+  	  if (go_int == 1 && NULL != sa->quality) /* FIX ME - Uptate the tests */
+	    printf("PRIMER_INTERNAL_OLIGO%s_MIN_SEQ_QUALITY=%d\n",
 		   suffix, intl->seq_quality);
-	printf("PRIMER_PAIR%s_COMPL_ANY=%.2f\n", suffix,
-	       best_pairs->pairs[i].compl_any / PR_ALIGN_SCORE_PRECISION);
-	printf("PRIMER_PAIR%s_COMPL_END=%.2f\n", suffix,
-	       best_pairs->pairs[i].compl_end  / PR_ALIGN_SCORE_PRECISION);
+  	  /* Print pair comp_any */
+	  printf("PRIMER_PAIR%s_COMPL_ANY=%.2f\n", suffix,
+		   retval->best_pairs.pairs[i].compl_any / PR_ALIGN_SCORE_PRECISION);
+	  /* Print pair comp_end */
+	  printf("PRIMER_PAIR%s_COMPL_END=%.2f\n", suffix,
+		   retval->best_pairs.pairs[i].compl_end  / PR_ALIGN_SCORE_PRECISION);
 
-	printf("%s%s=%d\n", prod_size_tag, suffix,
-				     best_pairs->pairs[i].product_size);
+	  /* Print product size */
+	  printf("PRIMER_PRODUCT_SIZE%s=%d\n", suffix,
+		   retval->best_pairs.pairs[i].product_size);
+	  /* Print the product Tm if a Tm range is defined */
+      if (pa->product_max_tm != PR_DEFAULT_PRODUCT_MAX_TM ||
+	      pa->product_min_tm != PR_DEFAULT_PRODUCT_MIN_TM) {
+	    printf("PRIMER_PRODUCT_TM%s=%.4f\n", suffix,
+			 retval->best_pairs.pairs[i].product_tm);
+        
+	    printf("PRIMER_PRODUCT_TM_OLIGO_TM_DIFF%s=%.4f\n", suffix,
+			retval->best_pairs.pairs[i].product_tm_oligo_tm_diff);
 
-	if (pa->product_max_tm != PR_DEFAULT_PRODUCT_MAX_TM
-	    || pa->product_min_tm != PR_DEFAULT_PRODUCT_MIN_TM) {
-	  printf("PRIMER_PRODUCT_TM%s=%.4f\n", suffix,
-		 best_pairs->pairs[i].product_tm);
+	    printf("PRIMER_PAIR%s_T_OPT_A=%.4f\n", suffix,
+			retval->best_pairs.pairs[i].t_opt_a);
+	  }
 
-	  printf("PRIMER_PRODUCT_TM_OLIGO_TM_DIFF%s=%.4f\n", suffix,
-	      best_pairs->pairs[i].product_tm_oligo_tm_diff);
-
-	   printf("PRIMER_PAIR%s_T_OPT_A=%.4f\n", suffix,
-	      best_pairs->pairs[i].t_opt_a);
-	}
-
-	if (best_pairs->pairs[i].template_mispriming != ALIGN_SCORE_UNDEF)
-	  printf("PRIMER_PAIR%s_TEMPLATE_MISPRIMING=%.2f\n", suffix,
-		 best_pairs->pairs[i].template_mispriming 
-		 / PR_ALIGN_SCORE_PRECISION);
-
-    }
+      /* Print the primer pair temlate mispriming */
+	  if (retval->best_pairs.pairs[i].template_mispriming != ALIGN_SCORE_UNDEF)
+	    printf("PRIMER_PAIR%s_TEMPLATE_MISPRIMING=%.2f\n", suffix,
+		    retval->best_pairs.pairs[i].template_mispriming 
+		    / PR_ALIGN_SCORE_PRECISION);
+	} /* End of print parameters of primer pairs */
+	
+    } /* End of the big loop printing all data */
+    
+    /* End the print with newline and flush all buffers */
     printf("=\n");
     if (fflush(stdout) == EOF) {
 	perror("fflush(stdout) failed");
@@ -239,96 +385,6 @@ boulder_print_error(const char *err) {
     perror("fflush(stdout) failed");
     exit(-1);
   }
-}
-
-void 
-boulder_print_oligos(
-		     const primer_args *pa,
-		     const seq_args *sa,
-		     int n,
-		     oligo_type l,
-		     primer_rec *oligo)
-     /*     primer_rec *f;
-    primer_rec *r;
-    primer_rec *mid; */
-{
-    char *warning;
-    int i, j;
-    char suffix [3], type[256];
-    /* type must be larger than the length of "PRIMER_INTERNAL_OLIGO". */
-
-    /* primer_rec *oligo; */
-    int incl_s = sa->incl_s;
-
-
-    if ((warning = pr_gather_warnings(sa, pa)) != NULL) {
-	printf("PRIMER_WARNING=%s\n", warning);
-	free(warning);
-    }
-
-    if (sa->error.data != NULL) {
-      boulder_print_error(sa->error.data);
-      return;
-    }
-
-    if(l == OT_LEFT) strcpy(type, "PRIMER_LEFT");
-    else if(l == OT_RIGHT) strcpy(type, "PRIMER_RIGHT");
-    else strcpy(type, "PRIMER_INTERNAL_OLIGO");
-
-    if (pa->explain_flag) print_all_explain(pa, sa);
-
-    i = 0;
-    j = (pa->num_return < n) ? pa->num_return : n;
-
-    /* if (l == OT_LEFT) oligo = f;
-    else if (l == OT_RIGHT) oligo = r;
-    else  oligo = mid;  */
-
-    while(i < j) {
-	if (i == 0) suffix[0] = '\0';
-	else sprintf(suffix, "_%d", i);
-
-	printf("%s%s_PENALTY=%.4f\n", type, suffix, oligo[i].quality);
-	if(l == OT_RIGHT)
-	   printf("%s%s_SEQUENCE=%s\n", type, suffix,
-		  pr_oligo_rev_c_sequence(sa, &oligo[i]));
-        else printf("%s%s_SEQUENCE=%s\n", type, suffix,
-		    pr_oligo_sequence(sa, &oligo[i])); 
-	printf("%s%s=%d,%d\n", type, suffix, 
-		       oligo[i].start + incl_s + pa->first_base_index,
-		       oligo[i].length);
-	printf("%s%s_TM=%.3f\n", type, suffix, oligo[i].temp);
-	printf("%s%s_GC_PERCENT=%.3f\n", type, suffix, oligo[i].gc_content);
-        printf("%s%s_SELF_ANY=%.2f\n", type, suffix,
-		       oligo[i].self_any / PR_ALIGN_SCORE_PRECISION);
-        printf("%s%s_SELF_END=%.2f\n", type, suffix,
-		       oligo[i].self_end / PR_ALIGN_SCORE_PRECISION);
-        if ((l == OT_LEFT || l == OT_RIGHT) && seq_lib_num_seq(pa->p_args.repeat_lib) > 0 )
-	    printf("%s%s_MISPRIMING_SCORE=%.2f, %s\n", type, suffix,
-		    oligo[i].repeat_sim.score[oligo[i].repeat_sim.max] /PR_ALIGN_SCORE_PRECISION,
-		    oligo[i].repeat_sim.name);
-        if (l == OT_INTL && seq_lib_num_seq(pa->o_args.repeat_lib) > 0)
-	    printf("%s%s_MISHYB_SCORE=%.2f,%s\n", type, suffix,
-	           oligo[i].repeat_sim.score[oligo[i].repeat_sim.max]/ PR_ALIGN_SCORE_PRECISION,
-                   oligo[i].repeat_sim.name);
-	if (NULL != sa->quality)printf("%s%s_MIN_SEQ_QUALITY=%d\n",
-		   type, suffix, oligo[i].seq_quality);
-        if (PR_DEFAULT_INSIDE_PENALTY != pa->inside_penalty
-	    || PR_DEFAULT_OUTSIDE_PENALTY != pa->outside_penalty != 0.0)
-	    printf("%s%s_POSITION_PENALTY=%f\n", type, suffix,
-		    oligo[i].position_penalty);
-	if(l == OT_LEFT || l == OT_RIGHT)
-	    printf("%s%s_END_STABILITY=%.4f\n", type, suffix,
-		    oligo[i].end_stability);
-
-	if (oligo_max_template_mispriming(&oligo[i]) != ALIGN_SCORE_UNDEF)
-	  printf("%s%s_TEMPLATE_MISPRIMING=%.2f\n", type, suffix,
-		 oligo_max_template_mispriming(&oligo[i])
-		 / PR_ALIGN_SCORE_PRECISION);
-
-        i++;
-    }
-    printf("=\n");
 }
 
 static void

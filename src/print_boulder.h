@@ -38,16 +38,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef BOULDER_OUTPUT_H
 #define BOULDER_OUTPUT_H 1
 #include "libprimer3.h"
-#include "read_boulder.h"
 
-void   boulder_print_pairs(const int *, const primer_args *, 
-			   const seq_args *, const pair_array_t *);
-
-void   boulder_print_oligos(const primer_args *, 
-			    const seq_args *, int, oligo_type,
-			    primer_rec *  
-			    /* primer_rec *r,  
-			       primer_rec *mid */);
+void   boulder_print(const int *, const primer_args *, 
+			         const seq_args *, const p3retval *);
 
 void   boulder_print_error(const char *err);
 
