@@ -89,8 +89,6 @@ main(argc,argv)
   if (!global_pa) {
     exit(-2); /* Out of memory. */
   }
-  /* FIX ME: This call is redundant, its part of p3_create_global_settings */
-  /* pr_set_default_global_args(global_pa); */
   
   /* Read in the flags provided with the program call */
   while (--argc > 0) {
@@ -107,13 +105,13 @@ main(argc,argv)
       strncpy (tag2int,*argv,19);
       int counter = 12;
       while (isdigit(tag2int[counter])) {
-		  if (isdigit(tag2int[counter])) {
-			  io_version=10*io_version+(tag2int[counter] - '0');
-		  }
-		  if ( counter > 20 ) {
-			  break; /* Just to be save */
-		  }
-     	  counter++;
+	if (isdigit(tag2int[counter])) {
+	  io_version=10*io_version+(tag2int[counter] - '0');
+	}
+	if ( counter > 20 ) {
+	  break; /* Just to be save */
+	}
+	counter++;
       }
     } else if (!strcmp(*argv, "-strict_tags")) {
       strict_tags = 1;
@@ -166,26 +164,26 @@ main(argc,argv)
     /* If there are fatal errors, write the proper message and exit */
     if (fatal_parse_err->data != NULL) {
       if (format_output) {
-	     format_error(stdout, sa->sequence_name, fatal_parse_err->data);
+	format_error(stdout, sa->sequence_name, fatal_parse_err->data);
       } else {
-	     boulder_print_error(fatal_parse_err->data);
+	boulder_print_error(fatal_parse_err->data);
       }
       fprintf(stderr, "%s: %s\n", 
-	            pr_program_name, fatal_parse_err->data);
+	      pr_program_name, fatal_parse_err->data);
       exit(-4);
     }
 
-    /* FIX ME -- read in mispriming libraries here? */
+    /* POSSIBLE CHANGE -- read in mispriming libraries here? */
 
     /* If there are nonfatal errors, write the proper message
      * and finish this loop */
     p3_adjust_seq_args(global_pa, sa, nonfatal_parse_err);
     if (!pr_is_empty(nonfatal_parse_err)) {
       if (format_output) {
-         format_error(stdout, sa->sequence_name, 
-		                 nonfatal_parse_err->data);
+	format_error(stdout, sa->sequence_name, 
+		     nonfatal_parse_err->data);
       } else {
-	     boulder_print_error(nonfatal_parse_err->data);
+	boulder_print_error(nonfatal_parse_err->data);
       }
       goto finish_loop;
     }
@@ -196,17 +194,17 @@ main(argc,argv)
     /* If there are errors, write the proper message
      * and finish this loop */
     if (!pr_is_empty(&retval->glob_err)
-    		||	!pr_is_empty(&retval->per_sequence_err)) {
+	||	!pr_is_empty(&retval->per_sequence_err)) {
       pr_append_new_chunk(combined_retval_err, 
 			  retval->glob_err.data);
       pr_append_new_chunk(combined_retval_err, 
 			  retval->per_sequence_err.data);
 
       if (format_output) {
-         format_error(stdout, sa->sequence_name,
-		      combined_retval_err->data);
+	format_error(stdout, sa->sequence_name,
+		     combined_retval_err->data);
       } else {
-	     boulder_print_error(combined_retval_err->data);
+	boulder_print_error(combined_retval_err->data);
       }
       goto finish_loop;
     }
@@ -214,20 +212,20 @@ main(argc,argv)
     /* Check if the error messages are empty */
     /* PR_ASSERT(pr_is_empty(&sa->error)) */
     PR_ASSERT(pr_is_empty(&retval->glob_err))
-    PR_ASSERT(pr_is_empty(&retval->per_sequence_err))
+      PR_ASSERT(pr_is_empty(&retval->per_sequence_err))
     
-    /* Print out the results: */
-    /* Use formated output */
-    if (format_output) {
-      /*  print_format_output(stdout, &io_version, global_pa, 
-	  sa, retval, pr_release); */
-    } 
+      /* Print out the results: */
+      /* Use formated output */
+      if (format_output) {
+	print_format_output(stdout, &io_version, global_pa, 
+			    sa, retval, pr_release);
+      } 
     /* Use boulder output */
-    else {
-      /* boulder_print(&io_version, global_pa, sa, retval); */
-    }
+      else {
+	boulder_print(&io_version, global_pa, sa, retval);
+      }
      
-    finish_loop: /* Here the falid loops join in again */
+  finish_loop: /* Here the failed loops join in again */
     if (NULL != retval) {
       /* Check for errors and print them */
       if (NULL != retval->glob_err.data) {
@@ -272,7 +270,7 @@ print_usage()
     fprintf(stderr, "$ primer3_core < my_input_file\n");
 }
 
-/* Print out copyright, a short usage message and the signal*/
+/* Print out copyright, a short usage message and the signal */
 static void
 sig_handler(signal)
     int signal;
