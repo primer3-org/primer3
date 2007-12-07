@@ -37,7 +37,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <signal.h>
 #include <ctype.h>
-#include <string.h> /* strlen(), memset(), strcmp() */
+#include <string.h> /* strcmp() */
 #include <stdlib.h> /* free() */
 #include "format_output.h"
 #include "libprimer3.h"
@@ -61,9 +61,10 @@ main(argc,argv)
   int format_output = 0;
   int strict_tags = 0;
   int io_version = 0;
-  primer_args *global_pa;
+
+  p3_global_settings *global_pa;
   seq_args *sa;
-  
+
   /* Setup the error structures handlers */
   pr_append_str *fatal_parse_err = NULL;
   pr_append_str *nonfatal_parse_err = NULL;
@@ -89,7 +90,7 @@ main(argc,argv)
     exit(-2); /* Out of memory. */
   }
   /* FIX ME: This call is redundant, its part of p3_create_global_settings */
-  pr_set_default_global_args(global_pa);
+  /* pr_set_default_global_args(global_pa); */
   
   /* Read in the flags provided with the program call */
   while (--argc > 0) {
@@ -156,7 +157,11 @@ main(argc,argv)
 		    fatal_parse_err, nonfatal_parse_err) <= 0) {
       break; /* leave the program loop and complain later */
     }
+    
     input_found = 1;
+    if (global_pa->primer_task == pick_pcr_primers_and_hyb_probe) {
+      PR_ASSERT(global_pa->pick_internal_oligo);
+    }
 
     /* If there are fatal errors, write the proper message and exit */
     if (fatal_parse_err->data != NULL) {
@@ -238,9 +243,8 @@ main(argc,argv)
    * End of the primary working loop */
 
   /* To avoid being distracted when looking for leaks: */
-  destroy_seq_lib(global_pa->p_args.repeat_lib);
-  destroy_seq_lib(global_pa->o_args.repeat_lib);
-  free(global_pa);
+  p3_destroy_global_settings(global_pa);
+  global_pa = NULL;
   destroy_pr_append_str(fatal_parse_err);
   destroy_pr_append_str(nonfatal_parse_err);
   destroy_pr_append_str(combined_retval_err);
