@@ -757,7 +757,6 @@ void  pr_print_pair_explain(FILE *, const pair_stats *);
 
 const char  *libprimer3_release(void);
 
-/* FIX ME, make this a print function? or a char * */
 const char  **libprimer3_copyright(void);
 
 /* An accessor function for a primer_rec *. */
@@ -798,7 +797,7 @@ p3_set_program_name(const char *name);
 char* p3_read_line(FILE *file);
 
 
-/* Hack */
+/* Hack -- used only in print boulder */
 #define primer_args p3_global_settings
 
 

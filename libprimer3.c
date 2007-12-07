@@ -50,7 +50,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* #define's */
 
-/*  FIX ME -- make sure that this change has no performance impact */
 #ifndef MAX_PRIMER_LENGTH
 #define MAX_PRIMER_LENGTH 36
 #endif
@@ -110,7 +109,8 @@ static void   _pr_reverse_complement(const char *, char *);
 
 static void   _pr_substr(const char *, int, int, char *);
 
-static void   add_must_use_warnings(seq_args *, const char *,
+static void   add_must_use_warnings(/* seq_args *, */ pr_append_str *,
+				    const char *,
 				    const oligo_stats *);
 static void   add_pair(const primer_pair *, pair_array_t *);
 static short  align(const char *, const char*, const dpal_args *a);
@@ -227,7 +227,6 @@ static void   check_if_lowercase_masked(const int position,
 
 
 /* FIX ME -- update to GPL 2 */
-
 /* Global static variables. */
 static const char *libprimer3_copyright_str[] = {
 "",
@@ -488,8 +487,11 @@ p3_create_global_settings() {
 
 void 
 p3_destroy_global_settings(p3_global_settings *a) {
-  /* FIX ME */
-  fprintf(stderr, "Called p3_destroy_global_settings, a stub\n");
+  if (NULL != a) {
+    destroy_seq_lib(a->p_args.repeat_lib);
+    destroy_seq_lib(a->o_args.repeat_lib);
+    free(a);
+  }
 }
 
 void
@@ -828,7 +830,8 @@ choose_primers(const p3_global_settings *pa,
 
     if (_pr_data_control(pa, sa, &retval->glob_err, 
 			 &sa->error, 
-			 &sa->warning) !=0 ) {
+			 &sa->warning
+			 /* &retval->warnings */) !=0 ) {
       return retval;
     }
 
@@ -836,15 +839,17 @@ choose_primers(const p3_global_settings *pa,
       dpal_arg_to_use = create_dpal_arg_holder();
 
     if (make_primer_lists(retval, pa, sa, dpal_arg_to_use) != 0) {
-      return retval;
+      /* There was an error */ return retval;
     }
 
-    if ((pa->primer_task == pick_hyb_probe_only 
-	 || pa->primer_task == pick_pcr_primers_and_hyb_probe)
-        && make_internal_oligo_list(retval, pa, sa,
-				    dpal_arg_to_use) != 0) {
-
-      return retval;
+    if (( pa->pick_internal_oligo
+	 /* OK pa->primer_task == pick_hyb_probe_only 
+	    || pa->primer_task == pick_pcr_primers_and_hyb_probe */
+	 )) {
+      if (make_internal_oligo_list(retval, pa, sa,
+				   dpal_arg_to_use) != 0) {
+	/* There was an error*/ return retval;
+      }
     }
 
     /* Creates files with left, right, and internal oligos. */
@@ -857,12 +862,12 @@ choose_primers(const p3_global_settings *pa,
 
     /* We sort _after_ printing lists to 
        maintain the order of test output. */
-    if ( pa->pick_right_primer /* pa->primer_task != pick_left_only 
+    if ( pa->pick_right_primer /* OK pa->primer_task != pick_left_only 
 				  && pa->primer_task != pick_hyb_probe_only */) 
       qsort(&retval->r[0], retval->n_r, sizeof(*retval->r),
 	    primer_rec_comp);
 
-    if( pa->pick_left_primer /* pa->primer_task != pick_right_only
+    if( pa->pick_left_primer /* OK pa->primer_task != pick_right_only
 				&& pa->primer_task != pick_hyb_probe_only */) 
       qsort(&retval->f[0], retval->n_f, sizeof(*retval->f),
 	    primer_rec_comp);
@@ -909,13 +914,13 @@ choose_primers(const p3_global_settings *pa,
        unacceptable, then add warnings. */
     if (pa->pick_anyway) {
       if (sa->left_input) {
-	add_must_use_warnings(sa, "Left primer", &sa->left_expl);
+	add_must_use_warnings(&sa->warning, "Left primer", &sa->left_expl);
       }
       if (sa->right_input) {
-	add_must_use_warnings(sa, "Right primer", &sa->right_expl);
+	add_must_use_warnings(&sa->warning, "Right primer", &sa->right_expl);
       }
       if (sa->internal_input) {
-	add_must_use_warnings(sa, "Hybridization probe", &sa->intl_expl);
+	add_must_use_warnings(&sa->warning, "Hybridization probe", &sa->intl_expl);
       }
     }
 
@@ -954,7 +959,7 @@ p3_get_retval_output_type(const p3retval *r) {
    i.e. that primer was supplied by the caller
    and pick_anyway is set. */
 static void
-add_must_use_warnings(seq_args *sa,
+add_must_use_warnings(/* seq_args *sa, */ pr_append_str *warning,
 		      const char* text,
 		      const oligo_stats *stats)
 {
@@ -986,12 +991,11 @@ add_must_use_warnings(seq_args *sa,
     pr_append_w_sep(&s, sep, "Masked with lowercase letter");
 
   if (s.data) {
-    pr_append_new_chunk(&sa->warning, text);
-    pr_append(&sa->warning, " is unacceptable: ");
-    pr_append(&sa->warning, s.data);
+    pr_append_new_chunk(/* &sa->*/ warning, text);
+    pr_append(/* &sa->*/ warning, " is unacceptable: ");
+    pr_append(/* &sa->*/ warning, s.data);
     free(s.data);
   }
-
 }
 
 /* Return 1 iff pair is already in the first num_pairs elements of 
@@ -1122,7 +1126,7 @@ make_primer_lists(p3retval *retval,
     k = 0;
     ostats = &sa->left_expl;
     if ( /* pa->primer_task != pick_right_only 
-	    && pa->primer_task != pick_hyb_probe_only */
+	    && pa->primer_task != pick_hyb_probe_only OK */
 	pa->pick_left_primer) {
       /* We will need a left primer. */
       left=n; right=0;
@@ -1198,7 +1202,7 @@ make_primer_lists(p3retval *retval,
 
     k = 0;
     ostats = &sa->right_expl;
-    if ( /* pa->primer_task != pick_left_only 
+    if ( /* OK pa->primer_task != pick_left_only 
 	    && pa->primer_task != pick_hyb_probe_only */
 	pa->pick_right_primer ) {
 
@@ -1873,8 +1877,10 @@ p3_print_oligo_lists(const p3retval *retval,
     char *file = pr_safe_malloc(strlen(sa->sequence_name) + 5);
     FILE *fh;
 
-    if(pa->primer_task != pick_right_only 
-       && pa->primer_task != pick_hyb_probe_only) {
+    if( pa->pick_left_primer 
+	/* OK pa->primer_task != pick_right_only 
+	   && pa->primer_task != pick_hyb_probe_only*/ 
+	) {
       strcpy(file, sa->sequence_name);
       strcat(file, ".for");
       if (!(fh = fopen(file,"w"))) {
@@ -1891,8 +1897,9 @@ p3_print_oligo_lists(const p3retval *retval,
       if (ret) return 1;
     }
 
-    if (pa->primer_task != pick_left_only 
-	&& pa->primer_task != pick_hyb_probe_only) {
+    if (pa->pick_right_primer 
+	/* pa->primer_task != pick_left_only 
+	   && pa->primer_task != pick_hyb_probe_only*/ ) {
       strcpy(file, sa->sequence_name);
       strcat(file, ".rev");
       if (!(fh = fopen(file,"w"))) {
@@ -1910,10 +1917,8 @@ p3_print_oligo_lists(const p3retval *retval,
       if (ret) return 1;
     }
 
-    if ( pa->primer_task == pick_pcr_primers_and_hyb_probe 
-	 || pa->primer_task == pick_hyb_probe_only /* pa->pick_internal_oligo */) {
-      /* FIX ME, the change above does not work correctly; put a test here and
-	 a breakpoint to debug */
+    if ( /* pa->primer_task == pick_pcr_primers_and_hyb_probe 
+	    || pa->primer_task == pick_hyb_probe_only */  pa->pick_internal_oligo ) {
       strcpy(file, sa->sequence_name);
       strcat(file, ".int");
       if (!(fh = fopen(file,"w"))) {
@@ -2103,11 +2108,13 @@ choose_pair_or_triple(retval, pa, sa,  dpal_arg_to_use, int_num, p)
 	}
 
 	if ( pa->primer_task == pick_pcr_primers_and_hyb_probe
-	     && choose_internal_oligo(retval,
-				      h.left, h.right,
-				      &n_int, sa, pa, 
-				      dpal_arg_to_use)!=0) {
-	  /* sa-> */ pair_expl->internal++;
+	     /* FIX ME 
+		this change does not work pa->pick_right_primer && pa->pick_left_primer && pa->pick_internal_oligo */
+	     && (choose_internal_oligo(retval,
+				       h.left, h.right,
+				       &n_int, sa, pa, 
+				       dpal_arg_to_use)!=0)) {
+	  pair_expl->internal++;
 	  continue;
 	}
 	/* sa-> */ pair_expl->ok++;
