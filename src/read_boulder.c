@@ -57,9 +57,6 @@ static void   parse_int(const char *, const char *, int *, pr_append_str *);
 static const char *parse_int_pair(const char *, const char *, char, int *, int *,
 			    pr_append_str *);
 
-/* static void   parse_interval_list_old(const char *, const char *, int*,
-   interval_array_t, pr_append_str *); */
-
 static void   parse_interval_list(const char *tag_name,
 				   const char *datum,
 				   interval_array_t2 *interval_arr,
@@ -70,6 +67,8 @@ static void   parse_product_size(const char *, char *, p3_global_settings *,
 				 pr_append_str *);
 static void   tag_syntax_error(const char *, const char *,  pr_append_str *);
 static int    parse_seq_quality(char *, int **);
+
+static char *pr_program_name = "TMP";
 
 /* 
  * Hack to support old SunOS headers.  (We do not try to declare _all_
@@ -117,27 +116,18 @@ extern double strtod();
        continue;                               \
    }
 
-#if 0
-#define COMPARE_INTERVAL_LIST(TAG, SIZE, LIST)                   \
-   if (COMPARE(TAG)) {                                           \
-       parse_interval_list(TAG, datum, &SIZE, LIST, parse_err);  \
-       continue;                                                 \
-   }
-#endif
-
 #define COMPARE_INTERVAL_LIST(TAG, PLACE)                   \
    if (COMPARE(TAG)) {                                           \
        parse_interval_list(TAG, datum, PLACE, parse_err);  \
        continue;                                                 \
    }
 
-
 /* 
  * See read_boulder.h for description.
  */
 int
 read_record(const int *strict_tags,
-		const int *io_version,
+	    const int *io_version,
 	    int   echo_output,
 	    p3_global_settings *pa, 
 	    seq_args *sa, 
@@ -580,22 +570,47 @@ read_record(const int *strict_tags,
       int_repeat_file_path = NULL;
     }
     
+
     /* Fix very old tags for backward compatibility */
     if (0 == *io_version) {
-		/* This next belongs here rather than libprimer3, because it deals
-		   with potential incompatibility with old tags (kept for backward
-		   compatibility, and new tags.  */
-		if((pick_internal_oligo == 1 || pick_internal_oligo == 0) &&
-		   (pa->primer_task == pick_left_only || 
-		pa->primer_task == pick_right_only ||
-		pa->primer_task == pick_hyb_probe_only)) 
-		  pr_append_new_chunk(glob_err, 
-		    "Contradiction in primer_task definition");
-		else if (pick_internal_oligo == 1) 
-		  pa->primer_task = 1;
-		else if (pick_internal_oligo == 0) pa->primer_task = 0;
+      /* This next belongs here rather than libprimer3, because it deals
+	 with potential incompatibility with old tags (kept for backward
+	 compatibility, and new tags.  */
+      if (pa->primer_task == pick_pcr_primers_and_hyb_probe) {
+	PR_ASSERT(pa->pick_internal_oligo);
+      }
+
+      if((pick_internal_oligo == 1 || pick_internal_oligo == 0) &&
+	 (pa->primer_task == pick_left_only || 
+	  pa->primer_task == pick_right_only ||
+	  pa->primer_task == pick_hyb_probe_only)) {
+	pr_append_new_chunk(glob_err, 
+			    "Contradiction in primer_task definition");
+      if (pa->primer_task == pick_pcr_primers_and_hyb_probe) {
+	PR_ASSERT(pa->pick_internal_oligo);
+      }
+      } else if (pick_internal_oligo == 1) {
+	pa->primer_task = pick_pcr_primers_and_hyb_probe;
+	pa->pick_internal_oligo = 1;
+	if (pa->primer_task == pick_pcr_primers_and_hyb_probe) {
+	  PR_ASSERT(pa->pick_internal_oligo);
+	}
+      } else if (pick_internal_oligo == 0) {
+	pa->primer_task = 0;
+	if (pa->primer_task == pick_pcr_primers_and_hyb_probe) {
+	  PR_ASSERT(pa->pick_internal_oligo);
+	}
+      }
+      if (pa->primer_task == pick_pcr_primers_and_hyb_probe) {
+	PR_ASSERT(pa->pick_internal_oligo);
+      }
+
     }
 		
+    if (pa->primer_task == pick_pcr_primers_and_hyb_probe) {
+      PR_ASSERT(pa->pick_internal_oligo);
+    }
+
     return 1;
 }
 #undef COMPARE
@@ -766,33 +781,6 @@ parse_interval_list(const char *tag_name,
     }
   }
 }
-
-#if 0
-static void
-parse_interval_list_old(tag_name, datum, count, interval_array, err)
-    const char *tag_name;
-    const char *datum;
-    int *count;
-    interval_array_t interval_array;
-    pr_append_str *err;
-{
-    const char *p = datum;
-    while (' ' == *p || '\t' == *p) p++;
-    while (*p != '\0' && *p != '\n') {
-	if (*count >= PR_MAX_INTERVAL_ARRAY) {
-	    pr_append_new_chunk(err, "Too many elements for tag ");
-	    pr_append(err, tag_name);
-	    return;
-	}
-	p = parse_int_pair(tag_name, p, ',', 
-			   &interval_array[*count][0],
-			   &interval_array[*count][1],
-			   err);
-	if (NULL == p) return;
-	(*count)++;
-    }
-}
-#endif
 
 static void
 parse_product_size(tag_name, in, pa, err)
