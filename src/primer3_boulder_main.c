@@ -219,12 +219,12 @@ main(argc,argv)
     /* Print out the results: */
     /* Use formated output */
     if (format_output) {
-    	print_format_output(stdout, &io_version, global_pa,
-	    		 		      sa, retval, pr_release);
-    }
+      /*  print_format_output(stdout, &io_version, global_pa, 
+	  sa, retval, pr_release); */
+    } 
     /* Use boulder output */
     else {
-	    boulder_print(&io_version, global_pa, sa, retval);
+      /* boulder_print(&io_version, global_pa, sa, retval); */
     }
      
     finish_loop: /* Here the falid loops join in again */
