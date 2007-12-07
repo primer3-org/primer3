@@ -63,26 +63,23 @@ main(argc,argv)
   int io_version = 0;
   primer_args *global_pa;
   seq_args *sa;
+  
   /* Setup the error structures handlers */
   pr_append_str *fatal_parse_err = NULL;
   pr_append_str *nonfatal_parse_err = NULL;
   pr_append_str *combined_retval_err = NULL;
+  
   /* Setup the output data structure handlers */
   p3retval *retval = NULL;
-  oligo_type oligot = OT_LEFT; /* Silence warning */
-  int num_oligo = 0;
-  primer_rec *oligo = NULL;
   int input_found=0;
 
   /* Get the program name for correct error messages */
   pr_program_name = argv[0];
   p3_set_program_name(pr_program_name);
 
-  /* 
-   * We set up some signal handlers in case someone starts up the program
+  /* We set up some signal handlers in case someone starts up the program
    * from the command line, wonders why nothing is happening, and then kills
-   * the program.
-   */
+   * the program. */
   signal(SIGINT, sig_handler);
   signal(SIGTERM, sig_handler);
 
@@ -102,7 +99,7 @@ main(argc,argv)
     } else if (!strcmp(*argv, "-2x_compat")) {
       printf( "PRIMER_ERROR=flag -2x_compat is no longer supported\n=\n");
       exit (-1);
-    }  else if (!strncmp(*argv, "-io_version=", 10)) {
+    } else if (!strncmp(*argv, "-io_version=", 10)) {
       /* This reads in the version number required for extended io functions */
       /* There may be a better way, but it works */
       char tag2int[20];
@@ -156,8 +153,7 @@ main(argc,argv)
      * values for primer picking to pa and sa. Perform initial data
      * checking. */
     if (read_record(&strict_tags, &io_version, !format_output, global_pa, sa, 
-		    fatal_parse_err, nonfatal_parse_err)
-	<= 0) {
+		    fatal_parse_err, nonfatal_parse_err) <= 0) {
       break; /* leave the program loop and complain later */
     }
     input_found = 1;
@@ -165,12 +161,12 @@ main(argc,argv)
     /* If there are fatal errors, write the proper message and exit */
     if (fatal_parse_err->data != NULL) {
       if (format_output) {
-	format_error(stdout, sa->sequence_name, fatal_parse_err->data);
+	     format_error(stdout, sa->sequence_name, fatal_parse_err->data);
       } else {
-	boulder_print_error(fatal_parse_err->data);
+	     boulder_print_error(fatal_parse_err->data);
       }
       fprintf(stderr, "%s: %s\n", 
-	      pr_program_name, fatal_parse_err->data);
+	            pr_program_name, fatal_parse_err->data);
       exit(-4);
     }
 
@@ -181,10 +177,10 @@ main(argc,argv)
     p3_adjust_seq_args(global_pa, sa, nonfatal_parse_err);
     if (!pr_is_empty(nonfatal_parse_err)) {
       if (format_output) {
-	format_error(stdout, sa->sequence_name, 
-		   nonfatal_parse_err->data);
+         format_error(stdout, sa->sequence_name, 
+		                 nonfatal_parse_err->data);
       } else {
-	boulder_print_error(nonfatal_parse_err->data);
+	     boulder_print_error(nonfatal_parse_err->data);
       }
       goto finish_loop;
     }
@@ -195,18 +191,17 @@ main(argc,argv)
     /* If there are errors, write the proper message
      * and finish this loop */
     if (!pr_is_empty(&retval->glob_err)
-	||
-	!pr_is_empty(&retval->per_sequence_err)) {
+    		||	!pr_is_empty(&retval->per_sequence_err)) {
       pr_append_new_chunk(combined_retval_err, 
 			  retval->glob_err.data);
       pr_append_new_chunk(combined_retval_err, 
 			  retval->per_sequence_err.data);
 
       if (format_output) {
-	format_error(stdout, sa->sequence_name,
-		     combined_retval_err->data);
+         format_error(stdout, sa->sequence_name,
+		      combined_retval_err->data);
       } else {
-	boulder_print_error(combined_retval_err->data);
+	     boulder_print_error(combined_retval_err->data);
       }
       goto finish_loop;
     }
@@ -217,42 +212,16 @@ main(argc,argv)
     PR_ASSERT(pr_is_empty(&retval->per_sequence_err))
     
     /* Print out the results: */
-    if (global_pa->pick_left_primer && global_pa->pick_right_primer) {
-      if (format_output) {
-    	  print_format_output(stdout, &io_version, global_pa,
+    /* Use formated output */
+    if (format_output) {
+    	print_format_output(stdout, &io_version, global_pa,
 	    		 		      sa, retval, pr_release);
-      }
-      /* Use boulder output */
-      else {
-	     boulder_print(&io_version, global_pa, sa, retval);
-
-      }
-    } else {
-      if (global_pa->pick_left_primer) {
-	oligot = OT_LEFT;
-	oligo = retval->f;
-	num_oligo = retval->n_f;
-      } else if (global_pa->pick_right_primer) {
-	oligot = OT_RIGHT;
-	oligo = retval->r;
-	num_oligo = retval->n_r;
-      } else if (global_pa->pick_internal_oligo) {
-	oligot = OT_INTL;
-	oligo = retval->mid;
-	num_oligo = retval->n_m;
-      } else {
-	fprintf(stderr, "%s: fatal programming error\n", pr_program_name);
-	abort();
-      }
-
-      if (format_output) {
-    	  print_format_output(stdout, &io_version, global_pa,
-	    		 		        sa, retval, pr_release);
-      } else {
-    	  boulder_print(&io_version, global_pa, sa, retval);
-      }
     }
- 
+    /* Use boulder output */
+    else {
+	    boulder_print(&io_version, global_pa, sa, retval);
+    }
+     
     finish_loop: /* Here the falid loops join in again */
     if (NULL != retval) {
       /* Check for errors and print them */
