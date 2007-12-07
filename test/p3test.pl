@@ -346,9 +346,16 @@ sub perldiff($$) {
         $linenumber++;
 	# Check for difference between two edited lines (line by line)
 	if ($l1 ne $l2) {
-	    print 
-		"Difference found at line $linenumber:\n<  $l1_orig\n>  $l2_orig\n";
-	    return 1;
+	    my ($l1trim, $l2trim) = ($l1, $l2);
+	    # Ignore final trailing space, if any (in case we
+	    # see MS newlines).
+	    $l1trim =~ s/\s$//;  
+	    $l2trim =~ s/\s$//;
+	    if ($l1trim ne $l2trim) {
+		print 
+		    "Difference found at line $linenumber:\n<  $l1_orig\n>  $l2_orig\n";
+		return 1;
+	    }
 	}
     }
     return 0;
