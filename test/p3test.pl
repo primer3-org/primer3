@@ -215,19 +215,19 @@ sub main() {
 	}
 
 	unless ($r == 0) {
-	    print "NON-0 EXIT: $r\n";
+	    print "NON-0 EXIT: $r {FAILED]\n";
 	    $exit_stat = -1;
 	    next;
 	}
 
 	$r = perldiff $output, $tmp;
-
 	if ($r == 0) {
 	    print "[OK]\n";
 	} else {
 	    print "[FAILED]\n";
 	    $exit_stat = -1;
 	}
+
 	if ($test eq 'primer' || $test eq 'primer1') {
 	    my $list_tmp = $test.'_list_tmp';
 	    my $list_last = $test.'_list_last';
@@ -239,7 +239,9 @@ sub main() {
 		# primer_list_last/filename_within_primer_list_last
 		my $regex = "[^/]+/";
 		$t=~ s/$regex//g;
-		$r = perldiff $list_tmp."/".$t, $list_last."/".$t;
+		if (perldiff $list_tmp."/".$t, $list_last."/".$t) {
+		    $r = 1;
+		}
 	    }
 	    print $test. "_list_files...";
 	    if ($r == 0) {
@@ -346,16 +348,9 @@ sub perldiff($$) {
         $linenumber++;
 	# Check for difference between two edited lines (line by line)
 	if ($l1 ne $l2) {
-	    my ($l1trim, $l2trim) = ($l1, $l2);
-	    # Ignore final trailing space, if any (in case we
-	    # see MS newlines).
-	    $l1trim =~ s/\s$//;  
-	    $l2trim =~ s/\s$//;
-	    if ($l1trim ne $l2trim) {
-		print 
-		    "Difference found at line $linenumber:\n<  $l1_orig\n>  $l2_orig\n";
-		return 1;
-	    }
+	    print 
+		"Difference found at line $linenumber:\n<  $l1_orig\n>  $l2_orig\n";
+	    return 1;
 	}
     }
     return 0;
