@@ -835,18 +835,20 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
       return retval;
     }
 
+    /* Set the parameters for alignment functions*/
     if (dpal_arg_to_use == NULL)
       dpal_arg_to_use = create_dpal_arg_holder();
 
+    /* Populate the forward and reverse primer lists */
     if (make_primer_lists(retval, pa, sa, dpal_arg_to_use) != 0) {
       /* There was an error */ return retval;
     }
 
-    if (( pa->pick_internal_oligo
+    /* Populate the internal oligo lists */
+    if ( pa->pick_internal_oligo) {
 	 /* OK pa->primer_task == pick_hyb_probe_only 
 	    || pa->primer_task == pick_pcr_primers_and_hyb_probe */
-	 )) {
-      if (make_internal_oligo_list(retval, pa, sa,
+	   if (make_internal_oligo_list(retval, pa, sa,
 				   dpal_arg_to_use) != 0) {
 	/* There was an error*/ return retval;
       }
@@ -1059,20 +1061,21 @@ make_primer_lists(p3retval *retval,
     int left, right;
     int i,j,n,k,pr_min;
     int tar_l, tar_r, f_b, r_b;
-    pair_stats *pair_expl = &sa->pair_expl;
-    oligo_stats *ostats;
+    pair_stats *pair_expl = &sa->pair_expl; /* To store the statistics for pairs */
+    oligo_stats *ostats; /* To store the statistics for each primer type */
 
-    /* 
-     * The position of the intial base of the rightmost stop codon that is
+    /* The position of the intial base of the rightmost stop codon that is
      * to the left of sa->start_codon_pos; valid only if sa->start_codon_pos
      * is "not null".  We will not want to include a stop codon to the right
-     * of the the start codon in the amplicon.
-     */
+     * of the the start codon in the amplicon. */
     int stop_codon1 = -1; 
-       
+
+    /* Array to store one primer sequences in */
     char s[MAX_PRIMER_LENGTH+1],s1[MAX_PRIMER_LENGTH+1];
+    /* Struct to store the primer parameters in */
     primer_rec h;
 
+    /* What goes in here? */
     left = right = 0;
 
     if (!PR_START_CODON_POS_IS_NULL(sa)) {
@@ -1093,17 +1096,22 @@ make_primer_lists(p3retval *retval,
 
     PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
 
-    tar_r = 0;
-    tar_l = n;
+    tar_r = 0; /* Target start position */
+    tar_l = n; /* Target length */
+    
+    /* Iterate over target array */
     for (i=0; i < sa->num_targets; i++) {
-
+    
+    /* Select the rightmost target start */
 	if (sa->tar[i][0] > tar_r)
 	  tar_r = sa->tar[i][0];
 
+	/* Select the rightmost target end */
 	if (sa->tar[i][0] + sa->tar[i][1] - 1 < tar_l)
 	  tar_l = sa->tar[i][0] + sa->tar[i][1] - 1;
     }
 
+    /* AU Why is it set now again to n and 0, what does it do ?? */
     if (_PR_DEFAULT_POSITION_PENALTIES(pa)) {
       if (0 == tar_r) tar_r = n;
       if (tar_l == n) tar_l = 0;
@@ -1131,28 +1139,39 @@ make_primer_lists(p3retval *retval,
       /* We will need a left primer. */
       left=n; right=0;
 
+      /* Loop counts down start position in i from right to left */
       for (i = f_b; i >= pa->p_args.min_size - 1; i--) {
 	s[0]='\0';
+	  /* Loop counts up primer lenth in j from min to max size */
 	for (j = pa->p_args.min_size; j <= pa->p_args.max_size; j++) {
+		/* AU When does that apply? */
 	    if (i-j > n-pr_min-1 && pick_left_only != pa->primer_task) continue;
+	    /* If the possible primer is smaller than the sequence */
 	    if (i-j+1>=0) {
+	    /* If there is no space on the array, allocate new space */
 		if (k >= retval->f_len) {
 		    retval->f_len += (retval->f_len >> 1);
-		    retval->f 
-		      = pr_safe_realloc(retval->f, 
+		    retval->f = pr_safe_realloc(retval->f, 
 					retval->f_len * sizeof(*retval->f));
 		}
+		/* Set the start of the primer */
 		h.start=i-j+1;
+		/* Set the length of the primer */
 		h.length=j;
 		h.repeat_sim.score = NULL;
+		/* Put the real primer sequence in s */
 		_pr_substr(sa->trimmed_seq, h.start, h.length, s);
 
+		/* FIX ME - Should we run this loop if we have a left_input
+		 * already specified ?? */
 		/* If the left_input oligo is specified and
 		   this is not it, skip this one. */
 		if (sa->left_input && strcmp_nocase(sa->left_input, s))
 		  continue;
 
+		/* Do we have to use this oligo anyway? */
 		h.must_use = (sa->left_input && pa->pick_anyway);
+		/* Add it to the considered statistics */
 		ostats->considered++;
 
 		if (!PR_START_CODON_POS_IS_NULL(sa)
@@ -1166,23 +1185,31 @@ make_primer_lists(p3retval *retval,
 		  if (!pa->pick_anyway) continue;
 		}
 
+		/* FIX ME: Do we have to do it again? see 1161 */
 		h.repeat_sim.score = NULL;
 
+		/* Calculate all the primer parameters */
 		oligo_param(pa, &h, OT_LEFT, dpal_arg_to_use, 
 			    sa, ostats);
 
+		/* If primer has to be used or is OK */
 		if (OK_OR_MUST_USE(&h)) {
+		  /* Calculate the penalty */
 		  h.quality = p_obj_fn(pa, &h, 0);
+		  /* Save the primer in the array */
 		  retval->f[k] = h;
+		  /* Update the most left primer variable */
 		  if (retval->f[k].start < left)
 		    left=retval->f[k].start;
+		  /* Update the number of primers */
 		  k++;
-		} else if (h.ok==OV_TOO_MANY_NS || h.ok==OV_INTERSECT_TARGET
+		} 
+        /* Break from the inner for loop, because there is no
+         * legal longer oligo with the same 3' sequence. */
+		else if (h.ok==OV_TOO_MANY_NS || h.ok==OV_INTERSECT_TARGET
 			   || h.ok==OV_SELF_ANY || h.ok==OV_END_STAB
 			   || h.ok==OV_POLY_X || h.ok==OV_EXCL_REGION || h.ok==OV_GC_CLAMP
 			   || h.ok == OV_SEQ_QUALITY || h.ok == OV_LIB_SIM ) {
-		  /* Break from the inner for loop, because there is no
-		     legal longer oligo with the same 3' sequence. */
 		  break;
 		}
 	    }
@@ -1190,6 +1217,7 @@ make_primer_lists(p3retval *retval,
 	}
       }  /*  for (i = f_b; .... */
     }  /* if (pa->pick_left_primer) */
+    /* Update statistics with how many primers are good */
     ostats->ok = retval->n_f = k;
 
     if (pa->primer_task == pick_right_only)
