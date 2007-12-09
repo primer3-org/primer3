@@ -787,22 +787,22 @@ static dpal_arg_holder *dpal_arg_to_use = NULL;
 
 /* See libprimer3.h for documentation. */
 p3retval *
-choose_primers(const p3_global_settings *pa,
-	       seq_args *sa)
+choose_primers(const p3_global_settings *pa, seq_args *sa)
 {
     int          i;               /* Loop index. */
     int          prod_size_range; /* Product size range indexr. */
-    pair_array_t a_pair_array;
-    pair_array_t *best_pairs;
-
+    pair_array_t a_pair_array;    /* Array for primer pairs */
+    pair_array_t *best_pairs;     /* Array for best primer pairs */
+    
+    /* Create retval and set were to find the results */
     p3retval *retval = create_p3retval();
     if (pa->pick_left_primer && pa->pick_right_primer) {
       retval->output_type = primer_pairs;
     } else {
       retval->output_type = primer_list;
     }
-
     if (retval == NULL)  return NULL;
+    /* Connect best_pairs to retval */
     best_pairs = &retval->best_pairs;
 
     /*
@@ -828,9 +828,9 @@ choose_primers(const p3_global_settings *pa,
 	&& pa->p_args.min_end_quality < pa->p_args.min_quality)
 	pa->p_args.min_end_quality = pa->p_args.min_quality; */
 
+    /* Check if the input in sa and pa makes sense */
     if (_pr_data_control(pa, sa, &retval->glob_err, 
-			 &sa->error, 
-			 &sa->warning
+			 &sa->error, &sa->warning
 			 /* &retval->warnings */) !=0 ) {
       return retval;
     }
@@ -3388,6 +3388,7 @@ p3_adjust_seq_args(const p3_global_settings *pa,
  * FIX ME -- this would probably be cleaner if it only
  * checked, rather than updated, sa.
  */
+/* Check if the input in sa and pa makes sense */
 int
 _pr_data_control(const p3_global_settings *pa,
 		 seq_args *sa,
@@ -3395,6 +3396,7 @@ _pr_data_control(const p3_global_settings *pa,
 		 pr_append_str *nonfatal_err,
 		 pr_append_str *warning)
 {
+	/* How long can a primer max be */
     static char s1[MAX_PRIMER_LENGTH+1];
     int i, pr_min, seq_len;
     char offending_char = '\0';
@@ -3406,6 +3408,7 @@ _pr_data_control(const p3_global_settings *pa,
 
     seq_len = strlen(sa->sequence);
 
+    /* Is sequence quality provided, as long as the sequence? */
     if (sa->n_quality !=0 && sa->n_quality != seq_len)
       pr_append_new_chunk(nonfatal_err, "Error in sequence quality data");
 
@@ -3416,7 +3419,7 @@ _pr_data_control(const p3_global_settings *pa,
       pr_append_new_chunk(glob_err,
 			  "PRIMER_INTERNAL_OLIGO_MAX_TEMPLATE_MISHYB is not supported");
 
-     if (pa->p_args.min_size < 1)
+    if (pa->p_args.min_size < 1)
       pr_append_new_chunk(glob_err, "PRIMER_MIN_SIZE must be >= 1");
 
     if (pa->p_args.max_size > MAX_PRIMER_LENGTH) {
@@ -3456,18 +3459,21 @@ _pr_data_control(const p3_global_settings *pa,
         return 1;
     }
 
+    /* A GC clamp can not be bigger then the primer */
     if (pa->gc_clamp > pa->p_args.min_size) {
 	pr_append_new_chunk(glob_err,
 			    "PRIMER_GC_CLAMP > PRIMER_MIN_SIZE");
 	return 1;
     }
 
+    /* The sequence name will be the file name */
     if (NULL == sa->sequence_name && pa->file_flag) {
 	pr_append_new_chunk(nonfatal_err,
 			    "Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG != 0");
 	return 1;
     }
 
+    /* Product size must be provided */
     if (0 == pa->num_intervals) {
 	pr_append_new_chunk( glob_err,
 			    "Empty value for PRIMER_PRODUCT_SIZE_RANGE");
@@ -3482,6 +3488,7 @@ _pr_data_control(const p3_global_settings *pa,
     }
 
     pr_min = INT_MAX;
+    /* Check if the primer is bigger then the product */
     for(i=0;i<pa->num_intervals;i++)
 	if(pa->pr_min[i]<pr_min) pr_min=pa->pr_min[i];
 
@@ -3491,6 +3498,7 @@ _pr_data_control(const p3_global_settings *pa,
 	return 1;
     }
 
+    /* FIX ME: use correct check */
     if ((pick_pcr_primers_and_hyb_probe == pa->primer_task 
 	 || pick_hyb_probe_only == pa->primer_task)
 	&& pa->o_args.max_size > pr_min) {
@@ -3499,6 +3507,7 @@ _pr_data_control(const p3_global_settings *pa,
         return 1;
     }
 
+    /* There must be at least one primer returned */
     if (pa->num_return < 1) {
 	pr_append_new_chunk(glob_err,
 			    "PRIMER_NUM_RETURN < 1");
@@ -3516,6 +3525,10 @@ _pr_data_control(const p3_global_settings *pa,
 	return 1;
     }
     
+    /* The product must fit in the included region */
+    /* FIX ME: Actually here can be checked for retval->output_type = primer_pairs 
+     * Maybe output_type should be part of pa and be set in read_boulder while 
+     * reading in the task */
     if (sa->incl_l < pr_min && pa->primer_task != pick_hyb_probe_only
 	&& pa->primer_task != pick_left_only
 	&& pa->primer_task != pick_right_only) {
@@ -3530,6 +3543,7 @@ _pr_data_control(const p3_global_settings *pa,
 	return 1;
     }
 
+    /* Is the startodon ATG and in the incl. region */
     if (!PR_START_CODON_POS_IS_NULL(sa)) {
       if (!PR_POSITION_PENALTY_IS_NULL(pa)) {
 	pr_append_new_chunk(nonfatal_err,
@@ -3553,6 +3567,7 @@ _pr_data_control(const p3_global_settings *pa,
       }
     }
 
+    /* FIX ME strange - Copies over trimmed seq in a check function ? */
     sa->trimmed_seq = pr_safe_malloc(sa->incl_l + 1);  /* FIX ME write */
     _pr_substr(sa->sequence, sa->incl_s, sa->incl_l, sa->trimmed_seq);
    
@@ -3620,7 +3635,6 @@ _pr_data_control(const p3_global_settings *pa,
            }
         }
     }
-
     else if (pa->p_args.weights.seq_quality || pa->o_args.weights.seq_quality) {
 	 pr_append_new_chunk(nonfatal_err,
 	      "Sequence quality is part of objective function but sequence quality is not defined");
@@ -3720,6 +3734,7 @@ _pr_data_control(const p3_global_settings *pa,
       pr_append(/* &sa-> */warning,
 		"has no effect when number of targets is 0");     /* FIX ME write warning */
     }
+    /* FIX ME use correct tag */
     if (pa->primer_task != pick_pcr_primers_and_hyb_probe 
 	&& pa->primer_task != pick_hyb_probe_only
 	&& sa->internal_input) {
@@ -3863,7 +3878,6 @@ _pr_check_and_adjust_intervals(seq_args *sa, int seq_len, pr_append_str * nonfat
  * Check intervals, and add any errors to err.
  * Update the start of each interval to
  * be relative to the start of the included region.
- * 
  */ 
 static int
 _pr_check_and_adjust_1_interval(const char *tag_name,
