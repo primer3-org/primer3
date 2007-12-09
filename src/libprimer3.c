@@ -3498,9 +3498,6 @@ _pr_data_control(const p3_global_settings *pa,
 	return 1;
     }
 
-    /* FIX ME: use correct check */
-   /* if ((pick_pcr_primers_and_hyb_probe == pa->primer_task 
-	 || pick_hyb_probe_only == pa->primer_task) */
 	if ((pa->pick_internal_oligo == 1 )
 	&& pa->o_args.max_size > pr_min) {
 	pr_append_new_chunk(glob_err,
@@ -3735,10 +3732,6 @@ _pr_data_control(const p3_global_settings *pa,
       pr_append(/* &sa-> */warning,
 		"has no effect when number of targets is 0");     /* FIX ME write warning */
     }
-    /* FIX ME use correct tag */
-    /*    if (pa->primer_task != pick_pcr_primers_and_hyb_probe 
-	&& pa->primer_task != pick_hyb_probe_only
-	&& sa->internal_input) {*/
     if (pa->pick_internal_oligo != 1 && sa->internal_input) {
       pr_append_new_chunk(nonfatal_err,
 			  "Not specified to pick internal oligos");
@@ -3819,8 +3812,6 @@ _pr_data_control(const p3_global_settings *pa,
         return 1;
      }
     
- /*   if ((pa->primer_task != pick_pcr_primers_and_hyb_probe 
-	 && pa->primer_task != pick_hyb_probe_only ) && */
     if ((pa->pick_internal_oligo != 1) &&
 			(pa->pr_pair_weights.io_quality)) {
        pr_append_new_chunk(glob_err,

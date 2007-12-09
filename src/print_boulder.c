@@ -165,16 +165,14 @@ boulder_print(io_version, pa, sa, retval)
       /* The conditions for primer pairs */
       else {
 	    /* Attach the selected pair to the pointers */
-		fwd = retval->best_pairs.pairs[i].left;
-		rev = retval->best_pairs.pairs[i].right;
+		fwd  = retval->best_pairs.pairs[i].left;
+		rev  = retval->best_pairs.pairs[i].right;
 		intl = retval->best_pairs.pairs[i].intl;
 		/* Pairs must have fwd and rev primers */
 	    go_fwd = 1;
 	    go_rev = 1;
 	    /* Do hyb oligos have to be printed? */
-	    /* FIX ME: Should be (pa->pick_internal_oligo) && (retval->output_type == primer_pairs) */
-	    /* Strangely this does not work */
-	    if (pa->primer_task == pick_pcr_primers_and_hyb_probe) {
+	    if (pa->pick_internal_oligo == 1) {
 	    	go_int = 1;
 	    } else {
 	    	go_int = 0;
@@ -388,28 +386,24 @@ boulder_print_error(const char *err) {
 }
 
 static void
-print_all_explain(pa, sa) /* FIX ME chance the conditions in the if stmts below */
+print_all_explain(pa, sa)
     const primer_args *pa;
     const seq_args *sa;
 {
-  if (pa->pick_left_primer  /*                pa->primer_task != pick_right_only
-					       && pa->primer_task != pick_hyb_probe_only  */
+  if (pa->pick_left_primer == 1
       && !(pa->pick_anyway && sa->left_input))
     print_explain(&sa->left_expl,OT_LEFT);
 
-  if (pa->pick_right_primer/*pa->primer_task != pick_left_only 
-			     && pa->primer_task != pick_hyb_probe_only */
+  if (pa->pick_right_primer == 1
       && !(pa->pick_anyway && sa->right_input))
     print_explain(&sa->right_expl,OT_RIGHT);
 
-  if ((pa->primer_task == pick_hyb_probe_only
-       || pa->primer_task == pick_pcr_primers_and_hyb_probe)  /* FIX ME, probably not set correctly when read in */
+  if ( pa->pick_internal_oligo == 1
       && !(pa->pick_anyway && sa->internal_input)) 
     print_explain(&sa->intl_expl, OT_INTL);
 
-  if /* (pa->primer_task  == pick_pcr_primers 
-	|| pa->primer_task == pick_pcr_primers_and_hyb_probe)  { */
-    (pa->pick_right_primer && pa->pick_left_primer) {
+  if (pa->pick_right_primer == 1 
+      && pa->pick_left_primer == 1) {
     printf("PRIMER_PAIR_EXPLAIN=");
     pr_print_pair_explain(stdout, &sa->pair_expl);
   }
