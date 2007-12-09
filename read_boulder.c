@@ -579,7 +579,7 @@ read_record(const int *strict_tags,
       if (pa->primer_task == pick_pcr_primers_and_hyb_probe) {
 	PR_ASSERT(pa->pick_internal_oligo);
       }
-
+      /* Give a error if the tasks don't match */
       if((pick_internal_oligo == 1 || pick_internal_oligo == 0) &&
 	 (pa->primer_task == pick_left_only || 
 	  pa->primer_task == pick_right_only ||
@@ -591,12 +591,17 @@ read_record(const int *strict_tags,
       }
       } else if (pick_internal_oligo == 1) {
 	pa->primer_task = pick_pcr_primers_and_hyb_probe;
+	pa->pick_left_primer = 1;
+	pa->pick_right_primer = 1;
 	pa->pick_internal_oligo = 1;
 	if (pa->primer_task == pick_pcr_primers_and_hyb_probe) {
 	  PR_ASSERT(pa->pick_internal_oligo);
 	}
       } else if (pick_internal_oligo == 0) {
-	pa->primer_task = 0;
+	pa->primer_task = pick_pcr_primers;
+	pa->pick_left_primer = 1;
+	pa->pick_right_primer = 1;
+	pa->pick_internal_oligo = 0;
 	if (pa->primer_task == pick_pcr_primers_and_hyb_probe) {
 	  PR_ASSERT(pa->pick_internal_oligo);
 	}
