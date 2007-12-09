@@ -3499,8 +3499,9 @@ _pr_data_control(const p3_global_settings *pa,
     }
 
     /* FIX ME: use correct check */
-    if ((pick_pcr_primers_and_hyb_probe == pa->primer_task 
-	 || pick_hyb_probe_only == pa->primer_task)
+   /* if ((pick_pcr_primers_and_hyb_probe == pa->primer_task 
+	 || pick_hyb_probe_only == pa->primer_task) */
+	if ((pa->pick_internal_oligo == 1 )
 	&& pa->o_args.max_size > pr_min) {
 	pr_append_new_chunk(glob_err,
 		 "PRIMER_INTERNAL_OLIGO_MAX_SIZE > min PRIMER_PRODUCT_SIZE_RANGE");
@@ -3735,9 +3736,10 @@ _pr_data_control(const p3_global_settings *pa,
 		"has no effect when number of targets is 0");     /* FIX ME write warning */
     }
     /* FIX ME use correct tag */
-    if (pa->primer_task != pick_pcr_primers_and_hyb_probe 
+    /*    if (pa->primer_task != pick_pcr_primers_and_hyb_probe 
 	&& pa->primer_task != pick_hyb_probe_only
-	&& sa->internal_input) {
+	&& sa->internal_input) {*/
+    if (pa->pick_internal_oligo != 1 && sa->internal_input) {
       pr_append_new_chunk(nonfatal_err,
 			  "Not specified to pick internal oligos");
       pr_append(nonfatal_err,
@@ -3816,9 +3818,10 @@ _pr_data_control(const p3_global_settings *pa,
 	   "Hyb probe GC content is part of objective function while optimum gc_content is not defined");
         return 1;
      }
-	
-    if ((pa->primer_task != pick_pcr_primers_and_hyb_probe 
-	 && pa->primer_task != pick_hyb_probe_only ) &&
+    
+ /*   if ((pa->primer_task != pick_pcr_primers_and_hyb_probe 
+	 && pa->primer_task != pick_hyb_probe_only ) && */
+    if ((pa->pick_internal_oligo != 1) &&
 			(pa->pr_pair_weights.io_quality)) {
        pr_append_new_chunk(glob_err,
 	  "Internal oligo quality is part of objective function while internal oligo choice is not required");
