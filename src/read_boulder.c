@@ -174,8 +174,8 @@ read_record(const int *strict_tags,
 		    pr_append_new_chunk(parse_err, "Duplicate tag: ");
 		    pr_append(parse_err, "SEQUENCE"); 
 	      } else {
-		    /* p3_set_seq_arg_sequence */
-		    if (p3_set_seq_args_sequence(sa, datum)) exit(-2);
+		    /* p3_set_sa_sequence */
+		    if (p3_set_sa_sequence(sa, datum)) exit(-2);
 	      }
 	      continue;
 	    }
