@@ -1914,7 +1914,6 @@ p3_print_oligo_lists(const p3retval *retval,
     char *file;
     FILE *fh;
 
-    /* Check if the left primers have to be printed */
     if (setjmp(_jmp_buf) != 0) {
       return 1;  /* If we get here, that means we returned via a longjmp.
 		    In this case errno should be ENOMEM. */
@@ -1923,6 +1922,7 @@ p3_print_oligo_lists(const p3retval *retval,
 
     file = pr_safe_malloc(strlen(sa->sequence_name) + 5);
 
+    /* Check if the left primers have to be printed */
     /* OK pa->primer_task != pick_right_only 
 	   && pa->primer_task != pick_hyb_probe_only*/
     if( pa->pick_left_primer ) {
