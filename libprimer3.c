@@ -1894,6 +1894,9 @@ oligo_max_template_mispriming(h)
     h->template_mispriming : h->template_mispriming_r;
 }
 
+
+/* START OF WHAT SHOULD GO TO IO_PRIMER_FILES.C */
+
 /* return 0 on success, 1 on error */
 /* Check errno for ENOMEM */
 /* This function is for backward compatability
@@ -1904,11 +1907,14 @@ p3_print_oligo_lists(const p3retval *retval,
 		     const p3_global_settings *pa,
 		     pr_append_str *err)
 {
+	/* Figure out if the sequence starts at position 1 or 0 */
     int   first_base_index = pa->first_base_index;
     int   ret;
+    /* Start building up a filename */
     char *file;
     FILE *fh;
 
+    /* Check if the left primers have to be printed */
     if (setjmp(_jmp_buf) != 0) {
       return 1;  /* If we get here, that means we returned via a longjmp.
 		    In this case errno should be ENOMEM. */
@@ -1917,7 +1923,10 @@ p3_print_oligo_lists(const p3retval *retval,
 
     file = pr_safe_malloc(strlen(sa->sequence_name) + 5);
 
+    /* OK pa->primer_task != pick_right_only 
+	   && pa->primer_task != pick_hyb_probe_only*/
     if( pa->pick_left_primer ) {
+      /* Create the file name and open file*/
       strcpy(file, sa->sequence_name);
       strcat(file, ".for");
       if (!(fh = fopen(file,"w"))) {
@@ -1927,6 +1936,7 @@ p3_print_oligo_lists(const p3retval *retval,
 	free(file);
 	return 1;
       }
+      /* Print the content to the file */
       ret = p3_print_one_oligo_list(sa, retval->n_f, retval->f, 
 			      OT_LEFT, first_base_index, 
 			      NULL != pa->p_args.repeat_lib, fh);
@@ -1934,6 +1944,7 @@ p3_print_oligo_lists(const p3retval *retval,
       if (ret) return 1;
     }
 
+    /* Check if the right primers have to be printed */
     if (pa->pick_right_primer 
 	/* pa->primer_task != pick_left_only 
 	   && pa->primer_task != pick_hyb_probe_only*/ ) {
@@ -1946,6 +1957,7 @@ p3_print_oligo_lists(const p3retval *retval,
 	free(file);
 	return 1;
       }
+      /* Print the content to the file */
       ret = p3_print_one_oligo_list(sa, retval->n_r, retval->r, 
 				    OT_RIGHT, first_base_index,
 				    NULL != pa->p_args.repeat_lib, fh);
@@ -1954,8 +1966,11 @@ p3_print_oligo_lists(const p3retval *retval,
       if (ret) return 1;
     }
 
-    if ( /* pa->primer_task == pick_pcr_primers_and_hyb_probe 
-	    || pa->primer_task == pick_hyb_probe_only */  pa->pick_internal_oligo ) {
+    /* Check if the internal oligos have to be printed */
+    if (pa->pick_internal_oligo) { 
+    /* pa->primer_task == pick_pcr_primers_and_hyb_probe 
+	   || pa->primer_task == pick_hyb_probe_only */ 
+      /* Create the file name and open file*/
       strcpy(file, sa->sequence_name);
       strcat(file, ".int");
       if (!(fh = fopen(file,"w"))) {
@@ -1965,7 +1980,7 @@ p3_print_oligo_lists(const p3retval *retval,
 	free(file);
 	return 1;
       }
-
+      /* Print the content to the file */
       ret = p3_print_one_oligo_list(sa, retval->n_m, retval->mid, OT_INTL,
 			  first_base_index,
 			  NULL != pa->o_args.repeat_lib,
@@ -1977,6 +1992,7 @@ p3_print_oligo_lists(const p3retval *retval,
     return 0;
 }
 
+/* Print out the content of one primer array */
 /* Return 1 on error, otherwise 0. */
 int
 p3_print_one_oligo_list(const seq_args *sa,
@@ -1990,9 +2006,12 @@ p3_print_one_oligo_list(const seq_args *sa,
 {
   int i;
 
+    /* Print out the header for the table */
     if (print_list_header(fh, o_type, first_base_index, print_lib_sim))
       return 1; /* error */
+    /* Iterate over the array */
     for (i = 0; i < n; i++) {
+    /* Print each single oligo */
 	if (print_oligo(fh, sa, i, &oligo_arr[i], o_type,
 			first_base_index, print_lib_sim))
 	  return 1; /* error */
@@ -2074,6 +2093,10 @@ print_oligo(FILE *fh,
     if (ret < 0) return 1;
     else return 0;
 }
+
+/* END OF WHAT SHOULD GO TO IO_PRIMER_FILES.C */
+
+
 
 /* This function requires that retval->n_f and n_r,
    and posibly n_m...see choose_internal_oligo().  
