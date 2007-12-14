@@ -4738,143 +4738,50 @@ p3_set_gs_first_base_index(p3_global_settings * p , int first_base_index){
   p->first_base_index = first_base_index;
 }
 
+void
+p3_set_gs_primer_num_return(p3_global_settings * p , int val) {
+  p->num_return = val ;
+}
 
+void
+p3_set_gs_primer_min_quality(p3_global_settings * p , int val) {
+  p->p_args.min_quality = val ;
+}
 
 void
-p3_set_gs_primer_num_return(p3_global_settings * p , int val);
+p3_set_gs_primer_min_end_quality(p3_global_settings * p , int val) {
+  p->p_args.min_end_quality = val ;
+}
 
+void
+p3_set_gs_primer_quality_range_min(p3_global_settings * p , int val) {
+  p->quality_range_min = val ;
+}
 
 void
-p3_set_gs_primer_min_quality(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_min_end_quality(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_quality_range_min(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_quality_range_max(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_product_max_tm(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_product_min_tm(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_product_opt_tm(p3_global_settings * p , int val);
+p3_set_gs_primer_quality_range_max(p3_global_settings * p , int val) {
+  p->quality_range_max = val ;
+}
 
+void
+p3_set_gs_primer_product_max_tm(p3_global_settings * p , int val) {
+  p->product_max_tm = val ;
+}
+
+void
+p3_set_gs_primer_product_min_tm(p3_global_settings * p , int val) {
+  p->product_min_tm = val ;
+}
+
+void
+p3_set_gs_primer_product_opt_tm(p3_global_settings * p , int val) {
+  p->product_opt_tm = val ;
+}
 
 void 
 p3_set_gs_primer_task(p3_global_settings * p , int primer_task){
   p->primer_task = primer_task;
 }
-
-
-
-void
-p3_set_gs_num_return(p3_global_settings * p , int num_return){
-  p->num_return = num_return; 
-}
-
-
-void
-p3_set_gs_lib_ambiguity_codes_consensus(p3_global_settings * p , int lib_ambiguity_codes_consensus) {
-  p->lib_ambiguity_codes_consensus = lib_ambiguity_codes_consensus;
-}
-
-void
-p3_set_gs_quality_range_min(p3_global_settings * p , int quality_range_min){
-  p->quality_range_min = quality_range_min;
-}
-
-void
-p3_set_gs_quality_range_max(p3_global_settings * p , int quality_range_max){
-  p->quality_range_max = quality_range_max ;
-}
-
-void
-p3_set_gs_max_end_stability(p3_global_settings * p , int max_end_stability){
-  p->max_end_stability = max_end_stability;
-}
-
-void
-p3_set_gs_lowercase_masking(p3_global_settings * p , int lowercase_masking){
-  p->lowercase_masking = lowercase_masking;
-}
-
-void
-p3_set_gs_outside_penalty(p3_global_settings * p , double outside_penalty){
-  p->outside_penalty = outside_penalty;
-}
-
-void
-p3_set_gs_inside_penalty(p3_global_settings * p , double inside_penalty){
-  p->inside_penalty = inside_penalty;
-}
-
-void  p3_get_gs_pr_min(p3_global_settings * p, int *pr_min){
-  /*  p->pr_min = pr_min;  FIX this */
-}
-
-void
-p3_set_gs_pr_max (p3_global_settings * p , int *pr_max){
-  /*  p->pr_max = pr_max;  FIX this */
-}
-
-void
-p3_set_gs_num_intervals(p3_global_settings * p , int num_intervals){
-  p->num_intervals = num_intervals;
-}
-
-void 
-p3_set_gs_pair_max_template_mispriming(p3_global_settings * p,
-				       short  pair_max_template_mispriming)
-{
-  p->pair_max_template_mispriming = pair_max_template_mispriming;
-}
-
-void
-p3_set_gs_pair_repeat_compl(p3_global_settings * p, short  pair_repeat_compl){ 
-  p->pair_repeat_compl = pair_repeat_compl;
-}
-
-void
-p3_set_gs_pair_compl_any(p3_global_settings * p , short  pair_compl_any){
-  p->pair_compl_any = pair_compl_any;
-}
-
-void
-p3_set_gs_pair_compl_end(p3_global_settings * p , short  pair_compl_end){
-  p->pair_compl_end = pair_compl_end;
-}
-
-void
-p3_set_gs_max_diff_tm(p3_global_settings * p , double max_diff_tm) {
-  p->max_diff_tm = max_diff_tm;
-}
-
-void 
-p3_set_gs_pick_left_primer(p3_global_settings * p , int pick_left_primer) {
-  p->pick_left_primer = pick_left_primer;
-}
-
-void 
-p3_set_gs_pick_right_primer(p3_global_settings * p , int pick_right_primer){
-  p->pick_right_primer = pick_right_primer;
-}
-
-void 
-p3_set_gs_pick_internal_oligo(p3_global_settings * p , int pick_internal_oligo){
-  p->pick_internal_oligo = pick_internal_oligo;
-}
-
-void 
-p3_set_gs_primer_pick_anyway(p3_global_settings * p , int val) {
-  p->pick_anyway = val ;
-}
-
-void 
-p3_set_gs_primer_gc_clamp(p3_global_settings * p , int val) {
-  p->gc_clamp = val;
-}
-
-
 
 
 void
@@ -5060,6 +4967,111 @@ void
 p3_set_gs_pair_compl_end(p3_global_settings * p , short  pair_compl_end);
 void
 p3_set_gs_max_diff_tm(p3_global_settings * p , double max_diff_tm);
+
+
+void
+p3_set_gs_lib_ambiguity_codes_consensus(p3_global_settings * p , int lib_ambiguity_codes_consensus) {
+  p->lib_ambiguity_codes_consensus = lib_ambiguity_codes_consensus;
+}
+
+void
+p3_set_gs_quality_range_min(p3_global_settings * p , int quality_range_min){
+  p->quality_range_min = quality_range_min;
+}
+
+void
+p3_set_gs_quality_range_max(p3_global_settings * p , int quality_range_max){
+  p->quality_range_max = quality_range_max ;
+}
+
+void
+p3_set_gs_max_end_stability(p3_global_settings * p , int max_end_stability){
+  p->max_end_stability = max_end_stability;
+}
+
+void
+p3_set_gs_lowercase_masking(p3_global_settings * p , int lowercase_masking){
+  p->lowercase_masking = lowercase_masking;
+}
+
+void
+p3_set_gs_outside_penalty(p3_global_settings * p , double outside_penalty){
+  p->outside_penalty = outside_penalty;
+}
+
+void
+p3_set_gs_inside_penalty(p3_global_settings * p , double inside_penalty){
+  p->inside_penalty = inside_penalty;
+}
+
+void  p3_get_gs_pr_min(p3_global_settings * p, int *pr_min){
+  /*  p->pr_min = pr_min;  FIX this */
+}
+
+void
+p3_set_gs_pr_max (p3_global_settings * p , int *pr_max){
+  /*  p->pr_max = pr_max;  FIX this */
+}
+
+void
+p3_set_gs_num_intervals(p3_global_settings * p , int num_intervals){
+  p->num_intervals = num_intervals;
+}
+
+void 
+p3_set_gs_pair_max_template_mispriming(p3_global_settings * p,
+				       short  pair_max_template_mispriming)
+{
+  p->pair_max_template_mispriming = pair_max_template_mispriming;
+}
+
+void
+p3_set_gs_pair_repeat_compl(p3_global_settings * p, short  pair_repeat_compl){ 
+  p->pair_repeat_compl = pair_repeat_compl;
+}
+
+void
+p3_set_gs_pair_compl_any(p3_global_settings * p , short  pair_compl_any){
+  p->pair_compl_any = pair_compl_any;
+}
+
+void
+p3_set_gs_pair_compl_end(p3_global_settings * p , short  pair_compl_end){
+  p->pair_compl_end = pair_compl_end;
+}
+
+void
+p3_set_gs_max_diff_tm(p3_global_settings * p , double max_diff_tm) {
+  p->max_diff_tm = max_diff_tm;
+}
+
+void 
+p3_set_gs_pick_left_primer(p3_global_settings * p , int pick_left_primer) {
+  p->pick_left_primer = pick_left_primer;
+}
+
+void 
+p3_set_gs_pick_right_primer(p3_global_settings * p , int pick_right_primer){
+  p->pick_right_primer = pick_right_primer;
+}
+
+void 
+p3_set_gs_pick_internal_oligo(p3_global_settings * p , int pick_internal_oligo){
+  p->pick_internal_oligo = pick_internal_oligo;
+}
+
+void 
+p3_set_gs_primer_pick_anyway(p3_global_settings * p , int val) {
+  p->pick_anyway = val ;
+}
+
+void 
+p3_set_gs_primer_gc_clamp(p3_global_settings * p , int val) {
+  p->gc_clamp = val;
+}
+
+
+
 
 /* ============================================================ */
 /* END 'set' functions for p3_global_settings                   */
