@@ -752,11 +752,20 @@ char  *pr_gather_warnings(const seq_args *, const p3_global_settings *);
 
 /* Return NULL on ENOMEM */
 pr_append_str *create_pr_append_str();
+
 void          pr_set_empty(pr_append_str *);
 int           pr_is_empty(const pr_append_str *);
 void          destroy_pr_append_str(pr_append_str *);
-void          pr_append(pr_append_str *, const char *);
-void          pr_append_new_chunk(pr_append_str *, const char *);
+
+/* Return 1 on ENOMEM, otherwise 0 */
+int           pr_append_external(pr_append_str *, const char *);
+
+int
+pr_append_w_sep_external(pr_append_str *x, 
+			 const char *sep,
+			 const char *s);
+
+int           pr_append_new_chunk_external(pr_append_str *, const char *);
 
 
 void  pr_print_pair_explain(FILE *, const pair_stats *);
@@ -801,6 +810,12 @@ p3_set_program_name(const char *name);
  * on the next call.
  */
 char* p3_read_line(FILE *file);
+
+
+int    p3_print_oligo_lists(const p3retval*, 
+			    const seq_args *, 
+			    const p3_global_settings *, 
+			    pr_append_str *err);
 
 
 /* Hack -- used only in print boulder */

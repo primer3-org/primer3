@@ -65,6 +65,10 @@ static void   parse_interval_list(const char *tag_name,
 
 static void   parse_product_size(const char *, char *, p3_global_settings *,
 				 pr_append_str *);
+
+static void   pr_append(pr_append_str *, const char *);
+static void   pr_append_new_chunk(pr_append_str *x, const char *s);
+
 static void   tag_syntax_error(const char *, const char *,  pr_append_str *);
 static int    parse_seq_quality(char *, int **);
 
@@ -881,6 +885,22 @@ _rb_safe_malloc(size_t x)
     if (NULL == r) OOM_ERROR;
     return r;
 }
+
+static void
+pr_append(pr_append_str *x,
+	  const char *s)
+{
+  if (pr_append_external(x, s)) OOM_ERROR;
+}
+
+static void
+pr_append_new_chunk(pr_append_str *x,
+		    const char *s)
+{
+  if (pr_append_new_chunk_external(x, s)) OOM_ERROR;
+}
+
+
 
 /* End of fail-stop wrappers. */
 /* =========================================================== */
