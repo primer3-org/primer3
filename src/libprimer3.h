@@ -102,6 +102,7 @@ typedef struct pr_append_str {
     char *data;
 } pr_append_str;
 
+
 /* The seq_lib struct represents a library of sequences. */
 /* Clients do not need to know the details of this structure. */
 typedef struct seq_lib {
@@ -599,11 +600,32 @@ typedef struct seq_args {
 
 } seq_args;
 
+
+/* primer_array is used to store a list of primers */
+typedef struct primer_array {
+ /* Array of oligo (primer) records. */
+ primer_rec *rec;
+
+ /* Number of initialized elements */
+ int nr;
+
+ /* Storage lengths of prim */
+ int al;
+
+ /* Type of oligos in the array */
+ oligo_type type;
+} primer_array;
+
+
 /*
  * The return value for for primer3. 
  * After use, free memory with destroy_p3retval().
  */
 typedef struct p3retval {
+	
+  /* New Arrays of oligo (primer) records. */
+  primer_array *fwd, *intl, *rev;
+	
   /* Arrays of oligo (primer) records. */
   primer_rec *f, *r, *mid;
 
