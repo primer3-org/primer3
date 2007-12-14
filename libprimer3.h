@@ -599,21 +599,25 @@ typedef struct seq_args {
 
 } seq_args;
 
-/* primer_array is used to store a list of primers */
-typedef struct primer_array {
+/* oligo_array is used to store a list of oligos or primers */
+typedef struct oligo_array {
+
  /* Array of oligo (primer) records. */
- primer_rec *rec;
+ primer_rec *oligo;
 
  /* Number of initialized elements */
- int nr;
+ int num_elem;
 
- /* Storage lengths of prim */
- int size;
+ /* Storage lengths of oligo */
+ int storage_size;
 
  /* Type of oligos in the array */
  oligo_type type;
-} primer_array;
+  /* We should think about whether we
+     need this here, but no objection
+     for now. */
 
+} oligo_array;
 
 /*
  * The return value for for primer3. 
@@ -622,7 +626,7 @@ typedef struct primer_array {
 typedef struct p3retval {
 	
   /* New Arrays of oligo (primer) records. */
-  primer_array *fwd, *intl, *rev;
+  oligo_array *fwd, *intl, *rev;
 	
   /* Arrays of oligo (primer) records. */
   primer_rec *f, *r, *mid;
@@ -649,17 +653,23 @@ typedef struct p3retval {
 /* Deallocate a primer3 state */
 void destroy_p3retval(p3retval *);
 
+
 /* get elements of p3retval */
-/* NOTE, we still need to provide accessors for the
-   oligo lists! */
-/* NOTE, we will likely need accessors for the 
-   pair_array_t */
 const pair_array_t *p3_get_retval_best_pairs(const p3retval *r);
 const char *p3_get_retval_glob_err(const p3retval *r);
 const char *p3_get_retval_per_sequence_err(const p3retval *r);
 const char *p3_get_retval_warnings(const p3retval *r);
-p3_output_type p3_get_retval_output_type(const p3retval *r);
+const p3_output_type p3_get_retval_output_type(const p3retval *r);
+const oligo_array *p3_get_retval_left_primers(const p3retval *r);
+const oligo_array *p3_get_retval_right_primers(const p3retval *r);
+const oligo_array *p3_get_retval_internal_oligos(const p3retval *r);
 
+/* Get elements of an oligo_array */
+int p3_get_oa_n(const oligo_array *x);
+const  primer_rec *p3_get_oa_i(const oligo_array *x, int i);
+
+/* We still need accessors (getters) for the elements of
+   primer_rec */
 
 /* Functions for seq_args -- create, destroy, set slots */
 seq_args *create_seq_arg();

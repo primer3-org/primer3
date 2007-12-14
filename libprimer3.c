@@ -271,11 +271,6 @@ NULL
 /* Other global variables. */
 static const char *pr_program_name = "probably primer3_core";
 
-typedef struct oligo_array {
-  int len;
-  primer_rec *data;
-} oligo_array;
-
 /*
  * ==========================================================================
  * External APIs
