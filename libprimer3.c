@@ -4783,40 +4783,97 @@ p3_set_gs_primer_task(p3_global_settings * p , int primer_task){
   p->primer_task = primer_task;
 }
 
+void 
+p3_set_gs_pick_right_primer(p3_global_settings * p , int pick_right_primer){
+  p->pick_right_primer = pick_right_primer;
+}
+
+void 
+p3_set_gs_pick_internal_oligo(p3_global_settings * p , int pick_internal_oligo){
+  p->pick_internal_oligo = pick_internal_oligo;
+}
+
+void 
+p3_set_gs_pick_left_primer(p3_global_settings * p , int pick_left_primer) {
+  p->pick_left_primer = pick_left_primer;
+}
+
 
 void
-p3_set_gs_primer_task(p3_global_settings * p , int primer_task);
+p3_set_gs_primer_internal_oligo_opt_size(p3_global_settings * p , int val) {
+  p->o_args.opt_size = val ;
+}
+     
+void
+p3_set_gs_primer_internal_oligo_max_size(p3_global_settings * p , int val) {
+  p->o_args.max_size = val ;
+}
 
 void
-p3_set_gs_primer_internal_oligo_opt_size(p3_global_settings * p , int val);
+p3_set_gs_primer_internal_oligo_min_size(p3_global_settings * p , int val) {
+  p->o_args.min_size = val ;
+}
+
 void
-p3_set_gs_primer_internal_oligo_max_size(p3_global_settings * p , int val);
+p3_set_gs_primer_internal_oligo_max_poly_x(p3_global_settings * p , int val) {
+  p->o_args.max_poly_x = val ;
+}
+
 void
-p3_set_gs_primer_internal_oligo_min_size(p3_global_settings * p , int val);
+p3_set_gs_primer_internal_oligo_opt_tm(p3_global_settings * p , int val) {
+  p->o_args.opt_tm = val ;
+}
+
 void
-p3_set_gs_primer_internal_oligo_max_poly_x(p3_global_settings * p , int val);
+p3_set_gs_primer_internal_oligo_opt_gc_percent(p3_global_settings * p , int val) {
+  p->o_args.opt_gc_content = val ;
+}
+
 void
-p3_set_gs_primer_internal_oligo_opt_tm(p3_global_settings * p , int val);
+p3_set_gs_primer_internal_oligo_max_tm(p3_global_settings * p , int val) {
+  p->o_args.max_tm = val ;
+}
+
 void
-p3_set_gs_primer_internal_oligo_opt_gc_percent(p3_global_settings * p , int val);
+p3_set_gs_primer_internal_oligo_min_tm(p3_global_settings * p , int val) {
+  p->o_args.min_tm = val ;
+}
+
 void
-p3_set_gs_primer_internal_oligo_max_tm(p3_global_settings * p , int val);
+p3_set_gs_primer_internal_oligo_min_gc(p3_global_settings * p , int val) {
+  p->o_args.min_gc = val ;
+}
+
 void
-p3_set_gs_primer_internal_oligo_min_tm(p3_global_settings * p , int val);
+p3_set_gs_primer_internal_oligo_max_gc(p3_global_settings * p , int val) {
+  p->o_args.max_gc = val ;
+}
+
 void
-p3_set_gs_primer_internal_oligo_min_gc(p3_global_settings * p , int val);
+p3_set_gs_primer_internal_oligo_salt_conc(p3_global_settings * p , int val) {
+  p->o_args.salt_conc = val ;
+}
+
 void
-p3_set_gs_primer_internal_oligo_max_gc(p3_global_settings * p , int val);
+p3_set_gs_primer_internal_oligo_divalent_conc(p3_global_settings * p , int val) {
+  p->o_args.divalent_conc = val ;
+}
+
 void
-p3_set_gs_primer_internal_oligo_salt_conc(p3_global_settings * p , int val);
+p3_set_gs_primer_internal_oligo_dntp_conc(p3_global_settings * p , int val) {
+  p->o_args.dntp_conc = val ;
+}
+ 
 void
-p3_set_gs_primer_internal_oligo_divalent_conc(p3_global_settings * p , int val);
+p3_set_gs_primer_internal_oligo_num_ns(p3_global_settings * p , int val) {
+  p->o_args.num_ns_accepted = val ;
+}
+
 void
-p3_set_gs_primer_internal_oligo_dntp_conc(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_internal_oligo_num_ns(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_internal_oligo_min_quality(p3_global_settings * p , int val);
+p3_set_gs_primer_internal_oligo_min_quality(p3_global_settings * p , int val) {
+  p->o_args.min_quality = val ;
+}
+
 void
 p3_set_gs_primer_internal_oligo_self_any(p3_global_settings * p , int val);
 void
@@ -5045,20 +5102,6 @@ p3_set_gs_max_diff_tm(p3_global_settings * p , double max_diff_tm) {
   p->max_diff_tm = max_diff_tm;
 }
 
-void 
-p3_set_gs_pick_left_primer(p3_global_settings * p , int pick_left_primer) {
-  p->pick_left_primer = pick_left_primer;
-}
-
-void 
-p3_set_gs_pick_right_primer(p3_global_settings * p , int pick_right_primer){
-  p->pick_right_primer = pick_right_primer;
-}
-
-void 
-p3_set_gs_pick_internal_oligo(p3_global_settings * p , int pick_internal_oligo){
-  p->pick_internal_oligo = pick_internal_oligo;
-}
 
 void 
 p3_set_gs_primer_pick_anyway(p3_global_settings * p , int val) {
