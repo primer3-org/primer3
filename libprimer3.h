@@ -610,7 +610,7 @@ typedef struct primer_array {
  int nr;
 
  /* Storage lengths of prim */
- int al;
+ int size;
 
  /* Type of oligos in the array */
  oligo_type type;
