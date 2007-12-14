@@ -172,6 +172,9 @@ static void   oligo_param(const p3_global_settings *pa,
 			  const dpal_arg_holder*,
 			  seq_args *, oligo_stats *);
 
+static void   pr_append(pr_append_str *, const char *);
+static void   pr_append_new_chunk(pr_append_str *x, const char *s);
+
 static int    characterize_pair(p3retval *p,
 				const p3_global_settings *,
 				seq_args *,
@@ -189,10 +192,6 @@ static void*  pr_safe_realloc(void *p, size_t x);
 
 static int    primer_pair_comp(const void *, const void*);
 static int    primer_rec_comp(const void *, const void *);
-static int    p3_print_oligo_lists(const p3retval*, 
-				   const seq_args *, 
-				   const p3_global_settings *, 
-				   pr_append_str *err);
 static int    print_list_header(FILE *, oligo_type, int, int);
 static int    print_oligo(FILE *, const seq_args *, int, const primer_rec *,
 			  oligo_type, int, int);
@@ -856,10 +855,14 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
 
     /* Creates files with left, right, and internal oligos. */
     if (pa->file_flag) {
-      p3_print_oligo_lists(retval, sa, pa,
-			   &retval->per_sequence_err); 
-      /* FIX ME, add test for this behavior (or other
-	 behavior?) Move this to outside libprimer3. */
+      if (p3_print_oligo_lists(retval, sa, pa,
+			       &retval->per_sequence_err)) {
+	if (errno == ENOMEM) {
+	  return NULL;
+	} else {
+	  return retval;
+	}
+      }
     }
 
     /* We sort _after_ printing lists to 
@@ -993,9 +996,9 @@ add_must_use_warnings(/* seq_args *sa, */ pr_append_str *warning,
     pr_append_w_sep(&s, sep, "Masked with lowercase letter");
 
   if (s.data) {
-    pr_append_new_chunk(/* &sa->*/ warning, text);
-    pr_append(/* &sa->*/ warning, " is unacceptable: ");
-    pr_append(/* &sa->*/ warning, s.data);
+    pr_append_new_chunk(warning, text);
+    pr_append(warning, " is unacceptable: ");
+    pr_append(warning, s.data);
     free(s.data);
   }
 }
@@ -1892,9 +1895,10 @@ oligo_max_template_mispriming(h)
 }
 
 /* return 0 on success, 1 on error */
+/* Check errno for ENOMEM */
 /* This function is for backward compatability
    in boulder io testing. */
-static int
+int
 p3_print_oligo_lists(const p3retval *retval,
 		     const seq_args *sa,
 		     const p3_global_settings *pa,
@@ -1902,13 +1906,18 @@ p3_print_oligo_lists(const p3retval *retval,
 {
     int   first_base_index = pa->first_base_index;
     int   ret;
-    char *file = pr_safe_malloc(strlen(sa->sequence_name) + 5);
+    char *file;
     FILE *fh;
 
-    if( pa->pick_left_primer 
-	/* OK pa->primer_task != pick_right_only 
-	   && pa->primer_task != pick_hyb_probe_only*/ 
-	) {
+    if (setjmp(_jmp_buf) != 0) {
+      return 1;  /* If we get here, that means we returned via a longjmp.
+		    In this case errno should be ENOMEM. */
+
+    }
+
+    file = pr_safe_malloc(strlen(sa->sequence_name) + 5);
+
+    if( pa->pick_left_primer ) {
       strcpy(file, sa->sequence_name);
       strcat(file, ".for");
       if (!(fh = fopen(file,"w"))) {
@@ -2757,10 +2766,8 @@ destroy_pr_append_str(pr_append_str *str) {
   free(str);
 }
 
-void
-pr_append(x, s)
-    pr_append_str *x;
-    const char *s;
+int
+pr_append_external(pr_append_str *x,  const char *s)
 {
     int xlen, slen;
 
@@ -2769,42 +2776,50 @@ pr_append(x, s)
 
     if (NULL == x->data) {
 	x->storage_size = 24;
-	x->data = pr_safe_malloc(x->storage_size);
+	x->data = malloc(x->storage_size);
+	if (NULL == x->data) return 1; /* out of memory */
 	*x->data = '\0';
     }
     xlen = strlen(x->data);
     slen = strlen(s);
     if (xlen + slen + 1 > x->storage_size) {
 	x->storage_size += 2 * (slen + 1);
-	x->data = pr_safe_realloc(x->data, x->storage_size);
+	x->data = realloc(x->data, x->storage_size);
+	if (NULL == x->data) return 1; /* out of memory */
     }
     strcpy(x->data + xlen, s);
+    return 0;
 }
 
-void
-pr_append_new_chunk(x, s)
-    pr_append_str *x;
-    const char *s;
+static void
+pr_append_new_chunk(pr_append_str *x, const char *s)
 {
   PR_ASSERT(NULL != x)
   if (NULL == s) return;
   pr_append_w_sep(x, "; ", s);
 }
 
-void
-pr_append_w_sep(x, sep, s)
-    pr_append_str *x;
-    const char *sep;
-    const char *s;
+int
+pr_append_new_chunk_external(pr_append_str *x, const char *s)
+{
+  PR_ASSERT(NULL != x)
+    if (NULL == s) return 0;
+  return(pr_append_w_sep_external(x, "; ", s));
+}
+
+int
+pr_append_w_sep_external(pr_append_str *x,
+			 const char *sep,
+			 const char *s)
 {
   PR_ASSERT(NULL != x)
   PR_ASSERT(NULL != s)
   PR_ASSERT(NULL != sep)
-    if (pr_is_empty(x))
-	pr_append(x, s);
-    else {
-	pr_append(x, sep);
-	pr_append(x, s);
+    if (pr_is_empty(x)) {
+      return(pr_append_external(x, s));
+    } else {
+	return(pr_append_external(x, sep)
+	       || pr_append_external(x, s));
     }
 }
 
@@ -4733,5 +4748,23 @@ pr_safe_realloc(void *p, size_t x)
     if (NULL == r) longjmp(_jmp_buf, 1);
     return r;
 }
+
+static void
+pr_append_w_sep(pr_append_str *x,
+		const char *sep,
+		const char *s)
+{
+  if (pr_append_w_sep_external(x, sep, s)) longjmp(_jmp_buf, 1);
+}
+
+
+static void
+pr_append(pr_append_str *x,
+		 const char *s)
+{
+  if (pr_append_external(x, s)) longjmp(_jmp_buf, 1);
+}
+
+
 /* End of malloc/realloc wrappers. */
 /* =========================================================== */

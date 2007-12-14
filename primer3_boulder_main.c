@@ -195,10 +195,14 @@ main(argc,argv)
      * and finish this loop */
     if (!pr_is_empty(&retval->glob_err)
 	||	!pr_is_empty(&retval->per_sequence_err)) {
-      pr_append_new_chunk(combined_retval_err, 
-			  retval->glob_err.data);
-      pr_append_new_chunk(combined_retval_err, 
-			  retval->per_sequence_err.data);
+
+      if (pr_append_new_chunk_external(combined_retval_err, 
+			      retval->glob_err.data))
+	exit(-2);
+
+      if (pr_append_new_chunk_external(combined_retval_err, 
+				       retval->per_sequence_err.data)) 
+	exit(-2);
 
       if (format_output) {
 	format_error(stdout, sa->sequence_name,
