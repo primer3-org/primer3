@@ -109,12 +109,6 @@ static void   _pr_reverse_complement(const char *, char *);
 
 static void   _pr_substr(const char *, int, int, char *);
 
-static void   add_must_use_warnings(/* seq_args *, */ pr_append_str *,
-				    const char *,
-				    const oligo_stats *);
-static void   add_pair(const primer_pair *, pair_array_t *);
-static short  align(const char *, const char*, const dpal_args *a);
-
 static int    _pr_check_and_adjust_intervals(seq_args *sa, 
 					     int seq_len, 
 					     pr_append_str * nonfatal_err, 
@@ -125,6 +119,21 @@ static int    _pr_check_and_adjust_1_interval(const char *, const int,
 					      interval_array_t, const int, 
 					      pr_append_str *err, seq_args *,
 					      pr_append_str *warning);
+
+static void   add_must_use_warnings(pr_append_str *,
+				    const char *,
+				    const oligo_stats *);
+
+static void   add_pair(const primer_pair *, pair_array_t *);
+
+static short  align(const char *, const char*, const dpal_args *a);
+
+static int    characterize_pair(p3retval *p,
+				const p3_global_settings *,
+				seq_args *,
+				int, int, int,
+				primer_pair *,
+				const dpal_arg_holder*);
 
 static int    choose_pair_or_triple(p3retval *,
 				    const p3_global_settings *,
@@ -148,8 +157,14 @@ void          compute_position_penalty(const p3_global_settings *, const seq_arg
 static p3retval *create_p3retval(void);
 
 static char   dna_to_upper(char *, int);
+
+static void   destroy_pr_append_str_data(const pr_append_str *str);
+
 static int    find_stop_codon(const char *, int, int);
+
 static void   gc_and_n_content(const int, const int, const char *, primer_rec *);
+
+static void   init_pr_append_str(pr_append_str *s);
 
 static int    make_primer_lists(p3retval *,
 				const p3_global_settings *,
@@ -173,17 +188,8 @@ static void   oligo_param(const p3_global_settings *pa,
 			  seq_args *, oligo_stats *);
 
 static void   pr_append(pr_append_str *, const char *);
+
 static void   pr_append_new_chunk(pr_append_str *x, const char *s);
-
-static int    characterize_pair(p3retval *p,
-				const p3_global_settings *,
-				seq_args *,
-				int, int, int,
-				primer_pair *,
-				const dpal_arg_holder*);
-
-static void   destroy_pr_append_str_data(const pr_append_str *str);
-static void   init_pr_append_str(pr_append_str *s);
 
 static int    pair_spans_target(const primer_pair *, const seq_args *);
 static void   pr_append_w_sep(pr_append_str *, const char *, const char *);
@@ -633,14 +639,15 @@ p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2)
   return  0;
 }
 
-/* ================================================================== */
-/* The main primer3 interface */
+/* ============================================================ */
+/* BEGIN functions for p3retval                                 */
+/* ============================================================ */
 
 /* Allocate a new primer3 state. Return NULL if out of memory. Assuming
    malloc sets errno to ENOMEM according to Unix98, set errno to ENOMEM
    on out-of-memory error. */
 
-p3retval *
+static p3retval *
 create_p3retval(void)
 {
   p3retval *state = (p3retval *)malloc(sizeof(*state));
@@ -696,7 +703,6 @@ destroy_p3retval(p3retval *state)
     if (state->best_pairs.storage_size != 0 && state->best_pairs.pairs)
 	free(state->best_pairs.pairs);
 
-
     destroy_pr_append_str_data(&state->glob_err);
     destroy_pr_append_str_data(&state->per_sequence_err);
     destroy_pr_append_str_data(&state->warnings);
@@ -707,6 +713,39 @@ destroy_p3retval(p3retval *state)
 
     free(state);
 }
+const pair_array_t *
+p3_get_retval_best_pairs(const p3retval *r) {
+  return &r->best_pairs;
+}
+
+const char *
+p3_get_retval_glob_err(const p3retval *r) {
+  return r->glob_err.data;
+}
+
+const char *
+p3_get_retval_per_sequence_err(const p3retval *r) {
+  return r->per_sequence_err.data;
+}
+
+const char *
+p3_get_retval_warnings(const p3retval *r) {
+  return r->warnings.data;
+}
+
+p3_output_type
+p3_get_retval_output_type(const p3retval *r) {
+  return r->output_type;
+}
+
+/* ============================================================ */
+/* END functions for p3retval                                   */
+/* ============================================================ */
+
+
+/* ============================================================ */
+/* BEGIN functions for dpal_arg_holder                          */
+/* ============================================================ */
 
 dpal_arg_holder *
 create_dpal_arg_holder () {
@@ -746,6 +785,11 @@ destroy_dpal_arg_holder(dpal_arg_holder *h) {
   free(h);
 }
 
+/* ============================================================ */
+/* END functions for dpal_arg_holder                            */
+/* ============================================================ */
+
+
 /* Create and initialize a seq_args data structure */
 seq_args
 *create_seq_arg() {
@@ -783,6 +827,8 @@ destroy_seq_args(seq_args *sa) {
 
 static dpal_arg_holder *dpal_arg_to_use = NULL;
 
+/* ================================================================== */
+/* The main primer3 interface */
 
 /* See libprimer3.h for documentation. */
 p3retval *
@@ -933,32 +979,7 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
     return retval;
 }
 
-const pair_array_t *
-p3_get_retval_best_pairs(const p3retval *r) {
-  return &r->best_pairs;
-}
-
-const char *
-p3_get_retval_glob_err(const p3retval *r) {
-  return r->glob_err.data;
-}
-
-const char *
-p3_get_retval_per_sequence_err(const p3retval *r) {
-  return r->per_sequence_err.data;
-}
-
-const char *
-p3_get_retval_warnings(const p3retval *r) {
-  return r->warnings.data;
-}
-
-p3_output_type
-p3_get_retval_output_type(const p3retval *r) {
-  return r->output_type;
-}
-
-
+
 /* Call this function only if the 'stat's contains
    the _errors_ associated with a given primer
    i.e. that primer was supplied by the caller
@@ -2754,112 +2775,6 @@ pr_gather_warnings(const seq_args *sa, const p3_global_settings *pa) {
   return pr_is_empty(&warning) ? NULL : warning.data;
 }
 
-static void
-init_pr_append_str(pr_append_str *s) {
-  s->data = NULL;
-  s->storage_size = 0;
-}
-
-pr_append_str *
-create_pr_append_str() {
-  /* We cannot use pr_safe_malloc here
-     because this function will be called outside
-     of the setjmp(....) */
-  pr_append_str *ret;
-
-  ret = malloc(sizeof(pr_append_str));
-  if (NULL == ret) return NULL;
-  init_pr_append_str(ret);
-  /* ret->data = NULL;
-     ret->storage_size = 0;  */
-  return ret;
-}
-
-static void
-destroy_pr_append_str_data(const pr_append_str *str) {
-  if (NULL == str) return;
-  if (str->data != NULL) free(str->data);
-}
-
-void
-destroy_pr_append_str(pr_append_str *str) {
-  if (str == NULL) return;
-  destroy_pr_append_str_data(str);
-  /* if (str->data != NULL) free(str->data); */
-  free(str);
-}
-
-int
-pr_append_external(pr_append_str *x,  const char *s)
-{
-    int xlen, slen;
-
-    PR_ASSERT(NULL != s);
-    PR_ASSERT(NULL != x);
-
-    if (NULL == x->data) {
-	x->storage_size = 24;
-	x->data = malloc(x->storage_size);
-	if (NULL == x->data) return 1; /* out of memory */
-	*x->data = '\0';
-    }
-    xlen = strlen(x->data);
-    slen = strlen(s);
-    if (xlen + slen + 1 > x->storage_size) {
-	x->storage_size += 2 * (slen + 1);
-	x->data = realloc(x->data, x->storage_size);
-	if (NULL == x->data) return 1; /* out of memory */
-    }
-    strcpy(x->data + xlen, s);
-    return 0;
-}
-
-static void
-pr_append_new_chunk(pr_append_str *x, const char *s)
-{
-  PR_ASSERT(NULL != x)
-  if (NULL == s) return;
-  pr_append_w_sep(x, "; ", s);
-}
-
-int
-pr_append_new_chunk_external(pr_append_str *x, const char *s)
-{
-  PR_ASSERT(NULL != x)
-    if (NULL == s) return 0;
-  return(pr_append_w_sep_external(x, "; ", s));
-}
-
-int
-pr_append_w_sep_external(pr_append_str *x,
-			 const char *sep,
-			 const char *s)
-{
-  PR_ASSERT(NULL != x)
-  PR_ASSERT(NULL != s)
-  PR_ASSERT(NULL != sep)
-    if (pr_is_empty(x)) {
-      return(pr_append_external(x, s));
-    } else {
-	return(pr_append_external(x, sep)
-	       || pr_append_external(x, s));
-    }
-}
-
-void
-pr_set_empty(pr_append_str *x)
-{
-    PR_ASSERT(NULL != x);
-    if (NULL != x->data) *x->data = '\0';
-}
-
-int
-pr_is_empty( const pr_append_str *x)
-{
-    PR_ASSERT(NULL != x);
-    return  NULL == x->data || '\0' == *x->data;
-}
-
 static short
 align(s1, s2, a)
     const char *s1, *s2;
@@ -4170,116 +4085,10 @@ libprimer3_copyright(void) {
   return libprimer3_copyright_str;
 }
 
-/* ======================================================== */
-/* Routines for creating and reading and destroying seq_lib
-   objects. */
-/* ======================================================== */
 
-#define INIT_BUF_SIZE 1024
-#define INIT_LIB_SIZE  500
-#define PR_MAX_LIBRARY_WT 100.0
+/* ============================================================ */
 
-/* 
- * Removes spaces and "end-of-line" characters
- * from the sequence, replaces all other
- * characters except A, T, G, C and IUB/IUPAC
- * codes with N.  Returns 0 if there were no such
- * replacements and the first non-ACGT IUB
- * character otherwise. 
- */
-static char
-upcase_and_check_char(s)
-    char *s;
-{
-    int i, j, n, m;
-
-    j = 0; m = 0;
-    n = strlen(s);
-    for(i=0; i<n; i++){
-      
-	switch(s[i])
-	{
-	case 'a' : s[i-j] = 'A'; break;
-	case 'g' : s[i-j] = 'G'; break;
-	case 'c' : s[i-j] = 'C'; break;
-	case 't' : s[i-j] = 'T'; break;
-	case 'n' : s[i-j] = 'N'; break;
-	case 'A' : s[i-j] = 'A'; break;
-	case 'G' : s[i-j] = 'G'; break;
-	case 'C' : s[i-j] = 'C'; break;
-	case 'T' : s[i-j] = 'T'; break;
-	case 'N' : s[i-j] = 'N'; break;
-
-        case 'b' : case 'B': 
-        case 'd' : case 'D':
-        case 'h' : case 'H':
-        case 'v' : case 'V':
-        case 'r' : case 'R':
-        case 'y' : case 'Y':
-        case 'k' : case 'K':
-        case 'm' : case 'M':
-	case 's' : case 'S':
-	case 'w' : case 'W':
-	  s[i-j] = toupper(s[i]); break;
-
-	case '\n': j++;          break;
-	case ' ' : j++;          break;
-	case '\t': j++;          break;
-	case '\r': j++;          break;
-	default  : if (!m) m = s[i]; s[i-j] = 'N'; 
-	}
-    }
-    s[n-j] = '\0';
-    return m;
-}
-
-static double
-parse_seq_name(s)
-char *s;
-{
-    char *p, *q;
-    double n;
-
-    p = s;
-    while( *p != '*' && *p != '\0' ) p++;
-    if (*p == '\0' ) return 1;
-    else {
-	 p++;
-	 n = strtod( p, &q );
-	 if( q == p ) return -1;
-    }
-    if(n > PR_MAX_LIBRARY_WT) return -1;
-
-    return n;
-}
-
-static void
-reverse_complement_seq_lib(lib)
-seq_lib  *lib;
-{
-    int i, n, k;
-    if((n = lib->seq_num) == 0) return;
-    else {
-	lib->names = pr_safe_realloc(lib->names, 2*n*sizeof(*lib->names));
-	lib->seqs = pr_safe_realloc(lib->seqs, 2*n*sizeof(*lib->seqs));
-	lib->weight = pr_safe_realloc(lib->weight, 2*n*sizeof(*lib->weight));
-	lib->rev_compl_seqs = pr_safe_malloc(2*n*sizeof(*lib->seqs));
-
-	lib->seq_num *= 2;
-	for(i=n; i<lib->seq_num; i++){
-	    k = strlen(lib->names[i-n]);
-	    lib->names[i] = pr_safe_malloc(k + 9);
-	    strcpy(lib->names[i], "reverse ");
-	    strcat(lib->names[i], lib->names[i-n]);
-	    lib->seqs[i] = pr_safe_malloc(strlen(lib->seqs[i-n]) + 1);
-	    _pr_reverse_complement(lib->seqs[i-n], lib->seqs[i]);
-	    lib->weight[i] = lib->weight[i-n];
-	    lib->rev_compl_seqs[i-n] = lib->seqs[i];
-	    lib->rev_compl_seqs[i] = lib->seqs[i-n];
-       }
-    }
-    return;
-}
+/* Used in seq_lib functions and also exported */
 
 /* 
  * Read a line of any length from file.  Return NULL on end of file,
@@ -4288,6 +4097,10 @@ seq_lib  *lib;
  * one static buffer, so subsequent calls will replace the string
  * pointed to by the return value.
  */
+
+/* used in p3_read_line and seq_lib functions */
+#define INIT_BUF_SIZE 1024
+
 char*
 p3_read_line(file)
 FILE *file;
@@ -4334,6 +4147,17 @@ FILE *file;
     }
 }
 
+
+/* ============================================================ */
+/* BEGIN seq_lib functions                                      */
+/* ============================================================ */
+
+#define INIT_LIB_SIZE  500
+#define PR_MAX_LIBRARY_WT 100.0
+
+static double parse_seq_name(char *s);
+static char   upcase_and_check_char(char *s);
+static void   reverse_complement_seq_lib(seq_lib  *lib);
 
 /* See comments in libprimer3.h */
 seq_lib *
@@ -4488,6 +4312,33 @@ destroy_seq_lib(p)
     free(p);
 }
 
+static void
+reverse_complement_seq_lib(seq_lib  *lib)
+{
+    int i, n, k;
+    if((n = lib->seq_num) == 0) return;
+    else {
+	lib->names = pr_safe_realloc(lib->names, 2*n*sizeof(*lib->names));
+	lib->seqs = pr_safe_realloc(lib->seqs, 2*n*sizeof(*lib->seqs));
+	lib->weight = pr_safe_realloc(lib->weight, 2*n*sizeof(*lib->weight));
+	lib->rev_compl_seqs = pr_safe_malloc(2*n*sizeof(*lib->seqs));
+
+	lib->seq_num *= 2;
+	for(i=n; i<lib->seq_num; i++){
+	    k = strlen(lib->names[i-n]);
+	    lib->names[i] = pr_safe_malloc(k + 9);
+	    strcpy(lib->names[i], "reverse ");
+	    strcat(lib->names[i], lib->names[i-n]);
+	    lib->seqs[i] = pr_safe_malloc(strlen(lib->seqs[i-n]) + 1);
+	    _pr_reverse_complement(lib->seqs[i-n], lib->seqs[i]);
+	    lib->weight[i] = lib->weight[i-n];
+	    lib->rev_compl_seqs[i-n] = lib->seqs[i];
+	    lib->rev_compl_seqs[i] = lib->seqs[i-n];
+       }
+    }
+    return;
+}
+
 int
 seq_lib_num_seq(const seq_lib* lib) {
   if (NULL == lib) return 0;
@@ -4500,15 +4351,91 @@ seq_lib_warning_data(const seq_lib *lib) {
   else return lib->warning.data;
 }
 
-int
-_set_string(char **loc, const char *new_string) {
-  if (*loc) {
-    free(*loc);
-  }
-  if (!(*loc = malloc(strlen(new_string) + 1))) return 1; /* ENOMEM */
-  strcpy(*loc, new_string);
-  return 0;
+static double
+parse_seq_name(char *s)
+{
+    char *p, *q;
+    double n;
+
+    p = s;
+    while( *p != '*' && *p != '\0' ) p++;
+    if (*p == '\0' ) return 1;
+    else {
+	 p++;
+	 n = strtod( p, &q );
+	 if( q == p ) return -1;
+    }
+    if(n > PR_MAX_LIBRARY_WT) return -1;
+
+    return n;
 }
+
+/* 
+ * Removes spaces and "end-of-line" characters
+ * from the sequence, replaces all other
+ * characters except A, T, G, C and IUB/IUPAC
+ * codes with N.  Returns 0 if there were no such
+ * replacements and the first non-ACGT IUB
+ * character otherwise. 
+ */
+static char
+upcase_and_check_char(char *s)
+{
+    int i, j, n, m;
+
+    j = 0; m = 0;
+    n = strlen(s);
+    for(i=0; i<n; i++){
+      
+	switch(s[i])
+	{
+	case 'a' : s[i-j] = 'A'; break;
+	case 'g' : s[i-j] = 'G'; break;
+	case 'c' : s[i-j] = 'C'; break;
+	case 't' : s[i-j] = 'T'; break;
+	case 'n' : s[i-j] = 'N'; break;
+	case 'A' : s[i-j] = 'A'; break;
+	case 'G' : s[i-j] = 'G'; break;
+	case 'C' : s[i-j] = 'C'; break;
+	case 'T' : s[i-j] = 'T'; break;
+	case 'N' : s[i-j] = 'N'; break;
+
+        case 'b' : case 'B': 
+        case 'd' : case 'D':
+        case 'h' : case 'H':
+        case 'v' : case 'V':
+        case 'r' : case 'R':
+        case 'y' : case 'Y':
+        case 'k' : case 'K':
+        case 'm' : case 'M':
+	case 's' : case 'S':
+	case 'w' : case 'W':
+	  s[i-j] = toupper(s[i]); break;
+
+	case '\n': j++;          break;
+	case ' ' : j++;          break;
+	case '\t': j++;          break;
+	case '\r': j++;          break;
+	default  : if (!m) m = s[i]; s[i-j] = 'N'; 
+	}
+    }
+    s[n-j] = '\0';
+    return m;
+}
+
+#undef INIT_LIB_SIZE
+#undef PR_MAX_LIBRARY_WT
+
+
+/* ============================================================ */
+/* END seq_lib functions                                        */
+/* ============================================================ */
+
+
+
+/* ============================================================ */
+/* BEGIN 'get' functions for seq_args                             */
+/* ============================================================ */
 
 interval_array_t2 *
 p3_get_sa_tar2(seq_args *sargs) {
@@ -4523,6 +4450,26 @@ p3_get_sa_excl2(seq_args *sargs) {
 interval_array_t2 *
 p3_get_sa_excl_internal2(seq_args *sargs) {
   return &sargs->excl_internal2 ;
+}
+
+/* ============================================================ */
+/* END 'get' functions for seq_args                             */
+/* ============================================================ */
+
+
+/* ============================================================ */
+/* BEGIN 'set' functions for seq_args                           */
+/* ============================================================ */
+
+/* Helper function */
+static int
+_set_string(char **loc, const char *new_string) {
+  if (*loc) {
+    free(*loc);
+  }
+  if (!(*loc = malloc(strlen(new_string) + 1))) return 1; /* ENOMEM */
+  strcpy(*loc, new_string);
+  return 0;
 }
 
 void
@@ -4560,7 +4507,6 @@ void * p3_set_sa_quality(seq_args *sargs, int *quality) {
   sargs->quality = quality 
 }
 */
-
 
 void
 p3_set_sa_n_quality(seq_args *sargs, int n_quality) {
@@ -4617,30 +4563,66 @@ p3_set_sa_internal_input(seq_args *sargs, const char *internal_input) {
    return _set_string(&sargs->internal_input, internal_input)  ;
 }
 
-void p3_set_gs_primer_task(p3_global_settings * p , int primer_task){
+/* ============================================================ */
+/* END 'set' functions for seq_args                             */
+/* ============================================================ */
+
+
+
+/* ============================================================ */
+/* BEGIN 'get' functions for p3_global_settings                 */
+/* ============================================================ */
+
+args_for_one_oligo_or_primer *
+p3_get_gs_p_args(p3_global_settings * p) {
+  return &p->p_args;
+}
+
+args_for_one_oligo_or_primer *
+p3_get_gs_o_args(p3_global_settings * p) {
+  return &p->o_args;
+}
+
+/* ============================================================ */
+/* END 'get' functions for p3_global_settings                   */
+/* ============================================================ */
+
+/* ============================================================ */
+/* BEGIN 'set' functions for p3_global_settings                 */
+/* ============================================================ */
+
+void 
+p3_set_gs_primer_task(p3_global_settings * p , int primer_task){
   p->primer_task = primer_task;
 }
 
-void p3_set_gs_pick_left_primer(p3_global_settings * p , int pick_left_primer){
+void 
+p3_set_gs_pick_left_primer(p3_global_settings * p , int pick_left_primer){
 p->pick_left_primer = pick_left_primer;
 }
 
-void p3_set_gs_pick_right_primer(p3_global_settings * p , int pick_right_primer){
+void 
+p3_set_gs_pick_right_primer(p3_global_settings * p , int pick_right_primer){
   p->pick_right_primer = pick_right_primer;
 }
 
-void p3_set_gs_pick_internal_oligo(p3_global_settings * p , int pick_internal_oligo){
+void 
+p3_set_gs_pick_internal_oligo(p3_global_settings * p , int pick_internal_oligo){
   p->pick_internal_oligo = pick_internal_oligo;
 }
 
-void p3_set_gs_file_flag(p3_global_settings * p , int file_flag){
+void 
+p3_set_gs_file_flag(p3_global_settings * p , int file_flag){
   p->file_flag = file_flag;
 }
-void p3_set_gs_explain_flag(p3_global_settings * p , int explain_flag){
+
+void 
+p3_set_gs_explain_flag(p3_global_settings * p , int explain_flag){
   p->explain_flag = explain_flag;
 }
 
-void p3_set_gs_first_base_index(p3_global_settings * p , int first_base_index){
+void 
+p3_set_gs_first_base_index(p3_global_settings * p , int first_base_index){
   p->first_base_index = first_base_index;
 }
 
@@ -4668,15 +4650,8 @@ void p3_set_gs_quality_range_max(p3_global_settings * p , int quality_range_max)
   p->quality_range_max = quality_range_max ;
 }
 
-args_for_one_oligo_or_primer *p3_get_gs_p_args(p3_global_settings * p) {
-  return &p->p_args;
-}
-
-args_for_one_oligo_or_primer *p3_get_gs_o_args(p3_global_settings * p) {
-  return &p->o_args;
-}
-
-void p3_set_gs_tm_santalucia(p3_global_settings * p , int tm_santalucia){
+void 
+p3_set_gs_tm_santalucia(p3_global_settings * p , int tm_santalucia){
   p->tm_santalucia = tm_santalucia;
 }
 
@@ -4732,7 +4707,10 @@ void p3_set_gs_product_opt_tm(p3_global_settings * p , double product_opt_tm){
   p->product_opt_tm = product_opt_tm;
 }
 
-void p3_set_gs_pair_max_template_mispriming(p3_global_settings * p , short  pair_max_template_mispriming){
+void 
+p3_set_gs_pair_max_template_mispriming(p3_global_settings * p,
+					    short  pair_max_template_mispriming)
+{
   p->pair_max_template_mispriming = pair_max_template_mispriming;
 }
 
@@ -4751,8 +4729,142 @@ void p3_set_gs_pair_compl_end(p3_global_settings * p , short  pair_compl_end){
 void p3_set_gs_max_diff_tm(p3_global_settings * p , double max_diff_tm){
   p->max_diff_tm = max_diff_tm;
 }
+/* ============================================================ */
+/* END 'set' functions for p3_global_settings                   */
+/* ============================================================ */
+
+
+/* ============================================================ */
+/* BEGIN Internal and external functions for pr_append_str      */
+/* ============================================================ */
+
+static void
+init_pr_append_str(pr_append_str *s) {
+  s->data = NULL;
+  s->storage_size = 0;
+}
+
+pr_append_str *
+create_pr_append_str() {
+  /* We cannot use pr_safe_malloc here
+     because this function will be called outside
+     of the setjmp(....) */
+  pr_append_str *ret;
+
+  ret = malloc(sizeof(pr_append_str));
+  if (NULL == ret) return NULL;
+  init_pr_append_str(ret);
+  /* ret->data = NULL;
+     ret->storage_size = 0;  */
+  return ret;
+}
+
+static void
+destroy_pr_append_str_data(const pr_append_str *str) {
+  if (NULL == str) return;
+  if (str->data != NULL) free(str->data);
+}
+
+void
+destroy_pr_append_str(pr_append_str *str) {
+  if (str == NULL) return;
+  destroy_pr_append_str_data(str);
+  /* if (str->data != NULL) free(str->data); */
+  free(str);
+}
+
+int
+pr_append_external(pr_append_str *x,  const char *s)
+{
+    int xlen, slen;
+
+    PR_ASSERT(NULL != s);
+    PR_ASSERT(NULL != x);
+
+    if (NULL == x->data) {
+	x->storage_size = 24;
+	x->data = malloc(x->storage_size);
+	if (NULL == x->data) return 1; /* out of memory */
+	*x->data = '\0';
+    }
+    xlen = strlen(x->data);
+    slen = strlen(s);
+    if (xlen + slen + 1 > x->storage_size) {
+	x->storage_size += 2 * (slen + 1);
+	x->data = realloc(x->data, x->storage_size);
+	if (NULL == x->data) return 1; /* out of memory */
+    }
+    strcpy(x->data + xlen, s);
+    return 0;
+}
+
+static void
+pr_append_new_chunk(pr_append_str *x, const char *s)
+{
+  PR_ASSERT(NULL != x)
+  if (NULL == s) return;
+  pr_append_w_sep(x, "; ", s);
+}
+
+int
+pr_append_new_chunk_external(pr_append_str *x, const char *s)
+{
+  PR_ASSERT(NULL != x)
+    if (NULL == s) return 0;
+  return(pr_append_w_sep_external(x, "; ", s));
+}
+
+int
+pr_append_w_sep_external(pr_append_str *x,
+			 const char *sep,
+			 const char *s)
+{
+  PR_ASSERT(NULL != x)
+  PR_ASSERT(NULL != s)
+  PR_ASSERT(NULL != sep)
+    if (pr_is_empty(x)) {
+      return(pr_append_external(x, s));
+    } else {
+	return(pr_append_external(x, sep)
+	       || pr_append_external(x, s));
+    }
+}
+
+void
+pr_set_empty(pr_append_str *x)
+{
+    PR_ASSERT(NULL != x);
+    if (NULL != x->data) *x->data = '\0';
+}
+
+int
+pr_is_empty( const pr_append_str *x)
+{
+    PR_ASSERT(NULL != x);
+    return  NULL == x->data || '\0' == *x->data;
+}
+
+static void
+pr_append_w_sep(pr_append_str *x,
+		const char *sep,
+		const char *s)
+{
+  if (pr_append_w_sep_external(x, sep, s)) longjmp(_jmp_buf, 1);
+}
 
 
+static void
+pr_append(pr_append_str *x,
+		 const char *s)
+{
+  if (pr_append_external(x, s)) longjmp(_jmp_buf, 1);
+}
+
+/* ============================================================ */
+/* END internal and external functions for pr_append_str        */
+/* ============================================================ */
+
+
 /* =========================================================== */
 /* Malloc and realloc wrappers that longjmp() on failure       */
 /* =========================================================== */
@@ -4772,22 +4884,6 @@ pr_safe_realloc(void *p, size_t x)
     return r;
 }
 
-static void
-pr_append_w_sep(pr_append_str *x,
-		const char *sep,
-		const char *s)
-{
-  if (pr_append_w_sep_external(x, sep, s)) longjmp(_jmp_buf, 1);
-}
-
-
-static void
-pr_append(pr_append_str *x,
-		 const char *s)
-{
-  if (pr_append_external(x, s)) longjmp(_jmp_buf, 1);
-}
-
-
-/* End of malloc/realloc wrappers. */
+/* =========================================================== */
+/* End of malloc/realloc wrappers.                             */
 /* =========================================================== */
