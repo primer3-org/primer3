@@ -726,7 +726,7 @@ p3_get_retval_warnings(const p3retval *r) {
   return r->warnings.data;
 }
 
-p3_output_type
+const p3_output_type
 p3_get_retval_output_type(const p3retval *r) {
   return r->output_type;
 }
@@ -735,7 +735,7 @@ p3_get_retval_output_type(const p3retval *r) {
 /* END functions for p3retval                                   */
 /* ============================================================ */
 
-
+
 /* ============================================================ */
 /* BEGIN functions for dpal_arg_holder                          */
 /* ============================================================ */
@@ -4432,7 +4432,7 @@ upcase_and_check_char(char *s)
 /* ============================================================ */
 
 
-
+
 /* ============================================================ */
 /* BEGIN 'get' functions for seq_args                             */
 /* ============================================================ */
