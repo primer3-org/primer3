@@ -626,9 +626,9 @@ typedef struct oligo_array {
 typedef struct p3retval {
 	
   /* New Arrays of oligo (primer) records. */
-  oligo_array *fwd, *intl, *rev;
+  oligo_array fwd, intl, rev;
 	
-  /* Arrays of oligo (primer) records. */
+  /* Old Arrays of oligo (primer) records. */
   primer_rec *f, *r, *mid;
 
   /* Number of initialized elements in f, r and mid */
