@@ -647,11 +647,13 @@ create_p3retval(void)
   if (!state)
     return NULL;
 
-  state->f   = malloc(sizeof(*state->f) * INITIAL_LIST_LEN);
-  state->r   = malloc(sizeof(*state->r) * INITIAL_LIST_LEN);
-  state->mid = malloc(sizeof(*state->mid) * INITIAL_LIST_LEN);
+  state->fwd.oligo   = malloc(sizeof(*state->fwd.oligo)  * INITIAL_LIST_LEN);
+  state->rev.oligo   = malloc(sizeof(*state->rev.oligo)  * INITIAL_LIST_LEN);
+  state->intl.oligo  = malloc(sizeof(*state->intl.oligo) * INITIAL_LIST_LEN);
 
-  if (state->f == NULL || state->r == NULL || state->mid == NULL)
+  if (state->fwd.oligo == NULL
+      || state->rev.oligo == NULL
+      || state->intl.oligo == NULL)
     return NULL;
 
   state->fwd.storage_size = INITIAL_LIST_LEN;
@@ -695,12 +697,12 @@ destroy_p3retval(p3retval *state)
 
     free_repeat_sim_score(state);
 
-    if (state->f)
-	free(state->f);
-    if (state->r)
-	free(state->r);
-    if (state->mid)
-	free(state->mid);
+    if (state->fwd.oligo)
+	free(state->fwd.oligo);
+    if (state->rev.oligo)
+	free(state->rev.oligo);
+    if (state->intl.oligo)
+	free(state->intl.oligo);
     if (state->best_pairs.storage_size != 0 && state->best_pairs.pairs)
 	free(state->best_pairs.pairs);
 
@@ -918,18 +920,18 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
        maintain the order of test output. */
     if ( pa->pick_right_primer /* OK pa->primer_task != pick_left_only 
 				  && pa->primer_task != pick_hyb_probe_only */) 
-      qsort(&retval->r[0], retval->rev.num_elem, sizeof(*retval->r),
+      qsort(&retval->rev.oligo[0], retval->rev.num_elem, sizeof(*retval->rev.oligo),
 	    primer_rec_comp);
 
     if( pa->pick_left_primer /* OK pa->primer_task != pick_right_only
 				&& pa->primer_task != pick_hyb_probe_only */) 
-      qsort(&retval->f[0], retval->fwd.num_elem, sizeof(*retval->f),
+      qsort(&retval->fwd.oligo[0], retval->fwd.num_elem, sizeof(*retval->fwd.oligo),
 	    primer_rec_comp);
 
     if(pa->primer_task == pick_hyb_probe_only)
-      qsort(&retval->mid[0], 
+      qsort(&retval->intl.oligo[0], 
 	    retval->intl.num_elem, 
-	    sizeof(*retval->mid), 
+	    sizeof(*retval->intl.oligo), 
 	    primer_rec_comp);
 
     a_pair_array.storage_size = a_pair_array.num_pairs = 0;
@@ -979,11 +981,6 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
     }
 
     if (0 != a_pair_array.storage_size) free(a_pair_array.pairs);
-    
-    /* FIX AU - Copy everything over */
-    retval->fwd.oligo = retval->f;
-    retval->intl.oligo = retval->mid;
-    retval->rev.oligo = retval->r;
     
     return retval;
 }
@@ -1079,7 +1076,7 @@ add_pair(const primer_pair *pair,
 
 /* 
  * Make lists of acceptable left and right primers.  After return, the
- * lists are stored in retval->f and retval->r and the coresponding
+ * lists are stored in retval->fwd.oligo and retval->rev.oligo and the coresponding
  * list sizes are stored in retval->fwd.num_elem and retval->rev.num_elem.  Return 1
  * if one of lists is empty or if leftmost left primer and rightmost
  * right primer do not provide sufficient product size.
@@ -1184,8 +1181,8 @@ make_primer_lists(p3retval *retval,
 	    /* If there is no space on the array, allocate new space */
 		if (k >= retval->fwd.storage_size) {
 		    retval->fwd.storage_size += (retval->fwd.storage_size >> 1);
-		    retval->f = pr_safe_realloc(retval->f, 
-					retval->fwd.storage_size * sizeof(*retval->f));
+		    retval->fwd.oligo = pr_safe_realloc(retval->fwd.oligo, 
+					retval->fwd.storage_size * sizeof(*retval->fwd.oligo));
 		}
 		/* Set the start of the primer */
 		h.start=i-j+1;
@@ -1230,10 +1227,10 @@ make_primer_lists(p3retval *retval,
 		  /* Calculate the penalty */
 		  h.quality = p_obj_fn(pa, &h, 0);
 		  /* Save the primer in the array */
-		  retval->f[k] = h;
+		  retval->fwd.oligo[k] = h;
 		  /* Update the most left primer variable */
-		  if (retval->f[k].start < left)
-		    left=retval->f[k].start;
+		  if (retval->fwd.oligo[k].start < left)
+		    left=retval->fwd.oligo[k].start;
 		  /* Update the number of primers */
 		  k++;
 		} 
@@ -1275,9 +1272,9 @@ make_primer_lists(p3retval *retval,
 	    if(i+j-1<n) {
 		if (k >= retval->rev.storage_size) {
 		    retval->rev.storage_size += (retval->rev.storage_size >> 1);
-		    retval->r 
-		      = pr_safe_realloc(retval->r, 
-					retval->rev.storage_size * sizeof(*retval->r));
+		    retval->rev.oligo 
+		      = pr_safe_realloc(retval->rev.oligo, 
+					retval->rev.storage_size * sizeof(*retval->rev.oligo));
 		}
 		h.start=i+j-1;
 		h.length=j;
@@ -1295,9 +1292,9 @@ make_primer_lists(p3retval *retval,
 		ostats->considered++;
 		if (OK_OR_MUST_USE(&h)) {
 		  h.quality = p_obj_fn(pa, &h, 0);
-		  retval->r[k] = h;
-		  if (retval->r[k].start > right)
-		    right = retval->r[k].start;
+		  retval->rev.oligo[k] = h;
+		  if (retval->rev.oligo[k].start > right)
+		    right = retval->rev.oligo[k].start;
 		  k++;
 		} else if (h.ok==OV_TOO_MANY_NS || h.ok==OV_INTERSECT_TARGET
 		    || h.ok==OV_SELF_ANY || h.ok==OV_END_STAB
@@ -1332,7 +1329,7 @@ make_primer_lists(p3retval *retval,
 } /* make_primer_lists */
 
 /* 
- * Make complete list of acceptable internal oligos in retval->mid.
+ * Make complete list of acceptable internal oligos in retval->intl.oligo.
  * and place the number of valid elements in mid in retval->intl.num_elem.  Return 1 if
  * there are no acceptable internal oligos; otherwise return 0.
  */
@@ -1348,10 +1345,10 @@ make_internal_oligo_list(retval, pa, sa, dpal_arg_to_use)
   char s[MAX_PRIMER_LENGTH+1];
   primer_rec h;
 
-  if (NULL == retval->mid) {
+  if (NULL == retval->intl.oligo) {
     retval->intl.storage_size = INITIAL_LIST_LEN;
-    retval->mid 
-      = pr_safe_malloc(sizeof(*retval->mid) * retval->intl.storage_size);
+    retval->intl.oligo 
+      = pr_safe_malloc(sizeof(*retval->intl.oligo) * retval->intl.storage_size);
   }
 
   n = strlen(sa->trimmed_seq);
@@ -1362,9 +1359,9 @@ make_internal_oligo_list(retval, pa, sa, dpal_arg_to_use)
       if(i-j < -1) break;
       if (k >= retval->intl.storage_size) {
 	retval->intl.storage_size += (retval->intl.storage_size >> 1);
-	retval->mid 
-	  = pr_safe_realloc(retval->mid, 
-			    retval->intl.storage_size * sizeof(*retval->mid));
+	retval->intl.oligo 
+	  = pr_safe_realloc(retval->intl.oligo, 
+			    retval->intl.storage_size * sizeof(*retval->intl.oligo));
       }
       h.start = i - j +1;
       h.length = j;
@@ -1383,7 +1380,7 @@ make_internal_oligo_list(retval, pa, sa, dpal_arg_to_use)
       sa->intl_expl.considered++;
       if (OK_OR_MUST_USE(&h)) {
 	h.quality = p_obj_fn(pa, &h, 2);
-	retval->mid[k] = h;
+	retval->intl.oligo[k] = h;
 	k++;
       } else if (h.ok==OV_TOO_MANY_NS || h.ok==OV_INTERSECT_TARGET
 		 || h.ok==OV_SELF_ANY || h.ok==OV_POLY_X
@@ -2167,9 +2164,9 @@ choose_pair_or_triple(retval, pa, sa,  dpal_arg_to_use, int_num, p)
      *
      * worst_pair must be defined if k >= pa->num_return.
      */
-    if (!OK_OR_MUST_USE(&retval->r[i])) continue;
+    if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) continue;
     if (k >= pa->num_return 
-	&& (retval->r[i].quality + retval->f[0].quality > worst_pair.pair_quality 
+	&& (retval->rev.oligo[i].quality + retval->fwd.oligo[0].quality > worst_pair.pair_quality 
 	    || worst_pair.pair_quality == 0))
       break;
 
@@ -2182,10 +2179,10 @@ choose_pair_or_triple(retval, pa, sa,  dpal_arg_to_use, int_num, p)
        * pairs have the same pair_quality.
        */
 
-      if (!OK_OR_MUST_USE(&retval->r[i])) break;
-      if (!OK_OR_MUST_USE(&retval->f[j])) continue;
+      if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) break;
+      if (!OK_OR_MUST_USE(&retval->fwd.oligo[j])) continue;
       if(k>= pa->num_return 
-	 && (retval->f[j].quality + retval->r[i].quality > worst_pair.pair_quality
+	 && (retval->fwd.oligo[j].quality + retval->rev.oligo[i].quality > worst_pair.pair_quality
 	     || worst_pair.pair_quality == 0)) {
 	/* worst_pair must be defined if k >= pa->num_return. */
 	n_last=j;
@@ -2213,7 +2210,7 @@ choose_pair_or_triple(retval, pa, sa,  dpal_arg_to_use, int_num, p)
 	/* sa-> */ pair_expl->ok++;
 	if (k < pa->num_return) {
 	  if ( pa->primer_task == pick_pcr_primers_and_hyb_probe) 
-	    h.intl = &retval->mid[n_int];
+	    h.intl = &retval->intl.oligo[n_int];
 	  if(pa->pr_pair_weights.io_quality) {
 	    h.pair_quality = obj_fn(pa, &h);
 	    PR_ASSERT(h.pair_quality >= 0.0);
@@ -2228,7 +2225,7 @@ choose_pair_or_triple(retval, pa, sa,  dpal_arg_to_use, int_num, p)
 	  k++;
 	} else {
 	  if ( pa->primer_task == pick_pcr_primers_and_hyb_probe)
-	    h.intl = &retval->mid[n_int];
+	    h.intl = &retval->intl.oligo[n_int];
 	  if(pa->pr_pair_weights.io_quality) {
 	    h.pair_quality = obj_fn(pa, &h);
 	    PR_ASSERT(h.pair_quality >= 0.0);
@@ -2276,7 +2273,7 @@ choose_internal_oligo(retval, left, right, nm, sa, pa, dpal_arg_to_use)
    i = -1;
 
    for (k=0; k < retval->intl.num_elem; k++) {
-     h = &retval->mid[k];  /* h is the record for the oligo currently
+     h = &retval->intl.oligo[k];  /* h is the record for the oligo currently
 			       under consideration */
 
      if ((h->start > (left->start + (left->length-1))) 
@@ -2406,9 +2403,9 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
     double min_oligo_tm;
     /* primer_pair *h = ppair; */
 
-    ppair->left = &retval->f[m];
-    ppair->right = &retval->r[n];
-    ppair->product_size = retval->r[n].start - retval->f[m].start+1;
+    ppair->left = &retval->fwd.oligo[m];
+    ppair->right = &retval->rev.oligo[n];
+    ppair->product_size = retval->rev.oligo[n].start - retval->fwd.oligo[m].start+1;
     ppair->target = 0;
     ppair->compl_any = ppair->compl_end = 0;
 
@@ -2464,7 +2461,7 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
       else pair_failed_flag = 1;
     }
       
-    ppair->diff_tm = fabs(retval->f[m].temp - retval->r[n].temp);
+    ppair->diff_tm = fabs(retval->fwd.oligo[m].temp - retval->rev.oligo[n].temp);
     if (ppair->diff_tm > pa->max_diff_tm) {
       /* sa-> */ pair_expl->temp_diff++;
 	if (!must_use) return PAIR_FAILED;
@@ -2480,14 +2477,14 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
 
     /* s1 is the forward oligo. */
     _pr_substr(sa->trimmed_seq,
-	       retval->f[m].start, 
-	       retval->f[m].length,
+	       retval->fwd.oligo[m].start, 
+	       retval->fwd.oligo[m].length,
 	       s1);
 
     /* s2 is the reverse oligo. */
     _pr_substr(sa->trimmed_seq,
-	       retval->r[n].start - retval->r[n].length + 1,
-	       retval->r[n].length,
+	       retval->rev.oligo[n].start - retval->rev.oligo[n].length + 1,
+	       retval->rev.oligo[n].length,
 	       s2);
 
 
@@ -2495,28 +2492,28 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
     _pr_reverse_complement(s2, s2_rev);
 
 
-    if (retval->f[m].self_any == ALIGN_SCORE_UNDEF) {
+    if (retval->fwd.oligo[m].self_any == ALIGN_SCORE_UNDEF) {
       /* We have not yet computed the  'self_any' paramter,
          which is an attempt at self primer-dimer and secondary
          structure. */
-      oligo_compl(&retval->f[m], &pa->p_args,
+      oligo_compl(&retval->fwd.oligo[m], &pa->p_args,
 		  sa, 
 		  OT_LEFT, dpal_arg_to_use, s1, s1_rev);
 
-      if (!OK_OR_MUST_USE(&retval->f[m])) {
+      if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
 	/* sa-> */ pair_expl->considered--;
 	return PAIR_FAILED;
       }
 
     }
 
-    if (retval->r[n].self_any == ALIGN_SCORE_UNDEF) {
-      oligo_compl(&retval->r[n], 
+    if (retval->rev.oligo[n].self_any == ALIGN_SCORE_UNDEF) {
+      oligo_compl(&retval->rev.oligo[n], 
 		  &pa->p_args,
 		  sa, 
 		  OT_RIGHT, dpal_arg_to_use, s2_rev, s2);
 
-       if (!OK_OR_MUST_USE(&retval->r[n])) {
+       if (!OK_OR_MUST_USE(&retval->rev.oligo[n])) {
 	 /* sa-> */ pair_expl->considered--;
 	  return PAIR_FAILED;
        }
@@ -2530,22 +2527,22 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
     /* Mispriming of _indvidiual_ primers to template and mispriming
        to repeat libraries. */
 
-    if (retval->f[m].repeat_sim.score == NULL) {
+    if (retval->fwd.oligo[m].repeat_sim.score == NULL) {
       /* We have not yet checked the olgio against the repeat library. */
-       oligo_mispriming(&retval->f[m], pa, sa, OT_LEFT,
+       oligo_mispriming(&retval->fwd.oligo[m], pa, sa, OT_LEFT,
 			dpal_arg_to_use->local_end,
 			dpal_arg_to_use);
-       if (!OK_OR_MUST_USE(&retval->f[m])) {
+       if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
 	 /* sa-> */ pair_expl->considered--;
 	   return PAIR_FAILED;
        }
     }
 
-    if(retval->r[n].repeat_sim.score == NULL){
-       oligo_mispriming(&retval->r[n], pa, sa, OT_RIGHT,
+    if(retval->rev.oligo[n].repeat_sim.score == NULL){
+       oligo_mispriming(&retval->rev.oligo[n], pa, sa, OT_RIGHT,
 			dpal_arg_to_use->local_end,
 			dpal_arg_to_use);
-       if (!OK_OR_MUST_USE(&retval->r[n])) {
+       if (!OK_OR_MUST_USE(&retval->rev.oligo[n])) {
 	 /* sa-> */ pair_expl->considered--;
 	  return PAIR_FAILED;
        }
@@ -3269,23 +3266,23 @@ free_repeat_sim_score(state)
    int i;
 
    for (i = 0; i < state->fwd.num_elem; i++) {
-       if (state->f[i].repeat_sim.score != NULL) {
-	   free(state->f[i].repeat_sim.score);
-	   state->f[i].repeat_sim.score = NULL;
+       if (state->fwd.oligo[i].repeat_sim.score != NULL) {
+	   free(state->fwd.oligo[i].repeat_sim.score);
+	   state->fwd.oligo[i].repeat_sim.score = NULL;
        }
    }
 
    for (i = 0; i < state->rev.num_elem; i++) {
-       if (state->r[i].repeat_sim.score != NULL) {
-	   free(state->r[i].repeat_sim.score);
-	   state->r[i].repeat_sim.score = NULL;
+       if (state->rev.oligo[i].repeat_sim.score != NULL) {
+	   free(state->rev.oligo[i].repeat_sim.score);
+	   state->rev.oligo[i].repeat_sim.score = NULL;
        }
    }
 
    for (i = 0; i < state->intl.num_elem; i++) {
-       if (state->mid[i].repeat_sim.score != NULL) {
-	   free(state->mid[i].repeat_sim.score);
-	   state->mid[i].repeat_sim.score = NULL;
+       if (state->intl.oligo[i].repeat_sim.score != NULL) {
+	   free(state->intl.oligo[i].repeat_sim.score);
+	   state->intl.oligo[i].repeat_sim.score = NULL;
        }
    }
 }
