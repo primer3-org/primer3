@@ -187,7 +187,8 @@ main(argc,argv)
       }
       goto finish_loop;
     }
-
+    
+    /* Pick the primers - the central function */
     retval = choose_primers(global_pa, sa);
     if (NULL == retval) exit(-2); /* Out of memory. */
 
