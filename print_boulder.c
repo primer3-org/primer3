@@ -106,9 +106,9 @@ boulder_print(io_version, pa, sa, retval)
 	     * set it to the number requested. */
 
 	    /* Get how many primers are in the array */
-	    num_fwd = retval->n_f;
-	    num_rev = retval->n_r;
-	    num_int = retval->n_m;
+	    num_fwd = retval->fwd.num_elem;
+	    num_rev = retval->rev.num_elem;
+	    num_int = retval->intl.num_elem;
 	    /* Get how may primers should be printed */
 	    num_print = pa->num_return;
 	    /* Set how many primers will be printed */
@@ -140,9 +140,9 @@ boulder_print(io_version, pa, sa, retval)
       /* The conditions for primer lists */
       if (retval->output_type == primer_list) {
          /* Attach the selected primers to the pointers */
-  		fwd = &retval->f[i];
-  		rev = &retval->r[i];
-  		intl = &retval->mid[i];
+  		fwd = &retval->fwd.oligo[i];
+  		rev = &retval->rev.oligo[i];
+  		intl = &retval->intl.oligo[i];
 	    /* Do fwd oligos have to be printed? */
 	    if ((pa->pick_left_primer) && (i < print_fwd)) {
 	    	go_fwd = 1;
