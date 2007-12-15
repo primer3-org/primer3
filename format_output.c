@@ -49,7 +49,7 @@ static void format_pairs(FILE *f, const p3_global_settings *pa,
 	     const seq_args *sa, const pair_array_t *best_pairs,
 	     const char *pr_release);
 static void format_oligos(FILE *, const p3_global_settings *, const seq_args *, 
-		   primer_rec *, int, oligo_type, const char*);
+		const oligo_array *, const char*);
 static int lib_sim_specified(const p3_global_settings *);
 static void print_explain(FILE *, const p3_global_settings *,
 			  const seq_args *, int, const char *);
@@ -82,12 +82,7 @@ print_format_output(FILE *f,
 	     const seq_args *sa,
 	     const p3retval *retval,
 	     const char *pr_release)
-{
-  /* The variables for primer lists */
-  oligo_type oligot = OT_LEFT; /* Silence warning */
-  int num_oligo = 0;
-  primer_rec *oligo = NULL;
-  
+{  
   /* Print as primer pairs */
   if (retval->output_type == primer_pairs) {
     format_pairs(f, pa, sa, &retval->best_pairs, pr_release);
@@ -96,24 +91,15 @@ print_format_output(FILE *f,
   }	else {
 	/* Figure out which primer to print */
     if (pa->pick_left_primer) {
-      oligot = OT_LEFT;
-	  oligo = retval->f;
-	  num_oligo = retval->n_f;
+	  format_oligos(stdout, pa, sa, &retval->fwd, pr_release);
     } else if (pa->pick_right_primer) {
-	  oligot = OT_RIGHT;
-	  oligo = retval->r;
-	  num_oligo = retval->n_r;
+	  format_oligos(stdout, pa, sa, &retval->rev, pr_release);
     } else if (pa->pick_internal_oligo) {
-	  oligot = OT_INTL;
-	  oligo = retval->mid;
-	  num_oligo = retval->n_m;
+	  format_oligos(stdout, pa, sa, &retval->intl, pr_release);
     } else {
 	  fprintf(stderr, "%s: fatal programming error\n", pr_program_name);
 	  abort();
     }
-    /* Call the print primer list function */
-    format_oligos(stdout, pa, sa, oligo, num_oligo,
-    		      oligot, pr_release);
   }
 	
 }
@@ -725,11 +711,12 @@ void
 format_oligos(FILE *f,
 	      const p3_global_settings *pa,
 	      const seq_args    *sa,
-	      primer_rec  *h,
-	      int n,
-	      oligo_type l,
+	      const oligo_array *oligo_list,
 	      const char* pr_release)
 {
+  primer_rec  *h = oligo_list->oligo;
+  int n = oligo_list->num_elem;
+  oligo_type l = oligo_list->type;
   char *warning;
   int print_lib_sim = lib_sim_specified(pa);
   int i;
