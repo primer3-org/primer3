@@ -192,6 +192,24 @@ main(argc,argv)
     retval = choose_primers(global_pa, sa);
     if (NULL == retval) exit(-2); /* Out of memory. */
 
+    /* FIX AU - Copy everything over */
+    retval->fwd.oligo = retval->f;
+    retval->intl.oligo = retval->mid;
+    retval->rev.oligo = retval->r;
+    
+    retval->fwd.num_elem = retval->n_f;
+    retval->intl.num_elem = retval->n_m;
+    retval->rev.num_elem = retval->n_r;
+
+    retval->fwd.storage_size = retval->f_len;
+    retval->intl.storage_size = retval->mid_len;
+    retval->rev.storage_size = retval->r_len;
+
+    retval->fwd.type = OT_LEFT;
+    retval->intl.type = OT_INTL;
+    retval->rev.type = OT_RIGHT;
+
+    
     /* If there are errors, write the proper message
      * and finish this loop */
     if (pr_is_empty(&retval->glob_err)

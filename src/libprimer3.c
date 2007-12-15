@@ -971,10 +971,28 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
     }
 
     if (0 != a_pair_array.storage_size) free(a_pair_array.pairs);
+    
+    /* FIX AU - Copy everything over */
+    retval->fwd.oligo = retval->f;
+    retval->intl.oligo = retval->mid;
+    retval->rev.oligo = retval->r;
+    
+    retval->fwd.num_elem = retval->n_f;
+    retval->intl.num_elem = retval->n_m;
+    retval->rev.num_elem = retval->n_r;
+
+    retval->fwd.storage_size = retval->f_len;
+    retval->intl.storage_size = retval->mid_len;
+    retval->rev.storage_size = retval->r_len;
+
+    retval->fwd.type = OT_LEFT;
+    retval->intl.type = OT_INTL;
+    retval->rev.type = OT_RIGHT;
+    
     return retval;
 }
 
-
+
 /* Call this function only if the 'stat's contains
    the _errors_ associated with a given primer
    i.e. that primer was supplied by the caller
@@ -2017,7 +2035,7 @@ p3_print_oligo_lists(const p3retval *retval,
 int
 p3_print_one_oligo_list(const seq_args *sa,
 			int n,
-			const primer_rec oligo_arr[],
+			const primer_rec *oligo_arr,
 			const oligo_type o_type,
 			const int first_base_index, 
 			const int print_lib_sim,
