@@ -44,7 +44,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "read_boulder.h"
 #include "print_boulder.h"
 
-/* Some global variables */
+/* Some function prototypes */
 static void   print_usage();
 static void   sig_handler(int);
 
@@ -193,8 +193,17 @@ main(argc,argv)
 
     /* If there are errors, write the proper message
      * and finish this loop */
-    if (!pr_is_empty(&retval->glob_err)
-	||	!pr_is_empty(&retval->per_sequence_err)) {
+    if (pr_is_empty(&retval->glob_err)
+	&& pr_is_empty(&retval->per_sequence_err)) {
+      /* Create files with left, right, and internal oligos. */
+      if (global_pa->file_flag) {
+	if (pr_is_empty(&sa->error)) {
+	  p3_print_oligo_lists(retval, sa, global_pa,
+			       &retval->per_sequence_err); 
+	}
+      }
+
+    } else {
 
       if (pr_append_new_chunk_external(combined_retval_err, 
 			      retval->glob_err.data))
