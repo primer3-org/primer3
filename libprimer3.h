@@ -628,19 +628,16 @@ typedef struct p3retval {
   /* Arrays of oligo (primer) records. */
   oligo_array fwd, intl, rev;
 	
-  /* Old Arrays of oligo (primer) records. */
-  primer_rec *f, *r, *mid;
-
   /* Array of best primer pairs */
   pair_array_t best_pairs;
 
-  pr_append_str glob_err;
-
-  pr_append_str per_sequence_err;
-
-  pr_append_str warnings;
-
+  /* Struct to store type of output */
   p3_output_type output_type;
+
+  /* Place for error messages */
+  pr_append_str glob_err;
+  pr_append_str per_sequence_err;
+  pr_append_str warnings;
 
 } p3retval;
 

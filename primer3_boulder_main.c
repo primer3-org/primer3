@@ -191,12 +191,6 @@ main(argc,argv)
     /* Pick the primers - the central function */
     retval = choose_primers(global_pa, sa);
     if (NULL == retval) exit(-2); /* Out of memory. */
-
-    /* FIX AU - Copy everything over */
-    retval->fwd.oligo = retval->f;
-    retval->intl.oligo = retval->mid;
-    retval->rev.oligo = retval->r;
-
     
     /* If there are errors, write the proper message
      * and finish this loop */
