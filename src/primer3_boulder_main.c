@@ -196,7 +196,8 @@ main(argc,argv)
     retval->fwd.oligo = retval->f;
     retval->intl.oligo = retval->mid;
     retval->rev.oligo = retval->r;
-    
+
+    /*
     retval->fwd.num_elem = retval->n_f;
     retval->intl.num_elem = retval->n_m;
     retval->rev.num_elem = retval->n_r;
@@ -204,7 +205,7 @@ main(argc,argv)
     retval->fwd.storage_size = retval->f_len;
     retval->intl.storage_size = retval->mid_len;
     retval->rev.storage_size = retval->r_len;
-
+*/
     retval->fwd.type = OT_LEFT;
     retval->intl.type = OT_INTL;
     retval->rev.type = OT_RIGHT;

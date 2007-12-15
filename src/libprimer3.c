@@ -654,9 +654,13 @@ create_p3retval(void)
   if (state->f == NULL || state->r == NULL || state->mid == NULL)
     return NULL;
 
-  state->f_len = state->r_len = state->mid_len = INITIAL_LIST_LEN;
+  state->fwd.storage_size = INITIAL_LIST_LEN;
+  state->rev.storage_size = INITIAL_LIST_LEN;
+  state->intl.storage_size = INITIAL_LIST_LEN;
 
-  state->n_f = state->n_r = state->n_m = 0;
+  state->fwd.num_elem = 0;
+  state->rev.num_elem = 0;
+  state->intl.num_elem = 0;
 
   state->best_pairs.storage_size = 0;
   state->best_pairs.pairs = NULL;
@@ -910,17 +914,17 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
        maintain the order of test output. */
     if ( pa->pick_right_primer /* OK pa->primer_task != pick_left_only 
 				  && pa->primer_task != pick_hyb_probe_only */) 
-      qsort(&retval->r[0], retval->n_r, sizeof(*retval->r),
+      qsort(&retval->r[0], retval->rev.num_elem, sizeof(*retval->r),
 	    primer_rec_comp);
 
     if( pa->pick_left_primer /* OK pa->primer_task != pick_right_only
 				&& pa->primer_task != pick_hyb_probe_only */) 
-      qsort(&retval->f[0], retval->n_f, sizeof(*retval->f),
+      qsort(&retval->f[0], retval->fwd.num_elem, sizeof(*retval->f),
 	    primer_rec_comp);
 
     if(pa->primer_task == pick_hyb_probe_only)
       qsort(&retval->mid[0], 
-	    retval->n_m, 
+	    retval->intl.num_elem, 
 	    sizeof(*retval->mid), 
 	    primer_rec_comp);
 
@@ -976,7 +980,8 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
     retval->fwd.oligo = retval->f;
     retval->intl.oligo = retval->mid;
     retval->rev.oligo = retval->r;
-    
+
+    /*
     retval->fwd.num_elem = retval->n_f;
     retval->intl.num_elem = retval->n_m;
     retval->rev.num_elem = retval->n_r;
@@ -984,7 +989,7 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
     retval->fwd.storage_size = retval->f_len;
     retval->intl.storage_size = retval->mid_len;
     retval->rev.storage_size = retval->r_len;
-
+*/
     retval->fwd.type = OT_LEFT;
     retval->intl.type = OT_INTL;
     retval->rev.type = OT_RIGHT;
@@ -1084,7 +1089,7 @@ add_pair(const primer_pair *pair,
 /* 
  * Make lists of acceptable left and right primers.  After return, the
  * lists are stored in retval->f and retval->r and the coresponding
- * list sizes are stored in retval->n_f and retval->n_r.  Return 1
+ * list sizes are stored in retval->fwd.num_elem and retval->rev.num_elem.  Return 1
  * if one of lists is empty or if leftmost left primer and rightmost
  * right primer do not provide sufficient product size.
  */
@@ -1186,10 +1191,10 @@ make_primer_lists(p3retval *retval,
 	    /* If the possible primer is smaller than the sequence */
 	    if (i-j+1>=0) {
 	    /* If there is no space on the array, allocate new space */
-		if (k >= retval->f_len) {
-		    retval->f_len += (retval->f_len >> 1);
+		if (k >= retval->fwd.storage_size) {
+		    retval->fwd.storage_size += (retval->fwd.storage_size >> 1);
 		    retval->f = pr_safe_realloc(retval->f, 
-					retval->f_len * sizeof(*retval->f));
+					retval->fwd.storage_size * sizeof(*retval->f));
 		}
 		/* Set the start of the primer */
 		h.start=i-j+1;
@@ -1255,7 +1260,7 @@ make_primer_lists(p3retval *retval,
       }  /*  for (i = f_b; .... */
     }  /* if (pa->pick_left_primer) */
     /* Update statistics with how many primers are good */
-    ostats->ok = retval->n_f = k;
+    ostats->ok = retval->fwd.num_elem = k;
 
     if (pa->primer_task == pick_right_only)
       r_b = 0;
@@ -1277,11 +1282,11 @@ make_primer_lists(p3retval *retval,
 	for(j = pa->p_args.min_size; j <= pa->p_args.max_size; j++) {
 	    if (i+j<pr_min && pa->primer_task != pick_right_only) continue;
 	    if(i+j-1<n) {
-		if (k >= retval->r_len) {
-		    retval->r_len += (retval->r_len >> 1);
+		if (k >= retval->rev.storage_size) {
+		    retval->rev.storage_size += (retval->rev.storage_size >> 1);
 		    retval->r 
 		      = pr_safe_realloc(retval->r, 
-					retval->r_len * sizeof(*retval->r));
+					retval->rev.storage_size * sizeof(*retval->r));
 		}
 		h.start=i+j-1;
 		h.length=j;
@@ -1316,15 +1321,15 @@ make_primer_lists(p3retval *retval,
 	}
       } /*  for (i = r_b; .... */
     } /* if (pa->pick_right_primer) */
-    ostats->ok = retval->n_r = k;
+    ostats->ok = retval->rev.num_elem = k;
 
     /* 
      * Return 1 if either the left primer list or the right primer
      * list is empty or if leftmost left primer and
      * rightmost right primer do not provide sufficient product size.
      */
-    if ((pa->pick_left_primer && 0 == retval->n_f)
-	|| ((pa->pick_right_primer)  && 0 == retval->n_r)) {
+    if ((pa->pick_left_primer && 0 == retval->fwd.num_elem)
+	|| ((pa->pick_right_primer)  && 0 == retval->rev.num_elem)) {
       return 1;
     } else if (pa->pick_left_primer 
 	       && pa->pick_right_primer
@@ -1337,7 +1342,7 @@ make_primer_lists(p3retval *retval,
 
 /* 
  * Make complete list of acceptable internal oligos in retval->mid.
- * and place the number of valid elements in mid in *n_m.  Return 1 if
+ * and place the number of valid elements in mid in retval->intl.num_elem.  Return 1 if
  * there are no acceptable internal oligos; otherwise return 0.
  */
 static int
@@ -1353,9 +1358,9 @@ make_internal_oligo_list(retval, pa, sa, dpal_arg_to_use)
   primer_rec h;
 
   if (NULL == retval->mid) {
-    retval->mid_len = INITIAL_LIST_LEN;
+    retval->intl.storage_size = INITIAL_LIST_LEN;
     retval->mid 
-      = pr_safe_malloc(sizeof(*retval->mid) * retval->mid_len);
+      = pr_safe_malloc(sizeof(*retval->mid) * retval->intl.storage_size);
   }
 
   n = strlen(sa->trimmed_seq);
@@ -1364,11 +1369,11 @@ make_internal_oligo_list(retval, pa, sa, dpal_arg_to_use)
     s[0] = '\0';
     for(j = pa->o_args.min_size; j <= pa->o_args.max_size; j++) {
       if(i-j < -1) break;
-      if (k >= retval->mid_len) {
-	retval->mid_len += (retval->mid_len >> 1);
+      if (k >= retval->intl.storage_size) {
+	retval->intl.storage_size += (retval->intl.storage_size >> 1);
 	retval->mid 
 	  = pr_safe_realloc(retval->mid, 
-			    retval->mid_len * sizeof(*retval->mid));
+			    retval->intl.storage_size * sizeof(*retval->mid));
       }
       h.start = i - j +1;
       h.length = j;
@@ -1399,9 +1404,9 @@ make_internal_oligo_list(retval, pa, sa, dpal_arg_to_use)
       }
     }
   }
-  retval->n_m = k;
-  sa->intl_expl.ok = retval->n_m;
-  if (retval->n_m == 0) return 1;
+  retval->intl.num_elem = k;
+  sa->intl_expl.ok = retval->intl.num_elem;
+  if (retval->intl.num_elem == 0) return 1;
   else return 0;
 } /* make_internal_oligo_list */
 
@@ -2135,8 +2140,8 @@ print_oligo(FILE *fh,
 
 
 
-/* This function requires that retval->n_f and n_r,
-   and posibly n_m...see choose_internal_oligo().  
+/* This function requires that retval->fwd.num_elem and rev.num_elem,
+   and posibly intl.num_elem...see choose_internal_oligo().  
    This function then sorts through the pairs or
    triples to find pa->nu. */
 static int
@@ -2163,8 +2168,8 @@ choose_pair_or_triple(retval, pa, sa,  dpal_arg_to_use, int_num, p)
   k=0; 
 
   i_worst = 0;
-  n_last = retval->n_f;
-  for (i=0; i<retval->n_r; i++) {
+  n_last = retval->fwd.num_elem;
+  for (i=0; i<retval->rev.num_elem; i++) {
     /* 
      * Make a quick cut based on the the quality of the best left
      * primer.
@@ -2279,7 +2284,7 @@ choose_internal_oligo(retval, left, right, nm, sa, pa, dpal_arg_to_use)
    min = 1000000.;
    i = -1;
 
-   for (k=0; k < retval->n_m; k++) {
+   for (k=0; k < retval->intl.num_elem; k++) {
      h = &retval->mid[k];  /* h is the record for the oligo currently
 			       under consideration */
 
@@ -3272,21 +3277,21 @@ free_repeat_sim_score(state)
 {
    int i;
 
-   for (i = 0; i < state->n_f; i++) {
+   for (i = 0; i < state->fwd.num_elem; i++) {
        if (state->f[i].repeat_sim.score != NULL) {
 	   free(state->f[i].repeat_sim.score);
 	   state->f[i].repeat_sim.score = NULL;
        }
    }
 
-   for (i = 0; i < state->n_r; i++) {
+   for (i = 0; i < state->rev.num_elem; i++) {
        if (state->r[i].repeat_sim.score != NULL) {
 	   free(state->r[i].repeat_sim.score);
 	   state->r[i].repeat_sim.score = NULL;
        }
    }
 
-   for (i = 0; i < state->n_m; i++) {
+   for (i = 0; i < state->intl.num_elem; i++) {
        if (state->mid[i].repeat_sim.score != NULL) {
 	   free(state->mid[i].repeat_sim.score);
 	   state->mid[i].repeat_sim.score = NULL;
