@@ -1974,9 +1974,9 @@ p3_print_oligo_lists(const p3retval *retval,
     }
 
     /* Print the content to the file */
-    ret = p3_print_one_oligo_list(sa, retval->n_f, retval->f, 
-				  OT_LEFT, first_base_index, 
-				  NULL != pa->p_args.repeat_lib, fh);
+    ret = p3_print_one_oligo_list(sa, retval->fwd.num_elem,
+    			  retval->fwd.oligo, OT_LEFT, 
+    			  first_base_index, NULL != pa->p_args.repeat_lib, fh);
     fclose(fh);
     if (ret) return 1;
   }
@@ -1995,9 +1995,9 @@ p3_print_oligo_lists(const p3retval *retval,
       return 1;
     }
     /* Print the content to the file */
-    ret = p3_print_one_oligo_list(sa, retval->n_r, retval->r, 
-				  OT_RIGHT, first_base_index,
-				  NULL != pa->p_args.repeat_lib, fh);
+    ret = p3_print_one_oligo_list(sa, retval->rev.num_elem,
+    			  retval->rev.oligo, OT_RIGHT,
+    			  first_base_index, NULL != pa->p_args.repeat_lib, fh);
 
     fclose(fh);
     if (ret) return 1;
@@ -2019,10 +2019,9 @@ p3_print_oligo_lists(const p3retval *retval,
       return 1;
     }
     /* Print the content to the file */
-    ret = p3_print_one_oligo_list(sa, retval->n_m, retval->mid, OT_INTL,
-				  first_base_index,
-				  NULL != pa->o_args.repeat_lib,
-				  fh);
+    ret = p3_print_one_oligo_list(sa, retval->intl.num_elem,
+    			  retval->intl.oligo, OT_INTL,
+				  first_base_index, NULL != pa->o_args.repeat_lib, fh);
     fclose(fh);
     if (ret) return 1;
   }
