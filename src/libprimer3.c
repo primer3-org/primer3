@@ -661,6 +661,10 @@ create_p3retval(void)
   state->fwd.num_elem = 0;
   state->rev.num_elem = 0;
   state->intl.num_elem = 0;
+  
+  state->fwd.type = OT_LEFT;
+  state->intl.type = OT_INTL;
+  state->rev.type = OT_RIGHT;
 
   state->best_pairs.storage_size = 0;
   state->best_pairs.pairs = NULL;
@@ -980,19 +984,6 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
     retval->fwd.oligo = retval->f;
     retval->intl.oligo = retval->mid;
     retval->rev.oligo = retval->r;
-
-    /*
-    retval->fwd.num_elem = retval->n_f;
-    retval->intl.num_elem = retval->n_m;
-    retval->rev.num_elem = retval->n_r;
-
-    retval->fwd.storage_size = retval->f_len;
-    retval->intl.storage_size = retval->mid_len;
-    retval->rev.storage_size = retval->r_len;
-*/
-    retval->fwd.type = OT_LEFT;
-    retval->intl.type = OT_INTL;
-    retval->rev.type = OT_RIGHT;
     
     return retval;
 }
