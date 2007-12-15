@@ -280,7 +280,7 @@ static const char *pr_program_name = "probably primer3_core";
 /* FIX ME -- there is no need to create #defines for these. */
 
 /* Default parameter values.  */
-#define OPT_SIZE            20
+
 #define MIN_SIZE             18
 #define MAX_SIZE             27
 
@@ -360,7 +360,6 @@ The default is 0 only for backward compatibility.
  http://www.clinchem.org/cgi/content/full/47/11/1956] The default
  is  0. (New in v. 1.1.0, added by Maido Remm and Triinu Koressaar.)
  */
-
 #define DIVALENT_CONC       0.0
 #define DNTP_CONC           0.0
 #define DNA_CONC           50.0
@@ -370,7 +369,6 @@ The default is 0 only for backward compatibility.
 #define SELF_END            300
 #define PAIR_COMPL_ANY      800
 #define PAIR_COMPL_END      300
-#define FILE_FLAG             0
 #define EXPLAIN_FLAG          0
 #define GC_CLAMP              0
 #define LIBERAL_BASE          0
@@ -497,7 +495,7 @@ p3_destroy_global_settings(p3_global_settings *a) {
 void
 pr_set_default_global_args(p3_global_settings *a) {
     memset(a, 0, sizeof(*a));  
-    a->p_args.opt_size         = OPT_SIZE;
+    a->p_args.opt_size         =  20;
     a->p_args.min_size         = MIN_SIZE;
     a->p_args.max_size         = MAX_SIZE;
     a->p_args.opt_tm           = OPT_TM;
@@ -522,7 +520,7 @@ pr_set_default_global_args(p3_global_settings *a) {
     a->p_args.max_self_end         = SELF_END;
     a->pair_compl_any   = PAIR_COMPL_ANY;
     a->pair_compl_end   = PAIR_COMPL_END;
-    a->file_flag        = FILE_FLAG;
+    a->file_flag        = 0;
     a->explain_flag     = EXPLAIN_FLAG;
     a->gc_clamp         = GC_CLAMP;
     a->p_args.max_poly_x       = MAX_POLY_X;
@@ -894,6 +892,7 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
       }
     }
 
+#if 0
     /* Creates files with left, right, and internal oligos. */
     if (pa->file_flag) {
       if (p3_print_oligo_lists(retval, sa, pa,
@@ -905,6 +904,7 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
 	}
       }
     }
+#endif
 
     /* We sort _after_ printing lists to 
        maintain the order of test output. */
@@ -1923,89 +1923,93 @@ p3_print_oligo_lists(const p3retval *retval,
 		     const p3_global_settings *pa,
 		     pr_append_str *err)
 {
-	/* Figure out if the sequence starts at position 1 or 0 */
-    int   first_base_index = pa->first_base_index;
-    int   ret;
-    /* Start building up a filename */
-    char *file;
-    FILE *fh;
+  /* Figure out if the sequence starts at position 1 or 0 */
+  int   first_base_index = pa->first_base_index;
+  int   ret;
+  /* Start building up a filename */
+  char *file;
+  FILE *fh;
 
-    if (setjmp(_jmp_buf) != 0) {
-      return 1;  /* If we get here, that means we returned via a longjmp.
-		    In this case errno should be ENOMEM. */
+  if (setjmp(_jmp_buf) != 0) {
+    return 1;  /* If we get here, that means we returned via a longjmp.
+		  In this case errno should be ENOMEM. */
 
-    }
+  }
 
-    file = pr_safe_malloc(strlen(sa->sequence_name) + 5);
+  file = malloc(strlen(sa->sequence_name) + 5);
+  if (NULL == file) return 1; /* ENOMEM */
 
-    /* Check if the left primers have to be printed */
-    /* OK pa->primer_task != pick_right_only 
-	   && pa->primer_task != pick_hyb_probe_only*/
-    if( pa->pick_left_primer ) {
-      /* Create the file name and open file*/
-      strcpy(file, sa->sequence_name);
-      strcat(file, ".for");
-      if (!(fh = fopen(file,"w"))) {
-	pr_append_new_chunk(err, "Unable to open file ");
-	pr_append(err, file);
-	pr_append(err, " for writing");
-	free(file);
+  /* Check if the left primers have to be printed */
+  /* OK pa->primer_task != pick_right_only 
+     && pa->primer_task != pick_hyb_probe_only*/
+  if( pa->pick_left_primer ) {
+    /* Create the file name and open file*/
+    strcpy(file, sa->sequence_name);
+    strcat(file, ".for");
+    if (!(fh = fopen(file,"w"))) {
+      if (pr_append_new_chunk_external(err, "Unable to open file "))
 	return 1;
-      }
-      /* Print the content to the file */
-      ret = p3_print_one_oligo_list(sa, retval->n_f, retval->f, 
-			      OT_LEFT, first_base_index, 
-			      NULL != pa->p_args.repeat_lib, fh);
-      fclose(fh);
-      if (ret) return 1;
+      if (pr_append_external(err, file)) return 1;
+      if (pr_append_external(err, " for writing")) return 1;
+      free(file);
+      return 1;
     }
 
-    /* Check if the right primers have to be printed */
-    if (pa->pick_right_primer 
-	/* pa->primer_task != pick_left_only 
-	   && pa->primer_task != pick_hyb_probe_only*/ ) {
-      strcpy(file, sa->sequence_name);
-      strcat(file, ".rev");
-      if (!(fh = fopen(file,"w"))) {
-	pr_append_new_chunk(err, "Unable to open file ");
-	pr_append(err, file);
-	pr_append(err, " for writing");
-	free(file);
-	return 1;
-      }
-      /* Print the content to the file */
-      ret = p3_print_one_oligo_list(sa, retval->n_r, retval->r, 
-				    OT_RIGHT, first_base_index,
-				    NULL != pa->p_args.repeat_lib, fh);
+    /* Print the content to the file */
+    ret = p3_print_one_oligo_list(sa, retval->n_f, retval->f, 
+				  OT_LEFT, first_base_index, 
+				  NULL != pa->p_args.repeat_lib, fh);
+    fclose(fh);
+    if (ret) return 1;
+  }
 
-      fclose(fh);
-      if (ret) return 1;
+  /* Check if the right primers have to be printed */
+  if (pa->pick_right_primer 
+      /* pa->primer_task != pick_left_only 
+	 && pa->primer_task != pick_hyb_probe_only*/ ) {
+    strcpy(file, sa->sequence_name);
+    strcat(file, ".rev");
+    if (!(fh = fopen(file,"w"))) {
+      pr_append_new_chunk(err, "Unable to open file ");
+      pr_append(err, file);
+      pr_append(err, " for writing");
+      free(file);
+      return 1;
     }
+    /* Print the content to the file */
+    ret = p3_print_one_oligo_list(sa, retval->n_r, retval->r, 
+				  OT_RIGHT, first_base_index,
+				  NULL != pa->p_args.repeat_lib, fh);
 
-    /* Check if the internal oligos have to be printed */
-    if (pa->pick_internal_oligo) { 
+    fclose(fh);
+    if (ret) return 1;
+  }
+
+  /* Check if the internal oligos have to be printed */
+  if (pa->pick_internal_oligo) { 
     /* pa->primer_task == pick_pcr_primers_and_hyb_probe 
-	   || pa->primer_task == pick_hyb_probe_only */ 
-      /* Create the file name and open file*/
-      strcpy(file, sa->sequence_name);
-      strcat(file, ".int");
-      if (!(fh = fopen(file,"w"))) {
-	pr_append_new_chunk(err, "Unable to open file ");
-	pr_append(err, file);
-	pr_append(err, " for writing");
-	free(file);
+       || pa->primer_task == pick_hyb_probe_only */ 
+    /* Create the file name and open file*/
+    strcpy(file, sa->sequence_name);
+    strcat(file, ".int");
+    if (!(fh = fopen(file,"w"))) {
+      if (pr_append_new_chunk_external(err, "Unable to open file "))
 	return 1;
-      }
-      /* Print the content to the file */
-      ret = p3_print_one_oligo_list(sa, retval->n_m, retval->mid, OT_INTL,
-			  first_base_index,
-			  NULL != pa->o_args.repeat_lib,
-			  fh);
-      fclose(fh);
-      if (ret) return 1;
+      if (pr_append_external(err, file)) return 1;
+      if (pr_append_external(err, " for writing")) return 1;
+      free(file);
+      return 1;
     }
-    free(file);
-    return 0;
+    /* Print the content to the file */
+    ret = p3_print_one_oligo_list(sa, retval->n_m, retval->mid, OT_INTL,
+				  first_base_index,
+				  NULL != pa->o_args.repeat_lib,
+				  fh);
+    fclose(fh);
+    if (ret) return 1;
+  }
+  free(file);
+  return 0;
 }
 
 /* Print out the content of one primer array */
