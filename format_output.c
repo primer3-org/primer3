@@ -525,7 +525,7 @@ print_explain(FILE *f,
 	      int print_lib_sim,
 	      const char *pr_release)
 {
-  const pair_stats *pair_stats = &sa->pair_expl;
+  const pair_stats *pair_stats = &retval->best_pairs.expl;
 
   char *format;
 
