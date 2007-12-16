@@ -1129,6 +1129,7 @@ make_primer_lists(p3retval *retval,
 		  const dpal_arg_holder *dpal_arg_to_use)
 {
     int left, right;
+	int length, start;
     int i,j,n,k,pr_min;
     int tar_l, tar_r, f_b, r_b;
     pair_stats *pair_expl = &retval->best_pairs.expl; /* To store the statistics for pairs */
@@ -1208,14 +1209,19 @@ make_primer_lists(p3retval *retval,
 	pa->pick_left_primer) {
       /* We will need a left primer. */
       left=n; right=0;
+      
+	  length = f_b - pa->p_args.min_size + 1;
+	  start = pa->p_args.min_size - 1;
 
       /* Loop counts down start position in i from right to left */
-      for (i = f_b; i >= pa->p_args.min_size - 1; i--) {
+      for (i = start + length; i >= start; i--) {
 	s[0]='\0';
 	  /* Loop counts up primer lenth in j from min to max size */
 	for (j = pa->p_args.min_size; j <= pa->p_args.max_size; j++) {
 		/* AU When does that apply? */
-	    if (i-j > n-pr_min-1 && pick_left_only != pa->primer_task) continue;
+	  /*  if (i-j > n-pr_min-1 && pick_left_only != pa->primer_task) continue;*/
+	    if (i-j > n-pr_min-1 && (retval->output_type == primer_pairs)
+	    		             && pa->pick_left_primer) continue;
 	    /* If the possible primer is smaller than the sequence */
 	    if (i-j < -1) break;
 	    /* If there is no space on the array, allocate new space */
@@ -1385,8 +1391,8 @@ make_internal_oligo_list(retval, pa, sa, dpal_arg_to_use)
   if (sa->internal_input){
 	  ret = add_one_primer(sa->internal_input, &retval->intl,
 			  					pa, sa, dpal_arg_to_use);
-
   }
+  /* Or pick all good in the given range */
   else {
 	  /* Use the settings to select a proper range */
 	  int length = strlen(sa->trimmed_seq) - pa->o_args.min_size;
@@ -1395,7 +1401,12 @@ make_internal_oligo_list(retval, pa, sa, dpal_arg_to_use)
 	  ret = pick_primers_range(start, length, &retval->intl,
 			  					pa, sa, dpal_arg_to_use);
   }
-  return ret;
+  if (ret == -1) {
+	  return 1;
+  }
+  else{
+	  return 0;
+  }
 } /* make_internal_oligo_list */
 
 
@@ -1407,7 +1418,7 @@ pick_primers_range(const int start, const int length, oligo_array *oligo,
                    seq_args *sa, const dpal_arg_holder *dpal_arg_to_use)
 {
 	/* Variables for the loop */
-    int i, j, k;
+    int i, j, k, left, primer_size_small, primer_size_large;
     
     /* Array to store one primer sequences in */
     char s[MAX_PRIMER_LENGTH+1] /*, s1[MAX_PRIMER_LENGTH+1] */;
@@ -1415,6 +1426,26 @@ pick_primers_range(const int start, const int length, oligo_array *oligo,
     /* Struct to store the primer parameters in */
     primer_rec h;
 
+    int pr_min, n;
+    /* Set pr_min to the very smallest 
+       allowable product size. */
+    pr_min = INT_MAX;
+    for (i=0; i < pa->num_intervals; i++) 
+      if(pa->pr_min[i] < pr_min)
+	pr_min = pa->pr_min[i];
+
+    PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
+
+    int stop_codon1 = -1;
+    if ((oligo->type == OT_LEFT) && !PR_START_CODON_POS_IS_NULL(sa)) {
+      stop_codon1 = find_stop_codon(sa->trimmed_seq, 
+				    sa->start_codon_pos, -1);
+
+      sa->stop_codon_pos = find_stop_codon(sa->trimmed_seq, 
+					   sa->start_codon_pos,  1);
+      sa->stop_codon_pos += sa->incl_s;
+    }
+    
     /* Allocate some space for primers if needed */
     if (NULL == oligo->oligo) {
     	oligo->storage_size = INITIAL_LIST_LEN;
@@ -1422,15 +1453,33 @@ pick_primers_range(const int start, const int length, oligo_array *oligo,
         = pr_safe_malloc(sizeof(*oligo->oligo) * oligo->storage_size);
     }
 
+    /* The var for the most left primer */
+    left=start + length;
+    
     /* Number of already picked primers */
     k = 0;
     
+    if (oligo->type == OT_INTL) {
+	    primer_size_small=pa->o_args.min_size;
+	    primer_size_large=pa->o_args.max_size;
+    }
+    else {
+	    primer_size_small=pa->p_args.min_size;
+	    primer_size_large=pa->p_args.max_size;    	
+    }
     /* Loop over the sequence */
     for(i = start + length; i >= start; i--) {
       s[0] = '\0';
       
       /* Loop over possible primer length from min to max */
-      for(j = pa->o_args.min_size; j <= pa->o_args.max_size; j++) {
+      for(j = primer_size_small; j <= primer_size_large; j++) {
+    	/* Continue if the product would not be sufficient */
+    	/* FIX ME use something based on:
+  	    if (i-j > n-pr_min-1 && (retval->output_type == primer_pairs)
+  	    		             && pa->pick_left_primer) continue;*/
+
+  	    if (i-j > n-pr_min-1 && (pick_left_only != pa->primer_task)
+  	    		&& (oligo->type != OT_INTL)) continue;
     	  
     	/* Break if the primer is bigger than the sequence left*/
         if(i-j < -1) break;
@@ -1453,6 +1502,16 @@ pick_primers_range(const int start, const int length, oligo_array *oligo,
 		/* Put the real primer sequence in s */
         _pr_substr(sa->trimmed_seq, h.start, h.length, s);
 
+		if ((oligo->type == OT_LEFT) && !PR_START_CODON_POS_IS_NULL(sa)
+		/* Make sure the primer would amplify at least part of
+		   the ORF. */
+		    && (0 != (h.start - sa->start_codon_pos) % 3
+			|| h.start <= stop_codon1
+			|| (sa->stop_codon_pos != -1 
+			    && h.start >= sa->stop_codon_pos))) {
+			oligo->expl.no_orf++;
+		  if (!pa->pick_anyway) continue;
+		}
        
 		/* Do not force primer3 to use this oligo */
         h.must_use = 0;
@@ -1473,6 +1532,9 @@ pick_primers_range(const int start, const int length, oligo_array *oligo,
           h.quality = p_obj_fn(pa, &h, 2);
 		  /* Save the primer in the array */
           oligo->oligo[k] = h;
+          /* Update the most left primer variable */
+          if (oligo->oligo[k].start < left)
+          		    left=oligo->oligo[k].start;
 		  /* Update the number of primers */
           k++;
         } 
@@ -1484,6 +1546,7 @@ pick_primers_range(const int start, const int length, oligo_array *oligo,
 		  		 || h.ok==OV_SEQ_QUALITY || h.ok==OV_LIB_SIM ) {
    	      break;
         }
+        else if ((oligo->type == OT_LEFT) && h.ok==OV_END_STAB) break;
       } /* j: Loop over possible primer length from min to max */
     } /* i: Loop over the sequence */
     /* Update array with how many primers are good */
@@ -1491,9 +1554,9 @@ pick_primers_range(const int start, const int length, oligo_array *oligo,
     /* Update statistics with how many primers are good */
     oligo->expl.ok = oligo->num_elem;
     
-    /* return 0 for success */
-    if (oligo->num_elem == 0) return 1;
-    else return 0;	
+    /* return -1 for error */
+    if (oligo->num_elem == 0) return -1;
+    else return left;	
 }
 
 
