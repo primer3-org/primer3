@@ -613,9 +613,10 @@ typedef struct oligo_array {
 
  /* Type of oligos in the array */
  oligo_type type;
-  /* We should think about whether we
-     need this here, but no objection
-     for now. */
+  /* I think its VERY handy */
+
+ /* Primers statistics. */
+ oligo_stats expl;
 
 } oligo_array;
 

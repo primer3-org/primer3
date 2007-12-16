@@ -46,13 +46,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 static char *pr_program_name = "Program name is probably primer3_core";
 
 static void format_pairs(FILE *f, const p3_global_settings *pa,
-	     const seq_args *sa, const pair_array_t *best_pairs,
+	     const seq_args *sa, const p3retval *retval, const pair_array_t *best_pairs,
 	     const char *pr_release);
 static void format_oligos(FILE *, const p3_global_settings *, const seq_args *, 
-		const oligo_array *, const char*);
+	      const p3retval *retval, const oligo_array *, const char*);
 static int lib_sim_specified(const p3_global_settings *);
-static void print_explain(FILE *, const p3_global_settings *,
-			  const seq_args *, int, const char *);
+static void print_explain(FILE *, const p3_global_settings *, const seq_args *,
+			  const p3retval *retval, int, const char *);
 static void print_pair_info(FILE *, const primer_pair *,
 			    const p3_global_settings *);
 static void print_oligo(FILE *, const char *, const seq_args *,
@@ -85,17 +85,17 @@ print_format_output(FILE *f,
 {  
   /* Print as primer pairs */
   if (retval->output_type == primer_pairs) {
-    format_pairs(f, pa, sa, &retval->best_pairs, pr_release);
+    format_pairs(f, pa, sa, retval, &retval->best_pairs, pr_release);
     
   /* Print as primer list */
   }	else {
 	/* Figure out which primer to print */
     if (pa->pick_left_primer) {
-	  format_oligos(stdout, pa, sa, &retval->fwd, pr_release);
+	  format_oligos(stdout, pa, sa, retval, &retval->fwd, pr_release);
     } else if (pa->pick_right_primer) {
-	  format_oligos(stdout, pa, sa, &retval->rev, pr_release);
+	  format_oligos(stdout, pa, sa, retval, &retval->rev, pr_release);
     } else if (pa->pick_internal_oligo) {
-	  format_oligos(stdout, pa, sa, &retval->intl, pr_release);
+	  format_oligos(stdout, pa, sa, retval, &retval->intl, pr_release);
     } else {
 	  fprintf(stderr, "%s: fatal programming error\n", pr_program_name);
 	  abort();
@@ -108,6 +108,7 @@ void
 format_pairs(FILE *f,
 	     const p3_global_settings *pa,
 	     const seq_args *sa,
+	     const p3retval *retval,
 	     const pair_array_t *best_pairs,
 	     const char *pr_release)
 {
@@ -172,7 +173,7 @@ format_pairs(FILE *f,
   
   /* Print the primer picking statistics */
   if (pa->explain_flag)
-    print_explain(f, pa, sa, print_lib_sim, pr_release);
+    print_explain(f, pa, sa, retval, print_lib_sim, pr_release);
   
   /* Flush the buffers and return */
   fprintf(f, "\n\n");
@@ -520,6 +521,7 @@ static void
 print_explain(FILE *f,
 	      const p3_global_settings *pa,
 	      const seq_args *sa,
+	      const p3retval *retval,
 	      int print_lib_sim,
 	      const char *pr_release)
 {
@@ -711,6 +713,7 @@ void
 format_oligos(FILE *f,
 	      const p3_global_settings *pa,
 	      const seq_args    *sa,
+	      const p3retval *retval,
 	      const oligo_array *oligo_list,
 	      const char* pr_release)
 {
@@ -785,7 +788,7 @@ format_oligos(FILE *f,
     }
   }
   if (pa->explain_flag) 
-    print_explain(f, pa, sa, print_lib_sim, pr_release);
+    print_explain(f, pa, sa, retval, print_lib_sim, pr_release);
   fprintf(f, "\n\n");
   if (fflush(f) == EOF) {
     perror("fflush(f) failed");
