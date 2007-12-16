@@ -215,7 +215,8 @@ static double p_obj_fn(const p3_global_settings *, primer_rec *, int );
 static void   oligo_compl(primer_rec *, 
 			  const args_for_one_oligo_or_primer *po_args,
 			  seq_args *sa,
-			  oligo_type, 
+			  oligo_type,
+			  oligo_stats *,
 			  const dpal_arg_holder *,
 			  const char *oligo_seq,
 			  const char *revc_oligo_seq
@@ -224,7 +225,8 @@ static void   oligo_compl(primer_rec *,
 static void   oligo_mispriming(primer_rec *,
 			       const p3_global_settings *,
 			       seq_args *,
-			       oligo_type, 
+			       oligo_type,
+			       oligo_stats *,
 			       const dpal_args *,
 			       const dpal_arg_holder *);
 
@@ -1518,7 +1520,6 @@ oligo_param(pa, h, l, dpal_arg_to_use, sa, stats)
     const char *revc_oligo_seq;
 
     const args_for_one_oligo_or_primer *po_args;
-    oligo_stats *o_stats;
 
     /* Initial slots in h */
     h->ok = OV_UNINITIALIZED;
@@ -1529,13 +1530,7 @@ oligo_param(pa, h, l, dpal_arg_to_use, sa, stats)
 
     if (OT_INTL == l) {
       po_args = &pa->o_args;
-      o_stats = &sa->intl_expl;
     } else {
-      if (OT_RIGHT == l) {
-	o_stats = &sa->right_expl;
-      } else {
-	o_stats = &sa->left_expl;
-      }
       po_args = &pa->p_args;
     }
 
@@ -1764,11 +1759,8 @@ oligo_param(pa, h, l, dpal_arg_to_use, sa, stats)
 	) {
 
       oligo_compl(h, po_args,
-		  sa,
-		  l, dpal_arg_to_use,
-		  oligo_seq,
-		  revc_oligo_seq
-		  ); 
+		  sa, l, stats, dpal_arg_to_use,
+		  oligo_seq, revc_oligo_seq); 
 
       if (h->ok != OV_UNINITIALIZED && !must_use) {
 	PR_ASSERT(h->ok != OV_OK);
@@ -1787,7 +1779,7 @@ oligo_param(pa, h, l, dpal_arg_to_use, sa, stats)
 	    && pa->p_args.weights.template_mispriming)
 	) {
 
-      oligo_mispriming(h, pa, sa, l, 
+      oligo_mispriming(h, pa, sa, l, stats,
 		       dpal_arg_to_use->local_end, 
 		       dpal_arg_to_use);
 
@@ -2166,15 +2158,13 @@ choose_internal_oligo(retval, left, right, nm, sa, pa, dpal_arg_to_use)
 	 _pr_substr(sa->trimmed_seq, h->start, h->length, oligo_seq);
 	 _pr_reverse_complement(oligo_seq, revc_oligo_seq);
 
-	 oligo_compl(h, &pa->o_args,
-		     sa,
-		     OT_INTL, dpal_arg_to_use, 
-		     oligo_seq, revc_oligo_seq);
+	 oligo_compl(h, &pa->o_args, sa, OT_INTL, &sa->intl_expl,
+			 dpal_arg_to_use, oligo_seq, revc_oligo_seq);
 	 if (!OK_OR_MUST_USE(h)) continue;
        }
 
        if (h->repeat_sim.score == NULL) {
-         oligo_mispriming(h, pa, sa, OT_INTL,
+         oligo_mispriming(h, pa, sa, OT_INTL, &sa->intl_expl,
 			  dpal_arg_to_use->local, dpal_arg_to_use);
 	 if (!OK_OR_MUST_USE(h)) continue;
        }
@@ -2384,8 +2374,7 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
          which is an attempt at self primer-dimer and secondary
          structure. */
       oligo_compl(&retval->fwd.oligo[m], &pa->p_args,
-		  sa, 
-		  OT_LEFT, dpal_arg_to_use, s1, s1_rev);
+		  sa, OT_LEFT, &sa->left_expl, dpal_arg_to_use, s1, s1_rev);
 
       if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
 	/* sa-> */ pair_expl->considered--;
@@ -2395,10 +2384,8 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
     }
 
     if (retval->rev.oligo[n].self_any == ALIGN_SCORE_UNDEF) {
-      oligo_compl(&retval->rev.oligo[n], 
-		  &pa->p_args,
-		  sa, 
-		  OT_RIGHT, dpal_arg_to_use, s2_rev, s2);
+      oligo_compl(&retval->rev.oligo[n], &pa->p_args,
+		  sa, OT_RIGHT, &sa->right_expl, dpal_arg_to_use, s2_rev, s2);
 
        if (!OK_OR_MUST_USE(&retval->rev.oligo[n])) {
 	 /* sa-> */ pair_expl->considered--;
@@ -2417,8 +2404,7 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
     if (retval->fwd.oligo[m].repeat_sim.score == NULL) {
       /* We have not yet checked the olgio against the repeat library. */
        oligo_mispriming(&retval->fwd.oligo[m], pa, sa, OT_LEFT,
-			dpal_arg_to_use->local_end,
-			dpal_arg_to_use);
+    		&sa->left_expl,dpal_arg_to_use->local_end, dpal_arg_to_use);
        if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
 	 /* sa-> */ pair_expl->considered--;
 	   return PAIR_FAILED;
@@ -2427,8 +2413,7 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
 
     if(retval->rev.oligo[n].repeat_sim.score == NULL){
        oligo_mispriming(&retval->rev.oligo[n], pa, sa, OT_RIGHT,
-			dpal_arg_to_use->local_end,
-			dpal_arg_to_use);
+    		&sa->right_expl, dpal_arg_to_use->local_end, dpal_arg_to_use);
        if (!OK_OR_MUST_USE(&retval->rev.oligo[n])) {
 	 /* sa-> */ pair_expl->considered--;
 	  return PAIR_FAILED;
@@ -2751,6 +2736,7 @@ oligo_compl(primer_rec *h,
 	    const args_for_one_oligo_or_primer *po_args,
 	    seq_args *sa,
 	    oligo_type l,
+	    oligo_stats *ostats,
 	    const dpal_arg_holder *dpal_arg_to_use,
 	    const char *oligo_seq,
 	    const char *revc_oligo_seq)
@@ -2758,16 +2744,8 @@ oligo_compl(primer_rec *h,
     char s[MAX_PRIMER_LENGTH+1], s1[MAX_PRIMER_LENGTH+1];
     int j;
     short max_self_any, max_self_end;
-    oligo_stats *ostats;
-    PR_ASSERT(h != NULL);
 
-    if (OT_LEFT == l) {
-      ostats = &sa->left_expl;
-    } else if (OT_RIGHT == l) {
-      ostats = &sa->right_expl;
-    } else {
-      ostats = &sa->intl_expl;
-    }
+    PR_ASSERT(h != NULL);
 
     max_self_any = po_args->max_self_any;
     max_self_end = po_args->max_self_end;
@@ -2807,6 +2785,7 @@ primer_mispriming_to_template(primer_rec *h,
 			      const p3_global_settings *pa,
 			      seq_args *sa,
 			      oligo_type l,
+			      oligo_stats *ostats,
 			      int first,
 			      int last, 
 			      /* The oligo sequence: */
@@ -2895,25 +2874,18 @@ primer_mispriming_to_template(primer_rec *h,
       && oligo_max_template_mispriming(h)
       > pa->p_args.max_template_mispriming) {
     h->ok = OV_TEMPLATE_MISPRIMING;
-    if (OT_LEFT == l) {
-      sa->left_expl.template_mispriming++;
-      sa->left_expl.ok--;
-    } else if (OT_RIGHT == l) {
-      sa->right_expl.template_mispriming++;
-      sa->right_expl.ok--;
+    if (OT_LEFT == l || OT_RIGHT == l ) {
+    	ostats->template_mispriming++;
+    	ostats->ok--;
     } else PR_ASSERT(0); /* Should not get here. */
   }
 }
 
 /* FIX ME, pass in the oligo sequences */
 static void 
-oligo_mispriming(h, pa, sa, l, align_args,  dpal_arg_to_use)
-   primer_rec *h;
-   const p3_global_settings *pa;
-   seq_args *sa;
-   oligo_type l;
-   const dpal_args *align_args;
-   const dpal_arg_holder *dpal_arg_to_use;
+oligo_mispriming( primer_rec *h, const p3_global_settings *pa,
+   seq_args *sa, oligo_type l, oligo_stats *ostats,
+   const dpal_args *align_args, const dpal_arg_holder *dpal_arg_to_use)
 {
   char 
     s[MAX_PRIMER_LENGTH+1],     /* Will contain the oligo sequence. */
@@ -2926,20 +2898,14 @@ oligo_mispriming(h, pa, sa, l, align_args,  dpal_arg_to_use)
 		     that is, WITHIN THE INCLUDED REGION. */
   int   min, max;
   short max_lib_compl;
-  oligo_stats *ostats;
+  /*oligo_stats *ostats; */
 
   if (OT_INTL == l) {
     lib = pa->o_args.repeat_lib;
     max_lib_compl = pa->o_args.max_repeat_compl;
-    ostats = &sa->intl_expl;
   } else {
     lib = pa->p_args.repeat_lib;
     max_lib_compl = pa->p_args.max_repeat_compl;
-    if (OT_LEFT == l) {
-      ostats = &sa->left_expl;
-    } else {
-      ostats = &sa->right_expl;
-    }
   }
 
   first =  (OT_LEFT == l || OT_INTL == l)
@@ -3010,7 +2976,7 @@ oligo_mispriming(h, pa, sa, l, align_args,  dpal_arg_to_use)
 
   if (_pr_need_template_mispriming(pa) && (l == OT_RIGHT || l == OT_LEFT)) {
     /* Calculate maximum similarity to ectopic sites in the template. */
-    primer_mispriming_to_template(h, pa, sa, l, first, last, s, s_r, align_args);
+    primer_mispriming_to_template(h, pa, sa, l, ostats, first, last, s, s_r, align_args);
   }
 }
 

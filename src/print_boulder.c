@@ -41,7 +41,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 static char *pr_program_name = "Program name is probably primer3_core";
 
-static void   print_all_explain(const primer_args *, const seq_args *);
+static void   print_all_explain(const primer_args *, const seq_args *, const p3retval *);
 static void   print_explain(const oligo_stats *, oligo_type);
 
 /* Print the data for chosen primer pairs to stdout in "boulderio" format. */
@@ -93,7 +93,7 @@ boulder_print(io_version, pa, sa, retval)
       return;
     }
     /* Prints out statistics about the primers */
-    if (pa->explain_flag) print_all_explain(pa, sa);
+    if (pa->explain_flag) print_all_explain(pa, sa, retval);
     
     /* Print out the stop codon if a reading frame was specified */
     if (!PR_START_CODON_POS_IS_NULL(sa))
@@ -386,9 +386,8 @@ boulder_print_error(const char *err) {
 }
 
 static void
-print_all_explain(pa, sa)
-    const primer_args *pa;
-    const seq_args *sa;
+print_all_explain(const primer_args *pa,
+    const seq_args *sa, const p3retval *retval)
 {
   if (pa->pick_left_primer == 1
       && !(pa->pick_anyway && sa->left_input))
