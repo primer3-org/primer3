@@ -3573,7 +3573,6 @@ _pr_data_control(const p3_global_settings *pa,
 		 pr_append_str *nonfatal_err,
 		 pr_append_str *warning)
 {
-	/* How long can a primer max be */
     static char s1[MAX_PRIMER_LENGTH+1];
     int i, pr_min, seq_len;
     char offending_char = '\0';
@@ -3643,7 +3642,7 @@ _pr_data_control(const p3_global_settings *pa,
 	return 1;
     }
 
-    /* The sequence name will be the file name */
+    /* The sequence name is needed for the file name */
     if (NULL == sa->sequence_name && pa->file_flag) {
 	pr_append_new_chunk(nonfatal_err,
 			    "Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG != 0");
@@ -4090,67 +4089,6 @@ _pr_check_and_adjust_1_interval(const char *tag_name,
 } /* _pr_check_and_adjust_intervals  */
 
 /* ============================================================ */
-
-/* Used in seq_lib functions and also exported */
-
-/* 
- * Read a line of any length from file.  Return NULL on end of file,
- * otherwise return a pointer to static storage containing the line.  Any
- * trailing newline is stripped off.  Be careful -- there is only
- * one static buffer, so subsequent calls will replace the string
- * pointed to by the return value.
- */
-
-/* used in p3_read_line and seq_lib functions */
-#define INIT_BUF_SIZE 1024
-
-char*
-p3_read_line(file)
-FILE *file;
-{
-    static size_t ssz;
-    static char *s = NULL;
-
-    size_t remaining_size;
-    char *p, *n;
-
-    if (NULL == s) {
-	ssz = INIT_BUF_SIZE;
-	s = pr_safe_malloc(ssz);
-    }
-    p = s;
-    remaining_size = ssz;
-    while (1) {
-	if (fgets(p, remaining_size, file) == NULL) /* End of file. */
-	    return p == s ? NULL : s;
-
-	if ((n = strchr(p, '\n')) != NULL) {
-	    *n = '\0';
-	    return s;
-	}
-
-	/* We did not get the whole line. */
-	
-	/* 
-         * The following assertion is a bit of hack, a at least for 32-bit
-         * machines, because we will usually run out of address space first.
-         * Really we should treat an over-long line as an input error, but
-         * since an over-long line is unlikely and we do want to provide some
-         * protection....
-	 */
-	PR_ASSERT(ssz <= INT_MAX);
-	if (ssz >= INT_MAX / 2)
-	    ssz = INT_MAX;
-	else {
-	    ssz *= 2;
-	}
-	s = pr_safe_realloc(s, ssz);
-	p = strchr(s, '\0');
-	remaining_size = ssz - (p - s);
-    }
-}
-
-/* ============================================================ */
 /* END functions which check and modify the input               */
 /* ============================================================ */
 
@@ -4381,6 +4319,62 @@ print_oligo(FILE *fh,
 static double parse_seq_name(char *s);
 static char   upcase_and_check_char(char *s);
 static void   reverse_complement_seq_lib(seq_lib  *lib);
+
+/* Read a line of any length from file.  Return NULL on end of file,
+ * otherwise return a pointer to static storage containing the line.  Any
+ * trailing newline is stripped off.  Be careful -- there is only
+ * one static buffer, so subsequent calls will replace the string
+ * pointed to by the return value.
+ * Used in seq_lib functions and also exported
+ * used in p3_read_line and seq_lib functions  
+ * */
+#define INIT_BUF_SIZE 1024
+
+char*
+p3_read_line(file)
+FILE *file;
+{
+    static size_t ssz;
+    static char *s = NULL;
+
+    size_t remaining_size;
+    char *p, *n;
+
+    if (NULL == s) {
+	ssz = INIT_BUF_SIZE;
+	s = pr_safe_malloc(ssz);
+    }
+    p = s;
+    remaining_size = ssz;
+    while (1) {
+	if (fgets(p, remaining_size, file) == NULL) /* End of file. */
+	    return p == s ? NULL : s;
+
+	if ((n = strchr(p, '\n')) != NULL) {
+	    *n = '\0';
+	    return s;
+	}
+
+	/* We did not get the whole line. */
+	
+	/* 
+         * The following assertion is a bit of hack, a at least for 32-bit
+         * machines, because we will usually run out of address space first.
+         * Really we should treat an over-long line as an input error, but
+         * since an over-long line is unlikely and we do want to provide some
+         * protection....
+	 */
+	PR_ASSERT(ssz <= INT_MAX);
+	if (ssz >= INT_MAX / 2)
+	    ssz = INT_MAX;
+	else {
+	    ssz *= 2;
+	}
+	s = pr_safe_realloc(s, ssz);
+	p = strchr(s, '\0');
+	remaining_size = ssz - (p - s);
+    }
+}
 
 /* See comments in libprimer3.h */
 seq_lib *
