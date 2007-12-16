@@ -180,7 +180,7 @@ static int    make_internal_oligo_list(p3retval *,
 				       const dpal_arg_holder *);
 
 static int    pick_primers_range(const int, const int,
-		           oligo_array *, const p3_global_settings *,
+		           oligo_array *,oligo_stats *, const p3_global_settings *,
                    seq_args *, const dpal_arg_holder *);
 
 static double obj_fn(const p3_global_settings *, primer_pair *);
@@ -679,17 +679,17 @@ create_p3retval(void)
       || state->intl.oligo == NULL)
     return NULL;
 
-  state->fwd.storage_size = INITIAL_LIST_LEN;
-  state->rev.storage_size = INITIAL_LIST_LEN;
+  state->fwd.storage_size  = INITIAL_LIST_LEN;
+  state->rev.storage_size  = INITIAL_LIST_LEN;
   state->intl.storage_size = INITIAL_LIST_LEN;
 
-  state->fwd.num_elem = 0;
-  state->rev.num_elem = 0;
+  state->fwd.num_elem  = 0;
+  state->rev.num_elem  = 0;
   state->intl.num_elem = 0;
   
-  state->fwd.type = OT_LEFT;
+  state->fwd.type  = OT_LEFT;
   state->intl.type = OT_INTL;
-  state->rev.type = OT_RIGHT;
+  state->rev.type  = OT_RIGHT;
 
   state->best_pairs.storage_size = 0;
   state->best_pairs.pairs = NULL;
@@ -699,6 +699,10 @@ create_p3retval(void)
   init_pr_append_str(&state->per_sequence_err);
   init_pr_append_str(&state->warnings);
 
+  memset(&state->fwd.expl,  0, sizeof(state->fwd.expl));
+  memset(&state->rev.expl,  0, sizeof(state->rev.expl));
+  memset(&state->intl.expl, 0, sizeof(state->intl.expl));
+  
   /* state->glob_err.data = NULL; 
   state->glob_err.storage_size = 0;
 
@@ -1000,13 +1004,13 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
        unacceptable, then add warnings. */
     if (pa->pick_anyway) {
       if (sa->left_input) {
-	add_must_use_warnings(&sa->warning, "Left primer", &sa->left_expl);
+	add_must_use_warnings(&sa->warning, "Left primer", &retval->fwd.expl);
       }
       if (sa->right_input) {
-	add_must_use_warnings(&sa->warning, "Right primer", &sa->right_expl);
+	add_must_use_warnings(&sa->warning, "Right primer", &retval->rev.expl);
       }
       if (sa->internal_input) {
-	add_must_use_warnings(&sa->warning, "Hybridization probe", &sa->intl_expl);
+	add_must_use_warnings(&sa->warning, "Hybridization probe", &retval->intl.expl);
       }
     }
 
@@ -1191,7 +1195,7 @@ make_primer_lists(p3retval *retval,
       f_b = n - pr_min + pa->p_args.max_size-1;
 
     k = 0;
-    ostats = &sa->left_expl;
+    ostats = &retval->fwd.expl;
     if ( /* pa->primer_task != pick_right_only 
 	    && pa->primer_task != pick_hyb_probe_only OK */
 	pa->pick_left_primer) {
@@ -1287,7 +1291,7 @@ make_primer_lists(p3retval *retval,
       r_b = pr_min - pa->p_args.max_size;
 
     k = 0;
-    ostats = &sa->right_expl;
+    ostats = &retval->rev.expl;
     if ( /* OK pa->primer_task != pick_left_only 
 	    && pa->primer_task != pick_hyb_probe_only */
 	pa->pick_right_primer ) {
@@ -1373,7 +1377,7 @@ make_internal_oligo_list(retval, pa, sa, dpal_arg_to_use)
   int length = strlen(sa->trimmed_seq) - pa->o_args.min_size;
   int start = pa->o_args.min_size - 1;
   
-  ret = pick_primers_range(start, length, &retval->intl,
+  ret = pick_primers_range(start, length, &retval->intl, &retval->intl.expl,
 		  					pa, sa, dpal_arg_to_use);
 
   return ret;
@@ -1385,8 +1389,8 @@ make_internal_oligo_list(retval, pa, sa, dpal_arg_to_use)
 /* pick_primers_range picks all primers in the range from start to start+length
  * and stores them in *oligo  */
 static int
-pick_primers_range(const int start, const int length,
-		           oligo_array *oligo, const p3_global_settings *pa,
+pick_primers_range(const int start, const int length, oligo_array *oligo,
+				   oligo_stats *stats, const p3_global_settings *pa,
                    seq_args *sa, const dpal_arg_holder *dpal_arg_to_use)
 {
 	/* Variables for the loop */
@@ -1449,10 +1453,10 @@ pick_primers_range(const int start, const int length,
 
 		/* Calculate all the primer parameters */
         oligo_param(pa, &h, OT_INTL, dpal_arg_to_use,
-  		  sa, &sa->intl_expl);
+  		  sa, stats);
 
 		/* Add it to the considered statistics */
-        sa->intl_expl.considered++;
+        stats->considered++;
 
 		/* If primer has to be used or is OK */
         if (OK_OR_MUST_USE(&h)) {
@@ -1476,7 +1480,7 @@ pick_primers_range(const int start, const int length,
     /* Update array with how many primers are good */
     oligo->num_elem = k;
     /* Update statistics with how many primers are good */
-    sa->intl_expl.ok = oligo->num_elem;
+    stats->ok = oligo->num_elem;
     
     /* return 0 for success */
     if (oligo->num_elem == 0) return 1;
@@ -2158,13 +2162,13 @@ choose_internal_oligo(retval, left, right, nm, sa, pa, dpal_arg_to_use)
 	 _pr_substr(sa->trimmed_seq, h->start, h->length, oligo_seq);
 	 _pr_reverse_complement(oligo_seq, revc_oligo_seq);
 
-	 oligo_compl(h, &pa->o_args, sa, OT_INTL, &sa->intl_expl,
+	 oligo_compl(h, &pa->o_args, sa, OT_INTL, &retval->intl.expl,
 			 dpal_arg_to_use, oligo_seq, revc_oligo_seq);
 	 if (!OK_OR_MUST_USE(h)) continue;
        }
 
        if (h->repeat_sim.score == NULL) {
-         oligo_mispriming(h, pa, sa, OT_INTL, &sa->intl_expl,
+         oligo_mispriming(h, pa, sa, OT_INTL, &retval->intl.expl,
 			  dpal_arg_to_use->local, dpal_arg_to_use);
 	 if (!OK_OR_MUST_USE(h)) continue;
        }
@@ -2374,7 +2378,7 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
          which is an attempt at self primer-dimer and secondary
          structure. */
       oligo_compl(&retval->fwd.oligo[m], &pa->p_args,
-		  sa, OT_LEFT, &sa->left_expl, dpal_arg_to_use, s1, s1_rev);
+		  sa, OT_LEFT, &retval->fwd.expl, dpal_arg_to_use, s1, s1_rev);
 
       if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
 	/* sa-> */ pair_expl->considered--;
@@ -2385,7 +2389,7 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
 
     if (retval->rev.oligo[n].self_any == ALIGN_SCORE_UNDEF) {
       oligo_compl(&retval->rev.oligo[n], &pa->p_args,
-		  sa, OT_RIGHT, &sa->right_expl, dpal_arg_to_use, s2_rev, s2);
+		  sa, OT_RIGHT, &retval->rev.expl, dpal_arg_to_use, s2_rev, s2);
 
        if (!OK_OR_MUST_USE(&retval->rev.oligo[n])) {
 	 /* sa-> */ pair_expl->considered--;
@@ -2404,7 +2408,7 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
     if (retval->fwd.oligo[m].repeat_sim.score == NULL) {
       /* We have not yet checked the olgio against the repeat library. */
        oligo_mispriming(&retval->fwd.oligo[m], pa, sa, OT_LEFT,
-    		&sa->left_expl,dpal_arg_to_use->local_end, dpal_arg_to_use);
+    		   &retval->fwd.expl,dpal_arg_to_use->local_end, dpal_arg_to_use);
        if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
 	 /* sa-> */ pair_expl->considered--;
 	   return PAIR_FAILED;
@@ -2413,7 +2417,7 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
 
     if(retval->rev.oligo[n].repeat_sim.score == NULL){
        oligo_mispriming(&retval->rev.oligo[n], pa, sa, OT_RIGHT,
-    		&sa->right_expl, dpal_arg_to_use->local_end, dpal_arg_to_use);
+    		&retval->rev.expl, dpal_arg_to_use->local_end, dpal_arg_to_use);
        if (!OK_OR_MUST_USE(&retval->rev.oligo[n])) {
 	 /* sa-> */ pair_expl->considered--;
 	  return PAIR_FAILED;

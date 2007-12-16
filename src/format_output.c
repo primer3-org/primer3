@@ -623,20 +623,20 @@ print_explain(FILE *f,
        || pick_left_only == pa->primer_task
        || pick_pcr_primers_and_hyb_probe == pa->primer_task)
       && !(pa->pick_anyway && sa->left_input))
-    print_stat_line(f, "Left", sa->left_expl, 
+    print_stat_line(f, "Left", retval->fwd.expl, 
 		    print_lib_sim, pa->lowercase_masking);
 
   if ((pick_pcr_primers == pa->primer_task
        || pick_right_only  == pa->primer_task
        || pick_pcr_primers_and_hyb_probe == pa->primer_task)
       && !(pa->pick_anyway && sa->right_input))
-    print_stat_line(f, "Right", sa->right_expl,
+    print_stat_line(f, "Right", retval->rev.expl,
 		    print_lib_sim, pa->lowercase_masking);
 
   if ((pick_pcr_primers_and_hyb_probe == pa->primer_task
        || pick_hyb_probe_only == pa->primer_task)
       && !(pa->pick_anyway && sa->internal_input))
-    print_stat_line(f, "Intl", sa->intl_expl, 
+    print_stat_line(f, "Intl", retval->intl.expl, 
 		    print_lib_sim, pa->lowercase_masking);
 
   if (pick_pcr_primers == pa->primer_task
