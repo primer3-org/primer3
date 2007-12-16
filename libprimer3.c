@@ -179,6 +179,10 @@ static int    make_internal_oligo_list(p3retval *,
 				       seq_args *,
 				       const dpal_arg_holder *);
 
+static int    pick_primers_range(const int, const int,
+		           oligo_array *, const p3_global_settings *,
+                   seq_args *, const dpal_arg_holder *);
+
 static double obj_fn(const p3_global_settings *, primer_pair *);
 
 static int    oligo_overlaps_interval(const int, const int,
@@ -1007,7 +1011,7 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
     if (0 != a_pair_array.storage_size) free(a_pair_array.pairs);
     
     return retval;
-}
+}  /* End of choose_primers() */
 
 /* Call this function only if the 'stat's contains
    the _errors_ associated with a given primer
@@ -1200,7 +1204,7 @@ make_primer_lists(p3retval *retval,
 		/* AU When does that apply? */
 	    if (i-j > n-pr_min-1 && pick_left_only != pa->primer_task) continue;
 	    /* If the possible primer is smaller than the sequence */
-	    if (i-j+1>=0) {
+	    if (i-j < -1) break;
 	    /* If there is no space on the array, allocate new space */
 		if (k >= retval->fwd.storage_size) {
 		    retval->fwd.storage_size += (retval->fwd.storage_size >> 1);
@@ -1265,8 +1269,7 @@ make_primer_lists(p3retval *retval,
 			   || h.ok == OV_SEQ_QUALITY || h.ok == OV_LIB_SIM ) {
 		  break;
 		}
-	    }
-	    else break;
+	    
 	}
       }  /*  for (i = f_b; .... */
     }  /* if (pa->pick_left_primer) */
@@ -1363,63 +1366,122 @@ make_internal_oligo_list(retval, pa, sa, dpal_arg_to_use)
      seq_args *sa;
      const dpal_arg_holder *dpal_arg_to_use;
 {
-  int i, j, n, k;
+  int ret;
+  /* Use the settings to select a proper range */
+  int length = strlen(sa->trimmed_seq) - pa->o_args.min_size;
+  int start = pa->o_args.min_size - 1;
+  
+  ret = pick_primers_range(start, length, &retval->intl,
+		  					pa, sa, dpal_arg_to_use);
 
-  char s[MAX_PRIMER_LENGTH+1];
-  primer_rec h;
-
-  if (NULL == retval->intl.oligo) {
-    retval->intl.storage_size = INITIAL_LIST_LEN;
-    retval->intl.oligo 
-      = pr_safe_malloc(sizeof(*retval->intl.oligo) * retval->intl.storage_size);
-  }
-
-  n = strlen(sa->trimmed_seq);
-  k = 0;
-  for(i = n - 1; i >= pa->o_args.min_size-1; i--) {
-    s[0] = '\0';
-    for(j = pa->o_args.min_size; j <= pa->o_args.max_size; j++) {
-      if(i-j < -1) break;
-      if (k >= retval->intl.storage_size) {
-	retval->intl.storage_size += (retval->intl.storage_size >> 1);
-	retval->intl.oligo 
-	  = pr_safe_realloc(retval->intl.oligo, 
-			    retval->intl.storage_size * sizeof(*retval->intl.oligo));
-      }
-      h.start = i - j +1;
-      h.length = j;
-      h.repeat_sim.score = NULL;
-      _pr_substr(sa->trimmed_seq, h.start, h.length, s);
-
-      if (sa->internal_input && strcmp_nocase(sa->internal_input, s))
-	continue;
-      h.must_use = (sa->internal_input && pa->pick_anyway);
-
-      h.repeat_sim.score = NULL;
-
-      oligo_param(pa, &h, OT_INTL, dpal_arg_to_use,
-		  sa, &sa->intl_expl);
-
-      sa->intl_expl.considered++;
-      if (OK_OR_MUST_USE(&h)) {
-	h.quality = p_obj_fn(pa, &h, 2);
-	retval->intl.oligo[k] = h;
-	k++;
-      } else if (h.ok==OV_TOO_MANY_NS || h.ok==OV_INTERSECT_TARGET
-		 || h.ok==OV_SELF_ANY || h.ok==OV_POLY_X
-		 || h.ok==OV_EXCL_REGION || h.ok==OV_GC_CLAMP
-		 || h.ok==OV_SEQ_QUALITY || h.ok==OV_LIB_SIM ) {
-	/* Break from the inner for loop, because there is no
-           legal longer oligo with the same 3' sequence. */
-	break;
-      }
-    }
-  }
-  retval->intl.num_elem = k;
-  sa->intl_expl.ok = retval->intl.num_elem;
-  if (retval->intl.num_elem == 0) return 1;
-  else return 0;
+  return ret;
 } /* make_internal_oligo_list */
+
+/* 
+ * f_b start + length*/
+
+/* pick_primers_range picks all primers in the range from start to start+length
+ * and stores them in *oligo  */
+static int
+pick_primers_range(const int start, const int length,
+		           oligo_array *oligo, const p3_global_settings *pa,
+                   seq_args *sa, const dpal_arg_holder *dpal_arg_to_use)
+{
+	/* Variables for the loop */
+    int i, j, k;
+    
+    /* Array to store one primer sequences in */
+    char s[MAX_PRIMER_LENGTH+1] /*, s1[MAX_PRIMER_LENGTH+1] */;
+    
+    /* Struct to store the primer parameters in */
+    primer_rec h;
+
+    /* Allocate some space for primers if needed */
+    if (NULL == oligo->oligo) {
+    	oligo->storage_size = INITIAL_LIST_LEN;
+    	oligo->oligo 
+        = pr_safe_malloc(sizeof(*oligo->oligo) * oligo->storage_size);
+    }
+
+    /* Number of already picked primers */
+    k = 0;
+    
+    /* Loop over the sequence */
+    for(i = start + length; i >= start; i--) {
+      s[0] = '\0';
+      
+      /* Loop over possible primer length from min to max */
+      for(j = pa->o_args.min_size; j <= pa->o_args.max_size; j++) {
+    	  
+    	/* Break if the primer is bigger than the sequence left*/
+        if(i-j < -1) break;
+        
+	    /* If there is no space on the array, allocate new space */
+        if (k >= oligo->storage_size) {
+        	oligo->storage_size += (oligo->storage_size >> 1);
+        	oligo->oligo = pr_safe_realloc(oligo->oligo, 
+        			oligo->storage_size * sizeof(*oligo->oligo));
+        }
+        
+		/* Set the start of the primer */
+        h.start = i - j +1;
+        
+		/* Set the length of the primer */
+        h.length = j;
+        /* Set repeat_sim to nothing */
+        h.repeat_sim.score = NULL;
+        
+		/* Put the real primer sequence in s */
+        _pr_substr(sa->trimmed_seq, h.start, h.length, s);
+
+        /* Fix Me - do not do this here !*/
+        if (sa->internal_input && strcmp_nocase(sa->internal_input, s))
+        		continue;
+        
+        /* Fix Me - get rid of internal input */
+		/* Force primer3 to use this oligo */
+        h.must_use = (sa->internal_input && pa->pick_anyway);
+
+		/* FIX ME: Do we have to do it again? see up */
+        h.repeat_sim.score = NULL;
+
+		/* Calculate all the primer parameters */
+        oligo_param(pa, &h, OT_INTL, dpal_arg_to_use,
+  		  sa, &sa->intl_expl);
+
+		/* Add it to the considered statistics */
+        sa->intl_expl.considered++;
+
+		/* If primer has to be used or is OK */
+        if (OK_OR_MUST_USE(&h)) {
+  		  /* Calculate the penalty */
+          h.quality = p_obj_fn(pa, &h, 2);
+		  /* Save the primer in the array */
+          oligo->oligo[k] = h;
+		  /* Update the number of primers */
+          k++;
+        } 
+      	/* Break from the inner for loop, because there is no
+                 legal longer oligo with the same 3' sequence. */
+        else if (   h.ok==OV_TOO_MANY_NS || h.ok==OV_INTERSECT_TARGET
+		  		 || h.ok==OV_SELF_ANY    || h.ok==OV_POLY_X
+		  		 || h.ok==OV_EXCL_REGION || h.ok==OV_GC_CLAMP
+		  		 || h.ok==OV_SEQ_QUALITY || h.ok==OV_LIB_SIM ) {
+   	      break;
+        }
+      } /* j: Loop over possible primer length from min to max */
+    } /* i: Loop over the sequence */
+    /* Update array with how many primers are good */
+    oligo->num_elem = k;
+    /* Update statistics with how many primers are good */
+    sa->intl_expl.ok = oligo->num_elem;
+    
+    /* return 0 for success */
+    if (oligo->num_elem == 0) return 1;
+    else return 0;	
+}
+
+
 
 /*
  * Compute various characteristics of the oligo, and determine
