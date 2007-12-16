@@ -175,9 +175,11 @@ main(argc,argv)
 
     /* POSSIBLE CHANGE -- read in mispriming libraries here? */
 
+    /* Modify some of the arguments */
+    p3_adjust_seq_args(global_pa, sa, nonfatal_parse_err);
+    
     /* If there are nonfatal errors, write the proper message
      * and finish this loop */
-    p3_adjust_seq_args(global_pa, sa, nonfatal_parse_err);
     if (!pr_is_empty(nonfatal_parse_err)) {
       if (format_output) {
 	format_error(stdout, sa->sequence_name, 
