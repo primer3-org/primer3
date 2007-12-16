@@ -857,18 +857,19 @@ destroy_seq_args(seq_args *sa) {
 /* ============================================================ */
 
 
-/* ============================================================ */
+
+
+
+
 /* The main primer3 interface                                   */
 /* See libprimer3.h for documentation.                          */
-/* ============================================================ */
-
 p3retval *
 choose_primers(const p3_global_settings *pa, seq_args *sa)
 {
     int          i;               /* Loop index. */
     int          prod_size_range; /* Product size range indexr. */
     pair_array_t a_pair_array;    /* Array for primer pairs */
-    pair_array_t *best_pairs;     /* Array for best primer pairs */
+    pair_array_t *best_pairs;     /* Pointer to best primer pairs */
     
     /* Create retval and set were to find the results */
     p3retval *retval = create_p3retval();
@@ -3125,6 +3126,206 @@ check_if_lowercase_masked(position, sequence, h)
    }
 }
 
+
+/* Put substring of seq starting at n with length m into s. */
+void
+_pr_substr(const char *seq, int n, int m, char *s)
+{
+	int i;
+	for(i=n;i<n+m;i++)s[i-n]=seq[i];
+	s[m]='\0';
+}
+
+/* Reverse and complement the sequence seq and put the result in s. */ 
+static void
+_pr_reverse_complement(const char *seq, char *s)
+{
+    const char *p = seq;
+    char *q = s;
+
+    while (*p != '\0') p++;
+    p--;
+    while (p >= seq) {
+	switch (*p)
+	{
+	case 'A': *q='T'; break;
+	case 'C': *q='G'; break;
+	case 'G': *q='C'; break;
+	case 'T': *q='A'; break;
+	case 'U': *q='A'; break;
+
+	case 'B': *q='V'; break;
+	case 'D': *q='H'; break;
+        case 'H': *q='D'; break;
+        case 'V': *q='B'; break;
+        case 'R': *q='Y'; break;
+        case 'Y': *q='R'; break;
+	case 'K': *q='M'; break;
+        case 'M': *q='K'; break;
+        case 'S': *q='S'; break;
+        case 'W': *q='W'; break;
+
+	case 'N': *q='N'; break;
+
+	case 'a': *q='t'; break;
+	case 'c': *q='g'; break;
+	case 'g': *q='c'; break;
+	case 't': *q='a'; break;
+	case 'u': *q='a'; break;
+
+	case 'b': *q='v'; break;
+	case 'd': *q='h'; break;
+        case 'h': *q='d'; break;
+        case 'v': *q='b'; break;
+        case 'r': *q='y'; break;
+        case 'y': *q='r'; break;
+	case 'k': *q='m'; break;
+        case 'm': *q='k'; break;
+        case 's': *q='s'; break;
+        case 'w': *q='w'; break;
+
+	case 'n': *q='n'; break;
+	}
+	p--; q++;
+    }
+    *q = '\0';
+}
+
+int
+_pr_need_template_mispriming(pa)
+  const p3_global_settings *pa;
+{
+  return 
+    pa->p_args.max_template_mispriming >= 0
+    || pa->p_args.weights.template_mispriming > 0.0
+    || _pr_need_pair_template_mispriming(pa);
+}
+
+int
+_pr_need_pair_template_mispriming(pa)
+  const p3_global_settings *pa;
+{
+  return 
+    pa->pair_max_template_mispriming >= 0
+    || pa->pr_pair_weights.template_mispriming > 0.0;
+}
+
+/* Upcase a DNA string, s, in place.  If amibiguity_code_ok is false the
+   string can consist of acgtnACGTN.  If it is true then the IUB/IUPAC
+   ambiguity codes are are allowed.  Return the first unrecognized letter if
+   any is seen (and turn it to 'N' in s).  Otherwise return '\0'.  */
+static char
+dna_to_upper(s, ambiguity_code_ok)
+    char * s;
+    int ambiguity_code_ok;
+{
+  char *p = s;
+  int unrecognized_base = '\0';
+  while (*p) {
+    switch (*p) {
+      case 'a': case 'A': *p='A'; break;
+      case 'c': case 'C': *p='C'; break;
+      case 'g': case 'G': *p='G'; break;
+      case 't': case 'T': *p='T'; break;
+      case 'n': case 'N': *p='N'; break;
+      default: 
+	if (ambiguity_code_ok) {
+	  switch (*p) {
+	  case 'r': case 'R': *p = 'R'; break;
+	  case 'y': case 'Y': *p = 'Y'; break;
+	  case 'm': case 'M': *p = 'M'; break;
+	  case 'w': case 'W': *p = 'W'; break;
+	  case 's': case 'S': *p = 'S'; break;
+	  case 'k': case 'K': *p = 'K'; break;
+	  case 'd': case 'D': *p = 'D'; break;
+	  case 'h': case 'H': *p = 'H'; break;
+	  case 'v': case 'V': *p = 'V'; break;
+	  case 'b': case 'B': *p = 'B'; break;
+	  }
+	} else {
+	  if (!unrecognized_base) unrecognized_base = *p;
+	  *p = 'N';
+	}
+	break;
+      }
+    p++;
+  }
+  return unrecognized_base;
+}
+
+static char * strstr_nocase(s1, s2)
+char *s1, *s2;
+{
+   int  n1, n2;
+   char *p, q, *tmp;
+
+   if(s1 == NULL || s2 == NULL) return NULL;
+   n1 = strlen(s1); n2 = strlen(s2);
+   if(n1 < n2) return NULL;
+
+   tmp = pr_safe_malloc(n1 + 1);
+   strcpy(tmp, s1);
+
+   q = *tmp; p = tmp;
+   while(q != '\0' && q != '\n'){
+      q = *(p + n2);
+      *(p + n2) = '\0';
+      if(strcmp_nocase(p, s2)){
+	 *(p + n2) = q; p++; continue;
+      }
+      else {free(tmp); return p;}
+   }
+   free(tmp); return NULL;
+}
+
+void
+pr_print_pair_explain(FILE *f,
+		      const pair_stats *pair_expl)
+  /* const seq_args *sa; */
+{
+  fprintf(f, "considered %d", /* sa-> */ pair_expl->considered);
+  if (/* sa-> */ pair_expl->target)
+    fprintf(f, ", no target %d", /* sa-> */ pair_expl->target);
+  if (/* sa-> */ pair_expl->product)
+    fprintf(f, ", unacceptable product size %d", /* sa-> */ pair_expl->product);
+  if (/* sa-> */ pair_expl->low_tm)
+    fprintf(f, ", low product Tm %d", /* sa-> */ pair_expl->low_tm);
+  if (/* sa-> */ pair_expl->high_tm)
+    fprintf(f, ", high product Tm %d", /* sa-> */ pair_expl->high_tm);
+  if (/* sa-> */ pair_expl->temp_diff) 
+    fprintf(f, ", tm diff too large %d",/* sa-> */ pair_expl->temp_diff);
+  if (/* sa-> */ pair_expl->compl_any) 
+    fprintf(f, ", high any compl %d", /* sa-> */ pair_expl->compl_any);
+  if (/* sa-> */ pair_expl->compl_end) 
+    fprintf(f, ", high end compl %d", /* sa-> */ pair_expl->compl_end);
+  if (/* sa-> */ pair_expl->internal) 
+    fprintf(f, ", no internal oligo %d", /* sa-> */ pair_expl->internal);
+  if (/* sa-> */ pair_expl->repeat_sim)
+    fprintf(f, ", high mispriming library similarity %d",
+	    /* sa-> */ pair_expl->repeat_sim);
+  if (/* sa-> */ pair_expl->template_mispriming)
+    fprintf(f, ", high template mispriming score %d",
+	    /* sa-> */ pair_expl->template_mispriming);
+  fprintf(f, ", ok %d\n", /* sa-> */ pair_expl->ok);
+}
+
+const char *
+libprimer3_release(void) {
+  return "libprimer3 release 2.0.0";
+}
+
+const char **
+libprimer3_copyright(void) {
+  return libprimer3_copyright_str;
+}
+
+
+
+/* ============================================================ */
+/* START functions which check and modify the input             */
+/* ============================================================ */
+
+/* Substracts the first_index of the start positions in an array */
 static void
 adjust_base_index_interval_list(intervals, num, first_index)
     interval_array_t intervals;
@@ -3134,6 +3335,7 @@ adjust_base_index_interval_list(intervals, num, first_index)
     for (i = 0; i < num; i++) intervals[i][0] -= first_index;
 }
 
+/* Fuction to set the included region and fix the start positions */
 int
 p3_adjust_seq_args(const p3_global_settings *pa, 
 		   seq_args *sa, 
@@ -3141,12 +3343,14 @@ p3_adjust_seq_args(const p3_global_settings *pa,
 {
   int seq_len, i;
 
+  /* Complain if there is no sequence */
   if (NULL == sa->sequence) {
     pr_append_new_chunk(nonfatal_err, "Missing SEQUENCE tag");
     return 1;
   } 
 
     /* FIX ME -- temporary */
+    /* Copy over the new arrays */
     sa->num_targets = sa->tar2.count;
     for (i = 0; i <PR_MAX_INTERVAL_ARRAY;  i++) {
       sa->tar[i][0]     = sa->tar2.pairs[i][0];
@@ -3165,11 +3369,14 @@ p3_adjust_seq_args(const p3_global_settings *pa,
 
   seq_len = strlen(sa->sequence);
 
+  /* If no included region is specified,
+   * use the whole sequence as included region */
   if (sa->incl_l == -1) {
     sa->incl_l = seq_len;
     sa->incl_s = pa->first_base_index;
   }
 
+  /* Fix the start of the included region and start codon */
   sa->incl_s -= pa->first_base_index;
   sa->start_codon_pos -= pa->first_base_index;
 
@@ -3183,6 +3390,8 @@ p3_adjust_seq_args(const p3_global_settings *pa,
     pa->first_base_index);
   */
 
+  /* Fix the start of Targets and 
+   * Excluded regions for primer and intl. oligo */
   adjust_base_index_interval_list(sa->tar, sa->num_targets,
 				  pa->first_base_index);
   adjust_base_index_interval_list(sa->excl, sa->num_excl,
@@ -3193,6 +3402,7 @@ p3_adjust_seq_args(const p3_global_settings *pa,
 
   return 0;
 }
+
 
 /*
  * Return 1 on error, 0 on success.  Set sa->trimmed_seq and possibly modify
@@ -3724,200 +3934,6 @@ _pr_check_and_adjust_1_interval(const char *tag_name,
     return 0;
 } /* _pr_check_and_adjust_intervals  */
 
-/* Put substring of seq starting at n with length m into s. */
-void
-_pr_substr(const char *seq, int n, int m, char *s)
-{
-	int i;
-	for(i=n;i<n+m;i++)s[i-n]=seq[i];
-	s[m]='\0';
-}
-
-/* Reverse and complement the sequence seq and put the result in s. */ 
-static void
-_pr_reverse_complement(const char *seq, char *s)
-{
-    const char *p = seq;
-    char *q = s;
-
-    while (*p != '\0') p++;
-    p--;
-    while (p >= seq) {
-	switch (*p)
-	{
-	case 'A': *q='T'; break;
-	case 'C': *q='G'; break;
-	case 'G': *q='C'; break;
-	case 'T': *q='A'; break;
-	case 'U': *q='A'; break;
-
-	case 'B': *q='V'; break;
-	case 'D': *q='H'; break;
-        case 'H': *q='D'; break;
-        case 'V': *q='B'; break;
-        case 'R': *q='Y'; break;
-        case 'Y': *q='R'; break;
-	case 'K': *q='M'; break;
-        case 'M': *q='K'; break;
-        case 'S': *q='S'; break;
-        case 'W': *q='W'; break;
-
-	case 'N': *q='N'; break;
-
-	case 'a': *q='t'; break;
-	case 'c': *q='g'; break;
-	case 'g': *q='c'; break;
-	case 't': *q='a'; break;
-	case 'u': *q='a'; break;
-
-	case 'b': *q='v'; break;
-	case 'd': *q='h'; break;
-        case 'h': *q='d'; break;
-        case 'v': *q='b'; break;
-        case 'r': *q='y'; break;
-        case 'y': *q='r'; break;
-	case 'k': *q='m'; break;
-        case 'm': *q='k'; break;
-        case 's': *q='s'; break;
-        case 'w': *q='w'; break;
-
-	case 'n': *q='n'; break;
-	}
-	p--; q++;
-    }
-    *q = '\0';
-}
-
-int
-_pr_need_template_mispriming(pa)
-  const p3_global_settings *pa;
-{
-  return 
-    pa->p_args.max_template_mispriming >= 0
-    || pa->p_args.weights.template_mispriming > 0.0
-    || _pr_need_pair_template_mispriming(pa);
-}
-
-int
-_pr_need_pair_template_mispriming(pa)
-  const p3_global_settings *pa;
-{
-  return 
-    pa->pair_max_template_mispriming >= 0
-    || pa->pr_pair_weights.template_mispriming > 0.0;
-}
-
-/* Upcase a DNA string, s, in place.  If amibiguity_code_ok is false the
-   string can consist of acgtnACGTN.  If it is true then the IUB/IUPAC
-   ambiguity codes are are allowed.  Return the first unrecognized letter if
-   any is seen (and turn it to 'N' in s).  Otherwise return '\0'.  */
-static char
-dna_to_upper(s, ambiguity_code_ok)
-    char * s;
-    int ambiguity_code_ok;
-{
-  char *p = s;
-  int unrecognized_base = '\0';
-  while (*p) {
-    switch (*p) {
-      case 'a': case 'A': *p='A'; break;
-      case 'c': case 'C': *p='C'; break;
-      case 'g': case 'G': *p='G'; break;
-      case 't': case 'T': *p='T'; break;
-      case 'n': case 'N': *p='N'; break;
-      default: 
-	if (ambiguity_code_ok) {
-	  switch (*p) {
-	  case 'r': case 'R': *p = 'R'; break;
-	  case 'y': case 'Y': *p = 'Y'; break;
-	  case 'm': case 'M': *p = 'M'; break;
-	  case 'w': case 'W': *p = 'W'; break;
-	  case 's': case 'S': *p = 'S'; break;
-	  case 'k': case 'K': *p = 'K'; break;
-	  case 'd': case 'D': *p = 'D'; break;
-	  case 'h': case 'H': *p = 'H'; break;
-	  case 'v': case 'V': *p = 'V'; break;
-	  case 'b': case 'B': *p = 'B'; break;
-	  }
-	} else {
-	  if (!unrecognized_base) unrecognized_base = *p;
-	  *p = 'N';
-	}
-	break;
-      }
-    p++;
-  }
-  return unrecognized_base;
-}
-
-static char * strstr_nocase(s1, s2)
-char *s1, *s2;
-{
-   int  n1, n2;
-   char *p, q, *tmp;
-
-   if(s1 == NULL || s2 == NULL) return NULL;
-   n1 = strlen(s1); n2 = strlen(s2);
-   if(n1 < n2) return NULL;
-
-   tmp = pr_safe_malloc(n1 + 1);
-   strcpy(tmp, s1);
-
-   q = *tmp; p = tmp;
-   while(q != '\0' && q != '\n'){
-      q = *(p + n2);
-      *(p + n2) = '\0';
-      if(strcmp_nocase(p, s2)){
-	 *(p + n2) = q; p++; continue;
-      }
-      else {free(tmp); return p;}
-   }
-   free(tmp); return NULL;
-}
-
-void
-pr_print_pair_explain(FILE *f,
-		      const pair_stats *pair_expl)
-  /* const seq_args *sa; */
-{
-  fprintf(f, "considered %d", /* sa-> */ pair_expl->considered);
-  if (/* sa-> */ pair_expl->target)
-    fprintf(f, ", no target %d", /* sa-> */ pair_expl->target);
-  if (/* sa-> */ pair_expl->product)
-    fprintf(f, ", unacceptable product size %d", /* sa-> */ pair_expl->product);
-  if (/* sa-> */ pair_expl->low_tm)
-    fprintf(f, ", low product Tm %d", /* sa-> */ pair_expl->low_tm);
-  if (/* sa-> */ pair_expl->high_tm)
-    fprintf(f, ", high product Tm %d", /* sa-> */ pair_expl->high_tm);
-  if (/* sa-> */ pair_expl->temp_diff) 
-    fprintf(f, ", tm diff too large %d",/* sa-> */ pair_expl->temp_diff);
-  if (/* sa-> */ pair_expl->compl_any) 
-    fprintf(f, ", high any compl %d", /* sa-> */ pair_expl->compl_any);
-  if (/* sa-> */ pair_expl->compl_end) 
-    fprintf(f, ", high end compl %d", /* sa-> */ pair_expl->compl_end);
-  if (/* sa-> */ pair_expl->internal) 
-    fprintf(f, ", no internal oligo %d", /* sa-> */ pair_expl->internal);
-  if (/* sa-> */ pair_expl->repeat_sim)
-    fprintf(f, ", high mispriming library similarity %d",
-	    /* sa-> */ pair_expl->repeat_sim);
-  if (/* sa-> */ pair_expl->template_mispriming)
-    fprintf(f, ", high template mispriming score %d",
-	    /* sa-> */ pair_expl->template_mispriming);
-  fprintf(f, ", ok %d\n", /* sa-> */ pair_expl->ok);
-}
-
-const char *
-libprimer3_release(void) {
-  return "libprimer3 release 2.0.0";
-}
-
-const char **
-libprimer3_copyright(void) {
-  return libprimer3_copyright_str;
-}
-
-
-
 /* ============================================================ */
 
 /* Used in seq_lib functions and also exported */
@@ -3978,6 +3994,11 @@ FILE *file;
 	remaining_size = ssz - (p - s);
     }
 }
+
+/* ============================================================ */
+/* END functions which check and modify the input               */
+/* ============================================================ */
+
 
 
 /* ============================================================ */
