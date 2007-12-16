@@ -180,7 +180,7 @@ static int    make_internal_oligo_list(p3retval *,
 				       const dpal_arg_holder *);
 
 static int    pick_primers_range(const int, const int,
-		           oligo_array *,oligo_stats *, const p3_global_settings *,
+		           oligo_array *, const p3_global_settings *,
                    seq_args *, const dpal_arg_holder *);
 
 static double obj_fn(const p3_global_settings *, primer_pair *);
@@ -1380,7 +1380,7 @@ make_internal_oligo_list(retval, pa, sa, dpal_arg_to_use)
   int length = strlen(sa->trimmed_seq) - pa->o_args.min_size;
   int start = pa->o_args.min_size - 1;
   
-  ret = pick_primers_range(start, length, &retval->intl, &retval->intl.expl,
+  ret = pick_primers_range(start, length, &retval->intl,
 		  					pa, sa, dpal_arg_to_use);
 
   return ret;
@@ -1393,7 +1393,7 @@ make_internal_oligo_list(retval, pa, sa, dpal_arg_to_use)
  * and stores them in *oligo  */
 static int
 pick_primers_range(const int start, const int length, oligo_array *oligo,
-				   oligo_stats *stats, const p3_global_settings *pa,
+				   const p3_global_settings *pa,
                    seq_args *sa, const dpal_arg_holder *dpal_arg_to_use)
 {
 	/* Variables for the loop */
@@ -1455,11 +1455,11 @@ pick_primers_range(const int start, const int length, oligo_array *oligo,
         h.repeat_sim.score = NULL;
 
 		/* Calculate all the primer parameters */
-        oligo_param(pa, &h, OT_INTL, dpal_arg_to_use,
-  		  sa, stats);
+        oligo_param(pa, &h, oligo->type, dpal_arg_to_use,
+  		  sa, &oligo->expl);
 
 		/* Add it to the considered statistics */
-        stats->considered++;
+        oligo->expl.considered++;
 
 		/* If primer has to be used or is OK */
         if (OK_OR_MUST_USE(&h)) {
@@ -1483,7 +1483,7 @@ pick_primers_range(const int start, const int length, oligo_array *oligo,
     /* Update array with how many primers are good */
     oligo->num_elem = k;
     /* Update statistics with how many primers are good */
-    stats->ok = oligo->num_elem;
+    oligo->expl.ok = oligo->num_elem;
     
     /* return 0 for success */
     if (oligo->num_elem == 0) return 1;
