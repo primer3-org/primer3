@@ -3322,6 +3322,161 @@ libprimer3_copyright(void) {
 
 
 /* ============================================================ */
+/* BEGIN Internal and external functions for pr_append_str      */
+/* ============================================================ */
+
+static void
+init_pr_append_str(pr_append_str *s) {
+  s->data = NULL;
+  s->storage_size = 0;
+}
+
+pr_append_str *
+create_pr_append_str() {
+  /* We cannot use pr_safe_malloc here
+     because this function will be called outside
+     of the setjmp(....) */
+  pr_append_str *ret;
+
+  ret = malloc(sizeof(pr_append_str));
+  if (NULL == ret) return NULL;
+  init_pr_append_str(ret);
+  /* ret->data = NULL;
+     ret->storage_size = 0;  */
+  return ret;
+}
+
+static void
+destroy_pr_append_str_data(const pr_append_str *str) {
+  if (NULL == str) return;
+  if (str->data != NULL) free(str->data);
+}
+
+void
+destroy_pr_append_str(pr_append_str *str) {
+  if (str == NULL) return;
+  destroy_pr_append_str_data(str);
+  /* if (str->data != NULL) free(str->data); */
+  free(str);
+}
+
+int
+pr_append_external(pr_append_str *x,  const char *s)
+{
+    int xlen, slen;
+
+    PR_ASSERT(NULL != s);
+    PR_ASSERT(NULL != x);
+
+    if (NULL == x->data) {
+	x->storage_size = 24;
+	x->data = malloc(x->storage_size);
+	if (NULL == x->data) return 1; /* out of memory */
+	*x->data = '\0';
+    }
+    xlen = strlen(x->data);
+    slen = strlen(s);
+    if (xlen + slen + 1 > x->storage_size) {
+	x->storage_size += 2 * (slen + 1);
+	x->data = realloc(x->data, x->storage_size);
+	if (NULL == x->data) return 1; /* out of memory */
+    }
+    strcpy(x->data + xlen, s);
+    return 0;
+}
+
+static void
+pr_append_new_chunk(pr_append_str *x, const char *s)
+{
+  PR_ASSERT(NULL != x)
+  if (NULL == s) return;
+  pr_append_w_sep(x, "; ", s);
+}
+
+int
+pr_append_new_chunk_external(pr_append_str *x, const char *s)
+{
+  PR_ASSERT(NULL != x)
+    if (NULL == s) return 0;
+  return(pr_append_w_sep_external(x, "; ", s));
+}
+
+int
+pr_append_w_sep_external(pr_append_str *x,
+			 const char *sep,
+			 const char *s)
+{
+  PR_ASSERT(NULL != x)
+  PR_ASSERT(NULL != s)
+  PR_ASSERT(NULL != sep)
+    if (pr_is_empty(x)) {
+      return(pr_append_external(x, s));
+    } else {
+	return(pr_append_external(x, sep)
+	       || pr_append_external(x, s));
+    }
+}
+
+void
+pr_set_empty(pr_append_str *x)
+{
+    PR_ASSERT(NULL != x);
+    if (NULL != x->data) *x->data = '\0';
+}
+
+int
+pr_is_empty( const pr_append_str *x)
+{
+    PR_ASSERT(NULL != x);
+    return  NULL == x->data || '\0' == *x->data;
+}
+
+static void
+pr_append_w_sep(pr_append_str *x,
+		const char *sep,
+		const char *s)
+{
+  if (pr_append_w_sep_external(x, sep, s)) longjmp(_jmp_buf, 1);
+}
+
+
+static void
+pr_append(pr_append_str *x,
+		 const char *s)
+{
+  if (pr_append_external(x, s)) longjmp(_jmp_buf, 1);
+}
+
+/* ============================================================ */
+/* END internal and external functions for pr_append_str        */
+/* ============================================================ */
+
+
+/* =========================================================== */
+/* Malloc and realloc wrappers that longjmp() on failure       */
+/* =========================================================== */
+static void *
+pr_safe_malloc(size_t x)
+{
+    void *r = malloc(x);
+    if (NULL == r) longjmp(_jmp_buf, 1);
+    return r;
+}
+
+static void *
+pr_safe_realloc(void *p, size_t x)
+{
+    void *r = realloc(p, x);
+    if (NULL == r) longjmp(_jmp_buf, 1);
+    return r;
+}
+
+/* =========================================================== */
+/* End of malloc/realloc wrappers.                             */
+/* =========================================================== */
+
+
+/* ============================================================ */
 /* START functions which check and modify the input             */
 /* ============================================================ */
 
@@ -4502,7 +4657,7 @@ upcase_and_check_char(char *s)
 
 
 /* ============================================================ */
-/* BEGIN 'get' functions for seq_args                             */
+/* BEGIN 'get' functions for seq_args                           */
 /* ============================================================ */
 
 interval_array_t2 *
@@ -4636,7 +4791,7 @@ p3_set_sa_internal_input(seq_args *sargs, const char *internal_input) {
 /* ============================================================ */
 
 
-
+
 /* ============================================================ */
 /* BEGIN 'get' functions for p3_global_settings                 */
 /* ============================================================ */
@@ -4655,7 +4810,7 @@ p3_get_gs_o_args(p3_global_settings * p) {
 /* END 'get' functions for p3_global_settings                   */
 /* ============================================================ */
 
-
+
 /* ============================================================ */
 /* BEGIN 'set' functions for p3_global_settings                 */
 /* ============================================================ */
@@ -5187,157 +5342,4 @@ p3_set_gs_primer_gc_clamp(p3_global_settings * p , int val) {
 /* END 'set' functions for p3_global_settings                   */
 /* ============================================================ */
 
-
-/* ============================================================ */
-/* BEGIN Internal and external functions for pr_append_str      */
-/* ============================================================ */
 
-static void
-init_pr_append_str(pr_append_str *s) {
-  s->data = NULL;
-  s->storage_size = 0;
-}
-
-pr_append_str *
-create_pr_append_str() {
-  /* We cannot use pr_safe_malloc here
-     because this function will be called outside
-     of the setjmp(....) */
-  pr_append_str *ret;
-
-  ret = malloc(sizeof(pr_append_str));
-  if (NULL == ret) return NULL;
-  init_pr_append_str(ret);
-  /* ret->data = NULL;
-     ret->storage_size = 0;  */
-  return ret;
-}
-
-static void
-destroy_pr_append_str_data(const pr_append_str *str) {
-  if (NULL == str) return;
-  if (str->data != NULL) free(str->data);
-}
-
-void
-destroy_pr_append_str(pr_append_str *str) {
-  if (str == NULL) return;
-  destroy_pr_append_str_data(str);
-  /* if (str->data != NULL) free(str->data); */
-  free(str);
-}
-
-int
-pr_append_external(pr_append_str *x,  const char *s)
-{
-    int xlen, slen;
-
-    PR_ASSERT(NULL != s);
-    PR_ASSERT(NULL != x);
-
-    if (NULL == x->data) {
-	x->storage_size = 24;
-	x->data = malloc(x->storage_size);
-	if (NULL == x->data) return 1; /* out of memory */
-	*x->data = '\0';
-    }
-    xlen = strlen(x->data);
-    slen = strlen(s);
-    if (xlen + slen + 1 > x->storage_size) {
-	x->storage_size += 2 * (slen + 1);
-	x->data = realloc(x->data, x->storage_size);
-	if (NULL == x->data) return 1; /* out of memory */
-    }
-    strcpy(x->data + xlen, s);
-    return 0;
-}
-
-static void
-pr_append_new_chunk(pr_append_str *x, const char *s)
-{
-  PR_ASSERT(NULL != x)
-  if (NULL == s) return;
-  pr_append_w_sep(x, "; ", s);
-}
-
-int
-pr_append_new_chunk_external(pr_append_str *x, const char *s)
-{
-  PR_ASSERT(NULL != x)
-    if (NULL == s) return 0;
-  return(pr_append_w_sep_external(x, "; ", s));
-}
-
-int
-pr_append_w_sep_external(pr_append_str *x,
-			 const char *sep,
-			 const char *s)
-{
-  PR_ASSERT(NULL != x)
-  PR_ASSERT(NULL != s)
-  PR_ASSERT(NULL != sep)
-    if (pr_is_empty(x)) {
-      return(pr_append_external(x, s));
-    } else {
-	return(pr_append_external(x, sep)
-	       || pr_append_external(x, s));
-    }
-}
-
-void
-pr_set_empty(pr_append_str *x)
-{
-    PR_ASSERT(NULL != x);
-    if (NULL != x->data) *x->data = '\0';
-}
-
-int
-pr_is_empty( const pr_append_str *x)
-{
-    PR_ASSERT(NULL != x);
-    return  NULL == x->data || '\0' == *x->data;
-}
-
-static void
-pr_append_w_sep(pr_append_str *x,
-		const char *sep,
-		const char *s)
-{
-  if (pr_append_w_sep_external(x, sep, s)) longjmp(_jmp_buf, 1);
-}
-
-
-static void
-pr_append(pr_append_str *x,
-		 const char *s)
-{
-  if (pr_append_external(x, s)) longjmp(_jmp_buf, 1);
-}
-
-/* ============================================================ */
-/* END internal and external functions for pr_append_str        */
-/* ============================================================ */
-
-
-/* =========================================================== */
-/* Malloc and realloc wrappers that longjmp() on failure       */
-/* =========================================================== */
-static void *
-pr_safe_malloc(size_t x)
-{
-    void *r = malloc(x);
-    if (NULL == r) longjmp(_jmp_buf, 1);
-    return r;
-}
-
-static void *
-pr_safe_realloc(void *p, size_t x)
-{
-    void *r = realloc(p, x);
-    if (NULL == r) longjmp(_jmp_buf, 1);
-    return r;
-}
-
-/* =========================================================== */
-/* End of malloc/realloc wrappers.                             */
-/* =========================================================== */
