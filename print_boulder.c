@@ -391,15 +391,15 @@ print_all_explain(const primer_args *pa,
 {
   if (pa->pick_left_primer == 1
       && !(pa->pick_anyway && sa->left_input))
-    print_explain(&sa->left_expl,OT_LEFT);
+    print_explain(&retval->fwd.expl,OT_LEFT);
 
   if (pa->pick_right_primer == 1
       && !(pa->pick_anyway && sa->right_input))
-    print_explain(&sa->right_expl,OT_RIGHT);
+    print_explain(&retval->rev.expl,OT_RIGHT);
 
   if ( pa->pick_internal_oligo == 1
       && !(pa->pick_anyway && sa->internal_input)) 
-    print_explain(&sa->intl_expl, OT_INTL);
+    print_explain(&retval->intl.expl, OT_INTL);
 
   if (pa->pick_right_primer == 1 
       && pa->pick_left_primer == 1) {

@@ -590,9 +590,6 @@ typedef struct seq_args {
   /*  Output (writable) arguments. */   /* FIX ME, MOVE THESE TO retval */
   pr_append_str error;  /* Error messages. */
   pr_append_str warning;  /* Warning messages. */
-  oligo_stats left_expl;  /* Left primers statistics. */
-  oligo_stats right_expl; /* Right primers statistics. */
-  oligo_stats intl_expl;  /* Internal oligos statistics. */
   pair_stats  pair_expl;  /* Pair statistics. */
   /*  END output arguments. */
   /* ================================================== */
