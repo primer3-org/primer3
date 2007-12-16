@@ -404,7 +404,7 @@ print_all_explain(const primer_args *pa,
   if (pa->pick_right_primer == 1 
       && pa->pick_left_primer == 1) {
     printf("PRIMER_PAIR_EXPLAIN=");
-    pr_print_pair_explain(stdout, &sa->pair_expl);
+    pr_print_pair_explain(stdout, &retval->best_pairs.expl);
   }
 }
 

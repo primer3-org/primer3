@@ -703,6 +703,9 @@ create_p3retval(void)
   memset(&state->rev.expl,  0, sizeof(state->rev.expl));
   memset(&state->intl.expl, 0, sizeof(state->intl.expl));
   
+  memset(&state->best_pairs.expl, 0, sizeof(state->best_pairs.expl));
+  
+  
   /* state->glob_err.data = NULL; 
   state->glob_err.storage_size = 0;
 
@@ -1124,7 +1127,7 @@ make_primer_lists(p3retval *retval,
     int left, right;
     int i,j,n,k,pr_min;
     int tar_l, tar_r, f_b, r_b;
-    pair_stats *pair_expl = &sa->pair_expl; /* To store the statistics for pairs */
+    pair_stats *pair_expl = &retval->best_pairs.expl; /* To store the statistics for pairs */
     oligo_stats *ostats; /* To store the statistics for each primer type */
 
     /* The position of the intial base of the rightmost stop codon that is
@@ -2026,7 +2029,7 @@ choose_pair_or_triple(retval, pa, sa,  dpal_arg_to_use, int_num, p)
   int i_worst;             /* The index within p of worst_pair. */
 
   primer_pair h;
-  pair_stats *pair_expl = &sa->pair_expl;
+  pair_stats *pair_expl = &retval->best_pairs.expl;
 
   k=0; 
 
@@ -2274,7 +2277,7 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
     char s1[MAX_PRIMER_LENGTH+1], s2[MAX_PRIMER_LENGTH+1], 
     s1_rev[MAX_PRIMER_LENGTH+1], s2_rev[MAX_PRIMER_LENGTH+1];
     short compl_end;
-    pair_stats *pair_expl = &sa->pair_expl;
+    pair_stats *pair_expl = &retval->best_pairs.expl;
 
     /* FUTURE CODE: we must use the pair if the caller specifed
        both the left and the right primer. */

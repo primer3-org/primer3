@@ -473,12 +473,6 @@ typedef struct primer_pair {
   char   *rep_name;
 } primer_pair;
 
-typedef struct pair_array_t {
-    int         storage_size;
-    int         num_pairs;
-    primer_pair *pairs;
-} pair_array_t;
-
 typedef int interval_array_t[PR_MAX_INTERVAL_ARRAY][2];
 
 typedef struct interval_array_t2 {
@@ -522,6 +516,13 @@ typedef struct pair_stats {
   int template_mispriming; /* Sum of template mispriming scores too hihg.   */
   int ok;                  /* Number that were ok.                          */
 } pair_stats;
+
+typedef struct pair_array_t {
+    int         storage_size;
+    int         num_pairs;
+    primer_pair *pairs;
+    pair_stats  expl;
+} pair_array_t;
 
 /*
  * Arguments relating to a single particular source sequence (for which
@@ -590,7 +591,6 @@ typedef struct seq_args {
   /*  Output (writable) arguments. */   /* FIX ME, MOVE THESE TO retval */
   pr_append_str error;  /* Error messages. */
   pr_append_str warning;  /* Warning messages. */
-  pair_stats  pair_expl;  /* Pair statistics. */
   /*  END output arguments. */
   /* ================================================== */
 
