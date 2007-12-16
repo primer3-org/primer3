@@ -120,6 +120,9 @@ static int    _pr_check_and_adjust_1_interval(const char *, const int,
 					      pr_append_str *err, seq_args *,
 					      pr_append_str *warning);
 
+static void   sort_primer_array(oligo_array *);
+
+
 static void   add_must_use_warnings(pr_append_str *,
 				    const char *,
 				    const oligo_stats *);
@@ -923,8 +926,6 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
 
     /* Populate the internal oligo lists */
     if ( pa->pick_internal_oligo) {
-	 /* OK pa->primer_task == pick_hyb_probe_only 
-	    || pa->primer_task == pick_pcr_primers_and_hyb_probe */
 	   if (make_internal_oligo_list(retval, pa, sa,
 				   dpal_arg_to_use) != 0) {
 	/* There was an error*/ return retval;
@@ -947,21 +948,15 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
 
     /* We sort _after_ printing lists to 
        maintain the order of test output. */
-    if ( pa->pick_right_primer /* OK pa->primer_task != pick_left_only 
-				  && pa->primer_task != pick_hyb_probe_only */) 
-      qsort(&retval->rev.oligo[0], retval->rev.num_elem, sizeof(*retval->rev.oligo),
-	    primer_rec_comp);
+    if (pa->pick_right_primer) 
+    	sort_primer_array(&retval->rev);
 
-    if( pa->pick_left_primer /* OK pa->primer_task != pick_right_only
-				&& pa->primer_task != pick_hyb_probe_only */) 
-      qsort(&retval->fwd.oligo[0], retval->fwd.num_elem, sizeof(*retval->fwd.oligo),
-	    primer_rec_comp);
+    if (pa->pick_left_primer) 
+    	sort_primer_array(&retval->fwd);
 
-    if(pa->primer_task == pick_hyb_probe_only)
-      qsort(&retval->intl.oligo[0], 
-	    retval->intl.num_elem, 
-	    sizeof(*retval->intl.oligo), 
-	    primer_rec_comp);
+    /* FIX ME why do we only sort this if we dont pick primers? */
+    if (pa->primer_task == pick_hyb_probe_only)
+    	sort_primer_array(&retval->intl);
 
     a_pair_array.storage_size = a_pair_array.num_pairs = 0;
 
@@ -1013,7 +1008,6 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
     
     return retval;
 }
-
 
 /* Call this function only if the 'stat's contains
    the _errors_ associated with a given primer
@@ -2133,6 +2127,14 @@ choose_internal_oligo(retval, left, right, nm, sa, pa, dpal_arg_to_use)
    *nm = i;
    if(*nm < 0) return 1;
    return 0;
+}
+
+/* Sort a given primer array by penalty */
+static void
+sort_primer_array(oligo_array *oligo)
+{
+	qsort(&oligo->oligo[0], oligo->num_elem, sizeof(*oligo->oligo),
+		    primer_rec_comp);
 }
 
 /* Compare function for sorting primer records. */
