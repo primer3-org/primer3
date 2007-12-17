@@ -895,7 +895,9 @@ destroy_seq_args(seq_args *sa) {
 /* The main primer3 interface                                   */
 /* See libprimer3.h for documentation.                          */
 p3retval *
-choose_primers(const p3_global_settings *pa, seq_args *sa)
+choose_primers(const p3_global_settings *pa, 
+	       /* const We can add this when pr_data control does not use &sa->error */
+	       seq_args *sa)
 {
     int          i;               /* Loop index. */
     int          prod_size_range; /* Product size range indexr. */
@@ -937,9 +939,18 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
 	pa->p_args.min_end_quality = pa->p_args.min_quality; */
 
     /* Check if the input in sa and pa makes sense */
-    if (_pr_data_control(pa, sa, &retval->glob_err, 
-			 &sa->error, &sa->warning
-			 /* &retval->warnings */) !=0 ) {
+    if (_pr_data_control(pa, sa, 
+			 &retval->glob_err,  /* Fatal errors */
+			 &sa->error,         /* Nonfatal errors */
+
+
+			 /* FIX ME We get programming errors, staring with the loss of
+			    PRIMER_WARNING=Unrecognized base in input sequence 
+			    in the primer_boundary test Check this in gdb */
+			 &sa->warning
+			 /* &retval->warnings */
+
+			 ) !=0 ) {
       return retval;
     }
 
@@ -1025,7 +1036,13 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
        unacceptable, then add warnings. */
     if (pa->pick_anyway) {
       if (sa->left_input) {
-	add_must_use_warnings(&sa->warning, "Left primer", &retval->fwd.expl);
+	add_must_use_warnings(
+			      
+			      /* FIX ME, fails on primer_must_use test */
+			      &sa->warning,
+			      /* &retval->warnings, TEST IN gdb */
+
+			      "Left primer", &retval->fwd.expl);
       }
       if (sa->right_input) {
 	add_must_use_warnings(&sa->warning, "Right primer", &retval->rev.expl);
