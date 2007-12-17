@@ -96,7 +96,7 @@ static jmp_buf _jmp_buf;
 
 /* Function declarations. */
 static int    _pr_data_control(const p3_global_settings *,  
-			       seq_args *, 
+			       const seq_args *, 
 			       pr_append_str *glob_err,
 			       pr_append_str *nonfatal_err,
 			       pr_append_str *warning);
@@ -3750,9 +3750,9 @@ p3_adjust_seq_args(const p3_global_settings *pa,
 				  sa->num_internal_excl,
 				  pa->first_base_index);
 
-  /* A suggestion that does not work:
+  /* A suggestion that does not work: */
   if (_pr_check_and_adjust_intervals(sa, seq_len, &sa->error, &sa->warning))
-    return 1; */
+    return 1; 
 
   
   
@@ -3769,7 +3769,7 @@ p3_adjust_seq_args(const p3_global_settings *pa,
 /* Check if the input in sa and pa makes sense */
 int
 _pr_data_control(const p3_global_settings *pa,
-		 seq_args *sa,
+		 const seq_args *sa,
 		 pr_append_str *glob_err,
 		 pr_append_str *nonfatal_err,
 		 pr_append_str *warning)
@@ -3942,48 +3942,6 @@ _pr_data_control(const p3_global_settings *pa,
       }
     }
 
-    /* Delete the following */    
-#if 0
-    /* FIX ME strange - Copies over trimmed seq in a check function ? */
-    sa->trimmed_seq = pr_safe_malloc(sa->incl_l + 1);  /* FIX ME write */
-    _pr_substr(sa->sequence, sa->incl_s, sa->incl_l, sa->trimmed_seq);
-   
-    /* edited by T. Koressaar for lowercase masking */
-    sa->trimmed_orig_seq = pr_safe_malloc(sa->incl_l + 1);   /* FIX ME write */
-    _pr_substr(sa->sequence, sa->incl_s, sa->incl_l, sa->trimmed_orig_seq);
-   
-    sa->upcased_seq = pr_safe_malloc(strlen(sa->sequence) + 1);    /* FIX ME write */
-    strcpy(sa->upcased_seq, sa->sequence);
-    if ((offending_char = dna_to_upper(sa->upcased_seq, 1))) {
-      offending_char = '\0';
-      /* TODO add warning or error (depending on liberal base)
-         here. */
-    }
-    sa->upcased_seq_r = pr_safe_malloc(strlen(sa->sequence) + 1);   /* FIX ME write */
-    _pr_reverse_complement(sa->upcased_seq, sa->upcased_seq_r);
-#endif
- 
-    
-#if 0
-    if (_pr_check_and_adjust_1_interval("TARGET", sa->num_targets, sa->tar, seq_len,
-			    nonfatal_err, sa, warning)      /* FIX ME write */
-	== 1) return 1;
-    sa->start_codon_pos -= sa->incl_s;    /* FIX ME write */
-
-    if (_pr_check_and_adjust_1_interval("EXCLUDED_REGION", sa->num_excl, sa->excl,
-			seq_len, nonfatal_err, sa, warning)    /* FIX ME write */
-	== 1) return 1;
-
-    if (_pr_check_and_adjust_1_interval("PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION",
-			sa->num_internal_excl, sa->excl_internal,
-			seq_len, nonfatal_err, sa, warning)    /* FIX ME write */
-	== 1) return 1;
-#else
-
-    if (_pr_check_and_adjust_intervals(sa, seq_len, nonfatal_err, warning))
-      return 1;
-#endif
-    
     if (NULL != sa->quality) {
 	if(pa->p_args.min_quality != 0 && pa->p_args.min_quality < pa->quality_range_min) {
 	   pr_append_new_chunk(glob_err,
