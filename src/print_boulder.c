@@ -97,7 +97,7 @@ boulder_print(io_version, pa, sa, retval)
     
     /* Print out the stop codon if a reading frame was specified */
     if (!PR_START_CODON_POS_IS_NULL(sa))
-      printf("PRIMER_STOP_CODON_POSITION=%d\n", sa->stop_codon_pos);
+      printf("PRIMER_STOP_CODON_POSITION=%d\n", /*sa*/ retval->stop_codon_pos);
     
     /* How often has the loop to be done? */
     if (retval->output_type == primer_list) {
