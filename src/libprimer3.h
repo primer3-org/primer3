@@ -562,13 +562,6 @@ typedef struct seq_args {
 			   */
   int  start_codon_pos;   /* Index of first base of the start codon. */
 
-  int  xstop_codon_pos;    /* 
-			   * An optional _output_, meaninful if a
-			   * start_codon_pos is "not nul".  The position of
-			   * the intial base of the leftmost stop codon that
-			   * is to the right of sa->start_codon_pos.
-			   */
-
   int  *quality;          /* Vector of quality scores. */
   int n_quality;          /* Length 'quality' */
   char *sequence;         /* The template sequence itself as input, 
@@ -583,10 +576,14 @@ typedef struct seq_args {
 
   char *upcased_seq;      /* Upper case version of sequence
 			     (_not_ trimmed). */
+
   char *upcased_seq_r;    /* Upper case version of sequence, 
 			     other strand (_not_ trimmed). */
+
   char *left_input;       /* A left primer to check or design around. */
+
   char *right_input;      /* A right primer to check or design around. */
+
   char *internal_input;   /* An internal oligo to check or design around. */
 
   /* ================================================== */
@@ -684,9 +681,9 @@ int p3_set_sa_left_input(seq_args *sargs, const char *left_input);
 int p3_set_sa_right_input(seq_args *sargs, const char *right_input);
 int p3_set_sa_internal_input(seq_args *sargs, const char *internal_input);
 
-interval_array_t2 *p3_get_seq_args_tar2(seq_args *sargs);
-interval_array_t2 *p3_get_seq_args_excl2(seq_args *sargs);
-interval_array_t2 *p3_get_seq_args_excl_internal2(seq_args *sargs);
+const interval_array_t2 *p3_get_seq_args_tar2(const seq_args *sargs);
+const interval_array_t2 *p3_get_seq_args_excl2(const seq_args *sargs);
+const interval_array_t2 *p3_get_seq_args_excl_internal2(const seq_args *sargs);
 
 /*
   use p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2);
@@ -903,7 +900,7 @@ const char  **libprimer3_copyright(void);
 /* An accessor function for a primer_rec *. */
 short oligo_max_template_mispriming(const primer_rec *);
 
-int   strcmp_nocase(char *, char *);
+int   strcmp_nocase(const char *, const char *);
 
 /* ======================================================= */
 /* Functions for creating and destroying a seq_lib object. */
