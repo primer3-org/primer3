@@ -3661,7 +3661,7 @@ p3_adjust_seq_args(const p3_global_settings *pa,
 		   seq_args *sa, 
 		   pr_append_str *nonfatal_err)
 {
-  int seq_len, i;
+  int seq_len, inc_len, i;
 
 
   /* Complain if there is no sequence */
@@ -3701,38 +3701,36 @@ p3_adjust_seq_args(const p3_global_settings *pa,
   sa->incl_s -= pa->first_base_index;
   sa->start_codon_pos -= pa->first_base_index;
 
-  /*  AU-IF */
-#if 0
   char offending_char = '\0';
+  
+  inc_len = sa->incl_s + sa->incl_l + 1;
 
-  /* Copies inluded region into trimmed_seq */
-  sa->trimmed_seq = pr_safe_malloc(sa->incl_l + 1);
-  _pr_substr(sa->sequence, sa->incl_s, sa->incl_l, sa->trimmed_seq);
- 
-  /* Copies inluded region into trimmed_orig_seq */
-  /* edited by T. Koressaar for lowercase masking */
-  sa->trimmed_orig_seq = pr_safe_malloc(sa->incl_l + 1);
-  _pr_substr(sa->sequence, sa->incl_s, sa->incl_l, sa->trimmed_orig_seq);
- 
-  /* Copies the whole sequence into upcased_seq */
-  sa->upcased_seq = pr_safe_malloc(strlen(sa->sequence) + 1);    /* FIX ME write */
-  strcpy(sa->upcased_seq, sa->sequence);
-  if ((offending_char = dna_to_upper(sa->upcased_seq, 1))) {
-    offending_char = '\0';
-    /* TODO add warning or error (depending on liberal base)
-       here. */
+  /* Fix me - AU: the last checkup just does not work */
+  
+  if ((sa->incl_l < INT_MAX) && (sa->incl_s > -1) 
+		  && (sa->incl_l > -1)/* && (inc_len < seq_len)*/ ) {
+	  /* Copies inluded region into trimmed_seq */
+	  sa->trimmed_seq = pr_safe_malloc(sa->incl_l + 1);
+	  _pr_substr(sa->sequence, sa->incl_s, sa->incl_l, sa->trimmed_seq);
+	 
+	  /* Copies inluded region into trimmed_orig_seq */
+	  /* edited by T. Koressaar for lowercase masking */
+	  sa->trimmed_orig_seq = pr_safe_malloc(sa->incl_l + 1);
+	  _pr_substr(sa->sequence, sa->incl_s, sa->incl_l, sa->trimmed_orig_seq);
+	 
+	  /* Copies the whole sequence into upcased_seq */
+	  sa->upcased_seq = pr_safe_malloc(strlen(sa->sequence) + 1);
+	  strcpy(sa->upcased_seq, sa->sequence);
+	  if ((offending_char = dna_to_upper(sa->upcased_seq, 1))) {
+	    offending_char = '\0';
+	    /* TODO add warning or error (depending on liberal base)
+	       here. */
+	  }
+	
+	  /* Copies the reverse complement of the whole sequence into upcased_seq_r */
+	  sa->upcased_seq_r = pr_safe_malloc(strlen(sa->sequence) + 1);
+	  _pr_reverse_complement(sa->upcased_seq, sa->upcased_seq_r);
   }
-
-  /* Copies the reverse complement of the whole sequence into upcased_seq_r */
-  sa->upcased_seq_r = pr_safe_malloc(strlen(sa->sequence) + 1);   /* FIX ME write */
-  _pr_reverse_complement(sa->upcased_seq, sa->upcased_seq_r);
-  
-  /* A suggestion that does not work:
-  if (_pr_check_and_adjust_intervals(sa, seq_len, &sa->error, &sa->warning))
-    return 1; */
-
-#endif
-  
   
   /*
     adjust_base_index_interval_list(sa->tar, sa->num_targets,
@@ -3754,6 +3752,12 @@ p3_adjust_seq_args(const p3_global_settings *pa,
 				  sa->num_internal_excl,
 				  pa->first_base_index);
 
+  /* A suggestion that does not work:
+  if (_pr_check_and_adjust_intervals(sa, seq_len, &sa->error, &sa->warning))
+    return 1; */
+
+  
+  
   return 0;
 }
 
@@ -3940,8 +3944,8 @@ _pr_data_control(const p3_global_settings *pa,
       }
     }
 
-    /*  AU-IF */    
-#if 1
+    /* Delete the following */    
+#if 0
     /* FIX ME strange - Copies over trimmed seq in a check function ? */
     sa->trimmed_seq = pr_safe_malloc(sa->incl_l + 1);  /* FIX ME write */
     _pr_substr(sa->sequence, sa->incl_s, sa->incl_l, sa->trimmed_seq);
