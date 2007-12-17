@@ -589,7 +589,12 @@ typedef struct seq_args {
   /* ================================================== */
   /*  Output (writable) arguments. */   /* FIX ME, MOVE THESE TO retval */
   pr_append_str error;  /* Error messages. */
+
+#define SA_WARNING 1
+#ifdef SA_WARNING
   pr_append_str warning;  /* Warning messages. */
+#endif
+
   /*  END output arguments. */
   /* ================================================== */
 
@@ -855,7 +860,8 @@ void p3_set_gs_pair_compl_end(p3_global_settings * p , short  pair_compl_end);
  * in retval.
  */
 
-p3retval *choose_primers(const p3_global_settings *pa, seq_args *sa);
+p3retval *choose_primers(const p3_global_settings *pa, 
+			 /* const */ seq_args *sa);
 
 /* Andreas, this is the idea, argument list will need
    to be cleaned up */
