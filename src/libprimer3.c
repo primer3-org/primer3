@@ -5294,131 +5294,271 @@ p3_set_gs_primer_internal_oligo_min_quality(p3_global_settings * p , int val) {
 }
 
 void
-p3_set_gs_primer_internal_oligo_self_any(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_internal_oligo_self_end(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_max_mispriming(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_internal_oligo_max_mishyb(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_pair_max_mispriming(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_max_template_mispriming(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_internal_oligo_max_template_mishyb(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_lib_ambiguity_codes_consensus(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_inside_penalty(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_outside_penalty(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_mispriming_library(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_internal_oligo_mishyb_library(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_max_end_stability(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_lowercase_masking(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_wt_tm_gt(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_wt_tm_lt(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_wt_gc_percent_gt(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_wt_gc_percent_lt(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_wt_size_lt(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_wt_size_gt(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_wt_compl_any(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_wt_comp_end(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_wt_num_ns(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_wt_rep_sim(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_wt_seq_qual(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_wt_end_qual(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_wt_pos_penalty(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_wt_end_stability(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_wt_template_mispriming(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_io_wt_tm_gt(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_io_wt_tm_lt(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_io_wt_gc_percent_gt(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_io_wt_gc_percent_lt(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_io_wt_size_lt(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_io_wt_size_gt(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_io_wt_wt_coml_any(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_io_wt_compl_end(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_io_wt_num_ns(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_io_wt_rep_sim(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_io_wt_seq_qual(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_io_wt_end_qual(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_io_wt_template_mishyb(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_pair_wt_pr_penalty(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_pair_wt_io_penalty(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_pair_wt_diff_tm(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_pair_wt_compl_any(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_pair_wt_compl_end(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_pair_wt_product_tm_lt(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_pair_wt_product_tm_gt(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_pair_wt_product_size_gt(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_pair_wt_product_size_lt(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_pair_wt_rep_sim(p3_global_settings * p , int val);
-void
-p3_set_gs_primer_pair_wt_template_mispriming(p3_global_settings * p , int val);
+p3_set_gs_primer_internal_oligo_self_any(p3_global_settings * p , int val) {
+  p->o_args.max_self_any = val ;
+}
 
 void
-p3_set_gs_first_base_index(p3_global_settings * p , int first_base_index);
-void
-p3_set_gs_liberal_base(p3_global_settings * p , int liberal_base);
-void
-p3_set_gs_num_return(p3_global_settings * p , int num_return);
-void
-p3_set_gs_pick_anyway(p3_global_settings * p , int pick_anyway);
-void
-p3_set_gs_lib_ambiguity_codes_consensus(p3_global_settings * p , int lib_ambiguity_codes_consensus);
-void
-p3_set_gs_quality_range_min(p3_global_settings * p , int quality_range_min);
-void
-p3_set_gs_quality_range_max(p3_global_settings * p , int quality_range_max);
+p3_set_gs_primer_internal_oligo_self_end(p3_global_settings * p , int val) {
+  p->o_args.max_self_end = val ;
+}
 
+void
+p3_set_gs_primer_max_mispriming(p3_global_settings * p , int val) {
+  p->p_args.max_repeat_compl = val ;
+}
+void
+p3_set_gs_primer_internal_oligo_max_mishyb(p3_global_settings * p , int val) {
+  p->o_args.max_repeat_compl = val ;
+}
+
+void
+p3_set_gs_primer_pair_max_mispriming(p3_global_settings * p , int val) {
+  p->pair_repeat_compl = val ;
+}
+
+void
+p3_set_gs_primer_max_template_mispriming(p3_global_settings * p , int val) {
+  p->p_args.max_template_mispriming = val ;
+}
+
+void
+p3_set_gs_primer_pair_max_template_mispriming(p3_global_settings * p , int val) {
+  p->p_args.max_template_mispriming = val ;
+}
+
+void
+p3_set_gs_primer_internal_oligo_max_template_mishyb(p3_global_settings * p , int val) {
+  p->o_args.max_template_mispriming = val ;
+}
+
+void
+p3_set_gs_primer_lib_ambiguity_codes_consensus(p3_global_settings * p , int val) {
+  p->lib_ambiguity_codes_consensus = val ;
+}
+
+void
+p3_set_gs_primer_inside_penalty(p3_global_settings * p , int val) {
+  p->inside_penalty = val ;
+}
+
+void
+p3_set_gs_primer_outside_penalty(p3_global_settings * p , int val) {
+  p->outside_penalty = val ;
+}
+
+void
+p3_set_gs_primer_max_end_stability(p3_global_settings * p , int val) {
+  p->max_end_stability = val ;
+}
+
+void
+p3_set_gs_primer_lowercase_masking(p3_global_settings * p , int val) {
+  p->lowercase_masking = val ;
+}
+
+void
+p3_set_gs_primer_wt_tm_gt(p3_global_settings * p , int val) {
+  p->p_args.weights.temp_gt = val ;
+}
+
+void
+p3_set_gs_primer_wt_tm_lt(p3_global_settings * p , int val) {
+  p->p_args.weights.temp_lt = val ;
+}
+
+void
+p3_set_gs_primer_wt_gc_percent_gt(p3_global_settings * p , int val) {
+  p->p_args.weights.gc_content_gt = val ;
+}
+
+void
+p3_set_gs_primer_wt_gc_percent_lt(p3_global_settings * p , int val) {
+  p->p_args.weights.gc_content_lt = val ;
+}
+
+void
+p3_set_gs_primer_wt_size_lt(p3_global_settings * p , int val) {
+  p->p_args.weights.length_lt = val ;
+}
+
+void
+p3_set_gs_primer_wt_size_gt(p3_global_settings * p , int val) {
+  p->p_args.weights.length_gt = val ;
+}
+
+void
+p3_set_gs_primer_wt_compl_any(p3_global_settings * p , int val) {
+  p->p_args.weights.compl_any = val ;
+}
+
+void
+p3_set_gs_primer_wt_compl_end(p3_global_settings * p , int val) {
+  p->p_args.weights.compl_end = val ;
+}
+
+void
+p3_set_gs_primer_wt_num_ns(p3_global_settings * p , int val) {
+  p->p_args.weights.num_ns = val ;
+}
+
+void
+p3_set_gs_primer_wt_rep_sim(p3_global_settings * p , int val) {
+  p->p_args.weights.repeat_sim = val ;
+}
+
+void
+p3_set_gs_primer_wt_seq_qual(p3_global_settings * p , int val) {
+  p->p_args.weights.seq_quality = val ;
+}
+
+void
+p3_set_gs_primer_wt_end_qual(p3_global_settings * p , int val) {
+  p->p_args.weights.end_quality = val ;
+}
+
+void
+p3_set_gs_primer_wt_pos_penalty(p3_global_settings * p , int val){
+  p->p_args.weights.pos_penalty = val ;
+}
+
+void
+p3_set_gs_primer_wt_end_stability(p3_global_settings * p , int val) {
+  p->p_args.weights.end_stability = val ;
+}
+
+void
+p3_set_gs_primer_wt_template_mispriming(p3_global_settings * p , int val) {
+  p->p_args.weights.template_mispriming = val ;
+}
+
+void
+p3_set_gs_primer_io_wt_tm_gt(p3_global_settings * p , int val) {
+  p->o_args.weights.temp_gt = val ;
+}
+
+void
+p3_set_gs_primer_io_wt_tm_lt(p3_global_settings * p , int val){
+  p->o_args.weights.temp_lt = val ;
+}
+
+void
+p3_set_gs_primer_io_wt_gc_percent_gt(p3_global_settings * p , int val) {
+  p->o_args.weights.gc_content_gt = val ;
+}
+
+void
+p3_set_gs_primer_io_wt_gc_percent_lt(p3_global_settings * p , int val) {
+  p->o_args.weights.gc_content_lt = val ;
+
+}
+
+void
+p3_set_gs_primer_io_wt_size_lt(p3_global_settings * p , int val) {
+  p->o_args.weights.length_lt = val ;
+}
+
+void
+p3_set_gs_primer_io_wt_size_gt(p3_global_settings * p , int val) {
+  p->o_args.weights.length_gt = val ;
+}
+
+void
+p3_set_gs_primer_io_wt_wt_compl_any(p3_global_settings * p , int val) {
+  p->o_args.weights.compl_any = val ;
+}
+
+void
+p3_set_gs_primer_io_wt_compl_end(p3_global_settings * p , int val) {
+  p->o_args.weights.compl_end = val ;
+}
+
+void
+p3_set_gs_primer_io_wt_num_ns(p3_global_settings * p , int val) {
+  p->o_args.weights.num_ns = val ;
+}
+
+void
+p3_set_gs_primer_io_wt_rep_sim(p3_global_settings * p , int val) {
+  p->o_args.weights.repeat_sim = val ;
+}
+
+void
+p3_set_gs_primer_io_wt_seq_qual(p3_global_settings * p , int val) {
+  p->o_args.weights.seq_quality = val ;
+}
+
+void
+p3_set_gs_primer_io_wt_end_qual(p3_global_settings * p , int val) {
+  p->o_args.weights.end_quality = val ;
+}
+
+void
+p3_set_gs_primer_io_wt_template_mishyb(p3_global_settings * p , int val) {
+  p->o_args.weights.template_mispriming = val ;
+}
+
+void
+p3_set_gs_primer_pair_wt_pr_penalty(p3_global_settings * p , int val) {
+  p->pr_pair_weights.primer_quality = val ;
+}
+
+void
+p3_set_gs_primer_pair_wt_io_penalty(p3_global_settings * p , int val) {
+  p->pr_pair_weights.io_quality = val ;
+}
+
+void
+p3_set_gs_primer_pair_wt_diff_tm(p3_global_settings * p , int val) {
+  p->pr_pair_weights.diff_tm = val ;
+}
+
+void
+p3_set_gs_primer_pair_wt_compl_any(p3_global_settings * p , int val) {
+  p->pr_pair_weights.compl_any = val ;
+}
+
+void
+p3_set_gs_primer_pair_wt_compl_end(p3_global_settings * p , int val) {
+  p->pr_pair_weights.compl_end = val ;
+}
+
+void
+p3_set_gs_primer_pair_wt_product_tm_lt(p3_global_settings * p , int val) {
+  p->pr_pair_weights.product_tm_lt = val ;
+}
+
+void
+p3_set_gs_primer_pair_wt_product_tm_gt(p3_global_settings * p , int val) {
+  p->pr_pair_weights.product_tm_gt = val ;
+}
+
+void
+p3_set_gs_primer_pair_wt_product_size_gt(p3_global_settings * p , int val) {
+  p->pr_pair_weights.product_size_gt = val ;
+}
+
+void
+p3_set_gs_primer_pair_wt_product_size_lt(p3_global_settings * p , int val) {
+  p->pr_pair_weights.product_size_lt = val ;
+}
+
+void
+p3_set_gs_primer_pair_wt_rep_sim(p3_global_settings * p , int val) {
+  p->pr_pair_weights.repeat_sim = val ;
+}
+
+void
+p3_set_gs_primer_pair_wt_template_mispriming(p3_global_settings * p , int val) {
+  p->pr_pair_weights.template_mispriming = val ;
+}
+
+/* still needed? 
 args_for_one_oligo_or_primer *p3_get_global_settings_p_args(p3_global_settings * p);
 args_for_one_oligo_or_primer *p3_get_global_settings_o_args(p3_global_settings * p);
 int p3_set_afogop_seq_lib(args_for_one_oligo_or_primer *, seq_lib *);
 int p3_set_afogop_opt_tm(args_for_one_oligo_or_primer *, double);
+*/
 
 
 void
