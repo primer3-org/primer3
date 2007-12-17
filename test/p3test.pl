@@ -416,7 +416,7 @@ sub _nowarn_system($) {
     no warnings 'all';
     my $r = system $cmd;
     my $r2 = $?;
-    if (WIFEXITED($r2)) {
+    if (!$winFlag && WIFEXITED($r2)) {
 	$r = WEXITSTATUS($r2);
 	if (defined $signo{'INT'}) {
 	    if ($r == $signo{'INT'}) {
@@ -429,7 +429,7 @@ sub _nowarn_system($) {
 	    }
 	}
     }
-    if (WIFSIGNALED($r2)) {
+    if (!$winFlag && WIFSIGNALED($r2)) {
 	my $r2 = WTERMSIG($r2);
 	print "Exited with signal $r2\n";
     }
