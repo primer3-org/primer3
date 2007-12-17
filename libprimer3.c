@@ -133,28 +133,32 @@ static short  align(const char *, const char*, const dpal_args *a);
 
 static int    characterize_pair(p3retval *p,
 				const p3_global_settings *,
-				seq_args *,
+				const seq_args *,
 				int, int, int,
 				primer_pair *,
 				const dpal_arg_holder*);
 
 static int    choose_pair_or_triple(p3retval *,
 				    const p3_global_settings *,
-				    seq_args *, const dpal_arg_holder *,
+				    const seq_args *, 
+				    const dpal_arg_holder *,
 				    int,
 				    pair_array_t *);
 
 static void   check_sequence_quality(const p3_global_settings *, primer_rec *,
-				     oligo_type, const seq_args *, int, int,
+				     oligo_type, 
+				     const seq_args *, int, int,
 				     int *, int *);
 
 static int    choose_internal_oligo(p3retval *,
 				    const primer_rec *, const primer_rec *,
-				    int *, seq_args *,
+				    int *, 
+				    const seq_args *,
 				    const p3_global_settings *,
 				    const dpal_arg_holder *);
 
-void          compute_position_penalty(const p3_global_settings *, const seq_args *, 
+void          compute_position_penalty(const p3_global_settings *, 
+				       const seq_args *, 
 				       primer_rec *, oligo_type);
 
 static p3retval *create_p3retval(void);
@@ -171,35 +175,38 @@ static void   init_pr_append_str(pr_append_str *s);
 
 static int    make_primer_lists(p3retval *,
 				const p3_global_settings *,
-				seq_args *,
+				const seq_args *,
 				const dpal_arg_holder *);
 
 static int    make_internal_oligo_list(p3retval *,
 				       const p3_global_settings *,
-				       seq_args *,
+				       const seq_args *,
 				       const dpal_arg_holder *);
 
 static int    pick_primers_range(const int, const int, int *,
-				 oligo_array *, const p3_global_settings *,
-				 seq_args *, const dpal_arg_holder *,
+				 oligo_array *, 
+				 const p3_global_settings *,
+				 const seq_args *, 
+				 const dpal_arg_holder *,
 				 p3retval *retval);
 
-static int    add_one_primer(char *primer, int *, oligo_array *oligo,
+static int    add_one_primer(const char *primer, 
+			     int *, oligo_array *oligo,
 			     const p3_global_settings *pa,
-			     seq_args *sa, 
+			     const seq_args *sa, 
 			     const dpal_arg_holder *dpal_arg_to_use,
 			     p3retval *);
 
 static double obj_fn(const p3_global_settings *, primer_pair *);
 
-static int    oligo_overlaps_interval(const int, const int,
-				      interval_array_t, const int);
+static int    oligo_overlaps_interval(int, int,
+				      const interval_array_t, int);
 static int    oligo_pair_seen(const primer_pair *, const pair_array_t *);
 
 static void   oligo_param(const p3_global_settings *pa,
 			  primer_rec *, oligo_type,
 			  const dpal_arg_holder*,
-			  seq_args *, oligo_stats *,
+			  const seq_args *, oligo_stats *,
 			  p3retval *);
 
 static void   pr_append(pr_append_str *, const char *);
@@ -222,7 +229,7 @@ static double p_obj_fn(const p3_global_settings *, primer_rec *, int );
 
 static void   oligo_compl(primer_rec *, 
 			  const args_for_one_oligo_or_primer *po_args,
-			  seq_args *sa,
+			  const seq_args *sa,
 			  oligo_type,
 			  oligo_stats *,
 			  const dpal_arg_holder *,
@@ -232,7 +239,7 @@ static void   oligo_compl(primer_rec *,
 
 static void   oligo_mispriming(primer_rec *,
 			       const p3_global_settings *,
-			       seq_args *,
+			       const seq_args *,
 			       oligo_type,
 			       oligo_stats *,
 			       const dpal_args *,
@@ -1132,7 +1139,7 @@ add_pair(const primer_pair *pair,
 static int
 make_primer_lists(p3retval *retval,
 		  const p3_global_settings *pa,
-		  seq_args *sa,
+		  const seq_args *sa,
 		  const dpal_arg_holder *dpal_arg_to_use)
 {
     int left, right;
@@ -1220,7 +1227,7 @@ make_primer_lists(p3retval *retval,
 	  start = pa->p_args.min_size - 1;
 	    
 	  /* Use the primer provided */
-  	  if (sa->left_input){
+  	  if (sa->left_input) {
   		  add_one_primer(sa->left_input, &left, &retval->fwd,
 				 pa, sa, dpal_arg_to_use, retval); 
   	  }
@@ -1316,12 +1323,10 @@ make_primer_lists(p3retval *retval,
  * there are no acceptable internal oligos; otherwise return 0.
  */
 static int
-make_internal_oligo_list(retval, pa, sa, dpal_arg_to_use)
-     p3retval *retval;
-     const p3_global_settings *pa;
-     seq_args *sa;
-     const dpal_arg_holder *dpal_arg_to_use;
-{
+make_internal_oligo_list(p3retval *retval,
+			 const p3_global_settings *pa,
+			 const seq_args *sa,
+			 const dpal_arg_holder *dpal_arg_to_use) {
   int ret;
   int left = 0;
   
@@ -1350,7 +1355,8 @@ make_internal_oligo_list(retval, pa, sa, dpal_arg_to_use)
 static int
 pick_primers_range(const int start, const int length, int *extreme,
 		   oligo_array *oligo, const p3_global_settings *pa,
-                   seq_args *sa, const dpal_arg_holder *dpal_arg_to_use,
+                   const seq_args *sa, 
+		   const dpal_arg_holder *dpal_arg_to_use,
 		   p3retval *retval)
 {
 	/* Variables for the loop */
@@ -1497,9 +1503,10 @@ pick_primers_range(const int start, const int length, int *extreme,
 /* add_one_primer finds one primer in the trimmed sequence
  * and stores them in *oligo  */
 static int
-add_one_primer(char *primer, int *extreme, oligo_array *oligo, 
+add_one_primer(const char *primer, int *extreme, oligo_array *oligo, 
 	       const p3_global_settings *pa,
-	       seq_args *sa, const dpal_arg_holder *dpal_arg_to_use,
+	       const seq_args *sa, 
+	       const dpal_arg_holder *dpal_arg_to_use,
 	       p3retval *retval)
 {
 	/* Variables for the loop */
@@ -1570,7 +1577,7 @@ add_one_primer(char *primer, int *extreme, oligo_array *oligo,
 
         /* Compare the primer with the sequence */
         if (strcmp_nocase(primer, s))
-        		continue;
+	  continue;
         
 		/* Force primer3 to use this oligo */
         h.must_use = (1 && pa->pick_anyway);
@@ -1644,7 +1651,7 @@ oligo_param(const p3_global_settings *pa,
 	    primer_rec *h,
 	    oligo_type l,
 	    const dpal_arg_holder *dpal_arg_to_use,
-	    seq_args *sa,
+	    const seq_args *sa,
 	    oligo_stats *stats,
 	    p3retval *retval) {
 
@@ -2024,11 +2031,10 @@ gc_and_n_content(start, len, sequence, h)
 }
 
 static int
-oligo_overlaps_interval(start, len, intervals, num_intervals)
-    const int start, len;
-    interval_array_t intervals;
-    const int num_intervals;
-{
+oligo_overlaps_interval(int start,
+			int len,
+			const interval_array_t intervals,
+			int num_intervals) {
     int i;
     int last = start + len - 1;
     for (i = 0; i < num_intervals; i++)
@@ -2153,7 +2159,7 @@ static int
 choose_pair_or_triple(retval, pa, sa,  dpal_arg_to_use, int_num, p)
      p3retval *retval;
      const p3_global_settings *pa;
-     seq_args *sa;
+     const seq_args *sa;
      const dpal_arg_holder *dpal_arg_to_use;
      int int_num;
      pair_array_t *p;
@@ -2278,7 +2284,7 @@ choose_internal_oligo(retval, left, right, nm, sa, pa, dpal_arg_to_use)
      p3retval *retval;
      const primer_rec *left, *right;
      int *nm;
-     seq_args *sa;
+     const seq_args *sa;
      const p3_global_settings *pa;
      const dpal_arg_holder *dpal_arg_to_use;
 {
@@ -2408,7 +2414,7 @@ static int
 characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
      p3retval *retval;
      const p3_global_settings *pa;
-     seq_args *sa;
+     const seq_args *sa;
      int m, n, int_num;
      primer_pair *ppair;
      const dpal_arg_holder *dpal_arg_to_use;
@@ -2880,7 +2886,7 @@ pr_oligo_rev_c_sequence(sa, o)
 static void
 oligo_compl(primer_rec *h,
 	    const args_for_one_oligo_or_primer *po_args,
-	    seq_args *sa,
+	    const seq_args *sa,
 	    oligo_type l,
 	    oligo_stats *ostats,
 	    const dpal_arg_holder *dpal_arg_to_use,
@@ -2929,7 +2935,7 @@ oligo_compl(primer_rec *h,
 static void 
 primer_mispriming_to_template(primer_rec *h,
 			      const p3_global_settings *pa,
-			      seq_args *sa,
+			      const seq_args *sa,
 			      oligo_type l,
 			      oligo_stats *ostats,
 			      int first,
@@ -3030,7 +3036,7 @@ primer_mispriming_to_template(primer_rec *h,
 /* FIX ME, pass in the oligo sequences */
 static void 
 oligo_mispriming( primer_rec *h, const p3_global_settings *pa,
-   seq_args *sa, oligo_type l, oligo_stats *ostats,
+   const seq_args *sa, oligo_type l, oligo_stats *ostats,
    const dpal_args *align_args, const dpal_arg_holder *dpal_arg_to_use)
 {
   char 
@@ -3215,12 +3221,12 @@ find_stop_codon(s, start, direction)
 }
 
 int
-strcmp_nocase(char *s1, char *s2)
+strcmp_nocase(const char *s1, const char *s2)
 {
    static char M[UCHAR_MAX];
    static int f = 0;
    int i;
-   char *p, *q;
+   const char *p, *q;
 
    if(f != 1){
       for(i = 0; i < UCHAR_MAX; i++) M[i] = i;
@@ -4898,17 +4904,19 @@ int p3_set_sa_primer_internal_input(seq_args *sargs, const char *s) {
   to do the sets for tar2, excl2, nd excl_internal2
 *************************/
 
-interval_array_t2 *p3_get_seq_args_tar2(seq_args *sargs) {
+const interval_array_t2 *
+p3_get_seq_args_tar2(const seq_args *sargs) {
   return &sargs->tar2 ;
 }
 
 
-interval_array_t2 *p3_get_seq_args_excl2(seq_args *sargs) {
+const interval_array_t2 *
+p3_get_seq_args_excl2(const seq_args *sargs) {
   return &sargs->excl2 ;
 }
 
-
-interval_array_t2 *p3_get_seq_args_excl_internal2(seq_args *sargs) {
+const interval_array_t2 *
+p3_get_seq_args_excl_internal2(const seq_args *sargs) {
   return &sargs->excl_internal2 ;
 }
 
