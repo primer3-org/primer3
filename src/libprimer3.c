@@ -3703,12 +3703,10 @@ p3_adjust_seq_args(const p3_global_settings *pa,
 
   char offending_char = '\0';
   
-  inc_len = sa->incl_s + sa->incl_l + 1;
+  inc_len = sa->incl_s + sa->incl_l - 1;
 
-  /* Fix me - AU: the last checkup just does not work */
-  
   if ((sa->incl_l < INT_MAX) && (sa->incl_s > -1) 
-		  && (sa->incl_l > -1)/* && (inc_len < seq_len)*/ ) {
+		  && (sa->incl_l > -1) && (inc_len < seq_len) ) {
 	  /* Copies inluded region into trimmed_seq */
 	  sa->trimmed_seq = pr_safe_malloc(sa->incl_l + 1);
 	  _pr_substr(sa->sequence, sa->incl_s, sa->incl_l, sa->trimmed_seq);
