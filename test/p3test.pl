@@ -43,6 +43,8 @@ use warnings 'all';
 use strict;
 use Cwd;
 use Getopt::Long;
+use POSIX; # For testing wait / system return value, e.g. WIFSIGNALED, WTERMSIG.....
+use Config; # To get the number for SIGINT
 
 sub perldiff($$);
 sub test_fatal_errors();
@@ -55,6 +57,8 @@ our $def_executable = "../src/primer3_core";
 our $exe = '../src/primer3_core';
 our ($verbose, $do_valgrind, $winFlag);
 
+our %signo;
+
 # The following format works with valgrind-3.2.3:
 our $valgrind_format  = "/usr/local/bin/valgrind "
 		   . " --leak-check=yes --show-reachable=yes "
@@ -66,6 +70,14 @@ sub main() {
     my %args;
 
     select STDERR;
+
+    if (defined $Config{sig_name}) {
+	my $i = 0;
+	for my $name (split(' ', $Config{sig_name})) {
+	    $signo{$name} = $i;
+	    $i++;
+	}
+    }
 
     # GetOptions handles various flag abbreviations and formats,
     # such as  -e ../src/primer3_core, --exe ../src/primer3_core, 
@@ -402,5 +414,24 @@ sub _nowarn_system($) {
     my $cmd = shift;
     if ($verbose) { print "\n$cmd\n" }
     no warnings 'all';
-    system $cmd;
+    my $r = system $cmd;
+    my $r2 = $?;
+    if (WIFEXITED($r2)) {
+	$r = WEXITSTATUS($r2);
+	if (defined $signo{'INT'}) {
+	    if ($r == $signo{'INT'}) {
+		print "\nCommand: $cmd\n";
+                print "generated exit value $r\n";
+		print "Presumably caused by catching SIGINT\n";
+		print "Tests halted\n\n";
+		print "\nWARNING: not all tests executed ... [FAILED]\n";
+		exit;
+	    }
+	}
+    }
+    if (WIFSIGNALED($r2)) {
+	my $r2 = WTERMSIG($r2);
+	print "Exited with signal $r2\n";
+    }
+    $r;
 }
