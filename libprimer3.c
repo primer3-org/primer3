@@ -180,12 +180,15 @@ static int    make_internal_oligo_list(p3retval *,
 				       const dpal_arg_holder *);
 
 static int    pick_primers_range(const int, const int, int *,
-		           oligo_array *, const p3_global_settings *,
-                   seq_args *, const dpal_arg_holder *);
+				 oligo_array *, const p3_global_settings *,
+				 seq_args *, const dpal_arg_holder *,
+				 p3retval *retval);
 
 static int    add_one_primer(char *primer, int *, oligo_array *oligo,
-				   const p3_global_settings *pa,
-                   seq_args *sa, const dpal_arg_holder *dpal_arg_to_use);
+			     const p3_global_settings *pa,
+			     seq_args *sa, 
+			     const dpal_arg_holder *dpal_arg_to_use,
+			     p3retval *);
 
 static double obj_fn(const p3_global_settings *, primer_pair *);
 
@@ -196,7 +199,8 @@ static int    oligo_pair_seen(const primer_pair *, const pair_array_t *);
 static void   oligo_param(const p3_global_settings *pa,
 			  primer_rec *, oligo_type,
 			  const dpal_arg_holder*,
-			  seq_args *, oligo_stats *);
+			  seq_args *, oligo_stats *,
+			  p3retval *);
 
 static void   pr_append(pr_append_str *, const char *);
 
@@ -951,6 +955,9 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
 
 #if 0
     /* Creates files with left, right, and internal oligos. */
+    /* 2007-12-17  Keep this around for one release
+       in case we need to provide backward compatible
+       ordering of primer / oligo lists */
     if (pa->file_flag) {
       if (p3_print_oligo_lists(retval, sa, pa,
 			       &retval->per_sequence_err)) {
@@ -1031,7 +1038,7 @@ choose_primers(const p3_global_settings *pa, seq_args *sa)
    i.e. that primer was supplied by the caller
    and pick_anyway is set. */
 static void
-add_must_use_warnings(/* seq_args *sa, */ pr_append_str *warning,
+add_must_use_warnings(pr_append_str *warning,
 		      const char* text,
 		      const oligo_stats *stats)
 {
@@ -1153,9 +1160,9 @@ make_primer_lists(p3retval *retval,
       stop_codon1 = find_stop_codon(sa->trimmed_seq, 
 				    sa->start_codon_pos, -1);
 
-      sa->stop_codon_pos = find_stop_codon(sa->trimmed_seq, 
+      retval->stop_codon_pos = find_stop_codon(sa->trimmed_seq, 
 					   sa->start_codon_pos,  1);
-      sa->stop_codon_pos += sa->incl_s;
+      retval->stop_codon_pos += sa->incl_s;
     }
 
     /* Set pr_min to the very smallest 
@@ -1215,12 +1222,12 @@ make_primer_lists(p3retval *retval,
 	  /* Use the primer provided */
   	  if (sa->left_input){
   		  add_one_primer(sa->left_input, &left, &retval->fwd,
-			  					pa, sa, dpal_arg_to_use); 
+				 pa, sa, dpal_arg_to_use, retval); 
   	  }
 	  /* Or pick all good in the given range */
 	  else {
 		  pick_primers_range(start, length, &left, &retval->fwd,
-				  					pa, sa, dpal_arg_to_use);
+				     pa, sa, dpal_arg_to_use, retval);
 	  }
     
     }  /* if (pa->pick_left_primer) */
@@ -1263,7 +1270,7 @@ make_primer_lists(p3retval *retval,
 
 		h.repeat_sim.score = NULL;
 		oligo_param(pa, &h, OT_RIGHT, dpal_arg_to_use,
-			    sa, ostats);
+			    sa, ostats, retval);
 		ostats->considered++;
 		if (OK_OR_MUST_USE(&h)) {
 		  h.quality = p_obj_fn(pa, &h, 0);
@@ -1321,7 +1328,7 @@ make_internal_oligo_list(retval, pa, sa, dpal_arg_to_use)
   /* Use the primer provided */
   if (sa->internal_input){
 	  ret = add_one_primer(sa->internal_input, &left, &retval->intl,
-			  					pa, sa, dpal_arg_to_use);
+			       pa, sa, dpal_arg_to_use, retval);
   }
   /* Or pick all good in the given range */
   else {
@@ -1331,7 +1338,8 @@ make_internal_oligo_list(retval, pa, sa, dpal_arg_to_use)
 	  int left = 0;
 	  
 	  ret = pick_primers_range(start, length, &left, &retval->intl,
-			  					pa, sa, dpal_arg_to_use);
+				   pa, sa, dpal_arg_to_use,
+				   retval);
   }
   return ret;
 } /* make_internal_oligo_list */
@@ -1341,8 +1349,9 @@ make_internal_oligo_list(retval, pa, sa, dpal_arg_to_use)
  * and stores them in *oligo  */
 static int
 pick_primers_range(const int start, const int length, int *extreme,
-				   oligo_array *oligo, const p3_global_settings *pa,
-                   seq_args *sa, const dpal_arg_holder *dpal_arg_to_use)
+		   oligo_array *oligo, const p3_global_settings *pa,
+                   seq_args *sa, const dpal_arg_holder *dpal_arg_to_use,
+		   p3retval *retval)
 {
 	/* Variables for the loop */
     int i, j, k, primer_size_small, primer_size_large;
@@ -1368,9 +1377,9 @@ pick_primers_range(const int start, const int length, int *extreme,
       stop_codon1 = find_stop_codon(sa->trimmed_seq, 
 				    sa->start_codon_pos, -1);
 
-      sa->stop_codon_pos = find_stop_codon(sa->trimmed_seq, 
+      retval->stop_codon_pos = find_stop_codon(sa->trimmed_seq, 
 					   sa->start_codon_pos,  1);
-      sa->stop_codon_pos += sa->incl_s;
+      retval->stop_codon_pos += sa->incl_s;
     }
     
     /* Allocate some space for primers if needed */
@@ -1437,8 +1446,8 @@ pick_primers_range(const int start, const int length, int *extreme,
 		   the ORF. */
 		    && (0 != (h.start - sa->start_codon_pos) % 3
 			|| h.start <= stop_codon1
-			|| (sa->stop_codon_pos != -1 
-			    && h.start >= sa->stop_codon_pos))) {
+			|| (retval->stop_codon_pos != -1 
+			    && h.start >= retval->stop_codon_pos))) {
 			oligo->expl.no_orf++;
 		  if (!pa->pick_anyway) continue;
 		}
@@ -1448,7 +1457,7 @@ pick_primers_range(const int start, const int length, int *extreme,
 
 		/* Calculate all the primer parameters */
         oligo_param(pa, &h, oligo->type, dpal_arg_to_use,
-  		  sa, &oligo->expl);
+		    sa, &oligo->expl, retval);
 
 		/* If primer has to be used or is OK */
         if (OK_OR_MUST_USE(&h)) {
@@ -1489,8 +1498,9 @@ pick_primers_range(const int start, const int length, int *extreme,
  * and stores them in *oligo  */
 static int
 add_one_primer(char *primer, int *extreme, oligo_array *oligo, 
-				const p3_global_settings *pa,
-                seq_args *sa, const dpal_arg_holder *dpal_arg_to_use)
+	       const p3_global_settings *pa,
+	       seq_args *sa, const dpal_arg_holder *dpal_arg_to_use,
+	       p3retval *retval)
 {
 	/* Variables for the loop */
     int i, j, k;
@@ -1516,9 +1526,9 @@ add_one_primer(char *primer, int *extreme, oligo_array *oligo,
       stop_codon1 = find_stop_codon(sa->trimmed_seq, 
 				    sa->start_codon_pos, -1);
 
-      sa->stop_codon_pos = find_stop_codon(sa->trimmed_seq, 
+      retval->stop_codon_pos = find_stop_codon(sa->trimmed_seq, 
 					   sa->start_codon_pos,  1);
-      sa->stop_codon_pos += sa->incl_s;
+      retval->stop_codon_pos += sa->incl_s;
     }
 
     /* Allocate some space for primers if needed */
@@ -1573,8 +1583,8 @@ add_one_primer(char *primer, int *extreme, oligo_array *oligo,
 		   the ORF. */
 		    && (0 != (h.start - sa->start_codon_pos) % 3
 			|| h.start <= stop_codon1
-			|| (sa->stop_codon_pos != -1 
-			    && h.start >= sa->stop_codon_pos))) {
+			|| (retval->stop_codon_pos != -1 
+			    && h.start >= retval->stop_codon_pos))) {
 			oligo->expl.no_orf++;
 		  if (!pa->pick_anyway) continue;
 		}
@@ -1584,7 +1594,7 @@ add_one_primer(char *primer, int *extreme, oligo_array *oligo,
 
 		/* Calculate all the primer parameters */
         oligo_param(pa, &h, oligo->type, dpal_arg_to_use,
-  		  sa, &oligo->expl);
+		    sa, &oligo->expl, retval);
 
 		/* If primer has to be used or is OK */
         if (OK_OR_MUST_USE(&h)) {
@@ -1630,14 +1640,14 @@ add_one_primer(char *primer, int *extreme, oligo_array *oligo,
 #define INSIDE_STOP_WT   100.0
 #define OUTSIDE_STOP_WT    0.5
 static void
-oligo_param(pa, h, l, dpal_arg_to_use, sa, stats)
-    const p3_global_settings *pa;
-    primer_rec *h;
-    oligo_type l;
-    const dpal_arg_holder *dpal_arg_to_use;
-    seq_args *sa;
-    oligo_stats *stats;
-{
+oligo_param(const p3_global_settings *pa,
+	    primer_rec *h,
+	    oligo_type l,
+	    const dpal_arg_holder *dpal_arg_to_use,
+	    seq_args *sa,
+	    oligo_stats *stats,
+	    p3retval *retval) {
+
   /* FIX ME -- most of this function is in 'index' land,
      change it to oligo land (s1, s1_rev, and  olig_seq. */
 
@@ -1737,14 +1747,14 @@ oligo_param(pa, h, l, dpal_arg_to_use, sa, stats)
 	    = (h->start - sa->start_codon_pos) * INSIDE_START_WT;
       }
       else if (OT_RIGHT == l) {
-	if (-1 == sa->stop_codon_pos) {
+	if (-1 == retval->stop_codon_pos) {
 	  h->position_penalty = (TRIMMED_SEQ_LEN(sa) - h->start - 1) * INSIDE_STOP_WT;
-	} else if (sa->stop_codon_pos < h->start)
+	} else if (retval->stop_codon_pos < h->start)
 	  h->position_penalty
-	    = (h->start - sa->stop_codon_pos) * OUTSIDE_STOP_WT;
+	    = (h->start - retval->stop_codon_pos) * OUTSIDE_STOP_WT;
 	else
 	  h->position_penalty
-	    = (sa->stop_codon_pos - h->start) * INSIDE_STOP_WT;
+	    = (retval->stop_codon_pos - h->start) * INSIDE_STOP_WT;
       }
     }
 

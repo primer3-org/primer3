@@ -561,12 +561,14 @@ typedef struct seq_args {
 			   * also the length of the trimmed_seq field.
 			   */
   int  start_codon_pos;   /* Index of first base of the start codon. */
-  int  stop_codon_pos;    /* 
+
+  int  xstop_codon_pos;    /* 
 			   * An optional _output_, meaninful if a
 			   * start_codon_pos is "not nul".  The position of
 			   * the intial base of the leftmost stop codon that
 			   * is to the right of sa->start_codon_pos.
 			   */
+
   int  *quality;          /* Vector of quality scores. */
   int n_quality;          /* Length 'quality' */
   char *sequence;         /* The template sequence itself as input, 
@@ -637,6 +639,14 @@ typedef struct p3retval {
   pr_append_str per_sequence_err;
   pr_append_str warnings;
 
+  /* 
+   * An optional _output_, meaninful if a
+   * start_codon_pos is "not nul".  The position of
+   * the intial base of the leftmost stop codon that
+   * is to the right of sa->start_codon_pos.
+   */
+  int stop_codon_pos;
+
 } p3retval;
 
 /* Deallocate a primer3 state */
@@ -692,7 +702,6 @@ void p3_set_sa_incl_s(seq_args *sargs, int incl_s);
 void p3_set_sa_incl_l(seq_args *sargs, int incl_l);
 
 void p3_set_sa_start_codon_pos(seq_args *sargs, int start_codon_pos);
-void p3_set_sa_stop_codon_pos(seq_args *sargs, int stop_codon_pos);
 int p3_set_sa_sequence_file(seq_args *sargs, const char *sequence_file);
 int p3_set_sa_trimmed_sequence(seq_args *sargs, const char *trimmed_sequence);
 int p3_set_sa_trimmed_original_sequence(seq_args *sargs, const char *trimmed_original_sequence);
