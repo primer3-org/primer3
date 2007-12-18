@@ -210,6 +210,8 @@ static void   oligo_param(const p3_global_settings *pa,
 			  p3retval *);
 
 static void   pr_append(pr_append_str *, const char *);
+static const char *pr_append_str_chars(const pr_append_str *x);
+
 
 static void   pr_append_new_chunk(pr_append_str *x, const char *s);
 
@@ -952,8 +954,8 @@ choose_primers(const p3_global_settings *pa,
 			 /* FIX ME We get programming errors, staring with the loss of
 			    PRIMER_WARNING=Unrecognized base in input sequence 
 			    in the primer_boundary test Check this in gdb */
-			 &sa->warning
-			 /* &retval->warnings */
+			 /* &sa->warning */
+			 &retval->warnings
 
 			 ) !=0 ) {
       return retval;
@@ -1004,6 +1006,10 @@ choose_primers(const p3_global_settings *pa,
     	sort_primer_array(&retval->fwd);
 
     /* FIX ME why do we only sort this if we dont pick primers? */
+    /* Probably because if we pick primers we sort by the
+       'goodness' of the primer pair.  I don't know
+       with 'goodness' of the primer pair includes the internal oligo
+       if there is one' */
     if (pa->primer_task == pick_hyb_probe_only)
     	sort_primer_array(&retval->intl);
 
@@ -1046,16 +1052,16 @@ choose_primers(const p3_global_settings *pa,
 	add_must_use_warnings(
 			      
 			      /* FIX ME, fails on primer_must_use test */
-			      &sa->warning,
-			      /* &retval->warnings, TEST IN gdb */
+			      /* &sa->warning, */
+			      &retval->warnings,
 
 			      "Left primer", &retval->fwd.expl);
       }
       if (sa->right_input) {
-	add_must_use_warnings(&sa->warning, "Right primer", &retval->rev.expl);
+	add_must_use_warnings(/* &sa->warning*/ &retval->warnings, "Right primer", &retval->rev.expl);
       }
       if (sa->internal_input) {
-	add_must_use_warnings(&sa->warning, "Hybridization probe", &retval->intl.expl);
+	add_must_use_warnings(/* &sa->warning,*/ &retval->warnings, "Hybridization probe", &retval->intl.expl);
       }
     }
 
@@ -2811,14 +2817,15 @@ obj_fn(pa, h)
 }
 
 char *
-pr_gather_warnings(const seq_args *sa, const p3_global_settings *pa) {
+pr_gather_warnings(const p3retval *retval, 
+		   const seq_args *sa, 
+		   const p3_global_settings *pa) {
   pr_append_str warning;
 
   PR_ASSERT(NULL != sa);
   PR_ASSERT(NULL != pa);
 
-  warning.data = NULL;
-  warning.storage_size = 0;
+  init_pr_append_str(&warning);
 
   if (seq_lib_warning_data(pa->p_args.repeat_lib))
     pr_append_new_chunk(&warning, seq_lib_warning_data(pa->p_args.repeat_lib));
@@ -2828,7 +2835,11 @@ pr_gather_warnings(const seq_args *sa, const p3_global_settings *pa) {
     pr_append(&warning, " (for internal oligo)");
   }
 
+  if (!pr_is_empty(&retval->warnings))
+    pr_append_new_chunk(&warning,  retval->warnings.data);
+
   if (sa->warning.data) pr_append_new_chunk(&warning, sa->warning.data);
+
   return pr_is_empty(&warning) ? NULL : warning.data;
 }
 
@@ -3534,6 +3545,11 @@ static void
 init_pr_append_str(pr_append_str *s) {
   s->data = NULL;
   s->storage_size = 0;
+}
+
+static const char *
+pr_append_str_chars(const pr_append_str *x) {
+  return x->data;
 }
 
 pr_append_str *

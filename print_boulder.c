@@ -46,14 +46,12 @@ static void   print_explain(const oligo_stats *, oligo_type);
 
 /* Print the data for chosen primer pairs to stdout in "boulderio" format. */
 void
-boulder_print(io_version, pa, sa, retval)
-    const int *io_version;
-    const primer_args *pa;
-    const seq_args *sa;
-    const p3retval *retval;
-    
+boulder_print(const int *io_version,
+	      const primer_args *pa,
+	      const seq_args *sa,
+	      const p3retval *retval)
 {
-	/* The pointers to warning tag */
+  /* The pointers to warning tag */
     char *warning;
     /* A small spacer */
     char suffix [3];
@@ -83,10 +81,11 @@ boulder_print(io_version, pa, sa, retval)
     PR_ASSERT(NULL != io_version);
 
     /* Check if there are warnings and print them */
-    if ((warning = pr_gather_warnings(sa, pa)) != NULL) { 
+    if ((warning = pr_gather_warnings(retval, sa, pa)) != NULL) { 
 	  printf("PRIMER_WARNING=%s\n", warning);
 	  free(warning);
     }
+
     /* Check if there are errors, print and return */
     if (sa->error.data != NULL) {
       boulder_print_error(sa->error.data);

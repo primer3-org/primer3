@@ -590,10 +590,9 @@ typedef struct seq_args {
   /*  Output (writable) arguments. */   /* FIX ME, MOVE THESE TO retval */
   pr_append_str error;  /* Error messages. */
 
-#define SA_WARNING 1
-#ifdef SA_WARNING
-  pr_append_str warning;  /* Warning messages. */
-#endif
+
+  pr_append_str warning;  /* Warning messages. */ /* DO NOT USE */
+
 
   /*  END output arguments. */
   /* ================================================== */
@@ -876,8 +875,9 @@ char  *pr_oligo_rev_c_sequence(const seq_args *, const primer_rec *);
 
 void  pr_set_default_global_args(p3_global_settings *);
 
-char  *pr_gather_warnings(const seq_args *, const p3_global_settings *);
-
+char  *pr_gather_warnings(const p3retval *, 
+			  const seq_args *, 
+			  const p3_global_settings *);
 
 /* Return NULL on ENOMEM */
 pr_append_str *create_pr_append_str();
