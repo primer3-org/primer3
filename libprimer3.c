@@ -5537,13 +5537,6 @@ p3_set_gs_primer_pair_wt_template_mispriming(p3_global_settings * p , int val) {
   p->pr_pair_weights.template_mispriming = val ;
 }
 
-/* still needed? 
-args_for_one_oligo_or_primer *p3_get_global_settings_p_args(p3_global_settings * p);
-args_for_one_oligo_or_primer *p3_get_global_settings_o_args(p3_global_settings * p);
-int p3_set_afogop_seq_lib(args_for_one_oligo_or_primer *, seq_lib *);
-int p3_set_afogop_opt_tm(args_for_one_oligo_or_primer *, double);
-*/
-
 void
 p3_set_gs_lib_ambiguity_codes_consensus(p3_global_settings * p , int lib_ambiguity_codes_consensus) {
   p->lib_ambiguity_codes_consensus = lib_ambiguity_codes_consensus;
