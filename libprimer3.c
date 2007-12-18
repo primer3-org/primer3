@@ -835,6 +835,11 @@ destroy_dpal_arg_holder(dpal_arg_holder *h) {
   free(h);
 }
 
+/* This is a static variable that is initialized once
+   in choose_primers().  If this variable has
+   'file' scope, we do not have to remember to free the associated
+   storage after each call to choose_primers(). Open
+   to discussion. */
 /* FIX ME AU: Dont understand what this is good for */
 static dpal_arg_holder *dpal_arg_to_use = NULL;
 
@@ -954,7 +959,9 @@ choose_primers(const p3_global_settings *pa,
       return retval;
     }
 
-    /* Set the parameters for alignment functions*/
+    /* Set the parameters for alignment functions
+       if dpal_arg_to_use, a static variable that has 'file' 
+       scope, has not yet been initialized. */
     if (dpal_arg_to_use == NULL)
       dpal_arg_to_use = create_dpal_arg_holder();
 
