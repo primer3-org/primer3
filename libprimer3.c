@@ -4956,15 +4956,6 @@ int p3_set_sa_primer_internal_input(seq_args *sargs, const char *s) {
 
 
 void
-p3_set_sa_num_excl(seq_args *sargs, int num_excl) {
-  sargs->num_excl = num_excl;
-}
-
-void
-p3_set_sa_num_internal_excl(seq_args *sargs, int num_internal_excl) {
-  sargs->num_internal_excl = num_internal_excl;
-}
-void
 p3_set_sa_incl_s(seq_args *sargs, int incl_s) {
   sargs->incl_s = incl_s;
 }
