@@ -1074,6 +1074,7 @@ choose_primers(const p3_global_settings *pa,
    the _errors_ associated with a given primer
    i.e. that primer was supplied by the caller
    and pick_anyway is set. */
+/* Translate the values in the struct into an warning sting message */
 static void
 add_must_use_warnings(pr_append_str *warning,
 		      const char* text,
@@ -1116,6 +1117,8 @@ add_must_use_warnings(pr_append_str *warning,
 
 /* Return 1 iff pair is already in the first num_pairs elements of 
    retpair. */
+/* Checks if the current pair is already in the list of 
+ * selected pairs. */
 static int
 oligo_pair_seen(const primer_pair *pair,
 		const pair_array_t *retpair)
@@ -1144,16 +1147,20 @@ static void
 add_pair(const primer_pair *pair,
 	 pair_array_t *retpair)
 {
+	/* If array is not initialised, initialise it with the size of pairs to return */
     if (0 == retpair->storage_size) {
 	retpair->storage_size = INITIAL_NUM_RETURN;
 	retpair->pairs 
 	    = pr_safe_malloc(retpair->storage_size * sizeof(*retpair->pairs));
-    } else if (retpair->storage_size == retpair->num_pairs) {
+    } 
+    /* If there is no space any more alloc double the space*/
+    else if (retpair->storage_size == retpair->num_pairs) {
 	retpair->storage_size *= 2;
 	retpair->pairs
 	    = pr_safe_realloc(retpair->pairs,
 			      retpair->storage_size * sizeof(*retpair->pairs));
     }
+    /* Copy the pair in the storage place */
     retpair->pairs[retpair->num_pairs] = *pair;
     retpair->num_pairs++;
 }
@@ -1283,8 +1290,11 @@ make_primer_lists(p3retval *retval,
 	    && pa->primer_task != pick_hyb_probe_only */
 	pa->pick_right_primer ) {
 
-      /* We will need a right primer */
-      for (i=r_b; i<=n-pa->p_args.min_size; i++) {
+    /* We will need a right primer */
+	length = n-pa->p_args.min_size - r_b + 1;
+	start = r_b;
+  	
+    for (i=start; i<=start + length; i++) {
 	s[0]='\0';
 	for(j = pa->p_args.min_size; j <= pa->p_args.max_size; j++) {
 	    if (i+j<pr_min && pa->primer_task != pick_right_only) continue;
