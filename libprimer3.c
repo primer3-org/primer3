@@ -4938,27 +4938,12 @@ int p3_set_sa_primer_internal_input(seq_args *sargs, const char *s) {
  return _set_string(&sargs->sequence_name, s); 
 }
 
-/***********************
+/*
   use p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2);
 
   to do the sets for tar2, excl2, nd excl_internal2
-*************************/
+*/
 
-const interval_array_t2 *
-p3_get_seq_args_tar2(const seq_args *sargs) {
-  return &sargs->tar2 ;
-}
-
-
-const interval_array_t2 *
-p3_get_seq_args_excl2(const seq_args *sargs) {
-  return &sargs->excl2 ;
-}
-
-const interval_array_t2 *
-p3_get_seq_args_excl_internal2(const seq_args *sargs) {
-  return &sargs->excl_internal2 ;
-}
 
 void
 p3_set_sa_num_excl(seq_args *sargs, int num_excl) {
