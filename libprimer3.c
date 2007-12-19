@@ -1350,6 +1350,7 @@ pick_left_primers(const int start, const int length, int *extreme,
 {
 	/* Variables for the loop */
     int i, j, k, primer_size_small, primer_size_large;
+    int pr_min, n;
     
     /* Array to store one primer sequences in */
     char s[MAX_PRIMER_LENGTH+1];
@@ -1357,7 +1358,6 @@ pick_left_primers(const int start, const int length, int *extreme,
     /* Struct to store the primer parameters in */
     primer_rec h;
 
-    int pr_min, n;
     /* Set pr_min to the very smallest 
        allowable product size. */
     pr_min = INT_MAX;
@@ -1365,6 +1365,7 @@ pick_left_primers(const int start, const int length, int *extreme,
       if(pa->pr_min[i] < pr_min)
 	pr_min = pa->pr_min[i];
 
+    /* Set n to the length of included region */
     PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
     
     /* The position of the intial base of the rightmost stop codon that is
@@ -1406,6 +1407,22 @@ pick_left_primers(const int start, const int length, int *extreme,
       
       /* Loop over possible primer length from min to max */
       for(j = primer_size_small; j <= primer_size_large; j++) {
+    	  
+  	    /* If there is no space on the array, allocate new space */
+        if (k >= oligo->storage_size) {
+          	oligo->storage_size += (oligo->storage_size >> 1);
+          	oligo->oligo = pr_safe_realloc(oligo->oligo, 
+          			oligo->storage_size * sizeof(*oligo->oligo));
+          }
+
+  		/* Set the length of the primer */
+        h.length = j;
+        
+        /* Set repeat_sim to nothing */
+        h.repeat_sim.score = NULL;
+          
+    	  
+    	  
     	/* Continue if the product would not be sufficient */
     	/* FIX ME use something based on:
   	    if (i-j > n-pr_min-1 && (retval->output_type == primer_pairs)
@@ -1416,21 +1433,9 @@ pick_left_primers(const int start, const int length, int *extreme,
     	  
     	/* Break if the primer is bigger than the sequence left*/
         if(i-j < -1) break;
-        
-	    /* If there is no space on the array, allocate new space */
-        if (k >= oligo->storage_size) {
-        	oligo->storage_size += (oligo->storage_size >> 1);
-        	oligo->oligo = pr_safe_realloc(oligo->oligo, 
-        			oligo->storage_size * sizeof(*oligo->oligo));
-        }
-        
+                
 		/* Set the start of the primer */
         h.start = i - j +1;
-        
-		/* Set the length of the primer */
-        h.length = j;
-        /* Set repeat_sim to nothing */
-        h.repeat_sim.score = NULL;
         
 		/* Put the real primer sequence in s */
         _pr_substr(sa->trimmed_seq, h.start, h.length, s);
@@ -1589,7 +1594,9 @@ pick_right_primers(const int start, const int length, int *extreme,
 
 
 /* add_one_primer finds one primer in the trimmed sequence
- * and stores them in *oligo  */
+ * and stores them in *oligo 
+ * The main difference to the general fuction is that it calculate
+ * its length and it will add aprimer of any length to the list */
 static int
 add_one_primer(const char *primer, int *extreme, oligo_array *oligo, 
 	       const p3_global_settings *pa,
@@ -1599,6 +1606,7 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
 {
 	/* Variables for the loop */
     int i, j, k, start, stop;
+    int pr_min, n;
     
     /* Array to store one primer sequences in */
     char s[MAX_PRIMER_LENGTH+1] , s1[MAX_PRIMER_LENGTH+1];
@@ -1606,7 +1614,6 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
     /* Struct to store the primer parameters in */
     primer_rec h;
     
-    int pr_min, n;
     /* Set pr_min to the very smallest 
        allowable product size. */
     pr_min = INT_MAX;
