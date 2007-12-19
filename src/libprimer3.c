@@ -5025,19 +5025,19 @@ void * p3_set_sa_primer_sequence_quality(seq_args *sargs, int quality) {
 */
 
 int
-p3_set_sa_primer_sequence_id(seq_args *sargs, const char* sequence_name) {
+p3_set_sa_sequence_id(seq_args *sargs, const char* sequence_name) {
  return _set_string(&sargs->sequence_name, sequence_name); 
 }
 
-int p3_set_sa_primer_left_input(seq_args *sargs, const char *s) {
+int p3_set_sa_left_input(seq_args *sargs, const char *s) {
  return _set_string(&sargs->left_input, s); 
 }
 
-int p3_set_sa_primer_right_input(seq_args *sargs, const char *s) {
+int p3_set_sa_right_input(seq_args *sargs, const char *s) {
  return _set_string(&sargs->right_input, s); 
 }
 
-int p3_set_sa_primer_internal_input(seq_args *sargs, const char *s) {
+int p3_set_sa_internal_input(seq_args *sargs, const char *s) {
  return _set_string(&sargs->sequence_name, s); 
 }
 
@@ -5122,7 +5122,7 @@ p3_set_gs_primer_max_polyx(p3_global_settings * p , int val) {
 }
 
 void
-p3_set_gs_product_opt_tm(p3_global_settings * p , double d) {
+p3_set_gs_primer_opt_tm(p3_global_settings * p , double d) {
   p->p_args.opt_tm = d ;
 }
 
@@ -5132,11 +5132,11 @@ p3_set_gs_primer_opt_gc_percent(p3_global_settings * p , double d) {
 }
 
 void
-p3_set_gs_product_min_tm(p3_global_settings * p , double d) {
+p3_set_gs_primer_min_tm(p3_global_settings * p , double d) {
   p->p_args.min_tm = d ;
 }
 void
-p3_set_gs_product_max_tm(p3_global_settings * p , double d) {
+p3_set_gs_primer_max_tm(p3_global_settings * p , double d) {
   p->p_args.max_tm = d;
 }
 
