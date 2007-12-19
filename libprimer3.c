@@ -1531,7 +1531,10 @@ pick_right_primers(const int start, const int length, int *extreme,
     }
 
     /* Number of already picked primers */
-    k = 0;   
+    k = 0;
+    if (sa->right_input)
+	_pr_reverse_complement(sa->right_input, s1);
+
     /* Loop over the sequence */
     for (i=start; i<=start + length; i++) {
     	s[0]='\0';
@@ -1548,9 +1551,8 @@ pick_right_primers(const int start, const int length, int *extreme,
     		h.length=j;
     		h.repeat_sim.score = NULL;
     		_pr_substr(sa->trimmed_seq,  i, j, s);
-    		_pr_reverse_complement(s, s1);
-
-    		if (sa->right_input && strcmp_nocase(sa->right_input, s1))
+ 
+    		if (sa->right_input && strcmp_nocase(s, s1))
     		  continue;
     		h.must_use = (sa->right_input && pa->pick_anyway);
 
