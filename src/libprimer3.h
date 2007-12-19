@@ -719,7 +719,6 @@ void p3_destroy_global_settings(p3_global_settings *);
 
 void p3_set_global_settings_prmin (p3_global_settings * p , int val, int i);
 void p3_set_global_settings_prmax (p3_global_settings * p , int val, int i);
-void p3_set_gs_product_opt_size(p3_global_settings * p , int product_opt_size);
 void p3_set_gs_primer_opt_size(p3_global_settings * p , int val);
 void p3_set_gs_primer_min_size(p3_global_settings * p , int val);
 void p3_set_gs_primer_max_size(p3_global_settings * p , int val);
@@ -771,6 +770,7 @@ void p3_set_gs_primer_internal_oligo_max_gc(p3_global_settings * p , int val);
 void p3_set_gs_primer_internal_oligo_salt_conc(p3_global_settings * p , int val);
 void p3_set_gs_primer_internal_oligo_divalent_conc(p3_global_settings * p , int val);
 void p3_set_gs_primer_internal_oligo_dntp_conc(p3_global_settings * p , int val);
+void p3_set_gs_primer_internal_oligo_dna_conc(p3_global_settings * p , int val);
 void p3_set_gs_primer_internal_oligo_num_ns(p3_global_settings * p , int val);
 void p3_set_gs_primer_internal_oligo_min_quality(p3_global_settings * p , int val);
 void p3_set_gs_primer_internal_oligo_self_any(p3_global_settings * p , int val);
