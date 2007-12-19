@@ -5101,7 +5101,7 @@ p3_set_gs_prmax (p3_global_settings * p , int val, int i) {
 }
 
 void
-p3_set_gs_product_opt_size(p3_global_settings * p , int val) {
+p3_set_gs_primer_opt_size(p3_global_settings * p , int val) {
   p->p_args.opt_size = val ; 
 }
 
