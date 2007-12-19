@@ -5360,6 +5360,11 @@ void
 p3_set_gs_primer_internal_oligo_dntp_conc(p3_global_settings * p , int val) {
   p->o_args.dntp_conc = val ;
 }
+
+void
+p3_set_gs_primer_internal_oligo_dna_conc(p3_global_settings * p , int val) {
+  p->o_args.dna_conc = val ;
+}
  
 void
 p3_set_gs_primer_internal_oligo_num_ns(p3_global_settings * p , int val) {
