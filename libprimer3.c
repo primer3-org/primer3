@@ -1479,7 +1479,7 @@ pick_left_primers(const int start, const int length, int *extreme,
 		  		 || h.ok==OV_SEQ_QUALITY || h.ok==OV_LIB_SIM ) {
    	      break;
         }
-        else if ((oligo->type == OT_LEFT) && h.ok==OV_END_STAB){ 
+        else if ((oligo->type != OT_INTL) && h.ok==OV_END_STAB){ 
         	break;
         }
       } /* j: Loop over possible primer length from min to max */
@@ -1536,7 +1536,7 @@ pick_right_primers(const int start, const int length, int *extreme,
 	_pr_reverse_complement(sa->right_input, s1);
 
     /* Loop over the sequence */
-    for (i=start; i<=start + length; i++) {
+    for (i = start + length; i >= start; i--) {
     	s[0]='\0';
     	for(j = pa->p_args.min_size; j <= pa->p_args.max_size; j++) {
     	    if (i+j<pr_min && pa->primer_task != pick_right_only) continue;
@@ -1749,10 +1749,7 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
 		  		 || h.ok==OV_SEQ_QUALITY || h.ok==OV_LIB_SIM ) {
    	      break;
         }
-        else if ((oligo->type == OT_LEFT) && h.ok==OV_END_STAB){ 
-        	break;
-        } 
-        else if ((oligo->type == OT_RIGHT) && h.ok==OV_END_STAB){ 
+        else if ((oligo->type != OT_INTL) && h.ok==OV_END_STAB){ 
         	break;
         } 
       } /* j: Loop over possible primer length from min to max */
