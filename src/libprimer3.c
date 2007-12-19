@@ -5231,7 +5231,7 @@ p3_set_gs_primer_liberal_base(p3_global_settings * p , int val) {
 }
 
 void 
-p3_set_gs_first_base_index(p3_global_settings * p , int first_base_index){
+p3_set_gs_primer_first_base_index(p3_global_settings * p , int first_base_index){
   p->first_base_index = first_base_index;
 }
 
