@@ -794,7 +794,7 @@ void p3_set_gs_primer_wt_gc_percent_lt(p3_global_settings * p , int val);
 void p3_set_gs_primer_wt_size_lt(p3_global_settings * p , int val);
 void p3_set_gs_primer_wt_size_gt(p3_global_settings * p , int val);
 void p3_set_gs_primer_wt_compl_any(p3_global_settings * p , int val);
-void p3_set_gs_primer_wt_comp_end(p3_global_settings * p , int val);
+void p3_set_gs_primer_wt_compl_end(p3_global_settings * p , int val);
 void p3_set_gs_primer_wt_num_ns(p3_global_settings * p , int val);
 void p3_set_gs_primer_wt_rep_sim(p3_global_settings * p , int val);
 void p3_set_gs_primer_wt_seq_qual(p3_global_settings * p , int val);
