@@ -679,6 +679,7 @@ int p3_adjust_seq_args(const p3_global_settings *pa,
 		       pr_append_str *nonfatal_err);
 
 int p3_set_sa_sequence(seq_args *sargs, const char *sequence);
+void p3_set_sa_primer_sequence_quality(seq_args *sargs, int quality);
 void p3_set_sa_n_quality(seq_args *sargs, int n_quality);
 int p3_set_sa_sequence_name(seq_args *sargs, const char* sequence_name);
 int p3_set_sa_left_input(seq_args *sargs, const char *left_input);

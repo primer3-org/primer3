@@ -5016,13 +5016,13 @@ p3_set_sa_sequence(seq_args *sargs, const char *sequence) {
   return _set_string(&sargs->sequence, sequence) ;
 }
 
-/*  needs work!!
+
 
 void
-void * p3_set_sa_primer_sequence_quality(seq_args *sargs, int quality) {
+p3_set_sa_primer_sequence_quality(seq_args *sargs, int quality) {
   sargs->quality[sargs->n_quality++] = quality ;
 }
-*/
+
 
 int
 p3_set_sa_sequence_id(seq_args *sargs, const char* sequence_name) {
