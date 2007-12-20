@@ -1420,8 +1420,6 @@ pick_left_primers(const int start, const int length, int *extreme,
         
         /* Set repeat_sim to nothing */
         h.repeat_sim.score = NULL;
-          
-    	  
     	  
     	/* Continue if the product would not be sufficient */
     	/* FIX ME use something based on:
@@ -1429,13 +1427,24 @@ pick_left_primers(const int start, const int length, int *extreme,
   	    		             && pa->pick_left_primer) continue;*/
 
   	    if (i-j > n-pr_min-1 && (pick_left_only != pa->primer_task)
-  	    		&& (oligo->type != OT_INTL)) continue;
-    	  
-    	/* Break if the primer is bigger than the sequence left*/
-        if(i-j < -1) break;
-                
-		/* Set the start of the primer */
-        h.start = i - j +1;
+  	    		&& (oligo->type == OT_LEFT)) continue;
+
+  	    /* Figure out positions for forward primers */
+  	    if (oligo->type != OT_RIGHT) {
+	    	/* Break if the primer is bigger than the sequence left*/
+	        if(i-j < -1) break;
+	                
+			/* Set the start of the primer */
+	        h.start = i - j +1;
+  	    }
+  	    /* Figure out positions for reverse primers */
+  	    else {
+  	    	/* Break if the primer is bigger than the sequence left*/
+    	    if(i+j>n) break;
+    	    
+    	    /* Set the start of the primer */
+    		h.start=i+j-1;
+  	    }
         
 		/* Put the real primer sequence in s */
         _pr_substr(sa->trimmed_seq, h.start, h.length, s);
