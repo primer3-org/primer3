@@ -5206,7 +5206,7 @@ p3_set_gs_primer_self_end(p3_global_settings * p , int val) {
 }
 
 void
-p3_set_gs_file_flag(p3_global_settings * p , int file_flag){
+p3_set_gs_primer_file_flag(p3_global_settings * p , int file_flag){
   p->file_flag = file_flag;
 }
 
