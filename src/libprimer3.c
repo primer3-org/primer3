@@ -1284,7 +1284,7 @@ make_primer_lists(p3retval *retval,
 		}
 		/* Or pick all good in the given range */
 		else {
-		  pick_right_primers(start, length, &right, &retval->rev,
+		  pick_left_primers(start, length, &right, &retval->rev,
 					     pa, sa, dpal_arg_to_use, retval);
 		}
     }
@@ -1421,33 +1421,41 @@ pick_left_primers(const int start, const int length, int *extreme,
         /* Set repeat_sim to nothing */
         h.repeat_sim.score = NULL;
     	  
-    	/* Continue if the product would not be sufficient */
-    	/* FIX ME use something based on:
-  	    if (i-j > n-pr_min-1 && (retval->output_type == primer_pairs)
-  	    		             && pa->pick_left_primer) continue;*/
-
-  	    if (i-j > n-pr_min-1 && (pick_left_only != pa->primer_task)
-  	    		&& (oligo->type == OT_LEFT)) continue;
-
   	    /* Figure out positions for forward primers */
   	    if (oligo->type != OT_RIGHT) {
+  	     	/* FIX ME use something based on:
+  	    	    if (i-j > n-pr_min-1 && (retval->output_type == primer_pairs)
+  	    	    		             && pa->pick_left_primer) continue;*/
+
+  	    	/* Check if the product is of sufficient size */
+  	  	    if (i-j > n-pr_min-1 && (pick_left_only != pa->primer_task)
+  	  	    		&& (oligo->type == OT_LEFT)) continue;
+  	    	
 	    	/* Break if the primer is bigger than the sequence left*/
 	        if(i-j < -1) break;
 	                
 			/* Set the start of the primer */
 	        h.start = i - j +1;
+	        
+			/* Put the real primer sequence in s */
+	        _pr_substr(sa->trimmed_seq, h.start, j, s);
   	    }
   	    /* Figure out positions for reverse primers */
   	    else {
+  	    	/* Check if the product is of sufficient size */
+    	    if (i+j<pr_min && pa->primer_task != pick_right_only) continue;
+  	    	
   	    	/* Break if the primer is bigger than the sequence left*/
     	    if(i+j>n) break;
     	    
     	    /* Set the start of the primer */
     		h.start=i+j-1;
+    		
+    		/* Put the real primer sequence in s */
+    		_pr_substr(sa->trimmed_seq,  i, j, s);
+
   	    }
         
-		/* Put the real primer sequence in s */
-        _pr_substr(sa->trimmed_seq, h.start, h.length, s);
         
 		/* Do not force primer3 to use this oligo */
         h.must_use = 0;
@@ -1480,7 +1488,12 @@ pick_left_primers(const int start, const int length, int *extreme,
 		  /* Save the primer in the array */
           oligo->oligo[k] = h;
           /* Update the most extreme primer variable */
-          if (oligo->oligo[k].start < *extreme)
+          if ((oligo->oligo[k].start < *extreme) &&
+        		  (oligo->type != OT_RIGHT))
+          		    *extreme=oligo->oligo[k].start;
+          /* Update the most extreme primer variable */
+          if ((oligo->oligo[k].start > *extreme) &&
+        		  (oligo->type == OT_RIGHT))
           		    *extreme=oligo->oligo[k].start;
 		  /* Update the number of primers */
           k++;
@@ -1501,7 +1514,7 @@ pick_left_primers(const int start, const int length, int *extreme,
     /* Update array with how many primers are good */
     oligo->num_elem = k;
     /* Update statistics with how many primers are good */
-    oligo->expl.ok = oligo->num_elem;
+    oligo->expl.ok = k;
     
     /* return -1 for error */
     if (oligo->num_elem == 0) return 1;
