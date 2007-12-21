@@ -591,7 +591,7 @@ typedef struct seq_args {
   pr_append_str error;  /* Error messages. */
 
 
-  pr_append_str warning;  /* Warning messages. */ /* DO NOT USE */
+  /* pr_append_str warning; */ /* Warning messages. */ /* DO NOT USE */
 
 
   /*  END output arguments. */
@@ -632,7 +632,7 @@ typedef struct p3retval {
   /* Array of best primer pairs */
   pair_array_t best_pairs;
 
-  /* Struct to store type of output */
+  /* Enum to store type of output */
   p3_output_type output_type;
 
   /* Place for error messages */
@@ -676,7 +676,8 @@ seq_args *create_seq_arg();
 void destroy_seq_args(seq_args *);
 int p3_adjust_seq_args(const p3_global_settings *pa, 
 		       seq_args *sa, 
-		       pr_append_str *nonfatal_err);
+		       pr_append_str *nonfatal_err,
+		       pr_append_str *warning);
 
 int p3_set_sa_sequence(seq_args *sargs, const char *sequence);
 void p3_set_sa_primer_sequence_quality(seq_args *sargs, int quality);
@@ -878,7 +879,8 @@ void  pr_set_default_global_args(p3_global_settings *);
 
 char  *pr_gather_warnings(const p3retval *, 
 			  const seq_args *, 
-			  const p3_global_settings *);
+			  const p3_global_settings *,
+			  const pr_append_str *more_warnings);
 
 /* Return NULL on ENOMEM */
 pr_append_str *create_pr_append_str();

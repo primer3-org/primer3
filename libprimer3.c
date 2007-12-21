@@ -722,16 +722,6 @@ create_p3retval(void)
   
   memset(&state->best_pairs.expl, 0, sizeof(state->best_pairs.expl));
   
-  
-  /* state->glob_err.data = NULL; 
-  state->glob_err.storage_size = 0;
-
-  state->per_sequence_err.data = NULL;
-  state->per_sequence_err.storage_size = 0;
-
-  state->warnings.data = NULL;
-  state->warnings.storage_size = 0; */
-
   return state;
 }
 
@@ -757,15 +747,32 @@ destroy_p3retval(p3retval *state)
     destroy_pr_append_str_data(&state->per_sequence_err);
     destroy_pr_append_str_data(&state->warnings);
 
-    /* if (NULL != state->glob_err.data) free(state->glob_err.data);
-    if (NULL != state->per_sequence_err.data) free(state->per_sequence_err.data); 
-    if (NULL != state->warnings.data) free(state->warnings.data);  */
-
     free(state);
 }
+
+const oligo_array *
+p3_get_retval_fwd(const p3retval *r) {
+  return &r->fwd;
+}
+
+const oligo_array *
+p3_get_retval_intl(const p3retval *r) {
+  return &r->intl;
+}
+
+const oligo_array *
+p3_get_retval_rev(const p3retval *r) {
+  return &r->rev;
+}
+
 const pair_array_t *
 p3_get_retval_best_pairs(const p3retval *r) {
   return &r->best_pairs;
+}
+
+p3_output_type
+p3_get_retval_output_type(const p3retval *r) {
+  return r->output_type;
 }
 
 const char *
@@ -780,12 +787,12 @@ p3_get_retval_per_sequence_err(const p3retval *r) {
 
 const char *
 p3_get_retval_warnings(const p3retval *r) {
-  return r->warnings.data;
+  return pr_append_str_chars(&r->warnings);
 }
 
-const p3_output_type
-p3_get_retval_output_type(const p3retval *r) {
-  return r->output_type;
+int
+p3_get_retval_stop_codon_pos(p3retval *r) {
+  return r->stop_codon_pos;
 }
 
 /* ============================================================ */
@@ -886,7 +893,7 @@ destroy_seq_args(seq_args *sa) {
   if (NULL != sa->upcased_seq_r) free(sa->upcased_seq_r);
   if (NULL != sa->sequence_name) free(sa->sequence_name);
   if (NULL != sa->error.data) free(sa->error.data);
-  if (NULL != sa->warning.data) free(sa->warning.data);
+  /* if (NULL != sa->warning.data) free(sa->warning.data); */
   free(sa);
 }
 
@@ -948,15 +955,8 @@ choose_primers(const p3_global_settings *pa,
     /* Check if the input in sa and pa makes sense */
     if (_pr_data_control(pa, sa, 
 			 &retval->glob_err,  /* Fatal errors */
-			 &sa->error,         /* Nonfatal errors */
-
-
-			 /* FIX ME We get programming errors, staring with the loss of
-			    PRIMER_WARNING=Unrecognized base in input sequence 
-			    in the primer_boundary test Check this in gdb */
-			 /* &sa->warning */
+			 &sa->error,         /* Nonfatal errors */ /* FIX ME, remove from seq_args */
 			 &retval->warnings
-
 			 ) !=0 ) {
       return retval;
     }
@@ -1049,19 +1049,16 @@ choose_primers(const p3_global_settings *pa,
        unacceptable, then add warnings. */
     if (pa->pick_anyway) {
       if (sa->left_input) {
-	add_must_use_warnings(
-			      
-			      /* FIX ME, fails on primer_must_use test */
-			      /* &sa->warning, */
-			      &retval->warnings,
-
+	add_must_use_warnings(&retval->warnings,
 			      "Left primer", &retval->fwd.expl);
       }
       if (sa->right_input) {
-	add_must_use_warnings(/* &sa->warning*/ &retval->warnings, "Right primer", &retval->rev.expl);
+	add_must_use_warnings(&retval->warnings, 
+			      "Right primer", &retval->rev.expl);
       }
       if (sa->internal_input) {
-	add_must_use_warnings(/* &sa->warning,*/ &retval->warnings, "Hybridization probe", &retval->intl.expl);
+	add_must_use_warnings(&retval->warnings,
+			      "Hybridization probe", &retval->intl.expl);
       }
     }
 
@@ -2819,7 +2816,8 @@ obj_fn(pa, h)
 char *
 pr_gather_warnings(const p3retval *retval, 
 		   const seq_args *sa, 
-		   const p3_global_settings *pa) {
+		   const p3_global_settings *pa,
+		   const pr_append_str *more_warnings) {
   pr_append_str warning;
 
   PR_ASSERT(NULL != sa);
@@ -2838,7 +2836,10 @@ pr_gather_warnings(const p3retval *retval,
   if (!pr_is_empty(&retval->warnings))
     pr_append_new_chunk(&warning,  retval->warnings.data);
 
-  if (sa->warning.data) pr_append_new_chunk(&warning, sa->warning.data);
+  /* if (sa->warning.data) pr_append_new_chunk(&warning, sa->warning.data); */
+  if (!pr_is_empty(more_warnings)) {
+    pr_append_new_chunk(&warning, more_warnings->data);
+  }
 
   return pr_is_empty(&warning) ? NULL : warning.data;
 }
@@ -3715,7 +3716,8 @@ adjust_base_index_interval_list(intervals, num, first_index)
 int
 p3_adjust_seq_args(const p3_global_settings *pa, 
 		   seq_args *sa, 
-		   pr_append_str *nonfatal_err)
+		   pr_append_str *nonfatal_err,
+		   pr_append_str *warning)
 {
   int seq_len, inc_len, i;
 
@@ -3807,14 +3809,11 @@ p3_adjust_seq_args(const p3_global_settings *pa,
 				  pa->first_base_index);
 
   /* A suggestion that does not work: */
-  if (_pr_check_and_adjust_intervals(sa, seq_len, &sa->error, &sa->warning))
+  if (_pr_check_and_adjust_intervals(sa, seq_len, &sa->error, warning))
     return 1; 
-
-  
   
   return 0;
 }
-
 
 /*
  * Return 1 on error, 0 on success.  Set sa->trimmed_seq and possibly modify
@@ -4037,24 +4036,29 @@ _pr_data_control(const p3_global_settings *pa,
     if ((offending_char = dna_to_upper(sa->trimmed_seq, 0))) {
       if (pa->liberal_base) {
 	pr_append_new_chunk(/* &sa->*/ warning,
-			    "Unrecognized base in input sequence");     /* FIX ME write to  warnings */
+			    "Unrecognized base in input sequence");
       }
       else {
-	pr_append_new_chunk(nonfatal_err, "Unrecognized base in input sequence");
+	pr_append_new_chunk(nonfatal_err,
+			    "Unrecognized base in input sequence");
 	return 1;
       }
     }
 
-    if (pa->p_args.opt_tm < pa->p_args.min_tm || pa->p_args.opt_tm > pa->p_args.max_tm) {
+    if (pa->p_args.opt_tm < pa->p_args.min_tm 
+	|| pa->p_args.opt_tm > pa->p_args.max_tm) {
 	 pr_append_new_chunk(glob_err,
 			     "Optimum primer Tm lower than minimum or higher than maximum");
 	 return 1;
     }
-    if (pa->o_args.opt_tm < pa->o_args.min_tm || pa->o_args.opt_tm > pa->o_args.max_tm) {
+
+    if (pa->o_args.opt_tm < pa->o_args.min_tm 
+	|| pa->o_args.opt_tm > pa->o_args.max_tm) {
 	 pr_append_new_chunk(glob_err,
 			     "Illegal values for PRIMER_INTERNAL_OLIGO_TM");
 	 return 1;
     }
+
     if (pa->p_args.min_gc > pa->p_args.max_gc
        || pa->p_args.min_gc > 100
        || pa->p_args.max_gc < 0){
@@ -4062,6 +4066,7 @@ _pr_data_control(const p3_global_settings *pa,
 			     "Illegal value for PRIMER_MAX_GC and PRIMER_MIN_GC");
 	 return 1;
     }
+
     if (pa->o_args.min_gc > pa->o_args.max_gc
        || pa->o_args.min_gc > 100
        || pa->o_args.max_gc < 0) {
@@ -4291,8 +4296,8 @@ _pr_check_and_adjust_1_interval(const char *tag_name,
 	if (intervals[i][0] < 0
 	    || intervals[i][0] + intervals[i][1] > sa->incl_l) {
 	    if (!outside_warning_issued) {
-		pr_append_new_chunk(&sa->warning, tag_name);
-		pr_append(&sa->warning,
+	      pr_append_new_chunk(/* &sa-> */ warning, tag_name);
+	      pr_append(/* &sa-> */warning,
 			  " outside of INCLUDED_REGION");
 		outside_warning_issued = 1;
 	    }
