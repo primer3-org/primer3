@@ -180,7 +180,7 @@ main(argc,argv)
     /* POSSIBLE CHANGE -- read in mispriming libraries here? */
 
     /* Modify some of the arguments */
-    p3_adjust_seq_args(global_pa, sa, nonfatal_parse_err, /* &sa-> */ more_warnings);  /* WARNING NOT DONE, NOT USED YET */
+    p3_adjust_seq_args(global_pa, sa, nonfatal_parse_err, more_warnings);
     
     /* If there are nonfatal errors, write the proper message
      * and finish this loop */
