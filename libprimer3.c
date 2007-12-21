@@ -5189,20 +5189,19 @@ p3_set_gs_primer_task(p3_global_settings * p , int primer_task){
 }
 
 void 
-p3_set_gs_pick_right_primer(p3_global_settings * p , int pick_right_primer){
+p3_set_gs_primer_pick_right_primer(p3_global_settings * p , int pick_right_primer){
   p->pick_right_primer = pick_right_primer;
 }
 
 void 
-p3_set_gs_pick_internal_oligo(p3_global_settings * p , int pick_internal_oligo){
+p3_set_gs_primer_pick_internal_oligo(p3_global_settings * p , int pick_internal_oligo){
   p->pick_internal_oligo = pick_internal_oligo;
 }
 
 void 
-p3_set_gs_pick_left_primer(p3_global_settings * p , int pick_left_primer) {
+p3_set_gs_primer_pick_left_primer(p3_global_settings * p , int pick_left_primer) {
   p->pick_left_primer = pick_left_primer;
 }
-
 
 void
 p3_set_gs_primer_internal_oligo_opt_size(p3_global_settings * p , int val) {
