@@ -2815,12 +2815,13 @@ obj_fn(pa, h)
 
 char *
 pr_gather_warnings(const p3retval *retval, 
-		   const seq_args *sa, 
+		   /* const seq_args *sa,  */
 		   const p3_global_settings *pa,
 		   const pr_append_str *more_warnings) {
+
   pr_append_str warning;
 
-  PR_ASSERT(NULL != sa);
+  /* PR_ASSERT(NULL != sa); */
   PR_ASSERT(NULL != pa);
 
   init_pr_append_str(&warning);
