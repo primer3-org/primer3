@@ -170,7 +170,7 @@ format_pairs(FILE *f,
   if (best_pairs->num_pairs == 0) fprintf(f, "NO PRIMERS FOUND\n\n");
   
   /* Print out the warings */
-  if ((warning = pr_gather_warnings(retval, sa, pa,  more_warnings))
+  if ((warning = pr_gather_warnings(retval, /*sa,*/ pa,  more_warnings))
       != NULL) {
     fprintf(f, "WARNING: %s\n\n", warning);
     free(warning);
@@ -779,7 +779,7 @@ format_oligos(FILE *f,
   fprintf(f, "Using %d-based sequence positions\n",
 	  pa->first_base_index);
   if (n == 0) fprintf(f, "NO OLIGOS FOUND\n\n");
-  if ((warning = pr_gather_warnings(retval, sa, pa, more_warnings))
+  if ((warning = pr_gather_warnings(retval, /*sa,*/ pa, more_warnings))
       != NULL) {
     fprintf(f, "WARNING: %s\n\n", warning);
     free(warning);

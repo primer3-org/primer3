@@ -878,7 +878,7 @@ char  *pr_oligo_rev_c_sequence(const seq_args *, const primer_rec *);
 void  pr_set_default_global_args(p3_global_settings *);
 
 char  *pr_gather_warnings(const p3retval *, 
-			  const seq_args *, 
+			  /* const seq_args *,  */
 			  const p3_global_settings *,
 			  const pr_append_str *more_warnings);
 

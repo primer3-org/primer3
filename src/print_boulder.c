@@ -82,7 +82,7 @@ boulder_print(const int *io_version,
     PR_ASSERT(NULL != io_version);
 
     /* Check if there are warnings and print them */
-    if ((warning = pr_gather_warnings(retval, sa, pa, more_warnings))
+    if ((warning = pr_gather_warnings(retval, /* sa,*/ pa, more_warnings))
 	!= NULL) { 
 	  printf("PRIMER_WARNING=%s\n", warning);
 	  free(warning);
