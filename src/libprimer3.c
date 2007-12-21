@@ -4317,8 +4317,6 @@ _pr_check_and_adjust_1_interval(const char *tag_name,
 /* END functions which check and modify the input               */
 /* ============================================================ */
 
-
-
 /* ============================================================ */
 /* BEGIN create primer files functions                          */
 /* ============================================================ */
@@ -4527,23 +4525,15 @@ print_oligo(FILE *fh,
 
 /* END OF WHAT SHOULD GO TO IO_PRIMER_FILES.C */
 
-
 /* ============================================================ */
 /* END create primer files functions                            */
 /* ============================================================ */
 
-
-
-/* ============================================================ */
-/* BEGIN seq_lib functions                                      */
-/* ============================================================ */
-
-#define INIT_LIB_SIZE  500
-#define PR_MAX_LIBRARY_WT 100.0
-
-static double parse_seq_name(char *s);
-static char   upcase_and_check_char(char *s);
-static void   reverse_complement_seq_lib(seq_lib  *lib);
+/* ============================================================
+  * BEGIN p3_read_line, a utility used
+  * both for reading boulder input and for reading sequence 
+  * libraries.
+  * ============================================================ */
 
 /* Read a line of any length from file.  Return NULL on end of file,
  * otherwise return a pointer to static storage containing the line.  Any
@@ -4600,6 +4590,21 @@ FILE *file;
 	remaining_size = ssz - (p - s);
     }
 }
+
+/* ============================================================ */
+/* END p3_read_line                                             */
+/* ============================================================ */
+
+/* ============================================================ */
+/* BEGIN seq_lib functions                                      */
+/* ============================================================ */
+
+#define INIT_LIB_SIZE  500
+#define PR_MAX_LIBRARY_WT 100.0
+
+static double parse_seq_name(char *s);
+static char   upcase_and_check_char(char *s);
+static void   reverse_complement_seq_lib(seq_lib  *lib);
 
 /* See comments in libprimer3.h */
 seq_lib *
