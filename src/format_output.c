@@ -45,11 +45,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 static char *pr_program_name = "Program name is probably primer3_core";
 
-static void format_pairs(FILE *f, const p3_global_settings *pa,
-	     const seq_args *sa, const p3retval *retval, const pair_array_t *best_pairs,
-	     const char *pr_release);
-static void format_oligos(FILE *, const p3_global_settings *, const seq_args *, 
-	      const p3retval *retval, const oligo_array *, const char*);
+static void format_pairs(FILE *f, 
+			 const p3_global_settings *pa,
+			 const seq_args *sa, 
+			 const p3retval *retval, 
+			 const pair_array_t *best_pairs,
+			 const char *pr_release,
+			 const pr_append_str *more_warnings);
+
+static void format_oligos(FILE *, 
+			  const p3_global_settings *, 
+			  const seq_args *, 
+			  const p3retval *retval, 
+			  const oligo_array *, 
+			  const char*,
+			  const pr_append_str *more_warnings);
+
 static int lib_sim_specified(const p3_global_settings *);
 static void print_explain(FILE *, const p3_global_settings *, const seq_args *,
 			  const p3retval *retval, int, const char *);
@@ -77,25 +88,27 @@ static void print_oligo_summary(FILE *, const p3_global_settings *,
 
 void
 print_format_output(FILE *f,
-		 const int *io_version,
-	     const p3_global_settings *pa,
-	     const seq_args *sa,
-	     const p3retval *retval,
-	     const char *pr_release)
+		    const int *io_version,
+		    const p3_global_settings *pa,
+		    const seq_args *sa,
+		    const p3retval *retval,
+		    const char *pr_release,
+		    const pr_append_str *more_warnings)
 {  
   /* Print as primer pairs */
   if (retval->output_type == primer_pairs) {
-    format_pairs(f, pa, sa, retval, &retval->best_pairs, pr_release);
+    format_pairs(f, pa, sa, retval, &retval->best_pairs, 
+		 pr_release, more_warnings);
     
   /* Print as primer list */
   }	else {
 	/* Figure out which primer to print */
     if (pa->pick_left_primer) {
-	  format_oligos(stdout, pa, sa, retval, &retval->fwd, pr_release);
+	  format_oligos(stdout, pa, sa, retval, &retval->fwd, pr_release, more_warnings);
     } else if (pa->pick_right_primer) {
-	  format_oligos(stdout, pa, sa, retval, &retval->rev, pr_release);
+	  format_oligos(stdout, pa, sa, retval, &retval->rev, pr_release, more_warnings);
     } else if (pa->pick_internal_oligo) {
-	  format_oligos(stdout, pa, sa, retval, &retval->intl, pr_release);
+	  format_oligos(stdout, pa, sa, retval, &retval->intl, pr_release, more_warnings);
     } else {
 	  fprintf(stderr, "%s: fatal programming error\n", pr_program_name);
 	  abort();
@@ -110,7 +123,8 @@ format_pairs(FILE *f,
 	     const seq_args *sa,
 	     const p3retval *retval,
 	     const pair_array_t *best_pairs,
-	     const char *pr_release)
+	     const char *pr_release,
+	     const pr_append_str *more_warnings)
 {
   /* Some variables */
   char *warning;
@@ -156,7 +170,8 @@ format_pairs(FILE *f,
   if (best_pairs->num_pairs == 0) fprintf(f, "NO PRIMERS FOUND\n\n");
   
   /* Print out the warings */
-  if ((warning = pr_gather_warnings(retval, sa, pa)) != NULL) {
+  if ((warning = pr_gather_warnings(retval, sa, pa,  more_warnings))
+      != NULL) {
     fprintf(f, "WARNING: %s\n\n", warning);
     free(warning);
   }
@@ -715,7 +730,8 @@ format_oligos(FILE *f,
 	      const seq_args    *sa,
 	      const p3retval *retval,
 	      const oligo_array *oligo_list,
-	      const char* pr_release)
+	      const char* pr_release,
+	      const pr_append_str *more_warnings)
 {
   primer_rec  *h = oligo_list->oligo;
   int n = oligo_list->num_elem;
@@ -763,7 +779,8 @@ format_oligos(FILE *f,
   fprintf(f, "Using %d-based sequence positions\n",
 	  pa->first_base_index);
   if (n == 0) fprintf(f, "NO OLIGOS FOUND\n\n");
-  if ((warning = pr_gather_warnings(retval, sa, pa)) != NULL) {
+  if ((warning = pr_gather_warnings(retval, sa, pa, more_warnings))
+      != NULL) {
     fprintf(f, "WARNING: %s\n\n", warning);
     free(warning);
   }

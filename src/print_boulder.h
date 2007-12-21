@@ -39,8 +39,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define BOULDER_OUTPUT_H 1
 #include "libprimer3.h"
 
-void   boulder_print(const int *, const primer_args *, 
-			         const seq_args *, const p3retval *);
+void   boulder_print(const int *, 
+		     const primer_args *, 
+		     const seq_args *, 
+		     const p3retval *,
+		     const pr_append_str *more_warnings);
 
 void   boulder_print_error(const char *err);
 

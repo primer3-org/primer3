@@ -69,6 +69,7 @@ main(argc,argv)
   pr_append_str *fatal_parse_err = NULL;
   pr_append_str *nonfatal_parse_err = NULL;
   pr_append_str *combined_retval_err = NULL;
+  pr_append_str *more_warnings = NULL;
   
   /* Setup the output data structure handlers */
   p3retval *retval = NULL;
@@ -122,12 +123,14 @@ main(argc,argv)
   }
 
   /* Allocate the space for empty error messages */
-  fatal_parse_err    = create_pr_append_str();
-  nonfatal_parse_err = create_pr_append_str();
+  fatal_parse_err     = create_pr_append_str();
+  nonfatal_parse_err  = create_pr_append_str();
   combined_retval_err = create_pr_append_str();
+  more_warnings       = create_pr_append_str();
   if (NULL == fatal_parse_err 
       || NULL == nonfatal_parse_err
-      || NULL == combined_retval_err) {
+      || NULL == combined_retval_err
+      || NULL == more_warnings) {
     exit(-2); /* Out of memory */
   }
 
@@ -146,6 +149,7 @@ main(argc,argv)
     pr_set_empty(fatal_parse_err);
     pr_set_empty(nonfatal_parse_err);
     pr_set_empty(combined_retval_err);
+    pr_set_empty(more_warnings);
     retval = NULL;
 
     /* Read data from stdin until a "=" line occurs.  Assign parameter
@@ -176,7 +180,7 @@ main(argc,argv)
     /* POSSIBLE CHANGE -- read in mispriming libraries here? */
 
     /* Modify some of the arguments */
-    p3_adjust_seq_args(global_pa, sa, nonfatal_parse_err);
+    p3_adjust_seq_args(global_pa, sa, nonfatal_parse_err, /* &sa-> */ more_warnings);  /* WARNING NOT DONE, NOT USED YET */
     
     /* If there are nonfatal errors, write the proper message
      * and finish this loop */
@@ -234,11 +238,11 @@ main(argc,argv)
       /* Use formated output */
       if (format_output) {
 	print_format_output(stdout, &io_version, global_pa, 
-			    sa, retval, pr_release);
+			    sa, retval, pr_release, more_warnings);
       } 
     /* Use boulder output */
       else {
-	boulder_print(&io_version, global_pa, sa, retval);
+	boulder_print(&io_version, global_pa, sa, retval, more_warnings);
       }
      
   finish_loop: /* Here the failed loops join in again */
@@ -262,6 +266,7 @@ main(argc,argv)
   destroy_pr_append_str(fatal_parse_err);
   destroy_pr_append_str(nonfatal_parse_err);
   destroy_pr_append_str(combined_retval_err);
+  destroy_pr_append_str(more_warnings);
   destroy_seq_args(sa);
   
   /* If it could not read input complain and die */
