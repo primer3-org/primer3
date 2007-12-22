@@ -4,19 +4,23 @@ Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
+    This file is part of primer3 software suite.
 
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * Neither the names of the copyright holders nor contributors may
-be used to endorse or promote products derived from this software
-without specific prior written permission.
+    This software suite is is free software;
+    you can redistribute it and/or modify it under the terms
+    of the GNU General Public License as published by the Free
+    Software Foundation; either version 2 of the License, or (at
+    your option) any later version.
+
+    This software is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this software (file gpl-2.0.txt in the source
+    distribution); if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -31,27 +35,19 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-  /* FIX ME -- why are we calling write? */
 #include <limits.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include "dpal.h"
-
-/* 
- * Panic messages for when the program runs out of memory.
- */
-#define DPAL_OOM_MESSAGE "Out of memory in function defined in dpal.c\n"
-#define DPAL_OOM_LEN  44
-#define DPAL_OOM_ERROR {write(2, DPAL_OOM_MESSAGE, DPAL_OOM_LEN); errno=ENOMEM; goto FAIL; }
 
 /*
  * We should probably remove the DPAL_FORGET_PATH compile-time option.
  * Efficiency now derives primarily from specialized versions of _dpal* for
  * particular parameter values.
  */
+
 #ifndef DPAL_FORGET_PATH
 /* 
  * Print an alignment on stderr, given the 2 aligned sequences, the "trace"
@@ -110,49 +106,12 @@ static void _dpal_long_nopath_maxgap1_global_end(const unsigned char *,
 						 const dpal_args *,
 						 dpal_results *);
 
-void
-dpal_set_default_nt_args(a)
-    dpal_args *a;
-{
-    unsigned int i, j;
-
-    memset(a, 0, sizeof(*a));
-    for (i = 0; i <= UCHAR_MAX; i++)
-	for (j = 0; j <= UCHAR_MAX; j++)
-	    if (('A' == i || 'C' == i || 'G' == i || 'T' == i || 'N' == i)
-		&& ('A' == j || 'C' == j || 'G' == j || 'T' == j 
-		    || 'N' == j)) {
-		    if (i == 'N' || j == 'N') 
-			a->ssm[i][j] = -25;
-		    else if (i == j)
-			a->ssm[i][j] = 100;
-		    else 
-			a->ssm[i][j] = -100;
-		} else
-		    a->ssm[i][j] = INT_MIN;
-
-    a->check_chars        = 1;
-    a->debug              = 0;
-    a->fail_stop          = DPAL_EXIT_ON_ERROR;
-    a->flag               = DPAL_LOCAL;
-    a->force_generic      = 0;
-    a->force_long_generic = 0;
-    a->force_long_maxgap1 = 0;
-    a->gap                = -100;
-    a->gapl               = -100;
-    a->max_gap            = 3;
-    a->score_only         = 0;
-}
-
-/**** FIX ME -- HOW IS THIS DIFFERENT FROM THE FN ABOVE? -- */
 /* Set dpal args to appropriate values for primer picking. */
 /* IMPORTANT -- if the scoring system changes, then
    the value returned by align() for short target sequences
    must be adjusted. */
 void
-set_dpal_args(a)
-    dpal_args *a;
-{
+set_dpal_args(dpal_args *a) {
     unsigned int i, j;
 
     memset(a, 0, sizeof(*a));
@@ -181,6 +140,18 @@ set_dpal_args(a)
     a->force_generic      = 0;
     a->force_long_generic = 0;
     a->force_long_maxgap1 = 0;
+}
+
+void
+dpal_set_default_nt_args(dpal_args *a) {
+  set_dpal_args(a);
+  a->check_chars        = 1;
+  a->debug              = 0;
+  a->fail_stop          = DPAL_EXIT_ON_ERROR;
+  a->gap                = -100;
+  a->gapl               = -100;
+  a->max_gap            = 3;
+  a->score_only         = 0;
 }
 
 void
@@ -280,11 +251,23 @@ xlate_ambiguity_code(c)
   else return NULL; /* Error condition */
 }
 
-/* This macro requires that the output argument is
-   always called 'out', and that out->score has
-   already been set to INT_MIN.
+/* The next two macros require that the output argument is always
+   called 'out'.
  */
 #define CHECK_ERROR(COND,MSG) if (COND) { out->msg = MSG; goto FAIL; }
+
+/* If fail_stop is set, will use fprintf, otherwise will return with
+   msg set. */
+#define DPAL_OOM_ERROR {out->msg = "Out of memory", errno=ENOMEM; goto FAIL; }
+
+static void
+fail_action(const dpal_args *in, dpal_results *out) {
+  if (in->fail_stop) {
+    fprintf(stderr, "\n%s\n", out->msg);
+    exit(-1);
+  } 
+  out->score=DPAL_ERROR_SCORE; 
+}
 
 void
 dpal(X, Y, in, out)
@@ -302,7 +285,10 @@ dpal(X, Y, in, out)
     CHECK_ERROR(NULL == X,   "NULL first sequence");
     CHECK_ERROR(NULL == Y,   "NULL second sequence");
     CHECK_ERROR(NULL == in,  "NULL 'in' pointer");
-    CHECK_ERROR(NULL == out, "NULL 'out' pointer");
+
+    if (NULL == out) return; /* Leave it to the caller to
+				crash */
+
     CHECK_ERROR(in->flag != DPAL_GLOBAL
 		&& in->flag != DPAL_GLOBAL_END
 		&& in->flag != DPAL_LOCAL_END
@@ -361,9 +347,13 @@ dpal(X, Y, in, out)
 
     return;
  FAIL:
+    fail_action(in, out);
+
     if (in->fail_stop) {
 	fprintf(stderr, "\n%s\n", out->msg);
 	exit(-1);
+    } else {
+      out->score=DPAL_ERROR_SCORE; 
     }
 }
 
@@ -377,33 +367,6 @@ _dpal_generic(X, Y, xlen, ylen, in, out)
 
     /* The "score matrix" (matrix of best scores). */
     static int S[DPAL_MAX_ALIGN][DPAL_MAX_ALIGN];
-
-#if NEW_TEST
-    static int * S[DPAL_MAX_ALIGN] = NULL;
-    if (NULL == S) {
-      S = malloc(ylen * sizeof(int) * DPAL_MAX_ALIGN);
-      if (!S) { DPAL_OOM_ERROR; }
-    } else {
-      S = realloc(ylen * sizeof(int) * DPAL_MAX_ALIGN);
-      if (!S) { DPAL_OOM_ERROR; }
-    }
-#endif
-
-#if NEW_TEST2
-    static int ** S = NULL;
-    if (NULL == S) {
-      S = malloc(xlen * sizeof(int *));
-      if (!S) { DPAL_OOM_ERROR; }
-    } else {
-      S = realloc(xlen * sizeof(int *));
-      if (!S) { DPAL_OOM_ERROR; }
-    }
-    for (i = 0; i < xlen; i++) {
-      S[i] = malloc(ylen * sizeof(int));
-      if (!S[i]) { DPAL_OOM_ERROR; }
-    }
-    /* Add free at end of function. */
-#endif
 
 #ifndef DPAL_FORGET_PATH
     /* The matrix of "trace" pointers */
@@ -624,6 +587,8 @@ _dpal_generic(X, Y, xlen, ylen, in, out)
     if (in->fail_stop) {
 	fprintf(stderr, "\n%s\n", out->msg);
 	exit(-1);
+    } else {
+      out->score=DPAL_ERROR_SCORE; 
     }
 } /* _dpal_generic */
 
@@ -791,6 +756,8 @@ _dpal_long_nopath_generic(X, Y, xlen, ylen, in, out)
     if (in->fail_stop) {
 	fprintf(stderr, "\n%s\n", out->msg);
 	exit(-1);
+    } else {
+      out->score=DPAL_ERROR_SCORE; 
     }
 } /* _dpal_long_nopath_generic */
 
@@ -886,6 +853,8 @@ _dpal_long_nopath_maxgap1_local(X, Y, xlen, ylen, in, out)
     if (in->fail_stop) {
 	fprintf(stderr, "\n%s\n", out->msg);
 	exit(-1);
+    } else {
+      out->score=DPAL_ERROR_SCORE; 
     }
 } /* _dpal_long_nopath_maxgap1_local */
 
@@ -992,6 +961,8 @@ _dpal_long_nopath_maxgap1_global_end(X, Y, xlen, ylen, in, out)
     if (in->fail_stop) {
 	fprintf(stderr, "\n%s\n", out->msg);
 	exit(-1);
+    } else {
+      out->score=DPAL_ERROR_SCORE; 
     }
 } /* _dpal_long_nopath_maxgap_global_end */
 
@@ -1134,7 +1105,7 @@ _dpal_long_nopath_maxgap1_local_end(X, Y, xlen, ylen, in, out)
     if (!P0) { DPAL_OOM_ERROR; }
     P1 = malloc(sizeof(int)*ylen);
     if (!P1) { DPAL_OOM_ERROR; }
-    P2 = malloc(sizeof(int)*ylen);  /* Memory was allocated here. */
+    P2 = malloc(sizeof(int)*ylen);
     if (!P2) { DPAL_OOM_ERROR; }
 
     S0 = P0; S1 = P1; S2 = P2;
@@ -1212,6 +1183,8 @@ _dpal_long_nopath_maxgap1_local_end(X, Y, xlen, ylen, in, out)
     if (in->fail_stop) {
 	fprintf(stderr, "\n%s\n", out->msg);
 	exit(-1);
+    } else {
+      out->score=DPAL_ERROR_SCORE;
     }
 } /* _dpal_long_nopath_maxgap1_local */
 

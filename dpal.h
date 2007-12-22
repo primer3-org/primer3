@@ -4,10 +4,10 @@ Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
 
-    This file is part of primer3 and the dpal library.
+    This file is part the primer3 software suite.
 
-    Primer3 and the dpal library are free software;
-    you can redistribute them and/or modify them under the terms
+    This software suite is free software;
+    you can redistribute is and/or modify it under the terms
     of the GNU General Public License as published by the Free
     Software Foundation; either version 2 of the License, or (at
     your option) any later version.
@@ -147,11 +147,12 @@ int dpal_set_ambiguity_code_matrix(dpal_args *);
 /* 
  * Align the first 2 arguments, using the scoring
  * matix and other arguments supplied in the dpal_args
- * argument.  Return results in the
- * dpal_results argument (a struct).
+ * argument.  Return results in argument 'out'.
+ * On error, sets out->score to DPAL_ERROR_SCORE
+ * and puts additional information in out->msg.
  */
 void dpal(const unsigned char *, const unsigned char*,
-	  const dpal_args *, dpal_results *);
+	  const dpal_args *, dpal_results *out);
 
 void set_dpal_args(dpal_args *);
 #endif
