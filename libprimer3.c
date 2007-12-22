@@ -862,8 +862,8 @@ static dpal_arg_holder *dpal_arg_to_use = NULL;
 /* ============================================================ */
 
 /* Create and initialize a seq_args data structure */
-seq_args
-*create_seq_arg() {
+seq_args *
+create_seq_arg() {
   seq_args *r = malloc(sizeof(*r));
   if (NULL == r) return NULL; /* Out of memory */
   memset(r, 0, sizeof(*r));
@@ -871,7 +871,7 @@ seq_args
   r->incl_l = -1; /* Indicates logical NULL. */
   r->n_quality = 0;
   r->quality = NULL;
-
+  init_pr_append_str(&r->error);
   
   return r;
 }
@@ -955,7 +955,8 @@ choose_primers(const p3_global_settings *pa,
     /* Check if the input in sa and pa makes sense */
     if (_pr_data_control(pa, sa, 
 			 &retval->glob_err,  /* Fatal errors */
-			 &sa->error,         /* Nonfatal errors */ /* FIX ME, remove from seq_args */
+			 /* &sa->error, */         /* Nonfatal errors */ /* FIX ME, remove from seq_args */
+			 &retval->per_sequence_err,
 			 &retval->warnings
 			 ) !=0 ) {
       return retval;
@@ -3810,7 +3811,7 @@ p3_adjust_seq_args(const p3_global_settings *pa,
 				  pa->first_base_index);
 
   /* A suggestion that does not work: */
-  if (_pr_check_and_adjust_intervals(sa, seq_len, &sa->error, warning))
+  if (_pr_check_and_adjust_intervals(sa, seq_len, /* &sa->error */ nonfatal_err, warning))
     return 1; 
   
   return 0;
@@ -3982,19 +3983,22 @@ _pr_data_control(const p3_global_settings *pa,
 	pr_append(nonfatal_err,
 	   "arguments for PRIMER_INSIDE_PENALTY or PRIMER_OUTSIDE_PENALTY");
       }
-      if (sa->start_codon_pos  > (sa->incl_s + sa->incl_l - 3))
+      if (sa->start_codon_pos  > (sa->incl_s + sa->incl_l - 3)) {
 	pr_append_new_chunk(nonfatal_err,
-	   "Start codon position not contained in INCLUDED_REGION");
-      else {
+			    "Start codon position not contained in INCLUDED_REGION");
+	return 1;
+      } else {
 	if (sa->start_codon_pos >= 0
 	    && ((sa->sequence[sa->start_codon_pos] != 'A'
 		 && sa->sequence[sa->start_codon_pos] != 'a')
 		|| (sa->sequence[sa->start_codon_pos + 1] != 'T'
 		    && sa->sequence[sa->start_codon_pos + 1] != 't')
 		|| (sa->sequence[sa->start_codon_pos + 2] != 'G'
-		    && sa->sequence[sa->start_codon_pos + 2] != 'g')))
+		    && sa->sequence[sa->start_codon_pos + 2] != 'g'))) {
 	  pr_append_new_chunk(nonfatal_err,
 			      "No start codon at PRIMER_START_CODON_POSITION");
+	  return 1;
+	}
       }
     }
 
@@ -4121,12 +4125,12 @@ _pr_data_control(const p3_global_settings *pa,
       return 1;
    }
    
-    if (!_PR_DEFAULT_POSITION_PENALTIES(pa) && sa->num_targets > 1) {
-      pr_append_new_chunk(nonfatal_err,
-			  "Non-default inside penalty or outside penalty ");
-      pr_append(nonfatal_err,
-		"is valid only when number of targets <= 1");
-    }
+   if (!_PR_DEFAULT_POSITION_PENALTIES(pa) && sa->num_targets > 1) {
+     pr_append_new_chunk(nonfatal_err,
+			 "Non-default inside penalty or outside penalty ");
+     pr_append(nonfatal_err,
+	       "is valid only when number of targets <= 1");
+   }
     if (!_PR_DEFAULT_POSITION_PENALTIES(pa) && 0 == sa->num_targets) {
       pr_append_new_chunk(/* &sa-> */ warning,
 			  "Non-default inside penalty or outside penalty ");
@@ -4245,7 +4249,7 @@ _pr_data_control(const p3_global_settings *pa,
         return 1;
     }
 
-    return (NULL == sa->error.data && NULL == /* pa->*/ glob_err->data) ? 0 : 1;
+    return (NULL == nonfatal_err->data && NULL == /* pa->*/ glob_err->data) ? 0 : 1;
 } /* _pr_data_control */
 
 

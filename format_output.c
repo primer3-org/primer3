@@ -135,7 +135,7 @@ format_pairs(FILE *f,
   PR_ASSERT(NULL != pa);
   PR_ASSERT(NULL != sa);
   
-  /* If therer are errors, print them and return */
+  /* If there are errors, print them and return */
   if (sa->error.data != NULL) {
     format_error(f, sa->sequence_name, sa->error.data);
     return;

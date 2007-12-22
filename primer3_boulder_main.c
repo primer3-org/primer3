@@ -159,6 +159,11 @@ main(argc,argv)
 		    fatal_parse_err, nonfatal_parse_err) <= 0) {
       break; /* leave the program loop and complain later */
     }
+
+    /* if (!pr_is_empty(&sa->error)) {
+	  fprintf(stderr, "(0) %s\n", sa->error.data);
+    } */
+
     
     input_found = 1;
     if (global_pa->primer_task == pick_pcr_primers_and_hyb_probe) {
@@ -181,6 +186,10 @@ main(argc,argv)
 
     /* Modify some of the arguments */
     p3_adjust_seq_args(global_pa, sa, nonfatal_parse_err, more_warnings);
+
+    /* if (!pr_is_empty(&sa->error)) {
+      fprintf(stderr, "\n(1) %s\n", sa->error.data);
+      } */
     
     /* If there are nonfatal errors, write the proper message
      * and finish this loop */
@@ -203,10 +212,13 @@ main(argc,argv)
     if (pr_is_empty(&retval->glob_err)
 	&& pr_is_empty(&retval->per_sequence_err)) {
       /* Create files with left, right, and internal oligos. */
-      if (global_pa->file_flag) {
+      if (global_pa->file_flag) {  /* FIX ME, get file_flag out global settings */
 	if (pr_is_empty(&sa->error)) {
 	  p3_print_oligo_lists(retval, sa, global_pa,
 			       &retval->per_sequence_err); 
+	} else {
+	  /* where did the error get set? */
+	  fprintf(stderr, "\n(2) %s\n", sa->error.data);
 	}
       }
 
@@ -224,19 +236,26 @@ main(argc,argv)
 	format_error(stdout, sa->sequence_name,
 		     combined_retval_err->data);
       } else {
+	if (!pr_is_empty(&retval->warnings)) { 
+	  printf("PRIMER_WARNING=%s\n", retval->warnings.data);
+	}
 	boulder_print_error(combined_retval_err->data);
       }
       goto finish_loop;
     }
 
-    /* Check if the error messages are empty */
-    /* PR_ASSERT(pr_is_empty(&sa->error)) */
+    /* Confirm that the error messages are empty */
     PR_ASSERT(pr_is_empty(&retval->glob_err))
       PR_ASSERT(pr_is_empty(&retval->per_sequence_err))
     
+      /* FIX ME -- move this inside the first branch of
+	 the if statement above */
       /* Print out the results: */
       /* Use formated output */
       if (format_output) {
+	/* FIX ME -- should print_format_output and boulder_print
+	   do the right thing if there are errors? 
+	   Is there "partial output" in retval if there is an error? */
 	print_format_output(stdout, &io_version, global_pa, 
 			    sa, retval, pr_release, more_warnings);
       } 

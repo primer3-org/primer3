@@ -178,20 +178,20 @@ read_record(const int *strict_tags,
 		    pr_append_new_chunk(parse_err, "Duplicate tag: ");
 		    pr_append(parse_err, "SEQUENCE"); 
 	      } else {
-		    /* p3_set_sa_sequence */
-		    if (p3_set_sa_sequence(sa, datum)) exit(-2);
+		if (p3_set_sa_sequence(sa, datum)) exit(-2);
 	      }
 	      continue;
 	    }
 
 	    if (COMPARE("PRIMER_SEQUENCE_QUALITY")) {
-	       if ((sa->n_quality = parse_seq_quality(datum, &sa->quality)) == 0) {
-		     pr_append_new_chunk(parse_err, /*&sa->error, */ 
-				     "Error in sequence quality data");
-		     continue;  /* FIX ME superfluous ? */
-           }
-	       continue;
-        }
+	      if ((sa->n_quality = parse_seq_quality(datum, &sa->quality)) == 0) {
+		pr_append_new_chunk(parse_err,
+				    "Error in sequence quality data");
+		/* continue;  // FIX ME superfluous ? */
+	      }
+	      continue;
+	    }
+
 
 	    COMPARE_AND_MALLOC("PRIMER_SEQUENCE_ID", sa->sequence_name);
 	    COMPARE_AND_MALLOC("MARKER_NAME", sa->sequence_name);
