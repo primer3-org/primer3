@@ -227,7 +227,7 @@ sub main() {
 	}
 
 	unless ($r == 0) {
-	    print "NON-0 EXIT: $r {FAILED]\n";
+	    print "NON-0 EXIT: $r [FAILED]\n";
 	    $exit_stat = -1;
 	    next;
 	}
