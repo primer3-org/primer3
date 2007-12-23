@@ -4,9 +4,9 @@ Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
 
-    This file is part of primer3 and the libprimer3 library.
+    This file is part of the primer3 suite and libraries.
 
-    Primer3 and the libprimer3 library are free software;
+    The primer3 suite and libraries are free software;
     you can redistribute them and/or modify them under the terms
     of the GNU General Public License as published by the Free
     Software Foundation; either version 2 of the License, or (at
@@ -257,7 +257,7 @@ static void   check_if_lowercase_masked(const int position,
 					primer_rec *h);
 
 
-/* FIX ME -- update to GPL 2 */
+/* FIX ME -- complete the update to GPL 2 */
 /* Global static variables. */
 static const char *libprimer3_copyright_str[] = {
 "",
@@ -293,6 +293,44 @@ static const char *libprimer3_copyright_str[] = {
 "OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
 NULL
 };
+
+static const char *primer3_copyright_char_star = "\n"
+"Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007\n"
+"Whitehead Institute for Biomedical Research, Steve Rozen\n"
+"(http://jura.wi.mit.edu/rozen), and Helen Skaletsky\n"
+"All rights reserved.\n"
+"\n"
+"    This file is part of the primer3 suite and libraries.\n"
+"\n"
+"    The primer3 suite and libraries are free software;\n"
+"    you can redistribute them and/or modify them under the terms\n"
+"    of the GNU General Public License as published by the Free\n"
+"    Software Foundation; either version 2 of the License, or (at\n"
+"    your option) any later version.\n"
+"\n"
+"    This software is distributed in the hope that it will be useful,\n"
+"    but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+"    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+"    GNU General Public License for more details.\n"
+"\n"
+"    You should have received a copy of the GNU General Public License\n"
+"    along with this software (file gpl-2.0.txt in the source\n"
+"    distribution); if not, write to the Free Software\n"
+"    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA\n"
+"\n"
+"THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\n"
+"\"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT\n"
+"LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR\n"
+"A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT\n"
+"OWNERS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,\n"
+"SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT\n"
+"LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,\n"
+"DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY\n"
+"THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n"
+"(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\n"
+"OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n"
+"\n";
+
 
 /* Other global variables. */
 static const char *pr_program_name = "probably primer3_core";
@@ -3499,33 +3537,31 @@ char *s1, *s2;
 
 void
 pr_print_pair_explain(FILE *f,
-		      const pair_stats *pair_expl)
-  /* const seq_args *sa; */
-{
-  fprintf(f, "considered %d", /* sa-> */ pair_expl->considered);
-  if (/* sa-> */ pair_expl->target)
-    fprintf(f, ", no target %d", /* sa-> */ pair_expl->target);
-  if (/* sa-> */ pair_expl->product)
-    fprintf(f, ", unacceptable product size %d", /* sa-> */ pair_expl->product);
-  if (/* sa-> */ pair_expl->low_tm)
-    fprintf(f, ", low product Tm %d", /* sa-> */ pair_expl->low_tm);
-  if (/* sa-> */ pair_expl->high_tm)
-    fprintf(f, ", high product Tm %d", /* sa-> */ pair_expl->high_tm);
-  if (/* sa-> */ pair_expl->temp_diff) 
-    fprintf(f, ", tm diff too large %d",/* sa-> */ pair_expl->temp_diff);
-  if (/* sa-> */ pair_expl->compl_any) 
-    fprintf(f, ", high any compl %d", /* sa-> */ pair_expl->compl_any);
-  if (/* sa-> */ pair_expl->compl_end) 
-    fprintf(f, ", high end compl %d", /* sa-> */ pair_expl->compl_end);
-  if (/* sa-> */ pair_expl->internal) 
-    fprintf(f, ", no internal oligo %d", /* sa-> */ pair_expl->internal);
-  if (/* sa-> */ pair_expl->repeat_sim)
+		      const pair_stats *pair_expl) {
+  fprintf(f, "considered %d", pair_expl->considered);
+  if (pair_expl->target)
+    fprintf(f, ", no target %d", pair_expl->target);
+  if (pair_expl->product)
+    fprintf(f, ", unacceptable product size %d", pair_expl->product);
+  if (pair_expl->low_tm)
+    fprintf(f, ", low product Tm %d", pair_expl->low_tm);
+  if (pair_expl->high_tm)
+    fprintf(f, ", high product Tm %d", pair_expl->high_tm);
+  if (pair_expl->temp_diff) 
+    fprintf(f, ", tm diff too large %d",pair_expl->temp_diff);
+  if (pair_expl->compl_any) 
+    fprintf(f, ", high any compl %d", pair_expl->compl_any);
+  if (pair_expl->compl_end) 
+    fprintf(f, ", high end compl %d", pair_expl->compl_end);
+  if (pair_expl->internal) 
+    fprintf(f, ", no internal oligo %d", pair_expl->internal);
+  if (pair_expl->repeat_sim)
     fprintf(f, ", high mispriming library similarity %d",
-	    /* sa-> */ pair_expl->repeat_sim);
-  if (/* sa-> */ pair_expl->template_mispriming)
+	    pair_expl->repeat_sim);
+  if (pair_expl->template_mispriming)
     fprintf(f, ", high template mispriming score %d",
-	    /* sa-> */ pair_expl->template_mispriming);
-  fprintf(f, ", ok %d\n", /* sa-> */ pair_expl->ok);
+	    pair_expl->template_mispriming);
+  fprintf(f, ", ok %d\n", pair_expl->ok);
 }
 
 const char *
@@ -3538,7 +3574,10 @@ libprimer3_copyright(void) {
   return libprimer3_copyright_str;
 }
 
-
+const char *
+primer3_copyright(void) {
+  return primer3_copyright_char_star;
+}
 
 /* ============================================================ */
 /* BEGIN Internal and external functions for pr_append_str      */

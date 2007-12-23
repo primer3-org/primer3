@@ -282,21 +282,21 @@ main(argc,argv)
 static void
 print_usage()
 {
-    const char **p = libprimer3_copyright();
-    while (NULL != *p) fprintf(stderr, "%s\n", *p++);
-    fprintf(stderr, "\n\nUSAGE: %s %s %s %s\n", pr_program_name,
-	    "[-format_output]", "[-io_version=xxx]", "[-strict_tags]");
-    fprintf(stderr, "This is primer3 (%s)\n", pr_release);
-    fprintf(stderr, "Input must be provided on standard input.\n");
-    fprintf(stderr, "For example:\n");
-    fprintf(stderr, "$ primer3_core < my_input_file\n");
+  /* const char **p = libprimer3_copyright();
+     while (NULL != *p) fprintf(stderr, "%s\n", *p++); */
+  fprintf(stderr, primer3_copyright());
+
+  fprintf(stderr, "\n\nUSAGE: %s %s %s %s\n", pr_program_name,
+	  "[-format_output]", "[-io_version=xxx]", "[-strict_tags]");
+  fprintf(stderr, "This is primer3 (%s)\n", pr_release);
+  fprintf(stderr, "Input must be provided on standard input.\n");
+  fprintf(stderr, "For example:\n");
+  fprintf(stderr, "$ primer3_core < my_input_file\n");
 }
 
 /* Print out copyright, a short usage message and the signal */
 static void
-sig_handler(signal)
-    int signal;
-{
+sig_handler(int signal) {
     print_usage();
     fprintf(stderr, "%s: received signal %d\n", pr_program_name, signal);
     exit(signal);
