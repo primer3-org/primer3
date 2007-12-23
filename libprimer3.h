@@ -898,7 +898,10 @@ void  pr_print_pair_explain(FILE *, const pair_stats *);
 
 const char  *libprimer3_release(void);
 
-const char  **libprimer3_copyright(void);
+const char  **libprimer3_copyright(void);  /* FIX ME -- do not use. */
+
+const char *primer3_copyright(void);
+
 
 /* An accessor function for a primer_rec *. */
 short oligo_max_template_mispriming(const primer_rec *);

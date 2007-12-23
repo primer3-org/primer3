@@ -251,13 +251,15 @@ xlate_ambiguity_code(c)
   else return NULL; /* Error condition */
 }
 
-/* The next two macros require that the output argument is always
+/* 
+   The next two macros require that the output argument is always
    called 'out'.
  */
+
 #define CHECK_ERROR(COND,MSG) if (COND) { out->msg = MSG; goto FAIL; }
 
-/* If fail_stop is set, will use fprintf, otherwise will return with
-   msg set. */
+/* If fail_stop is set, the code at FAIL: will use fprintf, otherwise
+   will return with msg set. */
 #define DPAL_OOM_ERROR {out->msg = "Out of memory", errno=ENOMEM; goto FAIL; }
 
 static void
@@ -348,13 +350,6 @@ dpal(X, Y, in, out)
     return;
  FAIL:
     fail_action(in, out);
-
-    /* if (in->fail_stop) {
-	fprintf(stderr, "\n%s\n", out->msg);
-	exit(-1);
-    } else {
-      out->score=DPAL_ERROR_SCORE; 
-      }*/
 }
 
 static void
@@ -585,12 +580,6 @@ _dpal_generic(X, Y, xlen, ylen, in, out)
     return;
  FAIL:
     fail_action(in, out);
-    /* if (in->fail_stop) {
-	fprintf(stderr, "\n%s\n", out->msg);
-	exit(-1);
-    } else {
-      out->score=DPAL_ERROR_SCORE; 
-      }*/
 } /* _dpal_generic */
 
 /* Linear space, no path, for any value of maxgap and for any alignment. */
@@ -755,12 +744,6 @@ _dpal_long_nopath_generic(X, Y, xlen, ylen, in, out)
     return;
  FAIL:
     fail_action(in, out);
-    /* if (in->fail_stop) {
-	fprintf(stderr, "\n%s\n", out->msg);
-	exit(-1);
-    } else {
-      out->score=DPAL_ERROR_SCORE; 
-      } */
 } /* _dpal_long_nopath_generic */
 
 static void
@@ -853,12 +836,6 @@ _dpal_long_nopath_maxgap1_local(X, Y, xlen, ylen, in, out)
     return;
  FAIL:
     fail_action(in, out);
-    /* if (in->fail_stop) {
-	fprintf(stderr, "\n%s\n", out->msg);
-	exit(-1);
-    } else {
-      out->score=DPAL_ERROR_SCORE; 
-      } */
 } /* _dpal_long_nopath_maxgap1_local */
 
 static void
@@ -962,12 +939,6 @@ _dpal_long_nopath_maxgap1_global_end(X, Y, xlen, ylen, in, out)
     return;
  FAIL:
     fail_action(in, out);
-    /* if (in->fail_stop) {
-	fprintf(stderr, "\n%s\n", out->msg);
-	exit(-1);
-    } else {
-      out->score=DPAL_ERROR_SCORE; 
-      } */
 } /* _dpal_long_nopath_maxgap_global_end */
 
 
@@ -1185,11 +1156,4 @@ _dpal_long_nopath_maxgap1_local_end(X, Y, xlen, ylen, in, out)
     return;
  FAIL:
     fail_action(in, out);
-	/* if (in->fail_stop) {
-	fprintf(stderr, "\n%s\n", out->msg);
-	exit(-1);
-    } else {
-      out->score=DPAL_ERROR_SCORE;
-      }*/
 } /* _dpal_long_nopath_maxgap1_local */
-
