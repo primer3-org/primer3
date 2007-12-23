@@ -587,14 +587,8 @@ typedef struct seq_args {
   char *internal_input;   /* An internal oligo to check or design around. */
 
   /* ================================================== */
-  /*  Output (writable) arguments. */   /* FIX ME, MOVE THESE TO retval */
-  pr_append_str error;  /* Error messages. */
-
-
-  /* pr_append_str warning; */ /* Warning messages. */ /* DO NOT USE */
-
-
-  /*  END output arguments. */
+  /* FIX ME, FINISH MOVE TO retval */
+   pr_append_str error; /* Error messages. */
   /* ================================================== */
 
 } seq_args;
