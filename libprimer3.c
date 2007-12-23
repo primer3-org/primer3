@@ -210,8 +210,6 @@ static void   oligo_param(const p3_global_settings *pa,
 			  p3retval *);
 
 static void   pr_append(pr_append_str *, const char *);
-static const char *pr_append_str_chars(const pr_append_str *x);
-
 
 static void   pr_append_new_chunk(pr_append_str *x, const char *s);
 
@@ -256,44 +254,7 @@ static void   check_if_lowercase_masked(const int position,
 					const char *sequence,
 					primer_rec *h);
 
-
-/* FIX ME -- complete the update to GPL 2 */
 /* Global static variables. */
-static const char *libprimer3_copyright_str[] = {
-"",
-"Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007",
-"Whitehead Institute for Biomedical Research, Steve Rozen",
-"(http://jura.wi.mit.edu/rozen), and Helen Skaletsky",
-"All rights reserved.",
-"",
-"Redistribution and use in source and binary forms, with or without",
-"modification, are permitted provided that the following conditions are",
-"met:",
-"",
-"   * Redistributions of source code must retain the above copyright",
-"notice, this list of conditions and the following disclaimer.",
-"   * Redistributions in binary form must reproduce the above",
-"copyright notice, this list of conditions and the following disclaimer",
-"in the documentation and/or other materials provided with the",
-"distribution.",
-"   * Neither the names of the copyright holders nor contributors may",
-"be used to endorse or promote products derived from this software",
-"without specific prior written permission.",
-"",
-"THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS",
-"\"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT",
-"LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR",
-"A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT",
-"OWNERS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,",
-"SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT",
-"LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,",
-"DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY",
-"THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT",
-"(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE",
-"OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
-NULL
-};
-
 static const char *primer3_copyright_char_star = "\n"
 "Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007\n"
 "Whitehead Institute for Biomedical Research, Steve Rozen\n"
@@ -331,8 +292,6 @@ static const char *primer3_copyright_char_star = "\n"
 "OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n"
 "\n";
 
-
-/* Other global variables. */
 static const char *pr_program_name = "probably primer3_core";
 
 /*
@@ -909,7 +868,7 @@ create_seq_arg() {
   r->incl_l = -1; /* Indicates logical NULL. */
   r->n_quality = 0;
   r->quality = NULL;
-  init_pr_append_str(&r->error);
+  /* init_pr_append_str(&r->error); */
   
   return r;
 }
@@ -930,8 +889,6 @@ destroy_seq_args(seq_args *sa) {
   if (NULL != sa->upcased_seq) free(sa->upcased_seq);
   if (NULL != sa->upcased_seq_r) free(sa->upcased_seq_r);
   if (NULL != sa->sequence_name) free(sa->sequence_name);
-  if (NULL != sa->error.data) free(sa->error.data);
-  /* if (NULL != sa->warning.data) free(sa->warning.data); */
   free(sa);
 }
 
@@ -941,15 +898,14 @@ destroy_seq_args(seq_args *sa) {
 
 
 
-
-
-
+/* ============================================================ */
+/* BEGIN choose_primers()                                       */
 /* The main primer3 interface                                   */
 /* See libprimer3.h for documentation.                          */
+/* ============================================================ */
 p3retval *
 choose_primers(const p3_global_settings *pa, 
-	       /* const We can add this when pr_data control does not use &sa->error */
-	       seq_args *sa)
+	       const seq_args *sa)
 {
     int          i;               /* Loop index. */
     int          prod_size_range; /* Product size range indexr. */
@@ -993,8 +949,7 @@ choose_primers(const p3_global_settings *pa,
     /* Check if the input in sa and pa makes sense */
     if (_pr_data_control(pa, sa, 
 			 &retval->glob_err,  /* Fatal errors */
-			 /* &sa->error, */         /* Nonfatal errors */ /* FIX ME, remove from seq_args */
-			 &retval->per_sequence_err,
+			 &retval->per_sequence_err, /* Non-fatal errors */
 			 &retval->warnings
 			 ) !=0 ) {
       return retval;
@@ -1104,7 +1059,12 @@ choose_primers(const p3_global_settings *pa,
     if (0 != a_pair_array.storage_size) free(a_pair_array.pairs);
     
     return retval;
-}  /* End of choose_primers() */
+}
+
+/* ============================================================ */
+/* END choose_primers()                                         */
+/* ============================================================ */
+
 
 /* Call this function only if the 'stat's contains
    the _errors_ associated with a given primer
@@ -2288,7 +2248,8 @@ choose_pair_or_triple(retval, pa, sa,  dpal_arg_to_use, int_num, p)
 
 	if ( pa->primer_task == pick_pcr_primers_and_hyb_probe
 	     /* FIX ME 
-		this change does not work pa->pick_right_primer && pa->pick_left_primer && pa->pick_internal_oligo */
+		this change does not work pa->pick_right_primer 
+		&& pa->pick_left_primer && pa->pick_internal_oligo */
 	     && (choose_internal_oligo(retval,
 				       h.left, h.right,
 				       &n_int, sa, pa, 
@@ -2409,9 +2370,7 @@ sort_primer_array(oligo_array *oligo)
 
 /* Compare function for sorting primer records. */
 static int
-primer_rec_comp(x1, x2)
-    const void *x1, *x2;
-{
+primer_rec_comp(const void *x1, const void *x2) {
     const primer_rec *a1 = x1, *a2 = x2;
 
     if(a1->quality < a2->quality) return -1;
@@ -2772,10 +2731,7 @@ compute_position_penalty(pa, sa, h, o_type)
  * still be in a legal position with respect to each other.
  */
 static int
-pair_spans_target(pair, sa)
-    const primer_pair *pair;
-    const seq_args *sa;
-{
+pair_spans_target(const primer_pair *pair, const seq_args *sa) {
     int i;
     int last_of_left = pair->left->start + pair->left->length - 1;
     int first_of_right = pair->right->start - pair->right->length + 1;
@@ -3569,11 +3525,6 @@ libprimer3_release(void) {
   return "libprimer3 release 2.0.0";
 }
 
-const char **
-libprimer3_copyright(void) {
-  return libprimer3_copyright_str;
-}
-
 const char *
 primer3_copyright(void) {
   return primer3_copyright_char_star;
@@ -3589,7 +3540,7 @@ init_pr_append_str(pr_append_str *s) {
   s->storage_size = 0;
 }
 
-static const char *
+const char *
 pr_append_str_chars(const pr_append_str *x) {
   return x->data;
 }
@@ -3849,8 +3800,7 @@ p3_adjust_seq_args(const p3_global_settings *pa,
 				  sa->num_internal_excl,
 				  pa->first_base_index);
 
-  /* A suggestion that does not work: */
-  if (_pr_check_and_adjust_intervals(sa, seq_len, /* &sa->error */ nonfatal_err, warning))
+  if (_pr_check_and_adjust_intervals(sa, seq_len, nonfatal_err, warning))
     return 1; 
   
   return 0;

@@ -53,11 +53,16 @@ boulder_print(const int *io_version,
 	      const pr_append_str *more_warnings)
 {
   /* The pointers to warning tag */
-    char *warning;
-    /* A small spacer */
-    char suffix [3];
-    /* Pointers for the primer set just printing */
-    primer_rec *fwd, *rev, *intl;
+  char *warning;
+
+  /* A place to put a string containing all error messages */
+  pr_append_str *combined_retval_err = NULL;
+
+  /* A small spacer */
+  char suffix [3];
+
+  /* Pointers for the primer set just printing */
+  primer_rec *fwd, *rev, *intl;
     
     /* Variables only used for Primer Lists */
     int num_fwd, num_rev, num_int, num_print;
@@ -88,11 +93,26 @@ boulder_print(const int *io_version,
 	  free(warning);
     }
 
+    combined_retval_err = create_pr_append_str();
+    if (NULL == combined_retval_err) exit(-2); /* Out of memory */
+
+    if (pr_append_new_chunk_external(combined_retval_err, 
+				     retval->glob_err.data))
+      exit(-2);
+
+    if (pr_append_new_chunk_external(combined_retval_err, 
+				     retval->per_sequence_err.data)) 
+      exit(-2);
+
     /* Check if there are errors, print and return */
-    if (sa->error.data != NULL) {
-      boulder_print_error(sa->error.data);
+    if (!pr_is_empty(combined_retval_err)) {
+      boulder_print_error(pr_append_str_chars(combined_retval_err));
+      destroy_pr_append_str(combined_retval_err);
       return;
     }
+    destroy_pr_append_str(combined_retval_err);
+
+
     /* Prints out statistics about the primers */
     if (pa->explain_flag) print_all_explain(pa, sa, retval);
     
@@ -440,4 +460,3 @@ print_explain(stat, l)
    
     printf(", ok %d\n", stat->ok);
 }
-

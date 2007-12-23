@@ -68,7 +68,6 @@ main(argc,argv)
   /* Setup the error structures handlers */
   pr_append_str *fatal_parse_err = NULL;
   pr_append_str *nonfatal_parse_err = NULL;
-  pr_append_str *combined_retval_err = NULL;
   pr_append_str *more_warnings = NULL;
   
   /* Setup the output data structure handlers */
@@ -125,11 +124,9 @@ main(argc,argv)
   /* Allocate the space for empty error messages */
   fatal_parse_err     = create_pr_append_str();
   nonfatal_parse_err  = create_pr_append_str();
-  combined_retval_err = create_pr_append_str();
   more_warnings       = create_pr_append_str();
   if (NULL == fatal_parse_err 
       || NULL == nonfatal_parse_err
-      || NULL == combined_retval_err
       || NULL == more_warnings) {
     exit(-2); /* Out of memory */
   }
@@ -148,7 +145,6 @@ main(argc,argv)
     /* Reset all errors handlers and the return structure */
     pr_set_empty(fatal_parse_err);
     pr_set_empty(nonfatal_parse_err);
-    pr_set_empty(combined_retval_err);
     pr_set_empty(more_warnings);
     retval = NULL;
 
@@ -182,12 +178,8 @@ main(argc,argv)
     /* Modify some of the arguments */
     p3_adjust_seq_args(global_pa, sa, nonfatal_parse_err, more_warnings);
 
-    /* if (!pr_is_empty(&sa->error)) {
-      fprintf(stderr, "\n(1) %s\n", sa->error.data);
-      } */
-    
     /* If there are nonfatal errors, write the proper message
-     * and finish this loop */
+     * and skip to the end of the loop */
     if (!pr_is_empty(nonfatal_parse_err)) {
       if (format_output) {
 	format_error(stdout, sa->sequence_name, 
@@ -195,58 +187,35 @@ main(argc,argv)
       } else {
 	boulder_print_error(nonfatal_parse_err->data);
       }
-      goto finish_loop;
+      goto loop_wrap_up;
     }
     
     /* Pick the primers - the central function */
     retval = choose_primers(global_pa, sa);
     if (NULL == retval) exit(-2); /* Out of memory. */
-    
-    /* If there are errors, write the proper message
-     * and finish this loop */
+
     if (pr_is_empty(&retval->glob_err)
 	&& pr_is_empty(&retval->per_sequence_err)) {
+      /* We need to test for error first, because
+	 p3_print_oligo_lists does not handle
+	 partial outputs in retval.  FIX ME,
+	 move test inside  */
       /* Create files with left, right, and internal oligos. */
-      if (global_pa->file_flag) {  /* FIX ME, get file_flag out global settings */
+      if (global_pa->file_flag) {  /* FIX ME, get file_flag out of global settings */
 	p3_print_oligo_lists(retval, sa, global_pa,
 			     &retval->per_sequence_err); 
       }
-      /* Print out the results: */
-      /* Use formated output */
-      if (format_output) {
-	/* FIX ME -- should print_format_output and boulder_print
-	   do the right thing if there are errors? 
-	   Is there "partial output" in retval if there is an error? */
-	print_format_output(stdout, &io_version, global_pa, 
-			    sa, retval, pr_release, more_warnings);
-      } 
-      /* Use boulder output */
-      else {
-	boulder_print(&io_version, global_pa, sa, retval, more_warnings);
-      }
-    } else {
-
-      if (pr_append_new_chunk_external(combined_retval_err, 
-			      retval->glob_err.data))
-	exit(-2);
-
-      if (pr_append_new_chunk_external(combined_retval_err, 
-				       retval->per_sequence_err.data)) 
-	exit(-2);
-
-      if (format_output) {
-	format_error(stdout, sa->sequence_name,
-		     combined_retval_err->data);
-      } else {
-	if (!pr_is_empty(&retval->warnings)) { 
-	  printf("PRIMER_WARNING=%s\n", retval->warnings.data);
-	}
-	boulder_print_error(combined_retval_err->data);
-      }
-      goto finish_loop;
     }
 
-  finish_loop: /* Here the failed loops join in again */
+    if (format_output) {
+      print_format_output(stdout, &io_version, global_pa, 
+			  sa, retval, pr_release, more_warnings);
+    } else {
+      /* Use boulder output */
+      boulder_print(&io_version, global_pa, sa, retval, more_warnings);
+    }
+
+  loop_wrap_up: /* Here the failed loops join in again */
     if (NULL != retval) {
       /* Check for errors and print them */
       if (NULL != retval->glob_err.data) {
@@ -266,7 +235,6 @@ main(argc,argv)
   global_pa = NULL;
   destroy_pr_append_str(fatal_parse_err);
   destroy_pr_append_str(nonfatal_parse_err);
-  destroy_pr_append_str(combined_retval_err);
   destroy_pr_append_str(more_warnings);
   destroy_seq_args(sa);
   
@@ -282,8 +250,6 @@ main(argc,argv)
 static void
 print_usage()
 {
-  /* const char **p = libprimer3_copyright();
-     while (NULL != *p) fprintf(stderr, "%s\n", *p++); */
   fprintf(stderr, primer3_copyright());
 
   fprintf(stderr, "\n\nUSAGE: %s %s %s %s\n", pr_program_name,
