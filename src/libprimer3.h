@@ -586,11 +586,6 @@ typedef struct seq_args {
 
   char *internal_input;   /* An internal oligo to check or design around. */
 
-  /* ================================================== */
-  /* FIX ME, FINISH MOVE TO retval */
-   pr_append_str error; /* Error messages. */
-  /* ================================================== */
-
 } seq_args;
 
 /* oligo_array is used to store a list of oligos or primers */
@@ -856,7 +851,7 @@ void p3_set_gs_pair_compl_end(p3_global_settings * p , short  pair_compl_end);
  */
 
 p3retval *choose_primers(const p3_global_settings *pa, 
-			 /* const */ seq_args *sa);
+			 const seq_args *sa);
 
 /* Andreas, this is the idea, argument list will need
    to be cleaned up */
@@ -886,22 +881,19 @@ void          destroy_pr_append_str(pr_append_str *);
 /* Return 1 on ENOMEM, otherwise 0 */
 int           pr_append_external(pr_append_str *, const char *);
 
-int
-pr_append_w_sep_external(pr_append_str *x, 
-			 const char *sep,
-			 const char *s);
+int           pr_append_w_sep_external(pr_append_str *x, 
+				       const char *sep,
+				       const char *s);
 
 int           pr_append_new_chunk_external(pr_append_str *, const char *);
 
+const char *  pr_append_str_chars(const pr_append_str *x);
 
 void  pr_print_pair_explain(FILE *, const pair_stats *);
 
 const char  *libprimer3_release(void);
 
-const char  **libprimer3_copyright(void);  /* FIX ME -- do not use. */
-
 const char *primer3_copyright(void);
-
 
 /* An accessor function for a primer_rec *. */
 short oligo_max_template_mispriming(const primer_rec *);
