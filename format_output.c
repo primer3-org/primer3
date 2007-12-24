@@ -256,7 +256,7 @@ print_summary(f, pa, sa, best_pairs, num)
     fprintf(f, "INCLUDED REGION SIZE: %d\n\n", sa->incl_l);
 
     if (best_pairs->num_pairs > 0) print_pair_info(f, p, pa);
-    print_pair_array(f, "TARGETS", sa->num_targets, sa->tar, pa, sa);
+    print_pair_array(f, "TARGETS", sa->num_targets, sa->tar, /* sa->tar2.count, sa->tar2.pairs, */ pa, sa);
     print_pair_array(f, "EXCLUDED REGIONS", sa->num_excl, sa->excl, pa, sa);
     print_pair_array(f, "INTERNAL OLIGO EXCLUDED REGIONS",
 		     sa->num_internal_excl, sa->excl_internal, pa, sa);

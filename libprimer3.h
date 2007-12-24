@@ -480,6 +480,14 @@ typedef struct interval_array_t2 {
   int count;
 } interval_array_t2;
 
+int 
+interval_array_t2_count(const interval_array_t2 *array);
+
+
+const int *
+interval_array_t2_get_pair(const interval_array_t2 *array, int i);
+
+
 typedef struct oligo_stats {
   int considered;          /* Total number of tested oligos of given type   */
   int ns;                  /* Number of oligos rejected because of Ns       */
@@ -531,7 +539,7 @@ typedef struct pair_array_t {
 typedef struct seq_args {
 
   interval_array_t2 tar2;   /* Replacement for tar,  below, FIX ME finish */
-  int num_targets;      /* The number of targets. */
+  int num_targets;     /* The number of targets. */
   interval_array_t tar;   /*
 			   * The targets themselves; tar[i][0] is the start
 			   * of the ith target, tar[i][1] its length.  These
@@ -676,9 +684,9 @@ int p3_set_sa_left_input(seq_args *sargs, const char *left_input);
 int p3_set_sa_right_input(seq_args *sargs, const char *right_input);
 int p3_set_sa_internal_input(seq_args *sargs, const char *internal_input);
 
-const interval_array_t2 *p3_get_seq_args_tar2(const seq_args *sargs);
-const interval_array_t2 *p3_get_seq_args_excl2(const seq_args *sargs);
-const interval_array_t2 *p3_get_seq_args_excl_internal2(const seq_args *sargs);
+const interval_array_t2 *p3_get_sa_tar2(const seq_args *sargs);
+const interval_array_t2 *p3_get_sa_excl2(const seq_args *sargs);
+const interval_array_t2 *p3_get_sa_excl_internal2(const seq_args *sargs);
 
 /*
   use p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2);

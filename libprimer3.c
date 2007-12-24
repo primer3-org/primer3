@@ -40,7 +40,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <math.h>
 #include <signal.h>
-  /*( #include <unistd.h> */
 #include <float.h>
 #include <string.h>
 #include <ctype.h> /* toupper */
@@ -111,14 +110,20 @@ static void   _pr_substr(const char *, int, int, char *);
 
 static int    _pr_check_and_adjust_intervals(seq_args *sa, 
 					     int seq_len, 
+					     int first_index,
 					     pr_append_str * nonfatal_err, 
 					     pr_append_str *warning);
 
 
-static int    _pr_check_and_adjust_1_interval(const char *, const int,
-					      interval_array_t, const int, 
-					      pr_append_str *err, seq_args *,
-					      pr_append_str *warning);
+static int    _pr_check_and_adjust_1_interval(const char *,
+					      int num,
+					      interval_array_t, 
+					      int, 
+					      int first_index,
+					      pr_append_str *err, 
+					      seq_args *,
+					      pr_append_str 
+					      *warning);
 
 static void   sort_primer_array(oligo_array *);
 
@@ -668,6 +673,17 @@ p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2)
 /* END functions for global settings                            */
 /* ============================================================ */
 
+int 
+interval_array_t2_count(const interval_array_t2 *array) {
+  return array->count;
+}
+
+const int *
+interval_array_t2_get_pair(const interval_array_t2 *array, int i) {
+  if (i > array->count) abort();
+  if (i < 0) abort();
+  return array->pairs[i];
+}
 
 
 /* ============================================================ */
@@ -3695,14 +3711,14 @@ pr_safe_realloc(void *p, size_t x)
 /* ============================================================ */
 
 /* Substracts the first_index of the start positions in an array */
-static void
+/* static void
 adjust_base_index_interval_list(intervals, num, first_index)
     interval_array_t intervals;
     int num, first_index;
 {
     int i;
     for (i = 0; i < num; i++) intervals[i][0] -= first_index;
-}
+}  */
 
 /* Fuction to set the included region and fix the start positions */
 int
@@ -3756,51 +3772,44 @@ p3_adjust_seq_args(const p3_global_settings *pa,
   inc_len = sa->incl_s + sa->incl_l - 1;
 
   if ((sa->incl_l < INT_MAX) && (sa->incl_s > -1) 
-		  && (sa->incl_l > -1) && (inc_len < seq_len) ) {
-	  /* Copies inluded region into trimmed_seq */
-	  sa->trimmed_seq = pr_safe_malloc(sa->incl_l + 1);
-	  _pr_substr(sa->sequence, sa->incl_s, sa->incl_l, sa->trimmed_seq);
+      && (sa->incl_l > -1) && (inc_len < seq_len) ) {
+    /* Copies inluded region into trimmed_seq */
+    sa->trimmed_seq = pr_safe_malloc(sa->incl_l + 1);
+    _pr_substr(sa->sequence, sa->incl_s, sa->incl_l, sa->trimmed_seq);
 	 
-	  /* Copies inluded region into trimmed_orig_seq */
-	  /* edited by T. Koressaar for lowercase masking */
-	  sa->trimmed_orig_seq = pr_safe_malloc(sa->incl_l + 1);
-	  _pr_substr(sa->sequence, sa->incl_s, sa->incl_l, sa->trimmed_orig_seq);
+    /* Copies inluded region into trimmed_orig_seq */
+    /* edited by T. Koressaar for lowercase masking */
+    sa->trimmed_orig_seq = pr_safe_malloc(sa->incl_l + 1);
+    _pr_substr(sa->sequence, sa->incl_s, sa->incl_l, sa->trimmed_orig_seq);
 	 
-	  /* Copies the whole sequence into upcased_seq */
-	  sa->upcased_seq = pr_safe_malloc(strlen(sa->sequence) + 1);
-	  strcpy(sa->upcased_seq, sa->sequence);
-	  if ((offending_char = dna_to_upper(sa->upcased_seq, 1))) {
-	    offending_char = '\0';
-	    /* TODO add warning or error (depending on liberal base)
-	       here. */
-	  }
+    /* Copies the whole sequence into upcased_seq */
+    sa->upcased_seq = pr_safe_malloc(strlen(sa->sequence) + 1);
+    strcpy(sa->upcased_seq, sa->sequence);
+    if ((offending_char = dna_to_upper(sa->upcased_seq, 1))) {
+      offending_char = '\0';
+      /* TODO add warning or error (depending on liberal base)
+	 here. */
+    }
 	
-	  /* Copies the reverse complement of the whole sequence into upcased_seq_r */
-	  sa->upcased_seq_r = pr_safe_malloc(strlen(sa->sequence) + 1);
-	  _pr_reverse_complement(sa->upcased_seq, sa->upcased_seq_r);
+    /* Copies the reverse complement of the whole sequence into upcased_seq_r */
+    sa->upcased_seq_r = pr_safe_malloc(strlen(sa->sequence) + 1);
+    _pr_reverse_complement(sa->upcased_seq, sa->upcased_seq_r);
   }
   
-  /*
-    adjust_base_index_interval_list(sa->tar, sa->num_targets,
-    pa->first_base_index);
-    adjust_base_index_interval_list(sa->excl2.pairs, sa->excl2.count,
-    pa->first_base_index);
-    adjust_base_index_interval_list(sa->excl_internal,
-    sa->num_internal_excl,
-    pa->first_base_index);
-  */
-
   /* Fix the start of Targets and 
    * Excluded regions for primer and intl. oligo */
-  adjust_base_index_interval_list(sa->tar, sa->num_targets,
+  /* adjust_base_index_interval_list(sa->tar, sa->num_targets,
 				  pa->first_base_index);
   adjust_base_index_interval_list(sa->excl, sa->num_excl,
 				  pa->first_base_index);
   adjust_base_index_interval_list(sa->excl_internal,
 				  sa->num_internal_excl,
-				  pa->first_base_index);
+				  pa->first_base_index); */
 
-  if (_pr_check_and_adjust_intervals(sa, seq_len, nonfatal_err, warning))
+  if (_pr_check_and_adjust_intervals(sa, 
+				     seq_len, 
+				     pa->first_base_index, 
+				     nonfatal_err, warning))
     return 1; 
   
   return 0;
@@ -4234,7 +4243,8 @@ _pr_data_control(const p3_global_settings *pa,
     if(pa->pr_pair_weights.io_quality 
 	&& pa->primer_task != pick_pcr_primers_and_hyb_probe ) {
 	  pr_append_new_chunk(glob_err,
-	   "Internal oligo quality is part of objective function while internal oligo choice is not required");
+	   "Internal oligo quality is part of objective function"
+			      " while internal oligo choice is not required");
         return 1;
     }
 
@@ -4243,20 +4253,27 @@ _pr_data_control(const p3_global_settings *pa,
 
 
 static int
-_pr_check_and_adjust_intervals(seq_args *sa, int seq_len, pr_append_str * nonfatal_err, pr_append_str *warning) {
+_pr_check_and_adjust_intervals(seq_args *sa, 
+			       int seq_len, 
+			       int first_index,
+			       pr_append_str * nonfatal_err, 
+			       pr_append_str *warning) {
+
 
     if (_pr_check_and_adjust_1_interval("TARGET", sa->num_targets, sa->tar, seq_len,
-			    nonfatal_err, sa, warning)      /* FIX ME write */
+					first_index,  nonfatal_err, sa, warning)
 	== 1) return 1;
-    sa->start_codon_pos -= sa->incl_s;    /* FIX ME write */
+    sa->start_codon_pos -= sa->incl_s;
 
     if (_pr_check_and_adjust_1_interval("EXCLUDED_REGION", sa->num_excl, sa->excl,
-			seq_len, nonfatal_err, sa, warning)    /* FIX ME write */
+					seq_len, first_index, nonfatal_err, sa, warning)
 	== 1) return 1;
 
     if (_pr_check_and_adjust_1_interval("PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION",
-			sa->num_internal_excl, sa->excl_internal,
-			seq_len, nonfatal_err, sa, warning)    /* FIX ME write */
+					sa->num_internal_excl, sa->excl_internal,
+					seq_len, 
+					first_index,
+					nonfatal_err, sa, warning)
 	== 1) return 1;
     return 0;
 }
@@ -4269,41 +4286,46 @@ _pr_check_and_adjust_intervals(seq_args *sa, int seq_len, pr_append_str * nonfat
  */ 
 static int
 _pr_check_and_adjust_1_interval(const char *tag_name,
-		    const int num_intervals,
-                    		    interval_array_t intervals,
-		    const int seq_len,
-		    pr_append_str *err,
-		    seq_args *sa,
-		    pr_append_str *warning)
+				int num_intervals,
+				interval_array_t intervals,
+				int seq_len,
+				int first_index,
+				pr_append_str *err,
+				seq_args *sa,
+				pr_append_str *warning)
 {
-    int i;
-    int outside_warning_issued = 0;
-    for (i=0; i < num_intervals; i++) {
-	if (intervals[i][0] + intervals[i][1] > seq_len) {
-	    pr_append_new_chunk(err, tag_name);
-	    pr_append(err, " beyond end of sequence");
-	    return 1;
-	}
-	/* Cause the interval start to be relative to the included region. */
-	intervals[i][0] -= sa->incl_s;
-	/* Check that intervals are within the included region. */
-	if (intervals[i][0] < 0
-	    || intervals[i][0] + intervals[i][1] > sa->incl_l) {
-	    if (!outside_warning_issued) {
-	      pr_append_new_chunk(/* &sa-> */ warning, tag_name);
-	      pr_append(/* &sa-> */warning,
-			  " outside of INCLUDED_REGION");
-		outside_warning_issued = 1;
-	    }
-	}
-	if (intervals[i][1] < 0) {
-	    pr_append_new_chunk(err, "Negative ");
-	    pr_append(err, tag_name);
-	    pr_append(err, " length");
-	    return 1;
-	}
+  int i;
+  int outside_warning_issued = 0;
+
+/* Substracts the first_index of the start positions in an array */
+  for (i = 0; i < num_intervals; i++) intervals[i][0] -= first_index;
+
+  for (i=0; i < num_intervals; i++) {
+    if (intervals[i][0] + intervals[i][1] > seq_len) {
+      pr_append_new_chunk(err, tag_name);
+      pr_append(err, " beyond end of sequence");
+      return 1;
     }
-    return 0;
+    /* Cause the interval start to be relative to the included region. */
+    intervals[i][0] -= sa->incl_s;
+    /* Check that intervals are within the included region. */
+    if (intervals[i][0] < 0
+	|| intervals[i][0] + intervals[i][1] > sa->incl_l) {
+      if (!outside_warning_issued) {
+	pr_append_new_chunk(warning, tag_name);
+	pr_append(warning,
+		  " outside of INCLUDED_REGION");
+	outside_warning_issued = 1;
+      }
+    }
+    if (intervals[i][1] < 0) {
+      pr_append_new_chunk(err, "Negative ");
+      pr_append(err, tag_name);
+      pr_append(err, " length");
+      return 1;
+    }
+  }
+  return 0;
 } /* _pr_check_and_adjust_intervals  */
 
 /* ============================================================ */
@@ -4877,18 +4899,18 @@ upcase_and_check_char(char *s)
 /* BEGIN 'get' functions for seq_args                           */
 /* ============================================================ */
 
-interval_array_t2 *
-p3_get_sa_tar2(seq_args *sargs) {
+const interval_array_t2 *
+p3_get_sa_tar2(const seq_args *sargs) {
   return &sargs->tar2 ;
 }
 
-interval_array_t2 *
-p3_get_sa_excl2(seq_args *sargs) {
+const interval_array_t2 *
+p3_get_sa_excl2(const seq_args *sargs) {
   return &sargs->excl2 ;
 }
 
-interval_array_t2 *
-p3_get_sa_excl_internal2(seq_args *sargs) {
+const interval_array_t2 *
+p3_get_sa_excl_internal2(const seq_args *sargs) {
   return &sargs->excl_internal2 ;
 }
 
