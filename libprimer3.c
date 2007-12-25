@@ -108,22 +108,22 @@ static void   _pr_reverse_complement(const char *, char *);
 
 static void   _pr_substr(const char *, int, int, char *);
 
-static int    _pr_check_and_adjust_intervals(seq_args *sa, 
-					     int seq_len, 
-					     int first_index,
-					     pr_append_str * nonfatal_err, 
-					     pr_append_str *warning);
 
+static int    _check_and_adjust_intervals(seq_args *sa,
+					  int seq_len, 
+					  int first_index,
+					  pr_append_str * nonfatal_err, 
+					  pr_append_str *warning);
 
-static int    _pr_check_and_adjust_1_interval(const char *,
-					      int num,
-					      interval_array_t, 
-					      int, 
-					      int first_index,
-					      pr_append_str *err, 
-					      seq_args *,
-					      pr_append_str 
-					      *warning);
+static int    _check_and_adjust_1_interval(const char *,
+					   int num,
+					   interval_array_t, 
+					   int, 
+					   int first_index,
+					   pr_append_str *err, 
+					   seq_args *,
+					   pr_append_str 
+					   *warning);
 
 static void   sort_primer_array(oligo_array *);
 
@@ -1159,30 +1159,33 @@ static void
 add_pair(const primer_pair *pair,
 	 pair_array_t *retpair)
 {
-	/* If array is not initialised, initialise it with the size of pairs to return */
-    if (0 == retpair->storage_size) {
-	retpair->storage_size = INITIAL_NUM_RETURN;
-	retpair->pairs 
-	    = pr_safe_malloc(retpair->storage_size * sizeof(*retpair->pairs));
-    } 
-    /* If there is no space any more alloc double the space*/
-    else if (retpair->storage_size == retpair->num_pairs) {
-	retpair->storage_size *= 2;
-	retpair->pairs
-	    = pr_safe_realloc(retpair->pairs,
-			      retpair->storage_size * sizeof(*retpair->pairs));
+  /* If array is not initialised, initialise it with the size of pairs
+     to return */
+  if (0 == retpair->storage_size) {
+    retpair->storage_size = INITIAL_NUM_RETURN;
+    retpair->pairs 
+      = pr_safe_malloc(retpair->storage_size * sizeof(*retpair->pairs));
+  } else {
+    if (retpair->storage_size == retpair->num_pairs) {
+      /* We need more space, so realloc double the space*/
+      retpair->storage_size *= 2;
+      retpair->pairs
+	= pr_safe_realloc(retpair->pairs,
+			  retpair->storage_size * sizeof(*retpair->pairs));
     }
-    /* Copy the pair in the storage place */
-    retpair->pairs[retpair->num_pairs] = *pair;
-    retpair->num_pairs++;
+  }
+  /* Copy the pair into the storage place */
+  retpair->pairs[retpair->num_pairs] = *pair;
+  retpair->num_pairs++;
 }
 
 /* 
  * Make lists of acceptable left and right primers.  After return, the
- * lists are stored in retval->fwd.oligo and retval->rev.oligo and the coresponding
- * list sizes are stored in retval->fwd.num_elem and retval->rev.num_elem.  Return 1
- * if one of lists is empty or if leftmost left primer and rightmost
- * right primer do not provide sufficient product size.
+ * lists are stored in retval->fwd.oligo and retval->rev.oligo and the
+ * coresponding list sizes are stored in retval->fwd.num_elem and
+ * retval->rev.num_elem.  Return 1 if one of lists is empty or if
+ * leftmost left primer and rightmost right primer do not provide
+ * sufficient product size.
  */
 static int
 make_primer_lists(p3retval *retval,
@@ -1213,15 +1216,15 @@ make_primer_lists(p3retval *retval,
     tar_l = n; /* Target length */
     
     /* Iterate over target array */
-    for (i=0; i < sa->num_targets; i++) {
+    for (i=0; i < sa->tar2.count; i++) {
 	    
-	    /* Select the rightmost target start */
-		if (sa->tar[i][0] > tar_r)
-		  tar_r = sa->tar[i][0];
+      /* Select the rightmost target start */
+      if (sa->tar2.pairs[i][0] > tar_r)
+	tar_r = sa->tar2.pairs[i][0];
 	
-		/* Select the rightmost target end */
-		if (sa->tar[i][0] + sa->tar[i][1] - 1 < tar_l)
-		  tar_l = sa->tar[i][0] + sa->tar[i][1] - 1;
+      /* Select the rightmost target end */
+      if (sa->tar2.pairs[i][0] + sa->tar2.pairs[i][1] - 1 < tar_l)
+	tar_l = sa->tar2.pairs[i][0] + sa->tar2.pairs[i][1] - 1;
     }
 
     if (_PR_DEFAULT_POSITION_PENALTIES(pa)) {
@@ -1770,15 +1773,15 @@ oligo_param(const p3_global_settings *pa,
 
     /* Upstream error checking has ensured that we use non-default position
        penalties only when there is 0 or 1 target. */
-    PR_ASSERT(sa->num_targets <= 1 || _PR_DEFAULT_POSITION_PENALTIES(pa));
+    PR_ASSERT(sa->tar2.count <= 1 || _PR_DEFAULT_POSITION_PENALTIES(pa));
     if (l < 2 
 	&& _PR_DEFAULT_POSITION_PENALTIES(pa)
-	&& oligo_overlaps_interval(j, k-j+1, sa->tar, sa->num_targets)) {
+	&& oligo_overlaps_interval(j, k-j+1, sa->tar2.pairs, sa->tar2.count)) {
       h->position_penalty = 0.0;
       h->position_penalty_infinite = '\1';
       h->target = 1;
     } else if (l < 2 && !_PR_DEFAULT_POSITION_PENALTIES(pa)
-	     && 1 == sa->num_targets) {
+	     && 1 == sa->tar2.count) {
       compute_position_penalty(pa, sa, h, l);
       if (h->position_penalty_infinite) h->target = 1;
     } else {
@@ -1807,11 +1810,11 @@ oligo_param(const p3_global_settings *pa,
       }
     }
 
-    if (l < 2 && oligo_overlaps_interval(j, k-j+1, sa->excl, sa->num_excl))
+    if (l < 2 && oligo_overlaps_interval(j, k-j+1, sa->excl2.pairs, sa->excl2.count))
 	h->excl = 1;
 
-    if (l == 2 && oligo_overlaps_interval(j, k-j+1, sa->excl_internal,
-					  sa->num_internal_excl))
+    if (l == 2 && oligo_overlaps_interval(j, k-j+1, sa->excl_internal2.pairs,
+					  sa->excl_internal2.count))
 	h->excl = 1;
 
     if(l < 2 && h->target==1) {
@@ -2193,7 +2196,7 @@ oligo_max_template_mispriming(h)
 }
 
 
-/* This function requires that retval->fwd.num_elem and rev.num_elem,
+/* This function requires retval->fwd.num_elem and rev.num_elem,
    and posibly intl.num_elem...see choose_internal_oligo().  
    This function then sorts through the pairs or
    triples to find pa->nu. */
@@ -2213,7 +2216,7 @@ choose_pair_or_triple(retval, pa, sa,  dpal_arg_to_use, int_num, p)
 	  */
   int i0, n_last, n_int;
   primer_pair worst_pair; /* The worst pair among those being "remembered". */
-  int i_worst;             /* The index within p of worst_pair. */
+  int i_worst;            /* The index within p of worst_pair. */
 
   primer_pair h;
   pair_stats *pair_expl = &retval->best_pairs.expl;
@@ -2273,7 +2276,8 @@ choose_pair_or_triple(retval, pa, sa,  dpal_arg_to_use, int_num, p)
 	  pair_expl->internal++;
 	  continue;
 	}
-	/* sa-> */ pair_expl->ok++;
+
+	pair_expl->ok++;
 	if (k < pa->num_return) {
 	  if ( pa->primer_task == pick_pcr_primers_and_hyb_probe) 
 	    h.intl = &retval->intl.oligo[n_int];
@@ -2450,6 +2454,8 @@ primer_pair_comp(x1, x2)
 /* 
  * Defines parameter values for given primer pair. Returns PAIR_OK if the pair is
  * acceptable; PAIR_FAILED otherwise.
+ *
+ * FIX ME -- POSSIBLE FUTURE CHANGE -- check for overlap here.
  */
 static int
 characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
@@ -2489,7 +2495,7 @@ characterize_pair(retval, pa, sa, m, n, int_num, ppair, dpal_arg_to_use)
 	else pair_failed_flag = 1;
     }
 
-    if (sa->num_targets > 0) {
+    if (sa->tar2.count > 0) {
 	if (pair_spans_target(ppair, sa))
 	    ppair->target = 1;
 	else {
@@ -2702,9 +2708,9 @@ compute_position_penalty(pa, sa, h, o_type)
   int target_begin, target_end;
 
   PR_ASSERT(OT_LEFT == o_type || OT_RIGHT == o_type);
-  PR_ASSERT(1 == sa->num_targets);
-  target_begin = sa->tar[0][0];
-  target_end = target_begin + sa->tar[0][1] - 1;
+  PR_ASSERT(1 == sa->tar2.count);
+  target_begin = sa->tar2.pairs[0][0];
+  target_end = target_begin + sa->tar2.pairs[0][1] - 1;
 
   three_prime_base = OT_LEFT == o_type
     ? h->start + h->length - 1 : h->start - h->length + 1;
@@ -2752,9 +2758,9 @@ pair_spans_target(const primer_pair *pair, const seq_args *sa) {
     int last_of_left = pair->left->start + pair->left->length - 1;
     int first_of_right = pair->right->start - pair->right->length + 1;
     int target_first, target_last;
-    for (i = 0; i < sa->num_targets; i++) {
-      target_first = sa->tar[i][0];
-      target_last = target_first + sa->tar[i][1] - 1;
+    for (i = 0; i < sa->tar2.count; i++) {
+      target_first = sa->tar2.pairs[i][0];
+      target_last = target_first + sa->tar2.pairs[i][1] - 1;
 	if (last_of_left <= target_last
 	    && first_of_right >= target_first
 	    && last_of_left < first_of_right)
@@ -3727,7 +3733,7 @@ p3_adjust_seq_args(const p3_global_settings *pa,
 		   pr_append_str *nonfatal_err,
 		   pr_append_str *warning)
 {
-  int seq_len, inc_len, i;
+  int seq_len, inc_len; /* , i;*/
 
 
   /* Complain if there is no sequence */
@@ -3735,24 +3741,6 @@ p3_adjust_seq_args(const p3_global_settings *pa,
     pr_append_new_chunk(nonfatal_err, "Missing SEQUENCE tag");
     return 1;
   } 
-
-    /* FIX ME -- temporary */
-    /* Copy over the new arrays */
-    sa->num_targets = sa->tar2.count;
-    for (i = 0; i <PR_MAX_INTERVAL_ARRAY;  i++) {
-      sa->tar[i][0]     = sa->tar2.pairs[i][0];
-      sa->tar[i][1]     = sa->tar2.pairs[i][1];
-    }
-    sa->num_excl = sa->excl2.count;
-    for (i = 0; i <PR_MAX_INTERVAL_ARRAY;  i++) {
-      sa->excl[i][0]     = sa->excl2.pairs[i][0];
-      sa->excl[i][1]     = sa->excl2.pairs[i][1];
-    }
-    sa->num_internal_excl = sa->excl_internal2.count;
-    for (i = 0; i <PR_MAX_INTERVAL_ARRAY;  i++) {
-      sa->excl_internal[i][0]     = sa->excl_internal2.pairs[i][0];
-      sa->excl_internal[i][1]     = sa->excl_internal2.pairs[i][1];
-    }
 
   seq_len = strlen(sa->sequence);
 
@@ -3796,22 +3784,31 @@ p3_adjust_seq_args(const p3_global_settings *pa,
     _pr_reverse_complement(sa->upcased_seq, sa->upcased_seq_r);
   }
   
-  /* Fix the start of Targets and 
-   * Excluded regions for primer and intl. oligo */
-  /* adjust_base_index_interval_list(sa->tar, sa->num_targets,
-				  pa->first_base_index);
-  adjust_base_index_interval_list(sa->excl, sa->num_excl,
-				  pa->first_base_index);
-  adjust_base_index_interval_list(sa->excl_internal,
-				  sa->num_internal_excl,
-				  pa->first_base_index); */
-
-  if (_pr_check_and_adjust_intervals(sa, 
-				     seq_len, 
-				     pa->first_base_index, 
-				     nonfatal_err, warning))
+  if (_check_and_adjust_intervals(sa,  /* NEW FUNCTION for the the array_interval_t2 slots in seq_args */
+				  seq_len, 
+				  pa->first_base_index, 
+				  nonfatal_err, warning)) {
     return 1; 
-  
+  }
+
+  /* FIX ME -- temporary */
+  /* Copy over the new arrays into the deprecated arrays */
+  /* sa->num_targets = sa->tar2.count;
+  for (i = 0; i <PR_MAX_INTERVAL_ARRAY;  i++) {
+      sa->tar[i][0]     = sa->tar2.pairs[i][0];
+      sa->tar[i][1]     = sa->tar2.pairs[i][1];
+      } */
+  /* sa->num_excl = sa->excl2.count;
+  for (i = 0; i <PR_MAX_INTERVAL_ARRAY;  i++) {
+    sa->excl[i][0]     = sa->excl2.pairs[i][0];
+    sa->excl[i][1]     = sa->excl2.pairs[i][1];
+    } */
+  /* sa->num_internal_excl = sa->excl_internal2.count;
+  for (i = 0; i <PR_MAX_INTERVAL_ARRAY;  i++) {
+    sa->excl_internal[i][0]     = sa->excl_internal2.pairs[i][0];
+    sa->excl_internal[i][1]     = sa->excl_internal2.pairs[i][1];
+  }  */
+
   return 0;
 }
 
@@ -4123,13 +4120,13 @@ _pr_data_control(const p3_global_settings *pa,
       return 1;
    }
    
-   if (!_PR_DEFAULT_POSITION_PENALTIES(pa) && sa->num_targets > 1) {
+   if (!_PR_DEFAULT_POSITION_PENALTIES(pa) && sa->tar2.count > 1) {
      pr_append_new_chunk(nonfatal_err,
 			 "Non-default inside penalty or outside penalty ");
      pr_append(nonfatal_err,
 	       "is valid only when number of targets <= 1");
    }
-    if (!_PR_DEFAULT_POSITION_PENALTIES(pa) && 0 == sa->num_targets) {
+    if (!_PR_DEFAULT_POSITION_PENALTIES(pa) && 0 == sa->tar2.count) {
       pr_append_new_chunk(/* &sa-> */ warning,
 			  "Non-default inside penalty or outside penalty ");
       pr_append(/* &sa-> */warning,
@@ -4251,33 +4248,30 @@ _pr_data_control(const p3_global_settings *pa,
     return (NULL == nonfatal_err->data && NULL == /* pa->*/ glob_err->data) ? 0 : 1;
 } /* _pr_data_control */
 
-
 static int
-_pr_check_and_adjust_intervals(seq_args *sa, 
-			       int seq_len, 
-			       int first_index,
-			       pr_append_str * nonfatal_err, 
-			       pr_append_str *warning) {
+_check_and_adjust_intervals(seq_args *sa, 
+			    int seq_len, 
+			    int first_index,
+			    pr_append_str * nonfatal_err, 
+			    pr_append_str *warning) {
 
+  if (_check_and_adjust_1_interval("TARGET", sa->tar2.count, sa->tar2.pairs, seq_len,
+				   first_index,  nonfatal_err, sa, warning)
+      == 1) return 1;
+  sa->start_codon_pos -= sa->incl_s;
 
-    if (_pr_check_and_adjust_1_interval("TARGET", sa->num_targets, sa->tar, seq_len,
-					first_index,  nonfatal_err, sa, warning)
-	== 1) return 1;
-    sa->start_codon_pos -= sa->incl_s;
+  if (_check_and_adjust_1_interval("EXCLUDED_REGION", sa->excl2.count, sa->excl2.pairs,
+				   seq_len, first_index, nonfatal_err, sa, warning)
+      == 1) return 1;
 
-    if (_pr_check_and_adjust_1_interval("EXCLUDED_REGION", sa->num_excl, sa->excl,
-					seq_len, first_index, nonfatal_err, sa, warning)
-	== 1) return 1;
-
-    if (_pr_check_and_adjust_1_interval("PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION",
-					sa->num_internal_excl, sa->excl_internal,
-					seq_len, 
-					first_index,
-					nonfatal_err, sa, warning)
-	== 1) return 1;
-    return 0;
+  if (_check_and_adjust_1_interval("PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION",
+				   sa->excl_internal2.count, sa->excl_internal2.pairs,
+				   seq_len, 
+				   first_index,
+				   nonfatal_err, sa, warning)
+      == 1) return 1;
+  return 0;
 }
-
 
 /* 
  * Check intervals, and add any errors to err.
@@ -4285,7 +4279,7 @@ _pr_check_and_adjust_intervals(seq_args *sa,
  * be relative to the start of the included region.
  */ 
 static int
-_pr_check_and_adjust_1_interval(const char *tag_name,
+_check_and_adjust_1_interval(const char *tag_name,
 				int num_intervals,
 				interval_array_t intervals,
 				int seq_len,
@@ -4326,10 +4320,10 @@ _pr_check_and_adjust_1_interval(const char *tag_name,
     }
   }
   return 0;
-} /* _pr_check_and_adjust_intervals  */
+} /* _check_and_adjust_intervals  */
 
 /* ============================================================ */
-/* END functions which check and modify the input               */
+/* END functions that check and modify the input                */
 /* ============================================================ */
 
 /* ============================================================ */
