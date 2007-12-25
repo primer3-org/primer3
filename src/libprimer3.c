@@ -1070,12 +1070,10 @@ choose_primers(const p3_global_settings *pa,
 
 	  if (
 	      !oligo_pair_seen(&a_pair_array.pairs[i], best_pairs)
-              /* FUNCTION DOES NOT WORK YET...
 	      &&
 	      !oligo_in_pair_overlaps_seen_oligo(&a_pair_array.pairs[i],
 						 best_pairs,
 						 pa->min_three_prime_distance)
-	      */
 	      ) {
 	    add_pair(&a_pair_array.pairs[i], best_pairs);
 	  } /* if .... */
@@ -1220,11 +1218,11 @@ oligo_in_pair_overlaps_seen_oligo(const primer_pair *pair,
   for (; q < stop; q++) {
     q_pos =  q->left->start + q->left->length - 1;
     pair_pos = pair->left->start + pair->left->length -  1;
-    if (abs(q_pos - pair_pos) > min_dist) { return 1; }
+    if (abs(q_pos - pair_pos) < min_dist) { return 1; }
 
     q_pos = q->right->start - q->right->length + 1;
     pair_pos = pair->right->start - pair->right->length + 1;
-    if (abs(q_pos - pair_pos) > min_dist) { return 1; }
+    if (abs(q_pos - pair_pos) < min_dist) { return 1; }
 
   }
   return 0;
