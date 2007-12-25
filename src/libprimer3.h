@@ -538,30 +538,22 @@ typedef struct pair_array_t {
  */
 typedef struct seq_args {
 
-  interval_array_t2 tar2;   /* Replacement for tar,  below, FIX ME finish */
-  int num_targets;     /* The number of targets. */
-  interval_array_t tar;   /*
-			   * The targets themselves; tar[i][0] is the start
-			   * of the ith target, tar[i][1] its length.  These
-			   * are presented as indexes within the sequence
-			   * slot, but during the execution of choice() they
-			   * are recalculated to be indexes within
-			   * trimmed_seq.
+                          /*  These FIX ME UPDATE THIS COMMENT, applies to next 3 slots
+ 			   * are presented as indexes within the
+ 			   * sequence slot, but 
+			   * they are recalculated to be
+ 			   * indexes within trimmed_seq.
+			   *
 			   */
 
-  interval_array_t2 excl2;  /* replacement for excl, below, FIX ME finish */
-  int num_excl;           /* The number of excluded regions.  */
-  interval_array_t excl;  /* The same as for targets.
-			   * These are presented as indexes within
-			   * the sequence slot, but during the
-			   * execution of choice() they are recalculated
-			   * to be indexes within trimmed_seq.
-			   */
-  interval_array_t2 excl_internal2;
+  interval_array_t2 tar2; /* The targets.  tar2->pairs[i][0] s the start
+			   * of the ith target, tar[i][1] its length.  */
 
-  int num_internal_excl;  /* Number of excluded regions for internal oligo.*/
-  interval_array_t excl_internal;
-  /* Similar to excl. */
+  interval_array_t2 excl2;/* The number of excluded regions. */
+
+  interval_array_t2 excl_internal2; 
+                          /* Number of excluded regions for internal
+			     oligo; similar to excl2.*/
 
   int incl_s;             /* The 0-based start of included region. */
   int incl_l;             /* 

@@ -256,10 +256,10 @@ print_summary(f, pa, sa, best_pairs, num)
     fprintf(f, "INCLUDED REGION SIZE: %d\n\n", sa->incl_l);
 
     if (best_pairs->num_pairs > 0) print_pair_info(f, p, pa);
-    print_pair_array(f, "TARGETS", sa->num_targets, sa->tar, /* sa->tar2.count, sa->tar2.pairs, */ pa, sa);
-    print_pair_array(f, "EXCLUDED REGIONS", sa->num_excl, sa->excl, pa, sa);
+    print_pair_array(f, "TARGETS", sa->tar2.count, sa->tar2.pairs, pa, sa);
+    print_pair_array(f, "EXCLUDED REGIONS", sa->excl2.count, sa->excl2.pairs, pa, sa);
     print_pair_array(f, "INTERNAL OLIGO EXCLUDED REGIONS",
-		     sa->num_internal_excl, sa->excl_internal, pa, sa);
+		     sa->excl_internal2.count, sa->excl_internal2.pairs, pa, sa);
 }
 
 /* Print column headers for lines printed by print_oligo(). */
@@ -395,19 +395,19 @@ print_seq(f, pa, sa, h, best_pairs, num)
 	       notes[i] |= INTL_OLIGO;
         }
 
-	for (j = 0; j < sa->num_targets; j++) {
-	    start = sa->tar[j][0] + sa->incl_s;
-	    if (i >= start && i < start + sa->tar[j][1])
+	for (j = 0; j < sa->tar2.count; j++) {
+	    start = sa->tar2.pairs[j][0] + sa->incl_s;
+	    if (i >= start && i < start + sa->tar2.pairs[j][1])
 		notes[i] |= TARGET;
 	}
-	for (j = 0; j < sa->num_excl; j++) {
-	    start = sa->excl[j][0] + sa->incl_s;
-	    if (i >= start && i < start + sa->excl[j][1])
+	for (j = 0; j < sa->excl2.count; j++) {
+	    start = sa->excl2.pairs[j][0] + sa->incl_s;
+	    if (i >= start && i < start + sa->excl2.pairs[j][1])
 		notes[i] |= EXCL_REGION;
 	}
-	for (j = 0; j < sa->num_internal_excl; j++) {
-	    start = sa->excl_internal[j][0] + sa->incl_s;
-	    if (i >= start && i < start + sa->excl_internal[j][1])
+	for (j = 0; j < sa->excl_internal2.count; j++) {
+	    start = sa->excl_internal2.pairs[j][0] + sa->incl_s;
+	    if (i >= start && i < start + sa->excl_internal2.pairs[j][1])
 		notes[i] |= INTL_EXCL_REGION;
 	}
     }
@@ -445,14 +445,14 @@ print_seq(f, pa, sa, h, best_pairs, num)
     if (vector_found)
 	fprintf(f, "...... vector sequence\n");
 
-    if (sa->num_excl > 0)
+    if (sa->excl2.count > 0)
 	fprintf(f, "XXXXXX excluded region\n");
 
     if (pa->primer_task == 1
-	&& sa->num_internal_excl > 0)
+	&& sa->excl_internal2.count > 0)
 	fprintf(f, "xxxxxx excluded region for internal oligo\n");
 
-    if (sa->num_targets > 0)
+    if (sa->tar2.count > 0)
 	fprintf(f, "****** target\n");
 
     if ((pa->primer_task == pick_pcr_primers ||
@@ -870,7 +870,7 @@ print_oligo_summary(f, pa, sa, h, l, num)
     fprintf(f, "SEQUENCE SIZE: %d\n", seq_len);
     fprintf(f, "INCLUDED REGION SIZE: %d\n\n", sa->incl_l);
 
-    print_pair_array(f, "TARGETS", sa->tar2.count /* num_targets*/, sa->/* tar*/tar2.pairs, pa, sa);
+    print_pair_array(f, "TARGETS", sa->tar2.count, sa->tar2.pairs, pa, sa);
     print_pair_array(f, "EXCLUDED REGIONS", sa->excl2.count, sa->excl2.pairs, pa, sa);
     print_pair_array(f, "INTERNAL OLIGO EXCLUDED REGIONS",
     	     sa->excl_internal2.count, sa->excl_internal2.pairs, pa, sa);
