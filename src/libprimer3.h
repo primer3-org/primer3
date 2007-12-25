@@ -247,11 +247,6 @@ typedef struct p3_global_settings {
   int    quality_range_max;
 
   /* ================================================== */
-  /* Writable return argument for errors. */
-  /* pr_append_str glob_err; */
-  /* This is now part of the return value from choose_primers. */
-
-  /* ================================================== */
   /* Arguments for individual oligos and/or primers */
   args_for_one_oligo_or_primer p_args;
   args_for_one_oligo_or_primer o_args;
@@ -265,12 +260,14 @@ typedef struct p3_global_settings {
   int salt_corrections; 
 
   /* Arguments applicable to primers but not oligos */
+
   double max_end_stability;
   /* The maximum value allowed for the delta
    * G of disruption for the 5 3' bases of
    * a primer.
    */
-  int    gc_clamp;              /* Required number of GCs at *3' end. */
+
+  int    gc_clamp;              /* Required number of GCs at 3' end. */
 
   /* ================================================== */
   /* Arguments related to primer and/or oligo
@@ -299,7 +296,6 @@ typedef struct p3_global_settings {
 
   /* ================================================== */
   /* Arguments for primer pairs and products. */
-  /* FIX ME, repplace this interval_array_t2 structs? */
   int    pr_min[PR_MAX_INTERVAL_ARRAY]; /* Minimum product sizes. */
   int    pr_max[PR_MAX_INTERVAL_ARRAY]; /* Maximum product sizes. */
   int    num_intervals;         /* 
@@ -317,12 +313,43 @@ typedef struct p3_global_settings {
   short  pair_compl_any;
   short  pair_compl_end;
 
-  /* Max diff between tm of primer and tm of product.
-     Cannot be calculated until product is known. */
+  /* Max difference between temperature of primer and temperature of
+     product.  Cannot be calculated until product is known. */
   double max_diff_tm; 
 
   pair_weights  pr_pair_weights;
 
+  int    min_three_prime_distance; /* Minimum number of base pairs
+				      between the 3' ends of
+				      successive left or successive
+				      right primers when returning
+				      num_return primer pairs.  The
+				      objective is get 'truly
+				      different' primer pairs.
+
+                                      Primers that end at e.g.
+                                      30 and 31 have a three-prime
+				      distance of 1.
+
+				      0 indicates a primer pair is
+				      ok if it has not already appeared
+                                      in the output list (default
+				      behavior and behavior
+                                      in previous releases). This
+				      is the most liberal behavior.
+
+                                      n > 0 indicates that a primer
+                                      pair is ok if:
+
+                                      NOT(3' end of left primer closer than n to
+				      the 3' end a left primer in an existing  pair)
+
+                                      AND
+
+                                      NOT(3' end of right primer closer than n
+				      to the 3' end of right primer in an existing pair)
+
+				   */
 } p3_global_settings;
 
 typedef enum oligo_type { OT_LEFT = 0, OT_RIGHT = 1, OT_INTL = 2 }
@@ -364,6 +391,7 @@ typedef struct rep_sim {
                     */
 } rep_sim;
 
+
 typedef struct primer_rec {
 
   rep_sim repeat_sim;
@@ -389,14 +417,20 @@ typedef struct primer_rec {
 
   double end_stability;
                    /* Delta G of disription of 5 3' bases. */
+
   int    start;    /* The 0-based index of the leftmost base of the primer
                       WITH RESPECT TO THE seq_args FIELD trimmed_seq. */
+
   int    seq_quality; /* Minimum quality score of bases included. */   
+
   short  self_any; /* Self complementarity as local alignment * 100. */
+
   short  self_end; /* Self complementarity at 3' end * 100. */
+
   short  template_mispriming;
                    /* Max 3' complementarity to any ectopic site in template
 		      on the given template strand. */
+
   short  template_mispriming_r;
                    /* Max 3' complementarity to any ectopic site in the
 		      template on the reverse complement of the given template
@@ -409,7 +443,9 @@ typedef struct primer_rec {
 		    * 0 if does not overlap any excluded region, 1 if it
 		    * does.
 		    */
+
   oligo_violation ok;
+
   char   length;   /* Length of the oligo. */
   char   num_ns;   /* Number of Ns in the oligo. */
   char   position_penalty_infinite; 
@@ -842,6 +878,7 @@ void p3_set_gs_pair_max_template_mispriming(p3_global_settings * p , short  pair
 void p3_set_gs_pair_repeat_compl(p3_global_settings * p, short  pair_repeat_compl); 
 void p3_set_gs_pair_compl_any(p3_global_settings * p , short  pair_compl_any);
 void p3_set_gs_pair_compl_end(p3_global_settings * p , short  pair_compl_end);
+void p3_set_gs_min_three_prime_distance(p3_global_settings *p, int min_distance);
 
 /* 
  * Choose individual primers or oligos, or primer pairs, or primer

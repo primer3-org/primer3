@@ -263,6 +263,8 @@ read_record(const int *strict_tags,
 	    COMPARE_INT("PRIMER_PRODUCT_OPT_SIZE", pa->product_opt_size);
 	    COMPARE_ALIGN_SCORE("PRIMER_SELF_ANY", pa->p_args.max_self_any);
 	    COMPARE_ALIGN_SCORE("PRIMER_SELF_END", pa->p_args.max_self_end);
+	    COMPARE_ALIGN_SCORE("PRIMER_PAIR_ANY", pa->pair_compl_any);
+	    COMPARE_ALIGN_SCORE("PRIMER_PAIR_END", pa->pair_compl_end);
 	    COMPARE_INT("PRIMER_FILE_FLAG", pa->file_flag);
 	    COMPARE_INT("PRIMER_PICK_ANYWAY", pa->pick_anyway);
 	    COMPARE_INT("PRIMER_GC_CLAMP", pa->gc_clamp);
@@ -272,6 +274,8 @@ read_record(const int *strict_tags,
 	    COMPARE_INT("PRIMER_NUM_RETURN", pa->num_return);
 	    COMPARE_INT("PRIMER_MIN_QUALITY", pa->p_args.min_quality);
 	    COMPARE_INT("PRIMER_MIN_END_QUALITY", pa->p_args.min_end_quality);
+	    COMPARE_INT("PRIMER_MIN_THREE_PRIME_DISTANCE", 
+			pa->min_three_prime_distance);
 	    COMPARE_INT("PRIMER_QUALITY_RANGE_MIN",
 				   pa->quality_range_min);
             COMPARE_INT("PRIMER_QUALITY_RANGE_MAX",
