@@ -5118,7 +5118,7 @@ p3_set_gs_primer_max_size(p3_global_settings * p , int val) {
 }
 
 void
-p3_set_gs_primer_max_polyx(p3_global_settings * p , int val) {
+p3_set_gs_primer_max_poly_x(p3_global_settings * p , int val) {
   p->p_args.max_poly_x = val;
 
 }
