@@ -5153,7 +5153,7 @@ p3_set_gs_primer_tm_santalucia(p3_global_settings * p , int val) {
 }
 
 void
-p3_set_gs_salt_corrections(p3_global_settings * p , int val) {
+p3_set_gs_primer_salt_corrections(p3_global_settings * p , int val) {
   p->salt_corrections = val;
 }
 
@@ -5431,10 +5431,26 @@ p3_set_gs_primer_outside_penalty(p3_global_settings * p , int val) {
   p->outside_penalty = val ;
 }
 
+
+void
+p3_set_gs_primer_mispriming_library(p3_global_settings * p , int val) {
+  /* fix this !!!! */
+  int i ;
+  i = val ;
+}
+
+void
+p3_set_gs_primer_internal_oligo_mishyb_library(p3_global_settings * p , int val) {
+  /* fix this !!!! */
+  int i ;
+  i = val ;
+}
+
 void
 p3_set_gs_primer_max_end_stability(p3_global_settings * p , int val) {
   p->max_end_stability = val ;
 }
+
 
 void
 p3_set_gs_primer_lowercase_masking(p3_global_settings * p , int val) {
