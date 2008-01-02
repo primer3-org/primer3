@@ -805,7 +805,7 @@ p3_get_retval_best_pairs(const p3retval *r) {
   return &r->best_pairs;
 }
 
-p3_output_type
+const p3_output_type
 p3_get_retval_output_type(const p3retval *r) {
   return r->output_type;
 }
