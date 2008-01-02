@@ -537,7 +537,7 @@ print_rest(f, pa, sa, best_pairs)
         fprintf(f, "   ");
 	print_oligo(f, "RIGHT PRIMER", sa, best_pairs->pairs[i].right, REVERSE,
 		    pa, pa->p_args.repeat_lib, print_lib_sim);
-	if ( pa->primer_task == 1) {
+	if ( pa->pick_internal_oligo == 1) {
             fprintf(f, "   ");
 	    print_oligo(f, "INTERNAL OLIGO", sa, best_pairs->pairs[i].intl,
 			FORWARD, pa, pa->o_args.repeat_lib, print_lib_sim);
@@ -579,16 +579,21 @@ print_explain(FILE *f,
 
   fprintf(f, "\nStatistics\n");
 
-  if (!pa->pick_anyway
-      || !((pick_pcr_primers == pa->primer_task 
+  if (!pa->pick_anyway || !(
+		 (pa->pick_left_primer == 1 && pa->pick_internal_oligo == 0
+		  && pa->pick_right_primer == 1
 	   && sa->left_input && sa->right_input)
-	  || (pick_pcr_primers_and_hyb_probe == pa->primer_task
+	  || (pa->pick_left_primer == 1 && pa->pick_internal_oligo == 1
+		  && pa->pick_right_primer == 1
 	      && sa->left_input && sa->right_input && sa->internal_input)
-	  || (pick_left_only == pa->primer_task
+	  || (pa->pick_left_primer == 1 && pa->pick_internal_oligo == 0
+		  && pa->pick_right_primer == 0
 	      && sa->left_input)
-	  || (pick_right_only == pa->primer_task
+	  || (pa->pick_left_primer == 0 && pa->pick_internal_oligo == 0
+		  && pa->pick_right_primer == 1
 	      && sa->right_input)
-	  || (pick_hyb_probe_only == pa->primer_task
+	  || (pa->pick_left_primer == 0 && pa->pick_internal_oligo == 1
+		  && pa->pick_right_primer == 0
 	      && sa->internal_input))) {
 
     if (print_lib_sim) {
@@ -651,30 +656,22 @@ print_explain(FILE *f,
 
   }
 
-  /* FIX ME clean up the conditions in these if stmts */
-
-  if ((pick_pcr_primers == pa->primer_task  
-       || pick_left_only == pa->primer_task
-       || pick_pcr_primers_and_hyb_probe == pa->primer_task)
+  if (pa->pick_left_primer == 1
       && !(pa->pick_anyway && sa->left_input))
     print_stat_line(f, "Left", retval->fwd.expl, 
 		    print_lib_sim, pa->lowercase_masking);
 
-  if ((pick_pcr_primers == pa->primer_task
-       || pick_right_only  == pa->primer_task
-       || pick_pcr_primers_and_hyb_probe == pa->primer_task)
+  if (pa->pick_right_primer == 1
       && !(pa->pick_anyway && sa->right_input))
     print_stat_line(f, "Right", retval->rev.expl,
 		    print_lib_sim, pa->lowercase_masking);
 
-  if ((pick_pcr_primers_and_hyb_probe == pa->primer_task
-       || pick_hyb_probe_only == pa->primer_task)
+  if (pa->pick_internal_oligo == 1
       && !(pa->pick_anyway && sa->internal_input))
     print_stat_line(f, "Intl", retval->intl.expl, 
 		    print_lib_sim, pa->lowercase_masking);
 
-  if (pick_pcr_primers == pa->primer_task
-      || pick_pcr_primers_and_hyb_probe == pa->primer_task) {
+  if (pa->pick_left_primer == 1 && pa->pick_right_primer == 1) {
     fprintf(f, "Pair Stats:\n");
     pr_print_pair_explain(f, pair_stats);
   }
