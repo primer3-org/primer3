@@ -213,6 +213,7 @@ INTERNAL OLIGO EXCLUDED REGIONS (start, len)*: 90,20
                                                              
 
 KEYS (in order of precedence):
+xxxxxx excluded region for internal oligo
 ^^^^^^ internal oligo
 
 
