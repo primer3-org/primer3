@@ -906,7 +906,6 @@ create_seq_arg() {
   r->incl_l = -1; /* Indicates logical NULL. */
   r->n_quality = 0;
   r->quality = NULL;
-  /* init_pr_append_str(&r->error); */
   
   return r;
 }
@@ -2917,13 +2916,11 @@ obj_fn(pa, h)
 
 char *
 pr_gather_warnings(const p3retval *retval, 
-		   /* const seq_args *sa,  */
 		   const p3_global_settings *pa,
 		   const pr_append_str *more_warnings) {
 
   pr_append_str warning;
 
-  /* PR_ASSERT(NULL != sa); */
   PR_ASSERT(NULL != pa);
 
   init_pr_append_str(&warning);
@@ -2936,7 +2933,7 @@ pr_gather_warnings(const p3retval *retval,
     pr_append(&warning, " (for internal oligo)");
   }
 
-  if (!pr_is_empty(&retval->warnings))
+  if (!pr_is_empty(&retval->warnings)) /* not here? */
     pr_append_new_chunk(&warning,  retval->warnings.data);
 
   /* if (sa->warning.data) pr_append_new_chunk(&warning, sa->warning.data); */
@@ -2944,7 +2941,7 @@ pr_gather_warnings(const p3retval *retval,
     pr_append_new_chunk(&warning, more_warnings->data);
   }
 
-  return pr_is_empty(&warning) ? NULL : warning.data;
+  return pr_is_empty(&warning) ? NULL : warning.data;  /* not here? */
 }
 
 static short
@@ -3662,8 +3659,6 @@ create_pr_append_str() {
   ret = malloc(sizeof(pr_append_str));
   if (NULL == ret) return NULL;
   init_pr_append_str(ret);
-  /* ret->data = NULL;
-     ret->storage_size = 0;  */
   return ret;
 }
 
@@ -3801,16 +3796,6 @@ pr_safe_realloc(void *p, size_t x)
 /* START functions which check and modify the input             */
 /* ============================================================ */
 
-/* Substracts the first_index of the start positions in an array */
-/* static void
-adjust_base_index_interval_list(intervals, num, first_index)
-    interval_array_t intervals;
-    int num, first_index;
-{
-    int i;
-    for (i = 0; i < num; i++) intervals[i][0] -= first_index;
-}  */
-
 /* Fuction to set the included region and fix the start positions */
 int
 p3_adjust_seq_args(const p3_global_settings *pa, 
@@ -3818,8 +3803,7 @@ p3_adjust_seq_args(const p3_global_settings *pa,
 		   pr_append_str *nonfatal_err,
 		   pr_append_str *warning)
 {
-  int seq_len, inc_len; /* , i;*/
-
+  int seq_len, inc_len;
 
   /* Complain if there is no sequence */
   if (NULL == sa->sequence) {
