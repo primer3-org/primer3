@@ -810,8 +810,8 @@ void p3_set_gs_primer_internal_oligo_max_template_mishyb(p3_global_settings * p 
 void p3_set_gs_primer_lib_ambiguity_codes_consensus(p3_global_settings * p , int val);
 void p3_set_gs_primer_inside_penalty(p3_global_settings * p , int val);
 void p3_set_gs_primer_outside_penalty(p3_global_settings * p , int val);
-void p3_set_gs_primer_mispriming_library(p3_global_settings * p , int val);
-void p3_set_gs_primer_internal_oligo_mishyb_library(p3_global_settings * p , int val);
+void p3_set_gs_primer_mispriming_library(p3_global_settings * p , char * val);
+void p3_set_gs_primer_internal_oligo_mishyb_library(p3_global_settings * p , char * val);
 void p3_set_gs_primer_max_end_stability(p3_global_settings * p , int val);
 void p3_set_gs_primer_lowercase_masking(p3_global_settings * p , int val);
 void p3_set_gs_primer_wt_tm_gt(p3_global_settings * p , int val);
