@@ -5384,16 +5384,14 @@ p3_set_gs_primer_outside_penalty(p3_global_settings * p , int val) {
 
 void
 p3_set_gs_primer_mispriming_library(p3_global_settings * p , int val) {
-  /* fix this !!!! */
-  int i ;
-  i = val ;
+  /* fix this ?? */
+  p->p_args.repeat_lib = read_and_create_seq_lib(path, "mispriming library") ;
 }
 
 void
 p3_set_gs_primer_internal_oligo_mishyb_library(p3_global_settings * p , int val) {
-  /* fix this !!!! */
-  int i ;
-  i = val ;
+  /* fix this ?? */
+  p->o_args.repeat_lib = read_and_create_seq_lib(path, "internal oligio mishyb library") ;
 }
 
 void
