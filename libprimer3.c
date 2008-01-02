@@ -3860,24 +3860,6 @@ p3_adjust_seq_args(const p3_global_settings *pa,
     return 1; 
   }
 
-  /* FIX ME -- temporary */
-  /* Copy over the new arrays into the deprecated arrays */
-  /* sa->num_targets = sa->tar2.count;
-  for (i = 0; i <PR_MAX_INTERVAL_ARRAY;  i++) {
-      sa->tar[i][0]     = sa->tar2.pairs[i][0];
-      sa->tar[i][1]     = sa->tar2.pairs[i][1];
-      } */
-  /* sa->num_excl = sa->excl2.count;
-  for (i = 0; i <PR_MAX_INTERVAL_ARRAY;  i++) {
-    sa->excl[i][0]     = sa->excl2.pairs[i][0];
-    sa->excl[i][1]     = sa->excl2.pairs[i][1];
-    } */
-  /* sa->num_internal_excl = sa->excl_internal2.count;
-  for (i = 0; i <PR_MAX_INTERVAL_ARRAY;  i++) {
-    sa->excl_internal[i][0]     = sa->excl_internal2.pairs[i][0];
-    sa->excl_internal[i][1]     = sa->excl_internal2.pairs[i][1];
-  }  */
-
   return 0;
 }
 
