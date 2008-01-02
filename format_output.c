@@ -177,7 +177,7 @@ format_pairs(FILE *f,
 
   /* Print if a mispriming libraby for the internal oligo 
    * was used and which one */
-  if ( pa->primer_task == pick_pcr_primers_and_hyb_probe ) {
+  if ( pa->pick_internal_oligo == 1 ) {
     if (pa->o_args.repeat_lib != NULL)
       fprintf(f, "Using internal oligo mishyb library %s\n",
 	      pa->o_args.repeat_lib->repeat_file);
@@ -247,7 +247,7 @@ print_summary(f, pa, sa, best_pairs, num)
 	print_oligo(f, "RIGHT PRIMER", sa, p->right, REVERSE, pa,
 		    pa->p_args.repeat_lib,
 		    print_lib_sim);
-	if ( pa->primer_task == 1)
+	if ( pa->pick_internal_oligo == 1 )
 	    print_oligo(f, "INTERNAL OLIGO", sa, p->intl, FORWARD,
 			pa, pa->o_args.repeat_lib,
 			print_lib_sim);
@@ -352,9 +352,8 @@ print_seq(f, pa, sa, h, best_pairs, num)
     char *notestr;
     primer_pair *p;
     p = NULL;
-    if(pa->primer_task == pick_pcr_primers ||
-       pa->primer_task == pick_pcr_primers_and_hyb_probe)
-				      p = best_pairs->pairs + num;
+    if(pa->pick_left_primer == 1 && pa->pick_right_primer == 1)
+	      p = best_pairs->pairs + num;
     len = strlen(sa->sequence);
     if (!(notes = malloc(sizeof(*notes) * len))) return 1;
     memset(notes, 0, sizeof(*notes) * len);
@@ -366,8 +365,7 @@ print_seq(f, pa, sa, h, best_pairs, num)
 	if (i < sa->incl_s || i >= sa->incl_s + sa->incl_l)
 	    notes[i] |= VECTOR;
 
-	if ((pa->primer_task == pick_pcr_primers ||
-	    pa->primer_task == pick_pcr_primers_and_hyb_probe) &&
+	if (pa->pick_left_primer == 1 && pa->pick_right_primer == 1 &&
 	    best_pairs->num_pairs > 0) {
 	    if (i >= p->left->start + sa->incl_s
 		&& i < p->left->start + p->left->length + sa->incl_s)
@@ -375,21 +373,21 @@ print_seq(f, pa, sa, h, best_pairs, num)
 	    if (i >= p->right->start - p->right->length + 1 + sa->incl_s
 		&& i <= p->right->start + sa->incl_s)
 		notes[i] |= RIGHT_OLIGO;
-	    if ( pa->primer_task == 1
+	    if ( pa->pick_internal_oligo == 1
 		&& i >= p->intl->start + sa->incl_s 
 		&& i < p->intl->start + p->intl->length + sa->incl_s)
 		notes[i] |= INTL_OLIGO;
 	}
 	else if (h != NULL) {
-	    if(pa->primer_task == pick_left_only &&
+	    if(pa->pick_left_primer == 1 &&
 	       i < h->start + h->length + sa->incl_s &&
 	       i >= h->start + sa->incl_s)
 	       notes[i] |= LEFT_OLIGO;
-            else if(pa->primer_task == pick_right_only &&
+        else if(pa->pick_right_primer == 1 &&
 	       i >= h->start - h->length + 1 + sa->incl_s
 	       && i <= h->start + sa->incl_s)
 	       notes[i] |= RIGHT_OLIGO;
-            else if(pa->primer_task == pick_hyb_probe_only &&
+        else if(pa->pick_internal_oligo == 1 &&
 	         i >= h->start + sa->incl_s                &&
 	         i < h->start + h->length + sa->incl_s)
 	       notes[i] |= INTL_OLIGO;
@@ -448,26 +446,24 @@ print_seq(f, pa, sa, h, best_pairs, num)
     if (sa->excl2.count > 0)
 	fprintf(f, "XXXXXX excluded region\n");
 
-    if (pa->primer_task == 1
-	&& sa->excl_internal2.count > 0)
+    if (pa->pick_internal_oligo ==1 && sa->excl_internal2.count > 0)
 	fprintf(f, "xxxxxx excluded region for internal oligo\n");
 
     if (sa->tar2.count > 0)
 	fprintf(f, "****** target\n");
 
-    if ((pa->primer_task == pick_pcr_primers ||
-	pa->primer_task == pick_pcr_primers_and_hyb_probe) &&
+    if (pa->pick_left_primer == 1 && pa->pick_right_primer == 1 &&
 	best_pairs->num_pairs > 0) {
 	   fprintf(f, ">>>>>> left primer\n");
 	   fprintf(f, "<<<<<< right primer\n");
-	   if ( pa->primer_task == 1)
+	   if ( pa->pick_internal_oligo == 1 )
 	      fprintf(f, "^^^^^^ internal oligo\n");
     }
-    else if (pa->primer_task == pick_left_only && h != NULL)
+    else if (pa->pick_left_primer == 1 && h != NULL)
 	   fprintf(f, ">>>>>> left primer\n");
-    else if (pa->primer_task == pick_right_only && h != NULL)
+    else if (pa->pick_right_primer == 1 && h != NULL)
 	   fprintf(f, "<<<<<< right primer\n");
-    else if (pa->primer_task == pick_hyb_probe_only && h != NULL)
+    else if (pa->pick_internal_oligo == 1 && h != NULL)
 	   fprintf(f, "^^^^^^ internal oligo\n");
 
     if (something_found) fputc('\n', f);
@@ -787,13 +783,14 @@ format_oligos(FILE *f,
     else
       fprintf(f, "No mispriming library specified\n");
   } else {
-    if ( pa->primer_task == 1) {
+	  /* FIX ME AU: You can never enter here: 
+  unnecessar if:  if ( pa->primer_task == 1 ) {
       if (pa->o_args.repeat_lib->repeat_file != NULL)
 	fprintf(f, "Using internal oligo mishyb library %s\n",
 		pa->o_args.repeat_lib->repeat_file);
       else
 	fprintf(f, "No internal oligo mishyb library specified\n");
-    }
+    } */
   }
 
   if(l == OT_LEFT) strcpy(type, "LEFT_PRIMER");
