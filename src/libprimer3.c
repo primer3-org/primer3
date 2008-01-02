@@ -2019,8 +2019,7 @@ oligo_param(const p3_global_settings *pa,
 
     if (must_use
 	|| pa->file_flag 
-	|| (pa->primer_task != pick_pcr_primers && 
-	    pa->primer_task != pick_pcr_primers_and_hyb_probe)
+	|| !(pa->pick_left_primer == 1 && pa->pick_right_primer == 1)  /* No Pairs!*/
 	|| po_args->weights.compl_any 
 	|| po_args->weights.compl_end
 	) {
@@ -2039,8 +2038,7 @@ oligo_param(const p3_global_settings *pa,
 
     if (must_use
 	|| pa->file_flag
-	||(pa->primer_task != pick_pcr_primers && 
-	   pa->primer_task != pick_pcr_primers_and_hyb_probe)
+	|| !(pa->pick_left_primer == 1 && pa->pick_right_primer == 1) /* No Pairs!*/
 	|| po_args->weights.repeat_sim
 	|| ((OT_RIGHT == l || OT_LEFT == l) 
 	    && pa->p_args.weights.template_mispriming)
@@ -2333,11 +2331,9 @@ choose_pair_or_triple(p3retval *retval,
 	  PR_ASSERT(h.pair_quality >= 0.0);
 	}
 
-	if ( pa->primer_task == pick_pcr_primers_and_hyb_probe
-	     /* FIX ME 
-		this change does not work pa->pick_right_primer 
-		&& pa->pick_left_primer && pa->pick_internal_oligo */
-	     && (choose_internal_oligo(retval,
+	if (pa->pick_right_primer && pa->pick_left_primer
+			&& pa->pick_internal_oligo
+			&& (choose_internal_oligo(retval,
 				       h.left, h.right,
 				       &n_int, sa, pa, 
 				       dpal_arg_to_use)!=0)) {
@@ -2349,7 +2345,8 @@ choose_pair_or_triple(p3retval *retval,
 
 	if (num_in_p < pa->num_return) {
 	  
-	  if ( pa->primer_task == pick_pcr_primers_and_hyb_probe) 
+	  if (pa->pick_right_primer && pa->pick_left_primer
+				&& pa->pick_internal_oligo) 
 	    h.intl = &retval->intl.oligo[n_int];
 
 	  if (pa->pr_pair_weights.io_quality) {
@@ -2366,7 +2363,8 @@ choose_pair_or_triple(p3retval *retval,
 	  num_in_p++;
 	} else {
 	  /* num_in_p >= pa->num_return */
-	  if ( pa->primer_task == pick_pcr_primers_and_hyb_probe) {
+	  if (pa->pick_right_primer && pa->pick_left_primer
+				&& pa->pick_internal_oligo) {
 	    h.intl = &retval->intl.oligo[n_int];
 	  }
 
@@ -2864,8 +2862,8 @@ obj_fn(pa, h)
     if(pa->pr_pair_weights.primer_quality)
        sum += pa->pr_pair_weights.primer_quality * (h->left->quality + h->right->quality);
 
-    if(pa->pr_pair_weights.io_quality && 
-        pa->primer_task == pick_pcr_primers_and_hyb_probe)
+    if(pa->pr_pair_weights.io_quality && pa->pick_right_primer 
+    		&& pa->pick_left_primer	&& pa->pick_internal_oligo)
        sum += pa->pr_pair_weights.io_quality * h->intl->quality;
 
     if(pa->pr_pair_weights.diff_tm)
@@ -3999,12 +3997,9 @@ _pr_data_control(const p3_global_settings *pa,
     }
     
     /* The product must fit in the included region */
-    /* FIX ME: Actually here can be checked for retval->output_type = primer_pairs 
-     * Maybe output_type should be part of pa and be set in read_boulder while 
-     * reading in the task */
-    if (sa->incl_l < pr_min && pa->primer_task != pick_hyb_probe_only
-	&& pa->primer_task != pick_left_only
-	&& pa->primer_task != pick_right_only) {
+    /* FIX ME: this wont work for primer lists */
+    if (sa->incl_l < pr_min && pa->pick_left_primer == 1 
+    		&& pa->pick_right_primer == 1) {
 	pr_append_new_chunk(nonfatal_err,
 	   "INCLUDED_REGION length < min PRIMER_PRODUCT_SIZE_RANGE");
 	return 1;
@@ -4284,7 +4279,7 @@ _pr_data_control(const p3_global_settings *pa,
     }
 
     if(pa->pr_pair_weights.io_quality 
-	&& pa->primer_task != pick_pcr_primers_and_hyb_probe ) {
+	&& pa->pick_internal_oligo == 0 ) {
 	  pr_append_new_chunk(glob_err,
 	   "Internal oligo quality is part of objective function"
 			      " while internal oligo choice is not required");
@@ -4405,8 +4400,6 @@ p3_print_oligo_lists(const p3retval *retval,
   if (NULL == file) return 1; /* ENOMEM */
 
   /* Check if the left primers have to be printed */
-  /* OK pa->primer_task != pick_right_only 
-     && pa->primer_task != pick_hyb_probe_only*/
   if( pa->pick_left_primer ) {
     /* Create the file name and open file*/
     strcpy(file, sa->sequence_name);
@@ -4429,9 +4422,7 @@ p3_print_oligo_lists(const p3retval *retval,
   }
 
   /* Check if the right primers have to be printed */
-  if (pa->pick_right_primer 
-      /* pa->primer_task != pick_left_only 
-	 && pa->primer_task != pick_hyb_probe_only*/ ) {
+  if (pa->pick_right_primer) {
     strcpy(file, sa->sequence_name);
     strcat(file, ".rev");
     if (!(fh = fopen(file,"w"))) {
@@ -4452,8 +4443,6 @@ p3_print_oligo_lists(const p3retval *retval,
 
   /* Check if the internal oligos have to be printed */
   if (pa->pick_internal_oligo) { 
-    /* pa->primer_task == pick_pcr_primers_and_hyb_probe 
-       || pa->primer_task == pick_hyb_probe_only */ 
     /* Create the file name and open file*/
     strcpy(file, sa->sequence_name);
     strcat(file, ".int");
