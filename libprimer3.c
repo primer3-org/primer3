@@ -1041,13 +1041,12 @@ choose_primers(const p3_global_settings *pa,
        'goodness' of the primer pair.  I don't know
        with 'goodness' of the primer pair includes the internal oligo
        if there is one' */
-    if (pa->primer_task == pick_hyb_probe_only)
+    if (retval->output_type == primer_list && pa->pick_internal_oligo == 1)
     	sort_primer_array(&retval->intl);
 
     a_pair_array.storage_size = a_pair_array.num_pairs = 0;
 
-    if (pa->primer_task == pick_pcr_primers 
-	|| pa->primer_task == pick_pcr_primers_and_hyb_probe) {
+    if (retval->output_type == primer_pairs) {
 
       /* Iterate over each product-size-range until we
 	 run out of size_range' s or until we get pa->num_return
@@ -1312,7 +1311,7 @@ make_primer_lists(p3retval *retval,
     /* We use some global information to restrict the region
        of the input sequence in which we generate candidate
        oligos. */
-    if (pa->primer_task == pick_left_only)
+    if (retval->output_type == primer_list && pa->pick_left_primer == 1)
       f_b = n - 1;
     else if (tar_r - 1 < n - pr_min + pa->p_args.max_size - 1 
 	&& !(pa->pick_anyway && sa->left_input))
@@ -1341,7 +1340,7 @@ make_primer_lists(p3retval *retval,
     
     }  /* if (pa->pick_left_primer) */
 
-    if (pa->primer_task == pick_right_only)
+    if (retval->output_type == primer_list && pa->pick_right_primer == 1)
       r_b = 0;
     else if (tar_l+1>pr_min - pa->p_args.max_size
 	&& !(pa->pick_anyway && sa->right_input))
@@ -1505,13 +1504,9 @@ pick_primer_range(const int start, const int length, int *extreme,
     	  
   	    /* Figure out positions for forward primers */
   	    if (oligo->type != OT_RIGHT) {
-  	     	/* FIX ME use something based on:
-  	    	    if (i-j > n-pr_min-1 && (retval->output_type == primer_pairs)
-  	    	    		             && pa->pick_left_primer) continue;*/
-
   	    	/* Check if the product is of sufficient size */
-  	  	    if (i-j > n-pr_min-1 && (pick_left_only != pa->primer_task)
-  	  	    		&& (oligo->type == OT_LEFT)) continue;
+  	  	    if (i-j > n-pr_min-1 && retval->output_type == primer_pairs
+  	  	    		&& oligo->type == OT_LEFT) continue;
   	    	
 	    	/* Break if the primer is bigger than the sequence left*/
 	        if(i-j < -1) break;
@@ -1525,7 +1520,7 @@ pick_primer_range(const int start, const int length, int *extreme,
   	    /* Figure out positions for reverse primers */
   	    else {
   	    	/* Check if the product is of sufficient size */
-    	    if (i+j<pr_min && pa->primer_task != pick_right_only) continue;
+    	    if (i+j<pr_min && retval->output_type == primer_pairs) continue;
   	    	
   	    	/* Break if the primer is bigger than the sequence left*/
     	    if(i+j>n) break;
