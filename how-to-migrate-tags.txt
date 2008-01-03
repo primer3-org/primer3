@@ -1,0 +1,181 @@
+This file should serve as a guideline how to migrate from the old tags to the new tags. New primer3 
+functionality is only available with the new tags.
+
+The new primer3 tags are designed with the idea in mind that not humans use primer3, but computer 
+scripts and other programs. The modifications make it easier for programmers to read the output and 
+write the input for primer3.
+
+There are three classes of input: "Sequence" input tags describe a particular input sequence to 
+primer3, and are reset after every boulder record (now starting with SEQUENCE_).  "Global" input 
+tags describe the general parameters that primer3 should use in its searches, and the values of these 
+tags persist between input boulder records until or unless they are explicitly reset (now starting 
+with PRIMER_). "Program" parameters that deal with the behavior of the primer3 program itself 
+(now starting with P3_). See below for a list of the modified tags.
+
+The handling of PRIMER_TASK changed completely. In the past we used it to tell primer3 what task to 
+perform. Now the task is complemented with PRIMER_PICK_RIGHT_PRIMER, PRIMER_PICK_INTERNAL_OLIGO and 
+PRIMER_PICK_LEFT_PRIMER, which specify which primers are to be picked.
+
+
+--------------------------------------------------------------------------------
+These Tags are modified:
+
+The "per sequence" tags:
+
+NEW VERSION                       - OLD VERSION                                - comment
+ 
+SEQUENCE_ID                       - PRIMER_SEQUENCE_ID
+SEQUENCE_DNA                      - SEQUENCE                                   - dont know a good tag
+SEQUENCE_QUALITY                  - PRIMER_SEQUENCE_QUALITY
+SEQUENCE_INCLUDED_REGION          - INCLUDED_REGION
+SEQUENCE_TARGET                   - TARGET
+SEQUENCE_EXCLUDED_REGION          - EXCLUDED_REGION
+SEQUENCE_INTERNAL_EXCLUDED_REGION - PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION
+SEQUENCE_START_CODON_POSITION     - PRIMER_START_CODON_POSITION
+ 
+SEQUENCE_PRIMER                   - PRIMER_LEFT_INPUT
+SEQUENCE_OLIGO                    - PRIMER_INTERNAL_OLIGO_INPUT
+SEQUENCE_PRIMER_REVCOMP           - PRIMER_RIGHT_INPUT
+
+--------------------------------------------------------------------------------
+The "global" tags:
+
+NEW VERSION                       - OLD VERSION                                - comment
+
+PRIMER_TASK                       - PRIMER_TASK                                - the use is modified
+PRIMER_PICK_RIGHT_PRIMER          - --- did not exist
+PRIMER_PICK_INTERNAL_OLIGO        - PRIMER_PICK_INTERNAL_OLIGO                 - the use is modified
+PRIMER_PICK_LEFT_PRIMER           - --- did not exist
+
+PRIMER_MONOVALENT_CONC            - PRIMER_SALT_CONC
+PRIMER_TM_FORMULA                 - PRIMER_TM_SANTALUCIA
+
+P3_FILE_FLAG                      - PRIMER_FILE_FLAG
+
+--------------------------------------------------------------------------------
+OUTPUT TAGS:
+
+There are three big changes on the output:
+- INTERNAL_OLIGO is now replaced by INTERNAL.
+- The first version is numbered 0.
+- The "PRODUCT" tags are renamed
+
+Now all primer related output follows the rule:
+PRIMER_{LEFT,RIGHT,INTERNAL,PAIR}_<j>_<tag_name>.
+where <j> is an integer from 0 to n, where n is at most the value of
+PRIMER_NUM_RETURN.
+
+This allows easy scripting by using the underscores _ to split the name. The first part
+is PRIMER, the second the type of oligo or pair parameters, the third is always a number, 
+starting at 0 and the rest are used by the tags.
+
+That affects also (shown for output nr. 5):
+NEW VERSION                             - OLD VERSION                       - comment
+PRIMER_PAIR_4_PENALTY                   - PRIMER_PAIR_PENALTY_4             - number moved behind PAIR
+PRIMER_PAIR_4_PRODUCT_SIZE              - PRIMER_PRODUCT_SIZE_4             - grouped with PAIR
+PRIMER_PAIR_4_PRODUCT_TM                - PRIMER_PRODUCT_TM_4               - grouped with PAIR
+PRIMER_PAIR_4_PRODUCT_TM_OLIGO_TM_DIFF  - PRIMER_PRODUCT_TM_OLIGO_TM_DIFF_4 - grouped with PAIR
+
+
+---------------------------------------------------------------------------------
+Unchanged Tags:
+
+PRIMER_EXPLAIN_FLAG
+PRIMER_PICK_ANYWAY
+PRIMER_MISPRIMING_LIBRARY
+PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS
+PRIMER_MAX_MISPRIMING
+PRIMER_MAX_TEMPLATE_MISPRIMING
+PRIMER_PAIR_MAX_MISPRIMING
+PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING
+PRIMER_PRODUCT_MIN_TM
+PRIMER_PRODUCT_OPT_TM
+PRIMER_PRODUCT_MAX_TM
+PRIMER_PRODUCT_OPT_SIZE
+PRIMER_PRODUCT_SIZE_RANGE
+PRIMER_GC_CLAMP
+PRIMER_OPT_SIZE
+PRIMER_MIN_SIZE
+PRIMER_MAX_SIZE
+PRIMER_OPT_TM
+PRIMER_MIN_TM
+PRIMER_MAX_TM
+PRIMER_MAX_DIFF_TM
+PRIMER_MIN_GC
+PRIMER_OPT_GC_PERCENT
+PRIMER_MAX_GC
+PRIMER_DIVALENT_CONC
+PRIMER_DNTP_CONC
+PRIMER_SALT_CORRECTIONS
+PRIMER_LOWERCASE_MASKING
+PRIMER_DNA_CONC
+PRIMER_NUM_NS_ACCEPTED
+PRIMER_SELF_ANY
+PRIMER_SELF_END
+PRIMER_MAX_POLY_X
+PRIMER_LIBERAL_BASE
+PRIMER_NUM_RETURN
+PRIMER_FIRST_BASE_INDEX
+PRIMER_MIN_QUALITY
+PRIMER_MIN_END_QUALITY
+PRIMER_QUALITY_RANGE_MIN
+PRIMER_QUALITY_RANGE_MAX
+PRIMER_INSIDE_PENALTY
+PRIMER_OUTSIDE_PENALTY
+PRIMER_MAX_END_STABILITY
+PRIMER_WT_TM_GT
+PRIMER_WT_TM_LT
+PRIMER_WT_SIZE_LT
+PRIMER_WT_SIZE_GT
+PRIMER_WT_GC_PERCENT_LT
+PRIMER_WT_GC_PERCENT_GT
+PRIMER_WT_COMPL_ANY
+PRIMER_WT_COMPL_END
+PRIMER_WT_NUM_NS
+PRIMER_WT_REP_SIM
+PRIMER_WT_SEQ_QUAL
+PRIMER_WT_END_QUAL
+PRIMER_WT_POS_PENALTY
+PRIMER_WT_END_STABILITY
+PRIMER_WT_TEMPLATE_MISPRIMING
+PRIMER_PAIR_WT_PR_PENALTY
+PRIMER_PAIR_WT_IO_PENALTY
+PRIMER_PAIR_WT_DIFF_TM
+PRIMER_PAIR_WT_COMPL_ANY
+PRIMER_PAIR_WT_COMPL_END
+PRIMER_PAIR_WT_PRODUCT_TM_LT
+PRIMER_PAIR_WT_PRODUCT_TM_GT
+PRIMER_PAIR_WT_PRODUCT_SIZE_GT
+PRIMER_PAIR_WT_PRODUCT_SIZE_LT
+PRIMER_PAIR_WT_REP_SIM
+PRIMER_PAIR_WT_TEMPLATE_MISPRIMING
+PRIMER_INTERNAL_OLIGO_OPT_SIZE
+PRIMER_INTERNAL_OLIGO_MIN_SIZE
+PRIMER_INTERNAL_OLIGO_MAX_SIZE
+PRIMER_INTERNAL_OLIGO_OPT_TM
+PRIMER_INTERNAL_OLIGO_MIN_TM
+PRIMER_INTERNAL_OLIGO_MAX_TM
+PRIMER_INTERNAL_OLIGO_MIN_GC
+PRIMER_INTERNAL_OLIGO_OPT_GC_PERCENT
+PRIMER_INTERNAL_OLIGO_MAX_GC
+PRIMER_INTERNAL_OLIGO_SALT_CONC
+PRIMER_INTERNAL_OLIGO_DIVALENT_CONC
+PRIMER_INTERNAL_OLIGO_DNTP_CONC
+PRIMER_INTERNAL_OLIGO_DNA_CONC
+PRIMER_INTERNAL_OLIGO_SELF_ANY
+PRIMER_INTERNAL_OLIGO_MAX_POLY_X
+PRIMER_INTERNAL_OLIGO_SELF_END
+PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY
+PRIMER_INTERNAL_OLIGO_MAX_MISHYB
+PRIMER_INTERNAL_OLIGO_MIN_QUALITY
+PRIMER_INTERNAL_OLIGO_NUM_NS
+PRIMER_IO_WT_TM_GT
+PRIMER_IO_WT_TM_LT
+PRIMER_IO_WT_SIZE_LT
+PRIMER_IO_WT_SIZE_GT
+PRIMER_IO_WT_GC_PERCENT_LT
+PRIMER_IO_WT_GC_PERCENT_GT
+PRIMER_IO_WT_COMPL_ANY
+PRIMER_IO_WT_NUM_NS
+PRIMER_IO_WT_REP_SIM
+PRIMER_IO_WT_SEQ_QUAL
