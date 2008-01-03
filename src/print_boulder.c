@@ -41,8 +41,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 static char *pr_program_name = "Program name is probably primer3_core";
 
-static void   print_all_explain(const primer_args *, const seq_args *, const p3retval *);
-static void   print_explain(const oligo_stats *, oligo_type);
+static void   print_all_explain(const primer_args *, const seq_args *, const p3retval *, const int *io_version);
+static void   print_explain(const oligo_stats *, oligo_type, const int *io_version);
 
 /* Print the data for chosen primer pairs to stdout in "boulderio" format. */
 void
@@ -63,7 +63,7 @@ boulder_print(const int *io_version,
 
   /* Pointers for the primer set just printing */
   primer_rec *fwd, *rev, *intl;
-    
+ 
     /* Variables only used for Primer Lists */
     int num_fwd, num_rev, num_int, num_print;
     int print_fwd = 0;
@@ -85,7 +85,15 @@ boulder_print(const int *io_version,
     PR_ASSERT(NULL != pa);
     PR_ASSERT(NULL != sa);
     PR_ASSERT(NULL != io_version);
-
+    
+    /* This deals with the renaming of the internal oligo */
+    char *new_oligo_name = "INTERNAL";
+    char *old_oligo_name = "INTERNAL_OLIGO";
+    char *int_oligo = new_oligo_name;
+    if (*io_version == 0) {
+  	  int_oligo = old_oligo_name;
+    }
+        
     /* Check if there are warnings and print them */
     if ((warning = pr_gather_warnings(retval, pa, more_warnings))
 	!= NULL) { 
@@ -114,7 +122,7 @@ boulder_print(const int *io_version,
 
 
     /* Prints out statistics about the primers */
-    if (pa->explain_flag) print_all_explain(pa, sa, retval);
+    if (pa->explain_flag) print_all_explain(pa, sa, retval, io_version);
     
     /* Print out the stop codon if a reading frame was specified */
     if (!PR_START_CODON_POS_IS_NULL(sa))
@@ -223,7 +231,7 @@ boulder_print(const int *io_version,
 	if (go_rev == 1)
 	  printf("PRIMER_RIGHT%s_PENALTY=%f\n", suffix, rev->quality);
 	if (go_int == 1)
-	  printf("PRIMER_INTERNAL_OLIGO%s_PENALTY=%f\n", suffix, intl->quality);
+	  printf("PRIMER_%s%s_PENALTY=%f\n", int_oligo, suffix, intl->quality);
 
     /* Print primer sequences. */
 	if (go_fwd == 1)
@@ -233,7 +241,7 @@ boulder_print(const int *io_version,
 	  printf("PRIMER_RIGHT%s_SEQUENCE=%s\n", suffix,
 	       pr_oligo_rev_c_sequence(sa, rev));
 	if(go_int == 1)
-	    printf("PRIMER_INTERNAL_OLIGO%s_SEQUENCE=%s\n", suffix,
+	    printf("PRIMER_%s%s_SEQUENCE=%s\n", int_oligo, suffix,
 		   pr_oligo_sequence(sa,intl));
 	
 	/* Print primer start and length */
@@ -246,7 +254,7 @@ boulder_print(const int *io_version,
 	       rev->start + incl_s + pa->first_base_index,
 	       rev->length);
 	if (go_int == 1)
-	    printf("PRIMER_INTERNAL_OLIGO%s=%d,%d\n", suffix,
+	    printf("PRIMER_%s%s=%d,%d\n", int_oligo, suffix,
 		   intl->start + incl_s + pa->first_base_index,
 		   intl->length);
 
@@ -256,7 +264,7 @@ boulder_print(const int *io_version,
 	if (go_rev == 1)
 	  printf("PRIMER_RIGHT%s_TM=%.3f\n", suffix, rev->temp);
 	if (go_int == 1)
-	    printf("PRIMER_INTERNAL_OLIGO%s_TM=%.3f\n",suffix, intl->temp);
+	    printf("PRIMER_%s%s_TM=%.3f\n", int_oligo, suffix, intl->temp);
 
 	/* Print primer GC content */
 	if (go_fwd == 1)
@@ -264,7 +272,7 @@ boulder_print(const int *io_version,
 	if (go_rev == 1)
 	  printf("PRIMER_RIGHT%s_GC_PERCENT=%.3f\n", suffix, rev->gc_content);
 	if (go_int == 1)
-	  printf("PRIMER_INTERNAL_OLIGO%s_GC_PERCENT=%.3f\n",suffix,
+	  printf("PRIMER_%s%s_GC_PERCENT=%.3f\n", int_oligo, suffix,
 		   intl->gc_content);
 
 	/* Print primer self_any */
@@ -275,7 +283,7 @@ boulder_print(const int *io_version,
 	  printf("PRIMER_RIGHT%s_SELF_ANY=%.2f\n", suffix,
 	       rev->self_any / PR_ALIGN_SCORE_PRECISION);
 	if (go_int == 1)
-	    printf("PRIMER_INTERNAL_OLIGO%s_SELF_ANY=%.2f\n", suffix,
+	    printf("PRIMER_%s%s_SELF_ANY=%.2f\n", int_oligo, suffix,
 		   intl->self_any / PR_ALIGN_SCORE_PRECISION);
 	
 	/* Print primer self_end*/
@@ -286,7 +294,7 @@ boulder_print(const int *io_version,
 	  printf("PRIMER_RIGHT%s_SELF_END=%.2f\n", suffix,
 		   rev->self_end / PR_ALIGN_SCORE_PRECISION);
 	if (go_int == 1)
-	    printf("PRIMER_INTERNAL_OLIGO%s_SELF_END=%.2f\n", suffix,
+	    printf("PRIMER_%s%s_SELF_END=%.2f\n", int_oligo, suffix,
 		   intl->self_end / PR_ALIGN_SCORE_PRECISION);
 	
 	/*Print out primer mispriming scores */
@@ -307,7 +315,7 @@ boulder_print(const int *io_version,
     
     /* Print out internal oligo mispriming scores */
 	if (go_int == 1 && seq_lib_num_seq(pa->o_args.repeat_lib) > 0)
-	  printf("PRIMER_INTERNAL_OLIGO%s_MISHYB_SCORE=%.2f, %s\n", suffix,
+	  printf("PRIMER_%s%s_MISHYB_SCORE=%.2f, %s\n", int_oligo, suffix,
 		intl->repeat_sim.score[intl->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
 		   	   intl->repeat_sim.name);
 
@@ -320,7 +328,7 @@ boulder_print(const int *io_version,
         printf("PRIMER_RIGHT%s_MIN_SEQ_QUALITY=%d\n", suffix,
 		   rev->seq_quality);
 	  if (go_int == 1 && (retval->output_type == primer_list)) 
-	  	printf("PRIMER_INTERNAL_OLIGO%s_MIN_SEQ_QUALITY=%d\n", suffix,
+	  	printf("PRIMER_%s%s_MIN_SEQ_QUALITY=%d\n", int_oligo, suffix,
 	  	   intl->seq_quality);
 	      /* Has to be here and in primer pairs for backward compatibility */
         }
@@ -355,7 +363,7 @@ boulder_print(const int *io_version,
     /* Print the pair parameters*/
 	if (retval->output_type == primer_pairs) {
   	  if (go_int == 1 && NULL != sa->quality) /* FIX ME - Uptate the tests */
-	    printf("PRIMER_INTERNAL_OLIGO%s_MIN_SEQ_QUALITY=%d\n",
+	    printf("PRIMER_%s%s_MIN_SEQ_QUALITY=%d\n", int_oligo,
 		   suffix, intl->seq_quality);
   	  /* Print pair comp_any */
 	  printf("PRIMER_PAIR%s_COMPL_ANY=%.2f\n", suffix,
@@ -364,22 +372,42 @@ boulder_print(const int *io_version,
 	  printf("PRIMER_PAIR%s_COMPL_END=%.2f\n", suffix,
 		   retval->best_pairs.pairs[i].compl_end  / PR_ALIGN_SCORE_PRECISION);
 
-	  /* Print product size */
-	  printf("PRIMER_PRODUCT_SIZE%s=%d\n", suffix,
-		   retval->best_pairs.pairs[i].product_size);
-	  /* Print the product Tm if a Tm range is defined */
-      if (pa->product_max_tm != PR_DEFAULT_PRODUCT_MAX_TM ||
-	      pa->product_min_tm != PR_DEFAULT_PRODUCT_MIN_TM) {
-	    printf("PRIMER_PRODUCT_TM%s=%.4f\n", suffix,
-			 retval->best_pairs.pairs[i].product_tm);
-        
-	    printf("PRIMER_PRODUCT_TM_OLIGO_TM_DIFF%s=%.4f\n", suffix,
-			retval->best_pairs.pairs[i].product_tm_oligo_tm_diff);
-
-	    printf("PRIMER_PAIR%s_T_OPT_A=%.4f\n", suffix,
-			retval->best_pairs.pairs[i].t_opt_a);
+	  if (*io_version == 0) {
+		  /* Print product size */
+		  printf("PRIMER_PRODUCT_SIZE%s=%d\n", suffix,
+			   retval->best_pairs.pairs[i].product_size);
+		  /* Print the product Tm if a Tm range is defined */
+		  if (pa->product_max_tm != PR_DEFAULT_PRODUCT_MAX_TM ||
+		      pa->product_min_tm != PR_DEFAULT_PRODUCT_MIN_TM) {
+		    printf("PRIMER_PRODUCT_TM%s=%.4f\n", suffix,
+				 retval->best_pairs.pairs[i].product_tm);
+		    
+		    printf("PRIMER_PRODUCT_TM_OLIGO_TM_DIFF%s=%.4f\n", suffix,
+				retval->best_pairs.pairs[i].product_tm_oligo_tm_diff);
+		
+		    printf("PRIMER_PAIR%s_T_OPT_A=%.4f\n", suffix,
+				retval->best_pairs.pairs[i].t_opt_a);
+		  }
+	  } else {
+		  /* Print product size */
+		  printf("PRIMER_PAIR%s_PRODUCT_SIZE=%d\n", suffix,
+			   retval->best_pairs.pairs[i].product_size);
+		  /* Print the product Tm if a Tm range is defined */
+		  if (pa->product_max_tm != PR_DEFAULT_PRODUCT_MAX_TM ||
+		      pa->product_min_tm != PR_DEFAULT_PRODUCT_MIN_TM) {
+		    printf("PRIMER_PAIR%s_PRODUCT_TM=%.4f\n", suffix,
+				 retval->best_pairs.pairs[i].product_tm);
+		    
+		    printf("PRIMER_PAIR%s_PRODUCT_TM_OLIGO_TM_DIFF=%.4f\n", suffix,
+				retval->best_pairs.pairs[i].product_tm_oligo_tm_diff);
+		
+		    printf("PRIMER_PAIR%s_T_OPT_A=%.4f\n", suffix,
+				retval->best_pairs.pairs[i].t_opt_a);
+		  }
 	  }
-
+      
+      
+      
       /* Print the primer pair temlate mispriming */
 	  if (retval->best_pairs.pairs[i].template_mispriming != ALIGN_SCORE_UNDEF)
 	    printf("PRIMER_PAIR%s_TEMPLATE_MISPRIMING=%.2f\n", suffix,
@@ -408,19 +436,19 @@ boulder_print_error(const char *err) {
 
 static void
 print_all_explain(const primer_args *pa,
-    const seq_args *sa, const p3retval *retval)
+    const seq_args *sa, const p3retval *retval, const int *io_version)
 {
   if (pa->pick_left_primer == 1
       && !(pa->pick_anyway && sa->left_input))
-    print_explain(&retval->fwd.expl,OT_LEFT);
+    print_explain(&retval->fwd.expl,OT_LEFT, io_version);
 
   if (pa->pick_right_primer == 1
       && !(pa->pick_anyway && sa->right_input))
-    print_explain(&retval->rev.expl,OT_RIGHT);
+    print_explain(&retval->rev.expl,OT_RIGHT, io_version);
 
   if ( pa->pick_internal_oligo == 1
       && !(pa->pick_anyway && sa->internal_input)) 
-    print_explain(&retval->intl.expl, OT_INTL);
+    print_explain(&retval->intl.expl, OT_INTL, io_version);
 
   if (pa->pick_right_primer == 1 
       && pa->pick_left_primer == 1) {
@@ -430,13 +458,12 @@ print_all_explain(const primer_args *pa,
 }
 
 static void
-print_explain(stat, l)
-    const oligo_stats *stat;
-    oligo_type l;
+print_explain(const oligo_stats *stat, oligo_type l, const int *io_version)
 {
     if(OT_LEFT == l)printf("PRIMER_LEFT_EXPLAIN=");
     else if(OT_RIGHT == l)printf("PRIMER_RIGHT_EXPLAIN=");
-	 else printf("PRIMER_INTERNAL_OLIGO_EXPLAIN=");
+	else if(*io_version == 0)printf("PRIMER_INTERNAL_OLIGO_EXPLAIN=");
+	else printf("PRIMER_INTERNAL_EXPLAIN=");
 
     printf("considered %d", stat->considered);
     if (stat->no_orf) printf(", would not amplify any of the ORF %d", stat->no_orf);
