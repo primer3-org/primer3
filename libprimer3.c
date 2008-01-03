@@ -594,12 +594,10 @@ pr_set_default_global_args(p3_global_settings *a) {
     a->gc_clamp         = GC_CLAMP;
     a->liberal_base      = LIBERAL_BASE;
 
-    /* Temporary, combination of old and new spec. */
-    a->primer_task         = pick_pcr_primers;
+    a->primer_task         = pick_detection_primers;
     a->pick_left_primer    = 1;
     a->pick_right_primer   = 1;
     a->pick_internal_oligo = 0;
-    /* End temporary */
 
     a->first_base_index  = 0;
     a->num_return        = NUM_RETURN;

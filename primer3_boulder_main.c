@@ -157,7 +157,8 @@ main(argc,argv)
     }
     
     input_found = 1;
-    if (global_pa->primer_task == pick_pcr_primers_and_hyb_probe) {
+    if ((global_pa->primer_task == pick_detection_primers) 
+    		&& (global_pa->pick_internal_oligo == 1)){
       PR_ASSERT(global_pa->pick_internal_oligo);
     }
 
