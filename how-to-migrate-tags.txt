@@ -69,8 +69,11 @@ This allows easy scripting by using the underscores _ to split the name. The fir
 is PRIMER, the second the type of oligo or pair parameters, the third is always a number, 
 starting at 0 and the rest are used by the tags.
 
+
 That affects also (shown for output nr. 5):
+
 NEW VERSION                             - OLD VERSION                       - comment
+
 PRIMER_PAIR_4_PENALTY                   - PRIMER_PAIR_PENALTY_4             - number moved behind PAIR
 PRIMER_PAIR_4_PRODUCT_SIZE              - PRIMER_PRODUCT_SIZE_4             - grouped with PAIR
 PRIMER_PAIR_4_PRODUCT_TM                - PRIMER_PRODUCT_TM_4               - grouped with PAIR
