@@ -46,7 +46,7 @@ typedef enum p3_file_type {
 } p3_file_type;
 
 /* 
- * Read data from stdin until a "=" line occurs.  Assign parameter
+ * Read data from file_input until a "=" line occurs.  Assign parameter
  * values for primer picking to pa and sa. Perform initial data
  * checking. Return 0 for end of data and 1 otherwise.  If nonfatal_err->data
  * is not NULL or fatal_err->data is not NULL then the data is erroneous
@@ -56,10 +56,27 @@ typedef enum p3_file_type {
 int read_record(FILE *file_input,
 		const int *strict_tags,
 		const int * io_version,
-		int         echo_output,
+		int echo_output,
 		p3_global_settings *pa, 
 		seq_args *sa,
 		pr_append_str *fatal_err,
 		pr_append_str *nonfatal_err);
+
+/* 
+ * Read data from file file_name until a "=" line occurs.  Assign parameter
+ * values for primer picking to pa and sa. Perform initial data
+ * checking. Return 0 for end of data and 1 otherwise.  If nonfatal_err->data
+ * is not NULL or fatal_err->data is not NULL then the data is erroneous
+ * and should not be processed. Echo the input lines to stdout.
+ */
+/* pr_append_str is an append-only string ADT. */
+int read_p3_file(const char *file_name,
+		const p3_file_type file_type,
+		int echo_output,
+		p3_global_settings *pa, 
+		seq_args *sa,
+		pr_append_str *fatal_err,
+		pr_append_str *nonfatal_err);
+
 
 #endif

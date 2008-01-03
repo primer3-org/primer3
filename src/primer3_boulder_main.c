@@ -61,6 +61,8 @@ main(argc,argv)
   int format_output = 0;
   int strict_tags = 0;
   int io_version = 0;
+  char p3_file_settings[80];
+  p3_file_settings[0] = '\0';
 
   p3_global_settings *global_pa;
   seq_args *sa;
@@ -113,6 +115,9 @@ main(argc,argv)
 	}
 	counter++;
       }
+    } else if (!strncmp(*argv, "-p3_file_settings=", 10)) {
+    	/* Not yet working */
+      strncpy (p3_file_settings,*argv,19);
     } else if (!strcmp(*argv, "-strict_tags")) {
       strict_tags = 1;
     } else  {
@@ -148,6 +153,12 @@ main(argc,argv)
     pr_set_empty(adjust_seq_args_warnings);
     retval = NULL;
 
+    /* Read data from the settings file until a "=" line occurs.  Assign parameter
+     * values for primer picking to pa and sa. */
+    if (p3_file_settings[0] != '\0') {
+		read_p3_file(p3_file_settings, settings, !format_output, global_pa, 
+		    		sa, fatal_parse_err, nonfatal_parse_err);
+    }
     /* Read data from stdin until a "=" line occurs.  Assign parameter
      * values for primer picking to pa and sa. Perform initial data
      * checking. */
