@@ -79,6 +79,7 @@ PRIMER_PAIR_4_PRODUCT_SIZE              - PRIMER_PRODUCT_SIZE_4             - gr
 PRIMER_PAIR_4_PRODUCT_TM                - PRIMER_PRODUCT_TM_4               - grouped with PAIR
 PRIMER_PAIR_4_PRODUCT_TM_OLIGO_TM_DIFF  - PRIMER_PRODUCT_TM_OLIGO_TM_DIFF_4 - grouped with PAIR
 
+PRIMER_INTERNAL_EXPLAIN                 - PRIMER_INTERNAL_OLIGO_EXPLAIN
 
 ---------------------------------------------------------------------------------
 Unchanged Tags:
