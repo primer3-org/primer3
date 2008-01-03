@@ -172,56 +172,108 @@ read_record(const int *strict_tags,
 	    /* Process "Sequence" (i.e. Per-Record) Arguments". */
 	    parse_err = non_fatal_err;
 
-	    /* COMPARE_AND_MALLOC("SEQUENCE", sa->sequence); */
-	    if (COMPARE("SEQUENCE")) {   /* NEW WAY */
-	      if (/* p3_get_seq_arg_sequence(sa) */ sa->sequence) {
-		    pr_append_new_chunk(parse_err, "Duplicate tag: ");
-		    pr_append(parse_err, "SEQUENCE"); 
-	      } else {
-		if (p3_set_sa_sequence(sa, datum)) exit(-2);
-	      }
-	      continue;
+	    /* Process the old sequence Tags*/
+	    if (*io_version == 0) {
+		    /* COMPARE_AND_MALLOC("SEQUENCE", sa->sequence); */
+		    if (COMPARE("SEQUENCE")) {   /* NEW WAY */
+		      if (/* p3_get_seq_arg_sequence(sa) */ sa->sequence) {
+			    pr_append_new_chunk(parse_err, "Duplicate tag: ");
+			    pr_append(parse_err, "SEQUENCE"); 
+		      } else {
+			if (p3_set_sa_sequence(sa, datum)) exit(-2);
+		      }
+		      continue;
+		    }
+		
+		    if (COMPARE("PRIMER_SEQUENCE_QUALITY")) {
+		      if ((sa->n_quality = parse_seq_quality(datum, &sa->quality)) == 0) {
+			pr_append_new_chunk(parse_err,
+					    "Error in sequence quality data");
+			/* continue;  // FIX ME superfluous ? */
+		      }
+		      continue;
+		    }
+		
+		
+		    COMPARE_AND_MALLOC("PRIMER_SEQUENCE_ID", sa->sequence_name);
+		    COMPARE_AND_MALLOC("MARKER_NAME", sa->sequence_name);
+		    COMPARE_AND_MALLOC("PRIMER_LEFT_INPUT", sa->left_input);
+		    COMPARE_AND_MALLOC("PRIMER_RIGHT_INPUT", sa->right_input);
+		    COMPARE_AND_MALLOC("PRIMER_INTERNAL_OLIGO_INPUT", sa->internal_input);
+		
+		    COMPARE_INTERVAL_LIST("TARGET", &sa->tar2);
+		    COMPARE_INTERVAL_LIST("EXCLUDED_REGION", &sa->excl2);
+		    COMPARE_INTERVAL_LIST("PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION",
+					  &sa->excl_internal2);
+		
+		    if (COMPARE("INCLUDED_REGION")) {
+			    p = parse_int_pair("INCLUDED_REGION", datum, ',',
+					   &sa->incl_s, &sa->incl_l, parse_err);
+			    if (NULL == p) /* 
+		                            * An error; the message is already
+		                            * in parse_err.
+		                            */
+			        continue;
+		
+			    while (' ' == *p || '\t' == *p) p++;
+			    if (*p != '\n' && *p != '\0')
+			       tag_syntax_error("INCLUDED_REGION", datum,
+					     parse_err);
+			    continue;
+		    }
+		    COMPARE_INT("PRIMER_START_CODON_POSITION", sa->start_codon_pos);
 	    }
-
-	    if (COMPARE("PRIMER_SEQUENCE_QUALITY")) {
-	      if ((sa->n_quality = parse_seq_quality(datum, &sa->quality)) == 0) {
-		pr_append_new_chunk(parse_err,
-				    "Error in sequence quality data");
-		/* continue;  // FIX ME superfluous ? */
-	      }
-	      continue;
+	    /* Process the new sequence Tags*/
+	    else {
+		    /* COMPARE_AND_MALLOC("SEQUENCE", sa->sequence); */
+		    if (COMPARE("SEQUENCE_DNA")) {   /* NEW WAY */
+		      if (/* p3_get_seq_arg_sequence(sa) */ sa->sequence) {
+			    pr_append_new_chunk(parse_err, "Duplicate tag: ");
+			    pr_append(parse_err, "SEQUENCE_DNA"); 
+		      } else {
+			if (p3_set_sa_sequence(sa, datum)) exit(-2);
+		      }
+		      continue;
+		    }
+		
+		    if (COMPARE("SEQUENCE_QUALITY")) {
+		      if ((sa->n_quality = parse_seq_quality(datum, &sa->quality)) == 0) {
+			pr_append_new_chunk(parse_err,
+					    "Error in sequence quality data");
+			/* continue;  // FIX ME superfluous ? */
+		      }
+		      continue;
+		    }
+		
+		
+		    COMPARE_AND_MALLOC("SEQUENCE_ID", sa->sequence_name);
+		    COMPARE_AND_MALLOC("SEQUENCE_PRIMER", sa->left_input);
+		    COMPARE_AND_MALLOC("SEQUENCE_PRIMER_REVCOMP", sa->right_input);
+		    COMPARE_AND_MALLOC("SEQUENCE_OLIGO", sa->internal_input);
+		
+		    COMPARE_INTERVAL_LIST("SEQUENCE_TARGET", &sa->tar2);
+		    COMPARE_INTERVAL_LIST("SEQUENCE_EXCLUDED_REGION", &sa->excl2);
+		    COMPARE_INTERVAL_LIST("SEQUENCE_INTERNAL_EXCLUDED_REGION",
+					  &sa->excl_internal2);
+		
+		    if (COMPARE("SEQUENCE_INCLUDED_REGION")) {
+			    p = parse_int_pair("SEQUENCE_INCLUDED_REGION", datum, ',',
+					   &sa->incl_s, &sa->incl_l, parse_err);
+			    if (NULL == p) /* 
+		                            * An error; the message is already
+		                            * in parse_err.
+		                            */
+			        continue;
+		
+			    while (' ' == *p || '\t' == *p) p++;
+			    if (*p != '\n' && *p != '\0')
+			       tag_syntax_error("SEQUENCE_INCLUDED_REGION", datum,
+					     parse_err);
+			    continue;
+		    }
+		    COMPARE_INT("SEQUENCE_START_CODON_POSITION", sa->start_codon_pos);
 	    }
-
-
-	    COMPARE_AND_MALLOC("PRIMER_SEQUENCE_ID", sa->sequence_name);
-	    COMPARE_AND_MALLOC("MARKER_NAME", sa->sequence_name);
-            COMPARE_AND_MALLOC("PRIMER_LEFT_INPUT", sa->left_input);
-            COMPARE_AND_MALLOC("PRIMER_RIGHT_INPUT", sa->right_input);
-            COMPARE_AND_MALLOC("PRIMER_INTERNAL_OLIGO_INPUT", sa->internal_input);
-
-	    COMPARE_INTERVAL_LIST("TARGET", &sa->tar2);
-	    COMPARE_INTERVAL_LIST("EXCLUDED_REGION", &sa->excl2);
-	    COMPARE_INTERVAL_LIST("PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION",
-				  &sa->excl_internal2);
-
-	    if (COMPARE("INCLUDED_REGION")) {
-		    p = parse_int_pair("INCLUDED_REGION", datum, ',',
-				   &sa->incl_s, &sa->incl_l, parse_err);
-		    if (NULL == p) /* 
-                                * An error; the message is already
-                                * in parse_err.
-                                */
-		        continue;
-
-		    while (' ' == *p || '\t' == *p) p++;
-		    if (*p != '\n' && *p != '\0')
-		       tag_syntax_error("INCLUDED_REGION", datum,
-				     parse_err);
-		    continue;
-	    }
-
-	    COMPARE_INT("PRIMER_START_CODON_POSITION", sa->start_codon_pos);
-
+	    
 	    /* 
 	     * Process "Global" Arguments (those that persist between boulder
 	     * records).
@@ -244,20 +296,27 @@ read_record(const int *strict_tags,
 	    COMPARE_FLOAT("PRIMER_MAX_TM", pa->p_args.max_tm);
 	    COMPARE_FLOAT("PRIMER_MAX_DIFF_TM", pa->max_diff_tm);
 
-	    COMPARE_INT("PRIMER_TM_SANTALUCIA",
-			pa->tm_santalucia);    /* added by T.Koressaar */
-	    COMPARE_INT("PRIMER_SALT_CORRECTIONS",
-			pa->salt_corrections); /* added by T.Koressaar */
+	    if (*io_version == 0) {
+	    	COMPARE_INT("PRIMER_TM_SANTALUCIA",	pa->tm_santalucia);    /* added by T.Koressaar */
+	    } else {
+	    	COMPARE_INT("PRIMER_TM_FORMULA",	pa->tm_santalucia);    /* added by T.Koressaar */
+	    }
+	    COMPARE_INT("PRIMER_SALT_CORRECTIONS", pa->salt_corrections); /* added by T.Koressaar */
 	    COMPARE_FLOAT("PRIMER_MIN_GC", pa->p_args.min_gc);
 	    COMPARE_FLOAT("PRIMER_MAX_GC", pa->p_args.max_gc);
-	    COMPARE_FLOAT("PRIMER_SALT_CONC", pa->p_args.salt_conc);
-
-	    /* added by T.Koressaar: */
-	    COMPARE_FLOAT("PRIMER_DIVALENT_CONC", pa->p_args.divalent_conc);
-
-	    /* added by T.Koressaar: */
+	    
+	    /* begin of added by T.Koressaar: */
+	    if (*io_version == 0) {
+	    	COMPARE_FLOAT("PRIMER_SALT_CONC", pa->p_args.salt_conc);
+		    COMPARE_FLOAT("PRIMER_DIVALENT_CONC", pa->p_args.divalent_conc);
+	    } else {
+	    	COMPARE_FLOAT("PRIMER_SALT_MONOVALENT", pa->p_args.salt_conc);
+		    COMPARE_FLOAT("PRIMER_SALT_DIVALENT", pa->p_args.divalent_conc);
+	    }
 	    COMPARE_FLOAT("PRIMER_DNTP_CONC", pa->p_args.dntp_conc);
 
+	    /* end of added by T.Koressaar: */
+    
 	    COMPARE_FLOAT("PRIMER_DNA_CONC", pa->p_args.dna_conc);
 	    COMPARE_INT("PRIMER_NUM_NS_ACCEPTED", pa->p_args.num_ns_accepted);
 	    COMPARE_INT("PRIMER_PRODUCT_OPT_SIZE", pa->product_opt_size);
@@ -265,7 +324,11 @@ read_record(const int *strict_tags,
 	    COMPARE_ALIGN_SCORE("PRIMER_SELF_END", pa->p_args.max_self_end);
 	    COMPARE_ALIGN_SCORE("PRIMER_PAIR_ANY", pa->pair_compl_any);
 	    COMPARE_ALIGN_SCORE("PRIMER_PAIR_END", pa->pair_compl_end);
-	    COMPARE_INT("PRIMER_FILE_FLAG", pa->file_flag);
+	    if (*io_version == 0) {
+	    	COMPARE_INT("PRIMER_FILE_FLAG", pa->file_flag);
+	    } else {
+	    	COMPARE_INT("P3_FILE_FLAG", pa->file_flag);
+	    }
 	    COMPARE_INT("PRIMER_PICK_ANYWAY", pa->pick_anyway);
 	    COMPARE_INT("PRIMER_GC_CLAMP", pa->gc_clamp);
 	    COMPARE_INT("PRIMER_EXPLAIN_FLAG", pa->explain_flag);
