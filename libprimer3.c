@@ -5235,8 +5235,45 @@ p3_set_gs_primer_product_opt_tm(p3_global_settings * p , int val) {
 }
 
 void 
-p3_set_gs_primer_task(p3_global_settings * p , int primer_task){
-  p->primer_task = primer_task;
+p3_set_gs_primer_task(p3_global_settings * pa , char * task_tmp){
+      if (!strcmp_nocase(task_tmp, "pick_pcr_primers")) {
+		pa->primer_task = pick_detection_primers;
+		pa->pick_left_primer = 1;
+		pa->pick_right_primer = 1;
+		pa->pick_internal_oligo = 0;
+      } else if (!strcmp_nocase(task_tmp, "pick_pcr_primers_and_hyb_probe")) {
+		pa->primer_task = pick_detection_primers; 
+		pa->pick_left_primer = 1;
+		pa->pick_right_primer = 1;
+		pa->pick_internal_oligo = 1;
+      } else if (!strcmp_nocase(task_tmp, "pick_left_only")) {
+		pa->primer_task = pick_detection_primers;
+		pa->pick_left_primer = 1;
+		pa->pick_right_primer = 0;
+		pa->pick_internal_oligo = 0;
+      } else if (!strcmp_nocase(task_tmp, "pick_right_only")) {
+		pa->primer_task = pick_detection_primers;
+		pa->pick_left_primer = 0;
+		pa->pick_right_primer = 1;
+		pa->pick_internal_oligo = 0;
+      } else if (!strcmp_nocase(task_tmp, "pick_hyb_probe_only")) {
+		pa->primer_task = pick_detection_primers;
+		pa->pick_left_primer = 0;
+		pa->pick_right_primer = 0;
+		pa->pick_internal_oligo = 1;
+      } else if (!strcmp_nocase(task_tmp, "pick_detection_primers")) {
+		pa->primer_task = pick_detection_primers;
+      } else if (!strcmp_nocase(task_tmp, "pick_cloning_primers")) {
+		pa->primer_task = pick_cloning_primers;
+      } else if (!strcmp_nocase(task_tmp, "pick_discriminative_primers")) {
+		pa->primer_task = pick_discriminative_primers;
+      } else if (!strcmp_nocase(task_tmp, "pick_sequencing_primers")) {
+		pa->primer_task = pick_sequencing_primers;
+      } else if (!strcmp_nocase(task_tmp, "pick_primer_list")) {
+		pa->primer_task = pick_primer_list;
+      } else if (!strcmp_nocase(task_tmp, "check_primers")) {
+		pa->primer_task = check_primers;
+      }
 }
 
 void 

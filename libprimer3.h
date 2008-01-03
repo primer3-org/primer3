@@ -788,7 +788,7 @@ void p3_set_gs_primer_quality_range_max(p3_global_settings * p , int val);
 void p3_set_gs_primer_product_max_tm(p3_global_settings * p , int val);
 void p3_set_gs_primer_product_min_tm(p3_global_settings * p , int val);
 void p3_set_gs_primer_product_opt_tm(p3_global_settings * p , int val);
-void p3_set_gs_primer_task(p3_global_settings * p , int primer_task);
+void p3_set_gs_primer_task(p3_global_settings * p , char * primer_task);
 void p3_set_gs_primer_pick_left_primer(p3_global_settings * p , int pick_left_primer);
 void p3_set_gs_primer_pick_right_primer(p3_global_settings * p , int pick_right_primer);
 void p3_set_gs_primer_pick_internal_oligo(p3_global_settings * p , int pick_internal_oligo);
