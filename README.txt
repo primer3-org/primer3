@@ -403,9 +403,9 @@ primer will end at or after the stop codon.
 
 PRIMER_PICK_ANYWAY (boolean, default 0)
 
-If true pick a primer pair even if PRIMER_LEFT_INPUT,
-PRIMER_RIGHT_INPUT, or PRIMER_INTERNAL_OLIGO_INPUT violates
-specific constraints.
+If true use primer provided in PRIMER_LEFT_INPUT, PRIMER_RIGHT_INPUT, 
+or PRIMER_INTERNAL_OLIGO_INPUT even if it violates specific 
+constraints.
 
 PRIMER_MISPRIMING_LIBRARY (string, optional)
 
