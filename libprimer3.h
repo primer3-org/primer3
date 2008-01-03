@@ -712,6 +712,13 @@ int p3_set_sa_left_input(seq_args *sargs, const char *left_input);
 int p3_set_sa_right_input(seq_args *sargs, const char *right_input);
 int p3_set_sa_internal_input(seq_args *sargs, const char *internal_input);
 
+
+/* The following three functions return 0 on success,
+   1 on error (no space for additional intervals). */
+int p3_add_to_sa_tar2(seq_args *, int, int);
+int p3_add_to_sa_excl2(seq_args *, int, int);
+int p3_add_to_sa_excl_internal2(seq_args *, int, int);
+
 const interval_array_t2 *p3_get_sa_tar2(const seq_args *sargs);
 const interval_array_t2 *p3_get_sa_excl2(const seq_args *sargs);
 const interval_array_t2 *p3_get_sa_excl_internal2(const seq_args *sargs);
@@ -861,6 +868,10 @@ void p3_set_gs_pick_anyway(p3_global_settings * p , int pick_anyway);
 void p3_set_gs_lib_ambiguity_codes_consensus(p3_global_settings * p , int lib_ambiguity_codes_consensus);
 void p3_set_gs_quality_range_min(p3_global_settings * p , int quality_range_min);
 void p3_set_gs_quality_range_max(p3_global_settings * p , int quality_range_max);
+
+/* Return 1 on error (product size range is full);
+   otherwise return 0. */
+int  p3_add_to_gs_product_size_range(p3_global_settings *, int, int);
 
 args_for_one_oligo_or_primer *p3_get_global_settings_p_args(p3_global_settings * p);
 args_for_one_oligo_or_primer *p3_get_global_settings_o_args(p3_global_settings * p);

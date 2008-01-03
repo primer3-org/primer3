@@ -878,11 +878,9 @@ destroy_dpal_arg_holder(dpal_arg_holder *h) {
 }
 
 /* This is a static variable that is initialized once
-   in choose_primers().  If this variable has
+   in choose_primers().  We make this variable have
    'file' scope, we do not have to remember to free the associated
-   storage after each call to choose_primers(). Open
-   to discussion. */
-/* FIX ME AU: Dont understand what this is good for */
+   storage after each call to choose_primers(). */
 static dpal_arg_holder *dpal_arg_to_use = NULL;
 
 /* ============================================================ */
@@ -4247,14 +4245,16 @@ _pr_data_control(const p3_global_settings *pa,
 	 pa->o_args.weights.gc_content_gt)
 	&& pa->o_args.opt_gc_content == DEFAULT_OPT_GC_PERCENT) {
         pr_append_new_chunk(glob_err, 
-	   "Hyb probe GC content is part of objective function while optimum gc_content is not defined");
+	   "Hyb probe GC content is part of objective function "
+			    "while optimum gc_content is not defined");
         return 1;
      }
     
     if ((pa->pick_internal_oligo != 1) &&
 			(pa->pr_pair_weights.io_quality)) {
        pr_append_new_chunk(glob_err,
-	  "Internal oligo quality is part of objective function while internal oligo choice is not required");
+	  "Internal oligo quality is part of objective function "
+			   "while internal oligo choice is not required");
        return 1;
     }
 
@@ -4991,13 +4991,6 @@ int p3_set_sa_internal_input(seq_args *sargs, const char *s) {
  return _set_string(&sargs->sequence_name, s); 
 }
 
-/*
-  use p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2);
-
-  to do the sets for tar2, excl2, nd excl_internal2
-*/
-
-
 void
 p3_set_sa_incl_s(seq_args *sargs, int incl_s) {
   sargs->incl_s = incl_s;
@@ -5012,6 +5005,22 @@ void
 p3_set_sa_start_codon_pos(seq_args *sargs, int start_codon_pos) {
   sargs->start_codon_pos = start_codon_pos;
 }
+
+int 
+p3_add_to_sa_tar2(seq_args *sargs, int n1, int n2) {
+  return p3_add_to_interval_array(&sargs->tar2, n1, n2);
+}
+
+int
+p3_add_to_sa_excl2(seq_args *sargs, int n1, int n2) {
+  return p3_add_to_interval_array(&sargs->excl2, n1, n2);
+}
+
+int
+p3_add_to_sa_excl_internal2(seq_args *sargs, int n1, int n2) {
+  return p3_add_to_interval_array(&sargs->excl_internal2, n1, n2);
+}
+
 
 /* ============================================================ */
 /* END 'set' functions for seq_args                             */
@@ -5688,6 +5697,16 @@ p3_set_gs_primer_pick_anyway(p3_global_settings * p , int val) {
 void 
 p3_set_gs_primer_gc_clamp(p3_global_settings * p , int val) {
   p->gc_clamp = val;
+}
+
+int
+p3_add_to_gs_product_size_range(p3_global_settings *pgs, 
+				int n1, int n2) {
+  if (pgs->num_intervals >= PR_MAX_INTERVAL_ARRAY)
+    return 1;
+  pgs->pr_min[pgs->num_intervals]  = n1;
+  pgs->pr_max[pgs->num_intervals]  = n2;
+  return 0;
 }
 
 /* ============================================================ */
