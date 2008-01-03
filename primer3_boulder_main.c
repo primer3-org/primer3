@@ -151,8 +151,8 @@ main(argc,argv)
     /* Read data from stdin until a "=" line occurs.  Assign parameter
      * values for primer picking to pa and sa. Perform initial data
      * checking. */
-    if (read_record(&strict_tags, &io_version, !format_output, global_pa, sa, 
-		    fatal_parse_err, nonfatal_parse_err) <= 0) {
+    if (read_record(stdin, &strict_tags, &io_version, !format_output, global_pa, 
+    		sa, fatal_parse_err, nonfatal_parse_err) <= 0) {
       break; /* leave the program loop and complain later */
     }
     

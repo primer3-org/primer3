@@ -39,6 +39,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define BOULDER_INPUT_H 1
 #include "libprimer3.h"
 
+typedef enum p3_file_type {
+	all_parameters    = 0,
+	sequence          = 1,
+	settings          = 2,
+} p3_file_type;
+
 /* 
  * Read data from stdin until a "=" line occurs.  Assign parameter
  * values for primer picking to pa and sa. Perform initial data
@@ -46,7 +52,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * is not NULL or fatal_err->data is not NULL then the data is erroneous
  * and should not be processed. Echo the input lines to stdout.
  */
-int read_record(const int *strict_tags,
+/* pr_append_str is an append-only string ADT. */
+int read_record(FILE *file_input,
+		const int *strict_tags,
 		const int * io_version,
 		int         echo_output,
 		p3_global_settings *pa, 
