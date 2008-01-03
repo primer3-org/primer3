@@ -157,7 +157,7 @@ read_record(FILE *file_input,
     /* Deal with the file headers */
     if ((strcmp(s,"Primer3 File - http://primer3.sourceforge.net")) == 0) {
     	/* read FILE_TYPE */
-    	if ((s = p3_read_line(stdin)) == NULL && !(strcmp(s,"=")))
+    	if ((s = p3_read_line(file_input)) == NULL && !(strcmp(s,"=")))
     		break;
     	if ((strcmp(s,"FILE_TYPE=all_parameters")) == 0) {
     		file_type = all_parameters;
@@ -172,7 +172,7 @@ read_record(FILE *file_input,
     	    pr_append_new_chunk(glob_err, "Unknown FILE_TYPE");
     	}
     	/* read the empty line */
-    	if ((s = p3_read_line(stdin)) == NULL && !(strcmp(s,"=")))
+    	if ((s = p3_read_line(file_input)) == NULL && !(strcmp(s,"=")))
     		break;
     	continue;
     }
@@ -678,6 +678,36 @@ read_record(FILE *file_input,
 #undef COMPARE_INT
 #undef COMPARE_FLOAT
 #undef COMPARE_INTERVAL_LIST
+
+int read_p3_file(const char *file_name,
+		const p3_file_type file_type,
+		int echo_output,
+		p3_global_settings *pa, 
+		seq_args *sa,
+		pr_append_str *fatal_err,
+		pr_append_str *nonfatal_err) {
+	/* Parameter for read_record */
+    FILE *file;
+    int ret_par = 1;
+    int strict_tags = 0;
+    int io_version = 1;
+    
+    /* Check if a file name was provided */
+    PR_ASSERT(NULL != file_name);
+    /* Open the file */
+    if((file = fopen(file_name,"r")) != NULL) {
+    	ret_par = read_record(file, &strict_tags, &io_version, 
+    				echo_output, pa, sa, fatal_err, nonfatal_err);
+    }
+    else {
+	pr_append_new_chunk(fatal_err,
+			    "Cannot open ");
+    pr_append(fatal_err, file_name);
+    }
+    if (file) fclose(file);
+ 	
+	return ret_par;
+}
 
 static void
 tag_syntax_error(tag_name, datum, err)
