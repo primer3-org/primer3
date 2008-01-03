@@ -130,16 +130,18 @@ extern double strtod();
  * See read_boulder.h for description.
  */
 int
-read_record(const int *strict_tags,
+read_record(FILE *file_input,
+		const int *strict_tags,
 	    const int *io_version,
 	    int   echo_output,
 	    p3_global_settings *pa, 
 	    seq_args *sa, 
 	    pr_append_str *glob_err,  /* Really should be called fatal_parse_err */
 	    pr_append_str *nonfatal_parse_err) { 
-  int line_len; /* seq_len; n_quality; */
+    int line_len; /* seq_len; n_quality; */
     int tag_len, datum_len;
     int data_found = 0;
+    p3_file_type file_type = all_parameters;
     int pick_internal_oligo = 2;
     char *s, *n, *datum, *task_tmp = NULL;
     const char *p;
@@ -151,7 +153,29 @@ read_record(const int *strict_tags,
 
     non_fatal_err = nonfatal_parse_err;
 
-    while ((s = p3_read_line(stdin)) != NULL && strcmp(s,"=")) {
+    while ((s = p3_read_line(file_input)) != NULL && strcmp(s,"=")) {
+    /* Deal with the file headers */
+    if ((strcmp(s,"Primer3 File - http://primer3.sourceforge.net")) == 0) {
+    	/* read FILE_TYPE */
+    	if ((s = p3_read_line(stdin)) == NULL && !(strcmp(s,"=")))
+    		break;
+    	if ((strcmp(s,"FILE_TYPE=all_parameters")) == 0) {
+    		file_type = all_parameters;
+    	}
+    	else if ((strcmp(s,"FILE_TYPE=sequence")) == 0) {
+    		file_type = sequence;
+    	}
+    	else if ((strcmp(s,"FILE_TYPE=settings")) == 0) {
+    		file_type = settings;
+    	}
+    	else {
+    	    pr_append_new_chunk(glob_err, "Unknown FILE_TYPE");
+    	}
+    	/* read the empty line */
+    	if ((s = p3_read_line(stdin)) == NULL && !(strcmp(s,"=")))
+    		break;
+    	continue;
+    }
 	data_found = 1;
 	/* Print out the input */
 	if (echo_output) printf("%s\n", s);
@@ -339,16 +363,11 @@ read_record(const int *strict_tags,
 	    COMPARE_INT("PRIMER_MIN_END_QUALITY", pa->p_args.min_end_quality);
 	    COMPARE_INT("PRIMER_MIN_THREE_PRIME_DISTANCE", 
 			pa->min_three_prime_distance);
-	    COMPARE_INT("PRIMER_QUALITY_RANGE_MIN",
-				   pa->quality_range_min);
-            COMPARE_INT("PRIMER_QUALITY_RANGE_MAX",
-				   pa->quality_range_max);
-
+	    COMPARE_INT("PRIMER_QUALITY_RANGE_MIN", pa->quality_range_min);
+        COMPARE_INT("PRIMER_QUALITY_RANGE_MAX", pa->quality_range_max);
 	    COMPARE_FLOAT("PRIMER_PRODUCT_MAX_TM", pa->product_max_tm);
 	    COMPARE_FLOAT("PRIMER_PRODUCT_MIN_TM", pa->product_min_tm);
 	    COMPARE_FLOAT("PRIMER_PRODUCT_OPT_TM", pa->product_opt_tm);
-
-
 	    COMPARE_AND_MALLOC("PRIMER_TASK", task_tmp);
 
 	    if (0 < *io_version) {
@@ -570,7 +589,7 @@ read_record(const int *strict_tags,
     * inside the while ((s = p3_read_line(stdin))...)  loop above.
     * FIX ME, in fact the reading of the library contents probably
     * belongs inside primer3_boulder_main.c or libprimer3.c. */
-    /* Reading in the repeat libraries */
+   /* Reading in the repeat libraries */
     if (NULL != repeat_file_path) {
       destroy_seq_lib(pa->p_args.repeat_lib);
       if ('\0' == *repeat_file_path) {
