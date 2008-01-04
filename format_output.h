@@ -51,8 +51,8 @@ void print_format_output(FILE *f,
 			 const p3_global_settings *pa,
 			 const seq_args *sa, 
 			 const p3retval *, 
-			 const char *,
-			 const pr_append_str *more_warnings);
+			 const char */*,
+				       const pr_append_str *more_warnings*/);
 
 void format_error(FILE *f, const char* seq_name, const char *err);
 

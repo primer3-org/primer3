@@ -94,6 +94,11 @@ typedef struct dpal_arg_holder {
 static jmp_buf _jmp_buf;
 
 /* Function declarations. */
+static int _adjust_seq_args(const p3_global_settings *pa, 
+			    seq_args *sa, 
+			    pr_append_str *nonfatal_err,
+			    pr_append_str *warning);
+
 static int    _pr_data_control(const p3_global_settings *,  
 			       const seq_args *, 
 			       pr_append_str *glob_err,
@@ -938,13 +943,14 @@ destroy_seq_args(seq_args *sa) {
 /* ============================================================ */
 p3retval *
 choose_primers(const p3_global_settings *pa, 
-	       const seq_args *sa)
+	       /* const */ seq_args *sa)
 {
     int          i;               /* Loop index. */
     int          prod_size_range; /* Product size range indexr. */
     pair_array_t a_pair_array;    /* Array for primer pairs */
     pair_array_t *best_pairs;     /* Pointer to best primer pairs */
     
+
     /* Create retval and set were to find the results */
     p3retval *retval = create_p3retval();
     if (pa->pick_left_primer && pa->pick_right_primer) {
@@ -974,6 +980,11 @@ choose_primers(const p3_global_settings *pa,
     PR_ASSERT(NULL != pa);
     PR_ASSERT(NULL != sa);
     
+    _adjust_seq_args(pa, sa, &retval->per_sequence_err, /*nonfatal_parse_err, */
+		     &retval->warnings /* adjust_seq_args_warnings*/ );
+
+    if (!pr_is_empty(&retval->per_sequence_err)) return retval;
+
     /* FIX ME -- make this a warning? */
     /* if (pa->p_args.min_quality != 0 
 	&& pa->p_args.min_end_quality < pa->p_args.min_quality)
@@ -2905,8 +2916,8 @@ obj_fn(pa, h)
 
 char *
 pr_gather_warnings(const p3retval *retval, 
-		   const p3_global_settings *pa,
-		   const pr_append_str *more_warnings) {
+		   const p3_global_settings *pa /*,
+		   const pr_append_str *more_warnings */) {
 
   pr_append_str warning;
 
@@ -2926,9 +2937,9 @@ pr_gather_warnings(const p3retval *retval,
     pr_append_new_chunk(&warning,  retval->warnings.data);
 
   /* if (sa->warning.data) pr_append_new_chunk(&warning, sa->warning.data); */
-  if (!pr_is_empty(more_warnings)) {
+  /* if (!pr_is_empty(more_warnings)) {
     pr_append_new_chunk(&warning, more_warnings->data);
-  }
+    } */
 
   return pr_is_empty(&warning) ? NULL : warning.data;  /* not here? */
 }
@@ -3786,15 +3797,19 @@ pr_safe_realloc(void *p, size_t x)
 /* ============================================================ */
 
 /* Fuction to set the included region and fix the start positions */
-int
-p3_adjust_seq_args(const p3_global_settings *pa, 
+static int
+_adjust_seq_args(const p3_global_settings *pa, 
 		   seq_args *sa, 
 		   pr_append_str *nonfatal_err,
 		   pr_append_str *warning)
 {
   int seq_len, inc_len;
 
-  /* Complain if there is no sequence */
+  /* 
+     Complain if there is no sequence; We need to check this
+     error here, because this function cannot do its work if
+     sa->sequence == NULL
+  */
   if (NULL == sa->sequence) {
     pr_append_new_chunk(nonfatal_err, "Missing SEQUENCE tag");
     return 1;
@@ -3842,7 +3857,7 @@ p3_adjust_seq_args(const p3_global_settings *pa,
     _pr_reverse_complement(sa->upcased_seq, sa->upcased_seq_r);
   }
   
-  if (_check_and_adjust_intervals(sa,  /* NEW FUNCTION for the the array_interval_t2 slots in seq_args */
+  if (_check_and_adjust_intervals(sa,
 				  seq_len, 
 				  pa->first_base_index, 
 				  nonfatal_err, warning)) {
@@ -3869,11 +3884,6 @@ _pr_data_control(const p3_global_settings *pa,
     static char s1[MAX_PRIMER_LENGTH+1];
     int i, pr_min, seq_len;
     char offending_char = '\0';
-
-    if (NULL == sa->sequence) {
-      pr_append_new_chunk(nonfatal_err, "Missing SEQUENCE tag");
-      return 1;
-    }
 
     seq_len = strlen(sa->sequence);
 
