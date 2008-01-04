@@ -523,6 +523,8 @@ p3_destroy_global_settings(p3_global_settings *a) {
   if (NULL != a) {
     destroy_seq_lib(a->p_args.repeat_lib);
     destroy_seq_lib(a->o_args.repeat_lib);
+    if (a->settings_file_id != NULL)
+    	free(a->settings_file_id);
     free(a);
   }
 }
@@ -680,6 +682,7 @@ pr_set_default_global_args(p3_global_settings *a) {
     */
 
     a->min_three_prime_distance        = 0;
+    a->settings_file_id                = NULL;
 }
 
 /* Add a valuepair to the array of intervals */

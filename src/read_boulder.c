@@ -189,7 +189,8 @@ read_record(FILE *file_input,
     	continue;
     }
     /* Read only the PRIMER tags if settings is selected */
-    if (read_file_type == settings && strncmp(s, "PRIMER_", 7)) {
+    if (read_file_type == settings && strncmp(s, "PRIMER_", 7)
+    			&& strncmp(s, "P3_FILE_ID", 10)) {
     	continue;
     }
     /* Silently ignore all primer3plus tags */
@@ -385,6 +386,9 @@ read_record(FILE *file_input,
 	    COMPARE_INT("PRIMER_MIN_END_QUALITY", pa->p_args.min_end_quality);
 	    COMPARE_INT("PRIMER_MIN_THREE_PRIME_DISTANCE", 
 			pa->min_three_prime_distance);
+	    if (*io_version > 0 && file_type == settings) {
+	    	COMPARE_AND_MALLOC("P3_FILE_ID", pa->settings_file_id);
+	    }
 	    COMPARE_INT("PRIMER_QUALITY_RANGE_MIN", pa->quality_range_min);
         COMPARE_INT("PRIMER_QUALITY_RANGE_MAX", pa->quality_range_max);
 	    COMPARE_FLOAT("PRIMER_PRODUCT_MAX_TM", pa->product_max_tm);
@@ -450,7 +454,7 @@ read_record(FILE *file_input,
 
 	    COMPARE_FLOAT("PRIMER_INSIDE_PENALTY", pa->inside_penalty);
 	    COMPARE_FLOAT("PRIMER_OUTSIDE_PENALTY", pa->outside_penalty);
-            if (COMPARE("PRIMER_MISPRIMING_LIBRARY")) {
+        if (COMPARE("PRIMER_MISPRIMING_LIBRARY")) {
 		if (repeat_file_path != NULL) {
 		    pr_append_new_chunk(glob_err,
 					"Duplicate PRIMER_MISPRIMING_LIBRARY tag");
@@ -462,7 +466,7 @@ read_record(FILE *file_input,
 		}
 		continue;
 	    }
-            if (COMPARE("PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY")) {
+        if (COMPARE("PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY")) {
 		if (int_repeat_file_path != NULL) {
 		    pr_append_new_chunk(glob_err,
 					"Duplicate PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY tag");

@@ -101,6 +101,12 @@ boulder_print(const int *io_version,
 	  free(warning);
     }
 
+    /* Check if a settings file was read an print its id */
+    if (pa->settings_file_id != NULL) { 
+	  printf("P3_FILE_ID=%s\n", pa->settings_file_id);
+	  free(warning);
+    }
+
     combined_retval_err = create_pr_append_str();
     if (NULL == combined_retval_err) exit(-2); /* Out of memory */
 
