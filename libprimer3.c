@@ -4672,7 +4672,7 @@ read_and_create_seq_lib(const char *filename, const char* errfrag){
     lib = add_filename_and_create_seq_lib(filename, errfrag);
     
     /* Load the files stored in seq_lib into seq_lib */
-	ret = load_files_to_seq_lib(lib, errfrag);
+	ret = load_all_file_to_seq_lib(lib, errfrag);
 	if (ret == NULL) {
 		return NULL;
 	} else {
@@ -4735,8 +4735,8 @@ add_filename_and_create_seq_lib(const char *filename, const char* errfrag){
     	    /* Copy the filename */
     	    lib->repeat_files[lib->file_num] = pr_safe_malloc(strlen(filename) + 1);
     	    strcpy(lib->repeat_files[lib->file_num], filename);
+    	    lib->file_read[lib->file_num] = 0;
     	    lib->file_num = lib->file_num + 1;
-    	    lib->file_read = 0;
     	    break;
     	}
     	/* else continue loop*/
@@ -4747,15 +4747,34 @@ add_filename_and_create_seq_lib(const char *filename, const char* errfrag){
 /* This loads the contents of files into the seq_lib.
  * The filenames must already be stored in seq_lib. */
 seq_lib *
-load_files_to_seq_lib(seq_lib *lib, const char *errfrag)
+load_all_file_to_seq_lib(seq_lib *lib, const char *errfrag)
+{
+	int i;
+	
+	for(i = 0; i < lib->file_num ; i++) {
+		/* Read only the unread files */
+		if (lib->file_read[i] !=0)
+			continue;
+		
+		/* Load the files stored in seq_lib into seq_lib */
+		lib = load_file_to_seq_lib(i, lib, errfrag);
+		/* Mark the file read */
+		lib->file_read[i] = 1;
+	}
+	return lib;
+}
+
+/* This loads the contents one file into the seq_lib.
+ * The filename must already be stored in seq_lib. */
+seq_lib *
+load_file_to_seq_lib(const int file_nr, seq_lib *lib, const char *errfrag)
 {
     char  *p;
     FILE *file;
-    int i, m, k, file_nr;
+    int i, m, k;
     size_t j, n;
     char buf[2];
     char offender = '\0', tmp;
-    file_nr = 0;
     
     if (setjmp(_jmp_buf) != 0)
         return NULL; /* If we get here, there was an error in
