@@ -4663,42 +4663,95 @@ static void   reverse_complement_seq_lib(seq_lib  *lib);
 
 /* See comments in libprimer3.h */
 seq_lib *
-read_and_create_seq_lib(const char * filename, const char *errfrag)
-{
-    char  *p;
-    FILE *file;
-    int i, m, k;
-    size_t j, n;
-    char buf[2];
-    char offender = '\0', tmp;
-    seq_lib *lib; 
+read_and_create_seq_lib(const char *filename, const char* errfrag){
+	seq_lib *lib;
+	seq_lib *ret;
+	lib = NULL;
+	
+	/* Add the filename to the seq_lib */
+    lib = add_filename_and_create_seq_lib(filename, errfrag);
+    
+    /* Load the files stored in seq_lib into seq_lib */
+	ret = load_files_to_seq_lib(lib, errfrag);
+	if (ret == NULL) {
+		return NULL;
+	} else {
+		return ret;
+	}
+}
 
+/* This function does only add the filenames to the seq_lib but
+ * does not load the content into the respective places */
+seq_lib *
+add_filename_and_create_seq_lib(const char *filename, const char* errfrag){
+	seq_lib *lib;
+	lib = NULL;
+    
     if (setjmp(_jmp_buf) != 0)
       return NULL; /* If we get here, there was an error in
 		      pr_safe_malloc or pr_safe_realloc. */
 
-    lib =  pr_safe_malloc(sizeof(* lib));
+    /* If the library doesnt exist, locate the space */
+    if (lib==NULL){
+	    lib =  pr_safe_malloc(sizeof(* lib));
+	    memset(lib, 0, sizeof(*lib));
+	    
+	    lib->repeat_files = pr_safe_malloc(sizeof(*lib->repeat_files));
+	    lib->file_storage_size = 1;
+	    
+	    /* Allocate the initial space for sequences */
+	    lib->names = pr_safe_malloc(INIT_LIB_SIZE*sizeof(*lib->names));
+	    lib->seqs  = pr_safe_malloc(INIT_LIB_SIZE*sizeof(*lib->seqs));
+	    lib->weight= pr_safe_malloc(INIT_LIB_SIZE*sizeof(*lib->weight));
+	    lib->seq_num = 0;
+	    lib->file_num = 0;
+	    lib->storage_size = INIT_LIB_SIZE;
 
-    memset(lib, 0, sizeof(*lib));
+    }
 
     PR_ASSERT(NULL != filename);
+    lib->file_num = 0;
+    /* Copy the filename */
+    lib->repeat_files[lib->file_num] = pr_safe_malloc(strlen(filename) + 1);
+    strcpy(lib->repeat_files[lib->file_num], filename);
+    lib->file_num = lib->file_num + 1;
 
-    lib->repeat_file = pr_safe_malloc(strlen(filename) + 1);
-    strcpy(lib->repeat_file, filename);
+	return lib;
+}
 
-    if((file = fopen(lib->repeat_file,"r")) == NULL) {
+/* This loads the contents of files into the seq_lib.
+ * The filenames must already be stored in seq_lib. */
+seq_lib *
+load_files_to_seq_lib(seq_lib *lib, const char *errfrag)
+{
+    char  *p;
+    FILE *file;
+    int i, m, k, file_nr;
+    size_t j, n;
+    char buf[2];
+    char offender = '\0', tmp;
+    file_nr = 0;
+    
+    if (setjmp(_jmp_buf) != 0)
+        return NULL; /* If we get here, there was an error in
+		      pr_safe_malloc or pr_safe_realloc. */
+   
+    if (lib==NULL){
+    	return NULL;
+    }
+    
+    /* Open the file */
+    if((file = fopen(lib->repeat_files[file_nr],"r")) == NULL) {
 	pr_append_new_chunk(&lib->error,
 			    "Cannot open ");
 	goto ERROR;
     }
 
+    /* Allocate initial space for all names, sequence and weight */
     j = INIT_BUF_SIZE;
-    n = INIT_LIB_SIZE;
-    lib->names = pr_safe_malloc(INIT_LIB_SIZE*sizeof(*lib->names));
-    lib->seqs  = pr_safe_malloc(INIT_LIB_SIZE*sizeof(*lib->seqs));
-    lib->weight= pr_safe_malloc(INIT_LIB_SIZE*sizeof(*lib->weight));
-    lib->seq_num = 0;
+    n = lib->storage_size;
 
+    /* Read in the file */
     i = -1;  m = 0; k = 0;
     while((p = p3_read_line(file))) {
 	if(*p == '>'){
@@ -4709,6 +4762,7 @@ read_and_create_seq_lib(const char * filename, const char *errfrag)
 		lib->seqs  = pr_safe_realloc(lib->seqs ,n*sizeof(*lib->seqs));
 		lib->weight= pr_safe_realloc(lib->weight,
 					     n*sizeof(*lib->weight));
+		lib->storage_size = n;
 	    }
 	    p++;
 	    lib->names[i] = pr_safe_malloc(strlen(p) + 1);
@@ -4771,7 +4825,7 @@ read_and_create_seq_lib(const char * filename, const char *errfrag)
 	pr_append(&lib->warning, ") in ");
 	pr_append(&lib->warning, errfrag);
 	pr_append(&lib->warning, " ");
-	pr_append(&lib->warning, lib->repeat_file);
+	pr_append(&lib->warning, lib->repeat_files[file_nr]);
     }
     if (file) fclose(file);
     reverse_complement_seq_lib(lib);
@@ -4780,7 +4834,7 @@ read_and_create_seq_lib(const char * filename, const char *errfrag)
  ERROR:
     pr_append(&lib->error, errfrag);
     pr_append(&lib->error, " ");
-    pr_append(&lib->error, lib->repeat_file);
+    pr_append(&lib->error, lib->repeat_files[file_nr]);
     if (file) fclose(file);
     return lib;
 }
@@ -4796,7 +4850,9 @@ destroy_seq_lib(p)
     int i;
     if (NULL == p) return;
 
-    if ( NULL != p->repeat_file) free(p->repeat_file);
+	for(i = 0; i < p->file_storage_size ; i++)
+		if ( NULL != p->repeat_files[i]) free(p->repeat_files[i]);
+	free(p->repeat_files);
     if (NULL != p->seqs) { 
 	for(i = 0; i < p->seq_num; i++)
 	    if (NULL != p->seqs[i]) free(p->seqs[i]);
