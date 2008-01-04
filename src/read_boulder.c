@@ -134,6 +134,7 @@ read_record(FILE *file_input,
 		const int *strict_tags,
 	    const int *io_version,
 	    int   echo_output,
+	    const p3_file_type read_file_type,
 	    p3_global_settings *pa, 
 	    seq_args *sa, 
 	    pr_append_str *glob_err,  /* Really should be called fatal_parse_err */
@@ -159,23 +160,38 @@ read_record(FILE *file_input,
     	/* read FILE_TYPE */
     	if ((s = p3_read_line(file_input)) == NULL && !(strcmp(s,"=")))
     		break;
-    	if ((strcmp(s,"FILE_TYPE=all_parameters")) == 0) {
+    	if ((strcmp(s,"P3_FILE_TYPE=all_parameters")) == 0) {
     		file_type = all_parameters;
     	}
-    	else if ((strcmp(s,"FILE_TYPE=sequence")) == 0) {
+    	else if ((strcmp(s,"P3_FILE_TYPE=sequence")) == 0) {
     		file_type = sequence;
     	}
-    	else if ((strcmp(s,"FILE_TYPE=settings")) == 0) {
+    	else if ((strcmp(s,"P3_FILE_TYPE=settings")) == 0) {
     		file_type = settings;
     	}
     	else {
-    	    pr_append_new_chunk(glob_err, "Unknown FILE_TYPE");
+    	    pr_append_new_chunk(glob_err, "Unknown P3_FILE_TYPE");
     	}
     	/* read the empty line */
     	if ((s = p3_read_line(file_input)) == NULL && !(strcmp(s,"=")))
     		break;
+    	/* Check if the file type matches the expected type */
+    	if (file_type != read_file_type && echo_output){
+    		pr_append_new_chunk(nonfatal_parse_err, 
+    				"Unexpected P3 file type parsed");
+    	}
     	continue;
     }
+    /* Read only the PRIMER tags if settings is selected */
+    if (read_file_type == settings && strncmp(s, "PRIMER_", 7)) {
+    	continue;
+    }
+    /* Silently ignore all primer3plus tags */
+    if (!(strncmp(s, "P3P_", 4))) {
+    	continue;
+    }
+    
+    
 	data_found = 1;
 	/* Print out the input */
 	if (echo_output) printf("%s\n", s);
@@ -195,7 +211,7 @@ read_record(FILE *file_input,
 	    
 	    /* Process "Sequence" (i.e. Per-Record) Arguments". */
 	    parse_err = non_fatal_err;
-
+	    
 	    /* Process the old sequence Tags*/
 	    if (*io_version == 0) {
 		    /* COMPARE_AND_MALLOC("SEQUENCE", sa->sequence); */
@@ -681,13 +697,13 @@ read_record(FILE *file_input,
 
 int read_p3_file(const char *file_name,
 		const p3_file_type file_type,
-		int echo_output,
 		p3_global_settings *pa, 
 		seq_args *sa,
 		pr_append_str *fatal_err,
 		pr_append_str *nonfatal_err) {
 	/* Parameter for read_record */
     FILE *file;
+	int echo_output = 0;
     int ret_par = 1;
     int strict_tags = 0;
     int io_version = 1;
@@ -696,8 +712,8 @@ int read_p3_file(const char *file_name,
     PR_ASSERT(NULL != file_name);
     /* Open the file */
     if((file = fopen(file_name,"r")) != NULL) {
-    	ret_par = read_record(file, &strict_tags, &io_version, 
-    				echo_output, pa, sa, fatal_err, nonfatal_err);
+    	ret_par = read_record(file, &strict_tags, &io_version, echo_output, 
+    			file_type, pa, sa, fatal_err, nonfatal_err);
     }
     else {
 	pr_append_new_chunk(fatal_err,

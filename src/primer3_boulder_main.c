@@ -44,6 +44,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "read_boulder.h"
 #include "print_boulder.h"
 
+#define FILE_NAME_SIZE 80
+
 /* Some function prototypes */
 static void   print_usage();
 static void   sig_handler(int);
@@ -61,8 +63,12 @@ main(argc,argv)
   int format_output = 0;
   int strict_tags = 0;
   int io_version = 0;
-  char p3_file_settings[80];
-  p3_file_settings[0] = '\0';
+  /* Some space for file names */
+  char *tmp_file_name = NULL;
+  char p3_all_file[FILE_NAME_SIZE];
+  char p3_settings_file[FILE_NAME_SIZE];
+  p3_all_file[0] = '\0';
+  p3_settings_file[0] = '\0';
 
   p3_global_settings *global_pa;
   seq_args *sa;
@@ -115,9 +121,9 @@ main(argc,argv)
 	}
 	counter++;
       }
-    } else if (!strncmp(*argv, "-p3_file_settings=", 10)) {
-    	/* Not yet working */
-      strncpy (p3_file_settings,*argv,19);
+    } else if (!strncmp(*argv, "-p3_settings_file=", 18)) {
+      tmp_file_name = strchr(*argv,'=') + 1;
+      strncpy (p3_settings_file,tmp_file_name,FILE_NAME_SIZE-1);
     } else if (!strcmp(*argv, "-strict_tags")) {
       strict_tags = 1;
     } else  {
@@ -136,10 +142,49 @@ main(argc,argv)
     exit(-2); /* Out of memory */
   }
 
+  /* Settings files have to be read in here */
+  /* The functions need a temporary sa */
+  if (!(sa = create_seq_arg())) {
+    exit(-2);
+  }
+
+  /* Read data from the settings file until a "=" line occurs.  Assign parameter
+   * values for primer picking to pa and sa. */
+  if (p3_settings_file[0] != '\0') {
+	  read_p3_file(p3_settings_file, settings, global_pa, 
+		    		sa, fatal_parse_err, nonfatal_parse_err);
+  }
+
+  /* We also need to print out errors here because the loop erases all
+   *  errors at start */
+  /* If there are fatal errors, write the proper message and exit */
+  if (fatal_parse_err->data != NULL) {
+    if (format_output) {
+	format_error(stdout, sa->sequence_name, fatal_parse_err->data);
+    } else {
+	boulder_print_error(fatal_parse_err->data);
+    }
+    fprintf(stderr, "%s: %s\n", 
+	      pr_program_name, fatal_parse_err->data);
+    exit(-4);
+  }
+  /* If there are nonfatal errors, write the proper message
+   * and skip to the end of the loop */
+  if (!pr_is_empty(nonfatal_parse_err)) {
+    if (format_output) {
+	format_error(stdout, sa->sequence_name, 
+		     nonfatal_parse_err->data);
+    } else {
+	boulder_print_error(nonfatal_parse_err->data);
+    }
+  }
+
+  /* The temporary sa is not needed any more */
+  destroy_seq_args(sa);
+  
   /* Read the data from input stream record by record and process it if
    * there are no errors. This is were the work is done! */
   while (1) {
-
     /* Create and initialize a seq_args data structure. sa (seq_args *) is 
      * initialized here because Values are _not_ retained across different
      * input records. */
@@ -153,17 +198,11 @@ main(argc,argv)
     /* pr_set_empty(adjust_seq_args_warnings); */
     retval = NULL;
 
-    /* Read data from the settings file until a "=" line occurs.  Assign parameter
-     * values for primer picking to pa and sa. */
-    if (p3_file_settings[0] != '\0') {
-		read_p3_file(p3_file_settings, settings, !format_output, global_pa, 
-		    		sa, fatal_parse_err, nonfatal_parse_err);
-    }
     /* Read data from stdin until a "=" line occurs.  Assign parameter
      * values for primer picking to pa and sa. Perform initial data
      * checking. */
-    if (read_record(stdin, &strict_tags, &io_version, !format_output, global_pa, 
-    		sa, fatal_parse_err, nonfatal_parse_err) <= 0) {
+    if (read_record(stdin, &strict_tags, &io_version, !format_output, all_parameters,
+    		global_pa, sa, fatal_parse_err, nonfatal_parse_err) <= 0) {
       break; /* leave the program loop and complain later */
     }
     
@@ -267,8 +306,8 @@ print_usage()
 {
   fprintf(stderr, primer3_copyright());
 
-  fprintf(stderr, "\n\nUSAGE: %s %s %s %s\n", pr_program_name,
-	  "[-format_output]", "[-io_version=xxx]", "[-strict_tags]");
+  fprintf(stderr, "\n\nUSAGE: %s %s %s %s %s\n", pr_program_name,
+	  "[-format_output]", "[-io_version=xxx]", "[-p3_settings_file=xxx]", "[-strict_tags]");
   fprintf(stderr, "This is primer3 (%s)\n", pr_release);
   fprintf(stderr, "Input must be provided on standard input.\n");
   fprintf(stderr, "For example:\n");

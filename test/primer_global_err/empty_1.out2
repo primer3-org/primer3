@@ -36,7 +36,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 
-USAGE: ../src/primer3_core [-format_output] [-io_version=xxx] [-strict_tags]
+USAGE: ../src/primer3_core [-format_output] [-io_version=xxx] [-p3_settings_file=xxx] [-strict_tags]
 This is primer3 (primer3 release 1.1.2)
 Input must be provided on standard input.
 For example:
