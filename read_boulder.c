@@ -39,8 +39,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h>  /* strtod, strtol,... */
 #include <ctype.h> /* toupper */
 #include <string.h> /* memset, strlen,  strcmp, ... */
-#include <unistd.h> /* write */
 #include "read_boulder.h"
+
+#define USE_NON_ANSI_WRITE
+
+#ifdef USE_NON_ANSI_WRITE
+#include <unistd.h> /* write */
+#endif
 
 #define INIT_BUF_SIZE 1024
 #define INIT_LIB_SIZE  500
@@ -48,6 +53,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* Static functions. */
 static void *_rb_safe_malloc(size_t x);
+static void  out_of_memory_error();
 
 static void   parse_align_score(const char *, const char *, short *,
 				pr_append_str *);
@@ -971,15 +977,13 @@ parse_seq_quality(s, num)
 /* 
  * Panic messages for when the program runs out of memory.
  */
-#define OOM_MESSAGE      "out of memory in read_boulder\n"
-#define OOM_MESSAGE_LEN  30
-#define OOM_ERROR write(2, OOM_MESSAGE, OOM_MESSAGE_LEN), exit(-2)
 
 static void *
 _rb_safe_malloc(size_t x)
 {
     void *r = malloc(x);
-    if (NULL == r) OOM_ERROR;
+    if (NULL == r)
+    	out_of_memory_error();
     return r;
 }
 
@@ -987,17 +991,27 @@ static void
 pr_append(pr_append_str *x,
 	  const char *s)
 {
-  if (pr_append_external(x, s)) OOM_ERROR;
+  if (pr_append_external(x, s))
+	  out_of_memory_error();
 }
 
 static void
 pr_append_new_chunk(pr_append_str *x,
 		    const char *s)
 {
-  if (pr_append_new_chunk_external(x, s)) OOM_ERROR;
+  if (pr_append_new_chunk_external(x, s)) 
+	  out_of_memory_error();
 }
 
-
+static void
+out_of_memory_error() {
+#ifdef USE_NON_ANSI_WRITE
+	write(2, "out of memory in read_boulder\n", 30);
+#else
+	fprintf(stderr, "out of memory in read_boulder\n");
+#endif
+	exit(-2);
+}
 
 /* End of fail-stop wrappers. */
 /* =========================================================== */
