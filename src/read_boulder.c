@@ -867,7 +867,7 @@ parse_interval_list(const char *tag_name,
     ret = p3_add_to_interval_array(interval_arr, i1, i2);
     if (ret) {
       pr_append_new_chunk(err, "Too many elements for tag ");
-      pr_append(err, tag_name);
+      pr_append(err, tag_name); return;
     }
   }
 }

@@ -70,7 +70,7 @@ main(argc,argv)
   /* Setup the error structures handlers */
   pr_append_str *fatal_parse_err = NULL;
   pr_append_str *nonfatal_parse_err = NULL;
-  pr_append_str *adjust_seq_args_warnings = NULL;
+  /* pr_append_str *adjust_seq_args_warnings = NULL; */
   
   /* Setup the output data structure handlers */
   p3retval *retval = NULL;
@@ -129,10 +129,10 @@ main(argc,argv)
   /* Allocate the space for empty error messages */
   fatal_parse_err     = create_pr_append_str();
   nonfatal_parse_err  = create_pr_append_str();
-  adjust_seq_args_warnings       = create_pr_append_str();
+  /* adjust_seq_args_warnings       = create_pr_append_str(); */
   if (NULL == fatal_parse_err 
       || NULL == nonfatal_parse_err
-      || NULL == adjust_seq_args_warnings) {
+      /* || NULL == adjust_seq_args_warnings */ ) {
     exit(-2); /* Out of memory */
   }
 
@@ -150,7 +150,7 @@ main(argc,argv)
     /* Reset all errors handlers and the return structure */
     pr_set_empty(fatal_parse_err);
     pr_set_empty(nonfatal_parse_err);
-    pr_set_empty(adjust_seq_args_warnings);
+    /* pr_set_empty(adjust_seq_args_warnings); */
     retval = NULL;
 
     /* Read data from the settings file until a "=" line occurs.  Assign parameter
@@ -187,8 +187,11 @@ main(argc,argv)
 
     /* POSSIBLE CHANGE -- read in mispriming libraries here? */
 
+
+#if 0
     /* Modify some of the arguments */
     p3_adjust_seq_args(global_pa, sa, nonfatal_parse_err, adjust_seq_args_warnings);
+#endif
 
     /* If there are nonfatal errors, write the proper message
      * and skip to the end of the loop */
@@ -221,10 +224,10 @@ main(argc,argv)
 
     if (format_output) {
       print_format_output(stdout, &io_version, global_pa, 
-			  sa, retval, pr_release, adjust_seq_args_warnings);
+			  sa, retval, pr_release /* , adjust_seq_args_warnings*/);
     } else {
       /* Use boulder output */
-      boulder_print(&io_version, global_pa, sa, retval, adjust_seq_args_warnings);
+      boulder_print(&io_version, global_pa, sa, retval /* , adjust_seq_args_warnings*/);
     }
 
   loop_wrap_up: /* Here the failed loops join in again */
@@ -247,7 +250,7 @@ main(argc,argv)
   global_pa = NULL;
   destroy_pr_append_str(fatal_parse_err);
   destroy_pr_append_str(nonfatal_parse_err);
-  destroy_pr_append_str(adjust_seq_args_warnings);
+  /* destroy_pr_append_str(adjust_seq_args_warnings); */
   destroy_seq_args(sa);
   
   /* If it could not read input complain and die */

@@ -699,10 +699,12 @@ const  primer_rec *p3_get_oa_i(const oligo_array *x, int i);
 /* Functions for seq_args -- create, destroy, set slots */
 seq_args *create_seq_arg();
 void destroy_seq_args(seq_args *);
+/*  OLD, no longer needed.
 int p3_adjust_seq_args(const p3_global_settings *pa, 
 		       seq_args *sa, 
 		       pr_append_str *nonfatal_err,
 		       pr_append_str *warning);
+*/
 
 int p3_set_sa_sequence(seq_args *sargs, const char *sequence);
 void p3_set_sa_primer_sequence_quality(seq_args *sargs, int quality);
@@ -899,7 +901,7 @@ void p3_set_gs_min_three_prime_distance(p3_global_settings *p, int min_distance)
  */
 
 p3retval *choose_primers(const p3_global_settings *pa, 
-			 const seq_args *sa);
+			 /* const */ seq_args *sa);
 
 /* Andreas, this is the idea, argument list will need
    to be cleaned up */
@@ -915,9 +917,8 @@ char  *pr_oligo_rev_c_sequence(const seq_args *, const primer_rec *);
 void  pr_set_default_global_args(p3_global_settings *);
 
 char  *pr_gather_warnings(const p3retval *, 
-			  /* const seq_args *,  */
-			  const p3_global_settings *,
-			  const pr_append_str *more_warnings);
+			  const p3_global_settings * /*,
+						       const pr_append_str *more_warnings*/);
 
 /* Return NULL on ENOMEM */
 pr_append_str *create_pr_append_str();
