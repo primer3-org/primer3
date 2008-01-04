@@ -4686,6 +4686,8 @@ seq_lib *
 add_filename_and_create_seq_lib(const char *filename, const char* errfrag){
 	seq_lib *lib;
 	lib = NULL;
+    size_t n;
+    int i;
     
     if (setjmp(_jmp_buf) != 0)
       return NULL; /* If we get here, there was an error in
@@ -4697,6 +4699,7 @@ add_filename_and_create_seq_lib(const char *filename, const char* errfrag){
 	    memset(lib, 0, sizeof(*lib));
 	    
 	    lib->repeat_files = pr_safe_malloc(sizeof(*lib->repeat_files));
+	    lib->file_read = pr_safe_malloc(sizeof(*lib->file_read));
 	    lib->file_storage_size = 1;
 	    
 	    /* Allocate the initial space for sequences */
@@ -4708,14 +4711,36 @@ add_filename_and_create_seq_lib(const char *filename, const char* errfrag){
 	    lib->storage_size = INIT_LIB_SIZE;
 
     }
-
     PR_ASSERT(NULL != filename);
-    lib->file_num = 0;
-    /* Copy the filename */
-    lib->repeat_files[lib->file_num] = pr_safe_malloc(strlen(filename) + 1);
-    strcpy(lib->repeat_files[lib->file_num], filename);
-    lib->file_num = lib->file_num + 1;
+    
+    /* If there is no space for more filenames alloc new */
+    n = lib->file_storage_size;
+    if(lib->file_num >= n) {
+    		n += INIT_LIB_SIZE;
+    		lib->repeat_files = pr_safe_realloc(lib->repeat_files,
+    				n*sizeof(*lib->repeat_files));
+    		lib->file_read = pr_safe_realloc(lib->file_read,
+    				n*sizeof(*lib->file_read));
+    		lib->file_storage_size = n;
+    }
 
+    /* Loop through all the filenames */
+    for(i = 0; i < lib->file_num + 1 ; i++) {
+    	/* If the file is already in the lib - dont add it */
+    	if ((lib->repeat_files[i] != NULL) && !(strcmp(lib->repeat_files[i], filename))) {
+    		break;
+    	}
+    	/* Add the name at the end */
+    	else if (i == lib->file_num) {
+    	    /* Copy the filename */
+    	    lib->repeat_files[lib->file_num] = pr_safe_malloc(strlen(filename) + 1);
+    	    strcpy(lib->repeat_files[lib->file_num], filename);
+    	    lib->file_num = lib->file_num + 1;
+    	    lib->file_read = 0;
+    	    break;
+    	}
+    	/* else continue loop*/
+    }
 	return lib;
 }
 
@@ -4850,9 +4875,11 @@ destroy_seq_lib(p)
     int i;
     if (NULL == p) return;
 
-	for(i = 0; i < p->file_storage_size ; i++)
+	for(i = 0; i < p->file_storage_size ; i++) {
 		if ( NULL != p->repeat_files[i]) free(p->repeat_files[i]);
+	}
 	free(p->repeat_files);
+	free(p->file_read);
     if (NULL != p->seqs) { 
 	for(i = 0; i < p->seq_num; i++)
 	    if (NULL != p->seqs[i]) free(p->seqs[i]);
