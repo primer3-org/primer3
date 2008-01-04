@@ -350,6 +350,7 @@ typedef struct p3_global_settings {
 				      to the 3' end of right primer in an existing pair)
 
 				   */
+  char *settings_file_id;
 } p3_global_settings;
 
 typedef enum oligo_type { OT_LEFT = 0, OT_RIGHT = 1, OT_INTL = 2 }
