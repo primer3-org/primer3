@@ -41,12 +41,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h> /* memset, strlen,  strcmp, ... */
 #include "read_boulder.h"
 
-#define USE_NON_ANSI_WRITE
-
-#ifdef USE_NON_ANSI_WRITE
-#include <unistd.h> /* write */
-#endif
-
 #define INIT_BUF_SIZE 1024
 #define INIT_LIB_SIZE  500
 #define PR_MAX_LIBRARY_WT 100.0
@@ -1009,12 +1003,8 @@ pr_append_new_chunk(pr_append_str *x,
 
 static void
 out_of_memory_error() {
-#ifdef USE_NON_ANSI_WRITE
-	write(2, "out of memory in read_boulder\n", 30);
-#else
-	fprintf(stderr, "out of memory in read_boulder\n");
-#endif
-	exit(-2);
+  fprintf(stderr, "out of memory in read_boulder\n");
+  exit(-2);
 }
 
 /* End of fail-stop wrappers. */
