@@ -4669,7 +4669,7 @@ read_and_create_seq_lib(const char *filename, const char* errfrag){
 	lib = NULL;
 	
 	/* Add the filename to the seq_lib */
-    lib = add_filename_and_create_seq_lib(filename, errfrag);
+    lib = add_filename_and_create_seq_lib(lib, filename, errfrag);
     
     /* Load the files stored in seq_lib into seq_lib */
 	ret = load_all_file_to_seq_lib(lib, errfrag);
@@ -4683,9 +4683,7 @@ read_and_create_seq_lib(const char *filename, const char* errfrag){
 /* This function does only add the filenames to the seq_lib but
  * does not load the content into the respective places */
 seq_lib *
-add_filename_and_create_seq_lib(const char *filename, const char* errfrag){
-	seq_lib *lib;
-	lib = NULL;
+add_filename_and_create_seq_lib(seq_lib *lib, const char *filename, const char* errfrag){
     size_t n;
     int i;
     
@@ -4698,9 +4696,9 @@ add_filename_and_create_seq_lib(const char *filename, const char* errfrag){
 	    lib =  pr_safe_malloc(sizeof(* lib));
 	    memset(lib, 0, sizeof(*lib));
 	    
-	    lib->repeat_files = pr_safe_malloc(sizeof(*lib->repeat_files));
-	    lib->file_read = pr_safe_malloc(sizeof(*lib->file_read));
-	    lib->file_storage_size = 1;
+	    lib->repeat_files = pr_safe_malloc(5*sizeof(*lib->repeat_files));
+	    lib->file_read = pr_safe_malloc(5*sizeof(*lib->file_read));
+	    lib->file_storage_size = 5;
 	    
 	    /* Allocate the initial space for sequences */
 	    lib->names = pr_safe_malloc(INIT_LIB_SIZE*sizeof(*lib->names));
@@ -4716,7 +4714,7 @@ add_filename_and_create_seq_lib(const char *filename, const char* errfrag){
     /* If there is no space for more filenames alloc new */
     n = lib->file_storage_size;
     if(lib->file_num >= n) {
-    		n += INIT_LIB_SIZE;
+    		n = 2 * n;
     		lib->repeat_files = pr_safe_realloc(lib->repeat_files,
     				n*sizeof(*lib->repeat_files));
     		lib->file_read = pr_safe_realloc(lib->file_read,
@@ -4727,7 +4725,8 @@ add_filename_and_create_seq_lib(const char *filename, const char* errfrag){
     /* Loop through all the filenames */
     for(i = 0; i < lib->file_num + 1 ; i++) {
     	/* If the file is already in the lib - dont add it */
-    	if ((lib->repeat_files[i] != NULL) && !(strcmp(lib->repeat_files[i], filename))) {
+    	if ((lib->repeat_files != NULL) && (lib->repeat_files[i] != NULL) 
+    			&& !(strcmp(lib->repeat_files[i], filename))) {
     		break;
     	}
     	/* Add the name at the end */

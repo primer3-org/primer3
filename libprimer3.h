@@ -969,7 +969,7 @@ seq_lib *
 read_and_create_seq_lib(const char *filename, const char* errfrag);
 
 seq_lib *
-add_filename_and_create_seq_lib(const char *filename, const char* errfrag);
+add_filename_and_create_seq_lib(seq_lib *lib, const char *filename, const char* errfrag);
 
 seq_lib *
 load_file_to_seq_lib(const int file_nr, seq_lib *lib, const char* errfrag);
