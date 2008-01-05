@@ -183,10 +183,15 @@ static void   gc_and_n_content(const int, const int, const char *, primer_rec *)
 
 static void   init_pr_append_str(pr_append_str *s);
 
-static int    make_primer_lists(p3retval *,
+static int    make_detection_primer_lists(p3retval *,
 				const p3_global_settings *,
 				const seq_args *,
 				const dpal_arg_holder *);
+
+static int    make_complete_primer_lists(p3retval *retval,
+				const p3_global_settings *pa,
+				const seq_args *sa,
+				const dpal_arg_holder *dpal_arg_to_use);
 
 static int    make_internal_oligo_list(p3retval *,
 				       const p3_global_settings *,
@@ -959,11 +964,13 @@ choose_primers(const p3_global_settings *pa,
     
     /* Set the general output type */
     if (pa->pick_left_primer && pa->pick_right_primer) {
-      retval->output_type = primer_pairs;
+    	retval->output_type = primer_pairs;
     } else {
-      retval->output_type = primer_list;
+    	retval->output_type = primer_list;
     }
-    
+    if (pa->primer_task == pick_primer_list) {
+    	retval->output_type = primer_list;
+    }
     
     if (retval == NULL)  return NULL;
     /* Connect best_pairs to retval */
@@ -987,6 +994,7 @@ choose_primers(const p3_global_settings *pa,
     PR_ASSERT(NULL != pa);
     PR_ASSERT(NULL != sa);
     
+    /* Change some parameters to fit the task */
     _adjust_seq_args(pa, sa, &retval->per_sequence_err, /*nonfatal_parse_err, */
 		     &retval->warnings /* adjust_seq_args_warnings*/ );
 
@@ -1011,20 +1019,24 @@ choose_primers(const p3_global_settings *pa,
        scope, has not yet been initialized. */
     if (dpal_arg_to_use == NULL)
       dpal_arg_to_use = create_dpal_arg_holder();
-
-    /* Populate the forward and reverse primer lists */
-    if (make_primer_lists(retval, pa, sa, dpal_arg_to_use) != 0) {
-      /* There was an error */ return retval;
+    
+    if (pa->primer_task == pick_primer_list) {
+    	make_complete_primer_lists(retval, pa, sa,
+	    		dpal_arg_to_use);
+    } else { /* The general way to pick primers */
+	    /* Populate the forward and reverse primer lists */
+	    if (make_detection_primer_lists(retval, pa, sa,
+	    		dpal_arg_to_use) != 0) {
+	      /* There was an error */ return retval;
+	    }
+	    /* Populate the internal oligo lists */
+	    if ( pa->pick_internal_oligo) {
+		   if (make_internal_oligo_list(retval, pa, sa,
+					   dpal_arg_to_use) != 0) {
+		/* There was an error*/ return retval;
+	      }
+	    }
     }
-
-    /* Populate the internal oligo lists */
-    if ( pa->pick_internal_oligo) {
-	   if (make_internal_oligo_list(retval, pa, sa,
-				   dpal_arg_to_use) != 0) {
-	/* There was an error*/ return retval;
-      }
-    }
-
 #if 0
     /* Creates files with left, right, and internal oligos. */
     /* 2007-12-17  Keep this around for one more release 
@@ -1275,7 +1287,7 @@ add_pair(const primer_pair *pair,
  * sufficient product size.
  */
 static int
-make_primer_lists(p3retval *retval,
+make_detection_primer_lists(p3retval *retval,
 		  const p3_global_settings *pa,
 		  const seq_args *sa,
 		  const dpal_arg_holder *dpal_arg_to_use)
@@ -1399,7 +1411,7 @@ make_primer_lists(p3retval *retval,
       pair_expl->considered = 1;
       return 1;
     } else return 0;
-} /* make_primer_lists */
+} /* make_detection_primer_lists */
 
 /* 
  * Make complete list of acceptable internal oligos in retval->intl.oligo.
@@ -1432,6 +1444,65 @@ make_internal_oligo_list(p3retval *retval,
   }
   return ret;
 } /* make_internal_oligo_list */
+
+
+/* 
+ * Make lists of acceptable left and right primers.  After return, the
+ * lists are stored in retval->fwd.oligo and retval->rev.oligo and the
+ * coresponding list sizes are stored in retval->fwd.num_elem and
+ * retval->rev.num_elem.  Return 1 if one of lists is empty or if
+ * leftmost left primer and rightmost right primer do not provide
+ * sufficient product size.
+ */
+static int
+make_complete_primer_lists(p3retval *retval,
+		  const p3_global_settings *pa,
+		  const seq_args *sa,
+		  const dpal_arg_holder *dpal_arg_to_use)
+{
+	int exteme_var;
+	int length, start;
+    int n;
+
+    /* Get the length of the sequence */
+    PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
+
+    if (pa->pick_left_primer) {
+		/* We will need a left primer. */
+		exteme_var = 0;
+		length = n - pa->p_args.min_size;
+		start = pa->p_args.min_size - 1;
+		    
+		/* Pick all good in the given range */
+		pick_primer_range(start, length, &exteme_var, &retval->fwd,
+					     pa, sa, dpal_arg_to_use, retval);
+
+    }  /* if (pa->pick_left_primer) */
+
+    if ( pa->pick_right_primer ) {
+		/* We will need a right primer */
+		exteme_var = n;
+		length = n - pa->p_args.min_size + 1;
+		start = 0;
+		
+		/* Pick all good in the given range */
+		pick_primer_range(start, length, &exteme_var, &retval->rev,
+					     pa, sa, dpal_arg_to_use, retval);
+	}
+    
+    if ( pa->pick_internal_oligo ) {
+    	/* We will need a internal oligo */
+	  length = n - pa->o_args.min_size;
+	  start = pa->o_args.min_size - 1;
+	  exteme_var = 0;
+	  
+	  /* Pick all good in the given range */
+	  pick_primer_range(start, length, &exteme_var, &retval->intl,
+				   pa, sa, dpal_arg_to_use, retval);
+    }
+    
+    return 0;
+} /* make_complete_primer_lists */
 
 
 /* pick_primer_range picks all primers in the range from start to start+length
@@ -2033,7 +2104,7 @@ oligo_param(const p3_global_settings *pa,
 
     if (must_use
 	|| pa->file_flag 
-	|| !(pa->pick_left_primer == 1 && pa->pick_right_primer == 1)  /* No Pairs!*/
+	|| retval->output_type == primer_list  /* !(pa->pick_left_primer == 1 && pa->pick_right_primer == 1)   No Pairs!*/
 	|| po_args->weights.compl_any 
 	|| po_args->weights.compl_end
 	) {
@@ -2052,7 +2123,7 @@ oligo_param(const p3_global_settings *pa,
 
     if (must_use
 	|| pa->file_flag
-	|| !(pa->pick_left_primer == 1 && pa->pick_right_primer == 1) /* No Pairs!*/
+	|| retval->output_type == primer_list  /* !(pa->pick_left_primer == 1 && pa->pick_right_primer == 1)   No Pairs!*/
 	|| po_args->weights.repeat_sim
 	|| ((OT_RIGHT == l || OT_LEFT == l) 
 	    && pa->p_args.weights.template_mispriming)
@@ -4010,14 +4081,17 @@ _pr_data_control(const p3_global_settings *pa,
     }
     
     /* The product must fit in the included region */
-    /* FIX ME: this wont work for primer lists */
     if (sa->incl_l < pr_min && pa->pick_left_primer == 1 
     		&& pa->pick_right_primer == 1) {
-	pr_append_new_chunk(nonfatal_err,
+    	if (pa->primer_task != pick_primer_list) {
+    		pr_append_new_chunk(nonfatal_err,
 	   "INCLUDED_REGION length < min PRIMER_PRODUCT_SIZE_RANGE");
-	return 1;
+    	}
+    	if (pa->primer_task == pick_detection_primers) {
+    		return 1;
+    	}
     }
-
+    
     if (pa->max_end_stability < 0) {
         pr_append_new_chunk(nonfatal_err,
 			    "PRIMER_MAX_END_STABILITY must be non-negative");
