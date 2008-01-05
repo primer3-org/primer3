@@ -112,16 +112,10 @@ typedef struct seq_lib {
                              of x->seqs[i], which lets us keep track of pairwise
                              mispriming.  See reverse_complement_seq_lib(). */
     double *weight;       /* An array of weights. */
-    int seq_num;          /* The number of names, sequences, and weights. */
-    int storage_size;     /* Space allocated for names, sequences, and weights. */
-    
-    char **repeat_files;  /* An array of pathes to the files containing the library. */
-    int *file_read;       /* An array of indicating if the file was read */
-    int file_num;         /* The number of files. */
-    int file_storage_size;/* Space allocated for filenames */
-    
+    char   *repeat_file;  /* The path of the file containing the library. */
     pr_append_str error;  /* Global error message if any.  */
     pr_append_str warning;/* Warning message. */
+    int seq_num;          /* The number of names, sequences, and weights. */
 } seq_lib;
 
 /* 
@@ -967,15 +961,6 @@ int   strcmp_nocase(const char *, const char *);
  */
 seq_lib *
 read_and_create_seq_lib(const char *filename, const char* errfrag);
-
-seq_lib *
-add_filename_and_create_seq_lib(seq_lib *lib, const char *filename, const char* errfrag);
-
-seq_lib *
-load_file_to_seq_lib(const int file_nr, seq_lib *lib, const char* errfrag);
-
-seq_lib *
-load_all_file_to_seq_lib(seq_lib *lib, const char* errfrag);
 
 void
 destroy_seq_lib(seq_lib *lib);

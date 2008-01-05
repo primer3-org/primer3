@@ -152,7 +152,6 @@ format_pairs(FILE *f,
   char *warning;
   int print_lib_sim = lib_sim_specified(pa);
   primer_rec *h = NULL;
-  int rf_i;
 
   PR_ASSERT(NULL != f);
   PR_ASSERT(NULL != pa);
@@ -170,25 +169,19 @@ format_pairs(FILE *f,
     fprintf(f, "PRIMER PICKING RESULTS FOR %s\n\n", sa->sequence_name);
   
   /* Print if a mispriming libraby was used and which one */
-  if (pa->p_args.repeat_lib != NULL) {
-      fprintf(f, "Using mispriming library %s",
-	      pa->p_args.repeat_lib->repeat_files[0]);
-  	  for(rf_i = 1; rf_i < pa->p_args.repeat_lib->file_num ; rf_i++)
-  		fprintf(f, ", %s", pa->p_args.repeat_lib->repeat_files[rf_i]);
-  	  fprintf(f, "\n");
-    } else
+  if (pa->p_args.repeat_lib != NULL)
+    fprintf(f, "Using mispriming library %s\n",
+	    pa->p_args.repeat_lib->repeat_file);
+  else
     fprintf(f, "No mispriming library specified\n");
 
   /* Print if a mispriming libraby for the internal oligo 
    * was used and which one */
   if ( pa->pick_internal_oligo == 1 ) {
-    if (pa->o_args.repeat_lib != NULL){
-    	fprintf(f, "Using internal oligo mishyb library %s",
-    		      pa->o_args.repeat_lib->repeat_files[0]);
-    	for(rf_i = 1; rf_i < pa->o_args.repeat_lib->file_num ; rf_i++)
-    		fprintf(f, ", %s", pa->o_args.repeat_lib->repeat_files[rf_i]);
-    	fprintf(f, "\n");
-    } else
+    if (pa->o_args.repeat_lib != NULL)
+      fprintf(f, "Using internal oligo mishyb library %s\n",
+	      pa->o_args.repeat_lib->repeat_file);
+    else
       fprintf(f, "No internal oligo mishyb library specified\n");
   }
 
@@ -762,7 +755,7 @@ format_oligos(FILE *f,
   oligo_type l = oligo_list->type;
   char *warning;
   int print_lib_sim = lib_sim_specified(pa);
-  int i, rf_i;
+  int i;
   pair_array_t *best_pairs;
   primer_rec *p;
   char type[20];
@@ -781,13 +774,10 @@ format_oligos(FILE *f,
   if (NULL != sa->sequence_name)
     fprintf(f, "PRIMER PICKING RESULTS FOR %s\n\n", sa->sequence_name);
   if (l != OT_INTL ) {
-    if (pa->p_args.repeat_lib != NULL) {
-      fprintf(f, "Using mispriming library %s",
-	      pa->p_args.repeat_lib->repeat_files[0]);
-  	  for(rf_i = 1; rf_i < pa->p_args.repeat_lib->file_num ; rf_i++)
-  		fprintf(f, ", %s", pa->p_args.repeat_lib->repeat_files[rf_i]);
-     	fprintf(f, "\n");   
-    } else
+    if (pa->p_args.repeat_lib != NULL)
+      fprintf(f, "Using mispriming library %s\n",
+	      pa->p_args.repeat_lib->repeat_file);
+    else
       fprintf(f, "No mispriming library specified\n");
   } else {
 	  /* FIX ME AU: You can never enter here: 
