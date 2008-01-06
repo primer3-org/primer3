@@ -4047,11 +4047,11 @@ fake_a_sequence(seq_args *sa)
 	if (sa->left_input){
 		strcat(sa->sequence, sa->left_input);
 	}
-	if (sa->right_input){
-		strcat(sa->sequence, rev);
-	}
 	if (sa->internal_input){
 		strcat(sa->sequence, sa->internal_input);
+	}
+	if (sa->right_input){
+		strcat(sa->sequence, rev);
 	}
 	return 0;
 }
