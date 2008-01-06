@@ -195,6 +195,11 @@ static int    make_complete_primer_lists(p3retval *retval,
 				const seq_args *sa,
 				const dpal_arg_holder *dpal_arg_to_use);
 
+static int    add_primers_to_check(p3retval *retval,
+				const p3_global_settings *pa,
+				const seq_args *sa,
+				const dpal_arg_holder *dpal_arg_to_use);
+
 static int    make_internal_oligo_list(p3retval *,
 				       const p3_global_settings *,
 				       const seq_args *,
@@ -1025,7 +1030,10 @@ choose_primers(const p3_global_settings *pa,
     if (pa->primer_task == pick_primer_list) {
     	make_complete_primer_lists(retval, pa, sa,
 	    		dpal_arg_to_use);
-    } else { /* The general way to pick primers */
+    } else if (pa->primer_task == check_primers) {
+    	add_primers_to_check(retval, pa, sa,
+	    		dpal_arg_to_use);
+    }else { /* The general way to pick primers */
 	    /* Populate the forward and reverse primer lists */
 	    if (make_detection_primer_lists(retval, pa, sa,
 	    		dpal_arg_to_use) != 0) {
@@ -1356,7 +1364,7 @@ make_detection_primer_lists(p3retval *retval,
 	  start = pa->p_args.min_size - 1;
 	    
 	  /* Use the primer provided */
-  	  if ((sa->left_input) || (pa->primer_task == check_primers)) {
+  	  if (sa->left_input) {
   		  add_one_primer(sa->left_input, &left, &retval->fwd,
 				 pa, sa, dpal_arg_to_use, retval); 
   	  }
@@ -1385,7 +1393,7 @@ make_detection_primer_lists(p3retval *retval,
 		start = r_b;
 	
 		/* Use the primer provided */
-		if ((sa->right_input) || (pa->primer_task == check_primers)) {
+		if (sa->right_input) {
 		  add_one_primer(sa->right_input, &right, &retval->rev,
 					 pa, sa, dpal_arg_to_use, retval); 
 		/*  pick_right_primers(start, length, &right, &retval->rev,
@@ -1404,9 +1412,6 @@ make_detection_primer_lists(p3retval *retval,
      * list is empty or if leftmost left primer and
      * rightmost right primer do not provide sufficient product size.
      */
-    if (pa->primer_task == check_primers) {
-    	return 0;
-    }
     
     if ((pa->pick_left_primer && 0 == retval->fwd.num_elem)
 	|| ((pa->pick_right_primer)  && 0 == retval->rev.num_elem)) {
@@ -1507,6 +1512,40 @@ make_complete_primer_lists(p3retval *retval,
 	  pick_primer_range(start, length, &exteme_var, &retval->intl,
 				   pa, sa, dpal_arg_to_use, retval);
     }
+    
+    return 0;
+} /* make_complete_primer_lists */
+
+/* 
+ * Make lists of acceptable left and right primers.  After return, the
+ * lists are stored in retval->fwd.oligo and retval->rev.oligo and the
+ * coresponding list sizes are stored in retval->fwd.num_elem and
+ * retval->rev.num_elem.  Return 1 if one of lists is empty or if
+ * leftmost left primer and rightmost right primer do not provide
+ * sufficient product size.
+ */
+static int
+add_primers_to_check(p3retval *retval,
+		  const p3_global_settings *pa,
+		  const seq_args *sa,
+		  const dpal_arg_holder *dpal_arg_to_use)
+{
+	int exteme_var;
+	
+	if (sa->left_input) {
+	  add_one_primer(sa->left_input, &exteme_var, &retval->fwd,
+				 pa, sa, dpal_arg_to_use, retval); 
+	}
+
+	if (sa->right_input) {
+	  add_one_primer(sa->right_input, &exteme_var, &retval->rev,
+				 pa, sa, dpal_arg_to_use, retval); 
+	}
+ 
+	if (sa->internal_input) {
+	  add_one_primer(sa->internal_input, &exteme_var, &retval->intl,
+				       pa, sa, dpal_arg_to_use, retval);
+	}
     
     return 0;
 } /* make_complete_primer_lists */
@@ -3917,7 +3956,11 @@ _adjust_seq_args(const p3_global_settings *pa,
      sa->sequence == NULL
   */
   if (NULL == sa->sequence) {
-    pr_append_new_chunk(nonfatal_err, "Missing SEQUENCE tag");
+  	if (pa->primer_task == check_primers) {
+  		pr_append_new_chunk(nonfatal_err, "Missing PRIMER tag");
+  	} else {
+  	    pr_append_new_chunk(nonfatal_err, "Missing SEQUENCE tag");  		
+  	}
     return 1;
   } 
 
@@ -4443,6 +4486,10 @@ _pr_data_control(const p3_global_settings *pa,
         return 1;
     }
 
+    if (pa->primer_task == check_primers && NULL == glob_err->data) {
+    	return 0;
+    }
+    
     return (NULL == nonfatal_err->data && NULL == /* pa->*/ glob_err->data) ? 0 : 1;
 } /* _pr_data_control */
 
