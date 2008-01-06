@@ -3945,11 +3945,9 @@ _adjust_seq_args(const p3_global_settings *pa,
   if (pa->primer_task == check_primers) {
 	  if (NULL == sa->sequence) {
 		  fake_a_sequence(sa);
-	  }
-	  
+	  }	  
   }
   
-
   /* 
      Complain if there is no sequence; We need to check this
      error here, because this function cannot do its work if
@@ -4194,10 +4192,14 @@ _pr_data_control(const p3_global_settings *pa,
     /* The product must fit in the included region */
     if (sa->incl_l < pr_min && pa->pick_left_primer == 1 
     		&& pa->pick_right_primer == 1) {
-    	if (pa->primer_task != pick_primer_list) {
+    	if (pa->primer_task == check_primers) {
+    		pr_append_new_chunk(warning,
+	   "INCLUDED_REGION length < min PRIMER_PRODUCT_SIZE_RANGE");
+    	} else if (pa->primer_task != pick_primer_list) {
     		pr_append_new_chunk(nonfatal_err,
 	   "INCLUDED_REGION length < min PRIMER_PRODUCT_SIZE_RANGE");
     	}
+
     	if (pa->primer_task == pick_detection_primers) {
     		return 1;
     	}
