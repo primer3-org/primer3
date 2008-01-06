@@ -598,7 +598,20 @@ read_record(FILE *file_input,
       } else if (!strcmp_nocase(task_tmp, "pick_primer_list")) {
 		pa->primer_task = pick_primer_list;
       } else if (!strcmp_nocase(task_tmp, "check_primers")) {
-		pa->primer_task = check_primers;
+  		pa->primer_task = check_primers;
+  		/* check_primers sets the picking flags itself */
+  		pa->pick_left_primer = 0;
+  		pa->pick_right_primer = 0;
+  		pa->pick_internal_oligo = 0;
+  		if (sa->left_input){
+  			pa->pick_left_primer = 1;
+  		}
+  		if (sa->right_input){
+  			pa->pick_right_primer = 1;
+  		}
+  		if (sa->internal_input){
+  			pa->pick_internal_oligo = 1;
+  		}
       } else 
     	pr_append_new_chunk(glob_err,
 			    "Unrecognized PRIMER_TASK");

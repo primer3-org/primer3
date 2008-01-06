@@ -99,6 +99,8 @@ static int _adjust_seq_args(const p3_global_settings *pa,
 			    pr_append_str *nonfatal_err,
 			    pr_append_str *warning);
 
+static int fake_a_sequence(seq_args *sa);
+
 static int    _pr_data_control(const p3_global_settings *,  
 			       const seq_args *, 
 			       pr_append_str *glob_err,
@@ -1354,7 +1356,7 @@ make_detection_primer_lists(p3retval *retval,
 	  start = pa->p_args.min_size - 1;
 	    
 	  /* Use the primer provided */
-  	  if (sa->left_input) {
+  	  if ((sa->left_input) || (pa->primer_task == check_primers)) {
   		  add_one_primer(sa->left_input, &left, &retval->fwd,
 				 pa, sa, dpal_arg_to_use, retval); 
   	  }
@@ -1382,7 +1384,8 @@ make_detection_primer_lists(p3retval *retval,
 		length = n-pa->p_args.min_size - r_b + 1;
 		start = r_b;
 	
-		if (sa->right_input) {
+		/* Use the primer provided */
+		if ((sa->right_input) || (pa->primer_task == check_primers)) {
 		  add_one_primer(sa->right_input, &right, &retval->rev,
 					 pa, sa, dpal_arg_to_use, retval); 
 		/*  pick_right_primers(start, length, &right, &retval->rev,
@@ -1401,6 +1404,10 @@ make_detection_primer_lists(p3retval *retval,
      * list is empty or if leftmost left primer and
      * rightmost right primer do not provide sufficient product size.
      */
+    if (pa->primer_task == check_primers) {
+    	return 0;
+    }
+    
     if ((pa->pick_left_primer && 0 == retval->fwd.num_elem)
 	|| ((pa->pick_right_primer)  && 0 == retval->rev.num_elem)) {
       return 1;
@@ -1427,7 +1434,7 @@ make_internal_oligo_list(p3retval *retval,
   int left = 0;
   
   /* Use the primer provided */
-  if (sa->internal_input){
+  if ((sa->internal_input) || (pa->primer_task == check_primers)){
 	  ret = add_one_primer(sa->internal_input, &left, &retval->intl,
 			       pa, sa, dpal_arg_to_use, retval);
   }
@@ -2637,6 +2644,9 @@ characterize_pair(p3retval *retval,
   /* FIX ME / FUTURE CODE: we must use the pair if the caller specifed
      both the left and the right primer. */
   int must_use = 0;
+  if (pa->primer_task == check_primers) {
+	  must_use = 1;
+  }
 
   int pair_failed_flag = 0;
   double min_oligo_tm;
@@ -2739,7 +2749,8 @@ characterize_pair(p3retval *retval,
 
     if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
       pair_expl->considered--;
-      return PAIR_FAILED;
+      if (!must_use) return PAIR_FAILED;
+      else pair_failed_flag = 1;
     }
 
   }
@@ -2750,7 +2761,8 @@ characterize_pair(p3retval *retval,
 
     if (!OK_OR_MUST_USE(&retval->rev.oligo[n])) {
       pair_expl->considered--;
-      return PAIR_FAILED;
+      if (!must_use) return PAIR_FAILED;
+      else pair_failed_flag = 1;
     }
   }
 
@@ -2768,7 +2780,8 @@ characterize_pair(p3retval *retval,
 		     &retval->fwd.expl,dpal_arg_to_use->local_end, dpal_arg_to_use);
     if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
       pair_expl->considered--;
-      return PAIR_FAILED;
+      if (!must_use) return PAIR_FAILED;
+      else pair_failed_flag = 1;
     }
   }
 
@@ -2777,7 +2790,8 @@ characterize_pair(p3retval *retval,
 		     &retval->rev.expl, dpal_arg_to_use->local_end, dpal_arg_to_use);
     if (!OK_OR_MUST_USE(&retval->rev.oligo[n])) {
       pair_expl->considered--;
-      return PAIR_FAILED;
+      if (!must_use) return PAIR_FAILED;
+      else pair_failed_flag = 1;
     }
   }
 	
@@ -2794,13 +2808,15 @@ characterize_pair(p3retval *retval,
   ppair->compl_any = align(s1,s2, dpal_arg_to_use->local);
   if (ppair->compl_any > pa->p_args.max_self_any) {
     /* sa-> */ pair_expl->compl_any++;
-    return PAIR_FAILED;
+    if (!must_use) return PAIR_FAILED;
+    else pair_failed_flag = 1;
   }
 
   if ((ppair->compl_end = align(s1, s2, dpal_arg_to_use->end))
       > pa->p_args.max_self_end) {
     pair_expl->compl_end++;
-    return PAIR_FAILED;
+    if (!must_use) return PAIR_FAILED;
+    else pair_failed_flag = 1;
   }
 
   /*
@@ -2811,7 +2827,8 @@ characterize_pair(p3retval *retval,
       > ppair->compl_end) {
     if (compl_end > pa->p_args.max_self_end) {
       pair_expl->compl_end++;
-      return PAIR_FAILED;
+      if (!must_use) return PAIR_FAILED;
+      else pair_failed_flag = 1;
     }
     ppair->compl_end = compl_end;
   }
@@ -2823,7 +2840,8 @@ characterize_pair(p3retval *retval,
   if ((ppair->repeat_sim = pair_repeat_sim(ppair, pa))
       > pa->pair_repeat_compl) {
     pair_expl->repeat_sim++;
-    return PAIR_FAILED;
+    if (!must_use) return PAIR_FAILED;
+    else pair_failed_flag = 1;
   }
   /* ============================================================= */
 
@@ -2848,7 +2866,8 @@ characterize_pair(p3retval *retval,
     if (pa->pair_max_template_mispriming >= 0.0
 	&& ppair->template_mispriming > pa->pair_max_template_mispriming) {
       pair_expl->template_mispriming++;
-      return PAIR_FAILED;
+      if (!must_use) return PAIR_FAILED;
+      else pair_failed_flag = 1;
     }
 
   }
@@ -3882,6 +3901,15 @@ _adjust_seq_args(const p3_global_settings *pa,
 		   pr_append_str *warning)
 {
   int seq_len, inc_len;
+  
+  /* Create a seq for check primers if needed */
+  if (pa->primer_task == check_primers) {
+	  if (NULL == sa->sequence) {
+		  fake_a_sequence(sa);
+	  }
+	  
+  }
+  
 
   /* 
      Complain if there is no sequence; We need to check this
@@ -3943,6 +3971,46 @@ _adjust_seq_args(const p3_global_settings *pa,
   }
 
   return 0;
+}
+
+/*
+ * Return 1 on error, 0 on success.  fake_a_sequence creates a sequence
+ * out of the provided primers and puts them in SA 
+ */
+
+static int
+fake_a_sequence(seq_args *sa)
+{
+	/* Allocate space for everything */
+	int space = 1;
+	char *rev = NULL;
+	if (sa->left_input){
+		space = space + strlen(sa->left_input);
+	}
+	if (sa->right_input){
+		space = space + strlen(sa->right_input);
+		rev = pr_safe_malloc(strlen(sa->right_input) + 1);
+		_pr_reverse_complement(sa->right_input, rev);
+	}
+	if (sa->internal_input){
+		space = space + strlen(sa->internal_input);
+	}
+	if (space == 1){
+		return 0;
+	}
+	sa->sequence = pr_safe_malloc(space);
+	*sa->sequence = '\0';
+	/* Copy over the primers */
+	if (sa->left_input){
+		strcat(sa->sequence, sa->left_input);
+	}
+	if (sa->right_input){
+		strcat(sa->sequence, rev);
+	}
+	if (sa->internal_input){
+		strcat(sa->sequence, sa->internal_input);
+	}
+	return 0;
 }
 
 /*

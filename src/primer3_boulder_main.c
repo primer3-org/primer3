@@ -164,6 +164,7 @@ main(argc,argv)
     }
     fprintf(stderr, "%s: %s\n", 
 	      pr_program_name, fatal_parse_err->data);
+    destroy_seq_args(sa);
     exit(-4);
   }
 
