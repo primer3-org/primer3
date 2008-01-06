@@ -872,6 +872,7 @@ void p3_set_gs_lib_ambiguity_codes_consensus(p3_global_settings * p , int lib_am
 void p3_set_gs_quality_range_min(p3_global_settings * p , int quality_range_min);
 void p3_set_gs_quality_range_max(p3_global_settings * p , int quality_range_max);
 
+void p3_empty_gs_product_size_range(p3_global_settings *pgs);
 /* Return 1 on error (product size range is full);
    otherwise return 0. */
 int  p3_add_to_gs_product_size_range(p3_global_settings *, int, int);
@@ -880,7 +881,6 @@ args_for_one_oligo_or_primer *p3_get_global_settings_p_args(p3_global_settings *
 args_for_one_oligo_or_primer *p3_get_global_settings_o_args(p3_global_settings * p);
 int p3_set_afogop_seq_lib(args_for_one_oligo_or_primer *, seq_lib *);
 int p3_set_afogop_opt_tm(args_for_one_oligo_or_primer *, double);
-
 
 void p3_set_gs_max_end_stability(p3_global_settings * p , int max_end_stability);
 void p3_set_gs_gc_clamp(p3_global_settings * p , int gc_clamp);

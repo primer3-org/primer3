@@ -5828,6 +5828,11 @@ p3_set_gs_primer_gc_clamp(p3_global_settings * p , int val) {
   p->gc_clamp = val;
 }
 
+void
+p3_empty_gs_product_size_range(p3_global_settings *pgs) {
+  pgs->num_intervals = 0;
+}
+
 int
 p3_add_to_gs_product_size_range(p3_global_settings *pgs, 
 				int n1, int n2) {
@@ -5835,6 +5840,7 @@ p3_add_to_gs_product_size_range(p3_global_settings *pgs,
     return 1;
   pgs->pr_min[pgs->num_intervals]  = n1;
   pgs->pr_max[pgs->num_intervals]  = n2;
+  pgs->num_intervals++;
   return 0;
 }
 

@@ -63,6 +63,7 @@ main(argc,argv)
   int format_output = 0;
   int strict_tags = 0;
   int io_version = 0;
+
   /* Some space for file names */
   char *tmp_file_name = NULL;
   char p3_all_file[FILE_NAME_SIZE];
@@ -73,12 +74,11 @@ main(argc,argv)
   p3_global_settings *global_pa;
   seq_args *sa;
 
-  /* Setup the error structures handlers */
+  /* Declare and initialize error strings. */  /* ANDREAS, handlers are usually functions */
   pr_append_str *fatal_parse_err = NULL;
   pr_append_str *nonfatal_parse_err = NULL;
-  /* pr_append_str *adjust_seq_args_warnings = NULL; */
   
-  /* Setup the output data structure handlers */
+  /* Retval will point to the return value from choose_primers(). */
   p3retval *retval = NULL;
   int input_found=0;
 
@@ -117,7 +117,7 @@ main(argc,argv)
 	  io_version=10*io_version+(tag2int[counter] - '0');
 	}
 	if ( counter > 20 ) {
-	  break; /* Just to be save */
+	  break; /* Just to be safe */
 	}
 	counter++;
       }
@@ -132,19 +132,17 @@ main(argc,argv)
     }
   }
 
-  /* Allocate the space for empty error messages */
+  /* Create  empty error messages */
   fatal_parse_err     = create_pr_append_str();
   nonfatal_parse_err  = create_pr_append_str();
-  /* adjust_seq_args_warnings       = create_pr_append_str(); */
   if (NULL == fatal_parse_err 
-      || NULL == nonfatal_parse_err
-      /* || NULL == adjust_seq_args_warnings */ ) {
+      || NULL == nonfatal_parse_err ) {
     exit(-2); /* Out of memory */
   }
 
   /* Settings files have to be read in here */
   /* The functions need a temporary sa */
-  if (!(sa = create_seq_arg())) {
+  if (!(sa = create_seq_arg())) {  /* ANDREAS, the storage assigned to sa here is not always freed */
     exit(-2);
   }
 
@@ -168,6 +166,7 @@ main(argc,argv)
 	      pr_program_name, fatal_parse_err->data);
     exit(-4);
   }
+
   /* If there are nonfatal errors, write the proper message
    * and skip to the end of the loop */
   if (!pr_is_empty(nonfatal_parse_err)) {
@@ -183,19 +182,18 @@ main(argc,argv)
   destroy_seq_args(sa);
   
   /* Read the data from input stream record by record and process it if
-   * there are no errors. This is were the work is done! */
+   * there are no errors. This is where the work is done. */
   while (1) {
     /* Create and initialize a seq_args data structure. sa (seq_args *) is 
      * initialized here because Values are _not_ retained across different
      * input records. */
-    if (!(sa = create_seq_arg())) {
+    if (!(sa = create_seq_arg())) {  /*  ANDREAS, the storage assigned to sa here is not alwayw freed */
       exit(-2);
     }
 
     /* Reset all errors handlers and the return structure */
     pr_set_empty(fatal_parse_err);
     pr_set_empty(nonfatal_parse_err);
-    /* pr_set_empty(adjust_seq_args_warnings); */
     retval = NULL;
 
     /* Read data from stdin until a "=" line occurs.  Assign parameter
@@ -203,6 +201,7 @@ main(argc,argv)
      * checking. */
     if (read_record(stdin, &strict_tags, &io_version, !format_output, all_parameters,
     		global_pa, sa, fatal_parse_err, nonfatal_parse_err) <= 0) {
+      
       break; /* leave the program loop and complain later */
     }
     
@@ -221,16 +220,12 @@ main(argc,argv)
       }
       fprintf(stderr, "%s: %s\n", 
 	      pr_program_name, fatal_parse_err->data);
+      destroy_p3retval(retval);
+      destroy_seq_args(sa);
       exit(-4);
     }
 
     /* POSSIBLE CHANGE -- read in mispriming libraries here? */
-
-
-#if 0
-    /* Modify some of the arguments */
-    p3_adjust_seq_args(global_pa, sa, nonfatal_parse_err, adjust_seq_args_warnings);
-#endif
 
     /* If there are nonfatal errors, write the proper message
      * and skip to the end of the loop */
@@ -245,7 +240,7 @@ main(argc,argv)
     }
     
     /* Pick the primers - the central function */
-    retval = choose_primers(global_pa, sa);
+    retval = choose_primers(global_pa, sa);  
     if (NULL == retval) exit(-2); /* Out of memory. */
 
     if (pr_is_empty(&retval->glob_err)
@@ -274,22 +269,23 @@ main(argc,argv)
       /* Check for errors and print them */
       if (NULL != retval->glob_err.data) {
 	fprintf(stderr, "%s: %s\n", pr_program_name, retval->glob_err.data);
+	destroy_p3retval(retval);
+	destroy_seq_args(sa);
 	exit(-4);
       }
     }
     /* Delete the data structures out of the memory */
     destroy_p3retval(retval); /* This works even if retval is NULL */
     destroy_seq_args(sa);
-  } 
-  /* while (1) (processing boulder io records) 
-   * End of the primary working loop */
+
+  }   /* while (1) (processing boulder io records) 
+       * End of the primary working loop */
 
   /* To avoid being distracted when looking for leaks: */
   p3_destroy_global_settings(global_pa);
   global_pa = NULL;
   destroy_pr_append_str(fatal_parse_err);
   destroy_pr_append_str(nonfatal_parse_err);
-  /* destroy_pr_append_str(adjust_seq_args_warnings); */
   destroy_seq_args(sa);
   
   /* If it could not read input complain and die */
