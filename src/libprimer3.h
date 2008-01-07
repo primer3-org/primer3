@@ -102,22 +102,6 @@ typedef struct pr_append_str {
     char *data;
 } pr_append_str;
 
-/* The seq_lib struct represents a library of sequences. */
-/* Clients do not need to know the details of this structure. */
-typedef struct seq_lib {
-    char **names;         /* An array of sequence names. */
-    char **seqs;          /* An array of sequences. */
-    char **rev_compl_seqs;/* An array of reversed-complemented sequences.
-                             x->rev_compl_seqs[i] is the reverse complement
-                             of x->seqs[i], which lets us keep track of pairwise
-                             mispriming.  See reverse_complement_seq_lib(). */
-    double *weight;       /* An array of weights. */
-    char   *repeat_file;  /* The path of the file containing the library. */
-    pr_append_str error;  /* Global error message if any.  */
-    pr_append_str warning;/* Warning message. */
-    int seq_num;          /* The number of names, sequences, and weights. */
-} seq_lib;
-
 /* 
  * Arguments to the primer program as a whole.  Values for these arguments are
  * retained _across_ different input records.  (These are the so-called
@@ -154,6 +138,8 @@ typedef struct pair_weights {
     double repeat_sim;
     double template_mispriming;
 } pair_weights;
+
+#include "p3_seq_lib.h"
 
 typedef struct args_for_one_oligo_or_primer {
   seq_lib       *repeat_lib;
@@ -949,28 +935,6 @@ const char *primer3_copyright(void);
 short oligo_max_template_mispriming(const primer_rec *);
 
 int   strcmp_nocase(const char *, const char *);
-
-/* ======================================================= */
-/* Functions for creating and destroying a seq_lib object. */
-/* ======================================================= */
-
-/*  
- * Reads any file in fasta format and returns a newly allocated
- * seq_lib, lib.  Sets lib.error to a non-empty string on any error
- * other than ENOMEM.  Returns NULL on ENOMEM.
- */
-seq_lib *
-read_and_create_seq_lib(const char *filename, const char* errfrag);
-
-void
-destroy_seq_lib(seq_lib *lib);
-
-/* number of sequences in a seq_lib* */
-int
-seq_lib_num_seq(const seq_lib* lib);
-
-char *
-seq_lib_warning_data(const seq_lib *lib);
 
 void
 p3_set_program_name(const char *name);

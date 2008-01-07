@@ -120,7 +120,7 @@ $(LIBPRIMER3_DYN): libprimer3.o
 $(PRIMER_EXE): $(PRIMER_OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
 
-libprimer3.o: libprimer3.c libprimer3.h dpal.h oligotm.h
+libprimer3.o: libprimer3.c libprimer3.h p3_seq_lib.h dpal.h oligotm.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ libprimer3.c
 
 ntdpal: ntdpal_main.o dpal.o
@@ -132,10 +132,10 @@ oligotm: oligotm_main.c oligotm.h $(LIBOLIGOTM)
 long_seq_tm_test: long_seq_tm_test_main.c oligotm.o
 	$(CC) $(CFLAGS) -o $@ long_seq_tm_test_main.c oligotm.o $(LIBOPTS) $(LDLIBS)
 
-read_boulder.o: read_boulder.c read_boulder.h libprimer3.h dpal.h
+read_boulder.o: read_boulder.c read_boulder.h libprimer3.h dpal.h p3_seq_lib.h 
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ read_boulder.c
 
-print_boulder.o: print_boulder.c print_boulder.h libprimer3.h
+print_boulder.o: print_boulder.c print_boulder.h libprimer3.h p3_seq_lib.h 
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ print_boulder.c
 
 dpal.o: dpal.c dpal.h
@@ -144,7 +144,7 @@ dpal.o: dpal.c dpal.h
 dpal_primer.o: dpal.c dpal.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ dpal.c
 
-format_output.o: format_output.c format_output.h libprimer3.h dpal.h
+format_output.o: format_output.c format_output.h libprimer3.h dpal.h p3_seq_lib.h 
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ format_output.c
 
 ntdpal_main.o: ntdpal_main.c dpal.h
