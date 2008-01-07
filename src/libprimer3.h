@@ -953,6 +953,12 @@ int    p3_print_oligo_lists(const p3retval*,
 			    pr_append_str *err);
 
 
+/* Reverse and complement the sequence seq and put the result in s.
+   WARNING: It is up the caller to ensure that s points to enough
+   space. */ 
+void   p3_reverse_complement(const char *, char *);
+
+
 /* Hack -- used only in print boulder */
 #define primer_args p3_global_settings
 

@@ -110,8 +110,6 @@ static int    _pr_data_control(const p3_global_settings *,
 static int    _pr_need_pair_template_mispriming(const p3_global_settings *pa);
 static int    _pr_need_template_mispriming(const p3_global_settings *);
 
-static void   _pr_reverse_complement(const char *, char *);
-
 
 static void   _pr_substr(const char *, int, int, char *);
 
@@ -1751,7 +1749,7 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
     if (oligo->type != OT_RIGHT) {
     	strncat(test_oligo, primer, MAX_PRIMER_LENGTH); 
     } else {
-    	_pr_reverse_complement(primer, test_oligo);
+    	p3_reverse_complement(primer, test_oligo);
     }
     
     /* Struct to store the primer parameters in */
@@ -2097,7 +2095,7 @@ oligo_param(const p3_global_settings *pa,
      }
 
     _pr_substr(seq,j,k-j+1,s1);
-    _pr_reverse_complement(s1, s1_rev);
+    p3_reverse_complement(s1, s1_rev);
 
     if (OT_RIGHT == l) {
       oligo_seq = s1_rev;
@@ -2566,7 +2564,7 @@ choose_internal_oligo(retval, left, right, nm, sa, pa, dpal_arg_to_use)
        if (h->self_any == ALIGN_SCORE_UNDEF) {
 
 	 _pr_substr(sa->trimmed_seq, h->start, h->length, oligo_seq);
-	 _pr_reverse_complement(oligo_seq, revc_oligo_seq);
+	 p3_reverse_complement(oligo_seq, revc_oligo_seq);
 
 	 oligo_compl(h, &pa->o_args, sa, OT_INTL, &retval->intl.expl,
 			 dpal_arg_to_use, oligo_seq, revc_oligo_seq);
@@ -2775,8 +2773,8 @@ characterize_pair(p3retval *retval,
 	     s2);
 
 
-  _pr_reverse_complement(s1, s1_rev);
-  _pr_reverse_complement(s2, s2_rev);
+  p3_reverse_complement(s1, s1_rev);
+  p3_reverse_complement(s2, s2_rev);
 
 
   if (retval->fwd.oligo[m].self_any == ALIGN_SCORE_UNDEF) {
@@ -3147,7 +3145,7 @@ pr_oligo_rev_c_sequence(sa, o)
     PR_ASSERT(start >= 0);
     PR_ASSERT(start + o->length <= seq_len);
     _pr_substr(sa->sequence, start, o->length, s);
-    _pr_reverse_complement(s,s1);
+    p3_reverse_complement(s,s1);
     return &s1[0];
 }
 
@@ -3176,7 +3174,7 @@ oligo_compl(primer_rec *h,
 
     j =  (OT_LEFT == l || OT_INTL == l) ? h->start : h->start-h->length+1;
     _pr_substr(sa->trimmed_seq, j, h->length, s1);  /* s1 is the 'forward sequnce, 5' -> 3' */
-    _pr_reverse_complement(s1, s);  /* s is the reverse complement of s1 */
+    p3_reverse_complement(s1, s);  /* s is the reverse complement of s1 */
 
     /* h->self_any = align(s1, s, dpal_arg_to_use->local); */
     h->self_any = align(oligo_seq, revc_oligo_seq, dpal_arg_to_use->local);
@@ -3340,7 +3338,7 @@ oligo_mispriming( primer_rec *h, const p3_global_settings *pa,
     : h->start;
 
   _pr_substr(sa->trimmed_seq, first, h->length, s);  /* New on 2007-10-11 */
-  _pr_reverse_complement(s, s_r);  /* New on 2007-10-11 */
+  p3_reverse_complement(s, s_r);  /* New on 2007-10-11 */
 
   /*
    * Calculate maximum similarity to sequences from user defined repeat
@@ -3589,9 +3587,11 @@ _pr_substr(const char *seq, int n, int m, char *s)
 	s[m]='\0';
 }
 
-/* Reverse and complement the sequence seq and put the result in s. */ 
-static void
-_pr_reverse_complement(const char *seq, char *s)
+/* Reverse and complement the sequence seq and put the result in s.
+   WARNING: It is up the caller to ensure that s points to enough
+   space. */ 
+void
+p3_reverse_complement(const char *seq, char *s)
 {
     const char *p = seq;
     char *q = s;
@@ -4001,7 +4001,7 @@ _adjust_seq_args(const p3_global_settings *pa,
 	
     /* Copies the reverse complement of the whole sequence into upcased_seq_r */
     sa->upcased_seq_r = pr_safe_malloc(strlen(sa->sequence) + 1);
-    _pr_reverse_complement(sa->upcased_seq, sa->upcased_seq_r);
+    p3_reverse_complement(sa->upcased_seq, sa->upcased_seq_r);
   }
   
   if (_check_and_adjust_intervals(sa,
@@ -4031,7 +4031,7 @@ fake_a_sequence(seq_args *sa)
 	if (sa->right_input){
 		space = space + strlen(sa->right_input);
 		rev = pr_safe_malloc(strlen(sa->right_input) + 1);
-		_pr_reverse_complement(sa->right_input, rev);
+		p3_reverse_complement(sa->right_input, rev);
 	}
 	if (sa->internal_input){
 		space = space + strlen(sa->internal_input);
@@ -4411,7 +4411,7 @@ _pr_data_control(const p3_global_settings *pa,
       if (strlen(sa->right_input) > pa->p_args.max_size) {
 	pr_append_new_chunk(nonfatal_err, "Specified right primer too long");
        } else { /* We do not want to overflow s1. */
-	_pr_reverse_complement(sa->right_input,s1);
+	p3_reverse_complement(sa->right_input,s1);
 	if (!strstr_nocase(sa->sequence, s1))
 	  pr_append_new_chunk(nonfatal_err,
 			      "Specified right primer not in sequence");
@@ -4845,6 +4845,7 @@ FILE *file;
 /* END p3_read_line                                             */
 /* ============================================================ */
 
+#if 0
 /* ============================================================ */
 /* BEGIN seq_lib functions                                      */
 /* ============================================================ */
@@ -4856,7 +4857,7 @@ static double parse_seq_name(char *s);
 static char   upcase_and_check_char(char *s);
 static void   reverse_complement_seq_lib(seq_lib  *lib);
 
-/* See comments in libprimer3.h */
+/* See comments in p3_seq_lib.h */
 seq_lib *
 read_and_create_seq_lib(const char * filename, const char *errfrag)
 {
@@ -5028,7 +5029,7 @@ reverse_complement_seq_lib(seq_lib  *lib)
 	    strcpy(lib->names[i], "reverse ");
 	    strcat(lib->names[i], lib->names[i-n]);
 	    lib->seqs[i] = pr_safe_malloc(strlen(lib->seqs[i-n]) + 1);
-	    _pr_reverse_complement(lib->seqs[i-n], lib->seqs[i]);
+	    p3_reverse_complement(lib->seqs[i-n], lib->seqs[i]);
 	    lib->weight[i] = lib->weight[i-n];
 	    lib->rev_compl_seqs[i-n] = lib->seqs[i];
 	    lib->rev_compl_seqs[i] = lib->seqs[i-n];
@@ -5128,6 +5129,7 @@ upcase_and_check_char(char *s)
 /* ============================================================ */
 /* END seq_lib functions                                        */
 /* ============================================================ */
+#endif
 
 
 

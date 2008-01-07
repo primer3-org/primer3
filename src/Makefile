@@ -110,12 +110,12 @@ $(LIBDPAL): dpal_primer.o
 $(LIBDPAL_DYN): dpal_primer.o
 	gcc -shared -W1,-soname,libdpal.so.1 -o $(LIBDPAL_DYN_LIB) dpal_primer.o
 
-$(LIBPRIMER3): libprimer3.o
-	ar rv $@ libprimer3.o
+$(LIBPRIMER3): libprimer3.o p3_seq_lib.o
+	ar rv $@ libprimer3.o p3_seq_lib.o
 	$(RANLIB) $@
 
-$(LIBPRIMER3_DYN): libprimer3.o
-	gcc -shared -W1,-soname,liprimer3.so.1 -o $(LIBPRIMER3_DYN) libprimer3.o
+$(LIBPRIMER3_DYN): libprimer3.o p3_seq_lib.o
+	gcc -shared -W1,-soname,liprimer3.so.1 -o $(LIBPRIMER3_DYN) libprimer3.o p3_seq_lib.o
 
 $(PRIMER_EXE): $(PRIMER_OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
@@ -140,6 +140,9 @@ print_boulder.o: print_boulder.c print_boulder.h libprimer3.h p3_seq_lib.h
 
 dpal.o: dpal.c dpal.h
 	$(CC) -c $(CFLAGS) -o $@ dpal.c
+
+p3_seq_lib.o: p3_seq_lib.c p3_seq_lib.h libprimer3.h
+	$(CC) -c $(CFLAGS) -o $@ p3_seq_lib.c
 
 dpal_primer.o: dpal.c dpal.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ dpal.c

@@ -38,7 +38,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef P3_SEQ_LIB_H
 #define P3_SEQ_LIB_H
 
-#include "libprimer3.h"
+/* WARNING -- #include libprimer3.h, not this file */
 
 /* The seq_lib struct represents a library of sequences. */
 /* Clients do not need to know the details of this structure. */
