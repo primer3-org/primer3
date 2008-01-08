@@ -683,7 +683,7 @@ const  primer_rec *p3_get_oa_i(const oligo_array *x, int i);
 /* We still need accessors (getters) for the elements of
    primer_rec */
 
-/* Functions for seq_args -- create, destroy, set slots */
+/* Functions for seq_args -- create, destroy, set, set slots */
 seq_args *create_seq_arg();
 void destroy_seq_args(seq_args *);
 /*  OLD, no longer needed.
@@ -725,6 +725,7 @@ int p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2);
 void p3_set_sa_incl_s(seq_args *sargs, int incl_s);
 void p3_set_sa_incl_l(seq_args *sargs, int incl_l);
 
+void p3_set_sa_n_quality(seq_args *sargs, int n_quality) ;
 void p3_set_sa_start_codon_pos(seq_args *sargs, int start_codon_pos);
 int p3_set_sa_sequence_file(seq_args *sargs, const char *sequence_file);
 int p3_set_sa_trimmed_sequence(seq_args *sargs, const char *trimmed_sequence);

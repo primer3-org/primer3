@@ -5152,10 +5152,14 @@ p3_get_sa_excl_internal2(const seq_args *sargs) {
   return &sargs->excl_internal2 ;
 }
 
+
 /* ============================================================ */
 /* END 'get' functions for seq_args                             */
 /* ============================================================ */
 
+int p3_get_sa_n_quality(seq_args *sargs) {
+  return sargs->n_quality ;
+}
 
 /* ============================================================ */
 /* BEGIN 'set' functions for seq_args                           */
@@ -5178,7 +5182,6 @@ p3_set_sa_sequence(seq_args *sargs, const char *sequence) {
 }
 
 
-
 void
 p3_set_sa_primer_sequence_quality(seq_args *sargs, int quality) {
   sargs->quality[sargs->n_quality++] = quality ;
@@ -5186,7 +5189,7 @@ p3_set_sa_primer_sequence_quality(seq_args *sargs, int quality) {
 
 
 int
-p3_set_sa_sequence_id(seq_args *sargs, const char* sequence_name) {
+p3_set_sa_sequence_name(seq_args *sargs, const char* sequence_name) {
  return _set_string(&sargs->sequence_name, sequence_name); 
 }
 
@@ -5210,6 +5213,10 @@ p3_set_sa_incl_s(seq_args *sargs, int incl_s) {
 void
 p3_set_sa_incl_l(seq_args *sargs, int incl_l) {
   sargs->incl_l = incl_l;
+}
+
+void p3_set_sa_n_quality(seq_args *sargs, int n_quality) {
+  sargs->n_quality = n_quality ;
 }
 
 void 
