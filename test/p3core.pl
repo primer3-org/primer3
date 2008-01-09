@@ -90,7 +90,8 @@ sub ($) { my $v = shift;
 	  my @nums = split /[, ]/, $v ;
 	  my $f = shift @nums ;
 	  my $s = shift @nums ;
-	  while (defined $f) {
+	  if ($f =~m/a-zA-Z/) { undef $f ;}
+	  while (defined $f && defined $s) {
 	      pl_add_to_sa_tar2($sa, $f, $s);     
 	      $f = shift @nums ;
 	      $s = shift @nums ;
@@ -126,7 +127,7 @@ sub ($) { my $v = shift;
 sub ($) { my $v = shift;  my $i = pl_set_sa_start_codon_pos($sa, $v) };     
    $dispatch{'PRIMER_PRODUCT_SIZE_RANGE'} = 
 sub ($) { my $v = shift;
-	  my @nums = split /[-"]/, $v ;
+	  my @nums = split /[-" ]/, $v ;
 	  my $f = shift @nums ;
           if ($f eq "") { $f = shift @nums; }
 
