@@ -41,7 +41,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <setjmp.h>
 #include <stdio.h> /* FILE */
 #include <stdlib.h>
-#include <limits.h> /* SHRT_MIN */
+#include <limits.h> /* SHRT_MIN, ULONG_MAX */
 
 /* ALIGN_SCORE_UNDEF is used only libprimer3 and clients, not in dpal */
 #define ALIGN_SCORE_UNDEF             SHRT_MIN
@@ -378,6 +378,42 @@ typedef struct rep_sim {
                     */
 } rep_sim;
 
+/* ANDREAS, please check 2008-01-09 */
+
+#if (ULONG_MAX < 4294967295UL)
+CANNOT COMPILE FOR THIS SYSTEM (< 32 bits in an unsigned long it)
+#endif
+typedef struct oligo_problems {
+  unsigned long int problem;
+} oligo_problems;
+
+void op_set_too_many_ns(oligo_problems *);
+void op_set_overlaps_target(oligo_problems *);
+void op_set_high_gc_content(oligo_problems *);
+void op_set_low_gc_content(oligo_problems *);
+void op_set_high_tm(oligo_problems *);
+void op_set_low_tm(oligo_problems *);
+void op_set_overlaps_excluded_region(oligo_problems *);
+
+/* ANDREAS, end of new stuff,  2008-01-09 */
+
+
+/*
+
+
+			       OV_SELF_ANY=6,
+                               OV_SELF_END=7,
+
+                               OV_GC_CLAMP=9,
+			       OV_END_STAB=10, 
+			       OV_POLY_X=11,
+			       OV_SEQ_QUALITY=12,
+                               OV_LIB_SIM=13,
+			       OV_TEMPLATE_MISPRIMING=14,
+                               OV_GMASKED=14 
+*/
+
+
 
 typedef struct primer_rec {
 
@@ -438,6 +474,9 @@ typedef struct primer_rec {
   char   position_penalty_infinite; 
                    /* Non-0 if the position penalty is infinite. */
   char   must_use; /* Non-0 if the oligo must be used even if it is illegal. */
+
+  oligo_problems problems;
+
 } primer_rec;
 
 /* 
