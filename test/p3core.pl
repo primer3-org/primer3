@@ -3,7 +3,7 @@
 use warnings 'all';
 use strict;
 
-use blib '../../../p3perl/Primer3';
+use blib '../../../p3perl/trunk';
 use Primer3 ':all';
 
 sub set_setters();
