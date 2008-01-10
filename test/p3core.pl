@@ -50,10 +50,11 @@ mylabel:
     while (<>) {
 	$i = 1 ;
 	$rec = $_;
+	if ($rec ne "=") { print $rec ; }
 	chomp $rec ;
 	if ($rec eq "=") {
 	    goto mylabel;
-}
+	}
 	($attrib, $val) = split(/=/, $rec);
 	$rec{$attrib} = $val ;
     }
@@ -135,7 +136,7 @@ sub ($) { my $v = shift;
           if ($s eq "") { $s = shift @nums; }
           
           pl_empty_gs_product_size_range($gs);     
-	  pl_add_to_gs_product_size_range($sa, $f, $s) };     
+	  pl_add_to_gs_product_size_range($gs, $f, $s) };     
 
    $dispatch{'PRIMER_DEFAULT_PRODUCT'} = 
 sub ($) { my $v = shift;
