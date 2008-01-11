@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
@@ -93,6 +93,7 @@ read_and_create_seq_lib(const char * filename, const char *errfrag)
     lib->seqs  = p3sl_safe_malloc(INIT_LIB_SIZE*sizeof(*lib->seqs));
     lib->weight= p3sl_safe_malloc(INIT_LIB_SIZE*sizeof(*lib->weight));
     lib->seq_num = 0;
+    lib->storage_size = INIT_LIB_SIZE;
 
     /* Read in the file */
     i = -1;  m = 0; k = 0;
@@ -120,7 +121,7 @@ read_and_create_seq_lib(const char * filename, const char *errfrag)
 	    j = P3SL_INIT_BUF_SIZE;
 	    k = 0;
 	    if(i > 0) {
-		/* We are actually testing the previous sequence. */
+		/* i has already been incremented, so need to use i-1 */
 		if(strlen(lib->seqs[i-1]) == 0) {
 		    p3sl_append_new_chunk(&lib->error, "Empty sequence in ");
 		    goto ERROR;
@@ -181,13 +182,208 @@ read_and_create_seq_lib(const char * filename, const char *errfrag)
     return lib;
 }
 
+int
+add_seq_to_seq_lib(seq_lib *sl,
+		   char *seq, 
+		   char *seq_id_plus, 
+		   const char *errfrag, 
+		   const char *filepath) {
+  int  i = sl->seq_num;
+  int  ss = sl->storage_size;
+  char offender;
+  char buf[2];
+  
+  /* We need to allocate more storage */
+  if (i >= ss) {
+    ss += INIT_LIB_SIZE;
+    sl->storage_size = ss;
+    sl->names = p3sl_safe_realloc(sl->names, ss*sizeof(*sl->names));
+    sl->seqs  = p3sl_safe_realloc(sl->seqs , ss*sizeof(*sl->seqs));
+    sl->weight= p3sl_safe_realloc(sl->weight,
+				   ss*sizeof(*sl->weight));
+  }
+  sl->seq_num = i + 1;
+
+  sl->names[i] = p3sl_safe_malloc(strlen(seq_id_plus) + 1);
+  strcpy(sl->names[i], seq_id_plus);
+  sl->weight[i] = parse_seq_name(sl->names[i]);
+  if(sl->weight[i] < 0) {
+    p3sl_append_new_chunk(&sl->error, "Illegal weight in ");
+    goto ERROR;
+  }
+
+  sl->seqs[i] = p3sl_safe_malloc(sizeof(seq) + 1);
+  strcpy(sl->seqs[i], seq);
+  if(strlen(sl->seqs[i]) == 0) {
+    p3sl_append_new_chunk(&sl->error, "Empty sequence in ");
+    goto ERROR;
+  }
+
+  offender = upcase_and_check_char(sl->seqs[i]);
+  if ('\0' != offender) {
+    buf[0] = offender;
+    buf[1] = '\0';
+    p3sl_append(&sl->warning, buf);
+    p3sl_append(&sl->warning, ") in ");
+    p3sl_append(&sl->warning, errfrag);
+    p3sl_append(&sl->warning, " ");
+    p3sl_append(&sl->warning, filepath);
+  }
+    
+  return 0;
+ ERROR:
+  if (errfrag) {
+    p3sl_append(&sl->error, errfrag);
+  }
+  if (filepath) {
+    p3sl_append(&sl->error, " in");
+    p3sl_append(&sl->error, filepath);
+  }
+  return 1;
+}
+
+seq_lib *
+create_empty_seq_lib() {
+  seq_lib *lib;
+
+  if (setjmp(_jmp_buf) != 0)
+    return NULL; /* If we get here, there was an error in
+		    p3sl_safe_malloc or p3sl_safe_realloc. */
+
+  lib =  p3sl_safe_malloc(sizeof(* lib));
+  
+  memset(lib, 0, sizeof(*lib));
+  lib->repeat_file = NULL;
+  lib->names = p3sl_safe_malloc(INIT_LIB_SIZE*sizeof(*lib->names));
+  lib->seqs  = p3sl_safe_malloc(INIT_LIB_SIZE*sizeof(*lib->seqs));
+  lib->weight= p3sl_safe_malloc(INIT_LIB_SIZE*sizeof(*lib->weight));
+  lib->seq_num = 0;
+  lib->storage_size = INIT_LIB_SIZE;
+  return lib;
+}
+
+seq_lib *
+next_read_and_create_seq_lib(const char * filename, const char *errfrag) {
+    char  *p;
+    FILE *file;
+    char *seq_id_plus = NULL;
+    char *seq;
+    size_t seq_storage_size;
+    size_t seq_len;
+
+    seq_lib *lib = create_empty_seq_lib();
+    if (NULL == lib) return NULL; /* ENOMEM */
+
+    if (setjmp(_jmp_buf) != 0)
+      return NULL; /* If we get here, there was an error in
+		      p3sl_safe_malloc or p3sl_safe_realloc. */
+
+
+    lib->repeat_file = p3sl_safe_malloc(strlen(filename) + 1);
+    strcpy(lib->repeat_file, filename);
+
+    if((file = fopen(lib->repeat_file,"r")) == NULL) {
+	p3sl_append_new_chunk(&lib->error,
+			    "Cannot open ");
+	goto ERROR;
+    }
+
+    seq = p3sl_safe_malloc(P3SL_INIT_BUF_SIZE);
+    seq_storage_size = P3SL_INIT_BUF_SIZE;
+    seq_len = 0;
+    *seq = '\0';
+
+    /* Read in the lines from the file */
+    while(1) {
+      p = p3_read_line(file);
+
+      if (NULL == p) {
+	/* End of file */
+	if (seq_id_plus != NULL) {
+	    if (seq_len == 0) {
+	      p3sl_append_new_chunk(&lib->error,
+				    "Empty sequence in ");
+	      goto ERROR;
+	    } else {
+	      add_seq_to_seq_lib(lib, seq, seq_id_plus, errfrag, filename);
+	    }
+	    free(seq_id_plus);
+	    seq_id_plus = NULL;
+	}
+	break;
+      }
+
+      if ('>' == *p) {
+	/* We found an id line */
+	/* There are two possibilities */
+	if (seq_id_plus == NULL) {
+	  /* 1. This is the first id line in the file,
+	     in which case seq_id_plus == NULL 
+	     (and seq_len == 0). */
+	  seq_id_plus = p3sl_safe_malloc(strlen(p) + 1);
+	  p++;  /* skip past the '>' */
+	  strcpy(seq_id_plus, p); 
+	} else {
+	  /* 2. This is NOT the first id line in the
+	     file, in which case seq_id_plus != NULL */
+	  if (seq_id_plus != NULL) {
+	    if (seq_len == 0) {
+	      p3sl_append_new_chunk(&lib->error,
+				    "Empty sequence in ");
+	      goto ERROR;
+	    } else {
+	      add_seq_to_seq_lib(lib, seq, seq_id_plus, errfrag, filename);
+	      /*"emtpy" the buffer */
+	      seq_len = 0;
+	      *seq = '\0';
+	    }
+	    free(seq_id_plus);
+	    seq_id_plus = p3sl_safe_malloc(strlen(p) + 1);
+	    p++;  /* skip past the '>' */
+	    strcpy(seq_id_plus, p); 
+	  }
+	}
+      } else {
+	/* A sequence line */
+	if (seq_id_plus == NULL) {
+	  p3sl_append_new_chunk(&lib->error,
+				    "Missing id line (expected '>') in ");
+	  goto ERROR;
+	}
+	while ( strlen(p)+ seq_len + 1 > seq_storage_size ) {
+	  seq_storage_size *= 2;
+	  seq = p3sl_safe_realloc(seq, seq_storage_size);
+	}
+	strcat(seq, p);
+	seq_len += strlen(p);
+      }
+    }
+
+    if (lib->seq_num == 0) {
+      	p3sl_append_new_chunk(&lib->error, "Empty ");
+	goto ERROR;
+    }
+      
+    reverse_complement_seq_lib(lib);
+
+    if (file) fclose(file);
+    return lib;
+
+ ERROR:
+    p3sl_append(&lib->error, errfrag);
+    p3sl_append(&lib->error, " ");
+    p3sl_append(&lib->error, lib->repeat_file);
+    if (file) fclose(file);
+    return lib;
+}
+
+
 /* 
  * Free exogenous storage associated with a seq_lib (but not the seq_lib
  * itself).  Silently ignore NULL p.  Set *p to 0 bytes.
  */
 void
-destroy_seq_lib(p)
-    seq_lib *p;
+destroy_seq_lib(seq_lib *p)
 {
     int i;
     if (NULL == p) return;
@@ -273,7 +469,7 @@ parse_seq_name(char *s)
  * from the sequence, replaces all other
  * characters except A, T, G, C and IUB/IUPAC
  * codes with N.  Returns 0 if there were no such
- * replacements and the first non-ACGT IUB
+ * replacements and the first non-ACGT, non-IUB
  * character otherwise. 
  */
 static char

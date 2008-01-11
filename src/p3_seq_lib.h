@@ -43,17 +43,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* The seq_lib struct represents a library of sequences. */
 /* Clients do not need to know the details of this structure. */
 typedef struct seq_lib {
-    char **names;         /* An array of sequence names. */
-    char **seqs;          /* An array of sequences. */
-    char **rev_compl_seqs;/* An array of reversed-complemented sequences.
-                             x->rev_compl_seqs[i] is the reverse complement
-                             of x->seqs[i], which lets us keep track of pairwise
-                             mispriming.  See reverse_complement_seq_lib(). */
-    double *weight;       /* An array of weights. */
-    char   *repeat_file;  /* The path of the file containing the library. */
-    pr_append_str error;  /* Global error message if any.  */
-    pr_append_str warning;/* Warning message. */
-    int seq_num;          /* The number of names, sequences, and weights. */
+  char **names;         /* An array of sequence names. */
+  char **seqs;          /* An array of sequences. */
+  char **rev_compl_seqs;/* An array of reversed-complemented sequences.
+			   x->rev_compl_seqs[i] is the reverse complement
+			   of x->seqs[i], which lets us keep track of pairwise
+			   mispriming.  See reverse_complement_seq_lib(). */
+  double *weight;       /* An array of weights. */
+  char   *repeat_file;  /* The path of the file containing the library. */
+  pr_append_str error;  /* Global error message if any.  */
+  pr_append_str warning;/* Warning message. */
+
+  /* The number of names, sequences, and weights. */
+  int seq_num;
+
+  /* The size of storage allocated for names, sequences, and weights */
+  int storage_size;  
 } seq_lib;
 
 /* ======================================================= */
