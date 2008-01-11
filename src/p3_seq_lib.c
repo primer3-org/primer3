@@ -60,7 +60,7 @@ static void   reverse_complement_seq_lib(seq_lib  *lib);
 
 /* See comments in p3_seq_lib.h */
 seq_lib *
-read_and_create_seq_lib(const char * filename, const char *errfrag)
+old_read_and_create_seq_lib(const char * filename, const char *errfrag)
 {
     char  *p;
     FILE *file;
@@ -182,12 +182,14 @@ read_and_create_seq_lib(const char * filename, const char *errfrag)
     return lib;
 }
 
+/* FIX ME, add library with weird characters to test the warning */
+
 int
 add_seq_to_seq_lib(seq_lib *sl,
 		   char *seq, 
 		   char *seq_id_plus, 
-		   const char *errfrag, 
-		   const char *filepath) {
+		   const char *errfrag) {
+
   int  i = sl->seq_num;
   int  ss = sl->storage_size;
   char offender;
@@ -208,15 +210,15 @@ add_seq_to_seq_lib(seq_lib *sl,
   strcpy(sl->names[i], seq_id_plus);
   sl->weight[i] = parse_seq_name(sl->names[i]);
   if(sl->weight[i] < 0) {
-    p3sl_append_new_chunk(&sl->error, "Illegal weight in ");
-    goto ERROR;
+    p3sl_append_new_chunk(&sl->error, "Illegal weight");
+    return 1;
   }
 
-  sl->seqs[i] = p3sl_safe_malloc(sizeof(seq) + 1);
+  sl->seqs[i] = p3sl_safe_malloc(strlen(seq) + 1);
   strcpy(sl->seqs[i], seq);
   if(strlen(sl->seqs[i]) == 0) {
     p3sl_append_new_chunk(&sl->error, "Empty sequence in ");
-    goto ERROR;
+    return 1;
   }
 
   offender = upcase_and_check_char(sl->seqs[i]);
@@ -227,19 +229,9 @@ add_seq_to_seq_lib(seq_lib *sl,
     p3sl_append(&sl->warning, ") in ");
     p3sl_append(&sl->warning, errfrag);
     p3sl_append(&sl->warning, " ");
-    p3sl_append(&sl->warning, filepath);
   }
     
   return 0;
- ERROR:
-  if (errfrag) {
-    p3sl_append(&sl->error, errfrag);
-  }
-  if (filepath) {
-    p3sl_append(&sl->error, " in");
-    p3sl_append(&sl->error, filepath);
-  }
-  return 1;
 }
 
 seq_lib *
@@ -263,11 +255,11 @@ create_empty_seq_lib() {
 }
 
 seq_lib *
-next_read_and_create_seq_lib(const char * filename, const char *errfrag) {
+read_and_create_seq_lib(const char * filename, const char *errfrag) {
     char  *p;
     FILE *file;
     char *seq_id_plus = NULL;
-    char *seq;
+    char *seq = NULL;;
     size_t seq_storage_size;
     size_t seq_len;
 
@@ -305,7 +297,10 @@ next_read_and_create_seq_lib(const char * filename, const char *errfrag) {
 				    "Empty sequence in ");
 	      goto ERROR;
 	    } else {
-	      add_seq_to_seq_lib(lib, seq, seq_id_plus, errfrag, filename);
+	      if (add_seq_to_seq_lib(lib, seq, seq_id_plus, errfrag)) {
+		p3sl_append(&lib->error, " in ");
+		goto ERROR;
+	      }
 	    }
 	    free(seq_id_plus);
 	    seq_id_plus = NULL;
@@ -332,13 +327,16 @@ next_read_and_create_seq_lib(const char * filename, const char *errfrag) {
 				    "Empty sequence in ");
 	      goto ERROR;
 	    } else {
-	      add_seq_to_seq_lib(lib, seq, seq_id_plus, errfrag, filename);
+	      if (add_seq_to_seq_lib(lib, seq, seq_id_plus, errfrag)) {
+		p3sl_append(&lib->error, " in ");
+		goto ERROR;
+	      }
 	      /*"emtpy" the buffer */
 	      seq_len = 0;
 	      *seq = '\0';
 	    }
 	    free(seq_id_plus);
-	    seq_id_plus = p3sl_safe_malloc(strlen(p) + 1);
+	    seq_id_plus = p3sl_safe_malloc(strlen(p));
 	    p++;  /* skip past the '>' */
 	    strcpy(seq_id_plus, p); 
 	  }
@@ -367,9 +365,13 @@ next_read_and_create_seq_lib(const char * filename, const char *errfrag) {
     reverse_complement_seq_lib(lib);
 
     if (file) fclose(file);
+    if (seq != NULL) free(seq);
+    if (seq_id_plus != NULL) free(seq_id_plus);
     return lib;
 
  ERROR:
+    if (seq != NULL) free(seq);
+    if (seq_id_plus != NULL) free(seq_id_plus);
     p3sl_append(&lib->error, errfrag);
     p3sl_append(&lib->error, " ");
     p3sl_append(&lib->error, lib->repeat_file);
