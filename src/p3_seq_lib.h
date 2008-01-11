@@ -83,5 +83,11 @@ seq_lib_num_seq(const seq_lib* lib);
 char *
 seq_lib_warning_data(const seq_lib *lib);
 
+int add_seq_and_rev_comp_to_seq_lib(seq_lib *sl,
+				    char *seq, 
+				    char *seq_id_plus, 
+				    const char *errfrag);
+
+
 #endif
 
