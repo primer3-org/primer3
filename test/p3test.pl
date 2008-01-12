@@ -168,6 +168,8 @@ sub main() {
 		  'p3-tmpl-mispriming',
 		  'primer_tm_lc_masking',
 		  'primer_tm_lc_masking_formatted',
+		  'v1_old_tasks',
+		  'v1_renewed_tasks',
 		  # Put primer_lib_amb_codes last because it is slow
 		  'primer_lib_amb_codes',
 		  ) {
@@ -231,7 +233,7 @@ sub main() {
 	    # back to main directory
 	    chdir "../";
 	} elsif ($test =~ /^v1_/) {
-	    my $cmd = "$valgrind_prefix$exe -strict_tags -version=1 <$input >$tmp";
+	    my $cmd = "$valgrind_prefix$exe -strict_tags -io_version=1 <$input >$tmp";
 	    $r = _nowarn_system($cmd);
 	} elsif ($test =~ /formatted$/) {
 	    my $cmd = "$valgrind_prefix$exe -strict_tags -format_output <$input >$tmp";
@@ -242,6 +244,7 @@ sub main() {
 	}
 
 	unless ($r == 0) {
+		$all_ok = 0;
 	    print "NON-0 EXIT: $r [FAILED]\n";
 	    $exit_stat = -1;
 	    next;
@@ -423,8 +426,10 @@ sub test_fatal_errors() {
 	    print 
 		"\nDifference found between $root.out2 and $root.tmp2\nfrom $cmd\n\n";
 	    $problem = 1;
-	    $all_ok = 0;
 	}
+    }
+    if ($problem == 1){
+    	$all_ok = 0;
     }
     print $problem ? "[FAILED]" : "[OK]" ,"\n";
 }
