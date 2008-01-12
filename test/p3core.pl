@@ -3,6 +3,7 @@
 use warnings 'all';
 use strict;
 
+use Carp;
 use blib '../../../p3perl/trunk';
 use Primer3 ':all';
 
@@ -17,49 +18,33 @@ sub main();
 main();
 
 sub main() {
-    my $rec;
-    my $i ;
-    my %rec ;
-    my $attrib ;
-    my $val ;
-    my $warn = "";
- 
+
+    select STDOUT; $| = 1;  # Not sure we need this ....
     set_setters();
     $gs = pl_create_global_settings();
-    $i = 0 ;
 
-mylabel:
-
-    $sa = pl_create_seq_arg();
-
-    if ($i) {
-	for $tag (sort keys %rec) {
-	    if ($dispatch{$tag})  {
-		&{$dispatch{$tag}}($rec{$tag});
-	    } else {
-		;
+    $/ = "\n=\n";
+    while (1) {
+	my $rec = <>;
+	last if !defined $rec;
+	chomp $rec;
+	$sa = pl_create_seq_arg();
+	my %rec;
+	my @rec = split /\n/, $rec;
+	for my $line (@rec) {
+	    print "$line\n";
+	    if ($line !~ /(^\w+\s*)=(.*)/) {
+		confess "Bad line $line\n";
 	    }
+	    my ($tag, $value) = ($1, $2);
+	    if ($dispatch{$tag})  {
+		&{$dispatch{$tag}}($value);
+	    } else { confess "no call for $tag" }
 	}
-
 	my $retval = pl_choose_primers($gs, $sa);
-	pl_boulder_print($gs, $sa, $retval) ; 
+	pl_boulder_print($gs, $sa, $retval) ;  # boulder_print generates the final '='
 	pl_destroy_seq_args($sa);
     }
-    undef %rec ;
-
-    while (<>) {
-	$i = 1 ;
-	$rec = $_;
-	if ($rec ne "=") { print $rec ; }
-	chomp $rec ;
-	if ($rec eq "=") {
-	    goto mylabel;
-	}
-	($attrib, $val) = split(/=/, $rec);
-	$rec{$attrib} = $val ;
-    }
-
-finish:
 }
 
 sub set_setters() {
