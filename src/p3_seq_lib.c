@@ -61,8 +61,7 @@ static double parse_seq_name(char *s);
 static char   upcase_and_check_char(char *s);
 static void   reverse_complement_seq_lib(seq_lib  *lib);
 
-
-int
+static int
 add_seq_to_seq_lib(seq_lib *sl,
 		   char *seq, 
 		   char *seq_id_plus, 
@@ -72,7 +71,7 @@ add_seq_to_seq_lib(seq_lib *sl,
   int  ss = sl->storage_size;
   char offender;
   char buf[2];
-  
+
   /* We need to allocate more storage */
   if (i >= ss) {
     ss += INIT_LIB_SIZE;
@@ -104,10 +103,13 @@ add_seq_to_seq_lib(seq_lib *sl,
   if ('\0' != offender) {
     buf[0] = offender;
     buf[1] = '\0';
+    p3sl_append(&sl->warning, "Unrecognized character (");
     p3sl_append(&sl->warning, buf);
+
     p3sl_append(&sl->warning, ") in ");
     p3sl_append(&sl->warning, errfrag);
-    p3sl_append(&sl->warning, " ");
+    p3sl_append(&sl->warning, ", entry ");
+    p3sl_append(&sl->warning, seq_id_plus);
   }
     
   return 0;
@@ -138,7 +140,7 @@ add_seq_and_rev_comp_to_seq_lib(seq_lib *sl,
   /* Handle the sequence */
   rev_seq = malloc(strlen(seq) + 1);
   if (rev_seq == NULL) return 1;
-  p3_reverse_complement(seq, rev_seq); /* uninit here 1 */
+  p3_reverse_complement(seq, rev_seq);
 
   save_r = add_seq_to_seq_lib(sl, rev_seq, rev_seq_id, errfrag);
   free(rev_seq_id);
@@ -242,7 +244,7 @@ read_and_create_seq_lib(const char * filename, const char *errfrag) {
 				    "Empty sequence in ");
 	      goto ERROR;
 	    } else {
-	      if (add_seq_to_seq_lib(lib, seq, seq_id_plus, errfrag)) { /* uninit here */
+	      if (add_seq_to_seq_lib(lib, seq, seq_id_plus, errfrag)) {
 		p3sl_append(&lib->error, " in ");
 		goto ERROR;
 	      }
