@@ -55,7 +55,7 @@ sub _nowarn_system($);
 
 our $def_executable = "../src/primer3_core";
 our $exe = '../src/primer3_core';
-our ($verbose, $do_valgrind, $winFlag);
+our ($verbose, $do_valgrind, $winFlag, $fastFlag);
 
 our %signo;
 
@@ -63,6 +63,9 @@ our %signo;
 our $valgrind_format  = "/usr/local/bin/valgrind "
 		   . " --leak-check=yes --show-reachable=yes "
 		   . " --log-file-exactly=%s.vg ";
+		   
+# Global variable for Errors
+my $all_ok;
 
 main();
 
@@ -70,6 +73,8 @@ sub main() {
     my %args;
 
     select STDERR;
+
+    $all_ok = 1;
 
     if (defined $Config{sig_name}) {
 	my $i = 0;
@@ -85,11 +90,12 @@ sub main() {
     if (!GetOptions(\%args,
 		    'valgrind',
 		    'windows',
+		    'fast',
 		    'verbose',
 		    'executable=s',
 		    )) {
 	print "Usage: perl p3test.pl \\\n",
-	"    [--executable <primer3 executable>] [ --valgrind ] [  --verbose ] [--windows]\n",
+	"    [--executable <primer3 executable>] [ --valgrind ] [  --verbose ] [--windows] [--fast]\n",
 	"\n",
 	"    where <primer3 executable> defaults to ../src/primer3_core\n";
 	exit -1;
@@ -98,6 +104,7 @@ sub main() {
     $exe = $args{'executable'} if defined$ args{'executable'};
     $winFlag = defined $args{'windows'};
     $verbose = defined $args{'verbose'};
+    $fastFlag = defined $args{'fast'};
     $do_valgrind = $args{'valgrind'};
     if ($winFlag && $do_valgrind) {
 	print "$0: Cannot specify both --valgrind and --windows\n";
@@ -167,8 +174,13 @@ sub main() {
 
 	# We are inside the for loop here....
 	print "$test...";
+	
 	if ($test eq 'primer_lib_amb_codes') {
-	    print 
+		if ($fastFlag) {
+			print "[skiped in fast mode]\n ";	
+			next;
+	    }
+		print 
 		"\nNOTE: this test takes _much_ longer than the others ",
 		"(10 to 20 minutes or more).\n",
 		"starting $test at ", scalar(localtime), "...";
@@ -218,6 +230,9 @@ sub main() {
 	    $r = _nowarn_system($tmpCmd);
 	    # back to main directory
 	    chdir "../";
+	} elsif ($test =~ /^v1_/) {
+	    my $cmd = "$valgrind_prefix$exe -strict_tags -version=1 <$input >$tmp";
+	    $r = _nowarn_system($cmd);
 	} elsif ($test =~ /formatted$/) {
 	    my $cmd = "$valgrind_prefix$exe -strict_tags -format_output <$input >$tmp";
 	    $r = _nowarn_system($cmd);
@@ -236,6 +251,7 @@ sub main() {
 	if ($r == 0) {
 	    print "[OK]\n";
 	} else {
+		$all_ok = 0;
 	    print "[FAILED]\n";
 	    $exit_stat = -1;
 	}
@@ -259,7 +275,8 @@ sub main() {
 	    if ($r == 0) {
 		print "[OK]\n";
 	    } 
-	    else { 
+	    else {
+	    $all_ok = 0;
 		print "[FAILED]\n";
 		$exit_stat = -1;
 	    }
@@ -288,6 +305,7 @@ sub main() {
 	    $exit_stat = -1;
 	}
     }
+    print $all_ok ? "\nPassed all tests - [OK]\n" : "\nAt least one test failed - [FAILED]\n";
     print "DONE ", scalar(localtime), "\n";
     exit $exit_stat;
 }
@@ -405,6 +423,7 @@ sub test_fatal_errors() {
 	    print 
 		"\nDifference found between $root.out2 and $root.tmp2\nfrom $cmd\n\n";
 	    $problem = 1;
+	    $all_ok = 0;
 	}
     }
     print $problem ? "[FAILED]" : "[OK]" ,"\n";
