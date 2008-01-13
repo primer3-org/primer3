@@ -4098,11 +4098,18 @@ _pr_data_control(const p3_global_settings *pa,
 
     seq_len = strlen(sa->sequence);
 
-    /* Is sequence quality provided, as long as the sequence? */
+    /* If sequence quality is provided, is it as long as the sequence? */
     if (sa->n_quality !=0 && sa->n_quality != seq_len)
-      pr_append_new_chunk(nonfatal_err, "Error in sequence quality data");
+      pr_append_new_chunk(nonfatal_err,
+			  "Error in sequence quality data");
 
-    if ((pa->p_args.min_quality != 0 || pa->o_args.min_quality != 0) && sa->n_quality == 0) 
+    if (pa->min_three_prime_distance < 0)
+      pr_append_new_chunk(nonfatal_err, 
+			  "Minimum 3' distance must be >= 0 "
+			  "(min_three_prime_distance)");
+
+    if ((pa->p_args.min_quality != 0 || pa->o_args.min_quality != 0)
+	&& sa->n_quality == 0) 
       pr_append_new_chunk(nonfatal_err, "Sequence quality data missing");
 
     if (pa->o_args.max_template_mispriming >= 0)
