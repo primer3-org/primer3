@@ -1172,6 +1172,8 @@ add_must_use_warnings(pr_append_str *warning,
   s.data = NULL;
   s.storage_size = 0;
 
+  if (stats->size_min) pr_append_w_sep(&s, sep, "Too short");
+  if (stats->size_max) pr_append_w_sep(&s, sep, "Too long");
   if (stats->ns) pr_append_w_sep(&s, sep, "Too many Ns");
   if (stats->target) pr_append_w_sep(&s, sep, "Overlaps Target");
   if (stats->excluded) pr_append_w_sep(&s, sep, "Overlaps Excluded Region");
@@ -2187,6 +2189,18 @@ oligo_param(const p3_global_settings *pa,
 		       dpal_arg_to_use->local_end, 
 		       dpal_arg_to_use);
 
+    }
+    
+    if (h->length > po_args->max_size ) {
+	h->ok = OV_TOO_LONG;
+	stats->size_max ++;
+	if (!must_use) return;
+    }
+
+    if (h->length < po_args->min_size ) {
+	h->ok = OV_TOO_SHORT;
+	stats->size_min ++;
+	if (!must_use) return;
     }
 
     if (OV_UNINITIALIZED == h->ok) h->ok = OV_OK;
@@ -4398,11 +4412,11 @@ _pr_data_control(const p3_global_settings *pa,
       }
       if (strlen(sa->internal_input) > pa->o_args.max_size)
 	pr_append_new_chunk(warning, 
-			"Specified internal oligo longer than PRIMER_INTERNAL_OLIGO_MAX_SIZE");
+			"Specified internal oligo > PRIMER_INTERNAL_OLIGO_MAX_SIZE");
 
       if (strlen(sa->internal_input) < pa->o_args.min_size)
 	pr_append_new_chunk(warning, 
-			"Specified internal oligo shorter PRIMER_INTERNAL_OLIGO_MIN_SIZE");
+			"Specified internal oligo < PRIMER_INTERNAL_OLIGO_MIN_SIZE");
 
       if (!strstr_nocase(sa->sequence, sa->internal_input))
 	pr_append_new_chunk(nonfatal_err,
@@ -4420,10 +4434,10 @@ _pr_data_control(const p3_global_settings *pa,
       }
       if (strlen(sa->left_input) > pa->p_args.max_size)
 	pr_append_new_chunk(warning, 
-			"Specified left primer longer than PRIMER_MAX_SIZE");
+			"Specified left primer > PRIMER_MAX_SIZE");
       if (strlen(sa->left_input) < pa->p_args.min_size)
 	pr_append_new_chunk(warning, 
-			"Specified left primer shorter than PRIMER_MIN_SIZE");
+			"Specified left primer < PRIMER_MIN_SIZE");
       if (!strstr_nocase(sa->sequence, sa->left_input))
 	pr_append_new_chunk(nonfatal_err,
 			    "Specified left primer not in sequence");
@@ -4440,10 +4454,10 @@ _pr_data_control(const p3_global_settings *pa,
       }
       if (strlen(sa->right_input) < pa->p_args.min_size)
 	pr_append_new_chunk(warning, 
-			"Specified right primer shorter than PRIMER_MIN_SIZE");
+			"Specified right primer < PRIMER_MIN_SIZE");
       if (strlen(sa->right_input) > pa->p_args.max_size) {
 	pr_append_new_chunk(warning, 
-			"Specified right primer longer than PRIMER_MAX_SIZE");
+			"Specified right primer > PRIMER_MAX_SIZE");
        } else { /* We do not want to overflow s1. */
 	p3_reverse_complement(sa->right_input,s1);
 	if (!strstr_nocase(sa->sequence, s1))

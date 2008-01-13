@@ -352,23 +352,26 @@ typedef struct p3_global_settings {
 typedef enum oligo_type { OT_LEFT = 0, OT_RIGHT = 1, OT_INTL = 2 }
   oligo_type;
 
-typedef enum oligo_violation { OV_UNINITIALIZED = -1,
-			       OV_OK=0, 
-			       OV_TOO_MANY_NS=1, 
-			       OV_INTERSECT_TARGET=2,
-                               OV_GC_CONTENT=3, 
-			       OV_TM_LOW=4, 
-			       OV_TM_HIGH=5, 
-			       OV_SELF_ANY=6,
-                               OV_SELF_END=7,
-			       OV_EXCL_REGION=8,
-                               OV_GC_CLAMP=9,
-			       OV_END_STAB=10, 
-			       OV_POLY_X=11,
-			       OV_SEQ_QUALITY=12,
-                               OV_LIB_SIM=13,
-			       OV_TEMPLATE_MISPRIMING=14,
-                               OV_GMASKED=14 /* edited by T. Koressaar for lowercase masking */ 
+typedef enum oligo_violation { 
+	OV_UNINITIALIZED = -1,
+	OV_OK=0, 
+	OV_TOO_MANY_NS=1, 
+	OV_INTERSECT_TARGET=2,
+	OV_GC_CONTENT=3, 
+	OV_TM_LOW=4, 
+	OV_TM_HIGH=5, 
+	OV_SELF_ANY=6,
+	OV_SELF_END=7,
+	OV_EXCL_REGION=8,
+	OV_GC_CLAMP=9,
+	OV_END_STAB=10, 
+	OV_POLY_X=11,
+	OV_SEQ_QUALITY=12,
+	OV_LIB_SIM=13,
+	OV_TEMPLATE_MISPRIMING=14,
+	OV_GMASKED=15, /* edited by T. Koressaar for lowercase masking */
+	OV_TOO_SHORT=16,
+	OV_TOO_LONG=17
 } oligo_violation;
 
 typedef struct rep_sim {
@@ -409,8 +412,6 @@ void op_set_overlaps_excluded_region(oligo_problems *);
 
 
 /*
-
-
 			       OV_SELF_ANY=6,
                                OV_SELF_END=7,
 
@@ -420,7 +421,10 @@ void op_set_overlaps_excluded_region(oligo_problems *);
 			       OV_SEQ_QUALITY=12,
                                OV_LIB_SIM=13,
 			       OV_TEMPLATE_MISPRIMING=14,
-                               OV_GMASKED=14 
+                               	OV_GMASKED=15,
+	OV_TOO_SHORT=16,
+	OV_TOO_LONG=17
+ 
 */
 
 
@@ -569,6 +573,8 @@ typedef struct oligo_stats {
   int gc_clamp;            /* Don't have required number of GCs at 3' end.  */
   int temp_min;            /* Melting temperature below t_min.              */
   int temp_max;            /* Melting temperature more than t_max.          */
+  int size_min;            /* Primer shorter than minimal size.             */
+  int size_max;            /* Primer longer than minimal size.              */
   int compl_any;           /* Self-complementarity too high.                */
   int compl_end;           /* Self-complementarity at 3' end too high.      */
   int repeat_score;        /* Complementarity with repeat sequence too high.*/
