@@ -198,6 +198,11 @@ static int    add_primers_to_check(p3retval *retval,
 				const seq_args *sa,
 				const dpal_arg_holder *dpal_arg_to_use);
 
+static int    pick_sequencing_primer_list(p3retval *retval,
+				const p3_global_settings *pa,
+				const seq_args *sa,
+				const dpal_arg_holder *dpal_arg_to_use);
+
 static int    make_internal_oligo_list(p3retval *,
 				       const p3_global_settings *,
 				       const seq_args *,
@@ -983,7 +988,8 @@ choose_primers(const p3_global_settings *pa,
     } else {
     	retval->output_type = primer_list;
     }
-    if (pa->primer_task == pick_primer_list) {
+    if (pa->primer_task == pick_primer_list ||
+    		pa->primer_task == pick_sequencing_primers) {
     	retval->output_type = primer_list;
     }
     
@@ -1037,6 +1043,9 @@ choose_primers(const p3_global_settings *pa,
     
     if (pa->primer_task == pick_primer_list) {
     	make_complete_primer_lists(retval, pa, sa,
+	    		dpal_arg_to_use);
+    } else if (pa->primer_task == pick_sequencing_primers) {
+    	pick_sequencing_primer_list(retval, pa, sa,
 	    		dpal_arg_to_use);
     } else if (pa->primer_task == check_primers) {
     	add_primers_to_check(retval, pa, sa,
@@ -1541,6 +1550,7 @@ add_primers_to_check(p3retval *retval,
 		  const dpal_arg_holder *dpal_arg_to_use)
 {
 	int exteme_var;
+	exteme_var=0;
 	
 	if (sa->left_input) {
 	  add_one_primer(sa->left_input, &exteme_var, &retval->fwd,
@@ -1560,6 +1570,58 @@ add_primers_to_check(p3retval *retval,
     return 0;
 } /* make_complete_primer_lists */
 
+
+/* 
+ * Make lists of acceptable left and right primers.  After return, the
+ * lists are stored in retval->fwd.oligo and retval->rev.oligo and the
+ * coresponding list sizes are stored in retval->fwd.num_elem and
+ * retval->rev.num_elem.  Return 1 if one of lists is empty or if
+ * leftmost left primer and rightmost right primer do not provide
+ * sufficient product size.
+ */
+static int
+pick_sequencing_primer_list(p3retval *retval,
+		  const p3_global_settings *pa,
+		  const seq_args *sa,
+		  const dpal_arg_holder *dpal_arg_to_use)
+{
+	int exteme_var;
+	int length, start;
+    int n;
+
+    /* Get the length of the sequence */
+    PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
+
+    
+    
+    
+    
+    if (pa->pick_left_primer) {
+		/* We will need a left primer. */
+		exteme_var = 0;
+		length = n - pa->p_args.min_size;
+		start = pa->p_args.min_size - 1;
+		    
+		/* Pick all good in the given range */
+		pick_primer_range(start, length, &exteme_var, &retval->fwd,
+					     pa, sa, dpal_arg_to_use, retval);
+
+    }  /* if (pa->pick_left_primer) */
+
+    if ( pa->pick_right_primer ) {
+		/* We will need a right primer */
+		exteme_var = n;
+		length = n - pa->p_args.min_size + 1;
+		start = 0;
+		
+		/* Pick all good in the given range */
+		pick_primer_range(start, length, &exteme_var, &retval->rev,
+					     pa, sa, dpal_arg_to_use, retval);
+	}
+    
+    
+    return 0;
+} /* make_complete_primer_lists */
 
 /* pick_primer_range picks all primers in the range from start to start+length
  * and stores them in *oligo  */
@@ -1984,7 +2046,10 @@ oligo_param(const p3_global_settings *pa,
     /* Upstream error checking has ensured that we use non-default position
        penalties only when there is 0 or 1 target. */
     PR_ASSERT(sa->tar2.count <= 1 || _PR_DEFAULT_POSITION_PENALTIES(pa));
-    if (l < 2 
+    if (pa->primer_task == pick_sequencing_primers) {
+          h->position_penalty = 0.0;
+          h->position_penalty_infinite = '\0';
+    } else if (l < 2 
 	&& _PR_DEFAULT_POSITION_PENALTIES(pa)
 	&& oligo_overlaps_interval(j, k-j+1, sa->tar2.pairs, sa->tar2.count)) {
       h->position_penalty = 0.0;
@@ -4543,10 +4608,51 @@ _pr_data_control(const p3_global_settings *pa,
         return 1;
     }
 
-    if (pa->primer_task == check_primers && NULL == glob_err->data) {
-    	return 0;
+    if (pa->sequencing.lead < 0) {
+	 pr_append_new_chunk(glob_err,
+			     "Illegal value for PRIMER_SEQUENCING_LEAD");
+	 return 1;
+    }
+
+    if (pa->sequencing.interval < 0) {
+	 pr_append_new_chunk(glob_err,
+			     "Illegal value for PRIMER_SEQUENCING_INTERVAL");
+	 return 1;
+    }
+
+    if (pa->sequencing.accuracy < 0) {
+	 pr_append_new_chunk(glob_err,
+			     "Illegal value for PRIMER_SEQUENCING_ACCURACY");
+	 return 1;
+    }
+
+    if (pa->sequencing.spacing < 0) {
+	 pr_append_new_chunk(glob_err,
+			     "Illegal value for PRIMER_SEQUENCING_SPACING");
+	 return 1;
     }
     
+    if(pa->sequencing.interval > pa->sequencing.spacing) {
+	  pr_append_new_chunk(glob_err,
+	   "PRIMER_SEQUENCING_INTERVAL > PRIMER_SEQUENCING_SPACING");
+        return 1;
+    }
+    if(pa->sequencing.accuracy > pa->sequencing.spacing) {
+	  pr_append_new_chunk(glob_err,
+	   "PRIMER_SEQUENCING_ACCURACY > PRIMER_SEQUENCING_SPACING");
+        return 1;
+    }
+    if(pa->sequencing.lead > pa->sequencing.spacing) {
+	  pr_append_new_chunk(glob_err,
+	   "PRIMER_SEQUENCING_LEAD > PRIMER_SEQUENCING_SPACING");
+        return 1;
+    }
+    if(pa->primer_task == pick_sequencing_primers && sa->incl_l != -1) {
+	  pr_append_new_chunk(glob_err,
+	   "Task pick_sequencing_primers can not be combined with included region");
+        return 1;
+    }
+
     return (NULL == nonfatal_err->data && NULL == /* pa->*/ glob_err->data) ? 0 : 1;
 } /* _pr_data_control */
 
