@@ -233,7 +233,7 @@ sub main() {
 	    # back to main directory
 	    chdir "../";
 	} elsif ($test =~ /^v1_/) {
-	    my $cmd = "$valgrind_prefix$exe -strict_tags -io_version=1 <$input >$tmp";
+	    my $cmd = "$valgrind_prefix$exe -strict_tags -io_version=4 <$input >$tmp";
 	    $r = _nowarn_system($cmd);
 	} elsif ($test =~ /formatted$/) {
 	    my $cmd = "$valgrind_prefix$exe -strict_tags -format_output <$input >$tmp";

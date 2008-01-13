@@ -121,6 +121,17 @@ main(argc,argv)
 	}
 	counter++;
       }
+      if (io_version==1){
+          printf( "PRIMER_ERROR=flag -io_version=1 is no longer supported\n=\n");
+          exit (-1);
+      }
+      if (io_version==2){
+          printf( "PRIMER_ERROR=flag -io_version=2 is no longer supported\n=\n");
+          exit (-1);
+      }
+      if (io_version==3){
+    	  io_version=0;
+      }
     } else if (!strncmp(*argv, "-p3_settings_file=", 18)) {
       tmp_file_name = strchr(*argv,'=') + 1;
       strncpy (p3_settings_file,tmp_file_name,FILE_NAME_SIZE-1);

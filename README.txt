@@ -1026,6 +1026,30 @@ that we note that pick_pcr_primers_and_hyb_probe is
 equivalent to the setting PRIMER_PICK_INTERNAL_OLIGO to a non-zero
 value and setting PRIMER_TASK to pick_pcr_primers.
 
+PRIMER_SEQUENCING_LEAD (int, default 0)
+
+Value only used if PRIMER_TASK=pick_sequencing_primers. Defines the 
+space from the 3'end of the primer to the point were the trace 
+signals are readable. 
+
+PRIMER_SEQUENCING_SPACING (int, default 500)
+
+Value only used if PRIMER_TASK=pick_sequencing_primers. Defines the 
+space from the 3'end of the primer to the 3'end of the next primer 
+on the same strand. 
+
+PRIMER_SEQUENCING_INTERVAL (int, default 250)
+
+Value only used if PRIMER_TASK=pick_sequencing_primers. Defines the 
+space from the 3'end of the primer to the 3'end of the next primer 
+on the reverse strand. 
+
+PRIMER_SEQUENCING_ACCURACY (int, default 20)
+
+Value only used if PRIMER_TASK=pick_sequencing_primers. Defines the 
+space from the calculated position of the 3'end to both sides in 
+which primer3plus picks the best primer. 
+
 PRIMER_WT_TM_GT (float, default 1.0)
 
 Penalty weight for primers with Tm over PRIMER_OPT_TM.
