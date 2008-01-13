@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
@@ -74,9 +74,11 @@ if (!(COND)) {                                           \
     abort();                                             \
 }
 
+/* ANDREAS, we need documentation on these */
 /* Enum to define tasks primer3 can do */
 typedef enum task { 
   pick_pcr_primers               = 0,
+  /*  For backward compatibility, equivalent to pick_detection_primers */
   pick_pcr_primers_and_hyb_probe = 1,
   pick_left_only                 = 2,
   pick_right_only                = 3,
@@ -84,7 +86,7 @@ typedef enum task {
   pick_detection_primers         = 5,
   pick_cloning_primers           = 6,
   pick_discriminative_primers    = 7,    
-  pick_sequencing_primers        = 8,
+  pick_sequencing_primers        = 8,  /* ANDREAS, we need to change the name of this one; pick_primers_for_tiled_sequence ? */
   pick_primer_list               = 9,
   check_primers                  = 10,
 } task;
@@ -391,8 +393,6 @@ typedef struct rep_sim {
                     */
 } rep_sim;
 
-/* ANDREAS, please check 2008-01-09 */
-
 #if (ULONG_MAX < 4294967295UL)
 CANNOT COMPILE FOR THIS SYSTEM (< 32 bits in an unsigned long it)
 #endif
@@ -407,16 +407,17 @@ void op_set_low_gc_content(oligo_problems *);
 void op_set_high_tm(oligo_problems *);
 void op_set_low_tm(oligo_problems *);
 void op_set_overlaps_excluded_region(oligo_problems *);
+void op_set_self_any(oligo_problems *);
+void op_set_self_end(oligo_problems *);
+void op_set_gc_glamp(oligo_problems *);
+void op_set_high_end_stability(oligo_problems *);
 
-/* ANDREAS, end of new stuff,  2008-01-09 */
-
+/* STEVE FIXME, continue with this, implement, move prototypes to .c */
 
 /*
-			       OV_SELF_ANY=6,
-                               OV_SELF_END=7,
 
-                               OV_GC_CLAMP=9,
-			       OV_END_STAB=10, 
+
+
 			       OV_POLY_X=11,
 			       OV_SEQ_QUALITY=12,
                                OV_LIB_SIM=13,
