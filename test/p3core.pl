@@ -207,7 +207,14 @@ sub ($) { my $v = shift;  my $i = pl_set_gs_primer_product_min_tm($sa, $v) };
    $dispatch{'PRIMER_PRODUCT_OPT_TM'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_product_opt_tm($sa, $v) };          
    $dispatch{'PRIMER_TASK'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_task($sa, $v) };          
+# WARNING this needs to be done for the other possible tasks
+sub ($) { my $v = shift;  
+	  my $i = pl_set_gs_primer_task($sa, $v);
+	      if ($v =~ /^\s*PICK_PCR_PRIMERS\s*$/) {
+		   pl_set_gs_primer_pick_left($sa, $v);
+		   pl_set_gs_primer_pick_right($sa, $v);
+	      }
+ };
    $dispatch{'PRIMER_PICK_RIGHT_PRIMER'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pick_right($sa, $v) };          
    $dispatch{'PRIMER_PICK_INTERNAL_OLIGO'} = 
