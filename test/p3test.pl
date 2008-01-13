@@ -75,6 +75,8 @@ sub main() {
     select STDERR;
 
     $all_ok = 1;
+    my $start_time;
+    $start_time = time();
 
     if (defined $Config{sig_name}) {
 	my $i = 0;
@@ -170,6 +172,7 @@ sub main() {
 		  'primer_tm_lc_masking_formatted',
 		  'v4_old_tasks',
 		  'v4_renewed_tasks',
+		  'v4_new_tasks',
 		  # Put primer_lib_amb_codes last because it is slow
 		  'primer_lib_amb_codes',
 		  ) {
@@ -309,6 +312,7 @@ sub main() {
 	}
     }
     print $all_ok ? "\nPassed all tests - [OK]\n" : "\nAt least one test failed - [FAILED]\n";
+    print "Tests run for ", (time() - $start_time), " seconds.\n";
     print "DONE ", scalar(localtime), "\n";
     exit $exit_stat;
 }
