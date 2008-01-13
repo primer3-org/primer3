@@ -168,8 +168,8 @@ sub main() {
 		  'p3-tmpl-mispriming',
 		  'primer_tm_lc_masking',
 		  'primer_tm_lc_masking_formatted',
-		  'v1_old_tasks',
-		  'v1_renewed_tasks',
+		  'v4_old_tasks',
+		  'v4_renewed_tasks',
 		  # Put primer_lib_amb_codes last because it is slow
 		  'primer_lib_amb_codes',
 		  ) {
@@ -232,7 +232,7 @@ sub main() {
 	    $r = _nowarn_system($tmpCmd);
 	    # back to main directory
 	    chdir "../";
-	} elsif ($test =~ /^v1_/) {
+	} elsif ($test =~ /^v4_/) {
 	    my $cmd = "$valgrind_prefix$exe -strict_tags -io_version=4 <$input >$tmp";
 	    $r = _nowarn_system($cmd);
 	} elsif ($test =~ /formatted$/) {
