@@ -139,6 +139,13 @@ typedef struct pair_weights {
     double template_mispriming;
 } pair_weights;
 
+typedef struct sequencing_parameters {
+    int lead;
+    int spacing;
+    int interval;
+    int accuracy;
+} sequencing_parameters;
+
 #include "p3_seq_lib.h"
 
 typedef struct args_for_one_oligo_or_primer {
@@ -263,6 +270,9 @@ typedef struct p3_global_settings {
   /* added by T.Koressaar for primer design from lowercase masked
      template */
 
+  sequencing_parameters sequencing;
+  /* Parameters used to calculate the position of sequencing primers */
+  
   double outside_penalty; /* Multiply this value times the number of NTs
 			   * from the 3' end to the the (unique) target to
 			   * get the 'position penalty'.

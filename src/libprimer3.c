@@ -442,6 +442,10 @@ The default is 0 only for backward compatibility.
 #define QUALITY_RANGE_MIN                   0
 #define QUALITY_RANGE_MAX                 100
 #define DEFAULT_MAX_END_STABILITY         100.0
+#define SEQUENCING_LEAD                    50
+#define SEQUENCING_SPACING                500
+#define SEQUENCING_INTERVAL               250
+#define SEQUENCING_ACCURACY                20
 
 /* 
 Added by T.Koressaar. Enables design of primers from lowercase masked
@@ -693,6 +697,12 @@ pr_set_default_global_args(p3_global_settings *a) {
 
     a->min_three_prime_distance        = 0;
     a->settings_file_id                = NULL;
+    
+    a->sequencing.lead                 = SEQUENCING_LEAD;
+    a->sequencing.spacing              = SEQUENCING_SPACING;
+    a->sequencing.interval             = SEQUENCING_INTERVAL;
+    a->sequencing.accuracy             = SEQUENCING_ACCURACY;
+
 }
 
 /* Add a valuepair to the array of intervals */

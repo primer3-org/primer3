@@ -388,6 +388,12 @@ read_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_PRODUCT_MAX_TM", pa->product_max_tm);
       COMPARE_FLOAT("PRIMER_PRODUCT_MIN_TM", pa->product_min_tm);
       COMPARE_FLOAT("PRIMER_PRODUCT_OPT_TM", pa->product_opt_tm);
+      
+      COMPARE_INT("PRIMER_SEQUENCING_LEAD", pa->sequencing.lead);
+      COMPARE_INT("PRIMER_SEQUENCING_SPACING", pa->sequencing.spacing);
+      COMPARE_INT("PRIMER_SEQUENCING_INTERVAL", pa->sequencing.interval);
+      COMPARE_INT("PRIMER_SEQUENCING_ACCURACY", pa->sequencing.accuracy);
+      
       COMPARE_AND_MALLOC("PRIMER_TASK", task_tmp);
 
       if (0 < *io_version) {
