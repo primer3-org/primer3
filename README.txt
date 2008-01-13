@@ -1026,7 +1026,7 @@ that we note that pick_pcr_primers_and_hyb_probe is
 equivalent to the setting PRIMER_PICK_INTERNAL_OLIGO to a non-zero
 value and setting PRIMER_TASK to pick_pcr_primers.
 
-PRIMER_SEQUENCING_LEAD (int, default 0)
+PRIMER_SEQUENCING_LEAD (int, default 50)
 
 Value only used if PRIMER_TASK=pick_sequencing_primers. Defines the 
 space from the 3'end of the primer to the point were the trace 
