@@ -4,8 +4,11 @@
 # For usage, see the usage statement in the code, below.
 #
 # ======================================================================
-# (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006,2007 Whitehead
-# Institute for Biomedical Research, Steve Rozen, and Helen Skaletsky
+# (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
+#
+# Whitehead Institute for Biomedical Research, Steve Rozen, and Helen
+# Skaletsky
+#
 # All rights reserved.
 # 
 #   This file is part of the primer3 suite.
@@ -135,6 +138,7 @@ sub main() {
     # that get translated into file names inside the loop.
     for my $test (
 		  'primer_boundary', # Put the quickest tests first.
+		  'p3_3_prime_n',
 		  'primer_internal',
 		  'primer_boundary_formatted',
 		  'primer_internal_formatted',
