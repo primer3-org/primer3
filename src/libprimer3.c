@@ -978,7 +978,8 @@ choose_primers(const p3_global_settings *pa,
     }
     
     if (retval == NULL)  return NULL;
-    /* Connect best_pairs to retval */
+
+    /* Create an alias for &retval->best_pairs */
     best_pairs = &retval->best_pairs;
 
     /*
@@ -993,7 +994,6 @@ choose_primers(const p3_global_settings *pa,
       destroy_p3retval(retval);
       return NULL;  /* If we get here, that means we returned via a longjmp.
 		       In this case errno should be ENOMEM. */
-
     }
 
     PR_ASSERT(NULL != pa);
