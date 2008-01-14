@@ -10,10 +10,9 @@ use Primer3 ':all';
 sub set_setters();
 sub main();
 
-    our %dispatch;
-    our $sa ;
-    our $tag;
-    our $gs;
+our %dispatch;
+our $sa ;
+our $gs;
 
 main();
 
@@ -48,6 +47,8 @@ sub main() {
 }
 
 sub set_setters() {
+
+# PER SEQUENCE INPUTS ==================================================
      $dispatch{'SEQUENCE'} = 
 sub ($) { my $v = shift; pl_set_sa_sequence($sa, $v) }; 
      $dispatch{'PRIMER_SEQUENCE_QUALITY'} = 
@@ -111,9 +112,12 @@ sub ($) { my $v = shift;
 	  pl_set_sa_incl_l($sa, $s)} ;     
    $dispatch{'PRIMER_START_CODON_POSITION'} = 
 sub ($) { my $v = shift;  my $i = pl_set_sa_start_codon_pos($sa, $v) };     
+
+# GLOBAL SETTINGS
+
    $dispatch{'PRIMER_PRODUCT_SIZE_RANGE'} = 
 sub ($) { my $v = shift;
-	  my @nums = split /[-" ]/, $v ;
+	  my @nums = split /[-\" ]/, $v ;
 	  my $f = shift @nums ;
           if ($f eq "") { $f = shift @nums; }
 
@@ -125,7 +129,7 @@ sub ($) { my $v = shift;
 
    $dispatch{'PRIMER_DEFAULT_PRODUCT'} = 
 sub ($) { my $v = shift;
-	  my @nums = split /[-"]/, $v ;
+	  my @nums = split /[-\"]/, $v ;
 	  my $f = shift @nums ;
           if ($f eq "") { $f = shift @nums; }
 
@@ -134,231 +138,226 @@ sub ($) { my $v = shift;
 
 	  pl_set_gs_prmin($sa, $f, 1);     
 	  pl_set_gs_prmax($sa, $s, 1)} ;     
+
    $dispatch{'PRIMER_DEFAULT_SIZE'} = 
-sub ($) { my $v = shift;  my $i = pl_set_sa_primer_opt_size($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_sa_primer_opt_size($gs, $v) };
    $dispatch{'PRIMER_OPT_SIZE'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_opt_size($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_opt_size($gs, $v) };          
    $dispatch{'PRIMER_MIN_SIZE'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_min_size($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_min_size($gs, $v) };          
    $dispatch{'PRIMER_MAX_SIZE'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_size($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_size($gs, $v) };          
    $dispatch{'PRIMER_MAX_POLY_X'} =
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_poly_x($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_poly_x($gs, $v) };          
    $dispatch{'PRIMER_OPT_TM'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_opt_tm($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_opt_tm($gs, $v) };          
    $dispatch{'PRIMER_OPT_GC_PERCENT'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_opt_gc_percent($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_opt_gc_percent($gs, $v) };          
    $dispatch{'PRIMER_MIN_TM'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_min_tm($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_min_tm($gs, $v) };          
    $dispatch{'PRIMER_MAX_TM'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_tm($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_tm($gs, $v) };          
    $dispatch{'PRIMER_MAX_TM_DIFF_TM'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_tm_diff_tm($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_tm_diff_tm($gs, $v) };          
    $dispatch{'PRIMER_TM_SANTALUCIA'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_tm_santalucia($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_tm_santalucia($gs, $v) };          
    $dispatch{'PRIMER_SALT_CORRECTIONS'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_salt_corrections($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_salt_corrections($gs, $v) };          
    $dispatch{'PRIMER_MIN_GC'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_min_gc($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_min_gc($gs, $v) };          
    $dispatch{'PRIMER_MAX_GC'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_gc($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_gc($gs, $v) };          
    $dispatch{'PRIMER_SALT_CONC'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_salt_conc($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_salt_conc($gs, $v) };          
    $dispatch{'PRIMER_DIVALENT_CONC'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_divalent_conc($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_divalent_conc($gs, $v) };          
    $dispatch{'PRIMER_DNTP_CONC'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_dntp_conc($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_dntp_conc($gs, $v) };          
    $dispatch{'PRIMER_DNA_CONC'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_dna_conc($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_dna_conc($gs, $v) };          
    $dispatch{'PRIMER_NUM_NS_ACCEPTED'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_num_ns_accepted($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_num_ns_accepted($gs, $v) };          
    $dispatch{'PRIMER_PRODUCT_OPT_SIZE'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_product_opt_size($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_product_opt_size($gs, $v) };          
    $dispatch{'PRIMER_SELF_ANY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_self_any($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_self_any($gs, $v) };          
    $dispatch{'PRIMER_SELF_END'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_self_end($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_self_end($gs, $v) };          
    $dispatch{'PRIMER_FILE_FLAG'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_file_flag($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_file_flag($gs, $v) };          
    $dispatch{'PRIMER_PICK_ANYWAY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pick_anyway($sa, $v) };     
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pick_anyway($gs, $v) };     
    $dispatch{'PRIMER_GC_CLAMP'} =
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_gc_clamp($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_gc_clamp($gs, $v) };          
    $dispatch{'PRIMER_EXPLAIN_FLAG'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_explain_flag($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_explain_flag($gs, $v) };          
    $dispatch{'PRIMER_LIBERAL_BASE'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_liberal_base($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_liberal_base($gs, $v) };          
    $dispatch{'PRIMER_FIRST_BASE_INDEX'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_first_base_index($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_first_base_index($gs, $v) };          
    $dispatch{'PRIMER_NUM_RETURN'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_num_return($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_num_return($gs, $v) };          
    $dispatch{'PRIMER_MIN_QUALITY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_min_quality($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_min_quality($gs, $v) };          
    $dispatch{'PRIMER_MIN_END_QUALITY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_min_end_quality($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_min_end_quality($gs, $v) };          
    $dispatch{'PRIMER_QUALITY_RANGE_MIN'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_quality_range_min($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_quality_range_min($gs, $v) };          
    $dispatch{'PRIMER_QUALITY_RANGE_MAX'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_quality_range_max($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_quality_range_max($gs, $v) };          
    $dispatch{'PRIMER_PRODUCT_MAX_TM'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_product_max_tm($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_product_max_tm($gs, $v) };          
    $dispatch{'PRIMER_PRODUCT_MIN_TM'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_product_min_tm($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_product_min_tm($gs, $v) };          
    $dispatch{'PRIMER_PRODUCT_OPT_TM'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_product_opt_tm($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_product_opt_tm($gs, $v) };          
    $dispatch{'PRIMER_TASK'} = 
-# WARNING this needs to be done for the other possible tasks
-sub ($) { my $v = shift;  
-	  my $i = pl_set_gs_primer_task($sa, $v);
-	      if ($v =~ /^\s*PICK_PCR_PRIMERS\s*$/) {
-		   pl_set_gs_primer_pick_left($sa, $v);
-		   pl_set_gs_primer_pick_right($sa, $v);
-	      }
- };
+sub ($) { my $v = shift; my $i = pl_set_gs_primer_task($gs, $v); };
    $dispatch{'PRIMER_PICK_RIGHT_PRIMER'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pick_right($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pick_right($gs, $v) };          
    $dispatch{'PRIMER_PICK_INTERNAL_OLIGO'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pick_internal_oligo($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pick_internal_oligo($gs, $v) };          
    $dispatch{'PRIMER_PICK_LEFT_PRIMER'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pick_left_primer($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pick_left_primer($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_OPT_SIZE'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_opt_size($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_opt_size($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_MAX_SIZE'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_max_size($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_max_size($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_MIN_SIZE'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_min_size($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_min_size($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_MAX_POLY_X'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_max_poly_x($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_max_poly_x($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_OPT_TM'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_opt_tm($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_opt_tm($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_OPT_GC_PERCENT'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_opt_gc_percent($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_opt_gc_percent($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_MAX_TM'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_max_tm($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_max_tm($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_MIN_TM'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_min_tm($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_min_tm($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_MIN_GC'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_min_gc($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_min_gc($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_MAX_GC'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_max_gc($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_max_gc($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_SALT_CONC'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_salt_conc($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_salt_conc($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_DIVALENT_CONC'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_divalent_conc($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_divalent_conc($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_DNTP_CONC'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_dntp_conc($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_dntp_conc($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_DNA_CONC'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_dna_conc($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_dna_conc($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_NUM_NS'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_num_ns($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_num_ns($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_MIN_QUALITY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_min_quality($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_min_quality($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_SELF_ANY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_self_any($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_self_any($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_SELF_END'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_self_end($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_self_end($gs, $v) };          
    $dispatch{'PRIMER_MAX_MISPRIMING'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_mispriming($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_mispriming($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_MAX_MISHYB'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_max_mishyb($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_max_mishyb($gs, $v) };          
    $dispatch{'PRIMER_PAIR_MAX_MISPRIMING'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_max_mispriming($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_max_mispriming($gs, $v) };          
    $dispatch{'PRIMER_MAX_TEMPLATE_MISPRIMING'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_template_mispriming($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_template_mispriming($gs, $v) };          
    $dispatch{'PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_max_template_mispriming($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_max_template_mispriming($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_MAX_TEMPLATE_MISHYB'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_max_template_mishyb($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_max_template_mishyb($gs, $v) };          
    $dispatch{'PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_ambiguity_codes_consensus($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_ambiguity_codes_consensus($gs, $v) };          
    $dispatch{'PRIMER_INSIDE_PENALTY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_inside_penalty($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_inside_penalty($gs, $v) };          
    $dispatch{'PRIMER_OUTSIDE_PENALTY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_outside_penalty($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_outside_penalty($gs, $v) };          
    $dispatch{'PRIMER_MISPRIMING_LIBRARY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_mispriming_library($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_mispriming_library($gs, $v) };          
    $dispatch{'PRIMER_MISHYB_LIBRARY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_mishyb_library($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_mishyb_library($gs, $v) };          
    $dispatch{'PRIMER_MAX_END_STABILITY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_end_stability($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_end_stability($gs, $v) };          
    $dispatch{'PRIMER_LOWERCASE_MASKING'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_lowercase_masking($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_lowercase_masking($gs, $v) };          
    $dispatch{'PRIMER_WT_TM_GT'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_tm_gt($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_tm_gt($gs, $v) };          
    $dispatch{'PRIMER_WT_TM_LT'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_tm_lt($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_tm_lt($gs, $v) };          
    $dispatch{'PRIMER_WT_GC_PERCENT_GT'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_gc_percent_gt($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_gc_percent_gt($gs, $v) };          
    $dispatch{'PRIMER_WT_GC_PERCENT_LT'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_gc_percent_lt($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_gc_percent_lt($gs, $v) };          
    $dispatch{'PRIMER_WT_SIZE_LT'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_size_lt($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_size_lt($gs, $v) };          
    $dispatch{'PRIMER_WT_SIZE_GT'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_size_gt($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_size_gt($gs, $v) };          
    $dispatch{'PRIMER_WT_COMPL_ANY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_compl_any($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_compl_any($gs, $v) };          
    $dispatch{'PRIMER_WT_COMPL_END'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_compl_end($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_compl_end($gs, $v) };          
    $dispatch{'PRIMER_WT_NUM_NS'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_num_ns($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_num_ns($gs, $v) };          
    $dispatch{'PRIMER_WT_REP_SIM'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_rep_sim($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_rep_sim($gs, $v) };          
    $dispatch{'PRIMER_WT_SEQ_QUAL'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_seq_qual($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_seq_qual($gs, $v) };          
    $dispatch{'PRIMER_WT_END_QUAL'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_end_qual($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_end_qual($gs, $v) };          
    $dispatch{'PRIMER_WT_POS_PENALTY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_pos_penalty($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_pos_penalty($gs, $v) };          
    $dispatch{'PRIMER_WT_END_STABILITY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_end_stability($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_end_stability($gs, $v) };          
    $dispatch{'PRIMER_WT_TEMPLATE_MISPRIMING'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_template_mispriming($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_template_mispriming($gs, $v) };          
    $dispatch{'PRIMER_IO_WT_TM_GT'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_tm_gt($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_tm_gt($gs, $v) };          
    $dispatch{'PRIMER_IO_WT_TM_LT'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_tm_lt($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_tm_lt($gs, $v) };          
    $dispatch{'PRIMER_IO_WT_GC_PERCENT_GT'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_gc_percent_gt($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_gc_percent_gt($gs, $v) };          
    $dispatch{'PRIMER_IO_WT_GC_PERCENT_LT'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_gc_percent_lt($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_gc_percent_lt($gs, $v) };          
    $dispatch{'PRIMER_IO_WT_SIZE_LT'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_size_lt($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_size_lt($gs, $v) };          
    $dispatch{'PRIMER_IO_WT_SIZE_GT'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_size_gt($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_size_gt($gs, $v) };          
    $dispatch{'PRIMER_IO_WT_COMPL_ANY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_compl_any($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_compl_any($gs, $v) };          
    $dispatch{'PRIMER_IO_WT_COMPL_END'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_compl_end($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_compl_end($gs, $v) };          
    $dispatch{'PRIMER_IO_WT_NUM_NS'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_num_ns($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_num_ns($gs, $v) };          
    $dispatch{'PRIMER_IO_WT_REP_SIM'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_rep_sim($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_rep_sim($gs, $v) };          
    $dispatch{'PRIMER_IO_WT_SEQ_QUAL'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_seq_qual($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_seq_qual($gs, $v) };          
    $dispatch{'PRIMER_IO_WT_END_QUAL'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_end_qual($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_end_qual($gs, $v) };          
    $dispatch{'PRIMER_IO_WT_TEMPLATE_MISHYB'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_template_mishyb($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_template_mishyb($gs, $v) };          
    $dispatch{'PRIMER_PAIR_WT_PR_PENALTY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_pr_penalty($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_pr_penalty($gs, $v) };          
    $dispatch{'PRIMER_PAIR_WT_IO_PENALTY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_io_penalty($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_io_penalty($gs, $v) };          
    $dispatch{'PRIMER_PAIR_WT_DIFF_TM'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_diff_tm($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_diff_tm($gs, $v) };          
    $dispatch{'PRIMER_PAIR_WT_COMPL_ANY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_compl_any($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_compl_any($gs, $v) };          
    $dispatch{'PRIMER_PAIR_WT_COMPL_END'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_compl_end($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_compl_end($gs, $v) };          
    $dispatch{'PRIMER_PAIR_WT_PRODUCT_TM_LT'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_product_tm_lt($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_product_tm_lt($gs, $v) };          
    $dispatch{'PRIMER_PAIR_WT_PRODUCT_TM_GT'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_product_tm_gt($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_product_tm_gt($gs, $v) };          
    $dispatch{'PRIMER_PAIR_WT_PRODUCT_SIZE_GT'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_product_size_gt($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_product_size_gt($gs, $v) };          
    $dispatch{'PRIMER_PAIR_WT_PRODUCT_SIZE_LT'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_product_size_lt($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_product_size_lt($gs, $v) };          
    $dispatch{'PRIMER_PAIR_WT_REP_SIM,'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_rep_sim($sa, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_rep_sim($gs, $v) };          
    $dispatch{'PRIMER_PAIR_WT_TEMPLATE_MISPRIMING'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_template_mispriming($sa, $v) };
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_template_mispriming($gs, $v) };
+$dispatch{'COMMENT'} = sub ($) {};
 }
