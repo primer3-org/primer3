@@ -397,38 +397,8 @@ typedef struct rep_sim {
 CANNOT COMPILE FOR THIS SYSTEM (< 32 bits in an unsigned long it)
 #endif
 typedef struct oligo_problems {
-  unsigned long int problem;
+  unsigned long int prob;
 } oligo_problems;
-
-void op_set_too_many_ns(oligo_problems *);
-void op_set_overlaps_target(oligo_problems *);
-void op_set_high_gc_content(oligo_problems *);
-void op_set_low_gc_content(oligo_problems *);
-void op_set_high_tm(oligo_problems *);
-void op_set_low_tm(oligo_problems *);
-void op_set_overlaps_excluded_region(oligo_problems *);
-void op_set_self_any(oligo_problems *);
-void op_set_self_end(oligo_problems *);
-void op_set_gc_glamp(oligo_problems *);
-void op_set_high_end_stability(oligo_problems *);
-
-/* STEVE FIXME, continue with this, implement, move prototypes to .c */
-
-/*
-
-
-
-			       OV_POLY_X=11,
-			       OV_SEQ_QUALITY=12,
-                               OV_LIB_SIM=13,
-			       OV_TEMPLATE_MISPRIMING=14,
-                               	OV_GMASKED=15,
-	OV_TOO_SHORT=16,
-	OV_TOO_LONG=17
- 
-*/
-
-
 
 typedef struct primer_rec {
 
@@ -493,6 +463,9 @@ typedef struct primer_rec {
   oligo_problems problems;
 
 } primer_rec;
+
+const char *
+p3_primer_rec_problems_to_string(const primer_rec *);
 
 /* 
  * The structure for a pair of primers. (So that we can have a function 

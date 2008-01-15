@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
@@ -285,9 +285,34 @@ static void   check_if_lowercase_masked(const int position,
 					const char *sequence,
 					primer_rec *h);
 
+
+/* Functions to record problems with oligos (or primers) */
+static void op_set_unwritten(primer_rec *);
+static void op_set_partially_written(primer_rec *);
+static void op_set_completely_written(primer_rec *);
+static void op_set_too_many_ns(primer_rec *);
+static void op_set_overlaps_target(primer_rec *);
+static void op_set_high_gc_content(primer_rec *);
+static void op_set_low_gc_content(primer_rec *);
+static void op_set_high_tm(primer_rec *);
+static void op_set_low_tm(primer_rec *);
+static void op_set_overlaps_excluded_region(primer_rec *);
+static void op_set_self_any(primer_rec *);
+static void op_set_self_end(primer_rec *);
+static void op_set_gc_glamp(primer_rec *);
+static void op_set_high_end_stability(primer_rec *);
+static void op_set_high_poly_x(primer_rec *);
+static void op_set_low_sequence_quality(primer_rec *);
+static void op_set_high_similarity_to_non_template_sequence(primer_rec *);
+static void op_set_high_similarity_to_multiple_template_sites(primer_rec *);
+static void op_set_overlaps_masked_sequence(primer_rec *);
+static void op_set_too_long(primer_rec *);
+static void op_set_too_short(primer_rec *);
+/* End functions to set poblems in oligos */
+
 /* Global static variables. */
 static const char *primer3_copyright_char_star = "\n"
-"Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007\n"
+"Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008\n"
 "Whitehead Institute for Biomedical Research, Steve Rozen\n"
 "(http://jura.wi.mit.edu/rozen), and Helen Skaletsky\n"
 "All rights reserved.\n"
@@ -6134,3 +6159,114 @@ p3_add_to_gs_product_size_range(p3_global_settings *pgs,
 /* ============================================================ */
 /* END 'set' functions for p3_global_settings                   */
 /* ============================================================ */
+
+
+/* FIX ME, these are not done */
+
+static void
+op_set_unwritten(primer_rec *oligo) {
+  oligo->problems.prob = 0UL;
+}
+
+#define OP_PARTIALLY_WRITTEN (1);
+#define OP_COMPLETELY_WRITTEN (1 << 1);
+
+static void
+op_set_partially_written(primer_rec *oligo) {
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
+}
+
+static void
+op_set_completely_written(primer_rec *oligo) {
+  oligo->problems.prob |= OP_COMPLETELY_WRITTEN;
+}
+
+static void
+op_set_too_many_ns(primer_rec *oligo) {
+
+}
+
+static void
+op_set_overlaps_target(primer_rec *oligo) {
+
+}
+
+static void
+op_set_high_gc_content(primer_rec *oligo) {
+
+}
+
+static void
+op_set_low_gc_content(primer_rec *oligo) {
+
+}
+
+static void
+op_set_high_tm(primer_rec *oligo) {
+
+}
+
+static void
+op_set_low_tm(primer_rec *oligo) {
+
+}
+
+static void
+op_set_overlaps_excluded_region(primer_rec *oligo) {
+
+}
+
+static void
+op_set_self_any(primer_rec *oligo) {
+
+}
+
+static void
+op_set_self_end(primer_rec *oligo) {
+
+}
+
+static void
+op_set_gc_glamp(primer_rec *oligo) {
+
+}
+
+static void
+op_set_high_end_stability(primer_rec *oligo) {
+
+}
+
+static void
+op_set_high_poly_x(primer_rec *oligo) {
+
+}
+
+static void
+op_set_low_sequence_quality(primer_rec *oligo) {
+
+}
+
+static void
+op_set_high_similarity_to_non_template_sequence(primer_rec *oligo) {
+
+}
+
+static void
+op_set_high_similarity_to_multiple_template_sites(primer_rec *oligo) {
+
+}
+
+static void
+op_set_overlaps_masked_sequence(primer_rec *oligo) {
+
+}
+
+static void
+op_set_too_long(primer_rec *oligo) {
+
+}
+
+static void
+op_set_too_short(primer_rec *oligo) {
+
+}
