@@ -4165,6 +4165,10 @@ fake_a_sequence(seq_args *sa)
 	if (sa->right_input){
 		strcat(sa->sequence, rev);
 	}
+	if(rev != NULL) {
+		free(rev);
+	}
+		
 	return 0;
 }
 
