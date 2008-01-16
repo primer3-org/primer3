@@ -84,7 +84,6 @@ sub main() {
 		confess "Bad line $line\n";
 	    }
 	    my ($tag, $value) = ($1, $2);
-	    print STDERR "found $tag $value\n";
 	    $tag_found = 1;
 	    if ($dispatch{$tag})  {
 		&{$dispatch{$tag}}($value);
@@ -210,8 +209,8 @@ sub ($) { my $v = shift;  my $i = pl_set_gs_primer_opt_gc_percent($gs, $v) };
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_min_tm($gs, $v) };          
    $dispatch{'PRIMER_MAX_TM'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_tm($gs, $v) };          
-   $dispatch{'PRIMER_MAX_TM_DIFF_TM'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_tm_diff_tm($gs, $v) };          
+   $dispatch{'PRIMER_MAX_DIFF_TM'} = 
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_diff_tm($gs, $v) };          
    $dispatch{'PRIMER_TM_SANTALUCIA'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_tm_santalucia($gs, $v) };          
    $dispatch{'PRIMER_SALT_CORRECTIONS'} = 
@@ -413,4 +412,5 @@ sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_rep_sim($gs, $v) };
    $dispatch{'PRIMER_PAIR_WT_TEMPLATE_MISPRIMING'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_template_mispriming($gs, $v) };
 $dispatch{'COMMENT'} = sub ($) {};
+$dispatch{'PRIMER_COMMENT'} = sub ($) {};
 }
