@@ -173,10 +173,7 @@ sub ($) { my $v = shift;
 	  my @nums = split /[-\" ]/, $v ;
 	  while (1) {
 	  my $f = shift @nums ;
-          if ($f eq "") { $f = shift @nums; }
-
 	  my $s = shift @nums ;
-          if ($s eq "") { $s = shift @nums; }
 	  if (!defined $f && !defined $s) { return ; }
 	  pl_add_to_gs_product_size_range($gs, $f, $s) ;
 	  }} ;
