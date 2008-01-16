@@ -71,18 +71,27 @@ sub main() {
 	my $rec = <>;
 	last if !defined $rec;
 	chomp $rec;
+	if (!$rec) {
+	    confess "Record $. is empty\n";
+	}
 	$sa = pl_create_seq_arg();
 	my %rec;
 	my @rec = split /\n/, $rec;
+	my $tag_found = 0;
 	for my $line (@rec) {
 	    print "$line\n";
 	    if ($line !~ /(^\w+\s*)=(.*)/) {
 		confess "Bad line $line\n";
 	    }
 	    my ($tag, $value) = ($1, $2);
+	    print STDERR "found $tag $value\n";
+	    $tag_found = 1;
 	    if ($dispatch{$tag})  {
 		&{$dispatch{$tag}}($value);
 	    } else { confess "no call for $tag" }
+	}
+	if (!$tag_found) {
+	    confess "Record $. is empty\n";
 	}
 	my $retval = pl_choose_primers($gs, $sa);
 	pl_boulder_print($gs, $sa, $retval) ;  # boulder_print generates the final '='
