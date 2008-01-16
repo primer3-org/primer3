@@ -169,15 +169,17 @@ sub ($) { my $v = shift;  my $i = pl_set_sa_start_codon_pos($sa, $v) };
 
    $dispatch{'PRIMER_PRODUCT_SIZE_RANGE'} = 
 sub ($) { my $v = shift;
+          pl_empty_gs_product_size_range($gs);     
 	  my @nums = split /[-\" ]/, $v ;
+	  while (1) {
 	  my $f = shift @nums ;
           if ($f eq "") { $f = shift @nums; }
 
 	  my $s = shift @nums ;
           if ($s eq "") { $s = shift @nums; }
-          
-          pl_empty_gs_product_size_range($gs);     
-	  pl_add_to_gs_product_size_range($gs, $f, $s) };     
+	  if (!defined $f && !defined $s) { return ; }
+	  pl_add_to_gs_product_size_range($gs, $f, $s) ;
+	  }} ;
 
    $dispatch{'PRIMER_DEFAULT_PRODUCT'} = 
 sub ($) { my $v = shift;
