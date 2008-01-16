@@ -73,17 +73,21 @@ double long_seq_tm(const char *seq,
    longer than MAX_PRIMER_LENGTH, but the formula becomes less
    accurate as the sequence grows longer.  Caveat emptor.
 
-   We use the folowing defines:
+   We use the folowing typedefs:
 */
+typedef enum tm_method_type {
+	breslauer_auto      = 0,
+	santalucia_auto     = 1,
+} tm_method_type;
 
-#define TM_METHOD_SANTALUCIA 1
-#define TM_METHOD_BRESLAUER  0
-#define SALT_CORRECTION_SCHILDKRAUT 0
-#define SALT_CORRECTION_SANTALUCIA  1
-#define SALT_CORRECTION_OWCZARZY    2
+typedef enum salt_correction_type {
+	schildkraut    = 0,
+	santalucia     = 1,
+	owczarzy       = 2,
+} salt_correction_type;
 
 /* 
-   If tm_method==TM_METHOD_SANTALUCIA, then the table of
+   If tm_method==santalucia_auto, then the table of
    nearest-neighbor thermodynamic parameters and method for Tm
    calculation in the paper [SantaLucia JR (1998) "A unified view of
    polymer, dumbbell and oligonucleotide DNA nearest-neighbor
@@ -92,7 +96,7 @@ double long_seq_tm(const char *seq,
    *THIS IS THE RECOMMENDED VALUE*.
    Added by T. Koressaar
  
-   If tm_method==TM_METHOD_BRESLAUER, then method for Tm
+   If tm_method==breslauer_auto, then method for Tm
    calculations in the paper [Rychlik W, Spencer WJ and Rhoads RE
    (1990) "Optimization of the annealing temperature for DNA
    amplification in vitro", Nucleic Acids Res 18:6409-12
@@ -104,14 +108,14 @@ double long_seq_tm(const char *seq,
    the method and the table that primer3 used up to and including
    version 1.0.1
  
-   If salt_corrections==SALT_CORRECTION_SCHILDKRAUT, then formula for
+   If salt_corrections==schildkraut, then formula for
    salt correction in the paper [Schildkraut, C, and Lifson, S (1965)
    "Dependence of the melting temperature of DNA on salt
    concentration", Biopolymers 3:195-208 (not available on-line)] is
    used.  This is the formula that primer3 used up to and including
    version 1.0.1.
 
-   If salt_corrections==SALT_CORRECTION_SANTALUCIA, then formula for
+   If salt_corrections==santalucia, then formula for
    salt correction suggested by the paper [SantaLucia JR (1998) "A
    unified view of polymer, dumbbell and oligonucleotide DNA
    nearest-neighbor thermodynamics", Proc Natl Acad Sci 95:1460-65
@@ -120,7 +124,7 @@ double long_seq_tm(const char *seq,
    *THIS IS THE RECOMMENDED VALUE*. 
    Added by T.Koressaar
  
-   If salt_corrections==SALT_CORRECTION_OWCZARZY, then formula for
+   If salt_corrections==owczarzy, then formula for
    salt correction in the paper [Owczarzy R, You Y, Moreira BG,
    Manthey JA, Huang L, Behlke MA and Walder JA (2004) "Effects of
    sodium ions on DNA duplex oligomers: Improved predictions of
@@ -135,19 +139,19 @@ double oligotm(const  char *seq,     /* The sequence. */
                double salt_conc,     /* Salt concentration (millimolar). */
 	       double divalent_conc, /* Concentration of divalent cations (millimolar) */
 	       double dntp_conc,     /* Concentration of dNTPs (millimolar) */
-	       int tm_method,    /* See description above. */
-	       int salt_corrections  /* See description above. */
+	       tm_method_type tm_method,    /* See description above. */
+	       salt_correction_type salt_corrections  /* See description above. */
 	       );
 
 /* Return the melting temperature of a given sequence, 'seq', of any
    length.
 */
 double seqtm(const  char *seq,  /* The sequence. */
-             double dna_conc,   /* DNA concentration (nanomolar). */
-             double salt_conc,  /* Concentration of divalent cations (millimolar). */
+         double dna_conc,   /* DNA concentration (nanomolar). */
+         double salt_conc,  /* Concentration of divalent cations (millimolar). */
 	     double divalent_conc, /* Concentration of divalent cations (millimolar) */
 	     double dntp_conc,     /* Concentration of dNTPs (millimolar) */
-             int    nn_max_len,  /* The maximum sequence length for
+         int    nn_max_len,  /* The maximum sequence length for
 				    using the nearest neighbor model
 				    (as implemented in oligotm.  For
 				    sequences longer than this, seqtm
@@ -155,8 +159,8 @@ double seqtm(const  char *seq,  /* The sequence. */
 				    in long_seq_tm.
 				 */
 
-	     int tm_method,       /* See description above. */
-	     int salt_corrections /* See description above. */
+         tm_method_type  tm_method,       /* See description above. */
+	     salt_correction_type salt_corrections /* See description above. */
 	     );
 
 /* Return the delta G of disruption of oligo using the nearest neighbor model.

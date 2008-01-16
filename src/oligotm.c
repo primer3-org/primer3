@@ -299,15 +299,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
    oligotm.h for documentation of arguments.
 */
 double 
-oligotm(s, DNA_nM, K_mM, divalent_conc, dntp_conc, tm_method,
-	salt_corrections)
-     const  char *s;
-     double DNA_nM;
-     double K_mM;
-     double divalent_conc;
-     double dntp_conc;
-     int tm_method;
-     int salt_corrections;
+oligotm(const  char *s,
+     double DNA_nM,
+     double K_mM,
+     double divalent_conc,
+     double dntp_conc,
+     tm_method_type  tm_method,
+     salt_correction_type salt_corrections)
 {
   register int dh = 0, ds = 0;
   register char c;
@@ -320,18 +318,18 @@ oligotm(s, DNA_nM, K_mM, divalent_conc, dntp_conc, tm_method,
      return OLIGOTM_ERROR;
    
    K_mM = K_mM + divalent_to_monovalent(divalent_conc, dntp_conc);
-  if (tm_method != TM_METHOD_BRESLAUER
-      && tm_method != TM_METHOD_SANTALUCIA)
+  if (tm_method != breslauer_auto
+      && tm_method != santalucia_auto)
     return OLIGOTM_ERROR;
-  if (salt_corrections != SALT_CORRECTION_SCHILDKRAUT
-      && salt_corrections != SALT_CORRECTION_SANTALUCIA
-      && salt_corrections != SALT_CORRECTION_OWCZARZY)
+  if (salt_corrections != schildkraut
+      && salt_corrections != santalucia
+      && salt_corrections != owczarzy)
     return OLIGOTM_ERROR;
 
   len = (strlen(s)-1);
 
   sym = symmetry(s); /*Add symmetry correction if seq is symmetrical*/
-  if( tm_method == TM_METHOD_BRESLAUER ) {
+  if( tm_method == breslauer_auto ) {
     ds=108;
   }
   else {
@@ -364,7 +362,7 @@ oligotm(s, DNA_nM, K_mM, divalent_conc, dntp_conc, tm_method,
   }
   /* Use a finite-state machine (DFA) to calucluate dh and ds for s. */
   c = *s; s++;
-  if (tm_method == TM_METHOD_BRESLAUER) {
+  if (tm_method == breslauer_auto) {
     if (c == 'A') goto A_STATE;
     else if (c == 'G') goto G_STATE;
     else if (c == 'T') goto T_STATE;
@@ -402,10 +400,10 @@ oligotm(s, DNA_nM, K_mM, divalent_conc, dntp_conc, tm_method,
 			    */
   Tm=0;  /* Melting temperature */
   len=len+1;
-  if (salt_corrections == SALT_CORRECTION_SCHILDKRAUT) {
+  if (salt_corrections == schildkraut) {
     double correction=- 273.15 + 16.6 * log10(K_mM/1000.0);
     Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/4000000000.0)) + correction;
-  } else if (salt_corrections== SALT_CORRECTION_SANTALUCIA) {
+  } else if (salt_corrections== santalucia) {
     delta_S = delta_S + 0.368 * (len - 1) * log(K_mM / 1000.0 );
     if(sym == 1) { /* primer is symmetrical */
       /* Equation A */
@@ -414,7 +412,7 @@ oligotm(s, DNA_nM, K_mM, divalent_conc, dntp_conc, tm_method,
       /* Equation B */
       Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/4000000000.0)) - 273.15;
     }      
-  } else if (salt_corrections== SALT_CORRECTION_OWCZARZY) {
+  } else if (salt_corrections == owczarzy) {
     double gcPercent=0;
     int i;
     for(i=0; i<=len && d != NULL && d != '\0';) {
@@ -470,20 +468,19 @@ oligotm(s, DNA_nM, K_mM, divalent_conc, dntp_conc, tm_method,
 }
 
 double 
-oligodg(s, tm_method)
-    const char *s;       /* The sequence. */
-    int tm_method; 
+oligodg(const char *s,      /* The sequence. */
+    int tm_method) 
 {
    register int dg = 0;
    register char c;
 
-  if (tm_method != TM_METHOD_BRESLAUER
-      && tm_method != TM_METHOD_SANTALUCIA)
+  if (tm_method != breslauer_auto
+      && tm_method != santalucia_auto)
     return OLIGOTM_ERROR;
 
    /* Use a finite-state machine (DFA) to calucluate dg s. */
    c = *s; s++;
-   if(tm_method != TM_METHOD_BRESLAUER) {      
+   if(tm_method != breslauer_auto) {      
       dg=-1960; /* Initial dG */
       if(c == 'A' || c == 'T')  {
 	 dg += -50; /* terminal AT penalty */
@@ -514,7 +511,7 @@ oligodg(s, tm_method)
 
      }
 DONE:  /* dg is now computed for the given sequence. */
-   if(tm_method != TM_METHOD_BRESLAUER) {
+   if(tm_method != breslauer_auto) {
       int sym;
       --s; --s; c = *s;
       if(c == 'A' || c == 'T')  {
@@ -534,15 +531,14 @@ DONE:  /* dg is now computed for the given sequence. */
     return OLIGOTM_ERROR;
 }
 
-double end_oligodg(s, len, tm_method)
-  const char *s;  
-  int len; /* The number of characters to return. */
-  int tm_method;
+double end_oligodg(const char *s,  
+  int len, /* The number of characters to return. */
+  int tm_method)
 {
   int x = strlen(s);
 
-  if (tm_method != TM_METHOD_BRESLAUER
-      && tm_method != TM_METHOD_SANTALUCIA)
+  if (tm_method != breslauer_auto
+      && tm_method != santalucia_auto)
     return OLIGOTM_ERROR;
 
   return 
@@ -552,41 +548,41 @@ double end_oligodg(s, len, tm_method)
 }
 
 /* See oligotm.h for documentation of arguments. */
-double seqtm(seq, dna_conc, salt_conc, divalent_conc, dntp_conc, nn_max_len,
-	     tm_method, salt_corrections)
-  const  char *seq;
-  double dna_conc;
-  double salt_conc;
-  double divalent_conc;
-  double dntp_conc;
-  int    nn_max_len;
-  int    tm_method;
-  int    salt_corrections;
+double seqtm(const  char *seq,
+  double dna_conc,
+  double salt_conc,
+  double divalent_conc,
+  double dntp_conc,
+  int    nn_max_len,
+  tm_method_type tm_method,
+  salt_correction_type salt_corrections)
 {
   int len = strlen(seq);
-   if (tm_method != TM_METHOD_BRESLAUER
-      && tm_method != TM_METHOD_SANTALUCIA)
+   if (tm_method != breslauer_auto
+      && tm_method != santalucia_auto)
     return OLIGOTM_ERROR;
-  if (salt_corrections != SALT_CORRECTION_SCHILDKRAUT
-      && salt_corrections != SALT_CORRECTION_SANTALUCIA
-      && salt_corrections != SALT_CORRECTION_OWCZARZY)
+  if (salt_corrections != schildkraut
+      && salt_corrections != santalucia
+      && salt_corrections != owczarzy)
     return OLIGOTM_ERROR;
 
-  return (len > nn_max_len)
-    ? long_seq_tm(seq, 0, len, salt_conc, divalent_conc, dntp_conc) 
-    : oligotm(seq, dna_conc, salt_conc, 
-	      divalent_conc, dntp_conc, tm_method, salt_corrections);
+  if (len > nn_max_len) {
+	  return long_seq_tm(seq, 0, len, salt_conc, divalent_conc, dntp_conc);
+  } else {
+	  return oligotm(seq, dna_conc, salt_conc, 
+		      divalent_conc, dntp_conc, tm_method, salt_corrections);
+  }
 }
 
 /* See oligotm.h for documentation on this function and the formula it
    uses. */
 double
-long_seq_tm(s, start, len, salt_conc, divalent_conc, dntp_conc)
-  const char *s;
-  int start, len;
-  double salt_conc;
-  double divalent_conc;
-  double dntp_conc;
+long_seq_tm(const char *s,
+  int start,
+  int len,
+  double salt_conc,
+  double divalent_conc,
+  double dntp_conc)
 {
   int GC_count = 0;
   const char *p, *end;
