@@ -5523,32 +5523,32 @@ p3_set_gs_primer_salt_corrections(p3_global_settings * p , int val) {
 }
 
 void
-p3_set_gs_primer_min_gc(p3_global_settings * p , int val) {
+p3_set_gs_primer_min_gc(p3_global_settings * p , double val) {
   p->p_args.min_gc = val ;
 }
 
 void
-p3_set_gs_primer_max_gc(p3_global_settings * p , int val) {
+p3_set_gs_primer_max_gc(p3_global_settings * p , double val) {
    p->p_args.max_gc = val ;
 }
 
 void
-p3_set_gs_primer_salt_conc(p3_global_settings * p , int val) {
+p3_set_gs_primer_salt_conc(p3_global_settings * p , double val) {
   p->p_args.salt_conc = val ;
 }
 
 void
-p3_set_gs_primer_divalent_conc(p3_global_settings * p , int val) {
+p3_set_gs_primer_divalent_conc(p3_global_settings * p , double val) {
  p->p_args.divalent_conc = val;
 }
 
 void
-p3_set_gs_primer_dntp_conc(p3_global_settings * p , int val) {
+p3_set_gs_primer_dntp_conc(p3_global_settings * p , double val) {
   p->p_args.dntp_conc = val ;
 }
 
 void
-p3_set_gs_primer_dna_conc(p3_global_settings * p , int val) {
+p3_set_gs_primer_dna_conc(p3_global_settings * p , double val) {
   p->p_args.dna_conc = val ;
 }
 
@@ -5628,17 +5628,17 @@ p3_set_gs_primer_quality_range_max(p3_global_settings * p , int val) {
 }
 
 void
-p3_set_gs_primer_product_max_tm(p3_global_settings * p , int val) {
+p3_set_gs_primer_product_max_tm(p3_global_settings * p , double val) {
   p->product_max_tm = val ;
 }
 
 void
-p3_set_gs_primer_product_min_tm(p3_global_settings * p , int val) {
+p3_set_gs_primer_product_min_tm(p3_global_settings * p , double val) {
   p->product_min_tm = val ;
 }
 
 void
-p3_set_gs_primer_product_opt_tm(p3_global_settings * p , int val) {
+p3_set_gs_primer_product_opt_tm(p3_global_settings * p , double val) {
   p->product_opt_tm = val ;
 }
 
@@ -5720,52 +5720,52 @@ p3_set_gs_primer_internal_oligo_max_poly_x(p3_global_settings * p , int val) {
 }
 
 void
-p3_set_gs_primer_internal_oligo_opt_tm(p3_global_settings * p , int val) {
+p3_set_gs_primer_internal_oligo_opt_tm(p3_global_settings * p , double val) {
   p->o_args.opt_tm = val ;
 }
 
 void
-p3_set_gs_primer_internal_oligo_opt_gc_percent(p3_global_settings * p , int val) {
+p3_set_gs_primer_internal_oligo_opt_gc_percent(p3_global_settings * p , double val) {
   p->o_args.opt_gc_content = val ;
 }
 
 void
-p3_set_gs_primer_internal_oligo_max_tm(p3_global_settings * p , int val) {
+p3_set_gs_primer_internal_oligo_max_tm(p3_global_settings * p , double val) {
   p->o_args.max_tm = val ;
 }
 
 void
-p3_set_gs_primer_internal_oligo_min_tm(p3_global_settings * p , int val) {
+p3_set_gs_primer_internal_oligo_min_tm(p3_global_settings * p , double val) {
   p->o_args.min_tm = val ;
 }
 
 void
-p3_set_gs_primer_internal_oligo_min_gc(p3_global_settings * p , int val) {
+p3_set_gs_primer_internal_oligo_min_gc(p3_global_settings * p , double val) {
   p->o_args.min_gc = val ;
 }
 
 void
-p3_set_gs_primer_internal_oligo_max_gc(p3_global_settings * p , int val) {
+p3_set_gs_primer_internal_oligo_max_gc(p3_global_settings * p , double val) {
   p->o_args.max_gc = val ;
 }
 
 void
-p3_set_gs_primer_internal_oligo_salt_conc(p3_global_settings * p , int val) {
+p3_set_gs_primer_internal_oligo_salt_conc(p3_global_settings * p , double val) {
   p->o_args.salt_conc = val ;
 }
 
 void
-p3_set_gs_primer_internal_oligo_divalent_conc(p3_global_settings * p , int val) {
+p3_set_gs_primer_internal_oligo_divalent_conc(p3_global_settings * p , double val) {
   p->o_args.divalent_conc = val ;
 }
 
 void
-p3_set_gs_primer_internal_oligo_dntp_conc(p3_global_settings * p , int val) {
+p3_set_gs_primer_internal_oligo_dntp_conc(p3_global_settings * p , double val) {
   p->o_args.dntp_conc = val ;
 }
 
 void
-p3_set_gs_primer_internal_oligo_dna_conc(p3_global_settings * p , int val) {
+p3_set_gs_primer_internal_oligo_dna_conc(p3_global_settings * p , double val) {
   p->o_args.dna_conc = val ;
 }
  
@@ -5824,12 +5824,12 @@ p3_set_gs_primer_lib_ambiguity_codes_consensus(p3_global_settings * p , int val)
 }
 
 void
-p3_set_gs_primer_inside_penalty(p3_global_settings * p , int val) {
+p3_set_gs_primer_inside_penalty(p3_global_settings * p , double val) {
   p->inside_penalty = val ;
 }
 
 void
-p3_set_gs_primer_outside_penalty(p3_global_settings * p , int val) {
+p3_set_gs_primer_outside_penalty(p3_global_settings * p , double val) {
   p->outside_penalty = val ;
 }
 
