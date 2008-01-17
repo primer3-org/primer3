@@ -171,11 +171,15 @@ sub ($) { my $v = shift;  my $i = pl_set_sa_start_codon_pos($sa, $v) };
 sub ($) { my $v = shift;
           pl_empty_gs_product_size_range($gs);     
 	  my @nums = split /[-\" ]/, $v ;
+	  my $f = "";
+	  my $s = "";
 	  while (1) {
-	  my $f = shift @nums ;
-	  my $s = shift @nums ;
+	  $f = shift @nums ;
+	  if (defined $f && $f eq "") {$f = shift @nums};
+	  $s = shift @nums ;
+	  if (defined $s && $s eq "") {$s = shift @nums};
 	  if (!defined $f && !defined $s) { return ; }
-	  pl_add_to_gs_product_size_range($gs, $f, $s) ;
+	  if ($f ne "" && $s ne "") {pl_add_to_gs_product_size_range($gs, $f, $s)} ;
 	  }} ;
 
    $dispatch{'PRIMER_DEFAULT_PRODUCT'} = 
