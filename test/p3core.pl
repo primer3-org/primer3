@@ -96,9 +96,15 @@ sub main() {
 	if (!$tag_found) {
 	    confess "Record $. is empty\n";
 	}
-	if (!$err) {print "err = $err\n" ; $retval = pl_choose_primers($gs, $sa); }
+	if (!$err) 
+	    {$retval = pl_choose_primers($gs, $sa); }
+	else
+	{
+	    $retval = pl_create_p3retval() ;
+	}
 	pl_boulder_print($gs, $sa, $retval) ;  # boulder_print generates the final '='
 	pl_destroy_seq_args($sa);
+	pl_destroy_p3retval($retval) ;
 	$err = 0 ;
     }
 }
