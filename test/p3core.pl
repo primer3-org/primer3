@@ -57,6 +57,10 @@ sub main();
 our %dispatch;
 our $sa ;
 our $gs;
+our $tag;
+our $value;
+our $err = 0 ;
+our $retval = 0 ;
 
 main();
 
@@ -83,7 +87,7 @@ sub main() {
 	    if ($line !~ /(^\w+\s*)=(.*)/) {
 		confess "Bad line $line\n";
 	    }
-	    my ($tag, $value) = ($1, $2);
+	    ($tag, $value) = ($1, $2);
 	    $tag_found = 1;
 	    if ($dispatch{$tag})  {
 		&{$dispatch{$tag}}($value);
@@ -92,9 +96,10 @@ sub main() {
 	if (!$tag_found) {
 	    confess "Record $. is empty\n";
 	}
-	my $retval = pl_choose_primers($gs, $sa);
+	if (!$err) {print "err = $err\n" ; $retval = pl_choose_primers($gs, $sa); }
 	pl_boulder_print($gs, $sa, $retval) ;  # boulder_print generates the final '='
 	pl_destroy_seq_args($sa);
+	$err = 0 ;
     }
 }
 
@@ -131,7 +136,7 @@ sub ($) { my $v = shift;
 	  my $s = shift @nums ;
 	  if ($f =~m/a-zA-Z/) { undef $f ;}
 	  while (defined $f && defined $s) {
-	      pl_add_to_sa_tar2($sa, $f, $s);     
+	      if (pl_add_to_sa_tar2($sa, $f, $s)) {print "PRIMER_ERROR=Too many elements for tag $tag\n"; $err = 1 ; return ;}     
 	      $f = shift @nums ;
 	      $s = shift @nums ;
 	    }};
@@ -141,7 +146,7 @@ sub ($) { my $v = shift;
 	  my $f = shift @nums ;
 	  my $s = shift @nums ;
 	  while (defined $f) {
-	      pl_add_to_sa_excl2($sa, $f, $s);     
+	      if (pl_add_to_sa_excl2($sa, $f, $s)) {print "PRIMER_ERROR=Too many elements for tag $tag\n"; $err = 1 ; return ;}     
 	      $f = shift @nums ;
 	      $s = shift @nums ;
 	    }};
@@ -151,7 +156,7 @@ sub ($) { my $v = shift;
 	  my $f = shift @nums ;
 	  my $s = shift @nums ;
 	  while (defined $f) {
-	      pl_add_to_sa_excl_internal2($sa, $f, $s);     
+	      if (pl_add_to_sa_excl_internal2($sa, $f, $s)) {print "PRIMER_ERROR=Too many elements for tag $tag\n"; $err = 1 ; return ;}     
 	      $f = shift @nums ;
 	      $s = shift @nums ;
 	    }};
@@ -179,7 +184,8 @@ sub ($) { my $v = shift;
 	  $s = shift @nums ;
 	  if (defined $s && $s eq "") {$s = shift @nums};
 	  if (!defined $f && !defined $s) { return ; }
-	  if ($f ne "" && $s ne "") {pl_add_to_gs_product_size_range($gs, $f, $s)} ;
+	  if ($f ne "" && $s ne "")
+	      {if (pl_add_to_gs_product_size_range($gs, $f, $s)) {print "PRIMER_ERROR=Too many elements for tag $tag\n"; return -1;}} ;
 	  }} ;
 
    $dispatch{'PRIMER_DEFAULT_PRODUCT'} = 

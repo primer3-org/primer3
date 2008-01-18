@@ -171,7 +171,7 @@ void          compute_position_penalty(const p3_global_settings *,
 				       const seq_args *, 
 				       primer_rec *, oligo_type);
 
-static p3retval *create_p3retval(void);
+p3retval *create_p3retval(void);
 
 static char   dna_to_upper(char *, int);
 
@@ -771,7 +771,7 @@ interval_array_t2_get_pair(const interval_array_t2 *array, int i) {
 /* Allocate a new primer3 state. Return NULL if out of memory. Assuming
    malloc sets errno to ENOMEM according to Unix98, set errno to ENOMEM
    on out-of-memory error. */
-static p3retval *
+p3retval *
 create_p3retval(void)
 {
   p3retval *state = (p3retval *)malloc(sizeof(*state));
