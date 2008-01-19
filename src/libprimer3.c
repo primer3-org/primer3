@@ -209,6 +209,13 @@ static int    make_internal_oligo_list(p3retval *,
 				       const seq_args *,
 				       const dpal_arg_holder *);
 
+static int    pick_only_best_primer(const int, const int,
+				oligo_array *, 
+				const p3_global_settings *,
+				const seq_args *, 
+				const dpal_arg_holder *,
+				p3retval *);
+
 static int    pick_primer_range(const int, const int, int *,
 				 oligo_array *, 
 				 const p3_global_settings *,
@@ -1092,10 +1099,12 @@ choose_primers(const p3_global_settings *pa,
 
     /* We sort _after_ printing lists to 
        maintain the order of test output. */
-    if (pa->pick_right_primer) 
+    if (pa->pick_right_primer && 
+    		(pa->primer_task != pick_sequencing_primers)) 
     	sort_primer_array(&retval->rev);
 
-    if (pa->pick_left_primer) 
+    if (pa->pick_left_primer && 
+    		(pa->primer_task != pick_sequencing_primers))
     	sort_primer_array(&retval->fwd);
 
     /* FIX ME why do we only sort this if we dont pick primers? */
@@ -1594,43 +1603,288 @@ pick_sequencing_primer_list(p3retval *retval,
 		  const seq_args *sa,
 		  const dpal_arg_holder *dpal_arg_to_use)
 {
-	int exteme_var;
 	int length, start;
-    int n;
+    int n, rest_accuracy;
+    int primer_nr; /* number of primers we need to pick */
+    int tar_n; /* counter for the targets */
+    int step_nr; /* counter to step through the targets */
+    int sequenced_len; /* bp sequenced in good quality */
+    int extra_seq; /* bp sequenced additionally on both sides */
+    int pr_position_f; /* pefect place for the 3' end of the fwd primer */
+    int pr_position_r; /* pefect place for the 3' end of the rev primer */
+    int left_unique; /* pick only one left */
+    int right_unique; /* pick only one right */
 
     /* Get the length of the sequence */
     PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
+    
+    /* For each target needed loop*/
+    tar_n = 0;
+	left_unique = -1;
+	right_unique = -1;
 
+    /* Calculate the amount of primers needed */
+    primer_nr = 1;
+    if ((pa->pick_left_primer) && (pa->pick_right_primer)){
+    	sequenced_len = pa->sequencing.interval;
+    	while(sequenced_len < sa->tar2.pairs[tar_n][1]) {
+    		primer_nr++;
+    		sequenced_len = pa->sequencing.spacing * (primer_nr - 1)
+                                          + pa->sequencing.interval;
+    	}   	
+    } else {
+    	sequenced_len = pa->sequencing.spacing;
+    	while(sequenced_len < sa->tar2.pairs[tar_n][1]) {
+    		primer_nr++;
+    		sequenced_len = pa->sequencing.spacing * primer_nr;
+    	}   	    	
+    }
+    /* Calculate the overlap on the sides */
+    extra_seq = (sequenced_len - sa->tar2.pairs[tar_n][1]) / 2;
     
-    
-    
-    
-    if (pa->pick_left_primer) {
-		/* We will need a left primer. */
-		exteme_var = 0;
-		length = n - pa->p_args.min_size;
-		start = pa->p_args.min_size - 1;
-		    
-		/* Pick all good in the given range */
-		pick_primer_range(start, length, &exteme_var, &retval->fwd,
-					     pa, sa, dpal_arg_to_use, retval);
-
-    }  /* if (pa->pick_left_primer) */
-
-    if ( pa->pick_right_primer ) {
-		/* We will need a right primer */
-		exteme_var = n;
-		length = n - pa->p_args.min_size + 1;
-		start = 0;
-		
-		/* Pick all good in the given range */
-		pick_primer_range(start, length, &exteme_var, &retval->rev,
-					     pa, sa, dpal_arg_to_use, retval);
-	}
-    
-    
+    /* Pick primers for each position */
+    for ( step_nr = 0 ; step_nr < primer_nr ; step_nr++ ) {
+    	pr_position_f = sa->tar2.pairs[tar_n][0] - extra_seq 
+    	                 + ( pa->sequencing.spacing * step_nr )
+    	                 - pa->sequencing.lead;
+    	pr_position_r = sa->tar2.pairs[tar_n][0] - extra_seq 
+    	                 + ( pa->sequencing.spacing * step_nr )
+    	                 + pa->sequencing.interval
+    	                 + pa->sequencing.lead;
+    	/* Check if calculated positions make sense */
+    	/* position_f can not be outside included region */
+    	if ((pr_position_f < (pa->p_args.min_size -1))
+    			&& left_unique == -1) {
+    		pr_position_f = pa->p_args.min_size - 1;
+    		left_unique = 0;
+    	}
+    	if (pr_position_f > (n - pa->p_args.min_size - 1)) {
+    		pr_position_f = n - pa->p_args.min_size - 1;
+    		/* Actually this should never happen */
+    		pr_append_new_chunk(&retval->warnings,
+    		  "Calculation error in sequencing position calculation");
+    	}
+    	/* position_r can not be outside included region */
+    	if ((pr_position_r < (pa->p_args.min_size - 1))
+    			&& right_unique == -1) {
+    		pr_position_r = pa->p_args.min_size - 1;
+    		/* Actually this should never happen */
+    		pr_append_new_chunk(&retval->warnings, 
+    		  "Calculation error in sequencing position calculation");
+    	}
+    	if (pr_position_r > (n - pa->p_args.min_size - 1)) {
+    		pr_position_r = n - pa->p_args.min_size - 1;
+    		right_unique = 0;
+    	}
+    	/* Now all pr_positions are within the sequence */
+    	if (pa->pick_left_primer) {
+			/* Stet the start and length for the regions */
+			start = pr_position_f - pa->sequencing.accuracy;
+			if (start < 0) {
+				rest_accuracy = pr_position_f + 1;
+				start = 0;
+			} else {
+				rest_accuracy = pa->sequencing.accuracy;
+			}
+			length = rest_accuracy + pa->sequencing.accuracy ;
+			if ((start + length) > n) {
+				length = n - start;
+			}
+			/* Pick all good in the given range */
+			pick_only_best_primer(start, length, &retval->fwd,
+						     pa, sa, dpal_arg_to_use, retval);
+    	}
+    	if (pa->pick_right_primer) {
+			start = pr_position_r - pa->sequencing.accuracy;
+			if (start < 0) {
+				rest_accuracy = pr_position_r + 1;
+				start = 0;
+			} else {
+				rest_accuracy = pa->sequencing.accuracy;
+			}
+			length = rest_accuracy + pa->sequencing.accuracy ;
+			if ((start + length) > n) {
+				length = n - start;
+			}
+			/* Pick all good in the given range */
+			pick_only_best_primer(start, length, &retval->rev,
+						     pa, sa, dpal_arg_to_use, retval);
+    	}
+    }
+        
     return 0;
 } /* make_complete_primer_lists */
+
+/* pick_primer_range picks all primers which have their 3' end in the range 
+ * from start to start+length and store only the best *oligo  */
+static int
+pick_only_best_primer(const int start, const int length,
+		  oligo_array *oligo, const p3_global_settings *pa,
+		  const seq_args *sa, 
+		  const dpal_arg_holder *dpal_arg_to_use,
+		  p3retval *retval) {
+	  /* Variables for the loop */
+	  int i, j, primer_size_small, primer_size_large;
+	  int n, found_primer;
+	    
+	  /* Array to store one primer sequences in */
+	  char oligo_seq[MAX_PRIMER_LENGTH+1];
+	    
+	  /* Struct to store the primer parameters in */
+	  primer_rec h;
+	  primer_rec best;
+	  best.quality = 1000.00;
+	  found_primer = 0;
+
+	  /* Set n to the length of included region */
+	  PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
+	    
+	  /* The position of the intial base of the rightmost stop codon that
+	   * is to the left of sa->start_codon_pos; valid only if
+	   * sa->start_codon_pos is "not null".  We will not want to include
+	   * a stop codon to the right of the the start codon in the
+	   * amplicon. */
+	  int stop_codon1 = -1;
+	    
+	  if ((oligo->type == OT_LEFT) && !PR_START_CODON_POS_IS_NULL(sa)) {
+	    stop_codon1 = find_stop_codon(sa->trimmed_seq, 
+					  sa->start_codon_pos, -1);
+
+	    retval->stop_codon_pos = find_stop_codon(sa->trimmed_seq, 
+						     sa->start_codon_pos,  1);
+	    retval->stop_codon_pos += sa->incl_s;
+	  }
+	  
+	  /* Allocate some space for primers if needed */
+	  if (NULL == oligo->oligo) {
+	    oligo->storage_size = INITIAL_LIST_LEN;
+	    oligo->oligo 
+	      = pr_safe_malloc(sizeof(*oligo->oligo) * oligo->storage_size);
+	  }
+      /* If there is no space on the array, allocate new space */
+      if ((oligo->num_elem + 1) >= oligo->storage_size) {
+	oligo->storage_size += (oligo->storage_size >> 1);
+	oligo->oligo = pr_safe_realloc(oligo->oligo, 
+				       oligo->storage_size * sizeof(*oligo->oligo));
+      }
+
+      /* Conditions for primer length */
+	  if (oligo->type == OT_INTL) {
+	    primer_size_small=pa->o_args.min_size;
+	    primer_size_large=pa->o_args.max_size;
+	  }
+	  else {
+	    primer_size_small=pa->p_args.min_size;
+	    primer_size_large=pa->p_args.max_size;    	
+	  }
+ 
+	  /* Loop over locations in the sequence */
+	  for(i = start + length - 1; i >= start; i--) {
+	    oligo_seq[0] = '\0';
+	      
+	    /* Loop over possible primer lengths, from min to max */
+	    for (j = primer_size_small; j <= primer_size_large; j++) {
+	      /* Set the length of the primer */
+	      h.length = j;
+	        
+	      /* Set repeat_sim to nothing */
+	      h.repeat_sim.score = NULL;
+	    	  
+	      /* No problems have been detected in the oligo/primer so far */
+	      op_set_unwritten(&h);
+
+	      /* Figure out positions for left primers and internal oligos */
+	      if (oligo->type != OT_RIGHT) {
+		/* Break if the primer is bigger than the sequence left */
+		if(i-j < -1) continue;
+		                
+		/* Set the start of the primer */
+		h.start = i - j + 1;
+		        
+		/* Put the real primer sequence in oligo_seq */
+		_pr_substr(sa->trimmed_seq, h.start, j, oligo_seq);
+	      } else {
+		/* Figure out positions for reverse primers */
+		/* Break if the primer is bigger than the sequence left*/
+		if(i+j > n) continue;
+	    	    
+		/* Set the start of the primer */
+		h.start = i+j-1;
+	    		
+		/* Put the real primer sequence in s */
+		_pr_substr(sa->trimmed_seq,  i, j, oligo_seq);
+
+	      }       
+	        
+	      /* Do not force primer3 to use this oligo */
+	      h.must_use = 0;
+	        
+	      /* Add it to the considered statistics */
+	      oligo->expl.considered++;
+
+	      if ((oligo->type == OT_LEFT) && !PR_START_CODON_POS_IS_NULL(sa)
+		  /* Make sure the primer would amplify at least part of
+		     the ORF. */
+		  && (0 != (h.start - sa->start_codon_pos) % 3
+		      || h.start <= stop_codon1
+		      || (retval->stop_codon_pos != -1 
+			  && h.start >= retval->stop_codon_pos))) {
+
+		oligo->expl.no_orf++;
+	        /* FIX ME op_set_no_orf(&h); */
+		if (!pa->pick_anyway) continue;
+	      }
+	       
+	      /* FIX ME: Do we have to do it again? see up */
+	      h.repeat_sim.score = NULL;
+
+	      /* Calculate all the primer parameters */
+	      oligo_param(pa, &h, oligo->type, dpal_arg_to_use,
+			  sa, &oligo->expl, retval, oligo_seq);
+
+	      /* If primer has to be used or is OK */
+	      if (OK_OR_MUST_USE(&h)) {
+		/* Calculate the penalty */
+		h.quality = p_obj_fn(pa, &h, oligo->type);
+		/* Save the primer in the array */
+		if (h.quality < best.quality) {
+			best = h;
+			found_primer = 1;
+		}
+	      } 
+	      /* Break from the inner for loop, because there is no
+		 legal longer oligo with the same 3' sequence. */
+	      else if (h.ok==OV_TOO_MANY_NS    || h.ok==OV_INTERSECT_TARGET
+		       || h.ok==OV_SELF_ANY    || h.ok==OV_POLY_X
+		       || h.ok==OV_EXCL_REGION || h.ok==OV_GC_CLAMP
+		       || h.ok==OV_SEQ_QUALITY || h.ok==OV_LIB_SIM ) {
+		break;
+	      }  else if ((oligo->type != OT_INTL) && h.ok==OV_END_STAB){ 
+		break;
+	      }
+	    } /* j: Loop over possible primer length from min to max */
+	  } /* i: Loop over the sequence */
+
+	  if (found_primer == 1) {
+		  /* Add the best to the array */
+		  oligo->oligo[oligo->num_elem] = best;
+		  /* Update array with how many primers are good */
+		  oligo->num_elem = oligo->num_elem + 1;
+		  /* Update statistics with how many primers are good */
+		  oligo->expl.ok = oligo->expl.ok + 1;
+	  } else {
+		  /* FIXME: make a apropriate warning */
+	/*	  pr_append_new_chunk(&retval->warnings, 
+				  "No primer found in range %d - %d",
+				  start + pa->first_base_index,
+				  start + length + pa->first_base_index);*/
+	  }
+	  /* return -1 for error */
+	  if (oligo->num_elem == 0) return 1;
+	  else return 0;	
+}
+
+
 
 /* pick_primer_range picks all primers in the range from start to
  * start+length and stores them in *oligo  */
@@ -4021,6 +4275,11 @@ _adjust_seq_args(const p3_global_settings *pa,
 		  fake_a_sequence(sa);
 	  }	  
   }
+  if(pa->primer_task == pick_sequencing_primers && sa->incl_l != -1) {
+	  pr_append_new_chunk(nonfatal_err,
+	   "Task pick_sequencing_primers can not be combined with included region");
+      return 1;
+  }
   
   /* 
      Complain if there is no sequence; We need to check this
@@ -4043,6 +4302,13 @@ _adjust_seq_args(const p3_global_settings *pa,
   if (sa->incl_l == -1) {
     sa->incl_l = seq_len;
     sa->incl_s = pa->first_base_index;
+  }
+
+  /* Generate at least one target */
+  if(pa->primer_task == pick_sequencing_primers && sa->tar2.count == 0) {
+	  sa->tar2.pairs[0][0] = pa->first_base_index;
+	  sa->tar2.pairs[0][1] = seq_len;
+	  sa->tar2.count = 1;
   }
 
   /* Fix the start of the included region and start codon */
@@ -4634,11 +4900,6 @@ _pr_data_control(const p3_global_settings *pa,
     if(pa->sequencing.lead > pa->sequencing.spacing) {
 	  pr_append_new_chunk(glob_err,
 	   "PRIMER_SEQUENCING_LEAD > PRIMER_SEQUENCING_SPACING");
-        return 1;
-    }
-    if(pa->primer_task == pick_sequencing_primers && sa->incl_l != -1) {
-	  pr_append_new_chunk(glob_err,
-	   "Task pick_sequencing_primers can not be combined with included region");
         return 1;
     }
 
