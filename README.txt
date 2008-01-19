@@ -228,26 +228,26 @@ as follows:
 
 An example of a legal (TAG,VALUE) pair is
 
-PRIMER_SEQUENCE_ID=my_marker
+SEQUENCE_ID=my_marker
 
 and an example of a BOULDER-IO record is
 
-PRIMER_SEQUENCE_ID=test1
-SEQUENCE=GACTGATCGATGCTAGCTACGATCGATCGATGCATGCTAGCTAGCTAGCTGCTAGC
+SEQUENCE_ID=test1
+SEQUENCE_DNA=GACTGATCGATGCTAGCTACGATCGATCGATGCATGCTAGCTAGCTAGCTGCTAGC
 =
 
 Many records can be sent, one after another. Below is an example
 of three different records which might be passed through a
 boulder-io stream:
 
-PRIMER_SEQUENCE_ID=test1
-SEQUENCE=GACTGATCGATGCTAGCTACGATCGATCGATGCATGCTAGCTAGCTAGCTGCTAGC
+SEQUENCE_ID=test1
+SEQUENCE_DNA=GACTGATCGATGCTAGCTACGATCGATCGATGCATGCTAGCTAGCTAGCTGCTAGC
 =
-PRIMER_SEQUENCE_ID=test2
-SEQUENCE=CATCATCATCATCGATGCTAGCATCNNACGTACGANCANATGCATCGATCGT
+SEQUENCE_ID=test2
+SEQUENCE_DNA=CATCATCATCATCGATGCTAGCATCNNACGTACGANCANATGCATCGATCGT
 =
-PRIMER_SEQUENCE_ID=test3
-SEQUENCE=NACGTAGCTAGCATGCACNACTCGACNACGATGCACNACAGCTGCATCGATGC
+SEQUENCE_ID=test3
+SEQUENCE_DNA=NACGTAGCTAGCATGCACNACTCGACNACGATGCACNACAGCTGCATCGATGC
 =
 
 Primer3 reads boulder-io on stdin and echos its input and returns
@@ -284,8 +284,9 @@ which primers are being picked.
 "Sequence" Input Tags
 ---------------------
 
-PRIMER_SEQUENCE_ID (string, optional)
+SEQUENCE_ID (string, optional)
 
+(former v3 name PRIMER_SEQUENCE_ID)
 (MARKER_NAME is a deprecated synonym maintained for v2
 compatibility.)
 
@@ -294,8 +295,9 @@ identify the source of the chosen primers.
 
 This tag must be present if PRIMER_FILE_FLAG is non-zero.
 
-SEQUENCE (nucleotide sequence, REQUIRED)
+SEQUENCE_DNA (nucleotide sequence, REQUIRED)
 
+(former v3 name SEQUENCE)
 The sequence from which to choose primers.  The sequence
 must be presented 5' -> 3' (see the discussion of the
 PRIMER_SELF_END argument).  The bases may be upper or lower case.
@@ -400,6 +402,97 @@ primer will end at or after the stop codon.
 
 "Global" Input Tags
 -------------------
+
+PRIMER_TASK (string, default pick_pcr_primers)
+
+Probably the most important Tag. It tells primer3 what task to perform.
+Legal values are:
+
+ - pick_detection_primers
+ 
+   Pick primers to detect a sequence (the classic primer3 task). Use 
+   the PRIMER_PICK_LEFT_PRIMER, PRIMER_PICK_INTERNAL_OLIGO and 
+   PRIMER_PICK_RIGHT_PRIMER to control which primers are picked.
+   If PRIMER_PICK_LEFT_PRIMER and PRIMER_PICK_RIGHT_PRIMER are 
+   selected primer3 tries to pick primer pairs.
+
+ - check_primers
+ 
+   Primer3 does not pick any primers, it only checks the primers 
+   provided in SEQUENCE_PRIMER, SEQUENCE_OLIGO and 
+   SEQUENCE_PRIMER_REVCOMP. Its the only task which does not
+   require a sequence. If the sequence is provided, it is used
+   as a template.
+   
+ - pick_primer_list
+ 
+   Pick all primers in the sequence or limited by included region.
+   It returns the primers sorted by quality starting with the 
+   best primers. If PRIMER_PICK_LEFT_PRIMER and 
+   PRIMER_PICK_RIGHT_PRIMER is selected primer3 tries not to pick 
+   primer pairs but to treat it as independent lists.
+   
+ - pick_sequencing_primers
+ 
+   Pick primers suited to sequence a region. SEQUENCE_TARGET can be 
+   used to indicate several targets. The position of each primer is 
+   calculated for optimal sequencing results.
+   
+ - pick_pcr_primers
+   
+   Shortcut for the following settings:
+   PRIMER_TASK=pick_detection_primers
+   PRIMER_PICK_LEFT_PRIMER=1
+   PRIMER_PICK_INTERNAL_OLIGO=0
+   PRIMER_PICK_RIGHT_PRIMER=1
+
+ - pick_pcr_primers_and_hyb_probe
+   
+   Shortcut for the following settings:
+   PRIMER_TASK=pick_detection_primers
+   PRIMER_PICK_LEFT_PRIMER=1
+   PRIMER_PICK_INTERNAL_OLIGO=1
+   PRIMER_PICK_RIGHT_PRIMER=1
+
+ - pick_left_only
+   
+   Shortcut for the following settings:
+   PRIMER_TASK=pick_detection_primers
+   PRIMER_PICK_LEFT_PRIMER=1
+   PRIMER_PICK_INTERNAL_OLIGO=0
+   PRIMER_PICK_RIGHT_PRIMER=0
+
+ - pick_right_only
+   
+   Shortcut for the following settings:
+   PRIMER_TASK=pick_detection_primers
+   PRIMER_PICK_LEFT_PRIMER=0
+   PRIMER_PICK_INTERNAL_OLIGO=0
+   PRIMER_PICK_RIGHT_PRIMER=1
+
+ - pick_hyb_probe_only
+   
+   Shortcut for the following settings:
+   PRIMER_TASK=pick_detection_primers
+   PRIMER_PICK_LEFT_PRIMER=0
+   PRIMER_PICK_INTERNAL_OLIGO=1
+   PRIMER_PICK_RIGHT_PRIMER=0
+
+PRIMER_PICK_LEFT_PRIMER (boolean, default 1)
+
+If the associated value is non-0, then primer3 will attempt to
+pick a left primer. 
+
+PRIMER_PICK_INTERNAL_OLIGO (boolean, default 0)
+
+If the associated value is non-0, then primer3 will attempt to
+pick an internal oligo (hybridization probe to detect the PCR
+product).
+
+PRIMER_PICK_RIGHT_PRIMER (boolean, default 1)
+
+If the associated value is non-0, then primer3 will attempt to
+pick a right primer.
 
 PRIMER_PICK_ANYWAY (boolean, default 0)
 
@@ -573,13 +666,6 @@ the PCR product size is size (in base pairs)
 of the DNA fragment that would be produced by the
 PCR reaction on the given sequence template.  This
 would, of course, include the primers themselves.
-
-PRIMER_PICK_INTERNAL_OLIGO (boolean, default 0)
-
-If the associated value is non-0, then primer3 will attempt to
-pick an internal oligo (hybridization probe to detect the PCR
-product).  This tag is maintained for backward compatibility.
-Use PRIMER_TASK.
 
 PRIMER_GC_CLAMP (int, default 0)
 
@@ -906,7 +992,7 @@ If the associated value is non-0, then primer3 creates two output
 files for each input SEQUENCE.  File <sequence_id>.for lists all
 acceptable left primers for <sequence_id>, and <sequence_id>.rev
 lists all acceptable right primers for <sequence_id>, where
-<sequence_id> is the value of the PRIMER_SEQUENCE_ID tag (which
+<sequence_id> is the value of the SEQUENCE_ID tag (which
 must be supplied).  In addition, if the input tag
 PRIMER_PICK_INTERNAL_OLIGO is non-0, primer3 produces a file
 <sequence_id>.int, which lists all acceptable internal oligos.
@@ -1016,15 +1102,6 @@ no optimum product size.  This parameter influences primer
 pair selection only
 if PRIMER_PAIR_WT_PRODUCT_SIZE_GT or
 PRIMER_PAIR_WT_PRODUCT_SIZE_LT is non-0.
-
-PRIMER_TASK (string, default pick_pcr_primers)
-
-Tell primer3 what task to perform. Legal values are pick_pcr_primers,
-pick_pcr_primers_and_hyb_probe, pick_left_only, pick_right_only,
-pick_hyb_probe_only.  The tasks should be self explanatory, except
-that we note that pick_pcr_primers_and_hyb_probe is
-equivalent to the setting PRIMER_PICK_INTERNAL_OLIGO to a non-zero
-value and setting PRIMER_TASK to pick_pcr_primers.
 
 PRIMER_SEQUENCING_LEAD (int, default 50)
 
@@ -1206,7 +1283,7 @@ UNIX command 'primer3 < input'.
 
 Let's look at the input record itself:
 
-PRIMER_SEQUENCE_ID=example
+SEQUENCE_ID=example
 SEQUENCE=GTAGTCAGTAGACNATGACNACTGACGATGCAGACNACACACACACACACAGCACACAGGTATTAGTGGGCCATTCGATCCCGACCCAAATCGATAGCTACGATGACG
 TARGET=37,21
 PRIMER_OPT_SIZE=18
@@ -1223,7 +1300,7 @@ PRIMER_EXPLAIN_FLAG=1
 A breakdown of the reasoning behind each of the TAG=VALUE pairs
 is below:
 
-PRIMER_SEQUENCE_ID=example
+SEQUENCE_ID=example
 
 The main intent of this tag is to provide an identifier for the
 sequence that is meaningful to the user, for example when primer3

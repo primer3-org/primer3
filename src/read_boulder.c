@@ -595,10 +595,6 @@ read_record(FILE *file_input,
       pr_append_new_chunk(glob_err, "Unrecognized PRIMER_TASK");
     } else if (!strcmp_nocase(task_tmp, "pick_detection_primers")) {
       pa->primer_task = pick_detection_primers;
-    } else if (!strcmp_nocase(task_tmp, "pick_cloning_primers")) {
-      pa->primer_task = pick_cloning_primers;
-    } else if (!strcmp_nocase(task_tmp, "pick_discriminative_primers")) {
-      pa->primer_task = pick_discriminative_primers;
     } else if (!strcmp_nocase(task_tmp, "pick_sequencing_primers")) {
       pa->primer_task = pick_sequencing_primers;
     } else if (!strcmp_nocase(task_tmp, "pick_primer_list")) {

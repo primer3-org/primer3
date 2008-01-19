@@ -84,11 +84,9 @@ typedef enum task {
   pick_right_only                = 3,
   pick_hyb_probe_only            = 4,
   pick_detection_primers         = 5,
-  pick_cloning_primers           = 6,
-  pick_discriminative_primers    = 7,    
-  pick_sequencing_primers        = 8,  /* ANDREAS, we need to change the name of this one; pick_primers_for_tiled_sequence ? */
-  pick_primer_list               = 9,
-  check_primers                  = 10,
+  pick_sequencing_primers        = 6,  /* ANDREAS, we need to change the name of this one; pick_primers_for_tiled_sequence ? */
+  pick_primer_list               = 7,
+  check_primers                  = 8,
 } task;
 
 /* Enum explaining if output are pairs */

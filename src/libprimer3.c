@@ -1619,7 +1619,8 @@ pick_sequencing_primer_list(p3retval *retval,
     PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
     
     /* For each target needed loop*/
-    tar_n = 0;
+    for (tar_n=0; tar_n < sa->tar2.count; tar_n++) {
+
 	left_unique = -1;
 	right_unique = -1;
 
@@ -1711,7 +1712,9 @@ pick_sequencing_primer_list(p3retval *retval,
 						     pa, sa, dpal_arg_to_use, retval);
     	}
     }
-        
+      
+    } /* End of Target Loop */
+    
     return 0;
 } /* make_complete_primer_lists */
 
@@ -1874,10 +1877,10 @@ pick_only_best_primer(const int start, const int length,
 		  oligo->expl.ok = oligo->expl.ok + 1;
 	  } else {
 		  /* FIXME: make a apropriate warning */
-	/*	  pr_append_new_chunk(&retval->warnings, 
-				  "No primer found in range %d - %d",
+		  pr_append_new_chunk(&retval->warnings, 
+				  "No primer found in range x - x" /*,
 				  start + pa->first_base_index,
-				  start + length + pa->first_base_index);*/
+				  start + length + pa->first_base_index*/);
 	  }
 	  /* return -1 for error */
 	  if (oligo->num_elem == 0) return 1;
@@ -5892,10 +5895,6 @@ p3_set_gs_primer_task(p3_global_settings * pa , char * task_tmp){
 		pa->pick_internal_oligo = 1;
       } else if (!strcmp_nocase(task_tmp, "pick_detection_primers")) {
 		pa->primer_task = pick_detection_primers;
-      } else if (!strcmp_nocase(task_tmp, "pick_cloning_primers")) {
-		pa->primer_task = pick_cloning_primers;
-      } else if (!strcmp_nocase(task_tmp, "pick_discriminative_primers")) {
-		pa->primer_task = pick_discriminative_primers;
       } else if (!strcmp_nocase(task_tmp, "pick_sequencing_primers")) {
 		pa->primer_task = pick_sequencing_primers;
       } else if (!strcmp_nocase(task_tmp, "pick_primer_list")) {
