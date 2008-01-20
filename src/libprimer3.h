@@ -986,9 +986,4 @@ int    p3_print_oligo_lists(const p3retval*,
    space. */ 
 void   p3_reverse_complement(const char *, char *);
 
-
-/* Hack -- used only in print boulder */
-#define primer_args p3_global_settings
-
-
 #endif

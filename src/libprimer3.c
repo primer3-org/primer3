@@ -305,7 +305,7 @@ static void op_set_low_tm(primer_rec *);
 static void op_set_overlaps_excluded_region(primer_rec *);
 static void op_set_high_self_any(primer_rec *oligo);
 static void op_set_high_self_end(primer_rec *oligo);
-static void op_set_gc_glamp(primer_rec *);
+static void op_set_no_gc_glamp(primer_rec *);
 static void op_set_high_end_stability(primer_rec *);
 static void op_set_high_poly_x(primer_rec *);
 static void op_set_low_sequence_quality(primer_rec *);
@@ -362,51 +362,15 @@ static const char *pr_program_name = "probably primer3_core";
  * ==========================================================================
  */
 
-/* FIX ME -- there is no need to create #defines for these. */
-
-/* 
-Added by T.Koressaar for salt correction for Tm calculation.
-A value of 1 (recommended) directs primer3 to use the salt
-correction formula in the paper [SantaLucia JR (1998) "A unified view
-of polymer, dumbbell and oligonucleotide DNA nearest-neighbor
-thermodynamics", Proc Natl Acad Sci 95:1460-65
-http://dx.doi.org/10.1073/pnas.95.4.1460]
-
-A value of 0 directs primer3 to use the the salt correction
-formula in the paper [Schildkraut, C, and Lifson, S (1965)
-"Dependence of the melting temperature of DNA on salt
-concentration", Biopolymers 3:195-208 (not available on-line)].
-This was the formula used in previous version of primer3.
-
-A value of 2 directs primer3 to use the salt correction formula
-in the paper [Owczarzy R, You Y, Moreira BG, Manthey JA, Huang L,
-Behlke MA and Walder JA (2004) "Effects of sodium ions on DNA
-duplex oligomers: Improved predictions of melting temperatures",
-Biochemistry 43:3537-54 http://dx.doi.org/10.1021/bi034621r].
-
-The default is 0 only for backward compatibility.
-*/
-#define SALT_CORRECTIONS    0
 
 #define DEFAULT_OPT_GC_PERCENT PR_UNDEFINED_INT_OPT
-#define MIN_GC             20.0
-#define MAX_GC             80.0
-#define SALT_CONC          50.0
 
-/*
- DIVALENT_CONC and DNTP_CONC are both needed for enabling use of
- divalent cations for calculation of melting temperature of short and
- long oligos.  The formula for converting the divalent cations to
- monovalent cations is in the paper [Ahsen von N, Wittwer CT, Schutz E
- (2001) "Oligonucleotide Melting Temperatures under PCR Conditions:
- Nearest-Neighbor Corrections for Mg^2+, Deoxynucleotide Triphosphate,
- and Dimethyl Sulfoxide Concentrations with Comparision to Alternative
- Empirical Formulas", Clinical Chemistry 47:1956-61
- http://www.clinchem.org/cgi/content/full/47/11/1956] The default
- is  0. (New in v. 1.1.0, added by Maido Remm and Triinu Koressaar.)
- */
-#define DIVALENT_CONC       0.0
-#define DNTP_CONC           0.0
+
+/* FIX ME -- there is no need to create #defines for these. */
+/* #define MIN_GC             20.0 */
+/* #define MAX_GC             80.0 */
+/* #define SALT_CONC          50.0 */
+
 #define DNA_CONC           50.0
 #define NUM_NS_ACCEPTED       0
 #define MAX_POLY_X            5
@@ -555,12 +519,32 @@ pr_set_default_global_args(p3_global_settings *a) {
     a->p_args.min_tm           = 57;
     a->p_args.max_tm           = 63;
 
-    a->p_args.min_gc           = MIN_GC;
+    a->p_args.min_gc           = 20.0;
     a->p_args.opt_gc_content   = DEFAULT_OPT_GC_PERCENT;
-    a->p_args.max_gc           = MAX_GC;
-    a->p_args.salt_conc        = SALT_CONC;
-    a->p_args.divalent_conc    = DIVALENT_CONC;
-    a->p_args.dntp_conc        = DNTP_CONC;
+    a->p_args.max_gc           = 80.0;
+
+/* #define SALT_CONC          50.0 */
+    a->p_args.salt_conc        = 50.0;
+
+    /*
+      DIVALENT_CONC and DNTP_CONC are both needed for enabling use of
+      divalent cations for calculation of melting temperature of short and
+      long oligos.  The formula for converting the divalent cations to
+      monovalent cations is in the paper [Ahsen von N, Wittwer CT, Schutz E
+      (2001) "Oligonucleotide Melting Temperatures under PCR Conditions:
+      Nearest-Neighbor Corrections for Mg^2+, Deoxynucleotide Triphosphate,
+      and Dimethyl Sulfoxide Concentrations with Comparision to Alternative
+      Empirical Formulas", Clinical Chemistry 47:1956-61
+      http://www.clinchem.org/cgi/content/full/47/11/1956] The default is
+      0.0.  (New in v. 1.1.0, added by Maido Remm and Triinu Koressaar.)
+    */
+    /* #define DIVALENT_CONC       0.0 */
+    /* #define DNTP_CONC           0.0 */
+
+    a->p_args.divalent_conc    = 0.0;
+    a->p_args.dntp_conc        = 0.0;
+
+
     a->p_args.dna_conc         = DNA_CONC;
     a->p_args.num_ns_accepted  = NUM_NS_ACCEPTED;
     a->p_args.max_self_any     = SELF_ANY;
@@ -589,43 +573,61 @@ pr_set_default_global_args(p3_global_settings *a) {
 
     /* End arguments for primers ============================= */
 
-    /* define MAX_DIFF_TM       100.0 */
-
-    a->max_diff_tm             = 100.0;
+    a->max_diff_tm                  = 100.0;
 
     /* 
-     * Added by T.Koressaar for updated table thermodynamics.
-     * Specifies details of melting temperature calculation.  (New in
-     * v. 1.1.0, added by Maido Remm and Triinu Koressaar.)
-     *
-     * A value of 1 (recommended) directs primer3 to use the table of
-     * thermodynamic values and the method for melting temperature
-     * calculation suggested in the paper [SantaLucia JR (1998) "A unified
-     * view of polymer, dumbbell and oligonucleotide DNA nearest-neighbor
-     * thermodynamics", Proc Natl Acad Sci 95:1460-65
-     * http://dx.doi.org/10.1073/pnas.95.4.1460].
-     *
-     * A value of 0 directs primer3 to a backward compatible calculation
-     * (in other words, the only calculation availble in previous
-     * version of primer3).
-     *
-     * This backward compatible calculation uses the table of
-     * thermodynamic parameters in the paper [Breslauer KJ, Frank R,
-     * Bloecker H and Marky LA (1986) "Predicting DNA duplex stability
-     * from the base sequence" Proc Natl Acad Sci 83:4746-50
-     * http://dx.doi.org/10.1073/pnas.83.11.3746],
-     * and the method in the paper [Rychlik W, Spencer WJ and Rhoads
-     * RE (1990) "Optimization of the annealing temperature for DNA
-     *  amplification in vitro", Nucleic Acids Res 18:6409-12
-     * http://www.pubmedcentral.nih.gov/articlerender.fcgi?tool=pubmed&pubmedid=2243783].
-     * 
-     * The default value is 0 only for backward compatibility.
+       Added by T.Koressaar for updated table thermodynamics.
+       Specifies details of melting temperature calculation.  (New in
+       v. 1.1.0, added by Maido Remm and Triinu Koressaar.)
+      
+       A value of 1 (recommended) directs primer3 to use the table of
+       thermodynamic values and the method for melting temperature
+       calculation suggested in the paper [SantaLucia JR (1998) "A unified
+       view of polymer, dumbbell and oligonucleotide DNA nearest-neighbor
+       thermodynamics", Proc Natl Acad Sci 95:1460-65
+       http://dx.doi.org/10.1073/pnas.95.4.1460].
+      
+       A value of 0 directs primer3 to a backward compatible calculation
+       (in other words, the only calculation availble in previous
+       version of primer3).
+      
+       This backward compatible calculation uses the table of
+       thermodynamic parameters in the paper [Breslauer KJ, Frank R,
+       Bloecker H and Marky LA (1986) "Predicting DNA duplex stability
+       from the base sequence" Proc Natl Acad Sci 83:4746-50
+       http://dx.doi.org/10.1073/pnas.83.11.3746],
+       and the method in the paper [Rychlik W, Spencer WJ and Rhoads
+       RE (1990) "Optimization of the annealing temperature for DNA
+       amplification in vitro", Nucleic Acids Res 18:6409-12
+       http://www.pubmedcentral.nih.gov/articlerender.fcgi?tool=pubmed&pubmedid=2243783].
+       
+       The default value is 0 only for backward compatibility.
      */
-
     a->tm_santalucia           = 0;
 
-    /* Added by T.Koressaar: */
-    a->salt_corrections        = SALT_CORRECTIONS;
+    /* 
+       Added by T.Koressaar for salt correction for Tm calculation.  A
+       value of 1 (recommended) directs primer3 to use the salt correction
+       formula in the paper [SantaLucia JR (1998) "A unified view of polymer,
+       dumbbell and oligonucleotide DNA nearest-neighbor thermodynamics",
+       Proc Natl Acad Sci 95:1460-65
+       http://dx.doi.org/10.1073/pnas.95.4.1460]
+
+       A value of 0 directs primer3 to use the the salt correction
+       formula in the paper [Schildkraut, C, and Lifson, S (1965)
+       "Dependence of the melting temperature of DNA on salt
+       concentration", Biopolymers 3:195-208 (not available on-line)].
+       This was the formula used in previous version of primer3.
+
+       A value of 2 directs primer3 to use the salt correction formula
+       in the paper [Owczarzy R, You Y, Moreira BG, Manthey JA, Huang L,
+       Behlke MA and Walder JA (2004) "Effects of sodium ions on DNA
+       duplex oligomers: Improved predictions of melting temperatures",
+       Biochemistry 43:3537-54 http://dx.doi.org/10.1021/bi034621r].
+
+       The default is 0 only for backward compatibility.
+    */
+    a->salt_corrections        = 0;
 
     a->pair_compl_any   = 800;
     a->pair_compl_end   = 300;
@@ -1339,127 +1341,127 @@ make_detection_primer_lists(p3retval *retval,
 		  const seq_args *sa,
 		  const dpal_arg_holder *dpal_arg_to_use)
 {
-    int left, right;
-	int length, start;
-    int i,n,k,pr_min;
-    int tar_l, tar_r, f_b, r_b;
-    pair_stats *pair_expl = &retval->best_pairs.expl; /* To store the statistics for pairs */
+  int left, right;
+  int length, start;
+  int i,n,k,pr_min;
+  int tar_l, tar_r, f_b, r_b;
+  pair_stats *pair_expl = &retval->best_pairs.expl; /* To store the statistics for pairs */
 
-    /* Var to save the very left and very right primer */
-    left = right = 0;
+  /* Var to save the very left and very right primer */
+  left = right = 0;
 
-    /* Set pr_min to the very smallest 
-       allowable product size. */
-    pr_min = INT_MAX;
-    for (i=0; i < pa->num_intervals; i++) 
-      if(pa->pr_min[i] < pr_min)
-	pr_min = pa->pr_min[i];
+  /* Set pr_min to the very smallest 
+     allowable product size. */
+  pr_min = INT_MAX;
+  for (i=0; i < pa->num_intervals; i++) 
+    if(pa->pr_min[i] < pr_min)
+      pr_min = pa->pr_min[i];
 
-    /* Get the length of the sequence */
-    PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
+  /* Get the length of the sequence */
+  PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
 
-    tar_r = 0; /* Target start position */
-    tar_l = n; /* Target length */
+  tar_r = 0; /* Target start position */
+  tar_l = n; /* Target length */
     
-    /* Iterate over target array */
-    for (i=0; i < sa->tar2.count; i++) {
+  /* Iterate over target array */
+  for (i=0; i < sa->tar2.count; i++) {
 	    
-      /* Select the rightmost target start */
-      if (sa->tar2.pairs[i][0] > tar_r)
-	tar_r = sa->tar2.pairs[i][0];
+    /* Select the rightmost target start */
+    if (sa->tar2.pairs[i][0] > tar_r)
+      tar_r = sa->tar2.pairs[i][0];
 	
-      /* Select the rightmost target end */
-      if (sa->tar2.pairs[i][0] + sa->tar2.pairs[i][1] - 1 < tar_l)
-	tar_l = sa->tar2.pairs[i][0] + sa->tar2.pairs[i][1] - 1;
-    }
+    /* Select the rightmost target end */
+    if (sa->tar2.pairs[i][0] + sa->tar2.pairs[i][1] - 1 < tar_l)
+      tar_l = sa->tar2.pairs[i][0] + sa->tar2.pairs[i][1] - 1;
+  }
 
-    if (_PR_DEFAULT_POSITION_PENALTIES(pa)) {
-	    if (0 == tar_r) tar_r = n;
-	    if (tar_l == n) tar_l = 0;
-    } else {
-	    tar_r = n;
-	    tar_l = 0;
-    }
+  if (_PR_DEFAULT_POSITION_PENALTIES(pa)) {
+    if (0 == tar_r) tar_r = n;
+    if (tar_l == n) tar_l = 0;
+  } else {
+    tar_r = n;
+    tar_l = 0;
+  }
 
-    /* We use some global information to restrict the region
-       of the input sequence in which we generate candidate
-       oligos. */
-    if (retval->output_type == primer_list && pa->pick_left_primer == 1)
-      f_b = n - 1;
-    else if (tar_r - 1 < n - pr_min + pa->p_args.max_size - 1 
-	&& !(pa->pick_anyway && sa->left_input))
-      f_b=tar_r - 1;
-    else 
-      f_b = n - pr_min + pa->p_args.max_size-1;
+  /* We use some global information to restrict the region
+     of the input sequence in which we generate candidate
+     oligos. */
+  if (retval->output_type == primer_list && pa->pick_left_primer == 1)
+    f_b = n - 1;
+  else if (tar_r - 1 < n - pr_min + pa->p_args.max_size - 1 
+	   && !(pa->pick_anyway && sa->left_input))
+    f_b=tar_r - 1;
+  else 
+    f_b = n - pr_min + pa->p_args.max_size-1;
 
-    k = 0;
+  k = 0;
 
-    if (pa->pick_left_primer) {
-      /* We will need a left primer. */
-      left=n; right=0;
-	  length = f_b - pa->p_args.min_size + 1;
-	  start = pa->p_args.min_size - 1;
+  if (pa->pick_left_primer) {
+    /* We will need a left primer. */
+    left=n; right=0;
+    length = f_b - pa->p_args.min_size + 1;
+    start = pa->p_args.min_size - 1;
 	    
-	  /* Use the primer provided */
-  	  if (sa->left_input) {
-  		  add_one_primer(sa->left_input, &left, &retval->fwd,
-				 pa, sa, dpal_arg_to_use, retval); 
-  	  }
-	  /* Or pick all good in the given range */
-	  else {
-		  pick_primer_range(start, length, &left, &retval->fwd,
-				     pa, sa, dpal_arg_to_use, retval);
-	  }
-    
-    }  /* if (pa->pick_left_primer) */
-
-    if (retval->output_type == primer_list && pa->pick_right_primer == 1)
-      r_b = 0;
-    else if (tar_l+1>pr_min - pa->p_args.max_size
-	&& !(pa->pick_anyway && sa->right_input))
-      r_b = tar_l+1;
-    else 
-      r_b = pr_min - pa->p_args.max_size;
-
-    k = 0;
-
-    if ( pa->pick_right_primer ) {
-	
-	    /* We will need a right primer */
-		length = n-pa->p_args.min_size - r_b + 1;
-		start = r_b;
-	
-		/* Use the primer provided */
-		if (sa->right_input) {
-		  add_one_primer(sa->right_input, &right, &retval->rev,
-					 pa, sa, dpal_arg_to_use, retval); 
-		/*  pick_right_primers(start, length, &right, &retval->rev,
-						 pa, sa, dpal_arg_to_use, retval);*/
-	
-		}
-		/* Or pick all good in the given range */
-		else {
-		  pick_primer_range(start, length, &right, &retval->rev,
-					     pa, sa, dpal_arg_to_use, retval);
-		}
+    /* Use the primer provided */
+    if (sa->left_input) {
+      add_one_primer(sa->left_input, &left, &retval->fwd,
+		     pa, sa, dpal_arg_to_use, retval); 
+    }
+    /* Or pick all good in the given range */
+    else {
+      pick_primer_range(start, length, &left, &retval->fwd,
+			pa, sa, dpal_arg_to_use, retval);
     }
     
-    /* 
-     * Return 1 if either the left primer list or the right primer
-     * list is empty or if leftmost left primer and
-     * rightmost right primer do not provide sufficient product size.
-     */
+  }  /* if (pa->pick_left_primer) */
+
+  if (retval->output_type == primer_list && pa->pick_right_primer == 1)
+    r_b = 0;
+  else if (tar_l+1>pr_min - pa->p_args.max_size
+	   && !(pa->pick_anyway && sa->right_input))
+    r_b = tar_l+1;
+  else 
+    r_b = pr_min - pa->p_args.max_size;
+
+  k = 0;
+
+  if ( pa->pick_right_primer ) {
+	
+    /* We will need a right primer */
+    length = n-pa->p_args.min_size - r_b + 1;
+    start = r_b;
+	
+    /* Use the primer provided */
+    if (sa->right_input) {
+      add_one_primer(sa->right_input, &right, &retval->rev,
+		     pa, sa, dpal_arg_to_use, retval); 
+      /*  pick_right_primers(start, length, &right, &retval->rev,
+	  pa, sa, dpal_arg_to_use, retval);*/
+	
+    }
+    /* Or pick all good in the given range */
+    else {
+      pick_primer_range(start, length, &right, &retval->rev,
+			pa, sa, dpal_arg_to_use, retval);
+    }
+  }
     
-    if ((pa->pick_left_primer && 0 == retval->fwd.num_elem)
-	|| ((pa->pick_right_primer)  && 0 == retval->rev.num_elem)) {
-      return 1;
-    } else if (pa->pick_left_primer 
-	       && pa->pick_right_primer
-	       && (right - left) < (pr_min - 1)) {
-      pair_expl->product    = 1;
-      pair_expl->considered = 1;
-      return 1;
-    } else return 0;
+  /* 
+   * Return 1 if either the left primer list or the right primer
+   * list is empty or if leftmost left primer and
+   * rightmost right primer do not provide sufficient product size.
+   */
+    
+  if ((pa->pick_left_primer && 0 == retval->fwd.num_elem)
+      || ((pa->pick_right_primer)  && 0 == retval->rev.num_elem)) {
+    return 1;
+  } else if (pa->pick_left_primer 
+	     && pa->pick_right_primer
+	     && (right - left) < (pr_min - 1)) {
+    pair_expl->product    = 1;
+    pair_expl->considered = 1;
+    return 1;
+  } else return 0;
 } /* make_detection_primer_lists */
 
 /* 
@@ -2224,7 +2226,6 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
   else return 0;	
 }
 
-
 /*
  * Compute various characteristics of the oligo, and determine
  * if it is acceptable.
@@ -2241,7 +2242,8 @@ oligo_param(const p3_global_settings *pa,
 	    const seq_args *sa,
 	    oligo_stats *stats,
 	    p3retval *retval,
-	    const char *input_oligo_seq) {
+	    const char *input_oligo_seq  /* This is 5'->3' on the template sequence! */
+	    ) {
 
   /* FIX ME -- most of this function is in 'index' land,
      change it to oligo land (s1, s1_rev, and  olig_seq. */
@@ -2288,7 +2290,7 @@ oligo_param(const p3_global_settings *pa,
   PR_ASSERT(k < TRIMMED_SEQ_LEN(sa));
    
   /* edited by T. Koressaar for lowercase masking */
-  if(pa->lowercase_masking==1) {
+  if(pa->lowercase_masking == 1) {
     if(l==OT_LEFT) {
       check_if_lowercase_masked(k, sa->trimmed_orig_seq,h);
     }
@@ -2313,6 +2315,7 @@ oligo_param(const p3_global_settings *pa,
   /* Upstream error checking has ensured that we use non-default position
      penalties only when there is 0 or 1 target. */
   PR_ASSERT(sa->tar2.count <= 1 || _PR_DEFAULT_POSITION_PENALTIES(pa));
+
   if (pa->primer_task == pick_sequencing_primers) {
     h->position_penalty = 0.0;
     h->position_penalty_infinite = '\0';
@@ -2352,55 +2355,75 @@ oligo_param(const p3_global_settings *pa,
     }
   }
 
-  if (l < 2 && oligo_overlaps_interval(j, k-j+1, sa->excl2.pairs, sa->excl2.count))
+  /* FIX ME CLEAN UP LOGIC HERE */
+  if (l != OT_INTL && oligo_overlaps_interval(j, k-j+1, sa->excl2.pairs, sa->excl2.count))
     h->excl = 1;
 
-  if (l == 2 && oligo_overlaps_interval(j, k-j+1, sa->excl_internal2.pairs,
-					sa->excl_internal2.count))
+  if (l == OT_INTL && oligo_overlaps_interval(j, k-j+1, sa->excl_internal2.pairs,
+					      sa->excl_internal2.count))
     h->excl = 1;
 
   if(l < 2 && h->target==1) {
-    h->ok = OV_INTERSECT_TARGET;
+    op_set_overlaps_target(h);
     stats->target++;
     if (!must_use) return;
   }
 
   if(h->excl==1){
-    h->ok = OV_EXCL_REGION;
+    op_set_overlaps_excluded_region(h);
     stats->excluded++;
     if (!must_use) return;
   }
 
-  if( (l < 2
-       && (h->gc_content< pa->p_args.min_gc
-	   || h->gc_content > pa->p_args.max_gc))
-      ||
-      (l==2 && (h->gc_content< pa->o_args.min_gc || h->gc_content > pa->o_args.max_gc))){
-    h->ok = OV_GC_CONTENT;
+  if (h->gc_content < po_args->min_gc) {
+    op_set_low_gc_content(h);
+    stats->gc++;
+    if (!must_use) return;
+  } else if (h->gc_content > po_args->max_gc) {
+    op_set_high_gc_content(h);
     stats->gc++;
     if (!must_use) return;
   }
 
   /* gc_clamp is applicable only to primers (as opposed
      to primers and hybridzations oligos. */
-  if(pa->gc_clamp != 0){
+#if 0
+  New code, not functional yet
+  if (OT_LEFT == l || OT_RIGHT == l) {
+    for (i = 0; i < pa->gc_clamp; i++) {
+      /* We want to look at the 3' end of the oligo being
+	 assessed, so we look in the 5' end of its reverse-complement */
+
+      if (revc_oligo_seq[i] != 'G' && revc_oligo_seq[i] != 'C') {
+	op_set_no_gc_glamp(h);
+	stats->gc_clamp++;
+	if (!must_use) return; else break;
+      }
+
+    }
+  }
+#endif
+
+
+#if 1
+  /* Old code, works */
+  if(pa->gc_clamp != 0){ 
     if(OT_LEFT == l) {
       for(i=k-pa->gc_clamp+1; i<= k; i++)if(seq[i] !='G'&&seq[i] !='C'){
-	h->ok = OV_GC_CLAMP;
+	op_set_no_gc_glamp(h);
 	stats->gc_clamp++;
 	if (!must_use) return; else break;
       }
     }
     if(OT_RIGHT == l){
       for(i=j; i<j+pa->gc_clamp; i++)if(seq[i] != 'G' && seq[i] != 'C'){
-	h->ok = OV_GC_CLAMP;
+	op_set_no_gc_glamp(h);
 	stats->gc_clamp++;
 	if (!must_use) return; else break;
       }
     }
   }
-            
-
+#endif
 
   if(OT_LEFT == l || OT_RIGHT == l) {
     check_sequence_quality(pa, h, l, sa, j, k, &min_q, &min_end_q, 
@@ -2453,7 +2476,7 @@ oligo_param(const p3_global_settings *pa,
   }
                    
   h->temp 
-    = seqtm(input_oligo_seq, po_args->dna_conc, 
+    = seqtm(oligo_seq, po_args->dna_conc, 
 	    po_args->salt_conc,
 	    po_args->divalent_conc,
 	    po_args->dntp_conc, 
@@ -2462,13 +2485,13 @@ oligo_param(const p3_global_settings *pa,
 	    pa->salt_corrections); 
 
   if (h->temp < po_args->min_tm) {
-    h->ok = OV_TM_LOW;
+    op_set_low_tm(h);
     stats->temp_min++;
     if (!must_use) return;
   }
 
   if (h->temp > po_args->max_tm) {
-    h->ok = OV_TM_HIGH;
+    op_set_high_tm(h);
     stats->temp_max++;
     if (!must_use) return;
   }
@@ -2479,7 +2502,7 @@ oligo_param(const p3_global_settings *pa,
     if ((h->end_stability = end_oligodg(oligo_seq, 5,
 					pa->tm_santalucia))
 	> pa->max_end_stability) {
-      h->ok = OV_END_STAB;
+      op_set_high_end_stability(h);
       stats->stability++;
       if (!must_use) return;
     }
@@ -6392,18 +6415,19 @@ op_set_unwritten(primer_rec *oligo) {
   oligo->problems.prob = 0UL;  /* Zero unsigned long */
 }
 
-#define OP_PARTIALLY_WRITTEN  (1);
-#define OP_COMPLETELY_WRITTEN (1 << 1);
-#define OP_TOO_MANY_NS        (1 << 2);
-#define OP_OVERLAPS_TARGET    (1 << 3);
-#define OP_HIGH_GC_CONTENT    (1 << 4);
-#define OP_LOW_GC_CONTENT     (1 << 5);
-#define OP_HIGH_TM            (1 << 6);
-#define OP_LOW_TM             (1 << 7);
-#define OP_OVERLAPS_EXCL_REGION (1 << 8);
+#define OP_PARTIALLY_WRITTEN    (1);
+#define OP_COMPLETELY_WRITTEN   (1 << 1);
+#define OP_TOO_MANY_NS          (1 << 2);
+#define OP_OVERLAPS_TARGET      (1 << 3);
+#define OP_HIGH_GC_CONTENT      (1 << 4);
+#define OP_LOW_GC_CONTENT       (1 << 5);
+#define OP_HIGH_TM              (1 << 6);
+#define OP_LOW_TM               (1 << 7);
 #define OP_OVERLAPS_EXCL_REGION (1 << 8);
 #define OP_HIGH_SELF_ANY        (1 << 9);
 #define OP_HIGH_SELF_END        (1 << 10);
+#define OP_NO_GC_CLAMP          (1 << 11);
+#define OP_HIGH_END_STABILITY   (1 << 12);
 
 static void
 op_set_completely_written(primer_rec *oligo) {
@@ -6419,32 +6443,44 @@ op_set_too_many_ns(primer_rec *oligo) {
 
 static void
 op_set_overlaps_target(primer_rec *oligo) {
-
+  oligo->ok = OV_INTERSECT_TARGET;
+  oligo->problems.prob |= OP_OVERLAPS_TARGET;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_high_gc_content(primer_rec *oligo) {
-
+  oligo->ok = OV_GC_CONTENT;
+  oligo->problems.prob |= OP_HIGH_GC_CONTENT;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_low_gc_content(primer_rec *oligo) {
-
+  oligo->ok = OV_GC_CONTENT;
+  oligo->problems.prob |= OP_LOW_GC_CONTENT;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_high_tm(primer_rec *oligo) {
-
+  oligo->ok = OV_TM_HIGH;
+  oligo->problems.prob |= OP_HIGH_TM;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_low_tm(primer_rec *oligo) {
-
+  oligo->ok = OV_TM_LOW;
+  oligo->problems.prob |= OP_LOW_TM;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_overlaps_excluded_region(primer_rec *oligo) {
-
+  oligo->ok = OV_EXCL_REGION;
+  oligo->problems.prob |= OP_OVERLAPS_EXCL_REGION;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
@@ -6462,13 +6498,17 @@ op_set_high_self_end(primer_rec *oligo) {
 }
 
 static void
-op_set_gc_glamp(primer_rec *oligo) {
-
+op_set_no_gc_glamp(primer_rec *oligo) {
+  oligo->ok = 	OV_GC_CLAMP;
+  oligo->problems.prob |= OP_NO_GC_CLAMP;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_high_end_stability(primer_rec *oligo) {
-
+  oligo->ok = OV_END_STAB;
+  oligo->problems.prob |= OP_HIGH_END_STABILITY;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
@@ -6505,4 +6545,3 @@ static void
 op_set_too_short(primer_rec *oligo) {
 
 }
-
