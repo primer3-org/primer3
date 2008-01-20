@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
@@ -41,17 +41,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 static char *pr_program_name = "Program name is probably primer3_core";
 
-static void   print_all_explain(const primer_args *, const seq_args *, const p3retval *, const int *io_version);
-static void   print_explain(const oligo_stats *, oligo_type, const int *io_version);
+static void   print_all_explain(const p3_global_settings *,
+				const seq_args *, 
+				const p3retval *, 
+				const int *io_version);
+
+static void   print_explain(const oligo_stats *, 
+			    oligo_type,
+			    const int *io_version);
 
 /* Print the data for chosen primer pairs to stdout in "boulderio" format. */
 void
 boulder_print(const int *io_version,
-	      const primer_args *pa,
+	      const p3_global_settings *pa,
 	      const seq_args *sa,
-	      const p3retval *retval/*,
-				      const pr_append_str *more_warnings */)
-{
+	      const p3retval *retval) {
   /* The pointers to warning tag */
   char *warning;
 
@@ -441,7 +445,7 @@ boulder_print_error(const char *err) {
 }
 
 static void
-print_all_explain(const primer_args *pa,
+print_all_explain(const p3_global_settings *pa,
     const seq_args *sa, const p3retval *retval, const int *io_version)
 {
   if (pa->pick_left_primer == 1

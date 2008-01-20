@@ -40,10 +40,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "libprimer3.h"
 
 void   boulder_print(const int *, 
-		     const primer_args *, 
+		     const p3_global_settings *, 
 		     const seq_args *, 
-		     const p3retval */*,
-				       const pr_append_str *more_warnings*/);
+		     const p3retval *);
 
 void   boulder_print_error(const char *err);
 
