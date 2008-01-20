@@ -84,9 +84,11 @@ typedef enum task {
   pick_right_only                = 3,
   pick_hyb_probe_only            = 4,
   pick_detection_primers         = 5,
-  pick_sequencing_primers        = 6,  /* ANDREAS, we need to change the name of this one; pick_primers_for_tiled_sequence ? */
-  pick_primer_list               = 7,
-  check_primers                  = 8,
+  pick_cloning_primers           = 6,
+  pick_discriminative_primers    = 7,    
+  pick_sequencing_primers        = 8,  /* ANDREAS, we need to change the name of this one; pick_primers_for_tiled_sequence ? */
+  pick_primer_list               = 9,
+  check_primers                  = 10,
 } task;
 
 /* Enum explaining if output are pairs */
@@ -635,6 +637,11 @@ typedef struct seq_args {
   char *right_input;      /* A right primer to check or design around. */
 
   char *internal_input;   /* An internal oligo to check or design around. */
+  
+  int force_left_start;   /* The 0-based forced 5' start left primer. */
+  int force_left_end;     /* The 0-based forced 3' end left primer. */
+  int force_right_start;  /* The 0-based forced 5' start right primer. */
+  int force_right_end;    /* The 0-based forced 3' end right primer. */
 
 } seq_args;
 

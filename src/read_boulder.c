@@ -313,6 +313,10 @@ read_record(FILE *file_input,
 	  continue;
 	}
 	COMPARE_INT("SEQUENCE_START_CODON_POSITION", sa->start_codon_pos);
+	COMPARE_INT("SEQUENCE_FORCE_LEFT_START", sa->force_left_start);
+	COMPARE_INT("SEQUENCE_FORCE_LEFT_END", sa->force_left_end);
+	COMPARE_INT("SEQUENCE_FORCE_RIGHT_START", sa->force_right_start);
+	COMPARE_INT("SEQUENCE_FORCE_RIGHT_END", sa->force_right_end);
       }
 	    
       /* 
@@ -595,6 +599,10 @@ read_record(FILE *file_input,
       pr_append_new_chunk(glob_err, "Unrecognized PRIMER_TASK");
     } else if (!strcmp_nocase(task_tmp, "pick_detection_primers")) {
       pa->primer_task = pick_detection_primers;
+    } else if (!strcmp_nocase(task_tmp, "pick_cloning_primers")) {
+      pa->primer_task = pick_cloning_primers;
+    } else if (!strcmp_nocase(task_tmp, "pick_discriminative_primers")) {
+      pa->primer_task = pick_discriminative_primers;
     } else if (!strcmp_nocase(task_tmp, "pick_sequencing_primers")) {
       pa->primer_task = pick_sequencing_primers;
     } else if (!strcmp_nocase(task_tmp, "pick_primer_list")) {

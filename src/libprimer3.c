@@ -951,6 +951,12 @@ create_seq_arg() {
   memset(r, 0, sizeof(*r));
   r->start_codon_pos = PR_DEFAULT_START_CODON_POS;
   r->incl_l = -1; /* Indicates logical NULL. */
+  
+  r->force_left_start = -1; /* Indicates logical NULL. */
+  r->force_left_end = -1; /* Indicates logical NULL. */
+  r->force_right_start = -1; /* Indicates logical NULL. */
+  r->force_right_end = -1; /* Indicates logical NULL. */
+
   r->n_quality = 0;
   r->quality = NULL;
   
@@ -4333,7 +4339,20 @@ _adjust_seq_args(const p3_global_settings *pa,
   /* Fix the start of the included region and start codon */
   sa->incl_s -= pa->first_base_index;
   sa->start_codon_pos -= pa->first_base_index;
+  
+  /* Fix the start */
+  sa->force_left_start -= pa->first_base_index;
+  sa->force_left_end -= pa->first_base_index;
+  sa->force_right_start -= pa->first_base_index;
+  sa->force_right_end -= pa->first_base_index;
 
+  /* Make it relative to included region */
+  sa->force_left_start -= sa->incl_s;
+  sa->force_left_end -= sa->incl_s;
+  sa->force_right_start -= sa->incl_s;
+  sa->force_right_end -= sa->incl_s;
+
+  
   char offending_char = '\0';
   
   inc_len = sa->incl_s + sa->incl_l - 1;
@@ -5911,6 +5930,10 @@ p3_set_gs_primer_task(p3_global_settings * pa , char * task_tmp){
 		pa->pick_internal_oligo = 1;
       } else if (!strcmp_nocase(task_tmp, "pick_detection_primers")) {
 		pa->primer_task = pick_detection_primers;
+      } else if (!strcmp_nocase(task_tmp, "pick_cloning_primers")) {
+		pa->primer_task = pick_cloning_primers;
+      } else if (!strcmp_nocase(task_tmp, "pick_discriminative_primers")) {
+		pa->primer_task = pick_discriminative_primers;
       } else if (!strcmp_nocase(task_tmp, "pick_sequencing_primers")) {
 		pa->primer_task = pick_sequencing_primers;
       } else if (!strcmp_nocase(task_tmp, "pick_primer_list")) {

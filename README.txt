@@ -399,6 +399,30 @@ Primer3 selects the position of the right primer by scanning
 right from the left primer for a stop codon.  Ideally the right
 primer will end at or after the stop codon.
 
+SEQUENCE_FORCE_LEFT_START (int, default -1)
+
+Forces the 5' end of the left primer to be at the indicated 
+position. Primers are also picked if they violate certain
+constrains.
+
+SEQUENCE_FORCE_LEFT_END (int, default -1)
+
+Forces the 3' end of the left primer to be at the indicated 
+position. Primers are also picked if they violate certain
+constrains.
+
+SEQUENCE_FORCE_RIGHT_START (int, default -1)
+
+Forces the 5' end of the left primer to be at the indicated 
+position. Primers are also picked if they violate certain
+constrains.
+
+SEQUENCE_FORCE_RIGHT_END (int, default -1)
+
+Forces the 3' end of the left primer to be at the indicated 
+position. Primers are also picked if they violate certain
+constrains.
+
 
 "Global" Input Tags
 -------------------
