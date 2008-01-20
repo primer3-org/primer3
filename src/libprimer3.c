@@ -1614,17 +1614,12 @@ pick_sequencing_primer_list(p3retval *retval,
     int extra_seq; /* bp sequenced additionally on both sides */
     int pr_position_f; /* pefect place for the 3' end of the fwd primer */
     int pr_position_r; /* pefect place for the 3' end of the rev primer */
-    int left_unique; /* pick only one left */
-    int right_unique; /* pick only one right */
 
     /* Get the length of the sequence */
     PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
     
     /* For each target needed loop*/
     for (tar_n=0; tar_n < sa->tar2.count; tar_n++) {
-
-	left_unique = -1;
-	right_unique = -1;
 
     /* Calculate the amount of primers needed */
     primer_nr = 1;
@@ -1656,10 +1651,8 @@ pick_sequencing_primer_list(p3retval *retval,
     	                 + pa->sequencing.lead;
     	/* Check if calculated positions make sense */
     	/* position_f can not be outside included region */
-    	if ((pr_position_f < (pa->p_args.min_size -1))
-    			&& left_unique == -1) {
+    	if (pr_position_f < (pa->p_args.min_size -1)) {
     		pr_position_f = pa->p_args.min_size - 1;
-    		left_unique = 0;
     	}
     	if (pr_position_f > (n - pa->p_args.min_size - 1)) {
     		pr_position_f = n - pa->p_args.min_size - 1;
@@ -1668,8 +1661,7 @@ pick_sequencing_primer_list(p3retval *retval,
     		  "Calculation error in sequencing position calculation");
     	}
     	/* position_r can not be outside included region */
-    	if ((pr_position_r < (pa->p_args.min_size - 1))
-    			&& right_unique == -1) {
+    	if (pr_position_r < (pa->p_args.min_size - 1)) {
     		pr_position_r = pa->p_args.min_size - 1;
     		/* Actually this should never happen */
     		pr_append_new_chunk(&retval->warnings, 
@@ -1677,7 +1669,6 @@ pick_sequencing_primer_list(p3retval *retval,
     	}
     	if (pr_position_r > (n - pa->p_args.min_size - 1)) {
     		pr_position_r = n - pa->p_args.min_size - 1;
-    		right_unique = 0;
     	}
     	/* Now all pr_positions are within the sequence */
     	if (pa->pick_left_primer) {
@@ -1878,7 +1869,7 @@ pick_only_best_primer(const int start, const int length,
 		  /* Update statistics with how many primers are good */
 		  oligo->expl.ok = oligo->expl.ok + 1;
 	  } else {
-		  /* FIXME: make a apropriate warning */
+		  /* FIX ME: make a apropriate warning */
 		  pr_append_new_chunk(&retval->warnings, 
 				  "No primer found in range x - x" /*,
 				  start + pa->first_base_index,
@@ -2795,7 +2786,7 @@ choose_pair_or_triple(p3retval *retval,
     if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) continue;
 
     /* 
-     * Make a  cut based on the the quality of the best left
+     * Make a cut based on the the quality of the best left
      * primer.
      * worst_pair must be defined if k >= pa->num_return.
      */
@@ -3056,7 +3047,6 @@ characterize_pair(p3retval *retval,
   if (pa->primer_task == check_primers) {
 	  must_use = 1;
   }
-
   int pair_failed_flag = 0;
   double min_oligo_tm;
 
@@ -3068,10 +3058,15 @@ characterize_pair(p3retval *retval,
 
   pair_expl->considered++;
 
+  if (ppair->left->must_use != 0 &&
+		  ppair->right->must_use != 0) {
+	  must_use = 1;
+  }
+
   if(ppair->product_size < pa->pr_min[int_num] || 
      ppair->product_size > pa->pr_max[int_num]) {
     pair_expl->product++;
-    ppair->product_size = -1;
+    ppair->product_size = -1;  /* FIX ME: Why do we do this? */
     if (!must_use) return PAIR_FAILED;
     else pair_failed_flag = 1;
   }
@@ -3488,9 +3483,8 @@ align(s1, s2, a)
    sequence returned is changed at the
    next call to pr_oligo_sequence. */
 char *
-pr_oligo_sequence(sa, o)
-    const seq_args *sa;
-    const primer_rec *o;
+pr_oligo_sequence(const seq_args *sa,
+    const primer_rec *o)
 {
     static char s[MAX_PRIMER_LENGTH+1];
     int seq_len;
@@ -3504,9 +3498,8 @@ pr_oligo_sequence(sa, o)
 }
 
 char *
-pr_oligo_rev_c_sequence(sa, o)
-    const seq_args *sa;
-    const primer_rec *o;
+pr_oligo_rev_c_sequence(const seq_args *sa,
+    const primer_rec *o)
 {
     static char s[MAX_PRIMER_LENGTH+1], s1[MAX_PRIMER_LENGTH+1];
     int seq_len, start;
