@@ -103,12 +103,9 @@ sub main() {
 	     pl_boulder_print($gs, $sa, $retval) ;}  # boulder_print generates the final '='
 	else
 	{
-	    $retval = pl_create_p3retval() ;
 	    print "$err=\n" ;
 	}
 	pl_destroy_seq_args($sa);
-	pl_destroy_global_settings($gs) ;
-	pl_destroy_p3retval($retval) ;
 	$err = "0" ;
     }
 }
