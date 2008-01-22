@@ -80,6 +80,7 @@ sub main() {
 	}
 	$sa = pl_create_seq_arg();
 	$gs = pl_create_global_settings();
+	pl_set_gs_primer_explain_flag($gs, 1);
 	my %rec;
 	my @rec = split /\n/, $rec;
 	my $tag_found = 0;
