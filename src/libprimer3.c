@@ -385,7 +385,7 @@ static const char *pr_program_name = "probably primer3_core";
 #define MAX_POLY_X            5
 #define SELF_ANY            800
 #define SELF_END            300
-#define EXPLAIN_FLAG          0
+#define EXPLAIN_FLAG          0  /* FIX ME MOVE THIS OUT! */
 #define GC_CLAMP              0
 #define LIBERAL_BASE          0
 #define PICK_INTERNAL_OLIGO   0
