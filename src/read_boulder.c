@@ -37,7 +37,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <limits.h>
 #include <stdlib.h>  /* strtod, strtol,... */
-#include <ctype.h> /* toupper */
+#include <ctype.h> /* toupper, isspace */
 #include <string.h> /* memset, strlen,  strcmp, ... */
 #include "read_boulder.h"
 
@@ -975,8 +975,8 @@ parse_seq_quality(char *s,
 
    p = q = s;
 
-   /* Skip leading blanks or tabs; FIX ME, TEST, probably not needed */
-   /*    while(*p == ' ' || *p == '\t'){
+   /* Skip leading blanks or tabs; FIX ME, TEST, probably not needed /*
+       while(*p == ' ' || *p == '\t'){
       p++;
       if (*p == '\0' || *p == '\n') return 0;
       } */
@@ -984,8 +984,14 @@ parse_seq_quality(char *s,
    while (*q != '\0' && *q != '\n') {
       t = strtol(p, &q, 10);
       if (q == p) {
-	p3_set_sa_empty_quality(sargs);
-	return 0; 
+	while (*q != '\0') {
+	  if (!isspace(*q)) {
+	    p3_set_sa_empty_quality(sargs);
+	    return 0; 
+	  }
+	  q++;
+	}
+	return sargs->n_quality;
       }
       p3_sa_add_to_quality_array(sargs, t);
 
