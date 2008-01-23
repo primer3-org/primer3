@@ -155,11 +155,12 @@ static int    choose_pair_or_triple(p3retval *,
                                     int,
                                     pair_array_t *);
 
-static void   check_sequence_quality(const p3_global_settings *, primer_rec *,
+static int    sequence_quality_is_ok(const p3_global_settings *, primer_rec *,
                                      oligo_type, 
                                      const seq_args *, int, int,
-                                     int *, int *,
-                                     int min_q, int min_q_end);
+				     oligo_stats *global_oligo_stats,
+                                     /* int *, int *, */
+				     const args_for_one_oligo_or_primer *);
 
 static int    choose_internal_oligo(p3retval *,
                                     const primer_rec *, const primer_rec *,
@@ -318,12 +319,13 @@ static void op_set_no_gc_glamp(primer_rec *);
 static void op_set_high_end_stability(primer_rec *);
 static void op_set_high_poly_x(primer_rec *);
 static void op_set_low_sequence_quality(primer_rec *);
-static void op_set_high_similarity_to_non_template_sequence(primer_rec *);
+static void op_set_low_end_sequence_quality(primer_rec *oligo);
+static void op_set_high_similarity_to_non_template_seq(primer_rec *);
 static void op_set_high_similarity_to_multiple_template_sites(primer_rec *);
 static void op_set_overlaps_masked_sequence(primer_rec *);
 static void op_set_too_long(primer_rec *);
 static void op_set_too_short(primer_rec *);
-/* End functions to set poblems in oligos */
+/* End functions to set problems in oligos */
 
 /* Global static variables. */
 static const char *primer3_copyright_char_star = "\n"
@@ -376,11 +378,7 @@ static const char *pr_program_name = "probably primer3_core";
 
 
 /* FIX ME -- there is no need to create #defines for these. */
-/* #define MIN_GC             20.0 */
-/* #define MAX_GC             80.0 */
-/* #define SALT_CONC          50.0 */
 
-#define DNA_CONC           50.0
 #define NUM_NS_ACCEPTED       0
 #define MAX_POLY_X            5
 #define SELF_ANY            800
@@ -547,14 +545,13 @@ pr_set_default_global_args(p3_global_settings *a) {
       http://www.clinchem.org/cgi/content/full/47/11/1956] The default is
       0.0.  (New in v. 1.1.0, added by Maido Remm and Triinu Koressaar.)
     */
-    /* #define DIVALENT_CONC       0.0 */
-    /* #define DNTP_CONC           0.0 */
-
     a->p_args.divalent_conc    = 0.0;
     a->p_args.dntp_conc        = 0.0;
 
 
-    a->p_args.dna_conc         = DNA_CONC;
+    /* #define DNA_CONC           50.0 */
+
+    a->p_args.dna_conc         = 50.0;
     a->p_args.num_ns_accepted  = NUM_NS_ACCEPTED;
     a->p_args.max_self_any     = SELF_ANY;
     a->p_args.max_self_end     = SELF_END;
@@ -640,9 +637,6 @@ pr_set_default_global_args(p3_global_settings *a) {
 
     a->pair_compl_any   = 800;
     a->pair_compl_end   = 300;
-
-    /* a->file_flag        = 0;  *//* FIX ME, THIS DOES NOT BELONG HERE */
-    /* a->explain_flag     = EXPLAIN_FLAG;  */
 
     a->gc_clamp         = GC_CLAMP;
     a->liberal_base      = LIBERAL_BASE;
@@ -2371,17 +2365,18 @@ oligo_param(const p3_global_settings *pa,
             const seq_args *sa,
             oligo_stats *stats,
             p3retval *retval,
-            const char *input_oligo_seq  /* This is 5'->3' on the template sequence! */
+
+            /* This is 5'->3', and on the template sequence! */
+            const char *input_oligo_seq
             ) {
 
   /* FIX ME -- most of this function is in 'index' land,
      change it to oligo land (s1, s1_rev, and  olig_seq. */
 
+  /* int tmp; */
   int i;
   int j; /* position of 5' base of oligo */
   int k; /* position of 3' base of oligo */
-
-  int min_q, min_end_q;
 
   int poly_x, max_poly_x;
   int must_use = h->must_use;
@@ -2554,29 +2549,42 @@ oligo_param(const p3_global_settings *pa,
   }
 #endif
 
-  if(OT_LEFT == l || OT_RIGHT == l) {
-    check_sequence_quality(pa, h, l, sa, j, k, &min_q, &min_end_q, 
-                           pa->p_args.min_quality, pa->p_args.min_end_quality);
-    if (min_q < pa->p_args.min_quality) {
-      h->ok = OV_SEQ_QUALITY;
-      stats->seq_quality++;
+#if 1
+  /* Tentative interface for generic oligo  testing
+     function */
+  if (!sequence_quality_is_ok(pa, h, l, sa, j, k,
+			      stats, po_args)
+      && !must_use) return;
+#endif
+
+#if 0
+  if (OT_LEFT == l || OT_RIGHT == l) { /* FIX ME - logic is spread
+					  between the calls and
+					  the internals of sequence_quality_is_ok,
+					  and may be duplicated */
+					  
+    tmp = sequence_quality_is_ok(pa, h, l, sa, j, k,
+                           stats, po_args);
+    if (h->seq_quality < po_args->min_quality) {
+      PR_ASSERT(tmp != 1);
       if (!must_use) return;
-    } else if (min_end_q < pa->p_args.min_end_quality) {
-      h->ok = OV_SEQ_QUALITY;
-      stats->seq_quality++;
+    } else if (h->seq_end_quality < po_args->min_end_quality) {
+      PR_ASSERT(tmp != 1);
       if (!must_use) return;
+    } else {
+      PR_ASSERT(tmp == 1);
     }
   } else if (OT_INTL == l) {
-    check_sequence_quality(pa, h, l, sa, j, k, &min_q, &min_end_q, 
-                           pa->o_args.min_quality, pa->o_args.min_quality);
-    if (min_q < pa->o_args.min_quality) {
-      h->ok = OV_SEQ_QUALITY;
-      stats->seq_quality++;
+    tmp = sequence_quality_is_ok(pa, h, l, sa, j, k,
+                           stats, po_args);
+    if (h->seq_quality < po_args->min_quality) {
+      PR_ASSERT(tmp != 1);
       if (!must_use) return;
+    } else{
+      PR_ASSERT(tmp == 1);
     }
-  } else {
-    PR_ASSERT(0); /* Programming error. */
-  }
+  } 
+#endif
 
   max_poly_x = po_args->max_poly_x;     
   if (max_poly_x > 0) {
@@ -2585,7 +2593,7 @@ oligo_param(const p3_global_settings *pa,
       if(seq[i] == seq[i-1]||seq[i] == 'N'){
         poly_x++;
         if(poly_x > max_poly_x){
-          h->ok = OV_POLY_X;
+	  op_set_high_poly_x(h);
           stats->poly_x++;
           if (!must_use) return; else break;
         }
@@ -2638,7 +2646,7 @@ oligo_param(const p3_global_settings *pa,
   }
 
   if (must_use
-      || pa->file_flag 
+      || pa->file_flag
       || retval->output_type == primer_list
       || po_args->weights.compl_any 
       || po_args->weights.compl_end
@@ -2689,59 +2697,98 @@ oligo_param(const p3_global_settings *pa,
 #undef INSIDE_STOP_WT
 #undef OUTSIDE_STOP_WT
 
-static void
-check_sequence_quality(const p3_global_settings *pa,
+/* Calculate the minimum sequence quality and the minimum sequence
+   quality of the 3' end of a primer or oligo.  Set h->seq_quality
+   and h->seq_end_quality with these values.  Return 1 (== ok)
+   if sa->quality is undefined.  Otherwise, return 1 (ok)
+   if h->seq_quality and h->seq_end_quality are within
+   range, or else return 0. 
+*/
+static int
+sequence_quality_is_ok(const p3_global_settings *pa,
                        primer_rec *h,
                        oligo_type l,
                        const seq_args *sa,
                        int j, int k,
-                       int *r_min_q, int *r_min_q_end,
-                       int min_allowed_q, int min_allowed_q_end) {
+		       oligo_stats *global_oligo_stats,
+		       const args_for_one_oligo_or_primer *po_args) {
   int i, min_q, min_q_end, m, q;
+  int  retval = 1;
 
-  q = min_q = min_q_end = pa->quality_range_max; /* FIX ME, THIS SETS DEFAULTS FOR p_args.min_end_quality, etc. */
+  if (NULL == sa->quality) {
+    h->seq_end_quality = h->seq_quality = pa->quality_range_max;
+    return 1;
+  } 
 
-  if (NULL != sa->quality) {
+  q = pa->quality_range_max;
 
-    if(OT_LEFT == l || OT_RIGHT == l){
-      min_q = pa->p_args.min_quality;
-      min_q_end = pa->p_args.min_end_quality;
-    }  else {min_q = min_q_end = pa->o_args.min_quality;} 
+  min_q = po_args->min_quality;
+  if (OT_LEFT == l || OT_RIGHT == l) {
+    min_q_end = po_args->min_end_quality;
+  }  else {
+    min_q_end = min_q;
+  } 
 
-    if (OT_LEFT == l || OT_INTL == l) {
+  if (OT_LEFT == l || OT_INTL == l) {
 
-      for(i = k-4; i <= k; i++) {
-        if(i < j) continue;
-        m = sa->quality[i + sa->incl_s];
-        if (m < q) q = m;
-      }
-      min_q_end = q;
-
-      for(i = j; i<=k-5; i++) {
-        m = sa->quality[i + sa->incl_s];
-        if (m < q) q = m;
-      }
-      min_q = q;
-
-    } else if (OT_RIGHT == l) {
-      for(i = j; i < j+5; i++) {
-        if(i > k) break;
-        m = sa->quality[i + sa->incl_s];
-        if (m < q) q = m;
-      }
-      min_q_end = q;
-       
-      for(i = j+5; i <= k; i++) {
-        m = sa->quality[i + sa->incl_s];
-        if (m < q) q = m;
-      }
-      min_q = q;
-    } else {
-      PR_ASSERT(0); /* Programming error. */
+    for(i = k-4; i <= k; i++) {
+      if(i < j) continue;
+      m = sa->quality[i + sa->incl_s];
+      if (m < q) q = m;
     }
+    min_q_end = q;
+
+    for(i = j; i<=k-5; i++) {
+      m = sa->quality[i + sa->incl_s];
+      if (m < q) q = m;
+    }
+    min_q = q;
+
+  } else if (OT_RIGHT == l) {
+    for(i = j; i < j+5; i++) {
+      if(i > k) break;
+      m = sa->quality[i + sa->incl_s];
+      if (m < q) q = m;
+    }
+    min_q_end = q;
+       
+    for(i = j+5; i <= k; i++) {
+      m = sa->quality[i + sa->incl_s];
+      if (m < q) q = m;
+    }
+    min_q = q;
+  } else {
+    PR_ASSERT(0); /* Programming error. */
   }
-  h->seq_quality = *r_min_q = min_q;
-  *r_min_q_end = min_q_end;
+
+  h->seq_quality = min_q;
+  h->seq_end_quality = min_q_end;
+
+  if (h->seq_quality < po_args->min_quality) {
+    op_set_low_sequence_quality(h);
+    global_oligo_stats->seq_quality++;
+    retval = 0;
+    return retval;
+  } 
+
+  if (OT_LEFT == l || OT_RIGHT == l) {
+    /* if (h->seq_quality < po_args->min_quality) {
+      op_set_low_sequence_quality(h);
+      global_oligo_stats->seq_quality++;
+      retval = 0;
+      } else */ if (h->seq_end_quality < po_args->min_end_quality) {
+      op_set_low_end_sequence_quality(h);
+      global_oligo_stats->seq_quality++;
+      retval = 0;
+    }
+  } /* else if (OT_INTL == l) {
+    if (h->seq_quality < po_args->min_quality) {
+      op_set_low_sequence_quality(h);
+      global_oligo_stats->seq_quality++;
+      retval = 0;
+      }
+      } */
+  return retval;
 }
 
 /* 
@@ -3555,8 +3602,7 @@ obj_fn(pa, h)
 
 char *
 pr_gather_warnings(const p3retval *retval, 
-                   const p3_global_settings *pa /*,
-                   const pr_append_str *more_warnings */) {
+                   const p3_global_settings *pa) {
 
   pr_append_str warning;
 
@@ -3572,15 +3618,10 @@ pr_gather_warnings(const p3retval *retval,
     pr_append(&warning, " (for internal oligo)");
   }
 
-  if (!pr_is_empty(&retval->warnings)) /* not here? */
+  if (!pr_is_empty(&retval->warnings))
     pr_append_new_chunk(&warning,  retval->warnings.data);
 
-  /* if (sa->warning.data) pr_append_new_chunk(&warning, sa->warning.data); */
-  /* if (!pr_is_empty(more_warnings)) {
-    pr_append_new_chunk(&warning, more_warnings->data);
-    } */
-
-  return pr_is_empty(&warning) ? NULL : warning.data;  /* not here? */
+  return pr_is_empty(&warning) ? NULL : warning.data;
 }
 
 static short
@@ -3871,7 +3912,7 @@ oligo_mispriming(primer_rec *h,
       }
 
       if (w > max_lib_compl) {
-        h->ok = OV_LIB_SIM;
+	op_set_high_similarity_to_non_template_seq(h);
         ostats->repeat_score++;
         ostats->ok--;
         if (!h->must_use) return;
@@ -4652,14 +4693,6 @@ _pr_data_control(const p3_global_settings *pa,
                             "PRIMER_GC_CLAMP > PRIMER_MIN_SIZE");
         return 1;
     }
-
-    /* The sequence name is needed for the file name */
-    /* 
-    if (NULL == sa->sequence_name && pa->file_flag) {
-        pr_append_new_chunk(nonfatal_err,
-                            "Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG != 0");
-        return 1;
-        } */
 
     /* Product size must be provided */
     if (0 == pa->num_intervals) {
@@ -5980,15 +6013,6 @@ p3_set_gs_gc_clamp(p3_global_settings * p , int gc_clamp){
   p->gc_clamp = gc_clamp;
 }
 
-/* SR, 2008-01-22 -- explain_flag is not needed inside 
-   libprmer3 -- statistics for 'explain' are gathered in
-   any case */
-/* void
-p3_set_gs_primer_explain_flag(p3_global_settings * p , int val) {
-  p->explain_flag = val  ;
-}
-*/ 
-    
 void
 p3_set_gs_primer_liberal_base(p3_global_settings * p , int val) {
   p->liberal_base = val;
@@ -6582,6 +6606,10 @@ op_set_unwritten(primer_rec *oligo) {
 #define OP_HIGH_SELF_END        (1 << 10);
 #define OP_NO_GC_CLAMP          (1 << 11);
 #define OP_HIGH_END_STABILITY   (1 << 12);
+#define OP_HIGH_POLY_X                  (1 << 13);
+#define OP_LOW_SEQUENCE_QUALITY         (1 << 14);
+#define OP_LOW_END_SEQUENCE_QUALITY     (1 << 15);
+#define OP_HIGH_SIM_TO_NON_TEMPLATE_SEQ (1 << 16);
 
 static void
 op_set_completely_written(primer_rec *oligo) {
@@ -6667,17 +6695,31 @@ op_set_high_end_stability(primer_rec *oligo) {
 
 static void
 op_set_high_poly_x(primer_rec *oligo) {
-
+  oligo->ok = OV_POLY_X;
+  oligo->problems.prob |= OP_HIGH_POLY_X;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_low_sequence_quality(primer_rec *oligo) {
-
+  oligo->ok = OV_SEQ_QUALITY;
+  oligo->problems.prob |= OP_LOW_SEQUENCE_QUALITY;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
-op_set_high_similarity_to_non_template_sequence(primer_rec *oligo) {
+op_set_low_end_sequence_quality(primer_rec *oligo) {
+  oligo->ok = OV_SEQ_QUALITY;
+  oligo->problems.prob |= OP_LOW_END_SEQUENCE_QUALITY;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
+}
 
+
+static void
+op_set_high_similarity_to_non_template_seq(primer_rec *oligo) {
+  oligo->ok = OV_LIB_SIM;
+  oligo->problems.prob |= OP_HIGH_SIM_TO_NON_TEMPLATE_SEQ;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void

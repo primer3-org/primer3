@@ -429,6 +429,8 @@ typedef struct primer_rec {
                       WITH RESPECT TO THE seq_args FIELD trimmed_seq. */
 
   int    seq_quality; /* Minimum quality score of bases included. */   
+  int    seq_end_quality;  /* Minimum quality core of the 5 3' bases. */
+
 
   short  self_any; /* Self complementarity as local alignment * 100. */
 
