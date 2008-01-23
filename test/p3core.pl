@@ -117,10 +117,10 @@ sub set_setters() {
 sub ($) { my $v = shift; pl_set_sa_sequence($sa, $v) }; 
      $dispatch{'PRIMER_SEQUENCE_QUALITY'} = 
 sub ($) { my $v = shift;
-	  my @nums = split / /, $v ;
+	  my @nums = split( /\s+/, $v) ;
 	  my $n = shift @nums ;
 	  pl_set_sa_empty_quality($sa);     
-	  while(defined $n) {
+	  while(defined $n || $n ne "") {
 	      pl_sa_add_to_quality_array($sa, $n) ;
 	      $n = shift @nums ;
 	    } 
