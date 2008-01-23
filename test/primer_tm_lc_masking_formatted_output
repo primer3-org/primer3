@@ -20,7 +20,7 @@ Statistics
          sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR 001
@@ -45,7 +45,7 @@ Statistics
          sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR 002
@@ -70,7 +70,7 @@ Statistics
          sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR 100
@@ -88,7 +88,7 @@ Statistics
          sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
         ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1     0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR 101
@@ -113,7 +113,7 @@ Statistics
          sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
         ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR 102
@@ -138,7 +138,7 @@ Statistics
          sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR 010
@@ -163,7 +163,7 @@ Statistics
          sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR 011
@@ -188,7 +188,7 @@ Statistics
          sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR 012
@@ -213,7 +213,7 @@ Statistics
          sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR 110
@@ -231,7 +231,7 @@ Statistics
          sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
         ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1     0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR 111
@@ -256,7 +256,7 @@ Statistics
          sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
         ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR 112
@@ -281,6 +281,158 @@ Statistics
          sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.1
+primer3 release 1.1.2
+
+
+PRIMER PICKING RESULTS FOR masking_001
+
+No mispriming library specified
+Using 0-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          0   20   46.14   40.00  3.00  3.00 GCCTTCATTAGAAAGTGACA
+RIGHT PRIMER        69   20   46.49   40.00  4.00  1.00 ATTAGTACCCAGGTGTGATT
+SEQUENCE SIZE: 70
+INCLUDED REGION SIZE: 70
+
+PRODUCT SIZE: 70, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 3.00
+
+    0 GCCTTCATTAGAAAGTGACANNNNNNNNNNNNNNNNNNNNNNNNNNNNNNAATCACACCT
+      >>>>>>>>>>>>>>>>>>>>                              <<<<<<<<<<
+
+   60 GGGTACTAAT
+      <<<<<<<<<<
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left      31    30     0     0     0     0     0     0     0     0     0     0     0     1
+Right     31    30     0     0     0     0     0     0     0     0     0     0     0     1
+Pair Stats:
+considered 1, ok 1
+primer3 release 1.1.2
+
+
+PRIMER PICKING RESULTS FOR masking_002
+
+No mispriming library specified
+Using 0-based sequence positions
+NO PRIMERS FOUND
+
+SEQUENCE SIZE: 70
+INCLUDED REGION SIZE: 70
+
+
+    0 GCCTTCATTAGAAAGTGACANNNNNNNNNNNNNNNNNNNNNNNNNNNNNNaATCACACCT
+   60 GGGTACTAAT
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left      31    30     0     0     0     0     0     0     0     0     0     0     0     1
+Right     31    30     0     0     0     0     0     0     0     0     0     0     1     0
+Pair Stats:
+considered 0, ok 0
+primer3 release 1.1.2
+
+
+PRIMER PICKING RESULTS FOR masking_003
+
+No mispriming library specified
+Using 0-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          0   20   46.14   40.00  3.00  3.00 GCCTTCATTAGAAAGTGACA
+RIGHT PRIMER        69   20   46.49   40.00  4.00  1.00 aTTAGTACCCAGGTGTGATT
+SEQUENCE SIZE: 70
+INCLUDED REGION SIZE: 70
+
+PRODUCT SIZE: 70, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 3.00
+
+    0 GCCTTCATTAGAAAGTGACANNNNNNNNNNNNNNNNNNNNNNNNNNNNNNAATCACACCT
+      >>>>>>>>>>>>>>>>>>>>                              <<<<<<<<<<
+
+   60 GGGTACTAAt
+      <<<<<<<<<<
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left      31    30     0     0     0     0     0     0     0     0     0     0     0     1
+Right     31    30     0     0     0     0     0     0     0     0     0     0     0     1
+Pair Stats:
+considered 1, ok 1
+primer3 release 1.1.2
+
+
+PRIMER PICKING RESULTS FOR masking_004
+
+No mispriming library specified
+Using 0-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          0   20   46.14   40.00  3.00  3.00 gCCTTCATTAGAAAGTGACA
+RIGHT PRIMER        69   20   46.49   40.00  4.00  1.00 ATTAGTACCCAGGTGTGATT
+SEQUENCE SIZE: 70
+INCLUDED REGION SIZE: 70
+
+PRODUCT SIZE: 70, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 3.00
+
+    0 gCCTTCATTAGAAAGTGACANNNNNNNNNNNNNNNNNNNNNNNNNNNNNNAATCACACCT
+      >>>>>>>>>>>>>>>>>>>>                              <<<<<<<<<<
+
+   60 GGGTACTAAT
+      <<<<<<<<<<
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left      31    30     0     0     0     0     0     0     0     0     0     0     0     1
+Right     31    30     0     0     0     0     0     0     0     0     0     0     0     1
+Pair Stats:
+considered 1, ok 1
+primer3 release 1.1.2
+
+
+PRIMER PICKING RESULTS FOR masking_005
+
+No mispriming library specified
+Using 0-based sequence positions
+NO PRIMERS FOUND
+
+SEQUENCE SIZE: 70
+INCLUDED REGION SIZE: 70
+
+
+    0 GCCTTCATTAGAAAGTGACaNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNAATCACACCT
+   60 GGGTACTAAT
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left      31    30     0     0     0     0     0     0     0     0     0     0     1     0
+Right     31    30     0     0     0     0     0     0     0     0     0     0     0     1
+Pair Stats:
+considered 0, ok 0
+primer3 release 1.1.2
 
 
