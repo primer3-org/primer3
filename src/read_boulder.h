@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
@@ -40,10 +40,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "libprimer3.h"
 
 typedef enum p3_file_type {
-	all_parameters    = 0,
-	sequence          = 1,
-	settings          = 2,
+        all_parameters    = 0,
+        sequence          = 1,
+        settings          = 2,
 } p3_file_type;
+
+typedef struct read_boulder_record_results {
+  int explain_flag;
+  int file_flag;
+} read_boulder_record_results;
 
 /* 
  * Read data from file_input until a "=" line occurs.  Assign parameter
@@ -53,15 +58,16 @@ typedef enum p3_file_type {
  * and should not be processed. Echo the input lines to stdout.
  */
 /* pr_append_str is an append-only string ADT. */
-int read_record(FILE *file_input,
-		const int *strict_tags,
-		const int * io_version,
-		int echo_output,
-		const p3_file_type read_file_type,
-		p3_global_settings *pa, 
-		seq_args *sa,
-		pr_append_str *fatal_err,
-		pr_append_str *nonfatal_err);
+int read_boulder_record(FILE *file_input,
+                        const int *strict_tags,
+                        const int * io_version,
+                        int echo_output,
+                        const p3_file_type read_file_type,
+                        p3_global_settings *pa, 
+                        seq_args *sa,
+                        pr_append_str *fatal_err,
+                        pr_append_str *nonfatal_err,
+                        read_boulder_record_results *);
 
 /* 
  * Read data from file file_name until a "=" line occurs.  Assign parameter
@@ -72,11 +78,12 @@ int read_record(FILE *file_input,
  */
 /* pr_append_str is an append-only string ADT. */
 int read_p3_file(const char *file_name,
-		const p3_file_type file_type,
-		p3_global_settings *pa, 
-		seq_args *sa,
-		pr_append_str *fatal_err,
-		pr_append_str *nonfatal_err);
+                 const p3_file_type file_type,
+                 p3_global_settings *pa, 
+                 seq_args *sa,
+                 pr_append_str *fatal_err,
+                 pr_append_str *nonfatal_err,
+                 read_boulder_record_results *read_boulder_record_res);
 
 
 #endif

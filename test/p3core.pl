@@ -61,6 +61,7 @@ our $tag;
 our $value;
 our $err = "0" ;
 our $retval = 0 ;
+our $explain_flag = 0;
 
 main();
 
@@ -80,7 +81,6 @@ sub main() {
 	}
 	$sa = pl_create_seq_arg();
 	# $gs = pl_create_global_settings();
-	# pl_set_gs_primer_explain_flag($gs, 1);
 	my %rec;
 	my @rec = split /\n/, $rec;
 	my $tag_found = 0;
@@ -98,11 +98,11 @@ sub main() {
 	if (!$tag_found) {
 	    confess "Record $. is empty\n";
 	}
-	if (!$err) 
-	    {$retval = pl_choose_primers($gs, $sa); 
-	     pl_boulder_print($gs, $sa, $retval) ;}  # boulder_print generates the final '='
-	else
-	{
+	if (!$err) {
+	    $retval = pl_choose_primers($gs, $sa); 
+	    pl_boulder_print($gs, $sa, $retval, $explain_flag);
+           # boulder_print generates the final '='
+	} else 	{
 	    print "$err=\n" ;
 	}
 	pl_destroy_seq_args($sa);
@@ -258,7 +258,7 @@ sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pick_anyway($gs, $v) };
    $dispatch{'PRIMER_GC_CLAMP'} =
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_gc_clamp($gs, $v) };          
    $dispatch{'PRIMER_EXPLAIN_FLAG'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_explain_flag($gs, $v) };          
+sub ($) { my $v = shift;  $explain_flag = 1 };          
    $dispatch{'PRIMER_LIBERAL_BASE'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_liberal_base($gs, $v) };          
    $dispatch{'PRIMER_FIRST_BASE_INDEX'} = 

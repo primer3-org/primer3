@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
@@ -39,11 +39,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define BOULDER_OUTPUT_H 1
 #include "libprimer3.h"
 
-void   boulder_print(const int *, 
-		     const p3_global_settings *, 
-		     const seq_args *, 
-		     const p3retval *);
+void   print_boulder(const int *, 
+                     const p3_global_settings *, 
+                     const seq_args *, 
+                     const p3retval *,
+                     int   exaplain_flag);
 
-void   boulder_print_error(const char *err);
+void   print_boulder_error(const char *err);
 
 #endif

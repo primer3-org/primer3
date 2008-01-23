@@ -73,6 +73,7 @@ main(argc,argv)
 
   p3_global_settings *global_pa;
   seq_args *sa;
+  read_boulder_record_results read_boulder_record_res = {0,0};
 
   /* Declare and initialize error strings. */  /* ANDREAS, handlers are usually functions */
   pr_append_str *fatal_parse_err = NULL;
@@ -160,8 +161,9 @@ main(argc,argv)
   /* Read data from the settings file until a "=" line occurs.  Assign parameter
    * values for primer picking to pa and sa. */
   if (p3_settings_file[0] != '\0') {
-	  read_p3_file(p3_settings_file, settings, global_pa, 
-		    		sa, fatal_parse_err, nonfatal_parse_err);
+    read_p3_file(p3_settings_file, settings, global_pa, 
+		 sa, fatal_parse_err, nonfatal_parse_err,
+		 &read_boulder_record_res);
   }
 
   /* We also need to print out errors here because the loop erases all
@@ -171,7 +173,7 @@ main(argc,argv)
     if (format_output) {
 	format_error(stdout, sa->sequence_name, fatal_parse_err->data);
     } else {
-	boulder_print_error(fatal_parse_err->data);
+	print_boulder_error(fatal_parse_err->data);
     }
     fprintf(stderr, "%s: %s\n", 
 	      pr_program_name, fatal_parse_err->data);
@@ -186,7 +188,7 @@ main(argc,argv)
 	format_error(stdout, sa->sequence_name, 
 		     nonfatal_parse_err->data);
     } else {
-	boulder_print_error(nonfatal_parse_err->data);
+	print_boulder_error(nonfatal_parse_err->data);
     }
   }
 
@@ -211,8 +213,15 @@ main(argc,argv)
     /* Read data from stdin until a "=" line occurs.  Assign parameter
      * values for primer picking to pa and sa. Perform initial data
      * checking. */
-    if (read_record(stdin, &strict_tags, &io_version, !format_output, all_parameters,
-    		global_pa, sa, fatal_parse_err, nonfatal_parse_err) <= 0) {
+    if (read_boulder_record(stdin, 
+			    &strict_tags, 
+			    &io_version,
+			    !format_output, 
+			    all_parameters,
+			    global_pa, sa, 
+			    fatal_parse_err, 
+			    nonfatal_parse_err,
+			    &read_boulder_record_res) <= 0) {
       
       break; /* leave the program loop and complain later */
     }
@@ -228,7 +237,7 @@ main(argc,argv)
       if (format_output) {
 	format_error(stdout, sa->sequence_name, fatal_parse_err->data);
       } else {
-	boulder_print_error(fatal_parse_err->data);
+	print_boulder_error(fatal_parse_err->data);
       }
       fprintf(stderr, "%s: %s\n", 
 	      pr_program_name, fatal_parse_err->data);
@@ -246,12 +255,24 @@ main(argc,argv)
 	format_error(stdout, sa->sequence_name, 
 		     nonfatal_parse_err->data);
       } else {
-	boulder_print_error(nonfatal_parse_err->data);
+	print_boulder_error(nonfatal_parse_err->data);
       }
       goto loop_wrap_up;
     }
     
+    if (read_boulder_record_res.file_flag && sa->sequence_name == NULL) {
+      /* We will not have a base name for the files */
+      if (format_output) {
+	format_error(stdout, NULL, 
+		     "Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG != 0");
+      } else {
+	print_boulder_error("Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG != 0");
+      }
+      goto loop_wrap_up;
+    }
+
     /* Pick the primers - the central function */
+    global_pa->file_flag = read_boulder_record_res.file_flag;
     retval = choose_primers(global_pa, sa);  
     if (NULL == retval) exit(-2); /* Out of memory. */
 
@@ -259,21 +280,24 @@ main(argc,argv)
 	&& pr_is_empty(&retval->per_sequence_err)) {
       /* We need to test for error first, because
 	 p3_print_oligo_lists does not handle
-	 partial outputs in retval.  FIX ME,
+	 partial outputs in retval.  FIX ME?, 
 	 move test inside  */
       /* Create files with left, right, and internal oligos. */
-      if (global_pa->file_flag) {  /* FIX ME, get file_flag out of global settings */
+      if (read_boulder_record_res.file_flag) {
 	p3_print_oligo_lists(retval, sa, global_pa,
-			     &retval->per_sequence_err); 
+			     &retval->per_sequence_err,
+			     sa->sequence_name);
       }
     }
 
     if (format_output) {
       print_format_output(stdout, &io_version, global_pa, 
-			  sa, retval, pr_release /* , adjust_seq_args_warnings*/);
+			  sa, retval, pr_release,
+			  read_boulder_record_res.explain_flag);
     } else {
       /* Use boulder output */
-      boulder_print(&io_version, global_pa, sa, retval /* , adjust_seq_args_warnings*/);
+      print_boulder(&io_version, global_pa, sa, retval, 
+		    read_boulder_record_res.explain_flag);
     }
 
   loop_wrap_up: /* Here the failed loops join in again */
