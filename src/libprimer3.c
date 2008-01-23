@@ -298,9 +298,10 @@ static int    pair_repeat_sim(primer_pair *, const p3_global_settings *);
 static void   free_repeat_sim_score(p3retval *);
 
 /* edited by T. Koressaar for lowercase masking:  */
-static void   check_if_lowercase_masked(const int position,
-                                        const char *sequence,
-                                        primer_rec *h);
+static int    is_lowercase_masked(int position,
+				   const char *sequence,
+				   primer_rec *h,
+				   oligo_stats *);
 
 
 /* Functions to record problems with oligos (or primers) */
@@ -2375,8 +2376,9 @@ oligo_param(const p3_global_settings *pa,
 
   /* int tmp; */
   int i;
-  int j; /* position of 5' base of oligo */
-  int k; /* position of 3' base of oligo */
+  int j, k;
+  int five_prime_pos; /* position of 5' base of oligo */
+  int three_prime_pos; /* position of 3' base of oligo */
 
   int poly_x, max_poly_x;
   int must_use = h->must_use;
@@ -2403,26 +2405,20 @@ oligo_param(const p3_global_settings *pa,
 
   /* Set j and k, and sanity check */
   if (OT_LEFT == l || OT_INTL == l) {
-    j = h->start; 
-    k=j+h->length-1;
-  }
-  else {
-    j = h->start-h->length+1; 
-    k=h->start;
+    five_prime_pos = j = h->start; 
+    three_prime_pos = k = j+h->length-1;
+  }  else {
+    three_prime_pos = j = h->start-h->length+1; 
+    five_prime_pos = k = h->start;
   }
   PR_ASSERT(k >= 0);
   PR_ASSERT(k < TRIMMED_SEQ_LEN(sa));
    
   /* edited by T. Koressaar for lowercase masking */
   if(pa->lowercase_masking == 1) {
-    if(l==OT_LEFT) {
-      check_if_lowercase_masked(k, sa->trimmed_orig_seq,h);
-    }
-    if(l==OT_RIGHT) {
-      check_if_lowercase_masked(j, sa->trimmed_orig_seq,h);
-    }
-    if(h->ok==OV_GMASKED) {
-      stats->gmasked++;
+    if (is_lowercase_masked(three_prime_pos, 
+			    sa->trimmed_orig_seq,
+			    h, stats)) {
       if (!must_use) return;
     }
   }
@@ -3815,7 +3811,7 @@ primer_mispriming_to_template(primer_rec *h,
   if (pa->p_args.max_template_mispriming >= 0 
       && oligo_max_template_mispriming(h)
       > pa->p_args.max_template_mispriming) {
-    h->ok = OV_TEMPLATE_MISPRIMING;
+    op_set_high_similarity_to_multiple_template_sites(h);
     if (OT_LEFT == l || OT_RIGHT == l ) {
         ostats->template_mispriming++;
         ostats->ok--;
@@ -4087,22 +4083,24 @@ free_repeat_sim_score(state)
    }
 }
 
-/*  Edited by T. Koressaar for lowercase masking. This function checks
+/*  
+ Edited by T. Koressaar for lowercase masking. This function checks
  if the 3' end of the primer has been masked by lowercase letter.
  Function created/Added by Eric Reppo, July 9, 2002
  */
-static void
-check_if_lowercase_masked(position, sequence, h)
-     const int position;
-     const char *sequence;
-     primer_rec *h;
-{   
+static int
+is_lowercase_masked(int position,
+		    const char *sequence,
+		    primer_rec *h,
+		    oligo_stats *global_oligo_stats) {   
    const char* p = &sequence[position];
    if ('a' == *p || 'c' == *p ||'g' == *p || 't' == *p) {
-      h->ok=OV_GMASKED;
+     op_set_overlaps_masked_sequence(h);
+     global_oligo_stats->gmasked++;
+     return 1;
    }
+   return 0;
 }
-
 
 /* Put substring of seq starting at n with length m into s. */
 void
@@ -6625,10 +6623,12 @@ op_set_unwritten(primer_rec *oligo) {
 #define OP_HIGH_SELF_END        (1 << 10);
 #define OP_NO_GC_CLAMP          (1 << 11);
 #define OP_HIGH_END_STABILITY   (1 << 12);
-#define OP_HIGH_POLY_X                  (1 << 13);
-#define OP_LOW_SEQUENCE_QUALITY         (1 << 14);
-#define OP_LOW_END_SEQUENCE_QUALITY     (1 << 15);
-#define OP_HIGH_SIM_TO_NON_TEMPLATE_SEQ (1 << 16);
+#define OP_HIGH_POLY_X                      (1 << 13);
+#define OP_LOW_SEQUENCE_QUALITY             (1 << 14);
+#define OP_LOW_END_SEQUENCE_QUALITY         (1 << 15);
+#define OP_HIGH_SIM_TO_NON_TEMPLATE_SEQ     (1 << 16);
+#define OP_HIGH_SIM_TO_MULTI_TEMPLATE_SITES (1 << 17);
+#define OP_OVERLAPS_MASKED_SEQ              (1 << 18);
 
 static void
 op_set_completely_written(primer_rec *oligo) {
@@ -6733,7 +6733,6 @@ op_set_low_end_sequence_quality(primer_rec *oligo) {
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
-
 static void
 op_set_high_similarity_to_non_template_seq(primer_rec *oligo) {
   oligo->ok = OV_LIB_SIM;
@@ -6743,11 +6742,16 @@ op_set_high_similarity_to_non_template_seq(primer_rec *oligo) {
 
 static void
 op_set_high_similarity_to_multiple_template_sites(primer_rec *oligo) {
-
+  oligo->ok = OV_TEMPLATE_MISPRIMING;
+  oligo->problems.prob |= OP_HIGH_SIM_TO_MULTI_TEMPLATE_SITES;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_overlaps_masked_sequence(primer_rec *oligo) {
+  oligo->ok = OV_GMASKED;
+  oligo->problems.prob |= OP_OVERLAPS_MASKED_SEQ;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 
 }
 
