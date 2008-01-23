@@ -615,8 +615,10 @@ typedef struct seq_args {
                            */
   int  start_codon_pos;   /* Index of first base of the start codon. */
 
-  int  *quality;          /* Vector of quality scores. */
-  int n_quality;          /* Length 'quality' */
+  int  *quality;             /* Vector of quality scores. */
+  int  n_quality;            /* Number of valid elements in 'quality' */
+  int  quality_storage_size; /* Amount of storage quality points to. */
+
   char *sequence;         /* The template sequence itself as input, 
                              not trimmed, not up-cased. */
   char *sequence_name;    /* An identifier for the sequence. */
@@ -730,11 +732,13 @@ int p3_adjust_seq_args(const p3_global_settings *pa,
 
 int p3_set_sa_sequence(seq_args *sargs, const char *sequence);
 void p3_set_sa_primer_sequence_quality(seq_args *sargs, int quality);
-void p3_set_sa_n_quality(seq_args *sargs, int n_quality);
 int p3_set_sa_sequence_name(seq_args *sargs, const char* sequence_name);
 int p3_set_sa_left_input(seq_args *sargs, const char *left_input);
 int p3_set_sa_right_input(seq_args *sargs, const char *right_input);
 int p3_set_sa_internal_input(seq_args *sargs, const char *internal_input);
+void p3_set_sa_empty_quality(seq_args *sargs);
+void p3_sa_add_to_quality_array(seq_args *sargs, int quality);
+
 
 
 /* The following three functions return 0 on success,

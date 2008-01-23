@@ -5831,8 +5831,27 @@ p3_set_sa_incl_l(seq_args *sargs, int incl_l) {
   sargs->incl_l = incl_l;
 }
 
-void p3_set_sa_n_quality(seq_args *sargs, int n_quality) {
-  sargs->n_quality = n_quality ;
+void p3_set_sa_empty_quality(seq_args *sargs) {
+  sargs->n_quality = 0;
+}
+
+void p3_sa_add_to_quality_array(seq_args *sargs, int quality) {
+  int n = sargs->n_quality;
+  if (sargs->quality_storage_size == 0) {
+    sargs->quality_storage_size = 3000;
+    sargs->quality
+      = pr_safe_malloc(sizeof(*sargs->quality) 
+		      * sargs->quality_storage_size);
+  }
+  if (n > sargs->quality_storage_size) {
+    sargs->quality_storage_size *= 2;
+    sargs->quality
+      = pr_safe_realloc(sargs->quality,
+			sizeof(*sargs->quality) 
+			* sargs->quality_storage_size);
+  }
+  sargs->quality[n] = quality;
+  sargs->n_quality++;
 }
 
 void 

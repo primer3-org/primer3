@@ -70,7 +70,7 @@ static void   pr_append(pr_append_str *, const char *);
 static void   pr_append_new_chunk(pr_append_str *x, const char *s);
 
 static void   tag_syntax_error(const char *, const char *,  pr_append_str *);
-static int    parse_seq_quality(char *, int **);
+static int    parse_seq_quality(char *, seq_args *);
 
 static char *pr_program_name = "TMP";
 
@@ -141,7 +141,7 @@ read_boulder_record(FILE *file_input,
                     pr_append_str *glob_err,  /* Really should be called fatal_parse_err */
                     pr_append_str *nonfatal_parse_err,
                     read_boulder_record_results *res) { 
-  int line_len; /* seq_len; n_quality; */
+  int line_len;
   int tag_len, datum_len;
   int data_found = 0;
   p3_file_type file_type = all_parameters;
@@ -228,10 +228,9 @@ read_boulder_record(FILE *file_input,
         }
                 
         if (COMPARE("PRIMER_SEQUENCE_QUALITY")) {
-          if ((sa->n_quality = parse_seq_quality(datum, &sa->quality)) == 0) {
+          if ((sa->n_quality = parse_seq_quality(datum, sa)) == 0) {
             pr_append_new_chunk(parse_err,
                                 "Error in sequence quality data");
-            /* continue;  // FIX ME superfluous ? */
           }
           continue;
         }
@@ -279,10 +278,9 @@ read_boulder_record(FILE *file_input,
         }
                 
         if (COMPARE("SEQUENCE_QUALITY")) {
-          if ((sa->n_quality = parse_seq_quality(datum, &sa->quality)) == 0) {
+          if ((sa->n_quality = parse_seq_quality(datum, sa)) == 0) {
             pr_append_new_chunk(parse_err,
                                 "Error in sequence quality data");
-            /* continue;  // FIX ME superfluous ? */
           }
           continue;
         }
@@ -962,35 +960,38 @@ parse_product_size(tag_name, in, pa, err)
 /* FIX ME -- TEST THIS A BIT MORE WITH
    off-by-one errors on length of the 
    quality score */
+
+/* This function returns the number of elements in
+   the sequence quality vector, and updates
+   sargs->quality,  sargs->n_quality,
+   and sargs->quality_storage_size */
 static int
-parse_seq_quality(s, num)
-   char *s;
-   int **num;
-{
-   int k, i=0, *g;
-   long t;
-   char *p, *q;
+parse_seq_quality(char *s,
+		  seq_args *sargs) {
+  long t;
+  char *p, *q;
+
+  p3_set_sa_empty_quality(sargs);
 
    p = q = s;
-   k = strlen(s);
-   g = *num = _rb_safe_malloc(sizeof(int)*k);
-   memset(g, 0, k * sizeof(int));
 
    /* Skip leading blanks or tabs; FIX ME, TEST, probably not needed */
-   while(*p == ' ' || *p == '\t'){
+   /*    while(*p == ' ' || *p == '\t'){
       p++;
       if (*p == '\0' || *p == '\n') return 0;
-   }
+      } */
 
    while (*q != '\0' && *q != '\n') {
       t = strtol(p, &q, 10);
-      if (q == p) return i;
+      if (q == p) {
+	p3_set_sa_empty_quality(sargs);
+	return 0; 
+      }
+      p3_sa_add_to_quality_array(sargs, t);
+
       p = q;
-      *g = t;
-      g++;
-      i++;
    }
-   return i;  /* FIX ME, is this branch ever taken? */
+   return sargs->n_quality;
 }
 
 /* =========================================================== */
