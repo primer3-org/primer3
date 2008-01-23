@@ -160,25 +160,6 @@ sub main() {
 		  'primer',
 		  'primer1',
 		  'primer_mispriming',
-		  'primer_mispriming_formatted',
-		  'primer_mispriming_boundary1',
-		  'primer_mispriming_boundary1_formatted',
-		  'primer_mispriming_boundary2',
-		  'primer_mispriming_boundary2_formatted',
-		  'primer_mispriming_long_lib',
-		  'primer_rat',
-		  'primer_human',
-		  'long_seq',
-		  'primer_position_penalty',
-		  'primer_position_penalty_formatted',
-		  'p3-tmpl-mispriming',
-		  'primer_tm_lc_masking',
-		  'primer_tm_lc_masking_formatted',
-		  'v4_old_tasks',
-		  'v4_renewed_tasks',
-		  'v4_new_tasks',
-		  # Put primer_lib_amb_codes last because it is slow
-		  'primer_lib_amb_codes',
 		  ) {
 
 	# We are inside the for loop here....

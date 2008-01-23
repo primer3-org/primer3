@@ -119,9 +119,9 @@ sub ($) { my $v = shift; pl_set_sa_sequence($sa, $v) };
 sub ($) { my $v = shift;
 	  my @nums = split /[\b]/, $v ;
 	  my $n = shift @nums ;
-	  my $nq = pl_sa_get_n_quality($sa);     
+	  my $nq = pl_get_sa_n_quality($sa);     
 	  while(defined $n) {
-	      Mytest2:pl_set_sa_quality($sa, $nq, $n) ;
+	      Mytest2:pl_set_sa_n_quality($sa, $nq, $n) ;
 	      $nq++;
 	      $n = shift @nums ;
 	    } 
@@ -162,7 +162,7 @@ sub ($) { my $v = shift;
 	  my @nums = split /[, ]/, $v ;
 	  my $f = shift @nums ;
 	  my $s = shift @nums ;
-	  while (defined $f) {
+	  while (defined $f && defined $s) {
 	      if (pl_add_to_sa_excl_internal2($sa, $f, $s)) {$err =  "PRIMER_ERROR=Too many elements for tag $tag\n"; return ;}     
 	      $f = shift @nums ;
 	      $s = shift @nums ;
@@ -343,8 +343,8 @@ sub ($) { my $v = shift;  my $i = pl_set_gs_primer_inside_penalty($gs, $v) };
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_outside_penalty($gs, $v) };          
    $dispatch{'PRIMER_MISPRIMING_LIBRARY'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_mispriming_library($gs, $v) };          
-   $dispatch{'PRIMER_MISHYB_LIBRARY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_mishyb_library($gs, $v) };          
+   $dispatch{'PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY'} = 
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_mishyb_library($gs, $v) };          
    $dispatch{'PRIMER_MAX_END_STABILITY'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_end_stability($gs, $v) };          
    $dispatch{'PRIMER_LOWERCASE_MASKING'} = 
@@ -423,7 +423,7 @@ sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_product_tm_gt($gs, $v
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_product_size_gt($gs, $v) };          
    $dispatch{'PRIMER_PAIR_WT_PRODUCT_SIZE_LT'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_product_size_lt($gs, $v) };          
-   $dispatch{'PRIMER_PAIR_WT_REP_SIM,'} = 
+   $dispatch{'PRIMER_PAIR_WT_REP_SIM'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_rep_sim($gs, $v) };          
    $dispatch{'PRIMER_PAIR_WT_TEMPLATE_MISPRIMING'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_template_mispriming($gs, $v) };
