@@ -117,15 +117,14 @@ sub set_setters() {
 sub ($) { my $v = shift; pl_set_sa_sequence($sa, $v) }; 
      $dispatch{'PRIMER_SEQUENCE_QUALITY'} = 
 sub ($) { my $v = shift;
-	  my @nums = split /[\b]/, $v ;
+	  my @nums = split / /, $v ;
 	  my $n = shift @nums ;
-	  my $nq = pl_get_sa_n_quality($sa);     
+	  pl_set_sa_empty_quality($sa);     
 	  while(defined $n) {
-	      Mytest2:pl_set_sa_n_quality($sa, $nq, $n) ;
-	      $nq++;
+	      pl_sa_add_to_quality_array($sa, $n) ;
 	      $n = shift @nums ;
 	    } 
-          pl_set_sa_n_quality($sa, $nq)} ;
+          } ;
     $dispatch{'PRIMER_SEQUENCE_ID'} = 
 sub ($) { my $v = shift; my $i = pl_set_sa_sequence_name($sa, $v) };     
      $dispatch{'MARKER_NAME'} = 
