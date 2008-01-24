@@ -100,8 +100,7 @@ print_boulder(const int *io_version,
     }
         
     /* Check if there are warnings and print them */
-    if ((warning = pr_gather_warnings(retval, pa /* , more_warnings*/))
-        != NULL) { 
+    if ((warning = p3_get_rv_and_gs_warnings(retval, pa)) != NULL) { 
           printf("PRIMER_WARNING=%s\n", warning);
           free(warning);
     }

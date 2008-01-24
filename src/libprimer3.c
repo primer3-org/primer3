@@ -857,31 +857,6 @@ p3_get_retval_best_pairs(const p3retval *r) {
   return &r->best_pairs;
 }
 
-const p3_output_type
-p3_get_retval_output_type(const p3retval *r) {
-  return r->output_type;
-}
-
-const char *
-p3_get_retval_glob_err(const p3retval *r) {
-  return r->glob_err.data;
-}
-
-const char *
-p3_get_retval_per_sequence_err(const p3retval *r) {
-  return r->per_sequence_err.data;
-}
-
-const char *
-p3_get_retval_warnings(const p3retval *r) {
-  return pr_append_str_chars(&r->warnings);
-}
-
-int
-p3_get_retval_stop_codon_pos(p3retval *r) {
-  return r->stop_codon_pos;
-}
-
 /* ============================================================ */
 /* END functions for p3retval                                   */
 /* ============================================================ */
@@ -3564,30 +3539,6 @@ obj_fn(pa, h)
     PR_ASSERT(sum >= 0.0);
 
     return sum;
-}
-
-char *
-pr_gather_warnings(const p3retval *retval, 
-                   const p3_global_settings *pa) {
-
-  pr_append_str warning;
-
-  PR_ASSERT(NULL != pa);
-
-  init_pr_append_str(&warning);
-
-  if (seq_lib_warning_data(pa->p_args.repeat_lib))
-    pr_append_new_chunk(&warning, seq_lib_warning_data(pa->p_args.repeat_lib));
-
-  if(seq_lib_warning_data(pa->o_args.repeat_lib)) {
-    pr_append_new_chunk(&warning, seq_lib_warning_data(pa->o_args.repeat_lib));
-    pr_append(&warning, " (for internal oligo)");
-  }
-
-  if (!pr_is_empty(&retval->warnings))
-    pr_append_new_chunk(&warning,  retval->warnings.data);
-
-  return pr_is_empty(&warning) ? NULL : warning.data;
 }
 
 static short
@@ -6738,4 +6689,55 @@ op_set_too_short(primer_rec *oligo) {
   oligo->ok = OV_TOO_SHORT;
   oligo->problems.prob |= OP_TOO_SHORT;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
+}
+
+/* JOHN, THESE ARE THE FUNCTIONS WE NEED TO WRAP IN Primer3.xs */
+
+const char *
+p3_get_rv_and_gs_warnings(const p3retval *retval, 
+			  const p3_global_settings *pa) {
+
+  pr_append_str warning;
+
+  PR_ASSERT(NULL != pa);
+
+  init_pr_append_str(&warning);
+
+  if (seq_lib_warning_data(pa->p_args.repeat_lib))
+    pr_append_new_chunk(&warning, seq_lib_warning_data(pa->p_args.repeat_lib));
+
+  if(seq_lib_warning_data(pa->o_args.repeat_lib)) {
+    pr_append_new_chunk(&warning, seq_lib_warning_data(pa->o_args.repeat_lib));
+    pr_append(&warning, " (for internal oligo)");
+  }
+
+  if (!pr_is_empty(&retval->warnings))
+    pr_append_new_chunk(&warning,  retval->warnings.data);
+
+  return pr_is_empty(&warning) ? NULL : warning.data;
+}
+
+const char *
+p3_get_rv_global_errors(const p3retval *retval) {
+  return retval->glob_err.data;
+}
+
+const char *
+p3_get_rv_per_sequence_errors(const p3retval *retval) {
+  return retval->per_sequence_err.data;
+}
+
+p3_output_type
+p3_get_rv_output_type(const p3retval *r) {
+  return r->output_type;
+}
+
+const char *
+p3_get_rv_warnings(const p3retval *r) {
+  return pr_append_str_chars(&r->warnings);
+}
+
+int
+p3_get_rvstop_codon_pos(p3retval *r) {
+  return r->stop_codon_pos;
 }

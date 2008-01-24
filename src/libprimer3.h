@@ -705,10 +705,15 @@ void destroy_p3retval(p3retval *);
 
 /* get elements of p3retval */
 const pair_array_t *p3_get_retval_best_pairs(const p3retval *r);
-const char *p3_get_retval_glob_err(const p3retval *r);
-const char *p3_get_retval_per_sequence_err(const p3retval *r);
-const char *p3_get_retval_warnings(const p3retval *r);
-const p3_output_type p3_get_retval_output_type(const p3retval *r);
+
+const char *p3_get_rv_and_gs_warnings(const p3retval *retval, 
+				      const p3_global_settings *pa);
+const char *p3_get_rv_global_errors(const p3retval *r);
+const char *p3_get_rv_per_sequence_errors(const p3retval *r);
+const char *p3_get_rv_warnings(const p3retval *r);
+p3_output_type p3_get_rv_output_type(const p3retval *r);
+int            p3_get_rv_stop_codon_pos(p3retval *r);
+
 const oligo_array *p3_get_retval_left_primers(const p3retval *r);
 const oligo_array *p3_get_retval_right_primers(const p3retval *r);
 const oligo_array *p3_get_retval_internal_oligos(const p3retval *r);
@@ -942,10 +947,6 @@ char  *pr_oligo_sequence(const seq_args *, const primer_rec *);
 char  *pr_oligo_rev_c_sequence(const seq_args *, const primer_rec *);
 
 void  pr_set_default_global_args(p3_global_settings *);
-
-char  *pr_gather_warnings(const p3retval *, 
-                          const p3_global_settings * /*,
-                                                       const pr_append_str *more_warnings*/);
 
 /* Return NULL on ENOMEM */
 pr_append_str *create_pr_append_str();
