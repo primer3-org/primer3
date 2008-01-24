@@ -120,7 +120,7 @@ sub ($) { my $v = shift;
 	  my @nums = split( /\s+/, $v) ;
 	  my $n = shift @nums ;
 	  pl_set_sa_empty_quality($sa);     
-	  while(defined $n || $n ne "") {
+	  while(defined $n && $n ne "") {
 	      pl_sa_add_to_quality_array($sa, $n) ;
 	      $n = shift @nums ;
 	    } 
