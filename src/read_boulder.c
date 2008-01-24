@@ -975,12 +975,6 @@ parse_seq_quality(char *s,
 
    p = q = s;
 
-   /* Skip leading blanks or tabs; FIX ME, TEST, probably not needed /*
-       while(*p == ' ' || *p == '\t'){
-      p++;
-      if (*p == '\0' || *p == '\n') return 0;
-      } */
-
    while (*q != '\0' && *q != '\n') {
       t = strtol(p, &q, 10);
       if (q == p) {
