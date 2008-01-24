@@ -4782,7 +4782,7 @@ _pr_data_control(const p3_global_settings *pa,
              "PRIMER_INTERNAL_OLIGO_MIN_QUALITY > PRIMER_QUALITY_RANGE_MAX");
            return 1;
         }
-        for(i=0; i< seq_len; i++) {
+        for(i=0; i < sa->n_quality; i++) {
            if(sa->quality[i] < pa->quality_range_min ||
                  sa->quality[i] > pa->quality_range_max) {
              pr_append_new_chunk(nonfatal_err,
