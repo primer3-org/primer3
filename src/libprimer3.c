@@ -998,7 +998,7 @@ destroy_seq_args(seq_args *sa) {
 /* ============================================================ */
 p3retval *
 choose_primers(const p3_global_settings *pa, 
-               /* const */ seq_args *sa)
+               seq_args *sa)
 {
     int          i;               /* Loop index. */
     int          prod_size_range; /* Product size range indexr. */
@@ -5786,7 +5786,7 @@ int p3_set_sa_right_input(seq_args *sargs, const char *s) {
 }
 
 int p3_set_sa_internal_input(seq_args *sargs, const char *s) {
- return _set_string(&sargs->sequence_name, s); 
+ return _set_string(&sargs->internal_input, s); 
 }
 
 void
