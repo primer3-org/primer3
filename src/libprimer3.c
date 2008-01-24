@@ -76,7 +76,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define OK_OR_MUST_USE(H) ((H)->ok == OV_OK || (H)->must_use)
 
-
 #define PR_UNDEFINED_INT_OPT          INT_MIN
 #define PR_UNDEFINED_DBL_OPT          DBL_MIN
 
@@ -2374,7 +2373,6 @@ oligo_param(const p3_global_settings *pa,
   /* FIX ME -- most of this function is in 'index' land,
      change it to oligo land (s1, s1_rev, and  olig_seq. */
 
-  /* int tmp; */
   int i;
   int j, k;
   int five_prime_pos; /* position of 5' base of oligo */
@@ -2545,42 +2543,11 @@ oligo_param(const p3_global_settings *pa,
   }
 #endif
 
-#if 1
   /* Tentative interface for generic oligo  testing
      function */
   if (!sequence_quality_is_ok(pa, h, l, sa, j, k,
 			      stats, po_args)
       && !must_use) return;
-#endif
-
-#if 0
-  if (OT_LEFT == l || OT_RIGHT == l) { /* FIX ME - logic is spread
-					  between the calls and
-					  the internals of sequence_quality_is_ok,
-					  and may be duplicated */
-					  
-    tmp = sequence_quality_is_ok(pa, h, l, sa, j, k,
-                           stats, po_args);
-    if (h->seq_quality < po_args->min_quality) {
-      PR_ASSERT(tmp != 1);
-      if (!must_use) return;
-    } else if (h->seq_end_quality < po_args->min_end_quality) {
-      PR_ASSERT(tmp != 1);
-      if (!must_use) return;
-    } else {
-      PR_ASSERT(tmp == 1);
-    }
-  } else if (OT_INTL == l) {
-    tmp = sequence_quality_is_ok(pa, h, l, sa, j, k,
-                           stats, po_args);
-    if (h->seq_quality < po_args->min_quality) {
-      PR_ASSERT(tmp != 1);
-      if (!must_use) return;
-    } else{
-      PR_ASSERT(tmp == 1);
-    }
-  } 
-#endif
 
   max_poly_x = po_args->max_poly_x;     
   if (max_poly_x > 0) {
@@ -2675,18 +2642,21 @@ oligo_param(const p3_global_settings *pa,
   }
     
   if (h->length > po_args->max_size ) {
-    h->ok = OV_TOO_LONG;
+    op_set_too_long(h);
     stats->size_max ++;
     if (!must_use) return;
   }
 
   if (h->length < po_args->min_size ) {
-    h->ok = OV_TOO_SHORT;
+    op_set_too_short(h);
     stats->size_min ++;
     if (!must_use) return;
   }
 
-  if (OV_UNINITIALIZED == h->ok) h->ok = OV_OK;
+  if (OV_UNINITIALIZED == h->ok) {  /* FIX ME, USE NEW INFORMATION OR FN */
+    h->ok = OV_OK;
+    op_set_completely_written(h);
+  }
 } /* oligo_param */
 #undef OUTSIDE_START_WT
 #undef INSIDE_START_WT
@@ -6629,6 +6599,8 @@ op_set_unwritten(primer_rec *oligo) {
 #define OP_HIGH_SIM_TO_NON_TEMPLATE_SEQ     (1 << 16);
 #define OP_HIGH_SIM_TO_MULTI_TEMPLATE_SITES (1 << 17);
 #define OP_OVERLAPS_MASKED_SEQ              (1 << 18);
+#define OP_TOO_LONG                         (1 << 19);
+#define OP_TOO_SHORT                        (1 << 20);
 
 static void
 op_set_completely_written(primer_rec *oligo) {
@@ -6752,15 +6724,18 @@ op_set_overlaps_masked_sequence(primer_rec *oligo) {
   oligo->ok = OV_GMASKED;
   oligo->problems.prob |= OP_OVERLAPS_MASKED_SEQ;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
-
 }
 
 static void
 op_set_too_long(primer_rec *oligo) {
-
+  oligo->ok = OV_TOO_LONG;
+  oligo->problems.prob |= OP_TOO_LONG;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_too_short(primer_rec *oligo) {
-
+  oligo->ok = OV_TOO_SHORT;
+  oligo->problems.prob |= OP_TOO_SHORT;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
