@@ -6691,9 +6691,7 @@ op_set_too_short(primer_rec *oligo) {
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
-/* JOHN, THESE ARE THE FUNCTIONS WE NEED TO WRAP IN Primer3.xs */
-
-const char *
+char *
 p3_get_rv_and_gs_warnings(const p3retval *retval, 
 			  const p3_global_settings *pa) {
 

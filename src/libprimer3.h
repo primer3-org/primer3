@@ -706,8 +706,10 @@ void destroy_p3retval(p3retval *);
 /* get elements of p3retval */
 const pair_array_t *p3_get_retval_best_pairs(const p3retval *r);
 
-const char *p3_get_rv_and_gs_warnings(const p3retval *retval, 
+/* It is the responsibility of caller to free the return value. */
+char *p3_get_rv_and_gs_warnings(const p3retval *retval, 
 				      const p3_global_settings *pa);
+
 const char *p3_get_rv_global_errors(const p3retval *r);
 const char *p3_get_rv_per_sequence_errors(const p3retval *r);
 const char *p3_get_rv_warnings(const p3retval *r);

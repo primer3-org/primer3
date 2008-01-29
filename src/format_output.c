@@ -148,7 +148,6 @@ format_pairs(FILE *f,
              const pr_append_str *combined_retval_err,
              int explain_flag)
 {
-  /* Some variables */
   char *warning;
   int print_lib_sim = lib_sim_specified(pa);
   primer_rec *h = NULL;
