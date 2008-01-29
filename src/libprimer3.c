@@ -6531,27 +6531,53 @@ op_set_unwritten(primer_rec *oligo) {
   oligo->problems.prob = 0UL;  /* Zero unsigned long */
 }
 
-#define OP_PARTIALLY_WRITTEN    (1);
-#define OP_COMPLETELY_WRITTEN   (1 << 1);
-#define OP_TOO_MANY_NS          (1 << 2);
-#define OP_OVERLAPS_TARGET      (1 << 3);
-#define OP_HIGH_GC_CONTENT      (1 << 4);
-#define OP_LOW_GC_CONTENT       (1 << 5);
-#define OP_HIGH_TM              (1 << 6);
-#define OP_LOW_TM               (1 << 7);
-#define OP_OVERLAPS_EXCL_REGION (1 << 8);
-#define OP_HIGH_SELF_ANY        (1 << 9);
-#define OP_HIGH_SELF_END        (1 << 10);
-#define OP_NO_GC_CLAMP          (1 << 11);
-#define OP_HIGH_END_STABILITY   (1 << 12);
-#define OP_HIGH_POLY_X                      (1 << 13);
-#define OP_LOW_SEQUENCE_QUALITY             (1 << 14);
-#define OP_LOW_END_SEQUENCE_QUALITY         (1 << 15);
-#define OP_HIGH_SIM_TO_NON_TEMPLATE_SEQ     (1 << 16);
-#define OP_HIGH_SIM_TO_MULTI_TEMPLATE_SITES (1 << 17);
-#define OP_OVERLAPS_MASKED_SEQ              (1 << 18);
-#define OP_TOO_LONG                         (1 << 19);
-#define OP_TOO_SHORT                        (1 << 20);
+#define OP_PARTIALLY_WRITTEN    (1)
+#define OP_COMPLETELY_WRITTEN   (1 << 1)
+#define OP_TOO_MANY_NS          (1 << 2)
+#define OP_OVERLAPS_TARGET      (1 << 3)
+#define OP_HIGH_GC_CONTENT      (1 << 4)
+#define OP_LOW_GC_CONTENT       (1 << 5)
+#define OP_HIGH_TM              (1 << 6)
+#define OP_LOW_TM               (1 << 7)
+#define OP_OVERLAPS_EXCL_REGION (1 << 8)
+#define OP_HIGH_SELF_ANY        (1 << 9)
+#define OP_HIGH_SELF_END        (1 << 10)
+#define OP_NO_GC_CLAMP          (1 << 11)
+#define OP_HIGH_END_STABILITY   (1 << 12)
+#define OP_HIGH_POLY_X                      (1 << 13)
+#define OP_LOW_SEQUENCE_QUALITY             (1 << 14)
+#define OP_LOW_END_SEQUENCE_QUALITY         (1 << 15)
+#define OP_HIGH_SIM_TO_NON_TEMPLATE_SEQ     (1 << 16)
+#define OP_HIGH_SIM_TO_MULTI_TEMPLATE_SITES (1 << 17)
+#define OP_OVERLAPS_MASKED_SEQ              (1 << 18)
+#define OP_TOO_LONG                         (1 << 19)
+#define OP_TOO_SHORT                        (1 << 20)
+
+/*  returns a pointer to static storage, which
+    is over-written on next call */
+#define ADD_OP_STR(COND, STR) if (prob & COND) { tmp = STR; strcpy(next, tmp); next += strlen(tmp); }
+const char *
+op_string(primer_rec *oligo) {
+  static char output[4096];
+  char *next = 0;
+  char *tmp;
+  unsigned long int prob = oligo->problems.prob;
+
+  if (!(prob & OP_PARTIALLY_WRITTEN)) {
+    tmp = " Not checked;";
+    strcpy(next, tmp);
+    next += strlen(tmp);
+  }
+  if (!(prob & OP_COMPLETELY_WRITTEN)) {
+    tmp = " Not completely checked;";
+    strcpy(next, tmp);
+    next += strlen(tmp);
+  }
+  ADD_OP_STR(OP_TOO_MANY_NS, " Too man Ns;")
+
+  return output;
+}
+
 
 static void
 op_set_completely_written(primer_rec *oligo) {

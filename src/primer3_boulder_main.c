@@ -73,9 +73,9 @@ main(argc,argv)
 
   p3_global_settings *global_pa;
   seq_args *sa;
-  read_boulder_record_results read_boulder_record_res = {0,0};
+  read_boulder_record_results read_boulder_record_res = {0,0,0};
 
-  /* Declare and initialize error strings. */  /* ANDREAS, handlers are usually functions */
+  /* Declare and initialize pointers  to error strings. */
   pr_append_str *fatal_parse_err = NULL;
   pr_append_str *nonfatal_parse_err = NULL;
   

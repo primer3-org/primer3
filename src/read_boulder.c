@@ -372,6 +372,7 @@ read_boulder_record(FILE *file_input,
       } else {
         COMPARE_INT("P3_FILE_FLAG", res->file_flag);
       }
+      COMPARE_INT("P3_SHOW_OLIGO_PROBLEMS", res->show_oligo_problems);
       COMPARE_INT("PRIMER_PICK_ANYWAY", pa->pick_anyway);
       COMPARE_INT("PRIMER_GC_CLAMP", pa->gc_clamp);
       COMPARE_INT("PRIMER_EXPLAIN_FLAG", res->explain_flag);
