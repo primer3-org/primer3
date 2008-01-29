@@ -808,8 +808,14 @@ void p3_set_gs_primer_dntp_conc(p3_global_settings * p , double val);
 void p3_set_gs_primer_dna_conc(p3_global_settings * p , double val);
 void p3_set_gs_primer_num_ns_accepted(p3_global_settings * p , int val);
 void p3_set_gs_primer_product_opt_size(p3_global_settings * p , int val);
-void p3_set_gs_primer_self_any(p3_global_settings * p , int val);
-void p3_set_gs_primer_self_end(p3_global_settings * p , int val);
+
+/* void p3_set_gs_primer_self_any(p3_global_settings * p , int val);
+   void p3_set_gs_primer_self_end(p3_global_settings * p , int val); */
+
+void p3_set_gs_primer_self_any(p3_global_settings * p , double val);
+void p3_set_gs_primer_self_end(p3_global_settings * p , double val);
+
+
 void p3_set_gs_primer_file_flag(p3_global_settings * p , int val);
 void p3_set_gs_primer_pick_anyway(p3_global_settings * p , int val);
 void p3_set_gs_primer_gc_clamp(p3_global_settings * p , int val);
@@ -843,13 +849,27 @@ void p3_set_gs_primer_internal_oligo_dntp_conc(p3_global_settings * p , double v
 void p3_set_gs_primer_internal_oligo_dna_conc(p3_global_settings * p , double val);
 void p3_set_gs_primer_internal_oligo_num_ns(p3_global_settings * p , int val);
 void p3_set_gs_primer_internal_oligo_min_quality(p3_global_settings * p , int val);
-void p3_set_gs_primer_internal_oligo_self_any(p3_global_settings * p , int val);
-void p3_set_gs_primer_internal_oligo_self_end(p3_global_settings * p , int val);
-void p3_set_gs_primer_max_mispriming(p3_global_settings * p , int val);
-void p3_set_gs_primer_internal_oligo_max_mishyb(p3_global_settings * p , int val);
-void p3_set_gs_primer_pair_max_mispriming(p3_global_settings * p , int val);
-void p3_set_gs_primer_max_template_mispriming(p3_global_settings * p , int val);
-void p3_set_gs_primer_internal_oligo_max_template_mishyb(p3_global_settings * p , int val);
+
+
+/* void p3_set_gs_primer_internal_oligo_self_any(p3_global_settings * p , int val); */
+void p3_set_gs_primer_internal_oligo_self_any(p3_global_settings * p , double val);
+
+
+
+/* void p3_set_gs_primer_internal_oligo_self_end(p3_global_settings * p , int val); */
+void p3_set_gs_primer_internal_oligo_self_end(p3_global_settings * p , double val);
+
+void p3_set_gs_primer_max_mispriming(p3_global_settings * p , double val);
+
+void p3_set_gs_primer_internal_oligo_max_mishyb(p3_global_settings * p , double val);
+
+void p3_set_gs_primer_pair_max_mispriming(p3_global_settings * p , double val);
+
+void p3_set_gs_primer_max_template_mispriming(p3_global_settings * p , double val);
+
+void p3_set_gs_primer_internal_oligo_max_template_mishyb(p3_global_settings * p , double val);
+
+
 void p3_set_gs_primer_lib_ambiguity_codes_consensus(p3_global_settings * p , int val);
 void p3_set_gs_primer_inside_penalty(p3_global_settings * p , double val);
 void p3_set_gs_primer_outside_penalty(p3_global_settings * p , double val);
@@ -921,10 +941,20 @@ void p3_set_gs_lowercase_masking(p3_global_settings * p , int lowercase_masking)
 void p3_set_gs_outside_penalty(p3_global_settings * p , double outside_penalty);
 void p3_set_gs_inside_penalty(p3_global_settings * p , double inside_penalty);
 void p3_set_gs_num_intervals(p3_global_settings * p , int num_intervals);
-void p3_set_gs_pair_max_template_mispriming(p3_global_settings * p , short  pair_max_template_mispriming);
-void p3_set_gs_pair_repeat_compl(p3_global_settings * p, short  pair_repeat_compl); 
-void p3_set_gs_pair_compl_any(p3_global_settings * p , short  pair_compl_any);
-void p3_set_gs_pair_compl_end(p3_global_settings * p , short  pair_compl_end);
+
+/* void p3_set_gs_pair_max_template_mispriming(p3_global_settings * p , short  pair_max_template_mispriming); */
+void p3_set_gs_pair_max_template_mispriming(p3_global_settings * p ,
+					    double pair_max_template_mispriming);
+
+/*  void p3_set_gs_pair_repeat_compl(p3_global_settings * p, short  pair_repeat_compl);  */
+void p3_set_gs_pair_repeat_compl(p3_global_settings * p, double pair_repeat_compl); 
+
+/* void p3_set_gs_pair_compl_any(p3_global_settings * p , short  pair_compl_any);
+   void p3_set_gs_pair_compl_end(p3_global_settings * p , short  pair_compl_end); */
+void p3_set_gs_pair_compl_any(p3_global_settings * p , double  pair_compl_any);
+void p3_set_gs_pair_compl_end(p3_global_settings * p , double  pair_compl_end);
+
+
 void p3_set_gs_min_three_prime_distance(p3_global_settings *p, int min_distance);
 
 /* 
