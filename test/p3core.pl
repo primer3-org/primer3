@@ -247,10 +247,13 @@ sub ($) { my $v = shift;  my $i = pl_set_gs_primer_num_ns_accepted($gs, $v) };
    $dispatch{'PRIMER_PRODUCT_OPT_SIZE'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_product_opt_size($gs, $v) };          
    $dispatch{'PRIMER_SELF_ANY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_self_any($gs, 100 * $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_self_any($gs, $v) };          
    $dispatch{'PRIMER_SELF_END'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_self_end($gs, 100 *$v) };          
+
+# THIS NEEDS TO BE REMOVED:
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_self_end($gs, $v) };          
    $dispatch{'PRIMER_FILE_FLAG'} = 
+
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_file_flag($gs, $v) };          
    $dispatch{'PRIMER_PICK_ANYWAY'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pick_anyway($gs, $v) };     
@@ -319,9 +322,9 @@ sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_num_ns($gs, $v
    $dispatch{'PRIMER_INTERNAL_OLIGO_MIN_QUALITY'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_min_quality($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_SELF_ANY'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_self_any($gs, 100 * $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_self_any($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_SELF_END'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_self_end($gs, 100 * $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_self_end($gs, $v) };          
    $dispatch{'PRIMER_MAX_MISPRIMING'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_mispriming($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_MAX_MISHYB'} = 
