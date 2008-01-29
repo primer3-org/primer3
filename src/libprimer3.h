@@ -318,7 +318,7 @@ typedef struct p3_global_settings {
 
   int    min_three_prime_distance; /* Minimum number of base pairs
                                       between the 3' ends of
-                                      successive left or successive
+                                      any two left or any two
                                       right primers when returning
                                       num_return primer pairs.  The
                                       objective is get 'truly
