@@ -383,7 +383,7 @@ static const char *pr_program_name = "probably primer3_core";
 
 /* FIX ME -- there is no need to create #defines for these. */
 
-#define INTERNAL_OLIGO_MAX_SIZE   27
+
 #define INTERNAL_OLIGO_OPT_TM     60.0
 #define INTERNAL_OLIGO_MIN_TM     57.0
 #define INTERNAL_OLIGO_MAX_TM     63.0
@@ -493,59 +493,27 @@ pr_set_default_global_args(p3_global_settings *a) {
     memset(a, 0, sizeof(*a));  
 
     /* Arguments for primers ================================= */
-    a->p_args.opt_size         = 20;
-    a->p_args.min_size         = 18;
-    a->p_args.max_size         = 27;
+    a->p_args.opt_size          = 20;
+    a->p_args.min_size          = 18;
+    a->p_args.max_size          = 27;
 
-    a->p_args.opt_tm           = 60;
-    a->p_args.min_tm           = 57;
-    a->p_args.max_tm           = 63;
+    a->p_args.opt_tm            = 60;
+    a->p_args.min_tm            = 57;
+    a->p_args.max_tm            = 63;
 
-    a->p_args.min_gc           = 20.0;
-    a->p_args.opt_gc_content   = DEFAULT_OPT_GC_PERCENT;
-    a->p_args.max_gc           = 80.0;
+    a->p_args.min_gc            = 20.0;
+    a->p_args.opt_gc_content    = DEFAULT_OPT_GC_PERCENT;
+    a->p_args.max_gc            = 80.0;
+    a->p_args.salt_conc         = 50.0;
+    a->p_args.divalent_conc     = 0.0;
+    a->p_args.dntp_conc         = 0.0;
 
-    a->p_args.salt_conc        = 50.0;
-
-    /*
-      DIVALENT_CONC and DNTP_CONC are both needed for enabling use of
-      divalent cations for calculation of melting temperature of short and
-      long oligos.  The formula for converting the divalent cations to
-      monovalent cations is in the paper [Ahsen von N, Wittwer CT, Schutz E
-      (2001) "Oligonucleotide Melting Temperatures under PCR Conditions:
-      Nearest-Neighbor Corrections for Mg^2+, Deoxynucleotide Triphosphate,
-      and Dimethyl Sulfoxide Concentrations with Comparision to Alternative
-      Empirical Formulas", Clinical Chemistry 47:1956-61
-      http://www.clinchem.org/cgi/content/full/47/11/1956] The default is
-      0.0.  (New in v. 1.1.0, added by Maido Remm and Triinu Koressaar.)
-    */
-    a->p_args.divalent_conc    = 0.0;
-    a->p_args.dntp_conc        = 0.0;
-    a->p_args.dna_conc         = 50.0;
-    /* #define NUM_NS_ACCEPTED       0 */
-
-    a->p_args.num_ns_accepted  = 0;
-
-    /*#define SELF_ANY            800 */
-
-    a->p_args.max_self_any     = 800;
-
-    /*#define SELF_END            300 */
-
-    a->p_args.max_self_end     = 300;
-
-    /* #define MAX_POLY_X            5*/
-
-
-    a->p_args.max_poly_x       = 5;
-
-    /* #define REPEAT_SIMILARITY                1200 */
-
+    a->p_args.dna_conc          = 50.0;
+    a->p_args.num_ns_accepted   = 0;
+    a->p_args.max_self_any      = 800;
+    a->p_args.max_self_end      = 300;
+    a->p_args.max_poly_x        = 5;
     a->p_args.max_repeat_compl  = 1200;
-
-    /*#define MIN_QUALITY                         0 */
-
-
     a->p_args.min_quality       = 0;
 
     a->p_args.min_end_quality   = 0;
@@ -570,51 +538,29 @@ pr_set_default_global_args(p3_global_settings *a) {
 
     /* End arguments for primers ============================= */
 
-    a->max_diff_tm                  = 100.0;
-
-    a->tm_santalucia           = 0;
-
-    a->salt_corrections        = 0;
-
-    a->pair_compl_any   = 800;
-    a->pair_compl_end   = 300;
-
-    /* #define GC_CLAMP              0 */
-
-    a->gc_clamp         = 0;
-
-    /*#define LIBERAL_BASE          0 */
-
-    a->liberal_base      = 0;
-
+    a->max_diff_tm         = 100.0;
+    a->tm_santalucia       = 0;
+    a->salt_corrections    = 0;
+    a->pair_compl_any      = 800;
+    a->pair_compl_end      = 300;
+    a->gc_clamp            = 0;
+    a->liberal_base        = 0;
     a->primer_task         = pick_detection_primers;
     a->pick_left_primer    = 1;
     a->pick_right_primer   = 1;
     a->pick_internal_oligo = 0;
-
-    a->first_base_index  = 0;
-    /* #define NUM_RETURN                          5 */
-
-    a->num_return        = 5;
-    a->pr_min[0]         = 100;
-    a->pr_max[0]         = 300;
-    a->num_intervals     = 1;
-
-    /* #define PAIR_REPEAT_SIMILARITY           2400*/
-    a->pair_repeat_compl = 2400;
-
-    /* #define QUALITY_RANGE_MIN                   0 */
-    a->quality_range_min = 0;
-
-    /* #define QUALITY_RANGE_MAX                 100*/
-    a->quality_range_max = 100;
+    a->first_base_index    = 0;
+    a->num_return          = 5;
+    a->pr_min[0]           = 100;
+    a->pr_max[0]           = 300;
+    a->num_intervals       = 1;
+    a->pair_repeat_compl   = 2400;
+    a->quality_range_min   = 0;
+    a->quality_range_max   = 100;
 
     a->outside_penalty   = PR_DEFAULT_OUTSIDE_PENALTY;
     a->inside_penalty    = PR_DEFAULT_INSIDE_PENALTY;
     a->max_end_stability = DEFAULT_MAX_END_STABILITY;
-
-/* #define LOWERCASE_MASKING                   0
- */
     a->lowercase_masking = 0; /* added by T.Koressaar */
     a->product_max_tm    = PR_DEFAULT_PRODUCT_MAX_TM;
     a->product_min_tm    = PR_DEFAULT_PRODUCT_MIN_TM;
@@ -625,13 +571,11 @@ pr_set_default_global_args(p3_global_settings *a) {
                           = PAIR_MAX_TEMPLATE_MISPRIMING;
 
 
-    /* #define INTERNAL_OLIGO_OPT_SIZE   20 */
     a->o_args.opt_size = 20;
-
-    /* #define INTERNAL_OLIGO_MIN_SIZE   18 */
     a->o_args.min_size = 18;
 
-    a->o_args.max_size = INTERNAL_OLIGO_MAX_SIZE;
+    /* #define INTERNAL_OLIGO_MAX_SIZE   27 */;
+    a->o_args.max_size = 27;
     a->o_args.opt_tm          = INTERNAL_OLIGO_OPT_TM;
     a->o_args.min_tm          = INTERNAL_OLIGO_MIN_TM;
     a->o_args.max_tm          = INTERNAL_OLIGO_MAX_TM;
@@ -648,8 +592,8 @@ pr_set_default_global_args(p3_global_settings *a) {
     a->o_args.max_self_end        = INTERNAL_OLIGO_SELF_END;
     a->o_args.max_repeat_compl    = INTERNAL_OLIGO_REPEAT_SIMILARITY;
 
-    a->o_args.min_quality     = 0; /* MIN_QUALITY; */
-    a->o_args.min_end_quality = 0; /* MIN_QUALITY; */
+    a->o_args.min_quality     = 0;
+    a->o_args.min_end_quality = 0;
 
     a->o_args.max_template_mispriming
                           = IO_MAX_TEMPLATE_MISHYB;
@@ -695,7 +639,7 @@ pr_set_default_global_args(p3_global_settings *a) {
 
 }
 
-/* Add a valuepair to the array of intervals */
+/* Add a pair of integers to an  array of intervals */
 int
 p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2) 
 {
@@ -1673,24 +1617,6 @@ pick_only_best_primer(const int start, const int length,
   /* Set n to the length of included region */
   PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
             
-#if 0
-  /* The position of the intial base of the rightmost stop codon that
-   * is to the left of sa->start_codon_pos; valid only if
-   * sa->start_codon_pos is "not null".  We will not want to include
-   * a stop codon to the right of the the start codon in the
-   * amplicon. */
-  int stop_codon1 = -1;
-            
-  if ((oligo->type == OT_LEFT) && !PR_START_CODON_POS_IS_NULL(sa)) {
-    stop_codon1 = find_stop_codon(sa->trimmed_seq, 
-                                  sa->start_codon_pos, -1);
-
-    retval->stop_codon_pos = find_stop_codon(sa->trimmed_seq, 
-                                             sa->start_codon_pos,  1);
-    retval->stop_codon_pos += sa->incl_s;
-  }
-#endif
-          
   /* Allocate some space for primers if needed */
   if (NULL == oligo->oligo) {
     oligo->storage_size = INITIAL_LIST_LEN;
@@ -1755,21 +1681,6 @@ pick_only_best_primer(const int start, const int length,
       /* Add it to the considered statistics */
       oligo->expl.considered++;
 
-#if 0
-      if ((oligo->type == OT_LEFT) && !PR_START_CODON_POS_IS_NULL(sa)
-          /* Make sure the primer would amplify at least part of
-             the ORF. */
-          && (0 != (h.start - sa->start_codon_pos) % 3
-              || h.start <= stop_codon1
-              || (retval->stop_codon_pos != -1 
-                  && h.start >= retval->stop_codon_pos))) {
-
-        oligo->expl.no_orf++;
-        /* FIX ME op_set_does_not_amplify_orf(&h); */
-        if (!pa->pick_anyway) continue;
-      }
-#endif
-               
       /* Calculate all the primer parameters */
       calculate_oligo_features(pa, &h, oligo->type, dpal_arg_to_use,
                                sa, &oligo->expl, retval, oligo_seq);
@@ -1843,24 +1754,6 @@ pick_primer_range(const int start, const int length, int *extreme,
   /* Set n to the length of included region */
   PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
     
-#if 0
-  /* The position of the intial base of the rightmost stop codon that
-   * is to the left of sa->start_codon_pos; valid only if
-   * sa->start_codon_pos is "not null".  We will not want to include
-   * a stop codon to the right of the the start codon in the
-   * amplicon. */
-  int stop_codon1 = -1;
-    
-  if ((oligo->type == OT_LEFT) && !PR_START_CODON_POS_IS_NULL(sa)) {
-    stop_codon1 = find_stop_codon(sa->trimmed_seq, 
-                                  sa->start_codon_pos, -1);
-
-    retval->stop_codon_pos = find_stop_codon(sa->trimmed_seq, 
-                                             sa->start_codon_pos,  1);
-    retval->stop_codon_pos += sa->incl_s;
-  }
-#endif
-  
   /* Allocate some space for primers if needed */
   if (NULL == oligo->oligo) {
     oligo->storage_size = INITIAL_LIST_LEN;
@@ -1934,21 +1827,6 @@ pick_primer_range(const int start, const int length, int *extreme,
       /* Add it to the considered statistics */
       oligo->expl.considered++;
 
-#if 0
-      if ((oligo->type == OT_LEFT) && !PR_START_CODON_POS_IS_NULL(sa)
-          /* Make sure the primer would amplify at least part of
-             the ORF. */
-          && (0 != (h.start - sa->start_codon_pos) % 3
-              || h.start <= stop_codon1
-              || (retval->stop_codon_pos != -1 
-                  && h.start >= retval->stop_codon_pos))) {
-
-        oligo->expl.no_orf++;
-        /* FIX ME op_set_does_not_amplify_orf(&h); */
-        if (!pa->pick_anyway) continue;
-      }
-#endif
-       
       /* Calculate all the primer parameters */
       calculate_oligo_features(pa, &h, oligo->type, dpal_arg_to_use,
                                sa, &oligo->expl, retval, oligo_seq);
@@ -2025,23 +1903,6 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
     
   PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
 
-#if 0
-  /* The position of the intial base of the rightmost stop codon that is
-   * to the left of sa->start_codon_pos; valid only if sa->start_codon_pos
-   * is "not null".  We will not want to include a stop codon to the right
-   * of the the start codon in the amplicon. */
-  int stop_codon1 = -1;
-    
-  if ((oligo->type == OT_LEFT) && !PR_START_CODON_POS_IS_NULL(sa)) {
-    stop_codon1 = find_stop_codon(sa->trimmed_seq, 
-                                  sa->start_codon_pos, -1);
-
-    retval->stop_codon_pos = find_stop_codon(sa->trimmed_seq, 
-                                             sa->start_codon_pos,  1);
-    retval->stop_codon_pos += sa->incl_s;
-  }
-#endif
-
   /* Allocate some space for primers if needed */
   if (NULL == oligo->oligo) {
     oligo->storage_size = INITIAL_LIST_LEN;
@@ -2098,20 +1959,6 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
     if (strcmp_nocase(test_oligo, oligo_seq))
       continue;
        
-#if 0
-    if ((oligo->type == OT_LEFT) && !PR_START_CODON_POS_IS_NULL(sa)
-        /* Make sure the primer would amplify at least part of
-           the ORF. */
-        && (0 != (h.start - sa->start_codon_pos) % 3
-            || h.start <= stop_codon1
-            || (retval->stop_codon_pos != -1 
-                && h.start >= retval->stop_codon_pos))) {
-      oligo->expl.no_orf++;
-        /* FIX ME op_set_does_not_amplify_orf(&h); */
-      if (!pa->pick_anyway) continue;
-    }
-#endif
-        
     /* Force primer3 to use this oligo */
     h.must_use = (1 && pa->pick_anyway);
                 
@@ -2179,23 +2026,6 @@ add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oli
           return 1;
   }
 
-#if 0
-  /* The position of the intial base of the rightmost stop codon that is
-   * to the left of sa->start_codon_pos; valid only if sa->start_codon_pos
-   * is "not null".  We will not want to include a stop codon to the right
-   * of the the start codon in the amplicon. */
-  int stop_codon1 = -1;
-    
-  if ((oligo->type == OT_LEFT) && !PR_START_CODON_POS_IS_NULL(sa)) {
-    stop_codon1 = find_stop_codon(sa->trimmed_seq, 
-                                  sa->start_codon_pos, -1);
-
-    retval->stop_codon_pos = find_stop_codon(sa->trimmed_seq, 
-                                             sa->start_codon_pos,  1);
-    retval->stop_codon_pos += sa->incl_s;
-  }
-#endif
-
   /* Allocate some space for primers if needed */
   if (NULL == oligo->oligo) {
     oligo->storage_size = INITIAL_LIST_LEN;
@@ -2238,19 +2068,6 @@ add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oli
       /* Put the real primer sequence in s */
       _pr_substr(sa->trimmed_seq,  i, j, oligo_seq);
   }
-        
-#if 0
-  if ((oligo->type == OT_LEFT) && !PR_START_CODON_POS_IS_NULL(sa)
-        /* Make sure the primer would amplify at least part of
-           the ORF. */
-        && (0 != (h.start - sa->start_codon_pos) % 3
-            || h.start <= stop_codon1
-            || (retval->stop_codon_pos != -1 
-                && h.start >= retval->stop_codon_pos))) {
-    /* FIX ME op_set_does_not_amplify_orf(&h); */
-      oligo->expl.no_orf++;
-   }
-#endif
         
   /* Force primer3 to use this oligo */
   h.must_use = (1 && pa->pick_anyway);
@@ -5363,294 +5180,6 @@ FILE *file;
 /* END p3_read_line                                             */
 /* ============================================================ */
 
-#if 0
-/* ============================================================ */
-/* BEGIN seq_lib functions                                      */
-/* ============================================================ */
-
-#define INIT_LIB_SIZE  500
-#define PR_MAX_LIBRARY_WT 100.0
-
-static double parse_seq_name(char *s);
-static char   upcase_and_check_char(char *s);
-static void   reverse_complement_seq_lib(seq_lib  *lib);
-
-/* See comments in p3_seq_lib.h */
-seq_lib *
-read_and_create_seq_lib(const char * filename, const char *errfrag)
-{
-    char  *p;
-    FILE *file;
-    int i, m, k;
-    size_t j, n;
-    char buf[2];
-    char offender = '\0', tmp;
-    seq_lib *lib; 
-
-    if (setjmp(_jmp_buf) != 0)
-      return NULL; /* If we get here, there was an error in
-                      pr_safe_malloc or pr_safe_realloc. */
-
-    lib =  pr_safe_malloc(sizeof(* lib));
-
-    memset(lib, 0, sizeof(*lib));
-
-    PR_ASSERT(NULL != filename);
-
-    lib->repeat_file = pr_safe_malloc(strlen(filename) + 1);
-    strcpy(lib->repeat_file, filename);
-
-    if((file = fopen(lib->repeat_file,"r")) == NULL) {
-        pr_append_new_chunk(&lib->error,
-                            "Cannot open ");
-        goto ERROR;
-    }
-
-    j = INIT_BUF_SIZE;
-    n = INIT_LIB_SIZE;
-    lib->names = pr_safe_malloc(INIT_LIB_SIZE*sizeof(*lib->names));
-    lib->seqs  = pr_safe_malloc(INIT_LIB_SIZE*sizeof(*lib->seqs));
-    lib->weight= pr_safe_malloc(INIT_LIB_SIZE*sizeof(*lib->weight));
-    lib->seq_num = 0;
-
-    /* Read in the file */
-    i = -1;  m = 0; k = 0;
-    while((p = p3_read_line(file))) {
-        if(*p == '>'){
-            i++;
-            if(i >= n) {
-                n += INIT_LIB_SIZE;
-                lib->names = pr_safe_realloc(lib->names,n*sizeof(*lib->names));
-                lib->seqs  = pr_safe_realloc(lib->seqs ,n*sizeof(*lib->seqs));
-                lib->weight= pr_safe_realloc(lib->weight,
-                                             n*sizeof(*lib->weight));
-            }
-            p++;
-            lib->names[i] = pr_safe_malloc(strlen(p) + 1);
-            strcpy(lib->names[i],p);
-            lib->weight[i] = parse_seq_name(lib->names[i]);
-            lib->seqs[i] = pr_safe_malloc(INIT_BUF_SIZE);
-            lib->seqs[i][0] = '\0';
-            lib->seq_num = i+1;
-            if(lib->weight[i] < 0) {
-                pr_append_new_chunk(&lib->error, "Illegal weight in ");
-                goto ERROR;
-            }
-            j = INIT_BUF_SIZE;
-            k = 0;
-            if(i > 0) {
-                /* We are actually testing the previous sequence. */
-                if(strlen(lib->seqs[i-1]) == 0) {
-                    pr_append_new_chunk(&lib->error, "Empty sequence in ");
-                    goto ERROR;
-                }
-                tmp = upcase_and_check_char(lib->seqs[i-1]);
-                m += tmp;
-                if (tmp && '\0' == offender) offender = tmp;
-            }
-            p--;
-        }
-        else {
-            if(i < 0){ 
-                pr_append_new_chunk(&lib->error,
-                                    "Missing id line (expected '>') in ");
-                goto ERROR;
-            } else {
-                if(k+strlen(p) > j-2){
-                    while(j-2 < k+ strlen(p))j += INIT_BUF_SIZE;
-                    lib->seqs[i] = pr_safe_realloc(lib->seqs[i], j);
-
-                }
-                strcat(lib->seqs[i], p);
-                k += strlen(p);
-            }
-        }
-    }
-    if(i < 0) {
-        pr_append_new_chunk(&lib->error, "Empty ");
-        goto ERROR;
-    }
-    else if(strlen(lib->seqs[i]) < 3) {
-        pr_append_new_chunk(&lib->error, "Sequence length < 3 in ");
-        goto ERROR;
-    }
-    tmp = upcase_and_check_char(lib->seqs[i]);
-    m += tmp;
-    if (tmp && '\0' == offender) offender = tmp;
-    if (offender) {
-        pr_append_new_chunk(&lib->warning,
-                            "Unrecognized character (");
-        buf[0] = offender;
-        buf[1] = '\0';
-        pr_append(&lib->warning, buf);
-        pr_append(&lib->warning, ") in ");
-        pr_append(&lib->warning, errfrag);
-        pr_append(&lib->warning, " ");
-        pr_append(&lib->warning, lib->repeat_file);
-    }
-    if (file) fclose(file);
-    reverse_complement_seq_lib(lib);
-    return lib;
-
- ERROR:
-    pr_append(&lib->error, errfrag);
-    pr_append(&lib->error, " ");
-    pr_append(&lib->error, lib->repeat_file);
-    if (file) fclose(file);
-    return lib;
-}
-
-/* 
- * Free exogenous storage associated with a seq_lib (but not the seq_lib
- * itself).  Silently ignore NULL p.  Set *p to 0 bytes.
- */
-void
-destroy_seq_lib(p)
-    seq_lib *p;
-{
-    int i;
-    if (NULL == p) return;
-
-    if ( NULL != p->repeat_file) free(p->repeat_file);
-    if (NULL != p->seqs) { 
-        for(i = 0; i < p->seq_num; i++)
-            if (NULL != p->seqs[i]) free(p->seqs[i]);
-        free(p->seqs);
-    }
-    if (NULL != p->names) {
-        for(i = 0; i < p->seq_num; i++)
-            if (NULL != p->names[i]) free(p->names[i]);
-        free(p->names);
-    }
-    if (NULL != p->weight) free(p->weight);
-    if (NULL != p->error.data) free(p->error.data);
-    if (NULL != p->warning.data) free(p->warning.data);
-    if (NULL != p->rev_compl_seqs) free(p->rev_compl_seqs);
-    free(p);
-}
-
-static void
-reverse_complement_seq_lib(seq_lib  *lib)
-{
-    int i, n, k;
-    if((n = lib->seq_num) == 0) return;
-    else {
-        lib->names = pr_safe_realloc(lib->names, 2*n*sizeof(*lib->names));
-        lib->seqs = pr_safe_realloc(lib->seqs, 2*n*sizeof(*lib->seqs));
-        lib->weight = pr_safe_realloc(lib->weight, 2*n*sizeof(*lib->weight));
-        lib->rev_compl_seqs = pr_safe_malloc(2*n*sizeof(*lib->seqs));
-
-        lib->seq_num *= 2;
-        for(i=n; i<lib->seq_num; i++){
-            k = strlen(lib->names[i-n]);
-            lib->names[i] = pr_safe_malloc(k + 9);
-            strcpy(lib->names[i], "reverse ");
-            strcat(lib->names[i], lib->names[i-n]);
-            lib->seqs[i] = pr_safe_malloc(strlen(lib->seqs[i-n]) + 1);
-            p3_reverse_complement(lib->seqs[i-n], lib->seqs[i]);
-            lib->weight[i] = lib->weight[i-n];
-            lib->rev_compl_seqs[i-n] = lib->seqs[i];
-            lib->rev_compl_seqs[i] = lib->seqs[i-n];
-       }
-    }
-    return;
-}
-
-int
-seq_lib_num_seq(const seq_lib* lib) {
-  if (NULL == lib) return 0;
-  else return lib->seq_num;
-}
-
-char *
-seq_lib_warning_data(const seq_lib *lib) {
-  if (NULL == lib) return NULL;
-  else return lib->warning.data;
-}
-
-static double
-parse_seq_name(char *s)
-{
-    char *p, *q;
-    double n;
-
-    p = s;
-    while( *p != '*' && *p != '\0' ) p++;
-    if (*p == '\0' ) return 1;
-    else {
-         p++;
-         n = strtod( p, &q );
-         if( q == p ) return -1;
-    }
-    if(n > PR_MAX_LIBRARY_WT) return -1;
-
-    return n;
-}
-
-/* 
- * Removes spaces and "end-of-line" characters
- * from the sequence, replaces all other
- * characters except A, T, G, C and IUB/IUPAC
- * codes with N.  Returns 0 if there were no such
- * replacements and the first non-ACGT IUB
- * character otherwise. 
- */
-static char
-upcase_and_check_char(char *s)
-{
-    int i, j, n, m;
-
-    j = 0; m = 0;
-    n = strlen(s);
-    for(i=0; i<n; i++){
-      
-        switch(s[i])
-        {
-        case 'a' : s[i-j] = 'A'; break;
-        case 'g' : s[i-j] = 'G'; break;
-        case 'c' : s[i-j] = 'C'; break;
-        case 't' : s[i-j] = 'T'; break;
-        case 'n' : s[i-j] = 'N'; break;
-        case 'A' : s[i-j] = 'A'; break;
-        case 'G' : s[i-j] = 'G'; break;
-        case 'C' : s[i-j] = 'C'; break;
-        case 'T' : s[i-j] = 'T'; break;
-        case 'N' : s[i-j] = 'N'; break;
-
-        case 'b' : case 'B': 
-        case 'd' : case 'D':
-        case 'h' : case 'H':
-        case 'v' : case 'V':
-        case 'r' : case 'R':
-        case 'y' : case 'Y':
-        case 'k' : case 'K':
-        case 'm' : case 'M':
-        case 's' : case 'S':
-        case 'w' : case 'W':
-          s[i-j] = toupper(s[i]); break;
-
-        case '\n': j++;          break;
-        case ' ' : j++;          break;
-        case '\t': j++;          break;
-        case '\r': j++;          break;
-        default  : if (!m) m = s[i]; s[i-j] = 'N'; 
-        }
-    }
-    s[n-j] = '\0';
-    return m;
-}
-
-#undef INIT_LIB_SIZE
-#undef PR_MAX_LIBRARY_WT
-
-
-/* ============================================================ */
-/* END seq_lib functions                                        */
-/* ============================================================ */
-#endif
-
-
-
 /* ============================================================ */
 /* BEGIN 'get' functions for seq_args                           */
 /* ============================================================ */
@@ -5669,7 +5198,6 @@ const interval_array_t2 *
 p3_get_sa_excl_internal2(const seq_args *sargs) {
   return &sargs->excl_internal2 ;
 }
-
 
 /* ============================================================ */
 /* END 'get' functions for seq_args                             */
@@ -5699,12 +5227,10 @@ p3_set_sa_sequence(seq_args *sargs, const char *sequence) {
   return _set_string(&sargs->sequence, sequence) ;
 }
 
-
 void
 p3_set_sa_primer_sequence_quality(seq_args *sargs, int quality) {
   sargs->quality[sargs->n_quality++] = quality ;
 }
-
 
 int
 p3_set_sa_sequence_name(seq_args *sargs, const char* sequence_name) {
@@ -5775,7 +5301,6 @@ int
 p3_add_to_sa_excl_internal2(seq_args *sargs, int n1, int n2) {
   return p3_add_to_interval_array(&sargs->excl_internal2, n1, n2);
 }
-
 
 /* ============================================================ */
 /* END 'set' functions for seq_args                             */
@@ -6532,13 +6057,6 @@ initialize_op(primer_rec *oligo) {
   oligo->ok = OV_UNINITIALIZED;
   oligo->problems.prob = 0UL;  /* 0UL is the unsigned long zero */
 }
-
-#if 0
-static void
-op_set_unwritten(primer_rec *oligo) {
-  oligo->problems.prob = 0UL;  /* Zero unsigned long */
-}
-#endif
 
 #define OP_PARTIALLY_WRITTEN                (1UL <<  0)
 #define OP_COMPLETELY_WRITTEN               (1UL <<  1)

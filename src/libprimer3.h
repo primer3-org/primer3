@@ -162,6 +162,21 @@ typedef struct args_for_one_oligo_or_primer {
 
   /* FIX ME -- skewed -- also used for product Tm */
   double salt_conc;
+
+  /*
+    DIVALENT_CONC and DNTP_CONC are both needed for enabling use of
+    divalent cations for calculation of melting temperature of short
+    and long oligos.  The formula for converting the divalent cations
+    to monovalent cations is in the paper [Ahsen von N, Wittwer CT,
+    Schutz E (2001) "Oligonucleotide Melting Temperatures under PCR
+    Conditions: Nearest-Neighbor Corrections for Mg^2+,
+    Deoxynucleotide Triphosphate, and Dimethyl Sulfoxide
+    Concentrations with Comparision to Alternative Empirical
+    Formulas", Clinical Chemistry 47:1956-61
+    http://www.clinchem.org/cgi/content/full/47/11/1956] The default
+    is 0.0.  (New in v. 1.1.0, added by Maido Remm and Triinu
+    Koressaar.)
+    */
   double divalent_conc; /* added by T.Koressaar, divalent salt concentration mmol/l */
   double dntp_conc; /* added by T.Koressaar, for considering divalent salt concentration */
 
@@ -372,37 +387,29 @@ typedef struct p3_global_settings {
 
   pair_weights  pr_pair_weights;
 
-  int    min_three_prime_distance; /* Minimum number of base pairs
-                                      between the 3' ends of
-                                      any two left or any two
-                                      right primers when returning
-                                      num_return primer pairs.  The
-                                      objective is get 'truly
-                                      different' primer pairs.
+  /* Minimum number of base pairs between the 3' ends of any two left
+     or any two right primers when returning num_return primer pairs.
+     The objective is get 'truly different' primer pairs.
 
-                                      Primers that end at e.g.
-                                      30 and 31 have a three-prime
-                                      distance of 1.
+     Primers that end at e.g. 30 and 31 have a three-prime distance
+     of 1.
 
-                                      0 indicates a primer pair is
-                                      ok if it has not already appeared
-                                      in the output list (default
-                                      behavior and behavior
-                                      in previous releases). This
-                                      is the most liberal behavior.
+     0 indicates a primer pair is ok if it has not already appeared in
+     the output list (default behavior and behavior in previous
+     releases). This is the most liberal behavior.
 
-                                      n > 0 indicates that a primer
-                                      pair is ok if:
+     n > 0 indicates that a primer pair is ok if:
 
-                                      NOT(3' end of left primer closer than n to
-                                      the 3' end a left primer in an existing  pair)
+     NOT(3' end of left primer closer than n to the 3' end a left
+     primer in an existing pair)
 
-                                      AND
+     AND
 
-                                      NOT(3' end of right primer closer than n
-                                      to the 3' end of right primer in an existing pair)
+     NOT(3' end of right primer closer than n
+     to the 3' end of right primer in an existing pair)
+  */
+  int    min_three_prime_distance; 
 
-                                   */
   char *settings_file_id;
 } p3_global_settings;
 
