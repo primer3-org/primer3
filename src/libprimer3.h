@@ -245,12 +245,58 @@ typedef struct p3_global_settings {
   args_for_one_oligo_or_primer p_args;
   args_for_one_oligo_or_primer o_args;
 
-  /* Added by T.Koressaar. Specify the table of thermodynamic
-     parameters to use (Options are ... SantaLucia 1998) */
+  /* 
+     Added by T.Koressaar for updated table thermodynamics.  Specifies
+     details of melting temperature calculation.  (New in v. 1.1.0,
+     added by Maido Remm and Triinu Koressaar.)
+      
+     A value of 1 (recommended) directs primer3 to use the table of
+     thermodynamic values and the method for melting temperature
+     calculation suggested in the paper [SantaLucia JR (1998) "A
+     unified view of polymer, dumbbell and oligonucleotide DNA
+     nearest-neighbor thermodynamics", Proc Natl Acad Sci 95:1460-65
+     http://dx.doi.org/10.1073/pnas.95.4.1460].
+      
+     A value of 0 directs primer3 to a backward compatible calculation
+     (in other words, the only calculation availble in previous
+     version of primer3).
+      
+     This backward compatible calculation uses the table of
+     thermodynamic parameters in the paper [Breslauer KJ, Frank R,
+     Bloecker H and Marky LA (1986) "Predicting DNA duplex stability
+     from the base sequence" Proc Natl Acad Sci 83:4746-50
+     http://dx.doi.org/10.1073/pnas.83.11.3746],
+     and the method in the paper [Rychlik W, Spencer WJ and Rhoads
+     RE (1990) "Optimization of the annealing temperature for DNA
+     amplification in vitro", Nucleic Acids Res 18:6409-12
+     http://www.pubmedcentral.nih.gov/articlerender.fcgi?tool=pubmed&pubmedid=2243783].
+       
+     The default value is 0 only for backward compatibility.
+  */
   int tm_santalucia;  
 
-  /* Added by T.Koressaar. Specify the salt correction formula for Tm
-     calculations. (Options are ... */
+  /* 
+     Added by T.Koressaar for salt correction for Tm calculation.  A
+     value of 1 (recommended) directs primer3 to use the salt correction
+     formula in the paper [SantaLucia JR (1998) "A unified view of polymer,
+     dumbbell and oligonucleotide DNA nearest-neighbor thermodynamics",
+     Proc Natl Acad Sci 95:1460-65
+     http://dx.doi.org/10.1073/pnas.95.4.1460]
+
+     A value of 0 directs primer3 to use the the salt correction
+     formula in the paper [Schildkraut, C, and Lifson, S (1965)
+     "Dependence of the melting temperature of DNA on salt
+     concentration", Biopolymers 3:195-208 (not available on-line)].
+     This was the formula used in previous version of primer3.
+
+     A value of 2 directs primer3 to use the salt correction formula
+     in the paper [Owczarzy R, You Y, Moreira BG, Manthey JA, Huang L,
+     Behlke MA and Walder JA (2004) "Effects of sodium ions on DNA
+     duplex oligomers: Improved predictions of melting temperatures",
+     Biochemistry 43:3537-54 http://dx.doi.org/10.1021/bi034621r].
+
+     The default is 0 only for backward compatibility.
+    */
   int salt_corrections; 
 
   /* Arguments applicable to primers but not oligos */
@@ -268,8 +314,18 @@ typedef struct p3_global_settings {
      location in the template. */
 
   int lowercase_masking; 
-  /* added by T.Koressaar for primer design from lowercase masked
-     template */
+  /* 
+     Added by T.Koressaar. Enables design of primers from lowercase
+     masked template.  A value of 1 directs primer3 to reject primers
+     overlapping lowercase a base exactly at the 3' end.
+
+     This property relies on the assumption that masked features
+     (e.g. repeats) can partly overlap primer, but they cannot overlap the
+     3'-end of the primer.  In other words, lowercase bases at other
+     positions in the primer are accepted, assuming that the masked
+     features do not influence the primer performance if they do not
+     overlap the 3'-end of primer.
+  */
 
   sequencing_parameters sequencing;
   /* Parameters used to calculate the position of sequencing primers */
@@ -691,11 +747,13 @@ typedef struct p3retval {
 
   /* 
    * An optional _output_, meaninful if a
-   * start_codon_pos is "not nul".  The position of
+   * start_codon_pos is "not null".  The position of
    * the intial base of the leftmost stop codon that
    * is to the right of sa->start_codon_pos.
    */
   int stop_codon_pos;
+
+  int upstream_stop_codon;  /* FIX ME needs docs */
 
 } p3retval;
 
@@ -708,7 +766,7 @@ const pair_array_t *p3_get_retval_best_pairs(const p3retval *r);
 
 /* It is the responsibility of caller to free the return value. */
 char *p3_get_rv_and_gs_warnings(const p3retval *retval, 
-				      const p3_global_settings *pa);
+                                      const p3_global_settings *pa);
 
 const char *p3_get_rv_global_errors(const p3retval *r);
 const char *p3_get_rv_per_sequence_errors(const p3retval *r);
@@ -944,7 +1002,7 @@ void p3_set_gs_num_intervals(p3_global_settings * p , int num_intervals);
 
 /* void p3_set_gs_pair_max_template_mispriming(p3_global_settings * p , short  pair_max_template_mispriming); */
 void p3_set_gs_pair_max_template_mispriming(p3_global_settings * p ,
-					    double pair_max_template_mispriming);
+                                            double pair_max_template_mispriming);
 
 /*  void p3_set_gs_pair_repeat_compl(p3_global_settings * p, short  pair_repeat_compl);  */
 void p3_set_gs_pair_repeat_compl(p3_global_settings * p, double pair_repeat_compl); 
@@ -1014,11 +1072,13 @@ p3_set_program_name(const char *name);
 
 /* 
  * Utility function for C clients -- will not overflow
- * buffer.  Warning: points to storage that is over-written
+ * buffer.  Warning: points to static storage that is over-written
  * on the next call.
  */
 char* p3_read_line(FILE *file);
 
+int        p3_ol_has_any_problem(const primer_rec *oligo);
+const char *p3_get_ol_problem_string(const primer_rec *oligo);
 
 int    p3_print_oligo_lists(const p3retval*, 
                             const seq_args *, 

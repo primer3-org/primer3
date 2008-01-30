@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
@@ -114,13 +114,13 @@ main(argc,argv)
       strncpy (tag2int,*argv,19);
       int counter = 12;
       while (isdigit(tag2int[counter])) {
-	if (isdigit(tag2int[counter])) {
-	  io_version=10*io_version+(tag2int[counter] - '0');
-	}
-	if ( counter > 20 ) {
-	  break; /* Just to be safe */
-	}
-	counter++;
+        if (isdigit(tag2int[counter])) {
+          io_version=10*io_version+(tag2int[counter] - '0');
+        }
+        if ( counter > 20 ) {
+          break; /* Just to be safe */
+        }
+        counter++;
       }
       if (io_version==1){
           printf( "PRIMER_ERROR=flag -io_version=1 is no longer supported\n=\n");
@@ -131,7 +131,7 @@ main(argc,argv)
           exit (-1);
       }
       if (io_version==3){
-    	  io_version=0;
+          io_version=0;
       }
     } else if (!strncmp(*argv, "-p3_settings_file=", 18)) {
       tmp_file_name = strchr(*argv,'=') + 1;
@@ -162,8 +162,8 @@ main(argc,argv)
    * values for primer picking to pa and sa. */
   if (p3_settings_file[0] != '\0') {
     read_p3_file(p3_settings_file, settings, global_pa, 
-		 sa, fatal_parse_err, nonfatal_parse_err,
-		 &read_boulder_record_res);
+                 sa, fatal_parse_err, nonfatal_parse_err,
+                 &read_boulder_record_res);
   }
 
   /* We also need to print out errors here because the loop erases all
@@ -171,12 +171,12 @@ main(argc,argv)
   /* If there are fatal errors, write the proper message and exit */
   if (fatal_parse_err->data != NULL) {
     if (format_output) {
-	format_error(stdout, sa->sequence_name, fatal_parse_err->data);
+        format_error(stdout, sa->sequence_name, fatal_parse_err->data);
     } else {
-	print_boulder_error(fatal_parse_err->data);
+        print_boulder_error(fatal_parse_err->data);
     }
     fprintf(stderr, "%s: %s\n", 
-	      pr_program_name, fatal_parse_err->data);
+              pr_program_name, fatal_parse_err->data);
     destroy_seq_args(sa);
     exit(-4);
   }
@@ -185,10 +185,10 @@ main(argc,argv)
    * and skip to the end of the loop */
   if (!pr_is_empty(nonfatal_parse_err)) {
     if (format_output) {
-	format_error(stdout, sa->sequence_name, 
-		     nonfatal_parse_err->data);
+        format_error(stdout, sa->sequence_name, 
+                     nonfatal_parse_err->data);
     } else {
-	print_boulder_error(nonfatal_parse_err->data);
+        print_boulder_error(nonfatal_parse_err->data);
     }
   }
 
@@ -214,33 +214,33 @@ main(argc,argv)
      * values for primer picking to pa and sa. Perform initial data
      * checking. */
     if (read_boulder_record(stdin, 
-			    &strict_tags, 
-			    &io_version,
-			    !format_output, 
-			    all_parameters,
-			    global_pa, sa, 
-			    fatal_parse_err, 
-			    nonfatal_parse_err,
-			    &read_boulder_record_res) <= 0) {
+                            &strict_tags, 
+                            &io_version,
+                            !format_output, 
+                            all_parameters,
+                            global_pa, sa, 
+                            fatal_parse_err, 
+                            nonfatal_parse_err,
+                            &read_boulder_record_res) <= 0) {
       
       break; /* leave the program loop and complain later */
     }
     
     input_found = 1;
     if ((global_pa->primer_task == pick_detection_primers) 
-    		&& (global_pa->pick_internal_oligo == 1)){
+                && (global_pa->pick_internal_oligo == 1)){
       PR_ASSERT(global_pa->pick_internal_oligo);
     }
 
     /* If there are fatal errors, write the proper message and exit */
     if (fatal_parse_err->data != NULL) {
       if (format_output) {
-	format_error(stdout, sa->sequence_name, fatal_parse_err->data);
+        format_error(stdout, sa->sequence_name, fatal_parse_err->data);
       } else {
-	print_boulder_error(fatal_parse_err->data);
+        print_boulder_error(fatal_parse_err->data);
       }
       fprintf(stderr, "%s: %s\n", 
-	      pr_program_name, fatal_parse_err->data);
+              pr_program_name, fatal_parse_err->data);
       destroy_p3retval(retval);
       destroy_seq_args(sa);
       exit(-4);
@@ -252,10 +252,10 @@ main(argc,argv)
      * and skip to the end of the loop */
     if (!pr_is_empty(nonfatal_parse_err)) {
       if (format_output) {
-	format_error(stdout, sa->sequence_name, 
-		     nonfatal_parse_err->data);
+        format_error(stdout, sa->sequence_name, 
+                     nonfatal_parse_err->data);
       } else {
-	print_boulder_error(nonfatal_parse_err->data);
+        print_boulder_error(nonfatal_parse_err->data);
       }
       goto loop_wrap_up;
     }
@@ -263,10 +263,10 @@ main(argc,argv)
     if (read_boulder_record_res.file_flag && sa->sequence_name == NULL) {
       /* We will not have a base name for the files */
       if (format_output) {
-	format_error(stdout, NULL, 
-		     "Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG != 0");
+        format_error(stdout, NULL, 
+                     "Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG != 0");
       } else {
-	print_boulder_error("Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG != 0");
+        print_boulder_error("Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG != 0");
       }
       goto loop_wrap_up;
     }
@@ -277,37 +277,38 @@ main(argc,argv)
     if (NULL == retval) exit(-2); /* Out of memory. */
 
     if (pr_is_empty(&retval->glob_err)
-	&& pr_is_empty(&retval->per_sequence_err)) {
+        && pr_is_empty(&retval->per_sequence_err)) {
       /* We need to test for error first, because
-	 p3_print_oligo_lists does not handle
-	 partial outputs in retval.  FIX ME?, 
-	 move test inside  */
+         p3_print_oligo_lists does not handle
+         partial outputs in retval.  FIX ME?, 
+         move test inside  */
       /* Create files with left, right, and internal oligos. */
       if (read_boulder_record_res.file_flag) {
-	p3_print_oligo_lists(retval, sa, global_pa,
-			     &retval->per_sequence_err,
-			     sa->sequence_name);
+        p3_print_oligo_lists(retval, sa, global_pa,
+                             &retval->per_sequence_err,
+                             sa->sequence_name);
       }
     }
 
     if (format_output) {
       print_format_output(stdout, &io_version, global_pa, 
-			  sa, retval, pr_release,
-			  read_boulder_record_res.explain_flag);
+                          sa, retval, pr_release,
+                          read_boulder_record_res.explain_flag);
     } else {
       /* Use boulder output */
       print_boulder(&io_version, global_pa, sa, retval, 
-		    read_boulder_record_res.explain_flag);
+                    read_boulder_record_res.explain_flag,
+                    read_boulder_record_res.show_oligo_problems);
     }
 
   loop_wrap_up: /* Here the failed loops join in again */
     if (NULL != retval) {
       /* Check for errors and print them */
       if (NULL != retval->glob_err.data) {
-	fprintf(stderr, "%s: %s\n", pr_program_name, retval->glob_err.data);
-	destroy_p3retval(retval);
-	destroy_seq_args(sa);
-	exit(-4);
+        fprintf(stderr, "%s: %s\n", pr_program_name, retval->glob_err.data);
+        destroy_p3retval(retval);
+        destroy_seq_args(sa);
+        exit(-4);
       }
     }
     /* Delete the data structures out of the memory */
@@ -339,7 +340,7 @@ print_usage()
   fprintf(stderr, primer3_copyright());
 
   fprintf(stderr, "\n\nUSAGE: %s %s %s %s %s\n", pr_program_name,
-	  "[-format_output]", "[-io_version=xxx]", "[-p3_settings_file=xxx]", "[-strict_tags]");
+          "[-format_output]", "[-io_version=xxx]", "[-p3_settings_file=xxx]", "[-strict_tags]");
   fprintf(stderr, "This is primer3 (%s)\n", pr_release);
   fprintf(stderr, "Input must be provided on standard input.\n");
   fprintf(stderr, "For example:\n");
