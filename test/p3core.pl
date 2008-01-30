@@ -62,6 +62,7 @@ our $value;
 our $err = "0" ;
 our $retval = 0 ;
 our $explain_flag = 0;
+our $show_oligo_problems = 0;
 
 main();
 
@@ -100,7 +101,7 @@ sub main() {
 	}
 	if (!$err) {
 	    $retval = pl_choose_primers($gs, $sa); 
-	    pl_boulder_print($gs, $sa, $retval, $explain_flag);
+	    p3_print_boulder($gs, $sa, $retval, $explain_flag, $show_oligo_problems);
            # boulder_print generates the final '='
 	} else 	{
 	    print "$err=\n" ;
@@ -431,4 +432,5 @@ sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_rep_sim($gs, $v) };
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_template_mispriming($gs, $v) };
 $dispatch{'COMMENT'} = sub ($) {};
 $dispatch{'PRIMER_COMMENT'} = sub ($) {};
+$dispatch{'P3_SHOW_OLIGO_PROBLEMS'} = sub { $show_oligo_problems = 1; };
 }
