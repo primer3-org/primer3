@@ -725,7 +725,6 @@ typedef struct oligo_array {
 
  /* Type of oligos in the array */
  oligo_type type;
-  /* I think its VERY handy */
 
  /* Primers statistics. */
  oligo_stats expl;
