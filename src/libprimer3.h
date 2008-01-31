@@ -93,15 +93,15 @@ typedef enum task {
 
 /* Enum explaining if output are pairs */
 typedef enum p3_output_type {
-        primer_pairs    = 0,
-        primer_list     = 1,
+  primer_pairs    = 0,
+  primer_list     = 1,
 } p3_output_type;
 
 
 /* pr_append_str is an append-only string ADT. */
 typedef struct pr_append_str {
-    int storage_size;
-    char *data;
+  int storage_size;
+  char *data;
 } pr_append_str;
 
 /* 
@@ -110,42 +110,42 @@ typedef struct pr_append_str {
  * "Global" arguments in the documentation.)
  */
 typedef struct oligo_weights {
-    double temp_gt;
-    double temp_lt;
-    double gc_content_gt;
-    double gc_content_lt;
-    double compl_any;
-    double compl_end;
-    double repeat_sim;
-    double length_lt;
-    double length_gt;
-    double seq_quality;
-    double end_quality;
-    double pos_penalty;
-    double end_stability;
-    double num_ns;
-    double template_mispriming;
+  double temp_gt;
+  double temp_lt;
+  double gc_content_gt;
+  double gc_content_lt;
+  double compl_any;
+  double compl_end;
+  double repeat_sim;
+  double length_lt;
+  double length_gt;
+  double seq_quality;
+  double end_quality;
+  double pos_penalty;
+  double end_stability;
+  double num_ns;
+  double template_mispriming;
 } oligo_weights;
 
 typedef struct pair_weights {
-    double primer_quality;
-    double io_quality;
-    double diff_tm;
-    double compl_any;
-    double compl_end;
-    double product_tm_lt;
-    double product_tm_gt;
-    double product_size_lt;
-    double product_size_gt;
-    double repeat_sim;
-    double template_mispriming;
+  double primer_quality;
+  double io_quality;
+  double diff_tm;
+  double compl_any;
+  double compl_end;
+  double product_tm_lt;
+  double product_tm_gt;
+  double product_size_lt;
+  double product_size_gt;
+  double repeat_sim;
+  double template_mispriming;
 } pair_weights;
 
 typedef struct sequencing_parameters {
-    int lead;
-    int spacing;
-    int interval;
-    int accuracy;
+  int lead;
+  int spacing;
+  int interval;
+  int accuracy;
 } sequencing_parameters;
 
 #include "p3_seq_lib.h"
@@ -176,7 +176,7 @@ typedef struct args_for_one_oligo_or_primer {
     http://www.clinchem.org/cgi/content/full/47/11/1956] The default
     is 0.0.  (New in v. 1.1.0, added by Maido Remm and Triinu
     Koressaar.)
-    */
+  */
   double divalent_conc; /* added by T.Koressaar, divalent salt concentration mmol/l */
   double dntp_conc; /* added by T.Koressaar, for considering divalent salt concentration */
 
@@ -311,7 +311,7 @@ typedef struct p3_global_settings {
      Biochemistry 43:3537-54 http://dx.doi.org/10.1021/bi034621r].
 
      The default is 0 only for backward compatibility.
-    */
+  */
   int salt_corrections; 
 
   /* Arguments applicable to primers but not oligos */
@@ -416,26 +416,28 @@ typedef struct p3_global_settings {
 typedef enum oligo_type { OT_LEFT = 0, OT_RIGHT = 1, OT_INTL = 2 }
   oligo_type;
 
+/* olgio_violation needs to be in the header file
+   because it is used in primer_rec */
 typedef enum oligo_violation { 
-        OV_UNINITIALIZED = -1,
-        OV_OK=0, 
-        OV_TOO_MANY_NS=1, 
-        OV_INTERSECT_TARGET=2,
-        OV_GC_CONTENT=3, 
-        OV_TM_LOW=4, 
-        OV_TM_HIGH=5, 
-        OV_SELF_ANY=6,
-        OV_SELF_END=7,
-        OV_EXCL_REGION=8,
-        OV_GC_CLAMP=9,
-        OV_END_STAB=10, 
-        OV_POLY_X=11,
-        OV_SEQ_QUALITY=12,
-        OV_LIB_SIM=13,
-        OV_TEMPLATE_MISPRIMING=14,
-        OV_GMASKED=15, /* edited by T. Koressaar for lowercase masking */
-        OV_TOO_SHORT=16,
-        OV_TOO_LONG=17
+  OV_UNINITIALIZED = -1,
+  OV_OK=0, 
+  OV_TOO_MANY_NS=1, 
+  OV_INTERSECT_TARGET=2,
+  OV_GC_CONTENT=3, 
+  OV_TM_LOW=4, 
+  OV_TM_HIGH=5, 
+  OV_SELF_ANY=6,
+  OV_SELF_END=7,
+  OV_EXCL_REGION=8,
+  OV_GC_CLAMP=9,
+  OV_END_STAB=10, 
+  OV_POLY_X=11,
+  OV_SEQ_QUALITY=12,
+  OV_LIB_SIM=13,
+  OV_TEMPLATE_MISPRIMING=14,
+  OV_GMASKED=15, /* edited by T. Koressaar for lowercase masking */
+  OV_TOO_SHORT=16,
+  OV_TOO_LONG=17
 } oligo_violation;
 
 typedef struct rep_sim {
@@ -465,10 +467,10 @@ typedef struct oligo_problems {
 typedef struct primer_rec {
 
   rep_sim repeat_sim;
-                   /* Name of the sequence from given file in fasta
-                    * format with maximum similarity to the oligo
-                    * and corresponding alignment score.
-                    */
+  /* Name of the sequence from given file in fasta
+   * format with maximum similarity to the oligo
+   * and corresponding alignment score.
+   */
 
   double temp;     /* 
                     * The oligo melting temperature calculated for the
@@ -478,15 +480,15 @@ typedef struct primer_rec {
   double gc_content;
 
   double position_penalty; 
-                  /*
-                   * Penalty for distance from "ideal" position as specified
-                   * by inside_penalty and outside_penalty.
-                   */
+  /*
+   * Penalty for distance from "ideal" position as specified
+   * by inside_penalty and outside_penalty.
+   */
 
   double quality;  /* Part of objective function due to this primer. */
 
   double end_stability;
-                   /* Delta G of disription of 5 3' bases. */
+  /* Delta G of disription of 5 3' bases. */
 
   int    start;    /* The 0-based index of the leftmost base of the primer
                       WITH RESPECT TO THE seq_args FIELD trimmed_seq. */
@@ -500,13 +502,13 @@ typedef struct primer_rec {
   short  self_end; /* Self complementarity at 3' end * 100. */
 
   short  template_mispriming;
-                   /* Max 3' complementarity to any ectopic site in template
-                      on the given template strand. */
+  /* Max 3' complementarity to any ectopic site in template
+     on the given template strand. */
 
   short  template_mispriming_r;
-                   /* Max 3' complementarity to any ectopic site in the
-                      template on the reverse complement of the given template
-                      strand. */
+  /* Max 3' complementarity to any ectopic site in the
+     template on the reverse complement of the given template
+     strand. */
   char   target;   /* 
                     * 0 if this primer does not overlap any target, 1 if it
                     * does.
@@ -521,7 +523,7 @@ typedef struct primer_rec {
   char   length;   /* Length of the oligo. */
   char   num_ns;   /* Number of Ns in the oligo. */
   char   position_penalty_infinite; 
-                   /* Non-0 if the position penalty is infinite. */
+  /* Non-0 if the position penalty is infinite. */
   char   must_use; /* Non-0 if the oligo must be used even if it is illegal. */
 
   oligo_problems problems;
@@ -597,10 +599,8 @@ typedef struct interval_array_t2 {
 int 
 interval_array_t2_count(const interval_array_t2 *array);
 
-
 const int *
 interval_array_t2_get_pair(const interval_array_t2 *array, int i);
-
 
 typedef struct oligo_stats {
   int considered;          /* Total number of tested oligos of given type   */
@@ -642,10 +642,10 @@ typedef struct pair_stats {
 } pair_stats;
 
 typedef struct pair_array_t {
-    int         storage_size;
-    int         num_pairs;
-    primer_pair *pairs;
-    pair_stats  expl;
+  int         storage_size;
+  int         num_pairs;
+  primer_pair *pairs;
+  pair_stats  expl;
 } pair_array_t;
 
 /*
@@ -794,13 +794,6 @@ const  primer_rec *p3_get_oa_i(const oligo_array *x, int i);
 /* Functions for seq_args -- create, destroy, set, set slots */
 seq_args *create_seq_arg();
 void destroy_seq_args(seq_args *);
-/*  OLD, no longer needed.
-int p3_adjust_seq_args(const p3_global_settings *pa, 
-                       seq_args *sa, 
-                       pr_append_str *nonfatal_err,
-                       pr_append_str *warning);
-*/
-
 int p3_set_sa_sequence(seq_args *sargs, const char *sequence);
 void p3_set_sa_primer_sequence_quality(seq_args *sargs, int quality);
 int p3_set_sa_sequence_name(seq_args *sargs, const char* sequence_name);
@@ -824,7 +817,6 @@ const interval_array_t2 *p3_get_sa_excl_internal2(const seq_args *sargs);
 
 /*
   use p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2);
-
   to do the sets for tar2, excl2, nd excl_internal2
 */
 int p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2);
@@ -872,14 +864,8 @@ void p3_set_gs_primer_dntp_conc(p3_global_settings * p , double val);
 void p3_set_gs_primer_dna_conc(p3_global_settings * p , double val);
 void p3_set_gs_primer_num_ns_accepted(p3_global_settings * p , int val);
 void p3_set_gs_primer_product_opt_size(p3_global_settings * p , int val);
-
-/* void p3_set_gs_primer_self_any(p3_global_settings * p , int val);
-   void p3_set_gs_primer_self_end(p3_global_settings * p , int val); */
-
 void p3_set_gs_primer_self_any(p3_global_settings * p , double val);
 void p3_set_gs_primer_self_end(p3_global_settings * p , double val);
-
-
 void p3_set_gs_primer_file_flag(p3_global_settings * p , int val);
 void p3_set_gs_primer_pick_anyway(p3_global_settings * p , int val);
 void p3_set_gs_primer_gc_clamp(p3_global_settings * p , int val);
@@ -913,27 +899,13 @@ void p3_set_gs_primer_internal_oligo_dntp_conc(p3_global_settings * p , double v
 void p3_set_gs_primer_internal_oligo_dna_conc(p3_global_settings * p , double val);
 void p3_set_gs_primer_internal_oligo_num_ns(p3_global_settings * p , int val);
 void p3_set_gs_primer_internal_oligo_min_quality(p3_global_settings * p , int val);
-
-
-/* void p3_set_gs_primer_internal_oligo_self_any(p3_global_settings * p , int val); */
 void p3_set_gs_primer_internal_oligo_self_any(p3_global_settings * p , double val);
-
-
-
-/* void p3_set_gs_primer_internal_oligo_self_end(p3_global_settings * p , int val); */
 void p3_set_gs_primer_internal_oligo_self_end(p3_global_settings * p , double val);
-
 void p3_set_gs_primer_max_mispriming(p3_global_settings * p , double val);
-
 void p3_set_gs_primer_internal_oligo_max_mishyb(p3_global_settings * p , double val);
-
 void p3_set_gs_primer_pair_max_mispriming(p3_global_settings * p , double val);
-
 void p3_set_gs_primer_max_template_mispriming(p3_global_settings * p , double val);
-
 void p3_set_gs_primer_internal_oligo_max_template_mishyb(p3_global_settings * p , double val);
-
-
 void p3_set_gs_primer_lib_ambiguity_codes_consensus(p3_global_settings * p , int val);
 void p3_set_gs_primer_inside_penalty(p3_global_settings * p , double val);
 void p3_set_gs_primer_outside_penalty(p3_global_settings * p , double val);
@@ -980,7 +952,6 @@ void p3_set_gs_primer_pair_wt_product_size_gt(p3_global_settings * p , double va
 void p3_set_gs_primer_pair_wt_product_size_lt(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_rep_sim(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_template_mispriming(p3_global_settings * p , double val);
-
 void p3_set_gs_first_base_index(p3_global_settings * p , int first_base_index);
 void p3_set_gs_liberal_base(p3_global_settings * p , int liberal_base);
 void p3_set_gs_num_return(p3_global_settings * p , int num_return);
@@ -992,8 +963,8 @@ void p3_set_gs_quality_range_max(p3_global_settings * p , int quality_range_max)
 void p3_empty_gs_product_size_range(p3_global_settings *pgs);
 /* Return 1 on error (product size range is full);
    otherwise return 0. */
-int  p3_add_to_gs_product_size_range(p3_global_settings *, int, int);
 
+int  p3_add_to_gs_product_size_range(p3_global_settings *, int, int);
 args_for_one_oligo_or_primer *p3_get_global_settings_p_args(p3_global_settings * p);
 args_for_one_oligo_or_primer *p3_get_global_settings_o_args(p3_global_settings * p);
 int p3_set_afogop_seq_lib(args_for_one_oligo_or_primer *, seq_lib *);
@@ -1006,15 +977,11 @@ void p3_set_gs_outside_penalty(p3_global_settings * p , double outside_penalty);
 void p3_set_gs_inside_penalty(p3_global_settings * p , double inside_penalty);
 void p3_set_gs_num_intervals(p3_global_settings * p , int num_intervals);
 
-/* void p3_set_gs_pair_max_template_mispriming(p3_global_settings * p , short  pair_max_template_mispriming); */
 void p3_set_gs_pair_max_template_mispriming(p3_global_settings * p ,
                                             double pair_max_template_mispriming);
 
-/*  void p3_set_gs_pair_repeat_compl(p3_global_settings * p, short  pair_repeat_compl);  */
 void p3_set_gs_pair_repeat_compl(p3_global_settings * p, double pair_repeat_compl); 
 
-/* void p3_set_gs_pair_compl_any(p3_global_settings * p , short  pair_compl_any);
-   void p3_set_gs_pair_compl_end(p3_global_settings * p , short  pair_compl_end); */
 void p3_set_gs_pair_compl_any(p3_global_settings * p , double  pair_compl_any);
 void p3_set_gs_pair_compl_end(p3_global_settings * p , double  pair_compl_end);
 
