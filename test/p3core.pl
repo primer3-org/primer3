@@ -63,6 +63,7 @@ our $err = "0" ;
 our $retval = 0 ;
 our $explain_flag = 0;
 our $show_oligo_problems = 0;
+our $printargs = 0 ; # set to 1 if dumping arguments to choose_primers
 
 main();
 
@@ -71,6 +72,9 @@ sub main() {
     select STDOUT; $| = 1;  # Not sure we need this ....
     set_setters();
     $gs = pl_create_global_settings();
+    if ($printargs) {
+     	pl_set_dump($gs) ;
+        }
 
     $/ = "\n=\n";
     while (1) {
@@ -81,7 +85,7 @@ sub main() {
 	    confess "Record $. is empty\n";
 	}
 	$sa = pl_create_seq_arg();
-	# $gs = pl_create_global_settings();
+	
 	my %rec;
 	my @rec = split /\n/, $rec;
 	my $tag_found = 0;
@@ -203,9 +207,8 @@ sub ($) { my $v = shift;
 
 	  my $s = shift @nums ;
           if ($s eq "") { $s = shift @nums; }
-
-	  pl_set_gs_prmin($sa, $f, 1);     
-	  pl_set_gs_prmax($sa, $s, 1)} ;     
+	  pl_set_gs_prmin($gs, $f, 0);     
+	  pl_set_gs_prmax($gs, $s, 0)} ;     
 
    $dispatch{'PRIMER_DEFAULT_SIZE'} = 
 sub ($) { my $v = shift;  my $i = pl_set_sa_primer_opt_size($gs, $v) };
