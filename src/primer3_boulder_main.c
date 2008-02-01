@@ -62,6 +62,7 @@ main(argc,argv)
   /* Setup the input data structures handlers */
   int format_output = 0;
   int strict_tags = 0;
+  int dump_args = 0 ; /* set to 1 if dumping arguments to choose_primers */
   int io_version = 0;
 
   /* Some space for file names */
@@ -98,6 +99,7 @@ main(argc,argv)
   if (!global_pa) {
     exit(-2); /* Out of memory. */
   }
+  if (dump_args) global_pa->dump = 1 ;
   
   /* Read in the flags provided with the program call */
   while (--argc > 0) {

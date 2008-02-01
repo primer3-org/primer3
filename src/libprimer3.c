@@ -888,6 +888,8 @@ choose_primers(const p3_global_settings *pa,
     pair_array_t a_pair_array;    /* Array for primer pairs */
     pair_array_t *best_pairs;     /* Pointer to best primer pairs */
     
+    if (pa->dump)
+      p3_print_args(pa, sa) ;
 
     /* Create retval and set were to find the results */
     p3retval *retval = create_p3retval();
@@ -6296,7 +6298,7 @@ p3_get_rv_stop_codon_pos(p3retval *r) {
 /* END functions for getting values from p3retvals            */
 /* ============================================================ */
 
-void p3_print_args(p3_global_settings *p, seq_args *s) {
+void p3_print_args(const p3_global_settings *p, seq_args *s) {
  if (!p->dump) return ;
 
 printf("begin global args\n") ; 
@@ -6405,8 +6407,8 @@ printf("gc_clamp %i\n", p->gc_clamp) ;
 printf("lowercase_masking %i\n", p->lowercase_masking) ; 
 printf("outside_penalty %f\n", p->outside_penalty) ;
 printf("inside_penalty %f\n", p->inside_penalty) ;
-printf("pr_min[PR_MAX_INTERVAL_ARRAY] %i\n", p->pr_min[PR_MAX_INTERVAL_ARRAY]) ;
-printf("pr_max[PR_MAX_INTERVAL_ARRAY] %i\n", p->pr_max[PR_MAX_INTERVAL_ARRAY]) ;
+printf("pr_min[PR_MIN_INTERVAL_ARRAY] %i\n", p->pr_min[0]) ;
+printf("pr_max[PR_MAX_INTERVAL_ARRAY] %i\n", p->pr_max[0]) ;
 printf("num_intervals %i\n", p->num_intervals) ;
 printf("product_opt_size %i\n", p->product_opt_size) ;
 printf("product_max_tm %f\n", p->product_max_tm) ;

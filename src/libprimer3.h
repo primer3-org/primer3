@@ -999,7 +999,7 @@ void p3_set_gs_min_three_prime_distance(p3_global_settings *p, int min_distance)
 p3retval *choose_primers(const p3_global_settings *pa, 
                          /* const */ seq_args *sa);
 
-void p3_print_args(p3_global_settings *, seq_args *) ;
+void p3_print_args(const p3_global_settings *, seq_args *) ;
 
 /* Andreas, this is the idea, argument list will need
    to be cleaned up */
