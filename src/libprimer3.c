@@ -176,7 +176,7 @@ static p3retval *create_p3retval(void);
 
 static char   dna_to_upper(char *, int);
 
-void   destroy_pr_append_str_data(pr_append_str *str);
+void          destroy_pr_append_str_data(pr_append_str *str);
 
 static int    find_stop_codon(const char *, int, int);
 
@@ -2070,18 +2070,26 @@ pick_primers_by_position(const int start, const int end, int *extreme,
                          const seq_args *sa, 
                          const dpal_arg_holder *dpal_arg_to_use,
                          p3retval *retval) {
-  int found_primer, length;
+  int found_primer, length, j, ret;
   found_primer = 1;
+  ret = 1;
   
-  if(sa->force_left_start > -1 && sa->force_left_end > -1) {
+  if(start > -1 && end > -1) {
     length = end - start;
     found_primer = add_one_primer_by_position(start, length, extreme, oligo,
                                               pa, sa, dpal_arg_to_use, retval);
     return found_primer;
-  } else if (sa->force_left_start > -1) {
-	  
+  } else if (start > -1) {
+    /* Loop over possible primer lengths, from min to max */
+    for (j = pa->p_args.min_size; j <= pa->p_args.max_size; j++) {
+      ret = add_one_primer_by_position(start, j, extreme, oligo,
+                                                pa, sa, dpal_arg_to_use, retval);
+      if (ret == 0) {
+        found_primer = 0;
+      }
+    }
 	return found_primer;
-  } else if (sa->force_left_end > -1) {
+  } else if (end > -1) {
 	  
 	  return found_primer;
   } else {
