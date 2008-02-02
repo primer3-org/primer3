@@ -4822,6 +4822,18 @@ _pr_data_control(const p3_global_settings *pa,
                         "PRIMER_SEQUENCING_LEAD > PRIMER_SEQUENCING_SPACING");
     return 1;
   }
+  if((sa->force_left_start > -1) && (sa->force_left_end > -1)
+		  && (sa->force_left_start > sa->force_left_end)) {
+    pr_append_new_chunk(glob_err,
+                        "SEQUENCE_FORCE_LEFT_START > SEQUENCE_FORCE_LEFT_END");
+    return 1;
+  }
+  if((sa->force_right_end > -1) && (sa->force_right_start > -1)
+		  && (sa->force_right_end > sa->force_right_start)) {
+    pr_append_new_chunk(glob_err,
+                        "SEQUENCE_FORCE_RIGHT_END > SEQUENCE_FORCE_RIGHT_START");
+    return 1;
+  }
 
   return (NULL == nonfatal_err->data && NULL == /* pa->*/ glob_err->data) ? 0 : 1;
 } /* _pr_data_control */
