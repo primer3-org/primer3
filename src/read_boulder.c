@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
@@ -151,8 +151,6 @@ read_boulder_record(FILE *file_input,
   pr_append_str *parse_err;
   pr_append_str *non_fatal_err;
   char *repeat_file_path = NULL, *int_repeat_file_path = NULL;
-
-  /* FIX ME call p3_create_seq_args inside read_boulder? */
 
   non_fatal_err = nonfatal_parse_err;
 
@@ -627,8 +625,8 @@ read_boulder_record(FILE *file_input,
     free(task_tmp);
   }
 
-  /* WARNING: read_seq_lib uses p3_read_line, so repeat files cannot be read
-   * inside the while ((s = p3_read_line(stdin))...)  loop above.
+  /* WARNING: read_and_create_seq_lib uses p3_read_line, so repeat files cannot be read
+   * inside the while ((s = p3_read_line(stdin))...) loop above.
    * FIX ME, in fact the reading of the library contents probably
    * belongs inside primer3_boulder_main.c or libprimer3.c. */
   /* Reading in the repeat libraries */
@@ -668,7 +666,6 @@ read_boulder_record(FILE *file_input,
     free(int_repeat_file_path);
     int_repeat_file_path = NULL;
   }
-    
 
   /* Fix very old tags for backward compatibility */
   if (*io_version == 0) {
@@ -968,31 +965,31 @@ parse_product_size(tag_name, in, pa, err)
    and sargs->quality_storage_size */
 static int
 parse_seq_quality(char *s,
-		  seq_args *sargs) {
+                  seq_args *sargs) {
   long t;
   char *p, *q;
 
   p3_set_sa_empty_quality(sargs);
 
-   p = q = s;
+  p = q = s;
 
-   while (*q != '\0' && *q != '\n') {
-      t = strtol(p, &q, 10);
-      if (q == p) {
-	while (*q != '\0') {
-	  if (!isspace(*q)) {
-	    p3_set_sa_empty_quality(sargs);
-	    return 0; 
-	  }
-	  q++;
-	}
-	return sargs->n_quality;
+  while (*q != '\0' && *q != '\n') {
+    t = strtol(p, &q, 10);
+    if (q == p) {
+      while (*q != '\0') {
+        if (!isspace(*q)) {
+          p3_set_sa_empty_quality(sargs);
+          return 0; 
+        }
+        q++;
       }
-      p3_sa_add_to_quality_array(sargs, t);
+      return sargs->n_quality;
+    }
+    p3_sa_add_to_quality_array(sargs, t);
 
-      p = q;
-   }
-   return sargs->n_quality;
+    p = q;
+  }
+  return sargs->n_quality;
 }
 
 /* =========================================================== */

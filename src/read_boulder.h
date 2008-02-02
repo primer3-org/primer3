@@ -52,39 +52,31 @@ typedef struct read_boulder_record_results {
 } read_boulder_record_results;
 
 /* 
- * Read data from file_input until a "=" line occurs.  Assign parameter
- * values for primer picking to pa and sa. Perform initial data
- * checking. Return 0 for end of data and 1 otherwise.  If nonfatal_err->data
- * is not NULL or fatal_err->data is not NULL then the data is erroneous
- * and should not be processed. Echo the input lines to stdout.
+ * Read data from file_input until a "=" line occurs.  Assign
+ * parameter values for primer picking to pa and sarg. Perform initial
+ * data checking. Return 0 if no records or no _more_ records were
+ * found, and 1 otherwise.  If nonfatal_err->data is not NULL or
+ * fatal_err->data is not NULL then the data is erroneous and should
+ * not be processed. Echo the input lines to stdout.
  */
-/* pr_append_str is an append-only string ADT. */
 int read_boulder_record(FILE *file_input,
                         const int *strict_tags,
                         const int * io_version,
                         int echo_output,
                         const p3_file_type read_file_type,
                         p3_global_settings *pa, 
-                        seq_args *sa,
+                        seq_args *sarg,
                         pr_append_str *fatal_err,
                         pr_append_str *nonfatal_err,
                         read_boulder_record_results *);
 
-/* 
- * Read data from file file_name until a "=" line occurs.  Assign parameter
- * values for primer picking to pa and sa. Perform initial data
- * checking. Return 0 for end of data and 1 otherwise.  If nonfatal_err->data
- * is not NULL or fatal_err->data is not NULL then the data is erroneous
- * and should not be processed. Echo the input lines to stdout.
- */
 /* pr_append_str is an append-only string ADT. */
 int read_p3_file(const char *file_name,
                  const p3_file_type file_type,
                  p3_global_settings *pa, 
-                 seq_args *sa,
+                 seq_args *sarg,
                  pr_append_str *fatal_err,
                  pr_append_str *nonfatal_err,
                  read_boulder_record_results *read_boulder_record_res);
-
 
 #endif
