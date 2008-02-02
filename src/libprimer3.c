@@ -223,21 +223,25 @@ static int    pick_primer_range(const int, const int, int *,
                                  const dpal_arg_holder *,
                                  p3retval *retval);
 
-static int    add_one_primer(const char *primer, 
-                             int *, oligo_array *oligo,
-                             const p3_global_settings *pa,
-                             const seq_args *sa, 
-                             const dpal_arg_holder *dpal_arg_to_use,
+static int    add_one_primer(const char *, int *, oligo_array *,
+                             const p3_global_settings *,
+                             const seq_args *, 
+                             const dpal_arg_holder *,
                              p3retval *);
 
-static int   add_one_primer_by_position(int start, 
-                                int length, 
-                                int *extreme, 
-                                oligo_array *oligo, 
-                                const p3_global_settings *pa,
-                                const seq_args *sa, 
-                                const dpal_arg_holder *dpal_arg_to_use,
-                                p3retval *retval);
+static int   add_one_primer_by_position(int, int, int *, 
+                                oligo_array *, 
+                                const p3_global_settings *,
+                                const seq_args *, 
+                                const dpal_arg_holder *,
+                                p3retval *);
+static int   pick_primers_by_position(const int, const int, 
+                                      int *,
+                                      oligo_array *, 
+                                      const p3_global_settings *,
+                                      const seq_args *, 
+                                      const dpal_arg_holder *,
+                                      p3retval *);
 
 static double obj_fn(const p3_global_settings *, primer_pair *);
 
@@ -1291,6 +1295,13 @@ make_detection_primer_lists(p3retval *retval,
       add_one_primer(sa->left_input, &left, &retval->fwd,
                      pa, sa, dpal_arg_to_use, retval); 
     }
+    /* Pick primers at one position */
+    else if(sa->force_left_start > -1 ||
+    		sa->force_left_end > -1) {
+      pick_primers_by_position(sa->force_left_start, sa->force_left_end, 
+                               &left, &retval->fwd, pa, sa,
+                               dpal_arg_to_use, retval);
+    }
     /* Or pick all good in the given range */
     else {
       pick_primer_range(start, length, &left, &retval->fwd,
@@ -1972,7 +1983,9 @@ add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oli
                p3retval *retval) {
   /* Variables for the loop */
   int i, j;
-  int n;
+  int n, found_primer;
+  /* Retun 1 for no primer found */
+  found_primer = 1;
     
   /* Array to store one primer sequences in */
   char oligo_seq[MAX_PRIMER_LENGTH+1];
@@ -1992,8 +2005,7 @@ add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oli
 
   /* This time we already know the size of the primer */
   j = length;
-  i = start - length + 1;
- 
+   
   oligo_seq[0] = '\0';
 
   /* Set the length of the primer */
@@ -2001,14 +2013,16 @@ add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oli
  
   /* Figure out positions for forward primers */
   if (oligo->type != OT_RIGHT) {
-  /* Set the start of the primer */
-          h.start = i - j +1;
+	  i = start + length - 1;
+      /* Set the start of the primer */
+      h.start = i - j +1;
                 
       /* Put the real primer sequence in s */
       _pr_substr(sa->trimmed_seq, h.start, j, oligo_seq);
   }
   /* Figure out positions for reverse primers */
   else {
+	  i = start - length + 1;
       /* Set the start of the primer */
       h.start=i+j-1;
                 
@@ -2032,6 +2046,7 @@ add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oli
       h.quality = p_obj_fn(pa, &h, oligo->type);
       /* Save the primer in the array */
       add_oligo_to_oligo_array(oligo, h);
+      found_primer = 0;
       /* Update the most extreme primer variable */
       if (( h.start < *extreme) &&
           (oligo->type != OT_RIGHT))
@@ -2047,7 +2062,24 @@ add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oli
   oligo->expl.ok = oligo->num_elem;
     
   /* return 0 for success */
-  return 0;     
+  return found_primer;     
+}
+
+static int
+pick_primers_by_position(const int start, const int end, int *extreme,
+                         oligo_array *oligo, const p3_global_settings *pa,
+                         const seq_args *sa, 
+                         const dpal_arg_holder *dpal_arg_to_use,
+                         p3retval *retval) {
+  int found_primer;
+  found_primer = 1;
+  
+  
+  found_primer = add_one_primer_by_position(start, end, extreme, oligo,
+                                            pa, sa, dpal_arg_to_use, retval);
+  
+	
+  return found_primer;
 }
 
 /*
