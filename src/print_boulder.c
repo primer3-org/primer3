@@ -64,8 +64,11 @@ print_boulder(const int *io_version,
   /* A place to put a string containing all error messages */
   pr_append_str *combined_retval_err = NULL;
 
-  /* A small spacer */
-  char suffix [3];
+  /* A small spacer; WARNING this is a fixed size
+     buffer, but plenty bigger than
+     log(2^64, 10), the longest character
+     string that is needed for a 64 bit integer. */
+  char suffix [100];
 
   /* Pointers for the primer set just printing */
   primer_rec *fwd, *rev, *intl;
