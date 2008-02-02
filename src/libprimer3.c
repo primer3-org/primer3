@@ -2071,15 +2071,25 @@ pick_primers_by_position(const int start, const int end, int *extreme,
                          const seq_args *sa, 
                          const dpal_arg_holder *dpal_arg_to_use,
                          p3retval *retval) {
-  int found_primer;
+  int found_primer, length;
   found_primer = 1;
   
-  
-  found_primer = add_one_primer_by_position(start, end, extreme, oligo,
-                                            pa, sa, dpal_arg_to_use, retval);
-  
-	
-  return found_primer;
+  if(sa->force_left_start > -1 && sa->force_left_end > -1) {
+    length = end - start;
+    found_primer = add_one_primer_by_position(start, length, extreme, oligo,
+                                              pa, sa, dpal_arg_to_use, retval);
+    return found_primer;
+  } else if (sa->force_left_start > -1) {
+	  
+	return found_primer;
+  } else if (sa->force_left_end > -1) {
+	  
+	  return found_primer;
+  } else {
+	  /* This schould never happen */
+	  
+    return 1;
+  }
 }
 
 /*
