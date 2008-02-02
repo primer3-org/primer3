@@ -1016,6 +1016,7 @@ void  pr_set_default_global_args(p3_global_settings *);
 
 /* Return NULL on ENOMEM */
 pr_append_str *create_pr_append_str();
+void          init_pr_append_str(pr_append_str *s);
 
 void          pr_set_empty(pr_append_str *);
 int           pr_is_empty(const pr_append_str *);

@@ -176,13 +176,11 @@ static p3retval *create_p3retval(void);
 
 static char   dna_to_upper(char *, int);
 
-static void   destroy_pr_append_str_data(const pr_append_str *str);
+void   destroy_pr_append_str_data(pr_append_str *str);
 
 static int    find_stop_codon(const char *, int, int);
 
 static void   gc_and_n_content(const int, const int, const char *, primer_rec *);
-
-static void   init_pr_append_str(pr_append_str *s);
 
 static int    make_detection_primer_lists(p3retval *,
                                 const p3_global_settings *,
@@ -856,6 +854,7 @@ create_seq_arg() {
 /* Free a seq_arg data structure */
 void
 destroy_seq_args(seq_args *sa) {
+  if (NULL == sa) return;
   if (NULL != sa->internal_input) free(sa->internal_input);
   if (NULL != sa->left_input) free(sa->left_input);
   if (NULL != sa->right_input) free(sa->right_input);
@@ -4008,7 +4007,7 @@ primer3_copyright(void) {
 /* BEGIN Internal and external functions for pr_append_str      */
 /* ============================================================ */
 
-static void
+void
 init_pr_append_str(pr_append_str *s) {
   s->data = NULL;
   s->storage_size = 0;
@@ -4033,10 +4032,11 @@ create_pr_append_str()
   return ret;
 }
 
-static void
-destroy_pr_append_str_data(const pr_append_str *str) {
+void
+destroy_pr_append_str_data(pr_append_str *str) {
   if (NULL == str) return;
   if (str->data != NULL) free(str->data);
+  str->data = NULL;
 }
 
 void
