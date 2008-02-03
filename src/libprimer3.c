@@ -631,7 +631,7 @@ pr_set_default_global_args(p3_global_settings *a) {
       which then match every oligo (very bad).
   */
 
-  a->min_three_prime_distance        = 0;
+  a->min_three_prime_distance        = -1;
   a->settings_file_id                = NULL;
     
   a->sequencing.lead                 = SEQUENCING_LEAD;
@@ -1150,13 +1150,23 @@ oligo_pair_seen(const primer_pair *pair,
 
    (1) The 3' end of the left primer in pair is
        < min_dist from the 3' end of any left primer
-       in retpair
+       in retpair and min_dist > 0
 
      OR
 
    (2) The 3' end of the right primer in pair is
        < min_dist from the 3' end of any right primer
-       in retpair
+       in retpair and min_dist > 0
+       
+     OR
+     
+   (3) If min_dist is set to 0 and the left or the right
+       primer are identical to one in the pair.
+       
+   Return 0 if EITHER:
+
+   (1) The min_dist is set to -1 for backward compartibility
+       
 */
 static int
 oligo_in_pair_overlaps_seen_oligo(const primer_pair *pair,
@@ -1170,6 +1180,9 @@ oligo_in_pair_overlaps_seen_oligo(const primer_pair *pair,
      allocates memory for retpair->pairs.) */
   if (retpair->num_pairs == 0)
     return 0;
+  
+  if (min_dist == -1)
+    return 0;
 
   q = &retpair->pairs[0];
 
@@ -1178,11 +1191,19 @@ oligo_in_pair_overlaps_seen_oligo(const primer_pair *pair,
   for (; q < stop; q++) {
     q_pos =  q->left->start + q->left->length - 1;
     pair_pos = pair->left->start + pair->left->length -  1;
-    if (abs(q_pos - pair_pos) < min_dist) { return 1; }
+    if ((abs(q_pos - pair_pos) < min_dist)
+    	     && (min_dist != 0)) { return 1; }
+    if ((q->left->length == pair->left->length)
+             && (q->left->start == pair->left->start)
+    	     && (min_dist == 0)) { return 1; }
 
     q_pos = q->right->start - q->right->length + 1;
     pair_pos = pair->right->start - pair->right->length + 1;
-    if (abs(q_pos - pair_pos) < min_dist) { return 1; }
+    if ((abs(q_pos - pair_pos) < min_dist)
+             && (min_dist != 0)) { return 1; }
+    if ((q->right->length == pair->right->length)
+             && (q->right->start == pair->right->start)
+    	     && (min_dist == 0)) { return 1; }
 
   }
   return 0;
@@ -2070,7 +2091,7 @@ pick_primers_by_position(const int start, const int end, int *extreme,
                          const dpal_arg_holder *dpal_arg_to_use,
                          p3retval *retval)
 {
-  int found_primer, length, j, ret;
+  int found_primer, length, j, ret, new_start;
   found_primer = 1;
   ret = 1;
   
@@ -2090,11 +2111,21 @@ pick_primers_by_position(const int start, const int end, int *extreme,
     }
     return found_primer;
   } else if (end > -1) {
-          
+	
+    /* Loop over possible primer lengths, from min to max */
+    for (j = pa->p_args.min_size; j <= pa->p_args.max_size; j++) {
+      new_start = start - j;
+      ret = add_one_primer_by_position(new_start, j, extreme, oligo,
+                                       pa, sa, dpal_arg_to_use, retval);
+      if (ret == 0) {
+        found_primer = 0;
+      }
+    }
     return found_primer;
   } else {
-    /* This schould never happen */
-          
+    /* Actually this should never happen */
+    pr_append_new_chunk(&retval->warnings, 
+             "Calculation error in forced primer position calculation");         
     return 1;
   }
 }
@@ -4349,9 +4380,9 @@ _pr_data_control(const p3_global_settings *pa,
     pr_append_new_chunk(nonfatal_err,
                         "Error in sequence quality data");
 
-  if (pa->min_three_prime_distance < 0)
+  if (pa->min_three_prime_distance < -1)
     pr_append_new_chunk(nonfatal_err, 
-                        "Minimum 3' distance must be >= 0 "
+                        "Minimum 3' distance must be >= -1 "
                         "(min_three_prime_distance)");
 
   if ((pa->p_args.min_quality != 0 || pa->o_args.min_quality != 0)

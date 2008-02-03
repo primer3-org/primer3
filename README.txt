@@ -839,7 +839,7 @@ Primer3 uses this argument to calculate oligo and primer melting
 temperatures. Use tag PRIMER_DIVALENT_CONC to specify the concentration
 of divalent cations (in this case you also should use tag PRIMER_DNTP_CONC).
 
-PRIMER_MIN_THREE_PRIME_DISTANCE (int, default 0)
+PRIMER_MIN_THREE_PRIME_DISTANCE (int, default -1)
 
 Minimum number of base pairs between the 3' ends of any two left or ny
 two right primers when returning num_return primer pairs.  The
@@ -847,9 +847,12 @@ objective is get 'truly different' primer pairs.
 
 Primers that end at e.g.  30 and 31 have a three-prime distance of 1.
 
-0 indicates a primer pair is ok if it has not already appeared in the
+-1 indicates a primer pair is ok if it has not already appeared in the
 output list (default behavior and behavior in previous releases). This
 is the most liberal behavior.
+
+0 indicates a primer pair is ok if not the left or the right primer 
+already appeared in any of the previous pairs.
 
 n > 0 indicates that a primer pair is ok if:
 
