@@ -378,12 +378,9 @@ static const char *pr_program_name = "probably primer3_core";
  * ==========================================================================
  */
 
-
 #define DEFAULT_OPT_GC_PERCENT PR_UNDEFINED_INT_OPT
 
-
 /* FIX ME -- there is no need to create #defines for these. */
-
 
 #define INTERNAL_OLIGO_OPT_TM     60.0
 #define INTERNAL_OLIGO_MIN_TM     57.0
@@ -506,49 +503,40 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->p_args.max_template_mispriming
     = MAX_TEMPLATE_MISPRIMING;
 
-
 /* Weights for objective functions for oligos and pairs. */
-
-
-
-#define PRIMER_WT_GC_PERCENT_LT  0
-#define PRIMER_WT_GC_PERCENT_GT  0
-#define PRIMER_WT_COMPL_ANY      0
-#define PRIMER_WT_COMPL_END      0
-#define PRIMER_WT_NUM_NS         0
-#define PRIMER_WT_REP_SIM        0
-#define PRIMER_WT_SEQ_QUAL       0
-#define PRIMER_WT_END_QUAL       0
-#define PRIMER_WT_POS_PENALTY    1
-#define PRIMER_WT_END_STABILITY  0
-
-
-
-  /* #define PRIMER_WT_TM_GT          1 */
   a->p_args.weights.temp_gt       = 1;
-
-
-  /* #define PRIMER_WT_TM_LT          1 */
   a->p_args.weights.temp_lt       = 1;
-
-
-  /* #define PRIMER_WT_SIZE_LT        1
-     #define PRIMER_WT_SIZE_GT        1 */
-
-
   a->p_args.weights.length_gt     = 1;
-
   a->p_args.weights.length_lt     = 1;
 
-  a->p_args.weights.gc_content_gt = PRIMER_WT_GC_PERCENT_GT;
-  a->p_args.weights.gc_content_lt = PRIMER_WT_GC_PERCENT_LT;
-  a->p_args.weights.compl_any     = PRIMER_WT_COMPL_ANY;
-  a->p_args.weights.compl_end     = PRIMER_WT_COMPL_END;
+  /* #define PRIMER_WT_GC_PERCENT_GT  0 */
+  a->p_args.weights.gc_content_gt = 0;
+
+  /* #define PRIMER_WT_GC_PERCENT_LT  0 */
+  a->p_args.weights.gc_content_lt = 0;
+
+  /* #define PRIMER_WT_COMPL_ANY      0 */
+  /* #define PRIMER_WT_COMPL_END      0 */
+  a->p_args.weights.compl_any     = 0;
+  a->p_args.weights.compl_end     = 0;
+
+#define PRIMER_WT_NUM_NS         0
   a->p_args.weights.num_ns        = PRIMER_WT_NUM_NS;
+
+#define PRIMER_WT_REP_SIM        0
   a->p_args.weights.repeat_sim    = PRIMER_WT_REP_SIM;
+
+
+#define PRIMER_WT_SEQ_QUAL       0
   a->p_args.weights.seq_quality   = PRIMER_WT_SEQ_QUAL;
+
+#define PRIMER_WT_END_QUAL       0
   a->p_args.weights.end_quality   = PRIMER_WT_END_QUAL;
+
+#define PRIMER_WT_POS_PENALTY    1
   a->p_args.weights.pos_penalty   = PRIMER_WT_POS_PENALTY;
+
+#define PRIMER_WT_END_STABILITY  0
   a->p_args.weights.end_stability = PRIMER_WT_END_STABILITY;
 
   /* End arguments for primers ============================= */
@@ -6055,8 +6043,6 @@ p3_add_to_gs_product_size_range(p3_global_settings *pgs,
 /* ============================================================ */
 /* START functions for setting and getting oligo problems       */
 /* ============================================================ */
-
-/* FIX ME, these are not done */
 
 static void
 initialize_op(primer_rec *oligo) {
