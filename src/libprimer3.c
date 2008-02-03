@@ -1353,6 +1353,13 @@ make_detection_primer_lists(p3retval *retval,
           pa, sa, dpal_arg_to_use, retval);*/
         
     }
+    /* Pick primers at one position */
+    else if(sa->force_right_start > -1 ||
+                sa->force_right_end > -1) {
+      pick_primers_by_position(sa->force_right_start, sa->force_right_end, 
+                               &right, &retval->rev, pa, sa,
+                               dpal_arg_to_use, retval);
+    }
     /* Or pick all good in the given range */
     else {
       pick_primer_range(start, length, &right, &retval->rev,
@@ -2096,7 +2103,12 @@ pick_primers_by_position(const int start, const int end, int *extreme,
   ret = 1;
   
   if(start > -1 && end > -1) {
-    length = end - start;
+    if (oligo->type != OT_RIGHT) {
+      length = end - start;
+    } else {
+      length = start - end;
+    }
+
     found_primer = add_one_primer_by_position(start, length, extreme, oligo,
                                               pa, sa, dpal_arg_to_use, retval);
     return found_primer;
@@ -2111,10 +2123,9 @@ pick_primers_by_position(const int start, const int end, int *extreme,
     }
     return found_primer;
   } else if (end > -1) {
-	
     /* Loop over possible primer lengths, from min to max */
     for (j = pa->p_args.min_size; j <= pa->p_args.max_size; j++) {
-      new_start = start - j;
+      new_start = end - j;
       ret = add_one_primer_by_position(new_start, j, extreme, oligo,
                                        pa, sa, dpal_arg_to_use, retval);
       if (ret == 0) {
@@ -2125,7 +2136,7 @@ pick_primers_by_position(const int start, const int end, int *extreme,
   } else {
     /* Actually this should never happen */
     pr_append_new_chunk(&retval->warnings, 
-             "Calculation error in forced primer position calculation");         
+           "Calculation error in forced primer position calculation");         
     return 1;
   }
 }
@@ -4224,6 +4235,16 @@ _adjust_seq_args(const p3_global_settings *pa,
            "Task pick_sequencing_primers can not be combined with included region");
       return 1;
   }
+  if(pa->primer_task == pick_cloning_primers && sa->incl_l == -1) {
+          pr_append_new_chunk(nonfatal_err,
+           "Task pick_cloning_primers requires a included region");
+      return 1;
+  }
+  if(pa->primer_task == pick_discriminative_primers && sa->incl_l == -1) {
+          pr_append_new_chunk(nonfatal_err,
+           "Task pick_discriminative_primers requires a included region");
+      return 1;
+  }
   
   /* 
      Complain if there is no sequence; We need to check this
@@ -4240,6 +4261,19 @@ _adjust_seq_args(const p3_global_settings *pa,
   } 
 
   seq_len = strlen(sa->sequence);
+  
+  /* For pick_cloning_primers set the forced positions */
+  if (pa->primer_task == pick_cloning_primers) {
+    sa->force_left_start = sa->incl_s;
+    sa->force_right_start = sa->incl_s + sa->incl_l;
+  }
+  /* For pick_discriminative_primers set the forced positions */
+  if (pa->primer_task == pick_discriminative_primers) {
+    sa->force_left_end = sa->incl_s;
+    sa->force_right_end = sa->incl_s + sa->incl_l;
+    sa->incl_l = seq_len;
+    sa->incl_s = pa->first_base_index;
+  }
 
   /* If no included region is specified,
    * use the whole sequence as included region */
