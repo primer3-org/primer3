@@ -4265,12 +4265,14 @@ _adjust_seq_args(const p3_global_settings *pa,
   /* For pick_cloning_primers set the forced positions */
   if (pa->primer_task == pick_cloning_primers) {
     sa->force_left_start = sa->incl_s;
-    sa->force_right_start = sa->incl_s + sa->incl_l;
+    sa->force_right_start = sa->incl_s + sa->incl_l - 1;
+    sa->incl_l = seq_len;
+    sa->incl_s = pa->first_base_index;
   }
   /* For pick_discriminative_primers set the forced positions */
   if (pa->primer_task == pick_discriminative_primers) {
     sa->force_left_end = sa->incl_s;
-    sa->force_right_end = sa->incl_s + sa->incl_l;
+    sa->force_right_end = sa->incl_s + sa->incl_l - 1;
     sa->incl_l = seq_len;
     sa->incl_s = pa->first_base_index;
   }
