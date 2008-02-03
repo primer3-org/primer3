@@ -176,8 +176,6 @@ static p3retval *create_p3retval(void);
 
 static char   dna_to_upper(char *, int);
 
-void          destroy_pr_append_str_data(pr_append_str *str);
-
 static int    find_stop_codon(const char *, int, int);
 
 static void   gc_and_n_content(const int, const int, const char *, primer_rec *);
@@ -414,22 +412,6 @@ static const char *pr_program_name = "probably primer3_core";
 #define PAIR_MAX_TEMPLATE_MISPRIMING PR_UNDEFINED_ALIGN_OPT
 #define IO_MAX_TEMPLATE_MISHYB       PR_UNDEFINED_ALIGN_OPT
 
-/* Weights for objective functions for oligos and pairs. */
-#define PRIMER_WT_TM_GT          1
-#define PRIMER_WT_TM_LT          1
-#define PRIMER_WT_SIZE_LT        1
-#define PRIMER_WT_SIZE_GT        1
-#define PRIMER_WT_GC_PERCENT_LT  0
-#define PRIMER_WT_GC_PERCENT_GT  0
-#define PRIMER_WT_COMPL_ANY      0
-#define PRIMER_WT_COMPL_END      0
-#define PRIMER_WT_NUM_NS         0
-#define PRIMER_WT_REP_SIM        0
-#define PRIMER_WT_SEQ_QUAL       0
-#define PRIMER_WT_END_QUAL       0
-#define PRIMER_WT_POS_PENALTY    1
-#define PRIMER_WT_END_STABILITY  0
-
 #define IO_WT_TM_GT          1
 #define IO_WT_TM_LT          1
 #define IO_WT_SIZE_LT        1
@@ -524,10 +506,40 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->p_args.max_template_mispriming
     = MAX_TEMPLATE_MISPRIMING;
 
-  a->p_args.weights.temp_gt       = PRIMER_WT_TM_GT;
-  a->p_args.weights.temp_lt       = PRIMER_WT_TM_LT;
-  a->p_args.weights.length_gt     = PRIMER_WT_SIZE_GT;
-  a->p_args.weights.length_lt     = PRIMER_WT_SIZE_LT;
+
+/* Weights for objective functions for oligos and pairs. */
+
+
+
+#define PRIMER_WT_GC_PERCENT_LT  0
+#define PRIMER_WT_GC_PERCENT_GT  0
+#define PRIMER_WT_COMPL_ANY      0
+#define PRIMER_WT_COMPL_END      0
+#define PRIMER_WT_NUM_NS         0
+#define PRIMER_WT_REP_SIM        0
+#define PRIMER_WT_SEQ_QUAL       0
+#define PRIMER_WT_END_QUAL       0
+#define PRIMER_WT_POS_PENALTY    1
+#define PRIMER_WT_END_STABILITY  0
+
+
+
+  /* #define PRIMER_WT_TM_GT          1 */
+  a->p_args.weights.temp_gt       = 1;
+
+
+  /* #define PRIMER_WT_TM_LT          1 */
+  a->p_args.weights.temp_lt       = 1;
+
+
+  /* #define PRIMER_WT_SIZE_LT        1
+     #define PRIMER_WT_SIZE_GT        1 */
+
+
+  a->p_args.weights.length_gt     = 1;
+
+  a->p_args.weights.length_lt     = 1;
+
   a->p_args.weights.gc_content_gt = PRIMER_WT_GC_PERCENT_GT;
   a->p_args.weights.gc_content_lt = PRIMER_WT_GC_PERCENT_LT;
   a->p_args.weights.compl_any     = PRIMER_WT_COMPL_ANY;
@@ -577,8 +589,7 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->o_args.opt_size = 20;
   a->o_args.min_size = 18;
 
-  /* #define INTERNAL_OLIGO_MAX_SIZE   27 */;
-  a->o_args.max_size = 27;
+  a->o_args.max_size        = 27;
   a->o_args.opt_tm          = INTERNAL_OLIGO_OPT_TM;
   a->o_args.min_tm          = INTERNAL_OLIGO_MIN_TM;
   a->o_args.max_tm          = INTERNAL_OLIGO_MAX_TM;
@@ -726,25 +737,25 @@ create_p3retval(void) {
 void
 destroy_p3retval(p3retval *state)
 {
-    if (!state)
-        return;
+  if (!state)
+    return;
 
-    free_repeat_sim_score(state);
+  free_repeat_sim_score(state);
 
-    if (state->fwd.oligo)
-        free(state->fwd.oligo);
-    if (state->rev.oligo)
-        free(state->rev.oligo);
-    if (state->intl.oligo)
-        free(state->intl.oligo);
-    if (state->best_pairs.storage_size != 0 && state->best_pairs.pairs)
-        free(state->best_pairs.pairs);
+  if (state->fwd.oligo)
+    free(state->fwd.oligo);
+  if (state->rev.oligo)
+    free(state->rev.oligo);
+  if (state->intl.oligo)
+    free(state->intl.oligo);
+  if (state->best_pairs.storage_size != 0 && state->best_pairs.pairs)
+    free(state->best_pairs.pairs);
 
-    destroy_pr_append_str_data(&state->glob_err);
-    destroy_pr_append_str_data(&state->per_sequence_err);
-    destroy_pr_append_str_data(&state->warnings);
+  destroy_pr_append_str_data(&state->glob_err);
+  destroy_pr_append_str_data(&state->per_sequence_err);
+  destroy_pr_append_str_data(&state->warnings);
 
-    free(state);
+  free(state);
 }
 
 const oligo_array *
@@ -1296,7 +1307,7 @@ make_detection_primer_lists(p3retval *retval,
     }
     /* Pick primers at one position */
     else if(sa->force_left_start > -1 ||
-    		sa->force_left_end > -1) {
+                sa->force_left_end > -1) {
       pick_primers_by_position(sa->force_left_start, sa->force_left_end, 
                                &left, &retval->fwd, pa, sa,
                                dpal_arg_to_use, retval);
@@ -2012,7 +2023,7 @@ add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oli
  
   /* Figure out positions for forward primers */
   if (oligo->type != OT_RIGHT) {
-	  i = start + length - 1;
+          i = start + length - 1;
       /* Set the start of the primer */
       h.start = i - j +1;
                 
@@ -2021,7 +2032,7 @@ add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oli
   }
   /* Figure out positions for reverse primers */
   else {
-	  i = start - length + 1;
+          i = start - length + 1;
       /* Set the start of the primer */
       h.start=i+j-1;
                 
@@ -2069,7 +2080,8 @@ pick_primers_by_position(const int start, const int end, int *extreme,
                          oligo_array *oligo, const p3_global_settings *pa,
                          const seq_args *sa, 
                          const dpal_arg_holder *dpal_arg_to_use,
-                         p3retval *retval) {
+                         p3retval *retval)
+{
   int found_primer, length, j, ret;
   found_primer = 1;
   ret = 1;
@@ -2083,18 +2095,18 @@ pick_primers_by_position(const int start, const int end, int *extreme,
     /* Loop over possible primer lengths, from min to max */
     for (j = pa->p_args.min_size; j <= pa->p_args.max_size; j++) {
       ret = add_one_primer_by_position(start, j, extreme, oligo,
-                                                pa, sa, dpal_arg_to_use, retval);
+                                       pa, sa, dpal_arg_to_use, retval);
       if (ret == 0) {
         found_primer = 0;
       }
     }
-	return found_primer;
+    return found_primer;
   } else if (end > -1) {
-	  
-	  return found_primer;
+          
+    return found_primer;
   } else {
-	  /* This schould never happen */
-	  
+    /* This schould never happen */
+          
     return 1;
   }
 }
@@ -4051,7 +4063,6 @@ void
 destroy_pr_append_str(pr_append_str *str) {
   if (str == NULL) return;
   destroy_pr_append_str_data(str);
-  /* if (str->data != NULL) free(str->data); */
   free(str);
 }
 
@@ -4823,13 +4834,13 @@ _pr_data_control(const p3_global_settings *pa,
     return 1;
   }
   if((sa->force_left_start > -1) && (sa->force_left_end > -1)
-		  && (sa->force_left_start > sa->force_left_end)) {
+     && (sa->force_left_start > sa->force_left_end)) {
     pr_append_new_chunk(glob_err,
                         "SEQUENCE_FORCE_LEFT_START > SEQUENCE_FORCE_LEFT_END");
     return 1;
   }
   if((sa->force_right_end > -1) && (sa->force_right_start > -1)
-		  && (sa->force_right_end > sa->force_right_start)) {
+     && (sa->force_right_end > sa->force_right_start)) {
     pr_append_new_chunk(glob_err,
                         "SEQUENCE_FORCE_RIGHT_END > SEQUENCE_FORCE_RIGHT_START");
     return 1;
@@ -6360,175 +6371,176 @@ p3_get_rv_stop_codon_pos(p3retval *r) {
 /* END functions for getting values from p3retvals            */
 /* ============================================================ */
 
-void p3_print_args(const p3_global_settings *p, seq_args *s) {
- if (!p->dump) return ;
+void p3_print_args(const p3_global_settings *p, seq_args *s)
+{
+  if (!p->dump) return ;
 
-printf("begin global args\n") ; 
-printf("primer_task %i\n", p->primer_task);
-printf("pick_left_primer %i\n", p->pick_left_primer);
-printf("pick_right_primer %i\n", p->pick_right_primer);
-printf("pick_internal_oligo %i\n", p->pick_internal_oligo);
-printf("file_flag %i\n", p->file_flag) ;
-printf("first_base_index %i\n", p->first_base_index);
-printf("liberal_base %i\n", p->liberal_base );
-printf("num_return %i\n", p->num_return) ;
-printf("pick_anyway %i\n", p->pick_anyway);
-printf("lib_ambiguity_codes_consensus %i\n", p->lib_ambiguity_codes_consensus) ;
-printf("quality_range_min %i\n", p->quality_range_min) ;
-printf("quality_range_max %i\n", p->quality_range_max) ;
+  printf("begin global args\n") ; 
+  printf("primer_task %i\n", p->primer_task);
+  printf("pick_left_primer %i\n", p->pick_left_primer);
+  printf("pick_right_primer %i\n", p->pick_right_primer);
+  printf("pick_internal_oligo %i\n", p->pick_internal_oligo);
+  printf("file_flag %i\n", p->file_flag) ;
+  printf("first_base_index %i\n", p->first_base_index);
+  printf("liberal_base %i\n", p->liberal_base );
+  printf("num_return %i\n", p->num_return) ;
+  printf("pick_anyway %i\n", p->pick_anyway);
+  printf("lib_ambiguity_codes_consensus %i\n", p->lib_ambiguity_codes_consensus) ;
+  printf("quality_range_min %i\n", p->quality_range_min) ;
+  printf("quality_range_max %i\n", p->quality_range_max) ;
 
-printf("begin p_args\n");
+  printf("begin p_args\n");
 
-printf("begin oligo_weights\n");
-printf("temp_gt %f\n", p->p_args.weights.temp_gt ) ;
-printf("temp_gt %f\n", p->p_args.weights.temp_gt) ;
-printf("temp_lt %f\n", p->p_args.weights.temp_lt) ;
-printf("gc_content_gt %f\n", p->p_args.weights.gc_content_gt) ;
-printf("gc_content_lt %f\n", p->p_args.weights.gc_content_lt) ;
-printf("compl_any %f\n", p->p_args.weights.compl_any) ;
-printf("compl_end %f\n", p->p_args.weights.compl_end) ;
-printf("repeat_sim %f\n", p->p_args.weights.repeat_sim) ;
-printf("length_lt %f\n", p->p_args.weights.length_lt) ;
-printf("length_gt %f\n", p->p_args.weights.length_gt) ;
-printf("seq_quality %f\n", p->p_args.weights.seq_quality) ;
-printf("end_quality %f\n", p->p_args.weights.end_quality) ;
-printf("pos_penalty %f\n", p->p_args.weights.pos_penalty) ;
-printf("end_stability %f\n", p->p_args.weights.end_stability) ;
-printf("num_ns %f\n", p->p_args.weights.num_ns) ;
-printf("template_mispriming %f\n", p->p_args.weights.template_mispriming) ;
-printf("end oligo_weights\n") ;
+  printf("begin oligo_weights\n");
+  printf("temp_gt %f\n", p->p_args.weights.temp_gt ) ;
+  printf("temp_gt %f\n", p->p_args.weights.temp_gt) ;
+  printf("temp_lt %f\n", p->p_args.weights.temp_lt) ;
+  printf("gc_content_gt %f\n", p->p_args.weights.gc_content_gt) ;
+  printf("gc_content_lt %f\n", p->p_args.weights.gc_content_lt) ;
+  printf("compl_any %f\n", p->p_args.weights.compl_any) ;
+  printf("compl_end %f\n", p->p_args.weights.compl_end) ;
+  printf("repeat_sim %f\n", p->p_args.weights.repeat_sim) ;
+  printf("length_lt %f\n", p->p_args.weights.length_lt) ;
+  printf("length_gt %f\n", p->p_args.weights.length_gt) ;
+  printf("seq_quality %f\n", p->p_args.weights.seq_quality) ;
+  printf("end_quality %f\n", p->p_args.weights.end_quality) ;
+  printf("pos_penalty %f\n", p->p_args.weights.pos_penalty) ;
+  printf("end_stability %f\n", p->p_args.weights.end_stability) ;
+  printf("num_ns %f\n", p->p_args.weights.num_ns) ;
+  printf("template_mispriming %f\n", p->p_args.weights.template_mispriming) ;
+  printf("end oligo_weights\n") ;
 
-printf("opt_tm %f\n", p->p_args.opt_tm) ;
-printf("min_tm %f\n", p->p_args.min_tm) ;
-printf("max_tm %f\n", p->p_args.max_tm) ;
-printf("opt_gc_content %f\n", p->p_args.opt_gc_content) ;
-printf("max_gc %f\n", p->p_args.max_gc) ;
-printf("min_gc %f\n", p->p_args.min_gc) ;
-printf("divalent_conc %f\n", p->p_args.divalent_conc) ;
-printf("dntp_conc %f\n", p->p_args.dntp_conc) ;
-printf("dna_conc %f\n", p->p_args.dna_conc) ;
-printf("num_ns_accepted %i\n", p->p_args.num_ns_accepted) ;
-printf("opt_size %i\n", p->p_args.opt_size) ;
-printf("min_size %i\n", p->p_args.min_size) ;
-printf("max_size %i\n", p->p_args.max_size) ;
-printf("max_poly_x %i\n", p->p_args.max_poly_x) ;
-printf("min_end_quality %i\n", p->p_args.min_end_quality) ;
-printf("min_quality %i\n", p->p_args.min_quality) ;
-printf("max_self_any %i\n", p->p_args.max_self_any) ;  
-printf("max_self_end %i\n", p->p_args.max_self_end) ;
-printf("max_repeat_compl %i\n", p->p_args.max_repeat_compl) ;
-printf("max_template_mispriming %i\n", p->p_args.max_template_mispriming) ;
-printf("end p_args\n") ; 
+  printf("opt_tm %f\n", p->p_args.opt_tm) ;
+  printf("min_tm %f\n", p->p_args.min_tm) ;
+  printf("max_tm %f\n", p->p_args.max_tm) ;
+  printf("opt_gc_content %f\n", p->p_args.opt_gc_content) ;
+  printf("max_gc %f\n", p->p_args.max_gc) ;
+  printf("min_gc %f\n", p->p_args.min_gc) ;
+  printf("divalent_conc %f\n", p->p_args.divalent_conc) ;
+  printf("dntp_conc %f\n", p->p_args.dntp_conc) ;
+  printf("dna_conc %f\n", p->p_args.dna_conc) ;
+  printf("num_ns_accepted %i\n", p->p_args.num_ns_accepted) ;
+  printf("opt_size %i\n", p->p_args.opt_size) ;
+  printf("min_size %i\n", p->p_args.min_size) ;
+  printf("max_size %i\n", p->p_args.max_size) ;
+  printf("max_poly_x %i\n", p->p_args.max_poly_x) ;
+  printf("min_end_quality %i\n", p->p_args.min_end_quality) ;
+  printf("min_quality %i\n", p->p_args.min_quality) ;
+  printf("max_self_any %i\n", p->p_args.max_self_any) ;  
+  printf("max_self_end %i\n", p->p_args.max_self_end) ;
+  printf("max_repeat_compl %i\n", p->p_args.max_repeat_compl) ;
+  printf("max_template_mispriming %i\n", p->p_args.max_template_mispriming) ;
+  printf("end p_args\n") ; 
 
-printf("begin o_args\n") ;
+  printf("begin o_args\n") ;
 
-printf("begin oligo_weights\n") ;
-printf("temp_gt %f\n", p->o_args.weights.temp_gt) ;
-printf("temp_lt %f\n", p->o_args.weights.temp_lt) ;
-printf("gc_content_gt %f\n", p->o_args.weights.gc_content_gt) ;
-printf("gc_content_lt %f\n", p->o_args.weights.gc_content_lt) ;
-printf("compl_any %f\n", p->o_args.weights.compl_any) ;
-printf("compl_end %f\n", p->o_args.weights.compl_end) ;
-printf("repeat_sim %f\n", p->o_args.weights.repeat_sim) ;
-printf("length_lt %f\n", p->o_args.weights.length_lt) ;
-printf("length_gt %f\n", p->o_args.weights.length_gt) ;
-printf("seq_quality %f\n", p->o_args.weights.seq_quality) ;
-printf("end_quality %f\n", p->o_args.weights.end_quality) ;
-printf("pos_penalty %f\n", p->o_args.weights.pos_penalty) ;
-printf("end_stability %f\n", p->o_args.weights.end_stability) ;
-printf("num_ns %f\n", p->o_args.weights.num_ns) ;
-printf("template_mispriming %f\n", p->o_args.weights.template_mispriming) ;
-printf("end oligo_weights\n") ;
+  printf("begin oligo_weights\n") ;
+  printf("temp_gt %f\n", p->o_args.weights.temp_gt) ;
+  printf("temp_lt %f\n", p->o_args.weights.temp_lt) ;
+  printf("gc_content_gt %f\n", p->o_args.weights.gc_content_gt) ;
+  printf("gc_content_lt %f\n", p->o_args.weights.gc_content_lt) ;
+  printf("compl_any %f\n", p->o_args.weights.compl_any) ;
+  printf("compl_end %f\n", p->o_args.weights.compl_end) ;
+  printf("repeat_sim %f\n", p->o_args.weights.repeat_sim) ;
+  printf("length_lt %f\n", p->o_args.weights.length_lt) ;
+  printf("length_gt %f\n", p->o_args.weights.length_gt) ;
+  printf("seq_quality %f\n", p->o_args.weights.seq_quality) ;
+  printf("end_quality %f\n", p->o_args.weights.end_quality) ;
+  printf("pos_penalty %f\n", p->o_args.weights.pos_penalty) ;
+  printf("end_stability %f\n", p->o_args.weights.end_stability) ;
+  printf("num_ns %f\n", p->o_args.weights.num_ns) ;
+  printf("template_mispriming %f\n", p->o_args.weights.template_mispriming) ;
+  printf("end oligo_weights\n") ;
 
-printf("opt_tm %f\n", p->o_args.opt_tm) ;
-printf("min_tm %f\n", p->o_args.min_tm) ;
-printf("max_tm %f\n", p->o_args.max_tm) ;
-printf("opt_gc_content %f\n", p->o_args.opt_gc_content) ;
-printf("max_gc %f\n", p->o_args.max_gc) ;
-printf("min_gc %f\n", p->o_args.min_gc) ;
-printf("divalent_conc %f\n", p->o_args.divalent_conc) ;
-printf("dntp_conc %f\n", p->o_args.dntp_conc) ;
-printf("dna_conc %f\n", p->o_args.dna_conc) ;
-printf("num_ns_accepted %i\n", p->o_args.num_ns_accepted) ;
-printf("opt_size %i\n", p->o_args.opt_size) ;
-printf("min_size %i\n", p->o_args.min_size) ;
-printf("max_size %i\n", p->o_args.max_size) ;
-printf("max_poly_x %i\n", p->o_args.max_poly_x) ;
-printf("min_end_quality %i\n", p->o_args.min_end_quality) ;
-printf("min_quality %i\n", p->o_args.min_quality) ;
-printf("max_self_any %i\n", p->o_args.max_self_any) ;
-printf("max_self_end %i\n", p->o_args.max_self_end) ;
-printf("max_repeat_compl %i\n", p->o_args.max_repeat_compl) ;
-printf("max_template_mispriming %i\n", p->o_args.max_template_mispriming) ;
-printf("end o_args\n") ;
+  printf("opt_tm %f\n", p->o_args.opt_tm) ;
+  printf("min_tm %f\n", p->o_args.min_tm) ;
+  printf("max_tm %f\n", p->o_args.max_tm) ;
+  printf("opt_gc_content %f\n", p->o_args.opt_gc_content) ;
+  printf("max_gc %f\n", p->o_args.max_gc) ;
+  printf("min_gc %f\n", p->o_args.min_gc) ;
+  printf("divalent_conc %f\n", p->o_args.divalent_conc) ;
+  printf("dntp_conc %f\n", p->o_args.dntp_conc) ;
+  printf("dna_conc %f\n", p->o_args.dna_conc) ;
+  printf("num_ns_accepted %i\n", p->o_args.num_ns_accepted) ;
+  printf("opt_size %i\n", p->o_args.opt_size) ;
+  printf("min_size %i\n", p->o_args.min_size) ;
+  printf("max_size %i\n", p->o_args.max_size) ;
+  printf("max_poly_x %i\n", p->o_args.max_poly_x) ;
+  printf("min_end_quality %i\n", p->o_args.min_end_quality) ;
+  printf("min_quality %i\n", p->o_args.min_quality) ;
+  printf("max_self_any %i\n", p->o_args.max_self_any) ;
+  printf("max_self_end %i\n", p->o_args.max_self_end) ;
+  printf("max_repeat_compl %i\n", p->o_args.max_repeat_compl) ;
+  printf("max_template_mispriming %i\n", p->o_args.max_template_mispriming) ;
+  printf("end o_args\n") ;
 
-printf("tm_santalucia %i\n", p->tm_santalucia) ;  
-printf("salt_corrections %i\n", p->salt_corrections) ; 
-printf("max_end_stability %f\n", p->max_end_stability) ;
-printf("gc_clamp %i\n", p->gc_clamp) ;
-printf("lowercase_masking %i\n", p->lowercase_masking) ; 
-printf("outside_penalty %f\n", p->outside_penalty) ;
-printf("inside_penalty %f\n", p->inside_penalty) ;
-printf("pr_min[PR_MIN_INTERVAL_ARRAY] %i\n", p->pr_min[0]) ;
-printf("pr_max[PR_MAX_INTERVAL_ARRAY] %i\n", p->pr_max[0]) ;
-printf("num_intervals %i\n", p->num_intervals) ;
-printf("product_opt_size %i\n", p->product_opt_size) ;
-printf("product_max_tm %f\n", p->product_max_tm) ;
-printf("product_min_tm %f\n", p->product_min_tm) ;
-printf("product_opt_tm %f\n", p->product_opt_tm) ;
-printf("pair_max_template_mispriming %i\n", p->pair_max_template_mispriming) ;
-printf("pair_repeat_compl %i\n", p->pair_repeat_compl) ;
-printf("pair_compl_any %i\n", p->pair_compl_any) ;
-printf("pair_compl_end %i\n", p->pair_compl_end) ;
+  printf("tm_santalucia %i\n", p->tm_santalucia) ;  
+  printf("salt_corrections %i\n", p->salt_corrections) ; 
+  printf("max_end_stability %f\n", p->max_end_stability) ;
+  printf("gc_clamp %i\n", p->gc_clamp) ;
+  printf("lowercase_masking %i\n", p->lowercase_masking) ; 
+  printf("outside_penalty %f\n", p->outside_penalty) ;
+  printf("inside_penalty %f\n", p->inside_penalty) ;
+  printf("pr_min[PR_MIN_INTERVAL_ARRAY] %i\n", p->pr_min[0]) ;
+  printf("pr_max[PR_MAX_INTERVAL_ARRAY] %i\n", p->pr_max[0]) ;
+  printf("num_intervals %i\n", p->num_intervals) ;
+  printf("product_opt_size %i\n", p->product_opt_size) ;
+  printf("product_max_tm %f\n", p->product_max_tm) ;
+  printf("product_min_tm %f\n", p->product_min_tm) ;
+  printf("product_opt_tm %f\n", p->product_opt_tm) ;
+  printf("pair_max_template_mispriming %i\n", p->pair_max_template_mispriming) ;
+  printf("pair_repeat_compl %i\n", p->pair_repeat_compl) ;
+  printf("pair_compl_any %i\n", p->pair_compl_any) ;
+  printf("pair_compl_end %i\n", p->pair_compl_end) ;
 
-printf("begin pr_pair_weights\n") ;
-printf("primer_quality %f\n", p->pr_pair_weights.primer_quality) ;
-printf("io_quality %f\n", p->pr_pair_weights.io_quality) ;
-printf("diff_tm %f\n", p->pr_pair_weights.diff_tm) ;
-printf("compl_any %f\n", p->pr_pair_weights.compl_any) ;
-printf("compl_end %f\n", p->pr_pair_weights.compl_end) ;
-printf("product_tm_lt %f\n", p->pr_pair_weights.product_tm_lt) ;
-printf("product_tm_gt %f\n", p->pr_pair_weights.product_tm_gt) ;
-printf("product_size_lt %f\n", p->pr_pair_weights.product_size_lt) ;
-printf("product_size_gt %f\n", p->pr_pair_weights.product_size_gt) ;
-printf("repeat_sim %f\n", p->pr_pair_weights.repeat_sim) ;
-printf("template_mispriming %f\n", p->pr_pair_weights.template_mispriming) ;
-printf("end pair_weights\n") ;
+  printf("begin pr_pair_weights\n") ;
+  printf("primer_quality %f\n", p->pr_pair_weights.primer_quality) ;
+  printf("io_quality %f\n", p->pr_pair_weights.io_quality) ;
+  printf("diff_tm %f\n", p->pr_pair_weights.diff_tm) ;
+  printf("compl_any %f\n", p->pr_pair_weights.compl_any) ;
+  printf("compl_end %f\n", p->pr_pair_weights.compl_end) ;
+  printf("product_tm_lt %f\n", p->pr_pair_weights.product_tm_lt) ;
+  printf("product_tm_gt %f\n", p->pr_pair_weights.product_tm_gt) ;
+  printf("product_size_lt %f\n", p->pr_pair_weights.product_size_lt) ;
+  printf("product_size_gt %f\n", p->pr_pair_weights.product_size_gt) ;
+  printf("repeat_sim %f\n", p->pr_pair_weights.repeat_sim) ;
+  printf("template_mispriming %f\n", p->pr_pair_weights.template_mispriming) ;
+  printf("end pair_weights\n") ;
 
-printf("min_three_prime_distance %i\n", p->min_three_prime_distance) ; 
-printf("settings_file_id %s\n", p->settings_file_id) ;
-printf("end global args\n") ;
+  printf("min_three_prime_distance %i\n", p->min_three_prime_distance) ; 
+  printf("settings_file_id %s\n", p->settings_file_id) ;
+  printf("end global args\n") ;
 
-printf("begin sequence args\n") ;
-/* FIX printf("interval_array_t2 tar2 %i\n",
-  int pairs[PR_MAX_INTERVAL_ARRAY][2]) ;
-  int count) ;
-printf("interval_array_t2 excl2 %i\n", 
-  int pairs[PR_MAX_INTERVAL_ARRAY][2]) ;
-  int count) ;
-printf("interval_array_t2 excl_internal2 %i\n",  
-  int pairs[PR_MAX_INTERVAL_ARRAY][2]) ;
-  int count) ;
-*/
-printf("incl_s %i\n", s->incl_s) ;
-printf("incl_l %i\n", s->incl_l) ;
-printf("start_codon_pos %i\n", s->start_codon_pos) ;
-/* FIX printf("quality%i\", s->quality) ; */
-printf("n_quality %i\n", s->n_quality) ;
-printf("quality_storage_size %i\n", s->quality_storage_size) ;
-printf("*sequence %s\n", s->sequence) ;
-printf("*sequence_name %s\n", s->sequence_name) ;
-printf("*sequence_file %s\n", s->sequence_file) ;
-printf("*trimmed_seq %s\n", s->trimmed_seq) ;
-printf("*trimmed_orig_seq %s\n", s->trimmed_orig_seq) ;
-printf("*upcased_seq %s\n", s->upcased_seq) ;
-printf("*upcased_seq_r %s\n", s->upcased_seq_r) ;
-printf("*left_input %s\n", s->left_input) ;
-printf("*right_input %s\n", s->right_input) ;
-printf("*internal_input %s\n", s->internal_input) ;
-printf("force_left_start %i\n", s->force_left_start) ;
-printf("force_left_end %i\n", s->force_left_end) ;
-printf("force_right_start %i\n", s->force_right_start) ;
-printf("force_right_end %i\n", s->force_right_end) ;
-printf("end sequence args\n") ;
+  printf("begin sequence args\n") ;
+  /* FIX printf("interval_array_t2 tar2 %i\n",
+     int pairs[PR_MAX_INTERVAL_ARRAY][2]) ;
+     int count) ;
+     printf("interval_array_t2 excl2 %i\n", 
+     int pairs[PR_MAX_INTERVAL_ARRAY][2]) ;
+     int count) ;
+     printf("interval_array_t2 excl_internal2 %i\n",  
+     int pairs[PR_MAX_INTERVAL_ARRAY][2]) ;
+     int count) ;
+  */
+  printf("incl_s %i\n", s->incl_s) ;
+  printf("incl_l %i\n", s->incl_l) ;
+  printf("start_codon_pos %i\n", s->start_codon_pos) ;
+  /* FIX printf("quality%i\", s->quality) ; */
+  printf("n_quality %i\n", s->n_quality) ;
+  printf("quality_storage_size %i\n", s->quality_storage_size) ;
+  printf("*sequence %s\n", s->sequence) ;
+  printf("*sequence_name %s\n", s->sequence_name) ;
+  printf("*sequence_file %s\n", s->sequence_file) ;
+  printf("*trimmed_seq %s\n", s->trimmed_seq) ;
+  printf("*trimmed_orig_seq %s\n", s->trimmed_orig_seq) ;
+  printf("*upcased_seq %s\n", s->upcased_seq) ;
+  printf("*upcased_seq_r %s\n", s->upcased_seq_r) ;
+  printf("*left_input %s\n", s->left_input) ;
+  printf("*right_input %s\n", s->right_input) ;
+  printf("*internal_input %s\n", s->internal_input) ;
+  printf("force_left_start %i\n", s->force_left_start) ;
+  printf("force_left_end %i\n", s->force_left_end) ;
+  printf("force_right_start %i\n", s->force_right_start) ;
+  printf("force_right_end %i\n", s->force_right_end) ;
+  printf("end sequence args\n") ;
 }

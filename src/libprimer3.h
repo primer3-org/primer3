@@ -1021,6 +1021,7 @@ void          init_pr_append_str(pr_append_str *s);
 void          pr_set_empty(pr_append_str *);
 int           pr_is_empty(const pr_append_str *);
 void          destroy_pr_append_str(pr_append_str *);
+void          destroy_pr_append_str_data(pr_append_str *str);
 
 /* Return 1 on ENOMEM, otherwise 0 */
 int           pr_append_external(pr_append_str *, const char *);

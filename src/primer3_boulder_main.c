@@ -73,16 +73,19 @@ main(argc,argv)
   p3_settings_file[0] = '\0';
 
   p3_global_settings *global_pa;
-  seq_args *sa;
+  seq_args *sarg;
   read_boulder_record_results read_boulder_record_res = {0,0,0};
 
-  /* Declare and initialize pointers  to error strings. */
-  pr_append_str *fatal_parse_err = NULL;
-  pr_append_str *nonfatal_parse_err = NULL;
+  pr_append_str fatal_parse_err;
+  pr_append_str nonfatal_parse_err;
   
   /* Retval will point to the return value from choose_primers(). */
   p3retval *retval = NULL;
   int input_found=0;
+
+  init_pr_append_str(&fatal_parse_err);
+  init_pr_append_str(&nonfatal_parse_err);
+
 
   /* Get the program name for correct error messages */
   pr_program_name = argv[0];
@@ -147,16 +150,18 @@ main(argc,argv)
   }
 
   /* Create  empty error messages */
+#if 0
   fatal_parse_err     = create_pr_append_str();
   nonfatal_parse_err  = create_pr_append_str();
   if (NULL == fatal_parse_err 
       || NULL == nonfatal_parse_err ) {
     exit(-2); /* Out of memory */
   }
+#endif
 
   /* Settings files have to be read in here */
-  /* The functions need a temporary sa */
-  if (!(sa = create_seq_arg())) {  /* ANDREAS, the storage assigned to sa here is not always freed */
+  /* The functions need a temporary sarg */
+  if (!(sarg = create_seq_arg())) {
     exit(-2);
   }
 
@@ -164,38 +169,39 @@ main(argc,argv)
    * values for primer picking to pa and sa. */
   if (p3_settings_file[0] != '\0') {
     read_p3_file(p3_settings_file, settings, global_pa, 
-                 sa, fatal_parse_err, nonfatal_parse_err,
+                 sarg, &fatal_parse_err, &nonfatal_parse_err,
                  &read_boulder_record_res);
   }
 
   /* We also need to print out errors here because the loop erases all
    *  errors at start */
   /* If there are fatal errors, write the proper message and exit */
-  if (fatal_parse_err->data != NULL) {
+  if (fatal_parse_err.data != NULL) {
     if (format_output) {
-        format_error(stdout, sa->sequence_name, fatal_parse_err->data);
+        format_error(stdout, sarg->sequence_name, fatal_parse_err.data);
     } else {
-        print_boulder_error(fatal_parse_err->data);
+        print_boulder_error(fatal_parse_err.data);
     }
     fprintf(stderr, "%s: %s\n", 
-              pr_program_name, fatal_parse_err->data);
-    destroy_seq_args(sa);
+              pr_program_name, fatal_parse_err.data);
+    destroy_seq_args(sarg);
     exit(-4);
   }
 
   /* If there are nonfatal errors, write the proper message
    * and skip to the end of the loop */
-  if (!pr_is_empty(nonfatal_parse_err)) {
+  if (!pr_is_empty(&nonfatal_parse_err)) {
     if (format_output) {
-        format_error(stdout, sa->sequence_name, 
-                     nonfatal_parse_err->data);
+        format_error(stdout, sarg->sequence_name, 
+                     nonfatal_parse_err.data);
     } else {
-        print_boulder_error(nonfatal_parse_err->data);
+        print_boulder_error(nonfatal_parse_err.data);
     }
   }
 
-  /* The temporary sa is not needed any more */
-  destroy_seq_args(sa);
+  /* The temporary sarg is not needed any more */
+  destroy_seq_args(sarg);
+  sarg = NULL;
   
   /* Read the data from input stream record by record and process it if
    * there are no errors. This is where the work is done. */
@@ -203,29 +209,27 @@ main(argc,argv)
     /* Create and initialize a seq_args data structure. sa (seq_args *) is 
      * initialized here because Values are _not_ retained across different
      * input records. */
-    if (!(sa = create_seq_arg())) {  /*  ANDREAS, the storage assigned to sa here is not alwayw freed */
+    if (!(sarg = create_seq_arg())) {
       exit(-2);
     }
 
     /* Reset all errors handlers and the return structure */
-    pr_set_empty(fatal_parse_err);
-    pr_set_empty(nonfatal_parse_err);
+    pr_set_empty(&fatal_parse_err);
+    pr_set_empty(&nonfatal_parse_err);
     retval = NULL;
 
-    /* Read data from stdin until a "=" line occurs.  Assign parameter
-     * values for primer picking to pa and sa. Perform initial data
-     * checking. */
-    if (read_boulder_record(stdin, 
+    /* See read_boulder.h for documentation on read_boulder_record().*/
+    if (!read_boulder_record(stdin, 
                             &strict_tags, 
                             &io_version,
                             !format_output, 
                             all_parameters,
-                            global_pa, sa, 
-                            fatal_parse_err, 
-                            nonfatal_parse_err,
-                            &read_boulder_record_res) <= 0) {
-      
-      break; /* leave the program loop and complain later */
+                            global_pa, 
+			    sarg, 
+                            &fatal_parse_err, 
+                            &nonfatal_parse_err,
+                            &read_boulder_record_res)) {
+      break; /* There were no more boulder records */
     }
     
     input_found = 1;
@@ -235,34 +239,32 @@ main(argc,argv)
     }
 
     /* If there are fatal errors, write the proper message and exit */
-    if (fatal_parse_err->data != NULL) {
+    if (fatal_parse_err.data != NULL) {
       if (format_output) {
-        format_error(stdout, sa->sequence_name, fatal_parse_err->data);
+        format_error(stdout, sarg->sequence_name, fatal_parse_err.data);
       } else {
-        print_boulder_error(fatal_parse_err->data);
+        print_boulder_error(fatal_parse_err.data);
       }
       fprintf(stderr, "%s: %s\n", 
-              pr_program_name, fatal_parse_err->data);
+              pr_program_name, fatal_parse_err.data);
       destroy_p3retval(retval);
-      destroy_seq_args(sa);
+      destroy_seq_args(sarg);
       exit(-4);
     }
 
-    /* POSSIBLE CHANGE -- read in mispriming libraries here? */
-
     /* If there are nonfatal errors, write the proper message
      * and skip to the end of the loop */
-    if (!pr_is_empty(nonfatal_parse_err)) {
+    if (!pr_is_empty(&nonfatal_parse_err)) {
       if (format_output) {
-        format_error(stdout, sa->sequence_name, 
-                     nonfatal_parse_err->data);
+        format_error(stdout, sarg->sequence_name, 
+                     nonfatal_parse_err.data);
       } else {
-        print_boulder_error(nonfatal_parse_err->data);
+        print_boulder_error(nonfatal_parse_err.data);
       }
       goto loop_wrap_up;
     }
     
-    if (read_boulder_record_res.file_flag && sa->sequence_name == NULL) {
+    if (read_boulder_record_res.file_flag && sarg->sequence_name == NULL) {
       /* We will not have a base name for the files */
       if (format_output) {
         format_error(stdout, NULL, 
@@ -275,7 +277,7 @@ main(argc,argv)
 
     /* Pick the primers - the central function */
     global_pa->file_flag = read_boulder_record_res.file_flag;
-    retval = choose_primers(global_pa, sa);  
+    retval = choose_primers(global_pa, sarg);  
     if (NULL == retval) exit(-2); /* Out of memory. */
 
     if (pr_is_empty(&retval->glob_err)
@@ -286,19 +288,19 @@ main(argc,argv)
          move test inside  */
       /* Create files with left, right, and internal oligos. */
       if (read_boulder_record_res.file_flag) {
-        p3_print_oligo_lists(retval, sa, global_pa,
+        p3_print_oligo_lists(retval, sarg, global_pa,
                              &retval->per_sequence_err,
-                             sa->sequence_name);
+                             sarg->sequence_name);
       }
     }
 
     if (format_output) {
       print_format_output(stdout, &io_version, global_pa, 
-                          sa, retval, pr_release,
+                          sarg, retval, pr_release,
                           read_boulder_record_res.explain_flag);
     } else {
       /* Use boulder output */
-      print_boulder(&io_version, global_pa, sa, retval, 
+      print_boulder(&io_version, global_pa, sarg, retval, 
                     read_boulder_record_res.explain_flag,
                     read_boulder_record_res.show_oligo_problems);
     }
@@ -309,13 +311,18 @@ main(argc,argv)
       if (NULL != retval->glob_err.data) {
         fprintf(stderr, "%s: %s\n", pr_program_name, retval->glob_err.data);
         destroy_p3retval(retval);
-        destroy_seq_args(sa);
+        destroy_seq_args(sarg);
         exit(-4);
       }
     }
-    /* Delete the data structures out of the memory */
+
+    /* FIX ME LEAK -- need to call destroy_pr_append_str_data 
+       here on the parse error strings */
+
     destroy_p3retval(retval); /* This works even if retval is NULL */
-    destroy_seq_args(sa);
+    retval = NULL;
+    destroy_seq_args(sarg);
+    sarg = NULL;
 
   }   /* while (1) (processing boulder io records) 
        * End of the primary working loop */
@@ -323,9 +330,9 @@ main(argc,argv)
   /* To avoid being distracted when looking for leaks: */
   p3_destroy_global_settings(global_pa);
   global_pa = NULL;
-  destroy_pr_append_str(fatal_parse_err);
-  destroy_pr_append_str(nonfatal_parse_err);
-  destroy_seq_args(sa);
+  destroy_seq_args(sarg);
+  destroy_pr_append_str_data(&nonfatal_parse_err);
+  destroy_pr_append_str_data(&fatal_parse_err);
   
   /* If it could not read input complain and die */
   if (0 == input_found) {
