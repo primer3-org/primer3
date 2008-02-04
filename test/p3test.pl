@@ -62,10 +62,7 @@ our ($verbose, $do_valgrind, $winFlag, $fastFlag);
 
 our %signo;
 
-# The following format works with valgrind-3.2.3:
-our $valgrind_format  = "/usr/local/bin/valgrind "
-		   . " --leak-check=yes --show-reachable=yes "
-		   . " --log-file-exactly=%s.vg ";
+our $valgrind_format;
 		   
 # Global variable for Errors
 my $all_ok;
@@ -74,6 +71,14 @@ main();
 
 sub main() {
     my %args;
+
+    my $valgrind_exe = "/usr/local/bin/valgrind";
+    if (!-x $valgrind_exe) { die "Cannot execute $valgrind_exe" }
+
+    # The following format works with valgrind-3.2.3:
+    $valgrind_format  = $valgrind_exe
+	. " --leak-check=yes --show-reachable=yes "
+	. " --log-file-exactly=%s.vg ";
 
     select STDERR;
 
@@ -119,7 +124,7 @@ sub main() {
     if ($winFlag) {
 	$exe = '..\\src\\primer3_core.exe';
 	# $def_executable = $exe; # keep things happy @ line 237 Brant probably not necessary any more
-                                  # Also, line numbers of particular statements are not very stable.
+	# Also, line numbers of particular statements are not very stable.
     }
 
     my $exit_stat = 0;
@@ -183,13 +188,13 @@ sub main() {
 
 	# We are inside the for loop here....
 	print "$test...";
-	
+
 	if ($test eq 'primer_lib_amb_codes') {
-		if ($fastFlag) {
-			print "[skiped in fast mode]\n ";	
-			next;
+	    if ($fastFlag) {
+		print "[skiped in fast mode]\n ";	
+		next;
 	    }
-		print 
+	    print 
 		"\nNOTE: this test takes _much_ longer than the others ",
 		"(10 to 20 minutes or more).\n",
 		"starting $test at ", scalar(localtime), "...";
@@ -208,7 +213,7 @@ sub main() {
 	die "Cannot read $input"  unless -r $input;
 	die "Cannot read $output"  unless -r $output;
 
-	my $r; # Return value for tests
+	my $r;			# Return value for tests
 
 	if ($test eq 'primer' || $test eq 'primer1') {
 	    # These tests generate primer lists, which
@@ -251,7 +256,7 @@ sub main() {
 	}
 
 	unless ($r == 0) {
-		$all_ok = 0;
+	    $all_ok = 0;
 	    print "NON-0 EXIT: $r [FAILED]\n";
 	    $exit_stat = -1;
 	    next;
@@ -261,7 +266,7 @@ sub main() {
 	if ($r == 0) {
 	    print "[OK]\n";
 	} else {
-		$all_ok = 0;
+	    $all_ok = 0;
 	    print "[FAILED]\n";
 	    $exit_stat = -1;
 	}
@@ -286,12 +291,12 @@ sub main() {
 		print "[OK]\n";
 	    } 
 	    else {
-	    $all_ok = 0;
+		$all_ok = 0;
 		print "[FAILED]\n";
 		$exit_stat = -1;
 	    }
 	}
-    }  # End of long for loop, for my $test in (.....) 
+    }		      # End of long for loop, for my $test in (.....) 
 
     # ================================================== 
     # If we were running under valgrind to look for memory-related
@@ -303,7 +308,7 @@ sub main() {
 	# we have grep.
 	my $r = system "grep ERROR *.vg */*.vg | grep -v 'ERROR SUMMARY: 0 errors'";
 	if (!$r) { # !$r because grep returns 0 if something is found,
-	           # and if something is found, we have a problem.
+	    # and if something is found, we have a problem.
 	    $exit_stat = -1;
 	}
 	$r = system "grep 'definitely lost' *.vg */*.vg | grep -v ' 0 bytes'";
