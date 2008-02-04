@@ -381,6 +381,8 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_MIN_END_QUALITY", pa->p_args.min_end_quality);
       COMPARE_INT("PRIMER_MIN_THREE_PRIME_DISTANCE", 
                   pa->min_three_prime_distance);
+      COMPARE_INT("PRIMER_PRIMERS_IN_PAIRS_MUST_BE_UNIQUE", 
+                  pa->primers_in_pairs_must_be_unique);
       if (*io_version > 0 && file_type == settings) {
         COMPARE_AND_MALLOC("P3_FILE_ID", pa->settings_file_id);
       }

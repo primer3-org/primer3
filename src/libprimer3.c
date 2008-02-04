@@ -496,78 +496,69 @@ pr_set_default_global_args(p3_global_settings *a) {
 #define INTERNAL_OLIGO_OPT_TM     60.0
 #define INTERNAL_OLIGO_MIN_TM     57.0
 #define INTERNAL_OLIGO_MAX_TM     63.0
-  a->o_args.opt_tm          = INTERNAL_OLIGO_OPT_TM;
-  a->o_args.min_tm          = INTERNAL_OLIGO_MIN_TM;
-  a->o_args.max_tm          = INTERNAL_OLIGO_MAX_TM;
+  a->o_args.opt_tm          = 60.0; /* INTERNAL_OLIGO_OPT_TM; */
+  a->o_args.min_tm          = 57.0; /* INTERNAL_OLIGO_MIN_TM; */
+  a->o_args.max_tm          = 63.0; /* INTERNAL_OLIGO_MAX_TM; */
 
 #define INTERNAL_OLIGO_MIN_GC     20.0
 #define INTERNAL_OLIGO_MAX_GC     80.0
-  a->o_args.min_gc          = INTERNAL_OLIGO_MIN_GC;
-  a->o_args.max_gc          = INTERNAL_OLIGO_MAX_GC;
-
+  a->o_args.min_gc          = 20.0; /* INTERNAL_OLIGO_MIN_GC; */
+  a->o_args.max_gc          = 80.0; /* INTERNAL_OLIGO_MAX_GC;*/
 
   a->o_args.opt_gc_content  = DEFAULT_OPT_GC_PERCENT;
 
 
 #define INTERNAL_OLIGO_MAX_POLY_X           5 
-  a->o_args.max_poly_x      = INTERNAL_OLIGO_MAX_POLY_X;
+  a->o_args.max_poly_x      = 5; /* INTERNAL_OLIGO_MAX_POLY_X; */
+
 #define INTERNAL_OLIGO_SALT_CONC         50.0
-  a->o_args.salt_conc       = INTERNAL_OLIGO_SALT_CONC;
+  a->o_args.salt_conc       = 50.0; /* INTERNAL_OLIGO_SALT_CONC; */
 
 #define INTERNAL_OLIGO_DIVALENT_CONC      0.0
-  a->o_args.divalent_conc   = INTERNAL_OLIGO_DIVALENT_CONC;
+  a->o_args.divalent_conc   = 0.0; /*INTERNAL_OLIGO_DIVALENT_CONC; */
 
 #define INTERNAL_OLIGO_DNTP_CONC          0.0
-  a->o_args.dntp_conc       = INTERNAL_OLIGO_DNTP_CONC;
+  a->o_args.dntp_conc       = 0.0; /* INTERNAL_OLIGO_DNTP_CONC; */
 
 #define INTERNAL_OLIGO_DNA_CONC          50.0
-  a->o_args.dna_conc        = INTERNAL_OLIGO_DNA_CONC;
+  a->o_args.dna_conc        = 50.0; /* INTERNAL_OLIGO_DNA_CONC; */
 
 #define INTERNAL_OLIGO_NUM_NS               0
-  a->o_args.num_ns_accepted = INTERNAL_OLIGO_NUM_NS;
-
+  a->o_args.num_ns_accepted = 0; /* INTERNAL_OLIGO_NUM_NS;*/
 
 #define INTERNAL_OLIGO_SELF_ANY          1200
 #define INTERNAL_OLIGO_SELF_END          1200
 #define INTERNAL_OLIGO_REPEAT_SIMILARITY 1200
-  a->o_args.max_self_any        = INTERNAL_OLIGO_SELF_ANY;
-  a->o_args.max_self_end        = INTERNAL_OLIGO_SELF_END;
-  a->o_args.max_repeat_compl    = INTERNAL_OLIGO_REPEAT_SIMILARITY;
+  a->o_args.max_self_any        = 1200; /* INTERNAL_OLIGO_SELF_ANY; */
+  a->o_args.max_self_end        = 1200; /* INTERNAL_OLIGO_SELF_END; */
+  a->o_args.max_repeat_compl    = 1200; /* INTERNAL_OLIGO_REPEAT_SIMILARITY; */
 
   a->o_args.min_quality     = 0;
   a->o_args.min_end_quality = 0;
   a->o_args.max_template_mispriming
     = PR_UNDEFINED_ALIGN_OPT;
+  a->o_args.weights.temp_gt     = 1;
+  a->o_args.weights.temp_lt     = 1;
 
+  /* #define IO_WT_SIZE_GT        1
+     #define IO_WT_SIZE_LT        1 */
+  a->o_args.weights.length_gt   = 1; /* IO_WT_SIZE_GT; */
+  a->o_args.weights.length_lt   = 1; /* IO_WT_SIZE_LT; */
 
-  /* #define IO_WT_TM_GT          1
-     #define IO_WT_TM_LT          1 */
-  a->o_args.weights.temp_gt     = 1; /* IO_WT_TM_GT; */
-  a->o_args.weights.temp_lt     = 1; /* IO_WT_TM_LT; */
+  /* #define IO_WT_GC_PERCENT_GT  0
+     #define IO_WT_GC_PERCENT_LT  0 */
+  a->o_args.weights.gc_content_gt = 0; /* IO_WT_GC_PERCENT_GT; */
+  a->o_args.weights.gc_content_lt = 0; /* IO_WT_GC_PERCENT_LT; */
 
-#define IO_WT_SIZE_GT        1
-#define IO_WT_SIZE_LT        1
-  a->o_args.weights.length_gt   = IO_WT_SIZE_GT;
-  a->o_args.weights.length_lt   = IO_WT_SIZE_LT;
+  /* #define IO_WT_COMPL_ANY      0
+     #define IO_WT_COMPL_END      0 */
+  a->o_args.weights.compl_any   = 0; /* IO_WT_COMPL_ANY; */
+  a->o_args.weights.compl_end   = 0; /* IO_WT_COMPL_END; */
 
-#define IO_WT_GC_PERCENT_GT  0
-#define IO_WT_GC_PERCENT_LT  0
-  a->o_args.weights.gc_content_gt = IO_WT_GC_PERCENT_GT;
-  a->o_args.weights.gc_content_lt = IO_WT_GC_PERCENT_LT;
-
-#define IO_WT_COMPL_ANY      0
-#define IO_WT_COMPL_END      0
-  a->o_args.weights.compl_any   = IO_WT_COMPL_ANY;
-  a->o_args.weights.compl_end   = IO_WT_COMPL_END;
-
-  /* #define IO_WT_NUM_NS         0
-#define IO_WT_REP_SIM        0
-#define IO_WT_SEQ_QUAL       0
-#define IO_WT_END_QUAL       0 */
-  a->o_args.weights.num_ns      = 0; /* IO_WT_NUM_NS; */
-  a->o_args.weights.repeat_sim  = 0; /* IO_WT_REP_SIM; */
-  a->o_args.weights.seq_quality = 0; /* IO_WT_SEQ_QUAL; */
-  a->o_args.weights.end_quality = 0; /* IO_WT_END_QUAL; */
+  a->o_args.weights.num_ns      = 0;
+  a->o_args.weights.repeat_sim  = 0;
+  a->o_args.weights.seq_quality = 0;
+  a->o_args.weights.end_quality = 0;
 
 #define PAIR_WT_PRIMER_PENALTY      1
 #define PAIR_WT_IO_PENALTY          0
@@ -592,12 +583,14 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->pr_pair_weights.product_size_gt = PAIR_WT_PRODUCT_SIZE_GT;
 
   a->lib_ambiguity_codes_consensus   = 1;
-  /*  For backward compatibility. It turns out that this _not_ what
-      one normally wants, since many libraries contain strings of N,
-      which then match every oligo (very bad).
+  /*  Set to 1 for backward compatibility. This _NOT_ what
+      one normally wants, since many libraries contain
+      strings of N, which then match every oligo (very bad).
   */
 
   a->min_three_prime_distance        = -1;
+  a->primers_in_pairs_must_be_unique = 0;
+
   a->settings_file_id                = NULL;
 
   a->sequencing.lead                 = 50;

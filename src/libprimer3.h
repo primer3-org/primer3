@@ -412,6 +412,11 @@ typedef struct p3_global_settings {
   */
   int    min_three_prime_distance; 
 
+  /* If non-0, the left primer in a pair must be unique with respect
+     to any previously generated left primer, and the analagous
+     condition must hold for right primers. */
+  int    primers_in_pairs_must_be_unique;
+
   char *settings_file_id;
   int dump;  /* dump fields for global settings and seq args if dump == 1 */
 } p3_global_settings;
