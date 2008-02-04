@@ -63,7 +63,7 @@ our $err = "0" ;
 our $retval = 0 ;
 our $explain_flag = 0;
 our $show_oligo_problems = 0;
-our $printargs = 0 ; # set to 1 if dumping arguments to choose_primers
+our $printargs = 1 ; # set to 1 if dumping arguments to choose_primers
 
 main();
 
@@ -120,6 +120,8 @@ sub set_setters() {
 # PER SEQUENCE INPUTS ==================================================
      $dispatch{'SEQUENCE'} = 
 sub ($) { my $v = shift; pl_set_sa_sequence($sa, $v) }; 
+     $dispatch{'SEQUENCE_DNA'} = 
+sub ($) { my $v = shift; pl_set_sa_sequence($sa, $v) }; 
      $dispatch{'PRIMER_SEQUENCE_QUALITY'} = 
 sub ($) { my $v = shift;
 	  my @nums = split( /\s+/, $v) ;
@@ -131,6 +133,8 @@ sub ($) { my $v = shift;
 	    } 
           } ;
     $dispatch{'PRIMER_SEQUENCE_ID'} = 
+sub ($) { my $v = shift; my $i = pl_set_sa_sequence_name($sa, $v) };     
+    $dispatch{'SEQUENCE_ID'} = 
 sub ($) { my $v = shift; my $i = pl_set_sa_sequence_name($sa, $v) };     
      $dispatch{'MARKER_NAME'} = 
 sub ($) { my $v = shift;  my $i = pl_set_sa_sequence_name($sa, $v) };     
@@ -157,6 +161,7 @@ sub ($) { my $v = shift;
 	  my $f = shift @nums ;
 	  my $s = shift @nums ;
 	  while (defined $f) {
+	      if ($s eq "" || $f eq "") { return ; }
 	      if (pl_add_to_sa_excl2($sa, $f, $s)) {$err = "PRIMER_ERROR=Too many elements for tag $tag\n"; return ;}     
 	      $f = shift @nums ;
 	      $s = shift @nums ;
@@ -173,9 +178,10 @@ sub ($) { my $v = shift;
 	    }};
    $dispatch{'INCLUDED_REGION'} = 
 sub ($) { my $v = shift;
-	  my @nums = split /[, ]/, $v ;
+	  my @nums = split /[, -]/, $v ;
 	  my $f = shift @nums ;
 	  my $s = shift @nums ;
+	  if ($f eq "" || $s eq "") { return ; }
 	  pl_set_sa_incl_s($sa, $f);     
 	  pl_set_sa_incl_l($sa, $s)} ;     
    $dispatch{'PRIMER_START_CODON_POSITION'} = 
@@ -288,7 +294,7 @@ sub ($) { my $v = shift;  my $i = pl_set_gs_primer_product_opt_tm($gs, $v) };
    $dispatch{'PRIMER_TASK'} = 
 sub ($) { my $v = shift; my $i = pl_set_gs_primer_task($gs, $v); };
    $dispatch{'PRIMER_PICK_RIGHT_PRIMER'} = 
-sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pick_right($gs, $v) };          
+sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pick_right_primer($gs, $v) };          
    $dispatch{'PRIMER_PICK_INTERNAL_OLIGO'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pick_internal_oligo($gs, $v) };          
    $dispatch{'PRIMER_PICK_LEFT_PRIMER'} = 
