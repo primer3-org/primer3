@@ -771,13 +771,28 @@ void destroy_p3retval(p3retval *);
 /* get elements of p3retval */
 const pair_array_t *p3_get_retval_best_pairs(const p3retval *r);
 
-/* It is the responsibility of caller to free the return value. */
+/* FIX ME -- needs more documentation
+   It is the responsibility of caller to free the return value. */
 char *p3_get_rv_and_gs_warnings(const p3retval *retval, 
                                       const p3_global_settings *pa);
 
+/* Return a char * describing global errors (usually/always?)  errors
+   caused by problems detected in the p3_global_settings * argument to
+   choose primers. Returned storage is free'ed on calling
+   destroy_p3retval(r). FIX ME? currently NULL if no error. */
 const char *p3_get_rv_global_errors(const p3retval *r);
+
+/* Return a char * describing per-sequence errors (usually/always?)
+   errors caused by problems detected in the seq_args * argument to
+   choose primers. Returned storage is free'ed on calling
+   destroy_p3retval(r). FIX ME? current NULL if no error. */
 const char *p3_get_rv_per_sequence_errors(const p3retval *r);
+
+/* Return a char * describing warnings generated in
+   choose_primers. Returned storage is free'ed on calling
+   destroy_p3retval(r). FIX ME? currently NULL if no warnings. */
 const char *p3_get_rv_warnings(const p3retval *r);
+
 p3_output_type p3_get_rv_output_type(const p3retval *r);
 int            p3_get_rv_stop_codon_pos(p3retval *r);
 
