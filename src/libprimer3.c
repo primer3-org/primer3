@@ -1116,6 +1116,8 @@ oligo_pair_seen(const primer_pair *pair,
        < min_dist from the 3' end of any right primer
        in retpair and min_dist > 0
        
+FIX ME --  comment from here down will be obsolete
+
      OR
      
    (3) If min_dist is set to 0 and the left or the right
@@ -2656,8 +2658,8 @@ oligo_max_template_mispriming(const primer_rec *h) {
 }
 
 
-/* This function requires retval->fwd.num_elem and rev.num_elem,
-   and posibly intl.num_elem...see choose_internal_oligo().  
+/* This function uses retval->fwd.num_elem and rev.num_elem
+   (and posibly intl.num_elem...see choose_internal_oligo()).  
    This function then sorts through the pairs or
    triples to find pa->num_return pairs or triples. */
 static int
@@ -2768,6 +2770,11 @@ choose_pair_or_triple(p3retval *retval,
             PR_ASSERT(h.pair_quality >= 0.0);
           }
 
+	  /* FIX me, check whether an left (resp. right) primer overlaps
+	     an existing left (resp. right) primer.  If so, we
+	     compare the quality of the pair containing the existing
+	     primer.  If better, we skip the new  pair.  If worse
+	     we remove the previous pair (and re-sort?). */
           if (compare_primer_pair(&h, &worst_pair) < 0) {
             /* 
              * There are already pa->num_return results, and vl is better than
@@ -2786,10 +2793,9 @@ choose_pair_or_triple(p3retval *retval,
           }
         }
       }
-    }    /* for (j=0; j<n_last; j++) -- inner loop */
+    }  /* for (j=0; j<n_last; j++) -- inner loop */
 
   } /* for (i=0; i<retval->rev.num_elem; i++) --- outer loop */
-
 
   if (num_in_p != 0) {
     qsort(p->pairs, num_in_p, sizeof(primer_pair), 
@@ -2929,8 +2935,6 @@ compare_primer_pair(const void *x1, const void *x2)
 /* 
  * Defines parameter values for given primer pair. Returns PAIR_OK if the pair is
  * acceptable; PAIR_FAILED otherwise.
- *
- * FIX ME -- POSSIBLE FUTURE CHANGE -- check for overlap here.
  */
 static int
 characterize_pair(p3retval *retval,

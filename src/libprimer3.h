@@ -402,12 +402,12 @@ typedef struct p3_global_settings {
 
      n > 0 indicates that a primer pair is ok if:
 
-     NOT(3' end of left primer closer than n to the 3' end a left
+     NOT (3' end of left primer closer than n to the 3' end a left
      primer in an existing pair)
 
      AND
 
-     NOT(3' end of right primer closer than n
+     NOT (3' end of right primer closer than n
      to the 3' end of right primer in an existing pair)
   */
   int    min_three_prime_distance; 
