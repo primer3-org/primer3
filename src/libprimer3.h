@@ -97,7 +97,6 @@ typedef enum p3_output_type {
   primer_list     = 1,
 } p3_output_type;
 
-
 /* pr_append_str is an append-only string ADT. */
 typedef struct pr_append_str {
   int storage_size;
@@ -177,8 +176,8 @@ typedef struct args_for_one_oligo_or_primer {
     is 0.0.  (New in v. 1.1.0, added by Maido Remm and Triinu
     Koressaar.)
   */
-  double divalent_conc; /* added by T.Koressaar, divalent salt concentration mmol/l */
-  double dntp_conc; /* added by T.Koressaar, for considering divalent salt concentration */
+  double divalent_conc;
+  double dntp_conc;
 
   double dna_conc;
   int    num_ns_accepted;
@@ -342,9 +341,9 @@ typedef struct p3_global_settings {
      overlap the 3'-end of primer.
   */
 
-  sequencing_parameters sequencing;
   /* Parameters used to calculate the position of sequencing primers */
-  
+  sequencing_parameters sequencing;
+
   double outside_penalty; /* Multiply this value times the number of NTs
                            * from the 3' end to the the (unique) target to
                            * get the 'position penalty'.
@@ -361,9 +360,12 @@ typedef struct p3_global_settings {
                            * that spans the target.
                            */
 
-
   /* ================================================== */
   /* Arguments for primer pairs and products. */
+
+  /* Warning,use p3_empty_gs_product_size_range and
+     p3_add_to_gs_product_size_range to set this next
+     three slot. */
   int    pr_min[PR_MAX_INTERVAL_ARRAY]; /* Minimum product sizes. */
   int    pr_max[PR_MAX_INTERVAL_ARRAY]; /* Maximum product sizes. */
   int    num_intervals;         /* 
@@ -991,7 +993,9 @@ void p3_set_gs_gc_clamp(p3_global_settings * p , int gc_clamp);
 void p3_set_gs_lowercase_masking(p3_global_settings * p , int lowercase_masking);
 void p3_set_gs_outside_penalty(p3_global_settings * p , double outside_penalty);
 void p3_set_gs_inside_penalty(p3_global_settings * p , double inside_penalty);
-void p3_set_gs_num_intervals(p3_global_settings * p , int num_intervals);
+
+/* DO NOT USE */
+/* void p3_set_gs_num_intervals(p3_global_settings * p , int num_intervals); */
 
 void p3_set_gs_pair_max_template_mispriming(p3_global_settings * p ,
                                             double pair_max_template_mispriming);
