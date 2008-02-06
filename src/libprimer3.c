@@ -74,7 +74,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define PAIR_OK 1
 #define PAIR_FAILED 0
 
-#define OK_OR_MUST_USE(H) ((H)->ok == OV_OK || (H)->must_use)
+/* #define OK_OR_MUST_USE(H) ((H)->ok == OV_OK || (H)->must_use) */
+#define OK_OR_MUST_USE(H) (!p3_ol_has_any_problem(H) || (H)->must_use)
 
 #define PR_UNDEFINED_INT_OPT          INT_MIN
 #define PR_UNDEFINED_DBL_OPT          DBL_MIN
@@ -97,6 +98,8 @@ static int _adjust_seq_args(const p3_global_settings *pa,
                             seq_args *sa, 
                             pr_append_str *nonfatal_err,
                             pr_append_str *warning);
+
+static int any_5_prime_ol_extension_has_problem(const primer_rec *);
 
 static int fake_a_sequence(seq_args *sa);
 
@@ -158,7 +161,6 @@ static int    sequence_quality_is_ok(const p3_global_settings *, primer_rec *,
                                      oligo_type, 
                                      const seq_args *, int, int,
                                      oligo_stats *global_oligo_stats,
-                                     /* int *, int *, */
                                      const args_for_one_oligo_or_primer *);
 
 static int    choose_internal_oligo(p3retval *,
@@ -178,7 +180,7 @@ static char   dna_to_upper(char *, int);
 
 static int    find_stop_codon(const char *, int, int);
 
-static void   gc_and_n_content(const int, const int, const char *, primer_rec *);
+static void   gc_and_n_content(int, int, const char *, primer_rec *);
 
 static int    make_detection_primer_lists(p3retval *,
                                 const p3_global_settings *,
@@ -493,67 +495,57 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->o_args.min_size     = 18;
   a->o_args.max_size     = 27;
 
-#define INTERNAL_OLIGO_OPT_TM     60.0
+  /* #define INTERNAL_OLIGO_OPT_TM     60.0 
 #define INTERNAL_OLIGO_MIN_TM     57.0
-#define INTERNAL_OLIGO_MAX_TM     63.0
-  a->o_args.opt_tm          = 60.0; /* INTERNAL_OLIGO_OPT_TM; */
-  a->o_args.min_tm          = 57.0; /* INTERNAL_OLIGO_MIN_TM; */
-  a->o_args.max_tm          = 63.0; /* INTERNAL_OLIGO_MAX_TM; */
+#define INTERNAL_OLIGO_MAX_TM     63.0 */
+  a->o_args.opt_tm          = 60.0;
+  a->o_args.min_tm          = 57.0;
+  a->o_args.max_tm          = 63.0;
 
-#define INTERNAL_OLIGO_MIN_GC     20.0
-#define INTERNAL_OLIGO_MAX_GC     80.0
-  a->o_args.min_gc          = 20.0; /* INTERNAL_OLIGO_MIN_GC; */
-  a->o_args.max_gc          = 80.0; /* INTERNAL_OLIGO_MAX_GC;*/
+  /* #define INTERNAL_OLIGO_MIN_GC     20.0 */
+  /* #define INTERNAL_OLIGO_MAX_GC     80.0 */
+  a->o_args.min_gc          = 20.0;
+  a->o_args.max_gc          = 80.0;
 
   a->o_args.opt_gc_content  = DEFAULT_OPT_GC_PERCENT;
 
+  /* #define INTERNAL_OLIGO_MAX_POLY_X           5  */
+  a->o_args.max_poly_x      = 5;
 
-#define INTERNAL_OLIGO_MAX_POLY_X           5 
-  a->o_args.max_poly_x      = 5; /* INTERNAL_OLIGO_MAX_POLY_X; */
+  /* #define INTERNAL_OLIGO_SALT_CONC         50.0 */
+  a->o_args.salt_conc       = 50.0;
 
-#define INTERNAL_OLIGO_SALT_CONC         50.0
-  a->o_args.salt_conc       = 50.0; /* INTERNAL_OLIGO_SALT_CONC; */
+  /* #define INTERNAL_OLIGO_DIVALENT_CONC      0.0*/
+  a->o_args.divalent_conc   = 0.0;
 
-#define INTERNAL_OLIGO_DIVALENT_CONC      0.0
-  a->o_args.divalent_conc   = 0.0; /*INTERNAL_OLIGO_DIVALENT_CONC; */
+  /* #define INTERNAL_OLIGO_DNTP_CONC          0.0 */
+  a->o_args.dntp_conc       = 0.0;
 
-#define INTERNAL_OLIGO_DNTP_CONC          0.0
-  a->o_args.dntp_conc       = 0.0; /* INTERNAL_OLIGO_DNTP_CONC; */
+  /* #define INTERNAL_OLIGO_DNA_CONC          50.0 */
+  a->o_args.dna_conc        = 50.0;
 
-#define INTERNAL_OLIGO_DNA_CONC          50.0
-  a->o_args.dna_conc        = 50.0; /* INTERNAL_OLIGO_DNA_CONC; */
+  /* #define INTERNAL_OLIGO_NUM_NS               0 */
+  a->o_args.num_ns_accepted = 0;
 
-#define INTERNAL_OLIGO_NUM_NS               0
-  a->o_args.num_ns_accepted = 0; /* INTERNAL_OLIGO_NUM_NS;*/
-
-#define INTERNAL_OLIGO_SELF_ANY          1200
+  /* #define INTERNAL_OLIGO_SELF_ANY          1200 
 #define INTERNAL_OLIGO_SELF_END          1200
-#define INTERNAL_OLIGO_REPEAT_SIMILARITY 1200
-  a->o_args.max_self_any        = 1200; /* INTERNAL_OLIGO_SELF_ANY; */
-  a->o_args.max_self_end        = 1200; /* INTERNAL_OLIGO_SELF_END; */
-  a->o_args.max_repeat_compl    = 1200; /* INTERNAL_OLIGO_REPEAT_SIMILARITY; */
+#define INTERNAL_OLIGO_REPEAT_SIMILARITY 1200*/
+  a->o_args.max_self_any        = 1200;
+  a->o_args.max_self_end        = 1200;
+  a->o_args.max_repeat_compl    = 1200;
 
   a->o_args.min_quality     = 0;
   a->o_args.min_end_quality = 0;
   a->o_args.max_template_mispriming
     = PR_UNDEFINED_ALIGN_OPT;
-  a->o_args.weights.temp_gt     = 1;
-  a->o_args.weights.temp_lt     = 1;
-
-  /* #define IO_WT_SIZE_GT        1
-     #define IO_WT_SIZE_LT        1 */
-  a->o_args.weights.length_gt   = 1; /* IO_WT_SIZE_GT; */
-  a->o_args.weights.length_lt   = 1; /* IO_WT_SIZE_LT; */
-
-  /* #define IO_WT_GC_PERCENT_GT  0
-     #define IO_WT_GC_PERCENT_LT  0 */
-  a->o_args.weights.gc_content_gt = 0; /* IO_WT_GC_PERCENT_GT; */
-  a->o_args.weights.gc_content_lt = 0; /* IO_WT_GC_PERCENT_LT; */
-
-  /* #define IO_WT_COMPL_ANY      0
-     #define IO_WT_COMPL_END      0 */
-  a->o_args.weights.compl_any   = 0; /* IO_WT_COMPL_ANY; */
-  a->o_args.weights.compl_end   = 0; /* IO_WT_COMPL_END; */
+  a->o_args.weights.temp_gt       = 1;
+  a->o_args.weights.temp_lt       = 1;
+  a->o_args.weights.length_gt     = 1;
+  a->o_args.weights.length_lt     = 1;
+  a->o_args.weights.gc_content_gt = 0;
+  a->o_args.weights.gc_content_lt = 0;
+  a->o_args.weights.compl_any     = 0;
+  a->o_args.weights.compl_end     = 0;
 
   a->o_args.weights.num_ns      = 0;
   a->o_args.weights.repeat_sim  = 0;
@@ -566,17 +558,18 @@ pr_set_default_global_args(p3_global_settings *a) {
 #define PAIR_WT_COMPL_ANY           0
 #define PAIR_WT_COMPL_END           0
 #define PAIR_WT_REP_SIM             0
+  a->pr_pair_weights.primer_quality  = 1; /* PAIR_WT_PRIMER_PENALTY; */
+  a->pr_pair_weights.io_quality      = 0; /* PAIR_WT_IO_PENALTY; */
+  a->pr_pair_weights.diff_tm         = 0; /* PAIR_WT_DIFF_TM; */
+  a->pr_pair_weights.compl_any       = 0; /* PAIR_WT_COMPL_ANY; */
+  a->pr_pair_weights.compl_end       = 0; /* PAIR_WT_COMPL_END;*/
+  a->pr_pair_weights.repeat_sim      = 0; /* PAIR_WT_REP_SIM; */
+
+
 #define PAIR_WT_PRODUCT_TM_LT       0
 #define PAIR_WT_PRODUCT_TM_GT       0
 #define PAIR_WT_PRODUCT_SIZE_LT     0
 #define PAIR_WT_PRODUCT_SIZE_GT     0
-
-  a->pr_pair_weights.primer_quality  = PAIR_WT_PRIMER_PENALTY;
-  a->pr_pair_weights.io_quality      = PAIR_WT_IO_PENALTY;
-  a->pr_pair_weights.diff_tm         = PAIR_WT_DIFF_TM;
-  a->pr_pair_weights.compl_any       = PAIR_WT_COMPL_ANY;
-  a->pr_pair_weights.compl_end       = PAIR_WT_COMPL_END;
-  a->pr_pair_weights.repeat_sim      = PAIR_WT_REP_SIM;
   a->pr_pair_weights.product_tm_lt   = PAIR_WT_PRODUCT_TM_LT;
   a->pr_pair_weights.product_tm_gt   = PAIR_WT_PRODUCT_TM_GT;
   a->pr_pair_weights.product_size_lt = PAIR_WT_PRODUCT_SIZE_LT;
@@ -626,7 +619,6 @@ interval_array_t2_get_pair(const interval_array_t2 *array, int i) {
   if (i < 0) abort();
   return array->pairs[i];
 }
-
 
 /* ============================================================ */
 /* BEGIN functions for p3retval                                 */
@@ -1702,11 +1694,7 @@ pick_only_best_primer(const int start,
           found_primer = 1;
         }
       } 
-      else if (h.ok==OV_TOO_MANY_NS    || h.ok==OV_INTERSECT_TARGET
-               || h.ok==OV_SELF_ANY    || h.ok==OV_POLY_X
-               || h.ok==OV_EXCL_REGION || h.ok==OV_GC_CLAMP
-               || h.ok==OV_SEQ_QUALITY || h.ok==OV_LIB_SIM 
-               || h.ok==OV_END_STAB) {
+      else if (any_5_prime_ol_extension_has_problem(&h)) {
         /* Break from the inner for loop, because there is no
            legal longer oligo with the same 3' sequence. */
         break;
@@ -1827,18 +1815,12 @@ pick_primer_range(const int start, const int length, int *extreme,
         /* Save the primer in the array */
         add_oligo_to_oligo_array(oligo, h);
         /* Update the most extreme primer variable */
-        if (( h.start < *extreme) &&
-            (oligo->type != OT_RIGHT))
+        if (( h.start < *extreme) && (oligo->type != OT_RIGHT))
           *extreme = h.start;
         /* Update the most extreme primer variable */
-        if ((h.start > *extreme) &&
-            (oligo->type == OT_RIGHT))
-          *extreme = /*oligo->oligo[k]*/ h.start;
-      } else if (h.ok==OV_TOO_MANY_NS    || h.ok==OV_INTERSECT_TARGET
-                 || h.ok==OV_SELF_ANY    || h.ok==OV_POLY_X
-                 || h.ok==OV_EXCL_REGION || h.ok==OV_GC_CLAMP
-                 || h.ok==OV_SEQ_QUALITY || h.ok==OV_LIB_SIM
-                 || h.ok==OV_END_STAB ) {
+        if ((h.start > *extreme) && (oligo->type == OT_RIGHT))
+          *extreme = h.start;
+      } else if (any_5_prime_ol_extension_has_problem(&h)) {
         /* Break from the inner for loop, because there is no
            legal longer oligo with the same 3' sequence. */
         break;
@@ -1942,14 +1924,11 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
       /* Save the primer in the array */
       add_oligo_to_oligo_array(oligo,  h);
       /* Update the most extreme primer variable */
-      if ((h.start < *extreme) &&
-          (oligo->type != OT_RIGHT))
+      if ((h.start < *extreme) && (oligo->type != OT_RIGHT))
         *extreme = h.start;
       /* Update the most extreme primer variable */
-      if ((h.start > *extreme) &&
-          (oligo->type == OT_RIGHT))
+      if ((h.start > *extreme) && (oligo->type == OT_RIGHT))
         *extreme = h.start;
-      /* Update the number of primers */
     } 
   } /* i: Loop over the sequence */
     /* Update array with how many primers are good */
@@ -6132,6 +6111,18 @@ static unsigned long int any_problem = (~0UL) ^ 3UL; /* all bits 1 except bits 0
 int
 p3_ol_has_any_problem(const primer_rec *oligo) {
   return (oligo->problems.prob & any_problem) != 0;
+}
+
+int
+any_5_prime_ol_extension_has_problem(const primer_rec *oligo)
+{
+  return (/* (oligo->problems.prob | OP_TOO_MANY_NS) || */
+          oligo->ok==OV_TOO_MANY_NS    || oligo->ok==OV_INTERSECT_TARGET
+          || oligo->ok==OV_SELF_ANY    || oligo->ok==OV_POLY_X
+          || oligo->ok==OV_EXCL_REGION || oligo->ok==OV_GC_CLAMP
+          || oligo->ok==OV_SEQ_QUALITY || oligo->ok==OV_LIB_SIM
+          || oligo->ok==OV_END_STAB 
+          );
 }
 
 /*  returns a pointer to static storage, which
