@@ -48,12 +48,12 @@ sub main() {
 		  runtst('primer_mispriming_long_lib');
 		  runtst('primer_rat');
 		  runtst('primer_human');
-		  runtst('long_seq');
+#		  runtst('long_seq');
 		  runtst('primer_position_penalty');
 #		  runtst('primer_position_penalty_formatted');
-		  runtst('p3-tmpl-mispriming');
+#		  runtst('p3-tmpl-mispriming');
 #		  runtst('v4_old_tasks');
-		  runtst('v4_renewed_tasks');
+#		  runtst('v4_renewed_tasks');
 #		  runtst('v4_new_tasks');
 		  # Put primer_lib_amb_codes last because it is slow
 #		  runtst('primer_lib_amb_codes');

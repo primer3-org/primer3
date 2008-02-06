@@ -63,7 +63,7 @@ our $err = "0" ;
 our $retval = 0 ;
 our $explain_flag = 0;
 our $show_oligo_problems = 0;
-our $printargs = 1 ; # set to 1 if dumping arguments to choose_primers
+our $printargs = 0 ; # set to 1 if dumping arguments to choose_primers
 
 main();
 
