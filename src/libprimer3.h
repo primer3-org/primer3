@@ -776,7 +776,10 @@ void destroy_p3retval(p3retval *);
 
 
 /* get elements of p3retval */
-const pair_array_t *p3_get_retval_best_pairs(const p3retval *r);
+const pair_array_t *p3_get_rv_best_pairs(const p3retval *r);
+const oligo_array *p3_get_rv_fwd(const p3retval *r);
+const oligo_array *p3_get_rv_intl(const p3retval *r);
+const oligo_array *p3_get_rv_rev(const p3retval *r);
 
 /* FIX ME -- needs more documentation
    It is the responsibility of caller to free the return value. */
@@ -802,10 +805,6 @@ const char *p3_get_rv_warnings(const p3retval *r);
 
 p3_output_type p3_get_rv_output_type(const p3retval *r);
 int            p3_get_rv_stop_codon_pos(p3retval *r);
-
-const oligo_array *p3_get_retval_left_primers(const p3retval *r);
-const oligo_array *p3_get_retval_right_primers(const p3retval *r);
-const oligo_array *p3_get_retval_internal_oligos(const p3retval *r);
 
 /* Get elements of an oligo_array */
 int p3_get_oa_n(const oligo_array *x);
@@ -1058,10 +1057,11 @@ int           pr_append_new_chunk_external(pr_append_str *, const char *);
 
 const char *  pr_append_str_chars(const pr_append_str *x);
 
-void  pr_print_pair_explain(FILE *, const pair_stats *);
+/* Warning, return pointers to static storage;  overwritten on each call. */
+const char *p3_get_pair_array_explain_string(const pair_array_t *);
+const char *p3_get_oligo_array_explain_string(const oligo_array *);
 
 const char  *libprimer3_release(void);
-
 const char *primer3_copyright(void);
 
 /* An accessor function for a primer_rec *. */

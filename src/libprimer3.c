@@ -705,22 +705,22 @@ destroy_p3retval(p3retval *state)
 }
 
 const oligo_array *
-p3_get_retval_fwd(const p3retval *r) {
+p3_get_rv_fwd(const p3retval *r) {
   return &r->fwd;
 }
 
 const oligo_array *
-p3_get_retval_intl(const p3retval *r) {
+p3_get_rv_intl(const p3retval *r) {
   return &r->intl;
 }
 
 const oligo_array *
-p3_get_retval_rev(const p3retval *r) {
+p3_get_rv_rev(const p3retval *r) {
   return &r->rev;
 }
 
 const pair_array_t *
-p3_get_retval_best_pairs(const p3retval *r) {
+p3_get_rv_best_pairs(const p3retval *r) {
   return &r->best_pairs;
 }
 
@@ -2770,11 +2770,11 @@ choose_pair_or_triple(p3retval *retval,
             PR_ASSERT(h.pair_quality >= 0.0);
           }
 
-	  /* FIX me, check whether an left (resp. right) primer overlaps
-	     an existing left (resp. right) primer.  If so, we
-	     compare the quality of the pair containing the existing
-	     primer.  If better, we skip the new  pair.  If worse
-	     we remove the previous pair (and re-sort?). */
+          /* FIX me, check whether an left (resp. right) primer overlaps
+             an existing left (resp. right) primer.  If so, we
+             compare the quality of the pair containing the existing
+             primer.  If better, we skip the new  pair.  If worse
+             we remove the previous pair (and re-sort?). */
           if (compare_primer_pair(&h, &worst_pair) < 0) {
             /* 
              * There are already pa->num_return results, and vl is better than
@@ -3969,34 +3969,78 @@ static char * strstr_nocase(char *s1, char *s2)
   free(tmp); return NULL;
 }
 
-void
-pr_print_pair_explain(FILE *f,
-                      const pair_stats *pair_expl)
+#define CHECK  if (r > bsize || r < 0) return "Internal error, not enough space for \"explain\" string";  bufp += r; bsize -= r
+#define SP_AND_CHECK(FMT, VAL) { r = snprintf(bufp, bsize, FMT, VAL); CHECK; }
+#define IF_SP_AND_CHECK(FMT, VAL) { if (VAL) { SP_AND_CHECK(FMT, VAL) } }
+const char *
+p3_pair_explain_string(const pair_stats *pair_expl)
 {
-  fprintf(f, "considered %d", pair_expl->considered);
-  if (pair_expl->target)
-    fprintf(f, ", no target %d", pair_expl->target);
-  if (pair_expl->product)
-    fprintf(f, ", unacceptable product size %d", pair_expl->product);
-  if (pair_expl->low_tm)
-    fprintf(f, ", low product Tm %d", pair_expl->low_tm);
-  if (pair_expl->high_tm)
-    fprintf(f, ", high product Tm %d", pair_expl->high_tm);
-  if (pair_expl->temp_diff) 
-    fprintf(f, ", tm diff too large %d",pair_expl->temp_diff);
-  if (pair_expl->compl_any) 
-    fprintf(f, ", high any compl %d", pair_expl->compl_any);
-  if (pair_expl->compl_end) 
-    fprintf(f, ", high end compl %d", pair_expl->compl_end);
-  if (pair_expl->internal) 
-    fprintf(f, ", no internal oligo %d", pair_expl->internal);
-  if (pair_expl->repeat_sim)
-    fprintf(f, ", high mispriming library similarity %d",
-            pair_expl->repeat_sim);
-  if (pair_expl->template_mispriming)
-    fprintf(f, ", high template mispriming score %d",
-            pair_expl->template_mispriming);
-  fprintf(f, ", ok %d\n", pair_expl->ok);
+  static char buf[10000];
+  char *bufp = buf;
+  size_t bsize = 10000;
+  size_t r;
+
+  SP_AND_CHECK("considered %d", pair_expl->considered)
+    IF_SP_AND_CHECK(", no target %d", pair_expl->target)
+    IF_SP_AND_CHECK(", unacceptable product size %d", pair_expl->product)
+    IF_SP_AND_CHECK(", low product Tm %d", pair_expl->low_tm)
+    IF_SP_AND_CHECK(", high product Tm %d", pair_expl->high_tm)
+    IF_SP_AND_CHECK(", tm diff too large %d",pair_expl->temp_diff)
+    IF_SP_AND_CHECK(", high any compl %d", pair_expl->compl_any)
+    IF_SP_AND_CHECK(", high end compl %d", pair_expl->compl_end)
+    IF_SP_AND_CHECK(", no internal oligo %d", pair_expl->internal)
+    IF_SP_AND_CHECK(", high mispriming library similarity %d",
+                    pair_expl->repeat_sim)
+    IF_SP_AND_CHECK(", high template mispriming score %d",
+                    pair_expl->template_mispriming);
+  SP_AND_CHECK(", ok %d", pair_expl->ok)
+    return buf;
+}
+
+const char *
+p3_oligo_explain_string(const oligo_stats *stat)
+{
+  static char buf[10000];
+  char *bufp = buf;
+  size_t bsize = 10000;
+  size_t r;
+
+  SP_AND_CHECK("considered %d", stat->considered)
+  IF_SP_AND_CHECK(", would not amplify any of the ORF %d", stat->no_orf)
+  IF_SP_AND_CHECK(", too many Ns %d", stat->ns)
+  IF_SP_AND_CHECK(", overlap target %d", stat->target)
+  IF_SP_AND_CHECK(", overlap excluded region %d", stat->excluded)
+  IF_SP_AND_CHECK(", GC content failed %d", stat->gc)
+  IF_SP_AND_CHECK(", GC clamp failed %d", stat->gc_clamp)
+  IF_SP_AND_CHECK(", low tm %d", stat->temp_min)
+  IF_SP_AND_CHECK(", high tm %d", stat->temp_max)
+  IF_SP_AND_CHECK(", high any compl %d", stat->compl_any)
+  IF_SP_AND_CHECK(", high end compl %d", stat->compl_end)
+  IF_SP_AND_CHECK(", high repeat similarity %d", stat->repeat_score)
+  IF_SP_AND_CHECK(", long poly-x seq %d", stat->poly_x)
+  IF_SP_AND_CHECK(",low sequence quality %d", stat->seq_quality)
+  IF_SP_AND_CHECK(",high 3' stability %d", stat->stability)
+  IF_SP_AND_CHECK(",high template mispriming score %d",
+                  stat->template_mispriming)
+  /* edited by T. Koressaar for lowercase masking */
+  IF_SP_AND_CHECK(",lowercase masking of 3' end %d",stat->gmasked)
+  SP_AND_CHECK(", ok %d", stat->ok)
+               return buf;
+}
+#undef CHECK
+#undef SP_AND_CHECK
+#undef IF_SP_AND_CHEC
+
+const char *
+p3_get_oligo_array_explain_string(const oligo_array *oligo_array) 
+{
+  return p3_oligo_explain_string(&oligo_array->expl);
+}
+
+const char *
+p3_get_pair_array_explain_string(const pair_array_t *pair_array)
+{
+  return p3_pair_explain_string(&pair_array->expl);
 }
 
 const char *

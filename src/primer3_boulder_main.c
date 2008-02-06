@@ -300,7 +300,7 @@ main(argc,argv)
                           read_boulder_record_res.explain_flag);
     } else {
       /* Use boulder output */
-      print_boulder(&io_version, global_pa, sarg, retval, 
+      print_boulder(/* & */io_version, global_pa, sarg, retval, 
                     read_boulder_record_res.explain_flag,
                     read_boulder_record_res.show_oligo_problems);
     }

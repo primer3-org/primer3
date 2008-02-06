@@ -52,7 +52,7 @@ static void format_pairs(FILE *f,
                          const pair_array_t *best_pairs,
                          const char *pr_release,
                          const pr_append_str *combined_retval_err,
-			 int explain_flag);
+                         int explain_flag);
 
 static void format_oligos(FILE *, 
                           const p3_global_settings *, 
@@ -61,7 +61,7 @@ static void format_oligos(FILE *,
                           const oligo_array *, 
                           const char*,
                           const pr_append_str *combined_retval_err,
-			  int explain_flag);
+                          int explain_flag);
 
 static int lib_sim_specified(const p3_global_settings *);
 static void print_explain(FILE *, const p3_global_settings *, const seq_args *,
@@ -95,7 +95,7 @@ print_format_output(FILE *f,
                     const seq_args *sa,
                     const p3retval *retval,
                     const char *pr_release,
-		    int   explain_flag)
+                    int   explain_flag)
 {  
   
   /* A place to put a string containing all error messages */
@@ -557,7 +557,7 @@ print_explain(FILE *f,
               int print_lib_sim,
               const char *pr_release)
 {
-  const pair_stats *pair_stats = &retval->best_pairs.expl;
+
 
   char *format;
 
@@ -670,8 +670,8 @@ print_explain(FILE *f,
                     print_lib_sim, pa->lowercase_masking);
 
   if (pa->pick_left_primer == 1 && pa->pick_right_primer == 1) {
-    fprintf(f, "Pair Stats:\n");
-    pr_print_pair_explain(f, pair_stats);
+    fprintf(f, "Pair Stats:\n%s\n",
+            p3_get_pair_array_explain_string(p3_get_rv_best_pairs(retval)));
   }
   fprintf(f, "%s\n", pr_release);
 }

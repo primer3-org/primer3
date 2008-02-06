@@ -44,15 +44,11 @@ static char *pr_program_name = "Program name is probably primer3_core";
 static void   print_all_explain(const p3_global_settings *,
                                 const seq_args *, 
                                 const p3retval *, 
-                                const int *io_version);
-
-static void   print_explain(const oligo_stats *, 
-                            oligo_type,
-                            const int *io_version);
+                                int   io_version);
 
 /* Print the data for chosen primer pairs to stdout in "boulderio" format. */
 void
-print_boulder(const int *io_version,
+print_boulder(int io_version,
               const p3_global_settings *pa,
               const seq_args *sa,
               const p3retval *retval,
@@ -93,13 +89,12 @@ print_boulder(const int *io_version,
   /* Check: are all pointers linked to something*/
   PR_ASSERT(NULL != pa);
   PR_ASSERT(NULL != sa);
-  PR_ASSERT(NULL != io_version);
     
   /* This deals with the renaming of the internal oligo */
   char *new_oligo_name = "INTERNAL";
   char *old_oligo_name = "INTERNAL_OLIGO";
   char *int_oligo = new_oligo_name;
-  if (*io_version == 0) {
+  if (io_version == 0) {
     int_oligo = old_oligo_name;
   }
         
@@ -222,7 +217,7 @@ print_boulder(const int *io_version,
     }
       
     /* Get the number for pimer counting in suffix[0] */
-    if ((i == 0) && (*io_version < 1) ){
+    if ((i == 0) && (io_version < 1) ){
       suffix[0] = '\0';
     } else { 
       sprintf(suffix, "_%d", i);
@@ -230,7 +225,7 @@ print_boulder(const int *io_version,
 
     /* Print out the Pair Penalties */
     if (retval->output_type == primer_pairs) {
-      if (*io_version < 1) {
+      if (io_version < 1) {
         printf("PRIMER_PAIR_PENALTY%s=%.4f\n", suffix,
                retval->best_pairs.pairs[i].pair_quality);
       } else {
@@ -396,7 +391,7 @@ print_boulder(const int *io_version,
       printf("PRIMER_PAIR%s_COMPL_END=%.2f\n", suffix,
              retval->best_pairs.pairs[i].compl_end  / PR_ALIGN_SCORE_PRECISION);
 
-      if (*io_version == 0) {
+      if (io_version == 0) {
         /* Print product size */
         printf("PRIMER_PRODUCT_SIZE%s=%d\n", suffix,
                retval->best_pairs.pairs[i].product_size);
@@ -458,54 +453,29 @@ print_boulder_error(const char *err) {
 
 static void
 print_all_explain(const p3_global_settings *pa,
-    const seq_args *sa, const p3retval *retval, const int *io_version)
+                  const seq_args *sa, 
+                  const p3retval *retval,
+                  int io_version)
 {
   if (pa->pick_left_primer == 1
       && !(pa->pick_anyway && sa->left_input))
-    print_explain(&retval->fwd.expl,OT_LEFT, io_version);
+    printf("PRIMER_LEFT_EXPLAIN=%s\n",
+           p3_get_oligo_array_explain_string(p3_get_rv_fwd(retval)));
 
   if (pa->pick_right_primer == 1
       && !(pa->pick_anyway && sa->right_input))
-    print_explain(&retval->rev.expl,OT_RIGHT, io_version);
+    printf("PRIMER_RIGHT_EXPLAIN=%s\n",
+           p3_get_oligo_array_explain_string(p3_get_rv_rev(retval)));
 
   if ( pa->pick_internal_oligo == 1
       && !(pa->pick_anyway && sa->internal_input)) 
-    print_explain(&retval->intl.expl, OT_INTL, io_version);
+    printf("PRIMER_INTERNAL_%sEXPLAIN=%s\n",
+           (io_version == 0 ? "OLIGO_" : ""),
+           p3_get_oligo_array_explain_string(p3_get_rv_intl(retval)));
 
   if (pa->pick_right_primer == 1 
       && pa->pick_left_primer == 1) {
-    printf("PRIMER_PAIR_EXPLAIN=");
-    pr_print_pair_explain(stdout, &retval->best_pairs.expl);
+    printf("PRIMER_PAIR_EXPLAIN=%s\n", 
+           p3_get_pair_array_explain_string(p3_get_rv_best_pairs(retval)));
   }
-}
-
-static void
-print_explain(const oligo_stats *stat, oligo_type l, const int *io_version)
-{
-  if(OT_LEFT == l)printf("PRIMER_LEFT_EXPLAIN=");
-  else if(OT_RIGHT == l)printf("PRIMER_RIGHT_EXPLAIN=");
-  else if(*io_version == 0)printf("PRIMER_INTERNAL_OLIGO_EXPLAIN=");
-  else printf("PRIMER_INTERNAL_EXPLAIN=");
-
-  printf("considered %d", stat->considered);
-  if (stat->no_orf) printf(", would not amplify any of the ORF %d", stat->no_orf);
-  if(stat->ns)printf(", too many Ns %d", stat->ns);
-  if(stat->target)printf(", overlap target %d", stat->target);
-  if(stat->excluded)printf(", overlap excluded region %d", stat->excluded);
-  if(stat->gc)printf(", GC content failed %d", stat->gc);
-  if(stat->gc_clamp)printf(", GC clamp failed %d", stat->gc_clamp);
-  if(stat->temp_min)printf(", low tm %d", stat->temp_min);
-  if(stat->temp_max)printf(", high tm %d", stat->temp_max);
-  if(stat->compl_any)printf(", high any compl %d", stat->compl_any);
-  if(stat->compl_end)printf(", high end compl %d", stat->compl_end);
-  if(stat->repeat_score) printf(", high repeat similarity %d", stat->repeat_score);
-  if(stat->poly_x)printf(", long poly-x seq %d", stat->poly_x);
-  if(stat->seq_quality)printf(",low sequence quality %d", stat->seq_quality);
-  if (stat->stability) printf(",high 3' stability %d", stat->stability);
-  if (stat->template_mispriming) printf(",high template mispriming score %d",
-                                        stat->template_mispriming);
-  /* edited by T. Koressaar for lowercase masking */
-  if(stat->gmasked) printf(",lowercase masking of 3' end %d",stat->gmasked);
-   
-  printf(", ok %d\n", stat->ok);
 }
