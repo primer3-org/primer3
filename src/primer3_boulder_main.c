@@ -276,7 +276,8 @@ main(argc,argv)
     }
 
     /* Pick the primers - the central function */
-    global_pa->file_flag = read_boulder_record_res.file_flag;
+    p3_set_gs_primer_file_flag(global_pa, 
+			       read_boulder_record_res.file_flag);
     retval = choose_primers(global_pa, sarg);  
     if (NULL == retval) exit(-2); /* Out of memory. */
 
