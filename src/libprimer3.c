@@ -6391,7 +6391,7 @@ p3_get_rv_stop_codon_pos(p3retval *r) {
 
 void p3_print_args(const p3_global_settings *p, seq_args *s)
 {
-  if (!p->dump) return ;
+  int i;
 
   printf("begin global args\n") ; 
   printf("primer_task %i\n", p->primer_task);
@@ -6499,9 +6499,11 @@ void p3_print_args(const p3_global_settings *p, seq_args *s)
   printf("lowercase_masking %i\n", p->lowercase_masking) ; 
   printf("outside_penalty %f\n", p->outside_penalty) ;
   printf("inside_penalty %f\n", p->inside_penalty) ;
-  printf("pr_min[PR_MIN_INTERVAL_ARRAY] %i\n", p->pr_min[0]) ;
-  printf("pr_max[PR_MAX_INTERVAL_ARRAY] %i\n", p->pr_max[0]) ;
-  printf("num_intervals %i\n", p->num_intervals) ;
+  printf("number of product size ranges: %d\n", p->num_intervals);
+  printf("product size ranges:\n");
+  for (i = 0; i < p->num_intervals; i++) {
+    printf("%d - %d \n", p->pr_min[0], p->pr_max[0]);
+  }
   printf("product_opt_size %i\n", p->product_opt_size) ;
   printf("product_max_tm %f\n", p->product_max_tm) ;
   printf("product_min_tm %f\n", p->product_min_tm) ;
