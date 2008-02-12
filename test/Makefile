@@ -36,7 +36,7 @@ test: makeexes testtm testdpal testcore
 	-echo 'TESTING ALL:'
 
 testcore:
-	-echo 'Testing primer3_core'; perl p3test.pl $(VALGRIND_FLAG)
+	-echo 'Testing primer3_core $(VALGRIND_FLAG)'; perl p3test.pl $(VALGRIND_FLAG)
 
 testdpal:
 	-echo 'Testing alignment calcs'; perl dpal_test.pl $(VALGRIND_FLAG); 
