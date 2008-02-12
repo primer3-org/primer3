@@ -1983,7 +1983,7 @@ boulder_print_pairs(prog_args, pa, sa, best_pairs)
 {
     const char *left_tag, *right_tag, *intl_tag, *prod_size_tag;
     char *warning;
-    char suffix [3];
+    char suffix [100];  /* Fixed buffer overflow. */
     primer_rec *fwd, *rev, *intl;
     int i, incl_s = sa->incl_s;
 
@@ -2186,8 +2186,12 @@ boulder_print_oligos(pa, sa, n, l)
 {
     char *warning;
     int i, j;
-    char suffix [3], type[256];
-    /* type must be larger than the length of "PRIMER_INTERNAL_OLIGO". */
+    char suffix[100];
+
+    char type[256];
+    /* WARNING: beware of possible buffer overflow when making
+       changes.  Variable 'type' must be larger than the lengt h of
+       "PRIMER_INTERNAL_OLIGO". */
 
     primer_rec *oligo;
     int incl_s = sa->incl_s;
