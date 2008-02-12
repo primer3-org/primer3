@@ -32,7 +32,10 @@
 
 VALGRIND_FLAG = 
 
-test: makeexes testtm testdpal
+test: makeexes testtm testdpal testcore
+	-echo 'TESTING ALL:'
+
+testcore:
 	-echo 'Testing primer3_core'; perl p3test.pl $(VALGRIND_FLAG)
 
 testdpal:
