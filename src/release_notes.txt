@@ -1,6 +1,7 @@
 release 1.1.3 2008-02-21 ================================================
 
- Corrected static buffer overflow errors in bulder_print_pairs()
+ "Maintenance" release:
+ Corrected overflow of static buffer in boulder_print_pairs()
  and boulder_print_oligos() in primer3_main.c
 
 release 1.1.2 2007-06-10 ================================================
