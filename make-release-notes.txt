@@ -1,0 +1,25 @@
+# go to ..../primer3/trunk/..
+svn cp trunk tags/release-<release number> -m 'tagged release <release number>'
+cd tags/release-<release number>/src
+make test
+make clean
+cd .. 
+rm *.~  # make clean does not take care of emacs backup files in the top level
+cd ../../.. 
+cp -rf release-<release number> primer3-<release number>
+rm -rf */.svn
+rm -rf */*/.svn
+rm -rf */*/*/.svn
+rm -rf */*/*/*/.svn  # I think that is enough levels down
+tar cvf primer3-<release number>.tar primer3-<release number>
+gzip primer3-<release number>.tar
+# take primer3-<release number>.tar.gz to another location, unzip, and test
+# do the upload
+ftp upload.sourceforge.net (anonymous)
+binary
+cd /incoming
+put primer3-<repease number>.tar.gz
+quit
+
+# Then log in to the sourceforge web site, go to the admin tab,
+# etc.   
