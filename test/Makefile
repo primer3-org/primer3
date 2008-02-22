@@ -37,12 +37,14 @@
 
 # See ../src/Makefile for instructions on how to use VALGRIND_FLAG
 
+# Got tired of typing VALGRIND and spelling it wrong:
+VAL =
 VALGRIND = 
 
 test: makeexes testtm testdpal testcore
 
 testcore:
-	-echo 'Testing primer3_core'; perl p3test.pl $(VALGRIND)
+	-echo 'Testing primer3_core'; perl p3test.pl $(VALGRIND) $(VAL)
 
 testdpal:
 	-echo 'Testing alignment calcs'; perl dpal_test.pl $(VALGRIND); 
