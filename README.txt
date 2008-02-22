@@ -1,7 +1,7 @@
-primer3 release 1.1.2
+primer3 release 1.1.3
 ---------------------
 
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
@@ -35,7 +35,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The oligtm library and tests are released under the GPL.  See
-file src/gpl.txt or go to http://www.gnu.org/licenses/gpl.txt.
+file src/gpl.txt or go to http://www.gnu.org/licenses/gpl-2.0.txt.
 
 INTRODUCTION
 ------------

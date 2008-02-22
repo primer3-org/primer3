@@ -1,2 +1,2 @@
 Most of primer3 is released under the NEW BSD license; see the copyright notice in src/primer3.h.
-The oligotm library is released under GPL; see the file src/gpl.txt.
+The oligotm library is released under GPL; see the file src/gpl-2.0.txt.
