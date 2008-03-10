@@ -74,14 +74,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define PAIR_OK 1
 #define PAIR_FAILED 0
 
-/* #define OK_OR_MUST_USE(H) ((H)->ok == OV_OK || (H)->must_use) */
 #define OK_OR_MUST_USE(H) (!p3_ol_has_any_problem(H) || (H)->must_use)
 
 #define PR_UNDEFINED_INT_OPT          INT_MIN
 #define PR_UNDEFINED_DBL_OPT          DBL_MIN
 
-/* Undefined value for alignment score (meaning do not check) used for maximum
-   template mispriming or mishyb. */
+/* Undefined value for alignment score (meaning do not check) used for
+   maximum template mispriming or mishyb. */
 #define PR_UNDEFINED_ALIGN_OPT        -100
 
 #define TRIMMED_SEQ_LEN(X) ((X)->incl_l)
@@ -310,7 +309,6 @@ static void set_retval_both_stop_codons(const seq_args *sa, p3retval *retval);
 
 /* Functions to record problems with oligos (or primers) */
 static void initialize_op(primer_rec *);
-/* static void op_set_unwritten(primer_rec *); */
 static void op_set_completely_written(primer_rec *);
 static void op_set_too_many_ns(primer_rec *);
 static void op_set_overlaps_target(primer_rec *);
@@ -528,28 +526,17 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->o_args.weights.seq_quality   = 0;
   a->o_args.weights.end_quality   = 0;
 
-  /* #define PAIR_WT_PRIMER_PENALTY      1
-#define PAIR_WT_IO_PENALTY          0
-#define PAIR_WT_DIFF_TM             0
-#define PAIR_WT_COMPL_ANY           0
-#define PAIR_WT_COMPL_END           0
-#define PAIR_WT_REP_SIM             0 */
-  a->pr_pair_weights.primer_quality  = 1; /* PAIR_WT_PRIMER_PENALTY; */
-  a->pr_pair_weights.io_quality      = 0; /* PAIR_WT_IO_PENALTY; */
-  a->pr_pair_weights.diff_tm         = 0; /* PAIR_WT_DIFF_TM; */
-  a->pr_pair_weights.compl_any       = 0; /* PAIR_WT_COMPL_ANY; */
-  a->pr_pair_weights.compl_end       = 0; /* PAIR_WT_COMPL_END;*/
-  a->pr_pair_weights.repeat_sim      = 0; /* PAIR_WT_REP_SIM; */
+  a->pr_pair_weights.primer_quality  = 1;
+  a->pr_pair_weights.io_quality      = 0;
+  a->pr_pair_weights.diff_tm         = 0;
+  a->pr_pair_weights.compl_any       = 0;
+  a->pr_pair_weights.compl_end       = 0;
+  a->pr_pair_weights.repeat_sim      = 0;
 
-
-  /* #define PAIR_WT_PRODUCT_TM_LT       0
-#define PAIR_WT_PRODUCT_TM_GT       0
-#define PAIR_WT_PRODUCT_SIZE_LT     0
-#define PAIR_WT_PRODUCT_SIZE_GT     0  */
-  a->pr_pair_weights.product_tm_lt   = 0; /* PAIR_WT_PRODUCT_TM_LT; */
-  a->pr_pair_weights.product_tm_gt   = 0; /* PAIR_WT_PRODUCT_TM_GT; */
-  a->pr_pair_weights.product_size_lt = 0; /* PAIR_WT_PRODUCT_SIZE_LT; */
-  a->pr_pair_weights.product_size_gt = 0; /* PAIR_WT_PRODUCT_SIZE_GT;*/
+  a->pr_pair_weights.product_tm_lt   = 0;
+  a->pr_pair_weights.product_tm_gt   = 0;
+  a->pr_pair_weights.product_size_lt = 0;
+  a->pr_pair_weights.product_size_gt = 0;
 
   a->lib_ambiguity_codes_consensus   = 1;
   /*  Set to 1 for backward compatibility. This _NOT_ what
@@ -802,6 +789,7 @@ destroy_seq_args(seq_args *sa) {
 
 
 
+
 /* ============================================================ */
 /* BEGIN choose_primers()                                       */
 /* The main primer3 interface                                   */
@@ -839,17 +827,17 @@ choose_primers(const p3_global_settings *pa,
   best_pairs = &retval->best_pairs;
 
   /*
-   * For catching ENOMEM.  We can only use longjmp to
-   * escape from errors that have been called through choose_primers
-   * and read_and_create_seq_lib. Therefore, if we subsequently
-   * update other static functions here to have external linkage
-   * then we need to check whether they call (or use functions which
-   * may in turn call) longjmp to handle ENOMEM.
+   * For catching ENOMEM.  WARNING: We can only use longjmp to escape
+   * from errors that have been called through choose_primers().
+   * Therefore, if we subsequently update other static functions in
+   * this file to have external linkage then we need to check whether
+   * they call (or use functions that in turn call) longjmp to handle
+   * ENOMEM.
    */
   if (setjmp(_jmp_buf) != 0) {
     destroy_p3retval(retval);
-    return NULL;  /* If we get here, that means we returned via a longjmp.
-                     In this case errno should be ENOMEM. */
+    return NULL;  /* If we get here, that means we returned via a
+                     longjmp.  In this case errno should be ENOMEM. */
   }
 
   PR_ASSERT(NULL != pa);
@@ -990,10 +978,230 @@ choose_primers(const p3_global_settings *pa,
     
   return retval;
 }
-
 /* ============================================================ */
 /* END choose_primers()                                         */
 /* ============================================================ */
+
+
+
+/* ============================================================ */
+/* BEGIN choose_pair_or_triple */
+/* This function uses retval->fwd.num_elem and rev.num_elem
+   (and posibly intl.num_elem...also see choose_internal_oligo()).  
+   This function then sorts through the pairs or
+   triples to find pa->num_return pairs or triples. */
+/* ============================================================ */
+static int
+choose_pair_or_triple(p3retval *retval,
+                      const p3_global_settings *pa,
+                      const seq_args *sa,
+                      const dpal_arg_holder *dpal_arg_to_use,
+                      int int_num,
+                      pair_array_t *p)
+{
+  int i,j;
+  int num_in_p ; /* 
+                  * The number of acceptable primer pairs saved in p.
+                  * at any one time (num_in_p <= pa->num_return.)
+                  */
+  int i0, n_last, n_int;
+  primer_pair worst_pair; /* The worst pair among those being "remembered". */
+  int i_worst;            /* The index within p of worst_pair. */
+
+  primer_pair h;
+  pair_stats *pair_expl = &retval->best_pairs.expl;
+
+  num_in_p = 0; 
+
+  i_worst = 0;
+  n_last = retval->fwd.num_elem;
+
+  for (i=0; i<retval->rev.num_elem; i++) {
+
+    if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) continue;
+
+    /* 
+     * Make a cut based on the the quality of the best left
+     * primer.
+     * worst_pair must be defined if k >= pa->num_return.
+     */
+    if ((num_in_p >= pa->num_return)
+        && (((retval->rev.oligo[i].quality + retval->fwd.oligo[0].quality)
+             > worst_pair.pair_quality)
+            || worst_pair.pair_quality == 0))
+      break;
+
+    for (j=0; j<n_last; j++) {
+      /* 
+       * Invariant: if 2 pairs in p have the same pair_quality, then the
+       * pair discovered second will have a higher index within p.
+       *
+       * This invariant is needed to produce consistent results when 2
+       * pairs have the same pair_quality.
+       */
+
+      if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) break;
+      if (!OK_OR_MUST_USE(&retval->fwd.oligo[j])) continue;
+      if (num_in_p >= pa->num_return 
+          && (retval->fwd.oligo[j].quality + retval->rev.oligo[i].quality > worst_pair.pair_quality
+              || worst_pair.pair_quality == 0)) {
+        /* worst_pair must be defined if k >= pa->num_return. */
+        n_last=j;
+        break;
+      }
+
+      if (PAIR_OK ==
+          characterize_pair(retval, pa, sa, j, i, int_num, &h, dpal_arg_to_use)) {
+
+        if (!pa->pr_pair_weights.io_quality) {
+          h.pair_quality = obj_fn(pa, &h);
+          PR_ASSERT(h.pair_quality >= 0.0);
+        }
+
+        if (pa->pick_right_primer && pa->pick_left_primer
+            && pa->pick_internal_oligo
+            && (choose_internal_oligo(retval,
+                                      h.left, h.right,
+                                      &n_int, sa, pa, 
+                                      dpal_arg_to_use)!=0)) {
+          pair_expl->internal++;
+          continue;
+        }
+
+        pair_expl->ok++;
+
+        if (num_in_p < pa->num_return) {
+          
+          if (pa->pick_right_primer && pa->pick_left_primer
+                                && pa->pick_internal_oligo) 
+            h.intl = &retval->intl.oligo[n_int];
+
+          if (pa->pr_pair_weights.io_quality) {
+            h.pair_quality = obj_fn(pa, &h);
+            PR_ASSERT(h.pair_quality >= 0.0);
+          }
+
+          add_pair(&h, p);
+
+          if (num_in_p == 0 || compare_primer_pair(&h, &worst_pair) > 0) {
+            worst_pair = h;
+            i_worst = num_in_p;
+          }
+          num_in_p++;
+        } else {
+          /* num_in_p >= pa->num_return */
+          if (pa->pick_right_primer && pa->pick_left_primer
+              && pa->pick_internal_oligo) {
+            h.intl = &retval->intl.oligo[n_int];
+          }
+
+          if (pa->pr_pair_weights.io_quality) {
+            h.pair_quality = obj_fn(pa, &h);
+            PR_ASSERT(h.pair_quality >= 0.0);
+          }
+
+          /* FIX me, check whether a left (resp. right) primer overlaps
+             an existing left (resp. right) primer.  If so, we
+             compare the quality of the pair containing the existing
+             primer.  If better, we skip the new  pair.  If worse
+             we remove the previous pair (and re-sort?). */
+          if (compare_primer_pair(&h, &worst_pair) < 0) {
+            /* 
+             * There are already pa->num_return results, and vl is better than
+             * the pa->num_return the quality found so far.
+             */
+            p->pairs[i_worst] = h;
+            worst_pair = h; /* h is a lower bound on the worst pair. */
+
+            for (i0 = 0; i0<pa->num_return; i0++) {
+              if (compare_primer_pair(&p->pairs[i0], &worst_pair) > 0) {
+                i_worst = i0;
+                worst_pair = p->pairs[i0];
+              }
+            }
+
+          }
+        }
+      }
+    }  /* for (j=0; j<n_last; j++) -- inner loop */
+
+  } /* for (i=0; i<retval->rev.num_elem; i++) --- outer loop */
+
+  if (num_in_p != 0) {
+    qsort(p->pairs, num_in_p, sizeof(primer_pair), 
+          compare_primer_pair);
+  }
+  p->num_pairs = num_in_p;
+  if (num_in_p == 0) return 1;
+  else return 0;
+}
+/* ============================================================ */
+/* END choose_pair_or_triple                                    */
+/* ============================================================ */
+
+
+/* ============================================================ */
+/* BEGIN choose_internal_oligo */
+/* Choose best internal oligo for given pair of left and right
+   primers. */
+/* ============================================================ */
+static int
+choose_internal_oligo(p3retval *retval,
+                      const primer_rec *left,
+                      const primer_rec *right,
+                      int *nm,
+                      const seq_args *sa,
+                      const p3_global_settings *pa,
+                      const dpal_arg_holder *dpal_arg_to_use)
+{
+  int i,k;
+  double min;
+  char oligo_seq[MAX_PRIMER_LENGTH+1], revc_oligo_seq[MAX_PRIMER_LENGTH+1];
+  primer_rec *h;
+  min = 1000000.;
+  i = -1;
+
+  for (k=0; k < retval->intl.num_elem; k++) {
+    h = &retval->intl.oligo[k];  /* h is the record for the oligo currently
+                                    under consideration */
+
+    if ((h->start > (left->start + (left->length-1))) 
+        && ((h->start + (h->length-1))
+            < (right->start-right->length+1)) 
+        && (h->quality < min) 
+        && (OK_OR_MUST_USE(h))) {
+       
+      if (h->self_any == ALIGN_SCORE_UNDEF) {
+
+        _pr_substr(sa->trimmed_seq, h->start, h->length, oligo_seq);
+        p3_reverse_complement(oligo_seq, revc_oligo_seq);
+
+        oligo_compl(h, &pa->o_args, &retval->intl.expl,
+                    dpal_arg_to_use, oligo_seq, revc_oligo_seq);
+        if (!OK_OR_MUST_USE(h)) continue;
+      }
+
+      if (h->repeat_sim.score == NULL) {
+        oligo_mispriming(h, pa, sa, OT_INTL, &retval->intl.expl,
+                         dpal_arg_to_use->local, dpal_arg_to_use);
+        if (!OK_OR_MUST_USE(h)) continue;
+      }
+
+      min = h->quality;
+      i=k;
+
+    } /* if ((h->start.... */
+
+  }  /* for (k=0;..... */
+
+  *nm = i;
+  if(*nm < 0) return 1;
+  return 0;
+}
+/* ============================================================ */
+/* END choose_internal_oligo */
+/* ============================================================ */
+
 
 
 /* Call this function only if the 'stat's contains
@@ -2615,209 +2823,6 @@ oligo_max_template_mispriming(const primer_rec *h) {
     h->template_mispriming : h->template_mispriming_r;
 }
 
-
-/* This function uses retval->fwd.num_elem and rev.num_elem
-   (and posibly intl.num_elem...also see choose_internal_oligo()).  
-   This function then sorts through the pairs or
-   triples to find pa->num_return pairs or triples. */
-static int
-choose_pair_or_triple(p3retval *retval,
-                      const p3_global_settings *pa,
-                      const seq_args *sa,
-                      const dpal_arg_holder *dpal_arg_to_use,
-                      int int_num,
-                      pair_array_t *p) {
-  int i,j;
-  int num_in_p ; /* 
-                  * The number of acceptable primer pairs saved in p.
-                  * at any one time (num_in_p <= pa->num_return.)
-                  */
-  int i0, n_last, n_int;
-  primer_pair worst_pair; /* The worst pair among those being "remembered". */
-  int i_worst;            /* The index within p of worst_pair. */
-
-  primer_pair h;
-  pair_stats *pair_expl = &retval->best_pairs.expl;
-
-  num_in_p = 0; 
-
-  i_worst = 0;
-  n_last = retval->fwd.num_elem;
-
-  for (i=0; i<retval->rev.num_elem; i++) {
-
-    if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) continue;
-
-    /* 
-     * Make a cut based on the the quality of the best left
-     * primer.
-     * worst_pair must be defined if k >= pa->num_return.
-     */
-    if ((num_in_p >= pa->num_return)
-        && (((retval->rev.oligo[i].quality + retval->fwd.oligo[0].quality)
-             > worst_pair.pair_quality)
-            || worst_pair.pair_quality == 0))
-      break;
-
-    for (j=0; j<n_last; j++) {
-      /* 
-       * Invariant: if 2 pairs in p have the same pair_quality, then the
-       * pair discovered second will have a higher index within p.
-       *
-       * This invariant is needed to produce consistent results when 2
-       * pairs have the same pair_quality.
-       */
-
-      if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) break;
-      if (!OK_OR_MUST_USE(&retval->fwd.oligo[j])) continue;
-      if (num_in_p >= pa->num_return 
-          && (retval->fwd.oligo[j].quality + retval->rev.oligo[i].quality > worst_pair.pair_quality
-              || worst_pair.pair_quality == 0)) {
-        /* worst_pair must be defined if k >= pa->num_return. */
-        n_last=j;
-        break;
-      }
-
-      if (PAIR_OK ==
-          characterize_pair(retval, pa, sa, j, i, int_num, &h, dpal_arg_to_use)) {
-
-        if (!pa->pr_pair_weights.io_quality) {
-          h.pair_quality = obj_fn(pa, &h);
-          PR_ASSERT(h.pair_quality >= 0.0);
-        }
-
-        if (pa->pick_right_primer && pa->pick_left_primer
-            && pa->pick_internal_oligo
-            && (choose_internal_oligo(retval,
-                                      h.left, h.right,
-                                      &n_int, sa, pa, 
-                                      dpal_arg_to_use)!=0)) {
-          pair_expl->internal++;
-          continue;
-        }
-
-        pair_expl->ok++;
-
-        if (num_in_p < pa->num_return) {
-          
-          if (pa->pick_right_primer && pa->pick_left_primer
-                                && pa->pick_internal_oligo) 
-            h.intl = &retval->intl.oligo[n_int];
-
-          if (pa->pr_pair_weights.io_quality) {
-            h.pair_quality = obj_fn(pa, &h);
-            PR_ASSERT(h.pair_quality >= 0.0);
-          }
-
-          add_pair(&h, p);
-
-          if (num_in_p == 0 || compare_primer_pair(&h, &worst_pair) > 0) {
-            worst_pair = h;
-            i_worst = num_in_p;
-          }
-          num_in_p++;
-        } else {
-          /* num_in_p >= pa->num_return */
-          if (pa->pick_right_primer && pa->pick_left_primer
-              && pa->pick_internal_oligo) {
-            h.intl = &retval->intl.oligo[n_int];
-          }
-
-          if (pa->pr_pair_weights.io_quality) {
-            h.pair_quality = obj_fn(pa, &h);
-            PR_ASSERT(h.pair_quality >= 0.0);
-          }
-
-          /* FIX me, check whether a left (resp. right) primer overlaps
-             an existing left (resp. right) primer.  If so, we
-             compare the quality of the pair containing the existing
-             primer.  If better, we skip the new  pair.  If worse
-             we remove the previous pair (and re-sort?). */
-          if (compare_primer_pair(&h, &worst_pair) < 0) {
-            /* 
-             * There are already pa->num_return results, and vl is better than
-             * the pa->num_return the quality found so far.
-             */
-            p->pairs[i_worst] = h;
-            worst_pair = h; /* h is a lower bound on the worst pair. */
-
-            for (i0 = 0; i0<pa->num_return; i0++) {
-              if (compare_primer_pair(&p->pairs[i0], &worst_pair) > 0) {
-                i_worst = i0;
-                worst_pair = p->pairs[i0];
-              }
-            }
-
-          }
-        }
-      }
-    }  /* for (j=0; j<n_last; j++) -- inner loop */
-
-  } /* for (i=0; i<retval->rev.num_elem; i++) --- outer loop */
-
-  if (num_in_p != 0) {
-    qsort(p->pairs, num_in_p, sizeof(primer_pair), 
-          compare_primer_pair);
-  }
-  p->num_pairs = num_in_p;
-  if (num_in_p == 0) return 1;
-  else return 0;
-}
-
-/* Choose best internal oligo for given pair of left and right primers. */
-static int
-choose_internal_oligo(p3retval *retval,
-                      const primer_rec *left,
-                      const primer_rec *right,
-                      int *nm,
-                      const seq_args *sa,
-                      const p3_global_settings *pa,
-                      const dpal_arg_holder *dpal_arg_to_use)
-{
-  int i,k;
-  double min;
-  char oligo_seq[MAX_PRIMER_LENGTH+1], revc_oligo_seq[MAX_PRIMER_LENGTH+1];
-  primer_rec *h;
-  min = 1000000.;
-  i = -1;
-
-  for (k=0; k < retval->intl.num_elem; k++) {
-    h = &retval->intl.oligo[k];  /* h is the record for the oligo currently
-                                    under consideration */
-
-    if ((h->start > (left->start + (left->length-1))) 
-        && ((h->start + (h->length-1))
-            < (right->start-right->length+1)) 
-        && (h->quality < min) 
-        && (OK_OR_MUST_USE(h))) {
-       
-      if (h->self_any == ALIGN_SCORE_UNDEF) {
-
-        _pr_substr(sa->trimmed_seq, h->start, h->length, oligo_seq);
-        p3_reverse_complement(oligo_seq, revc_oligo_seq);
-
-        oligo_compl(h, &pa->o_args, &retval->intl.expl,
-                    dpal_arg_to_use, oligo_seq, revc_oligo_seq);
-        if (!OK_OR_MUST_USE(h)) continue;
-      }
-
-      if (h->repeat_sim.score == NULL) {
-        oligo_mispriming(h, pa, sa, OT_INTL, &retval->intl.expl,
-                         dpal_arg_to_use->local, dpal_arg_to_use);
-        if (!OK_OR_MUST_USE(h)) continue;
-      }
-
-      min = h->quality;
-      i=k;
-
-    } /* if ((h->start.... */
-
-  }  /* for (k=0;..... */
-
-  *nm = i;
-  if(*nm < 0) return 1;
-  return 0;
-}
 
 /* Sort a given primer array by penalty */
 static void
