@@ -33,5 +33,5 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifndef RELEASE_H
 #define RELEASE_H 1
-static const char * pr_release = "primer3 release 1.1.2";
+static const char * pr_release = "primer3 release 1.1.4";
 #endif

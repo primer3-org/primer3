@@ -1,17 +1,17 @@
-OS X (10.4) Universal Binary Installation Instructions (bcf; 3/27/2006;23:33)
+OS X Universal Binary Installation Instructions (bcf; 4/22/2008)
 
 
 How to install this software
 ============================
 
-1. 	Double click on the .tar.gz file to extract the archive.
+1.  Double click on the .tar.gz file to extract the archive.
 
 2.  The binary files are located in the 'bin' [for 'binary'] folder
 
 3.  (Optional) To run the tests, cd to the new directory and then the test folder
 
 4.  (Optional) Within this folder run:
-	a. perl -w p3test.pl
+	a. `perl p3test.pl`
 	
 5.  (Optional) You should not see 'FAILED' during the tests.
 
