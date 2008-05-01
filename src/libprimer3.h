@@ -881,7 +881,7 @@ void p3_set_gs_primer_salt_corrections(p3_global_settings * p , int salt_correct
 void p3_set_gs_primer_min_gc(p3_global_settings * p , double val);
 void p3_set_gs_primer_max_gc(p3_global_settings * p , double val);
 void p3_set_gs_primer_salt_conc(p3_global_settings * p , double val);
-void p3_set_gs_primer_divalent_con(p3_global_settings * p , double val);
+void p3_set_gs_primer_divalent_conc(p3_global_settings * p , double val);
 void p3_set_gs_primer_dntp_conc(p3_global_settings * p , double val);
 void p3_set_gs_primer_dna_conc(p3_global_settings * p , double val);
 void p3_set_gs_primer_num_ns_accepted(p3_global_settings * p , int val);
