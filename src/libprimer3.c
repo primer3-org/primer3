@@ -43,6 +43,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <float.h>
 #include <string.h>
 #include <ctype.h> /* toupper */
+
+			   /* #include <queue> */
+
 #include "dpal.h"
 #include "oligotm.h"
 #include "libprimer3.h"
@@ -389,7 +392,7 @@ p3_global_settings *
 p3_create_global_settings() {
   p3_global_settings *r;
 
-  if (!(r = malloc(sizeof(*r)))) {
+  if (!(r = (p3_global_settings *) malloc(sizeof(*r)))) {
     return NULL;
   }
 
@@ -461,8 +464,8 @@ pr_set_default_global_args(p3_global_settings *a) {
   /* End of arguments for primers =========================== */
 
   a->max_diff_tm         = 100.0;
-  a->tm_santalucia       = 0;
-  a->salt_corrections    = 0;
+  a->tm_santalucia       = breslauer_auto;
+  a->salt_corrections    = schildkraut;
   a->pair_compl_any      = 800;
   a->pair_compl_end      = 300;
   a->gc_clamp            = 0;
@@ -596,9 +599,12 @@ create_p3retval(void) {
   if (!state)
     return NULL;
 
-  state->fwd.oligo   = malloc(sizeof(*state->fwd.oligo)  * INITIAL_LIST_LEN);
-  state->rev.oligo   = malloc(sizeof(*state->rev.oligo)  * INITIAL_LIST_LEN);
-  state->intl.oligo  = malloc(sizeof(*state->intl.oligo) * INITIAL_LIST_LEN);
+  state->fwd.oligo   
+    = (primer_rec *) malloc(sizeof(*state->fwd.oligo)  * INITIAL_LIST_LEN);
+  state->rev.oligo
+    = (primer_rec *) malloc(sizeof(*state->rev.oligo)  * INITIAL_LIST_LEN);
+  state->intl.oligo
+    = (primer_rec *) malloc(sizeof(*state->intl.oligo) * INITIAL_LIST_LEN);
 
   if (state->fwd.oligo == NULL
       || state->rev.oligo == NULL
@@ -692,25 +698,26 @@ p3_get_rv_best_pairs(const p3retval *r) {
 dpal_arg_holder *
 create_dpal_arg_holder () {
 
-  dpal_arg_holder *h = pr_safe_malloc(sizeof(dpal_arg_holder));
+  dpal_arg_holder *h 
+    = (dpal_arg_holder *) pr_safe_malloc(sizeof(dpal_arg_holder));
 
-  h->local = pr_safe_malloc(sizeof(*h->local));
+  h->local = (dpal_args *) pr_safe_malloc(sizeof(*h->local));
   set_dpal_args(h->local);
   h->local->flag = DPAL_LOCAL;
 
-  h->end = pr_safe_malloc(sizeof(*h->end));
+  h->end = (dpal_args *) pr_safe_malloc(sizeof(*h->end));
   set_dpal_args(h->end);
   h->end->flag = DPAL_GLOBAL_END;
 
-  h->local_end = pr_safe_malloc(sizeof(*h->local_end));
+  h->local_end = (dpal_args *) pr_safe_malloc(sizeof(*h->local_end));
   set_dpal_args(h->local_end);
   h->local_end->flag = DPAL_LOCAL_END;
 
-  h->local_ambig  = pr_safe_malloc(sizeof(*h->local_ambig));
+  h->local_ambig  = (dpal_args *) pr_safe_malloc(sizeof(*h->local_ambig));
   *h->local_ambig = *h->local;
   PR_ASSERT(dpal_set_ambiguity_code_matrix(h->local_ambig));
 
-  h->local_end_ambig = pr_safe_malloc(sizeof(*h->local_end_ambig));
+  h->local_end_ambig = (dpal_args *) pr_safe_malloc(sizeof(*h->local_end_ambig));
   *h->local_end_ambig = *h->local_end;
   PR_ASSERT(dpal_set_ambiguity_code_matrix(h->local_end_ambig));
 
@@ -746,7 +753,7 @@ static dpal_arg_holder *dpal_arg_to_use = NULL;
 /* Create and initialize a seq_args data structure */
 seq_args *
 create_seq_arg() {
-  seq_args *r = malloc(sizeof(*r));
+  seq_args *r = (seq_args *) malloc(sizeof(*r));
   if (NULL == r) return NULL; /* Out of memory */
   memset(r, 0, sizeof(*r));
   r->start_codon_pos = PR_DEFAULT_START_CODON_POS;
@@ -1358,14 +1365,16 @@ add_pair(const primer_pair *pair,
   if (0 == retpair->storage_size) {
     retpair->storage_size = INITIAL_NUM_RETURN;
     retpair->pairs 
-      = pr_safe_malloc(retpair->storage_size * sizeof(*retpair->pairs));
+      = (primer_pair *)
+      pr_safe_malloc(retpair->storage_size * sizeof(*retpair->pairs));
   } else {
     if (retpair->storage_size == retpair->num_pairs) {
       /* We need more space, so realloc double the space*/
       retpair->storage_size *= 2;
       retpair->pairs
-        = pr_safe_realloc(retpair->pairs,
-                          retpair->storage_size * sizeof(*retpair->pairs));
+        = (primer_pair *) 
+	pr_safe_realloc(retpair->pairs,
+			retpair->storage_size * sizeof(*retpair->pairs));
     }
   }
   /* Copy the pair into the storage place */
@@ -1777,12 +1786,15 @@ add_oligo_to_oligo_array(oligo_array *oarray, primer_rec orec) {
   if (NULL == oarray->oligo) {
     oarray->storage_size = INITIAL_LIST_LEN;
     oarray->oligo 
-      = pr_safe_malloc(sizeof(*oarray->oligo) * oarray->storage_size);
+      = (primer_rec *)
+      pr_safe_malloc(sizeof(*oarray->oligo) * oarray->storage_size);
   }
   /* If there is no space on the array, allocate new space */
   if ((oarray->num_elem + 1) >= oarray->storage_size) { /* FIX ME, is +1 really needed? */
     oarray->storage_size += (oarray->storage_size >> 1);
-    oarray->oligo = pr_safe_realloc(oarray->oligo, 
+    oarray->oligo
+      = (primer_rec *)
+      pr_safe_realloc(oarray->oligo, 
                                    oarray->storage_size * sizeof(*oarray->oligo));
   }
   oarray->oligo[oarray->num_elem] = orec; 
@@ -2721,11 +2733,9 @@ oligo_overlaps_interval(int start,
 
 /* Calculate the part of the objective function due to one primer. */
 static double
-p_obj_fn(pa, h, j)
-    const p3_global_settings *pa;
-    primer_rec *h;
-    int  j;
-{
+p_obj_fn(const p3_global_settings *pa,
+	 primer_rec *h,
+	 int  j) {
   double sum;
 
   sum = 0;
@@ -2836,7 +2846,8 @@ sort_primer_array(oligo_array *oligo)
 static int
 primer_rec_comp(const void *x1, const void *x2)
 {
-  const primer_rec *a1 = x1, *a2 = x2;
+  const primer_rec *a1 = (const primer_rec *) x1;
+  const primer_rec *a2 = (const primer_rec *) x2;
 
   if(a1->quality < a2->quality) return -1;
   if (a1->quality > a2->quality) return 1;
@@ -2857,7 +2868,8 @@ primer_rec_comp(const void *x1, const void *x2)
 static int
 compare_primer_pair(const void *x1, const void *x2)
 {
-  const primer_pair *a1 = x1, *a2 = x2;
+  const primer_pair *a1 = (const primer_pair *) x1;
+  const primer_pair *a2 = (const primer_pair *) x2;
   int y1, y2;
 
   if(a1->pair_quality < a2->pair_quality) return -1;
@@ -3284,10 +3296,9 @@ obj_fn(const p3_global_settings *pa, primer_pair *h)
 }
 
 static short
-align(s1, s2, a)
-    const char *s1, *s2;
-    const dpal_args *a;
-{
+align(const char *s1,
+      const char *s2,
+      const dpal_args *a) {
   dpal_results r;
 
   if(a->flag == DPAL_LOCAL || a->flag == DPAL_LOCAL_END) {
@@ -3299,7 +3310,7 @@ align(s1, s2, a)
       return (short) (100 * strlen(s2));
     }
   }
-  dpal(s1, s2, a, &r);
+  dpal((const unsigned char *) s1, (const unsigned char *) s2, a, &r);
   PR_ASSERT(r.score <= SHRT_MAX);
   if (r.score == DPAL_ERROR_SCORE) {
     /* There was an error. */
@@ -3535,7 +3546,7 @@ oligo_mispriming(primer_rec *h,
     /* Library exists and is non-empty. */
 
     h->repeat_sim.score = 
-      pr_safe_malloc(lib->seq_num * sizeof(short));
+      (short *) pr_safe_malloc(lib->seq_num * sizeof(short));
     h->repeat_sim.max = h->repeat_sim.min = 0;
     max = min = 0;
     h->repeat_sim.name = lib->names[0];
@@ -3591,10 +3602,8 @@ oligo_mispriming(primer_rec *h,
 }
 
 static int
-pair_repeat_sim(h, pa)
-  primer_pair *h;
-  const p3_global_settings *pa;
-{
+pair_repeat_sim(primer_pair *h,
+		const p3_global_settings *pa) {
   int i, n, max, w;
   primer_rec *fw, *rev;
      
@@ -3653,9 +3662,9 @@ set_retval_both_stop_codons(const seq_args *sa, p3retval *retval) {
  * know the postion of the start codon relative to s.
  */
 static int
-find_stop_codon(s, start, direction)
-  const char* s;
-{
+find_stop_codon(const char* s,
+		int start,
+		int direction) {
   const char *p, *q;
   int increment = 3 * direction;
   int len = strlen(s);
@@ -3850,9 +3859,7 @@ p3_reverse_complement(const char *seq, char *s)
 }
 
 int
-_pr_need_template_mispriming(pa)
-  const p3_global_settings *pa;
-{
+_pr_need_template_mispriming(const p3_global_settings *pa) {
   return 
     pa->p_args.max_template_mispriming >= 0
     || pa->p_args.weights.template_mispriming > 0.0
@@ -3908,8 +3915,8 @@ dna_to_upper(char * s, int ambiguity_code_ok)
   return unrecognized_base;
 }
 
-static char * strstr_nocase(char *s1, char *s2)
-{
+static char *
+strstr_nocase(char *s1, char *s2) {
   int  n1, n2;
   char *p, q, *tmp;
 
@@ -3917,7 +3924,7 @@ static char * strstr_nocase(char *s1, char *s2)
   n1 = strlen(s1); n2 = strlen(s2);
   if(n1 < n2) return NULL;
 
-  tmp = pr_safe_malloc(n1 + 1);
+  tmp = (char *) pr_safe_malloc(n1 + 1);
   strcpy(tmp, s1);
 
   q = *tmp; p = tmp;
@@ -4032,14 +4039,13 @@ pr_append_str_chars(const pr_append_str *x) {
 }
 
 pr_append_str *
-create_pr_append_str()
-{
+create_pr_append_str() {
   /* We cannot use pr_safe_malloc here
      because this function will be called outside
      of the setjmp(....) */
   pr_append_str *ret;
 
-  ret = malloc(sizeof(pr_append_str));
+  ret = (pr_append_str *) malloc(sizeof(pr_append_str));
   if (NULL == ret) return NULL;
   init_pr_append_str(ret);
   return ret;
@@ -4060,8 +4066,7 @@ destroy_pr_append_str(pr_append_str *str) {
 }
 
 int
-pr_append_external(pr_append_str *x,  const char *s)
-{
+pr_append_external(pr_append_str *x,  const char *s) {
   int xlen, slen;
 
   PR_ASSERT(NULL != s);
@@ -4069,7 +4074,7 @@ pr_append_external(pr_append_str *x,  const char *s)
 
   if (NULL == x->data) {
     x->storage_size = 24;
-    x->data = malloc(x->storage_size);
+    x->data = (char *) malloc(x->storage_size);
     if (NULL == x->data) return 1; /* out of memory */
     *x->data = '\0';
   }
@@ -4077,7 +4082,7 @@ pr_append_external(pr_append_str *x,  const char *s)
   slen = strlen(s);
   if (xlen + slen + 1 > x->storage_size) {
     x->storage_size += 2 * (slen + 1);
-    x->data = realloc(x->data, x->storage_size);
+    x->data = (char *) realloc(x->data, x->storage_size);
     if (NULL == x->data) return 1; /* out of memory */
   }
   strcpy(x->data + xlen, s);
@@ -4278,16 +4283,16 @@ _adjust_seq_args(const p3_global_settings *pa,
   if ((sa->incl_l < INT_MAX) && (sa->incl_s > -1) 
       && (sa->incl_l > -1) && (inc_len < seq_len) ) {
     /* Copies inluded region into trimmed_seq */
-    sa->trimmed_seq = pr_safe_malloc(sa->incl_l + 1);
+    sa->trimmed_seq = (char *) pr_safe_malloc(sa->incl_l + 1);
     _pr_substr(sa->sequence, sa->incl_s, sa->incl_l, sa->trimmed_seq);
          
     /* Copies inluded region into trimmed_orig_seq */
     /* edited by T. Koressaar for lowercase masking */
-    sa->trimmed_orig_seq = pr_safe_malloc(sa->incl_l + 1);
+    sa->trimmed_orig_seq = (char *) pr_safe_malloc(sa->incl_l + 1);
     _pr_substr(sa->sequence, sa->incl_s, sa->incl_l, sa->trimmed_orig_seq);
          
     /* Copies the whole sequence into upcased_seq */
-    sa->upcased_seq = pr_safe_malloc(strlen(sa->sequence) + 1);
+    sa->upcased_seq = (char *) pr_safe_malloc(strlen(sa->sequence) + 1);
     strcpy(sa->upcased_seq, sa->sequence);
     if ((offending_char = dna_to_upper(sa->upcased_seq, 1))) {
       offending_char = '\0';
@@ -4296,7 +4301,7 @@ _adjust_seq_args(const p3_global_settings *pa,
     }
         
     /* Copies the reverse complement of the whole sequence into upcased_seq_r */
-    sa->upcased_seq_r = pr_safe_malloc(strlen(sa->sequence) + 1);
+    sa->upcased_seq_r = (char *) pr_safe_malloc(strlen(sa->sequence) + 1);
     p3_reverse_complement(sa->upcased_seq, sa->upcased_seq_r);
   }
   
@@ -4326,7 +4331,7 @@ fake_a_sequence(seq_args *sa)
   }
   if (sa->right_input){
     space = space + strlen(sa->right_input);
-    rev = pr_safe_malloc(strlen(sa->right_input) + 1);
+    rev = (char *) pr_safe_malloc(strlen(sa->right_input) + 1);
     p3_reverse_complement(sa->right_input, rev);
   }
   if (sa->internal_input){
@@ -4335,7 +4340,7 @@ fake_a_sequence(seq_args *sa)
   if (space == 1){
     return 0;
   }
-  sa->sequence = pr_safe_malloc(space);
+  sa->sequence = (char *) pr_safe_malloc(space);
   *sa->sequence = '\0';
   /* Copy over the primers */
   if (sa->left_input){
@@ -4976,7 +4981,7 @@ p3_print_oligo_lists(const p3retval *retval,
 
   }
 
-  file = malloc(strlen(sa->sequence_name) + 5);
+  file = (char *) malloc(strlen(sa->sequence_name) + 5);
   if (NULL == file) return 1; /* ENOMEM */
 
   /* Check if the left primers have to be printed */
@@ -5179,7 +5184,7 @@ p3_read_line(FILE *file)
 
   if (NULL == s) {
     ssz = INIT_BUF_SIZE;
-    s = pr_safe_malloc(ssz);
+    s = (char *) pr_safe_malloc(ssz);
   }
   p = s;
   remaining_size = ssz;
@@ -5207,7 +5212,7 @@ p3_read_line(FILE *file)
     else {
       ssz *= 2;
     }
-    s = pr_safe_realloc(s, ssz);
+    s = (char *) pr_safe_realloc(s, ssz);
     p = strchr(s, '\0');
     remaining_size = ssz - (p - s);
   }
@@ -5254,7 +5259,8 @@ _set_string(char **loc, const char *new_string) {
   if (*loc) {
     free(*loc);
   }
-  if (!(*loc = malloc(strlen(new_string) + 1))) return 1; /* ENOMEM */
+  if (!(*loc = (char *) malloc(strlen(new_string) + 1))) 
+    return 1; /* ENOMEM */
   strcpy(*loc, new_string);
   return 0;
 }
@@ -5305,15 +5311,17 @@ void p3_sa_add_to_quality_array(seq_args *sargs, int quality) {
   if (sargs->quality_storage_size == 0) {
     sargs->quality_storage_size = 3000;
     sargs->quality
-      = pr_safe_malloc(sizeof(*sargs->quality) 
-                      * sargs->quality_storage_size);
+      = (int *)
+      pr_safe_malloc(sizeof(*sargs->quality) 
+		     * sargs->quality_storage_size);
   }
   if (n > sargs->quality_storage_size) {
     sargs->quality_storage_size *= 2;
     sargs->quality
-      = pr_safe_realloc(sargs->quality,
-                        sizeof(*sargs->quality) 
-                        * sargs->quality_storage_size);
+      = (int *) 
+      pr_safe_realloc(sargs->quality,
+		      sizeof(*sargs->quality) 
+		      * sargs->quality_storage_size);
   }
   sargs->quality[n] = quality;
   sargs->n_quality++;
@@ -5422,12 +5430,14 @@ p3_set_gs_primer_max_diff_tm(p3_global_settings * p , double val) {
 }
 
 void
-p3_set_gs_primer_tm_santalucia(p3_global_settings * p , int val) {
+p3_set_gs_primer_tm_santalucia(p3_global_settings * p,
+			       tm_method_type val) {
   p->tm_santalucia = val ;
 }
 
 void
-p3_set_gs_primer_salt_corrections(p3_global_settings * p , int val) {
+p3_set_gs_primer_salt_corrections(p3_global_settings * p,
+				  salt_correction_type val) {
   p->salt_corrections = val;
 }
 
@@ -6127,7 +6137,7 @@ p3_get_ol_problem_string(const primer_rec *oligo) {
                                   concatenated will not overflow this
                                   buffer. */
   char *next = output;
-  char *tmp;
+  const char *tmp;
   unsigned long int prob = oligo->problems.prob;
   output[0] = '\0';
 

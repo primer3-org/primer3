@@ -42,6 +42,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h> /* FILE */
 #include <stdlib.h>
 #include <limits.h> /* SHRT_MIN, ULONG_MAX */
+#include "oligotm.h"
 
 /* ALIGN_SCORE_UNDEF is used only libprimer3 and clients, not in dpal */
 #define ALIGN_SCORE_UNDEF             SHRT_MIN
@@ -287,7 +288,7 @@ typedef struct p3_global_settings {
        
      The default value is 0 only for backward compatibility.
   */
-  int tm_santalucia;  
+  tm_method_type tm_santalucia;  
 
   /* 
      Added by T.Koressaar for salt correction for Tm calculation.  A
@@ -311,7 +312,7 @@ typedef struct p3_global_settings {
 
      The default is 0 only for backward compatibility.
   */
-  int salt_corrections; 
+  salt_correction_type salt_corrections; 
 
   /* Arguments applicable to primers but not oligos */
 
@@ -876,8 +877,10 @@ void p3_set_gs_primer_opt_gc_percent(p3_global_settings * p , double val);
 void p3_set_gs_primer_min_tm(p3_global_settings * p , double product_min_tm);
 void p3_set_gs_primer_max_tm(p3_global_settings * p , double product_max_tm);
 void p3_set_gs_primer_max_diff_tm(p3_global_settings * p , double val);
-void p3_set_gs_primer_tm_santalucia(p3_global_settings * p , int val);
-void p3_set_gs_primer_salt_corrections(p3_global_settings * p , int salt_corrections);
+void p3_set_gs_primer_tm_santalucia(p3_global_settings * p,
+				    tm_method_type val);
+void p3_set_gs_primer_salt_corrections(p3_global_settings * p,
+				       salt_correction_type salt_corrections);
 void p3_set_gs_primer_min_gc(p3_global_settings * p , double val);
 void p3_set_gs_primer_max_gc(p3_global_settings * p , double val);
 void p3_set_gs_primer_salt_conc(p3_global_settings * p , double val);

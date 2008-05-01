@@ -55,11 +55,11 @@ double end_oligodg(const char *oligo, int len, int tm_method);
 
  */
 double long_seq_tm(const char *seq, 
-		   int start, 
-		   int length, 
-		   double salt_conc, 
-		   double divalent_conc, 
-		   double dntp_conc);
+                   int start, 
+                   int length, 
+                   double salt_conc, 
+                   double divalent_conc, 
+                   double dntp_conc);
 
 /* 
    For olgigotm() and seqtm()
@@ -76,14 +76,14 @@ double long_seq_tm(const char *seq,
    We use the folowing typedefs:
 */
 typedef enum tm_method_type {
-	breslauer_auto      = 0,
-	santalucia_auto     = 1,
+        breslauer_auto      = 0,
+        santalucia_auto     = 1,
 } tm_method_type;
 
 typedef enum salt_correction_type {
-	schildkraut    = 0,
-	santalucia     = 1,
-	owczarzy       = 2,
+        schildkraut    = 0,
+        santalucia     = 1,
+        owczarzy       = 2,
 } salt_correction_type;
 
 /* 
@@ -137,31 +137,31 @@ typedef enum salt_correction_type {
 double oligotm(const  char *seq,     /* The sequence. */
                double dna_conc,      /* DNA concentration (nanomolar). */
                double salt_conc,     /* Salt concentration (millimolar). */
-	       double divalent_conc, /* Concentration of divalent cations (millimolar) */
-	       double dntp_conc,     /* Concentration of dNTPs (millimolar) */
-	       tm_method_type tm_method,    /* See description above. */
-	       salt_correction_type salt_corrections  /* See description above. */
-	       );
+               double divalent_conc, /* Concentration of divalent cations (millimolar) */
+               double dntp_conc,     /* Concentration of dNTPs (millimolar) */
+               tm_method_type tm_method,    /* See description above. */
+               salt_correction_type salt_corrections  /* See description above. */
+               );
 
 /* Return the melting temperature of a given sequence, 'seq', of any
    length.
 */
 double seqtm(const  char *seq,  /* The sequence. */
-         double dna_conc,   /* DNA concentration (nanomolar). */
-         double salt_conc,  /* Concentration of divalent cations (millimolar). */
-	     double divalent_conc, /* Concentration of divalent cations (millimolar) */
-	     double dntp_conc,     /* Concentration of dNTPs (millimolar) */
-         int    nn_max_len,  /* The maximum sequence length for
-				    using the nearest neighbor model
-				    (as implemented in oligotm.  For
-				    sequences longer than this, seqtm
-				    uses the "GC%" formula implemented
-				    in long_seq_tm.
-				 */
+             double dna_conc,   /* DNA concentration (nanomolar). */
+             double salt_conc,  /* Concentration of divalent cations (millimolar). */
+             double divalent_conc, /* Concentration of divalent cations (millimolar) */
+             double dntp_conc,     /* Concentration of dNTPs (millimolar) */
+             int    nn_max_len,  /* The maximum sequence length for
+                                    using the nearest neighbor model
+                                    (as implemented in oligotm.  For
+                                    sequences longer than this, seqtm
+                                    uses the "GC%" formula implemented
+                                    in long_seq_tm.
+                                 */
 
-         tm_method_type  tm_method,       /* See description above. */
-	     salt_correction_type salt_corrections /* See description above. */
-	     );
+             tm_method_type  tm_method,       /* See description above. */
+             salt_correction_type salt_corrections /* See description above. */
+             );
 
 /* Return the delta G of disruption of oligo using the nearest neighbor model.
    The length of seq should be relatively short, 
@@ -169,8 +169,8 @@ double seqtm(const  char *seq,  /* The sequence. */
    neighbor model.
 */
 double oligodg(const char *seq, 
-	       int tm_method /* See description above. */
-	       );
+               int tm_method /* See description above. */
+               );
 
 /* Returns 1 if the sequence is self-complementary or symmetrical; 0
    otherwise
