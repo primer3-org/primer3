@@ -1,7 +1,7 @@
 /*
 Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
 Whitehead Institute for Biomedical Research, Steve Rozen
-(http://jura.wi.mit.edu/rozen), and Helen Skaletsky
+(http://purl.com/STEVEROZEN/), and Helen Skaletsky
 All rights reserved.
 
     This file is part the primer3 software suite.
@@ -38,6 +38,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _DPAL_H
 #define _DPAL_H
 #include <limits.h> /* INT_MIN */
+
+#ifdef __cplusplus
+    extern "C" {
+#endif
 
 #define DPAL_ERROR_SCORE INT_MIN
 
@@ -155,4 +159,9 @@ void dpal(const unsigned char *, const unsigned char*,
 	  const dpal_args *, dpal_results *out);
 
 void set_dpal_args(dpal_args *);
+
+#ifdef __cplusplus
+    }
+#endif
+
 #endif

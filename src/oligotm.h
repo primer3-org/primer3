@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
 All rights reserved.
@@ -23,6 +23,10 @@ All rights reserved.
 
 */
      
+#ifdef __cplusplus
+    extern "C" {
+#endif
+
 #ifndef _OLIGO_TM
 #define _OLIGO_TM 1
 #define OLIGOTM_ERROR -999999.9999
@@ -180,5 +184,9 @@ int symmetry(const char *seq);
 /* Converts divalent salt concentration to monovalent salt concentration */
 
 double divalent_to_monovalent(double divalent, double dntp);
+
+#ifdef __cplusplus
+    }
+#endif
 
 #endif

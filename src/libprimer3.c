@@ -1711,30 +1711,38 @@ pick_sequencing_primer_list(p3retval *retval,
     
     /* Pick primers for each position */
     for ( step_nr = 0 ; step_nr < primer_nr ; step_nr++ ) {
+
       pr_position_f = sa->tar2.pairs[tar_n][0] - extra_seq 
         + ( pa->sequencing.spacing * step_nr )
         - pa->sequencing.lead;
+
       pr_position_r = sa->tar2.pairs[tar_n][0] - extra_seq 
         + ( pa->sequencing.spacing * step_nr )
         + pa->sequencing.interval
         + pa->sequencing.lead;
+
       /* Check if calculated positions make sense */
-      /* position_f can not be outside included region */
+
+      /* position_f cannot be outside included region */
       if (pr_position_f < (pa->p_args.min_size -1)) {
         pr_position_f = pa->p_args.min_size - 1;
       }
+
       if (pr_position_f > (n - pa->p_args.min_size - 1)) {
         pr_position_f = n - pa->p_args.min_size - 1;
         /* Actually this should never happen */
         pr_append_new_chunk(&retval->warnings,
-                            "Calculation error in sequencing position calculation");
+                            "Calculation error in forward "
+			    "sequencing position calculation");
       }
-      /* position_r can not be outside included region */
+
+      /* position_r cannot be outside included region */
       if (pr_position_r < (pa->p_args.min_size - 1)) {
         pr_position_r = pa->p_args.min_size - 1;
         /* Actually this should never happen */
         pr_append_new_chunk(&retval->warnings, 
-                            "Calculation error in sequencing position calculation");
+                            "Calculation error in reverse "
+			    "sequencing position calculation");
       }
       if (pr_position_r > (n - pa->p_args.min_size - 1)) {
         pr_position_r = n - pa->p_args.min_size - 1;

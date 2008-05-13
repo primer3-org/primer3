@@ -42,6 +42,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h> /* FILE */
 #include <stdlib.h>
 #include <limits.h> /* SHRT_MIN, ULONG_MAX */
+
+#ifdef __cplusplus
+    extern "C" {
+#endif
+
 #include "oligotm.h"
 
 /* ALIGN_SCORE_UNDEF is used only libprimer3 and clients, not in dpal */
@@ -1096,5 +1101,9 @@ int    p3_print_oligo_lists(const p3retval*,
    WARNING: It is up the caller to ensure that s points to enough
    space. */ 
 void   p3_reverse_complement(const char *, char *);
+
+#ifdef __cplusplus
+    }
+#endif
 
 #endif

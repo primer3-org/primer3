@@ -1,7 +1,7 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
 Whitehead Institute for Biomedical Research, Steve Rozen
-(http://jura.wi.mit.edu/rozen), and Helen Skaletsky
+(http://purl.com/STEVEROZEN/), and Helen Skaletsky
 All rights reserved.
 
     This file is part of primer3 software suite.
@@ -47,7 +47,7 @@ main(argc, argv)
 {
     dpal_args a;
     dpal_results r;
-    const char *s1, *s2;
+    const unsigned char *s1, *s2;
     int tmp_ret;
     int i;
     int print_align_end = 0; /* 
@@ -144,8 +144,8 @@ main(argc, argv)
       fprintf(stderr, msg, argv[0]);
       exit(-1);
     }
-    s1 = argv[i];
-    s2 = argv[i+1];
+    s1 = (unsigned char *) argv[i];
+    s2 = (unsigned char *) argv[i+1];
     mode = *argv[i+2];
     if ('l' == mode)
 	a.flag = DPAL_LOCAL;
@@ -160,6 +160,7 @@ main(argc, argv)
 	exit(-1);
     }
     if(print_align_end == 1) a.force_long_generic = 1;
+
     dpal(s1, s2, &a, &r);
     if (r.score == DPAL_ERROR_SCORE) {
       tmp_ret = fprintf(stderr, "Error: %s\n", r.msg);

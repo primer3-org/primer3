@@ -51,17 +51,20 @@ static void  out_of_memory_error();
 
 static void   parse_align_score(const char *, const char *, short *,
                                 pr_append_str *);
+
 static void   parse_double(const char *, const char *, double *,
                            pr_append_str *);
+
 static void   parse_int(const char *, const char *, int *, pr_append_str *);
-static const char *parse_int_pair(const char *, const char *, char, int *, int *,
-                            pr_append_str *);
+
+static const char *parse_int_pair(const char *, const char *,
+                                  char, int *, int *,
+                                  pr_append_str *);
 
 static void   parse_interval_list(const char *tag_name,
-                                   const char *datum,
-                                   interval_array_t2 *interval_arr,
-                                   pr_append_str *err);
-
+                                  const char *datum,
+                                  interval_array_t2 *interval_arr,
+                                  pr_append_str *err);
 
 static void   parse_product_size(const char *, char *, p3_global_settings *,
                                  pr_append_str *);
@@ -338,11 +341,14 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_MAX_DIFF_TM", pa->max_diff_tm);
 
       if (*io_version == 0) {
-        COMPARE_INT("PRIMER_TM_SANTALUCIA",        pa->tm_santalucia);    /* added by T.Koressaar */
+        COMPARE_INT("PRIMER_TM_SANTALUCIA",
+                     pa->tm_santalucia);    /* added by T.Koressaar */
       } else {
-        COMPARE_INT("PRIMER_TM_FORMULA",        pa->tm_santalucia);    /* added by T.Koressaar */
+        COMPARE_INT("PRIMER_TM_FORMULA",
+                     pa->tm_santalucia);    /* added by T.Koressaar */
       }
-      COMPARE_INT("PRIMER_SALT_CORRECTIONS", pa->salt_corrections); /* added by T.Koressaar */
+      COMPARE_INT("PRIMER_SALT_CORRECTIONS",
+                  pa->salt_corrections); /* added by T.Koressaar */
       COMPARE_FLOAT("PRIMER_MIN_GC", pa->p_args.min_gc);
       COMPARE_FLOAT("PRIMER_MAX_GC", pa->p_args.max_gc);
             
