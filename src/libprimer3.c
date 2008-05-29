@@ -1670,9 +1670,9 @@ add_primers_to_check(p3retval *retval,
  */
 static int
 pick_sequencing_primer_list(p3retval *retval,
-                  const p3_global_settings *pa,
-                  const seq_args *sa,
-                  const dpal_arg_holder *dpal_arg_to_use)
+                            const p3_global_settings *pa,
+                            const seq_args *sa,
+                            const dpal_arg_holder *dpal_arg_to_use)
 {
   int length, start;
   int n, rest_accuracy;
@@ -1681,8 +1681,9 @@ pick_sequencing_primer_list(p3retval *retval,
   int step_nr; /* counter to step through the targets */
   int sequenced_len; /* bp sequenced in good quality */
   int extra_seq; /* bp sequenced additionally on both sides */
-  int pr_position_f; /* pefect place for the 3' end of the fwd primer */
-  int pr_position_r; /* pefect place for the 3' end of the rev primer */
+
+  int pr_position_f; /* best location for the 3' end of the fwd primer */
+  int pr_position_r; /* best location for the 3' end of the rev primer */
 
   /* Get the length of the sequence */
   PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
@@ -1733,7 +1734,7 @@ pick_sequencing_primer_list(p3retval *retval,
         /* Actually this should never happen */
         pr_append_new_chunk(&retval->warnings,
                             "Calculation error in forward "
-			    "sequencing position calculation");
+                            "sequencing position calculation");
       }
 
       /* position_r cannot be outside included region */
@@ -1742,7 +1743,7 @@ pick_sequencing_primer_list(p3retval *retval,
         /* Actually this should never happen */
         pr_append_new_chunk(&retval->warnings, 
                             "Calculation error in reverse "
-			    "sequencing position calculation");
+                            "sequencing position calculation");
       }
       if (pr_position_r > (n - pa->p_args.min_size - 1)) {
         pr_position_r = n - pa->p_args.min_size - 1;
@@ -1786,7 +1787,7 @@ pick_sequencing_primer_list(p3retval *retval,
   } /* End of Target Loop */
     
   return 0;
-} /* make_complete_primer_lists */
+} /* pick_sequencing_primer_list */
 
 static void
 add_oligo_to_oligo_array(oligo_array *oarray, primer_rec orec) {

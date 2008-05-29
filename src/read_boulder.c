@@ -154,6 +154,7 @@ read_boulder_record(FILE *file_input,
   pr_append_str *parse_err;
   pr_append_str *non_fatal_err;
   char *repeat_file_path = NULL, *int_repeat_file_path = NULL;
+  int tmp_int;
 
   non_fatal_err = nonfatal_parse_err;
 
@@ -341,14 +342,25 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_MAX_DIFF_TM", pa->max_diff_tm);
 
       if (*io_version == 0) {
-        COMPARE_INT("PRIMER_TM_SANTALUCIA",
-                     pa->tm_santalucia);    /* added by T.Koressaar */
+        if (COMPARE("PRIMER_TM_SANTALUCIA")) {
+          parse_int("PRIMER_TM_SANTALUCIA", datum, &tmp_int, parse_err);
+          pa->tm_santalucia = tmp_int;    /* added by T.Koressaar */
+          continue;
+        }
       } else {
-        COMPARE_INT("PRIMER_TM_FORMULA",
-                     pa->tm_santalucia);    /* added by T.Koressaar */
+        if (COMPARE("PRIMER_TM_FORMULA")) {
+          parse_int("PRIMER_TM_SANTALUCIA", datum, &tmp_int, parse_err);
+          pa->tm_santalucia = tmp_int;    /* added by T.Koressaar */
+          continue;
+        }
       }
-      COMPARE_INT("PRIMER_SALT_CORRECTIONS",
-                  pa->salt_corrections); /* added by T.Koressaar */
+
+      if (COMPARE("PRIMER_SALT_CORRECTIONS")) {
+        parse_int("PRIMER_SALT_CORRECTIONS", datum, &tmp_int, parse_err);
+        pa->salt_corrections = tmp_int; /* added by T.Koressaar */
+        continue;
+      }
+
       COMPARE_FLOAT("PRIMER_MIN_GC", pa->p_args.min_gc);
       COMPARE_FLOAT("PRIMER_MAX_GC", pa->p_args.max_gc);
             
@@ -361,7 +373,6 @@ read_boulder_record(FILE *file_input,
         COMPARE_FLOAT("PRIMER_SALT_DIVALENT", pa->p_args.divalent_conc);
       }
       COMPARE_FLOAT("PRIMER_DNTP_CONC", pa->p_args.dntp_conc);
-
       /* end of added by T.Koressaar: */
     
       COMPARE_FLOAT("PRIMER_DNA_CONC", pa->p_args.dna_conc);
