@@ -23,12 +23,13 @@ All rights reserved.
 
 */
      
-#ifdef __cplusplus
-    extern "C" {
-#endif
-
 #ifndef _OLIGO_TM
 #define _OLIGO_TM 1
+
+#ifdef __cplusplus
+  extern "C" {
+#endif
+
 #define OLIGOTM_ERROR -999999.9999
 
 /* Return the delta G of the last len bases of oligo if oligo is at least len

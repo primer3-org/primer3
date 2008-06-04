@@ -43,11 +43,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h>
 #include <limits.h> /* SHRT_MIN, ULONG_MAX */
 
-#ifdef __cplusplus
-    extern "C" {
-#endif
-
 #include "oligotm.h"
+
+#ifdef __cplusplus
+  extern "C" {
+#endif
 
 /* ALIGN_SCORE_UNDEF is used only libprimer3 and clients, not in dpal */
 #define ALIGN_SCORE_UNDEF             SHRT_MIN
