@@ -72,14 +72,6 @@ main();
 sub main() {
     my %args;
 
-    my $valgrind_exe = "/usr/local/bin/valgrind";
-    if (!-x $valgrind_exe) { die "Cannot execute $valgrind_exe" }
-
-    # The following format works with valgrind-3.2.3:
-    $valgrind_format  = $valgrind_exe
-	. " --leak-check=yes --show-reachable=yes "
-	. " --log-file-exactly=%s.vg ";
-
     select STDERR;
 
     $all_ok = 1;
@@ -87,11 +79,11 @@ sub main() {
     $start_time = time();
 
     if (defined $Config{sig_name}) {
-	my $i = 0;
-	for my $name (split(' ', $Config{sig_name})) {
+	  my $i = 0;
+	  for my $name (split(' ', $Config{sig_name})) {
 	    $signo{$name} = $i;
 	    $i++;
-	}
+	  }
     }
 
     # GetOptions handles various flag abbreviations and formats,
@@ -120,6 +112,15 @@ sub main() {
 	print "$0: Cannot specify both --valgrind and --windows\n";
 	exit -1;
     }
+
+    my $valgrind_exe = "/usr/local/bin/valgrind";
+    if ((!-x $valgrind_exe) && ($do_valgrind))
+    	{ die "Cannot execute $valgrind_exe" }
+
+    # The following format works with valgrind-3.2.3:
+    $valgrind_format  = $valgrind_exe
+	. " --leak-check=yes --show-reachable=yes "
+	. " --log-file-exactly=%s.vg ";
 
     if ($winFlag) {
 	$exe = '..\\src\\primer3_core.exe';
