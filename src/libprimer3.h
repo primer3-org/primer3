@@ -883,9 +883,9 @@ void p3_set_gs_primer_min_tm(p3_global_settings * p , double product_min_tm);
 void p3_set_gs_primer_max_tm(p3_global_settings * p , double product_max_tm);
 void p3_set_gs_primer_max_diff_tm(p3_global_settings * p , double val);
 void p3_set_gs_primer_tm_santalucia(p3_global_settings * p,
-				    tm_method_type val);
+                                    tm_method_type val);
 void p3_set_gs_primer_salt_corrections(p3_global_settings * p,
-				       salt_correction_type salt_corrections);
+                                       salt_correction_type salt_corrections);
 void p3_set_gs_primer_min_gc(p3_global_settings * p , double val);
 void p3_set_gs_primer_max_gc(p3_global_settings * p , double val);
 void p3_set_gs_primer_salt_conc(p3_global_settings * p , double val);
@@ -1026,18 +1026,18 @@ void p3_set_gs_min_three_prime_distance(p3_global_settings *p, int min_distance)
  * Otherwise return retval (updated).  Errors are returned in 
  * in retval.
  */
-
 p3retval *choose_primers(const p3_global_settings *pa, 
-                         /* const */ seq_args *sa);
+                         seq_args *sa);
 
-void p3_print_args(const p3_global_settings *, seq_args *) ;
+/* For testing/debugging: print the values in pa and sa to stdout. */
+void p3_print_args(const p3_global_settings *pa, seq_args *sa) ;
 
-/* Andreas, this is the idea, argument list will need
-   to be cleaned up */
+/* Print out the content of one primer array */
+/* Return 1 on error, otherwise 0. */
 int    p3_print_one_oligo_list(const seq_args *, 
-                                      int, const primer_rec[],
-                                      const oligo_type, const int, 
-                                      const int, FILE *);
+                               int, const primer_rec[],
+                               const oligo_type, const int, 
+                               const int, FILE *);
 
 char  *pr_oligo_sequence(const seq_args *, const primer_rec *);
 

@@ -45,9 +45,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <ctype.h> /* toupper */
 
-#include <queue.h>
 #include <vector.h>
-  /* #include <set.h> */
+#include <queue.h>
+#include <set.h>
 
 #include "dpal.h"
 #include "oligotm.h"
@@ -802,9 +802,6 @@ destroy_seq_args(seq_args *sa) {
 /* ============================================================ */
 /* END functions for seq_arg_holder                             */
 /* ============================================================ */
-
-
-
 
 /* ============================================================ */
 /* BEGIN choose_primers()                                       */
@@ -6653,6 +6650,60 @@ void p3_print_args(const p3_global_settings *p, seq_args *s)
   printf("end sequence args\n") ;
 }
 
+
+class pair_or_triple_stream {
+
+public:
+  pair_or_triple_stream(p3retval *retval,
+			const p3_global_settings *pa,
+			const seq_args *sa,
+			const dpal_arg_holder *dpal_arg_to_use) :
+    retval(retval), p3gs(pa), sa(sa), dpal_arg(dpal_arg_to_use),
+    prod_size_interval_index(0), rev_primer_index(0), for_primer_index()
+  {}
+
+  const primer_pair* next();
+
+private:
+  const p3retval *retval;
+  const p3_global_settings *p3gs;
+  const seq_args *sa;
+  const dpal_arg_holder *dpal_arg;
+
+  int prod_size_interval_index; // The interval currently under examination
+  int rev_primer_index;         // The index of the next reverse primer to consider
+  int for_primer_index;         // The index of the next forward primer to consider
+  priority_queue<primer_pair, vector<primer_pair> > priqueue;
+  set<primer_pair> primer_pair_set;
+
+};
+
+const primer_pair*
+pair_or_triple_stream::next() {
+  /* FIX ME, this is the new function */
+
+  while (prod_size_interval_index < p3gs->num_intervals) {
+
+    while (!OK_OR_MUST_USE(&retval->rev.oligo[rev_primer_index])) {
+      rev_primer_index++;
+      
+      while (!OK_OR_MUST_USE(&retval->fwd.oligo[for_primer_index])) {
+	for_primer_index++;
+      }
+
+    }
+
+    /* No more pairs in this product size interval. */
+    prod_size_interval_index++;
+  }  /* while (prod_size_interval_index < p3gs->num_intervals) { */
+
+  if (priqueue.empty()) {
+    return NULL;
+  }
+  return &priqueue.top();
+}
+
+
 /* ============================================================
    BEGIN next_pair_or_triple
    This function uses retval->fwd.num_elem and rev.num_elem
@@ -6669,61 +6720,41 @@ next_pair_or_triple(p3retval *retval,
   int i,j;
   int n_int;
 
-
-  primer_pair h;  /* FIX ME -- need to allocate before storing in set and queue. */
+  primer_pair ppair;  /* FIX ME -- need to allocate before storing in set and queue. */
   pair_stats *pair_expl = &retval->best_pairs.expl;
   priority_queue<primer_pair, vector<primer_pair> > priqueue;
-  /* set<primer_pair> primer_pair_set; */
+  set<primer_pair> primer_pair_set;
 
- printf("%d\n", priqueue.empty());
-
+  printf("%d\n", priqueue.empty());
+ 
   for (i=0; i < retval->rev.num_elem; i++) {
 
     if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) continue;
 
-    /*
-     * Make a cut based on the the quality of the best left
-     * primer.
-     */
-
-    if (retval->rev.oligo[i].quality + retval->fwd.oligo[0].quality) {
-      h = priqueue.top();  {  /* FIX ME -- make sure queue is not empty */
-      printf("Pop top element 1, eventually we will return it\n");
-      continue;
-    }
-
     for (j=0; j < retval->fwd.num_elem; j++) {
-      /*
-       * Invariant: if 2 pairs in p have the same pair_quality, then the
-       * pair discovered second will have a higher index within p.
-       *
-       * This ensures consistent results when 2 pairs have the same
-       * pair_quality.
-       */
 
       if (!OK_OR_MUST_USE(&retval->fwd.oligo[j])) continue;
 
-      if (retval->fwd.oligo[j].quality + retval->rev.oligo[i].quality
-          > priqueue.top().pair_quality) {  /* FIX ME -- make sure queue is not empty */
-
-        h = priqueue.top();
+      if (!priqueue.empty() 
+	  && retval->fwd.oligo[j].quality + retval->rev.oligo[i].quality
+          > priqueue.top().pair_quality) {
+        ppair = priqueue.top();
         printf("Pop top element, eventually we will return it\n");
-
       }
 
       if (PAIR_OK !=
-          characterize_pair(retval, pa, sa, j, i, int_num, &h, dpal_arg_to_use))
+          characterize_pair(retval, pa, sa, j, i, int_num, &ppair, dpal_arg_to_use))
         continue;
 
       if (!pa->pr_pair_weights.io_quality) {
-        h.pair_quality = obj_fn(pa, &h);
-        PR_ASSERT(h.pair_quality >= 0.0);
+        ppair.pair_quality = obj_fn(pa, &ppair);
+        PR_ASSERT(ppair.pair_quality >= 0.0);
       }
 
       if (pa->pick_right_primer && pa->pick_left_primer
           && pa->pick_internal_oligo
           && (choose_internal_oligo(retval,
-                                    h.left, h.right,
+                                    ppair.left, ppair.right,
                                     &n_int, sa, pa,
                                     dpal_arg_to_use)!=0)) {
         pair_expl->internal++;
@@ -6734,14 +6765,14 @@ next_pair_or_triple(p3retval *retval,
 
       if (pa->pick_right_primer && pa->pick_left_primer
           && pa->pick_internal_oligo)
-        h.intl = &retval->intl.oligo[n_int];
+        ppair.intl = &retval->intl.oligo[n_int];
 
       if (pa->pr_pair_weights.io_quality) {
-        h.pair_quality = obj_fn(pa, &h);
-        PR_ASSERT(h.pair_quality >= 0.0);
+        ppair.pair_quality = obj_fn(pa, &ppair);
+        PR_ASSERT(ppair.pair_quality >= 0.0);
       }
 
-      priqueue.push(h);
+      priqueue.push(ppair);
     } /* for (j=0; j < retval->fwd.num_elem; j++) -- inner loop */
 
   } /* for (i=0; i < retval->rev.num_elem; i++) --- outer loop */
@@ -6749,5 +6780,3 @@ next_pair_or_triple(p3retval *retval,
 /* ============================================================ */
 /* END next_pair_or_triple                                      */
 /* ============================================================ */
-}
-
