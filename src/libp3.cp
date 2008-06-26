@@ -6684,11 +6684,16 @@ pair_or_triple_stream::next() {
 
   while (prod_size_interval_index < p3gs->num_intervals) {
 
-    while (!OK_OR_MUST_USE(&retval->rev.oligo[rev_primer_index])) {
+    while (rev_primer_index < retval->rev.num_elem
+	   && !OK_OR_MUST_USE(&retval->rev.oligo[rev_primer_index])) {
       rev_primer_index++;
       
-      while (!OK_OR_MUST_USE(&retval->fwd.oligo[for_primer_index])) {
+      while (for_primer_index < retval->fwd.num_elem
+	     && !OK_OR_MUST_USE(&retval->fwd.oligo[for_primer_index])) {
 	for_primer_index++;
+
+	/* Fix me -- more stuff goes here */
+
       }
 
     }
