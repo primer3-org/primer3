@@ -269,10 +269,10 @@ read_boulder_record(FILE *file_input,
       /* Process the new sequence Tags*/
       else {
         /* COMPARE_AND_MALLOC("SEQUENCE", sa->sequence); */
-        if (COMPARE("SEQUENCE_DNA")) {   /* NEW WAY */
+        if (COMPARE("SEQUENCE_TEMPLATE")) {   /* NEW WAY */
           if (/* p3_get_seq_arg_sequence(sa) */ sa->sequence) {
             pr_append_new_chunk(parse_err, "Duplicate tag: ");
-            pr_append(parse_err, "SEQUENCE_DNA"); 
+            pr_append(parse_err, "SEQUENCE_TEMPLATE"); 
           } else {
             if (p3_set_sa_sequence(sa, datum)) exit(-2);
           }
@@ -290,7 +290,7 @@ read_boulder_record(FILE *file_input,
         COMPARE_AND_MALLOC("SEQUENCE_ID", sa->sequence_name);
         COMPARE_AND_MALLOC("SEQUENCE_PRIMER", sa->left_input);
         COMPARE_AND_MALLOC("SEQUENCE_PRIMER_REVCOMP", sa->right_input);
-        COMPARE_AND_MALLOC("SEQUENCE_OLIGO", sa->internal_input);
+        COMPARE_AND_MALLOC("SEQUENCE_INTERNAL", sa->internal_input);
                 
         COMPARE_INTERVAL_LIST("SEQUENCE_TARGET", &sa->tar2);
         COMPARE_INTERVAL_LIST("SEQUENCE_EXCLUDED_REGION", &sa->excl2);
