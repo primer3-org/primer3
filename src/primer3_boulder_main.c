@@ -109,9 +109,12 @@ main(argc,argv)
     argv++;
     if (!strcmp(*argv, "-format_output")) {
       format_output = 1;
+    } else if (!strcmp(*argv, "-about")) {
+          printf( "%s\n", pr_release);
+          exit (0);
     } else if (!strcmp(*argv, "-2x_compat")) {
-      printf( "PRIMER_ERROR=flag -2x_compat is no longer supported\n=\n");
-      exit (-1);
+          printf( "PRIMER_ERROR=flag -2x_compat is no longer supported\n=\n");
+          exit (-1);
     } else if (!strncmp(*argv, "-io_version=", 10)) {
       /* This reads in the version number required for extended io functions */
       /* There may be a better way, but it works */

@@ -137,8 +137,8 @@ int
 read_boulder_record(FILE *file_input,
                     const int *strict_tags,
                     const int *io_version,
-                    int   echo_output,
-                    const p3_file_type read_file_type,
+                    int   echo_output, /* should be echo_input */
+                    const p3_file_type expected_file_type,
                     p3_global_settings *pa, 
                     seq_args *sa, 
                     pr_append_str *glob_err,  /* Really should be called fatal_parse_err */
@@ -180,14 +180,14 @@ read_boulder_record(FILE *file_input,
       if ((s = p3_read_line(file_input)) == NULL && !(strcmp(s,"=")))
         break;
       /* Check if the file type matches the expected type */
-      if (file_type != read_file_type && echo_output){
+      if (file_type != expected_file_type && echo_output){
         pr_append_new_chunk(nonfatal_parse_err, 
                             "Unexpected P3 file type parsed");
       }
       continue;
     }
     /* Read only the PRIMER tags if settings is selected */
-    if (read_file_type == settings && strncmp(s, "PRIMER_", 7)
+    if (expected_file_type == settings && strncmp(s, "PRIMER_", 7)
         && strncmp(s, "P3_FILE_ID", 10)) {
       continue;
     }
