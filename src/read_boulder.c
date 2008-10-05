@@ -290,7 +290,7 @@ read_boulder_record(FILE *file_input,
         COMPARE_AND_MALLOC("SEQUENCE_ID", sa->sequence_name);
         COMPARE_AND_MALLOC("SEQUENCE_PRIMER", sa->left_input);
         COMPARE_AND_MALLOC("SEQUENCE_PRIMER_REVCOMP", sa->right_input);
-        COMPARE_AND_MALLOC("SEQUENCE_INTERNAL", sa->internal_input);
+        COMPARE_AND_MALLOC("SEQUENCE_INTERNAL_OLIGO", sa->internal_input);
                 
         COMPARE_INTERVAL_LIST("SEQUENCE_TARGET", &sa->tar2);
         COMPARE_INTERVAL_LIST("SEQUENCE_EXCLUDED_REGION", &sa->excl2);
