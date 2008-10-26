@@ -207,7 +207,9 @@ read_boulder_record(FILE *file_input,
        * of the record. */
       pr_append_new_chunk(glob_err, "Input line with no '=': ");
       pr_append(glob_err, s);
-    } else {
+    } 
+    /* Read in the old tags used until primer3 version 2.0 */
+    else if (*io_version == 0) {
       /* Get the tag and the value pointers */
       tag_len = n - s;
       datum = n + 1;
@@ -216,113 +218,49 @@ read_boulder_record(FILE *file_input,
       /* Process "Sequence" (i.e. Per-Record) Arguments". */
       parse_err = non_fatal_err;
             
-      /* Process the old sequence Tags*/
-      if (*io_version == 0) {
-        /* COMPARE_AND_MALLOC("SEQUENCE", sa->sequence); */
-        if (COMPARE("SEQUENCE")) {   /* NEW WAY */
-          if (/* p3_get_seq_arg_sequence(sa) */ sa->sequence) {
-            pr_append_new_chunk(parse_err, "Duplicate tag: ");
-            pr_append(parse_err, "SEQUENCE"); 
-          } else {
-            if (p3_set_sa_sequence(sa, datum)) exit(-2);
-          }
-          continue;
+      /* COMPARE_AND_MALLOC("SEQUENCE", sa->sequence); */
+      if (COMPARE("SEQUENCE")) {   /* NEW WAY */
+        if (/* p3_get_seq_arg_sequence(sa) */ sa->sequence) {
+          pr_append_new_chunk(parse_err, "Duplicate tag: ");
+          pr_append(parse_err, "SEQUENCE"); 
+        } else {
+          if (p3_set_sa_sequence(sa, datum)) exit(-2);
         }
-                
-        if (COMPARE("PRIMER_SEQUENCE_QUALITY")) {
-          if ((sa->n_quality = parse_seq_quality(datum, sa)) == 0) {
-            pr_append_new_chunk(parse_err,
-                                "Error in sequence quality data");
-          }
-          continue;
-        }
-                
-                
-        COMPARE_AND_MALLOC("PRIMER_SEQUENCE_ID", sa->sequence_name);
-        COMPARE_AND_MALLOC("MARKER_NAME", sa->sequence_name);
-        COMPARE_AND_MALLOC("PRIMER_LEFT_INPUT", sa->left_input);
-        COMPARE_AND_MALLOC("PRIMER_RIGHT_INPUT", sa->right_input);
-        COMPARE_AND_MALLOC("PRIMER_INTERNAL_OLIGO_INPUT", sa->internal_input);
-                
-        COMPARE_INTERVAL_LIST("TARGET", &sa->tar2);
-        COMPARE_INTERVAL_LIST("EXCLUDED_REGION", &sa->excl2);
-        COMPARE_INTERVAL_LIST("PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION",
-                              &sa->excl_internal2);
-                
-        if (COMPARE("INCLUDED_REGION")) {
-          p = parse_int_pair("INCLUDED_REGION", datum, ',',
-                             &sa->incl_s, &sa->incl_l, parse_err);
-          if (NULL == p) /* 
-                          * An error; the message is already
-                          * in parse_err.
-                          */
-            continue;
-                
-          while (' ' == *p || '\t' == *p) p++;
-          if (*p != '\n' && *p != '\0')
-            tag_syntax_error("INCLUDED_REGION", datum,
-                             parse_err);
-          continue;
-        }
-        COMPARE_INT("PRIMER_START_CODON_POSITION", sa->start_codon_pos);
+        continue;
       }
-      /* Process the new sequence Tags*/
-      else {
-        /* COMPARE_AND_MALLOC("SEQUENCE", sa->sequence); */
-        if (COMPARE("SEQUENCE_TEMPLATE")) {   /* NEW WAY */
-          if (/* p3_get_seq_arg_sequence(sa) */ sa->sequence) {
-            pr_append_new_chunk(parse_err, "Duplicate tag: ");
-            pr_append(parse_err, "SEQUENCE_TEMPLATE"); 
-          } else {
-            if (p3_set_sa_sequence(sa, datum)) exit(-2);
-          }
-          continue;
+      if (COMPARE("PRIMER_SEQUENCE_QUALITY")) {
+        if ((sa->n_quality = parse_seq_quality(datum, sa)) == 0) {
+          pr_append_new_chunk(parse_err,
+                              "Error in sequence quality data");
         }
-                
-        if (COMPARE("SEQUENCE_QUALITY")) {
-          if ((sa->n_quality = parse_seq_quality(datum, sa)) == 0) {
-            pr_append_new_chunk(parse_err,
-                                "Error in sequence quality data");
-          }
-          continue;
-        }
-                
-        COMPARE_AND_MALLOC("SEQUENCE_ID", sa->sequence_name);
-        COMPARE_AND_MALLOC("SEQUENCE_PRIMER", sa->left_input);
-        COMPARE_AND_MALLOC("SEQUENCE_PRIMER_REVCOMP", sa->right_input);
-        COMPARE_AND_MALLOC("SEQUENCE_INTERNAL_OLIGO", sa->internal_input);
-                
-        COMPARE_INTERVAL_LIST("SEQUENCE_TARGET", &sa->tar2);
-        COMPARE_INTERVAL_LIST("SEQUENCE_EXCLUDED_REGION", &sa->excl2);
-        COMPARE_INTERVAL_LIST("SEQUENCE_INTERNAL_EXCLUDED_REGION",
-                              &sa->excl_internal2);
-                
-        if (COMPARE("SEQUENCE_INCLUDED_REGION")) {
-          p = parse_int_pair("SEQUENCE_INCLUDED_REGION", datum, ',',
-                             &sa->incl_s, &sa->incl_l, parse_err);
-          if (NULL == p) /* 
-                          * An error; the message is already
-                          * in parse_err.
-                          */
-            continue;
-                
-          while (' ' == *p || '\t' == *p) p++;
-          if (*p != '\n' && *p != '\0')
-            tag_syntax_error("SEQUENCE_INCLUDED_REGION", datum,
-                             parse_err);
-          continue;
-        }
-        COMPARE_INT("SEQUENCE_START_CODON_POSITION", sa->start_codon_pos);
-        COMPARE_INT("SEQUENCE_FORCE_LEFT_START", sa->force_left_start);
-        COMPARE_INT("SEQUENCE_FORCE_LEFT_END", sa->force_left_end);
-        COMPARE_INT("SEQUENCE_FORCE_RIGHT_START", sa->force_right_start);
-        COMPARE_INT("SEQUENCE_FORCE_RIGHT_END", sa->force_right_end);
+        continue;
       }
+      COMPARE_AND_MALLOC("PRIMER_SEQUENCE_ID", sa->sequence_name);
+      COMPARE_AND_MALLOC("MARKER_NAME", sa->sequence_name);
+      COMPARE_AND_MALLOC("PRIMER_LEFT_INPUT", sa->left_input);
+      COMPARE_AND_MALLOC("PRIMER_RIGHT_INPUT", sa->right_input);
+      COMPARE_AND_MALLOC("PRIMER_INTERNAL_OLIGO_INPUT", sa->internal_input);
+      COMPARE_INTERVAL_LIST("TARGET", &sa->tar2);
+      COMPARE_INTERVAL_LIST("EXCLUDED_REGION", &sa->excl2);
+      COMPARE_INTERVAL_LIST("PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION",
+                            &sa->excl_internal2);
+      if (COMPARE("INCLUDED_REGION")) {
+        p = parse_int_pair("INCLUDED_REGION", datum, ',',
+                           &sa->incl_s, &sa->incl_l, parse_err);
+        if (NULL == p) /* An error; the message is already
+                        * in parse_err. */
+          continue;
+                
+        while (' ' == *p || '\t' == *p) p++;
+        if (*p != '\n' && *p != '\0')
+          tag_syntax_error("INCLUDED_REGION", datum,
+                           parse_err);
+        continue;
+      }
+      COMPARE_INT("PRIMER_START_CODON_POSITION", sa->start_codon_pos);
             
-      /* 
-       * Process "Global" Arguments (those that persist between boulder
-       * records).
-       */
+      /* Process "Global" Arguments (those that persist between boulder
+       * records).    */
       parse_err = glob_err;  /* These errors are considered fatal. */
       if (COMPARE("PRIMER_PRODUCT_SIZE_RANGE")
           || COMPARE("PRIMER_DEFAULT_PRODUCT")) {
@@ -340,41 +278,23 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_MIN_TM", pa->p_args.min_tm);
       COMPARE_FLOAT("PRIMER_MAX_TM", pa->p_args.max_tm);
       COMPARE_FLOAT("PRIMER_MAX_DIFF_TM", pa->max_diff_tm);
-
-      if (*io_version == 0) {
-        if (COMPARE("PRIMER_TM_SANTALUCIA")) {
-          parse_int("PRIMER_TM_SANTALUCIA", datum, &tmp_int, parse_err);
-          pa->tm_santalucia = tmp_int;    /* added by T.Koressaar */
-          continue;
-        }
-      } else {
-        if (COMPARE("PRIMER_TM_FORMULA")) {
-          parse_int("PRIMER_TM_SANTALUCIA", datum, &tmp_int, parse_err);
-          pa->tm_santalucia = tmp_int;    /* added by T.Koressaar */
-          continue;
-        }
+      if (COMPARE("PRIMER_TM_SANTALUCIA")) {
+        parse_int("PRIMER_TM_SANTALUCIA", datum, &tmp_int, parse_err);
+        pa->tm_santalucia = tmp_int;    /* added by T.Koressaar */
+        continue;
       }
-
-      if (COMPARE("PRIMER_SALT_CORRECTIONS")) {
+     if (COMPARE("PRIMER_SALT_CORRECTIONS")) {
         parse_int("PRIMER_SALT_CORRECTIONS", datum, &tmp_int, parse_err);
         pa->salt_corrections = tmp_int; /* added by T.Koressaar */
         continue;
       }
-
       COMPARE_FLOAT("PRIMER_MIN_GC", pa->p_args.min_gc);
       COMPARE_FLOAT("PRIMER_MAX_GC", pa->p_args.max_gc);
-            
       /* begin of added by T.Koressaar: */
-      if (*io_version == 0) {
-        COMPARE_FLOAT("PRIMER_SALT_CONC", pa->p_args.salt_conc);
-        COMPARE_FLOAT("PRIMER_DIVALENT_CONC", pa->p_args.divalent_conc);
-      } else {
-        COMPARE_FLOAT("PRIMER_SALT_MONOVALENT", pa->p_args.salt_conc);
-        COMPARE_FLOAT("PRIMER_SALT_DIVALENT", pa->p_args.divalent_conc);
-      }
+      COMPARE_FLOAT("PRIMER_SALT_CONC", pa->p_args.salt_conc);
+      COMPARE_FLOAT("PRIMER_DIVALENT_CONC", pa->p_args.divalent_conc); 
       COMPARE_FLOAT("PRIMER_DNTP_CONC", pa->p_args.dntp_conc);
       /* end of added by T.Koressaar: */
-    
       COMPARE_FLOAT("PRIMER_DNA_CONC", pa->p_args.dna_conc);
       COMPARE_INT("PRIMER_NUM_NS_ACCEPTED", pa->p_args.num_ns_accepted);
       COMPARE_INT("PRIMER_PRODUCT_OPT_SIZE", pa->product_opt_size);
@@ -382,11 +302,7 @@ read_boulder_record(FILE *file_input,
       COMPARE_ALIGN_SCORE("PRIMER_SELF_END", pa->p_args.max_self_end);
       COMPARE_ALIGN_SCORE("PRIMER_PAIR_ANY", pa->pair_compl_any);
       COMPARE_ALIGN_SCORE("PRIMER_PAIR_END", pa->pair_compl_end);
-      if (*io_version == 0) {
-        COMPARE_INT("PRIMER_FILE_FLAG", res->file_flag);
-      } else {
-        COMPARE_INT("P3_FILE_FLAG", res->file_flag);
-      }
+      COMPARE_INT("PRIMER_FILE_FLAG", res->file_flag);
       COMPARE_INT("PRIMER_SHOW_OLIGO_PROBLEMS", res->show_oligo_problems);
       COMPARE_INT("PRIMER_PICK_ANYWAY", pa->pick_anyway);
       COMPARE_INT("PRIMER_GC_CLAMP", pa->gc_clamp);
@@ -400,31 +316,17 @@ read_boulder_record(FILE *file_input,
                   pa->min_three_prime_distance);
       COMPARE_INT("PRIMER_PRIMERS_IN_PAIRS_MUST_BE_UNIQUE", 
                   pa->primers_in_pairs_must_be_unique);
-      if (*io_version > 0 && file_type == settings) {
-        COMPARE_AND_MALLOC("P3_FILE_ID", pa->settings_file_id);
-      }
       COMPARE_INT("PRIMER_QUALITY_RANGE_MIN", pa->quality_range_min);
       COMPARE_INT("PRIMER_QUALITY_RANGE_MAX", pa->quality_range_max);
       COMPARE_FLOAT("PRIMER_PRODUCT_MAX_TM", pa->product_max_tm);
       COMPARE_FLOAT("PRIMER_PRODUCT_MIN_TM", pa->product_min_tm);
       COMPARE_FLOAT("PRIMER_PRODUCT_OPT_TM", pa->product_opt_tm);
-      
       COMPARE_INT("PRIMER_SEQUENCING_LEAD", pa->sequencing.lead);
       COMPARE_INT("PRIMER_SEQUENCING_SPACING", pa->sequencing.spacing);
       COMPARE_INT("PRIMER_SEQUENCING_INTERVAL", pa->sequencing.interval);
       COMPARE_INT("PRIMER_SEQUENCING_ACCURACY", pa->sequencing.accuracy);
-      
       COMPARE_AND_MALLOC("PRIMER_TASK", task_tmp);
-
-      if (0 < *io_version) {
-        COMPARE_INT("PRIMER_PICK_RIGHT_PRIMER", pa->pick_right_primer);
-        COMPARE_INT("PRIMER_PICK_INTERNAL_OLIGO", pa->pick_internal_oligo);
-        COMPARE_INT("PRIMER_PICK_LEFT_PRIMER", pa->pick_left_primer);
-      }
-      else {
-        COMPARE_INT("PRIMER_PICK_INTERNAL_OLIGO", pick_internal_oligo);
-      }
-            
+      COMPARE_INT("PRIMER_PICK_INTERNAL_OLIGO", pick_internal_oligo);
       COMPARE_INT("PRIMER_INTERNAL_OLIGO_OPT_SIZE", pa->o_args.opt_size);
       COMPARE_INT("PRIMER_INTERNAL_OLIGO_MAX_SIZE", pa->o_args.max_size);
       COMPARE_INT("PRIMER_INTERNAL_OLIGO_MIN_SIZE", pa->o_args.min_size);
@@ -437,16 +339,13 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MIN_GC", pa->o_args.min_gc);
       COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MAX_GC", pa->o_args.max_gc);
       COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_SALT_CONC",  pa->o_args.salt_conc);
-
       COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DIVALENT_CONC",
                     pa->o_args.divalent_conc); /* added by T.Koressaar */
       COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DNTP_CONC",
                     pa->o_args.dntp_conc); /* added by T.Koressaar */
-
       COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DNA_CONC", pa->o_args.dna_conc);
       COMPARE_INT("PRIMER_INTERNAL_OLIGO_NUM_NS", pa->o_args.num_ns_accepted);
       COMPARE_INT("PRIMER_INTERNAL_OLIGO_MIN_QUALITY", pa->o_args.min_quality);
-
       COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_SELF_ANY",
                           pa->o_args.max_self_any);
       COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_SELF_END", 
@@ -457,7 +356,6 @@ read_boulder_record(FILE *file_input,
                           pa->o_args.max_repeat_compl);
       COMPARE_ALIGN_SCORE("PRIMER_PAIR_MAX_MISPRIMING",
                           pa->pair_repeat_compl);
-
       /* Mispriming / mishybing in the template. */
       COMPARE_ALIGN_SCORE("PRIMER_MAX_TEMPLATE_MISPRIMING",
                           pa->p_args.max_template_mispriming);
@@ -470,8 +368,257 @@ read_boulder_record(FILE *file_input,
          and mishyb libraries. */
       COMPARE_INT("PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS",
                   pa->lib_ambiguity_codes_consensus);
-
-
+      COMPARE_FLOAT("PRIMER_INSIDE_PENALTY", pa->inside_penalty);
+      COMPARE_FLOAT("PRIMER_OUTSIDE_PENALTY", pa->outside_penalty);
+      if (COMPARE("PRIMER_MISPRIMING_LIBRARY")) {
+        if (repeat_file_path != NULL) {
+          pr_append_new_chunk(glob_err,
+                              "Duplicate PRIMER_MISPRIMING_LIBRARY tag");
+          free(repeat_file_path);
+          repeat_file_path = NULL;
+        } else {
+          repeat_file_path = _rb_safe_malloc(strlen(datum) + 1);
+          strcpy(repeat_file_path, datum);
+        }
+        continue;
+      }
+      if (COMPARE("PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY")) {
+        if (int_repeat_file_path != NULL) {
+          pr_append_new_chunk(glob_err,
+                              "Duplicate PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY tag");
+          free(int_repeat_file_path);
+          int_repeat_file_path = NULL;
+        } else {
+          int_repeat_file_path = _rb_safe_malloc(strlen(datum) + 1);
+          strcpy(int_repeat_file_path, datum);
+        }
+        continue;
+      }
+      if (COMPARE("PRIMER_COMMENT") || COMPARE("COMMENT")) continue;
+      COMPARE_FLOAT("PRIMER_MAX_END_STABILITY", pa->max_end_stability);
+      COMPARE_INT("PRIMER_LOWERCASE_MASKING",
+                  pa->lowercase_masking); /* added by T. Koressaar */
+      /* weights for objective functions  */
+      /* CHANGE TEMP/temp -> TM/tm */
+      COMPARE_FLOAT("PRIMER_WT_TM_GT", pa->p_args.weights.temp_gt);
+      COMPARE_FLOAT("PRIMER_WT_TM_LT", pa->p_args.weights.temp_lt);
+      COMPARE_FLOAT("PRIMER_WT_GC_PERCENT_GT", pa->p_args.weights.gc_content_gt);
+      COMPARE_FLOAT("PRIMER_WT_GC_PERCENT_LT", pa->p_args.weights.gc_content_lt);
+      COMPARE_FLOAT("PRIMER_WT_SIZE_LT", pa->p_args.weights.length_lt);
+      COMPARE_FLOAT("PRIMER_WT_SIZE_GT", pa->p_args.weights.length_gt);
+      COMPARE_FLOAT("PRIMER_WT_COMPL_ANY", pa->p_args.weights.compl_any);
+      COMPARE_FLOAT("PRIMER_WT_COMPL_END", pa->p_args.weights.compl_end);
+      COMPARE_FLOAT("PRIMER_WT_NUM_NS", pa->p_args.weights.num_ns);
+      COMPARE_FLOAT("PRIMER_WT_REP_SIM", pa->p_args.weights.repeat_sim);
+      COMPARE_FLOAT("PRIMER_WT_SEQ_QUAL", pa->p_args.weights.seq_quality);
+      COMPARE_FLOAT("PRIMER_WT_END_QUAL", pa->p_args.weights.end_quality);
+      COMPARE_FLOAT("PRIMER_WT_POS_PENALTY", pa->p_args.weights.pos_penalty);
+      COMPARE_FLOAT("PRIMER_WT_END_STABILITY",
+                    pa->p_args.weights.end_stability);
+      COMPARE_FLOAT("PRIMER_WT_TEMPLATE_MISPRIMING",
+                    pa->p_args.weights.template_mispriming);
+      COMPARE_FLOAT("PRIMER_IO_WT_TM_GT", pa->o_args.weights.temp_gt);
+      COMPARE_FLOAT("PRIMER_IO_WT_TM_LT", pa->o_args.weights.temp_lt);
+      COMPARE_FLOAT("PRIMER_IO_WT_GC_PERCENT_GT", pa->o_args.weights.gc_content_gt);
+      COMPARE_FLOAT("PRIMER_IO_WT_GC_PERCENT_LT", pa->o_args.weights.gc_content_lt);
+      COMPARE_FLOAT("PRIMER_IO_WT_SIZE_LT", pa->o_args.weights.length_lt);
+      COMPARE_FLOAT("PRIMER_IO_WT_SIZE_GT", pa->o_args.weights.length_gt);
+      COMPARE_FLOAT("PRIMER_IO_WT_COMPL_ANY", pa->o_args.weights.compl_any);
+      COMPARE_FLOAT("PRIMER_IO_WT_COMPL_END", pa->o_args.weights.compl_end);
+      COMPARE_FLOAT("PRIMER_IO_WT_NUM_NS", pa->o_args.weights.num_ns);
+      COMPARE_FLOAT("PRIMER_IO_WT_REP_SIM", pa->o_args.weights.repeat_sim);
+      COMPARE_FLOAT("PRIMER_IO_WT_SEQ_QUAL", pa->o_args.weights.seq_quality);
+      COMPARE_FLOAT("PRIMER_IO_WT_END_QUAL", pa->o_args.weights.end_quality);
+      COMPARE_FLOAT("PRIMER_IO_WT_TEMPLATE_MISHYB",
+                    pa->o_args.weights.template_mispriming);
+      COMPARE_FLOAT("PRIMER_PAIR_WT_PR_PENALTY", 
+                    pa->pr_pair_weights.primer_quality);
+      COMPARE_FLOAT("PRIMER_PAIR_WT_IO_PENALTY",
+                    pa->pr_pair_weights.io_quality);
+      COMPARE_FLOAT("PRIMER_PAIR_WT_DIFF_TM",
+                    pa->pr_pair_weights.diff_tm);
+      COMPARE_FLOAT("PRIMER_PAIR_WT_COMPL_ANY",
+                    pa->pr_pair_weights.compl_any);
+      COMPARE_FLOAT("PRIMER_PAIR_WT_COMPL_END",
+                    pa->pr_pair_weights.compl_end);
+      COMPARE_FLOAT("PRIMER_PAIR_WT_PRODUCT_TM_LT",
+                    pa->pr_pair_weights.product_tm_lt);
+      COMPARE_FLOAT("PRIMER_PAIR_WT_PRODUCT_TM_GT",
+                    pa->pr_pair_weights.product_tm_gt);
+      COMPARE_FLOAT("PRIMER_PAIR_WT_PRODUCT_SIZE_GT",
+                    pa->pr_pair_weights.product_size_gt);
+      COMPARE_FLOAT("PRIMER_PAIR_WT_PRODUCT_SIZE_LT",
+                    pa->pr_pair_weights.product_size_lt);
+      COMPARE_FLOAT("PRIMER_PAIR_WT_REP_SIM",
+                    pa->pr_pair_weights.repeat_sim);
+      COMPARE_FLOAT("PRIMER_PAIR_WT_TEMPLATE_MISPRIMING",
+                    pa->pr_pair_weights.template_mispriming);
+    }
+    /* Read in the new tags used from primer3 version 2.0 on */    
+    else {
+      /* Get the tag and the value pointers */
+      tag_len = n - s;
+      datum = n + 1;
+      datum_len = line_len - tag_len - 1;
+            
+      /* Process "Sequence" (i.e. Per-Record) Arguments". */
+      parse_err = non_fatal_err;
+              
+      /* COMPARE_AND_MALLOC("SEQUENCE", sa->sequence); */
+      if (COMPARE("SEQUENCE_TEMPLATE")) {   /* NEW WAY */
+        if (/* p3_get_seq_arg_sequence(sa) */ sa->sequence) {
+          pr_append_new_chunk(parse_err, "Duplicate tag: ");
+          pr_append(parse_err, "SEQUENCE_TEMPLATE"); 
+        } else {
+          if (p3_set_sa_sequence(sa, datum)) exit(-2);
+        }
+        continue;
+      }
+      if (COMPARE("SEQUENCE_QUALITY")) {
+        if ((sa->n_quality = parse_seq_quality(datum, sa)) == 0) {
+          pr_append_new_chunk(parse_err,
+                              "Error in sequence quality data");
+        }
+        continue;
+      }
+      COMPARE_AND_MALLOC("SEQUENCE_ID", sa->sequence_name);
+      COMPARE_AND_MALLOC("SEQUENCE_PRIMER", sa->left_input);
+      COMPARE_AND_MALLOC("SEQUENCE_PRIMER_REVCOMP", sa->right_input);
+      COMPARE_AND_MALLOC("SEQUENCE_INTERNAL_OLIGO", sa->internal_input);
+      COMPARE_INTERVAL_LIST("SEQUENCE_TARGET", &sa->tar2);
+      COMPARE_INTERVAL_LIST("SEQUENCE_EXCLUDED_REGION", &sa->excl2);
+      COMPARE_INTERVAL_LIST("SEQUENCE_INTERNAL_EXCLUDED_REGION",
+                              &sa->excl_internal2);
+      if (COMPARE("SEQUENCE_INCLUDED_REGION")) {
+        p = parse_int_pair("SEQUENCE_INCLUDED_REGION", datum, ',',
+                           &sa->incl_s, &sa->incl_l, parse_err);
+        if (NULL == p) /* An error; the message is already
+                        * in parse_err.  */
+          continue;
+        while (' ' == *p || '\t' == *p) p++;
+        if (*p != '\n' && *p != '\0')
+            tag_syntax_error("SEQUENCE_INCLUDED_REGION", datum,
+                             parse_err);
+          continue;
+      }
+      COMPARE_INT("SEQUENCE_START_CODON_POSITION", sa->start_codon_pos);
+      COMPARE_INT("SEQUENCE_FORCE_LEFT_START", sa->force_left_start);
+      COMPARE_INT("SEQUENCE_FORCE_LEFT_END", sa->force_left_end);
+      COMPARE_INT("SEQUENCE_FORCE_RIGHT_START", sa->force_right_start);
+      COMPARE_INT("SEQUENCE_FORCE_RIGHT_END", sa->force_right_end);
+      /* Process "Global" Arguments (those that persist between boulder
+       * records). */
+      parse_err = glob_err;  /* These errors are considered fatal. */
+      if (COMPARE("PRIMER_PRODUCT_SIZE_RANGE")
+          || COMPARE("PRIMER_DEFAULT_PRODUCT")) {
+        parse_product_size("PRIMER_PRODUCT_SIZE_RANGE", datum, pa,
+                           parse_err);
+        continue;
+      }
+      COMPARE_INT("PRIMER_DEFAULT_SIZE", pa->p_args.opt_size);
+      COMPARE_INT("PRIMER_OPT_SIZE", pa->p_args.opt_size);
+      COMPARE_INT("PRIMER_MIN_SIZE", pa->p_args.min_size);
+      COMPARE_INT("PRIMER_MAX_SIZE", pa->p_args.max_size);
+      COMPARE_INT("PRIMER_MAX_POLY_X", pa->p_args.max_poly_x);
+      COMPARE_FLOAT("PRIMER_OPT_TM", pa->p_args.opt_tm);
+      COMPARE_FLOAT("PRIMER_OPT_GC_PERCENT", pa->p_args.opt_gc_content);
+      COMPARE_FLOAT("PRIMER_MIN_TM", pa->p_args.min_tm);
+      COMPARE_FLOAT("PRIMER_MAX_TM", pa->p_args.max_tm);
+      COMPARE_FLOAT("PRIMER_MAX_DIFF_TM", pa->max_diff_tm);
+      if (COMPARE("PRIMER_TM_FORMULA")) {
+          parse_int("PRIMER_TM_SANTALUCIA", datum, &tmp_int, parse_err);
+          pa->tm_santalucia = tmp_int;    /* added by T.Koressaar */
+          continue;
+      }
+      if (COMPARE("PRIMER_SALT_CORRECTIONS")) {
+        parse_int("PRIMER_SALT_CORRECTIONS", datum, &tmp_int, parse_err);
+        pa->salt_corrections = tmp_int; /* added by T.Koressaar */
+        continue;
+      }
+      COMPARE_FLOAT("PRIMER_MIN_GC", pa->p_args.min_gc);
+      COMPARE_FLOAT("PRIMER_MAX_GC", pa->p_args.max_gc);
+      /* begin of added by T.Koressaar: */
+      COMPARE_FLOAT("PRIMER_SALT_MONOVALENT", pa->p_args.salt_conc);
+      COMPARE_FLOAT("PRIMER_SALT_DIVALENT", pa->p_args.divalent_conc);
+      COMPARE_FLOAT("PRIMER_DNTP_CONC", pa->p_args.dntp_conc);
+      /* end of added by T.Koressaar: */
+      COMPARE_FLOAT("PRIMER_DNA_CONC", pa->p_args.dna_conc);
+      COMPARE_INT("PRIMER_NUM_NS_ACCEPTED", pa->p_args.num_ns_accepted);
+      COMPARE_INT("PRIMER_PRODUCT_OPT_SIZE", pa->product_opt_size);
+      COMPARE_ALIGN_SCORE("PRIMER_SELF_ANY", pa->p_args.max_self_any);
+      COMPARE_ALIGN_SCORE("PRIMER_SELF_END", pa->p_args.max_self_end);
+      COMPARE_ALIGN_SCORE("PRIMER_PAIR_ANY", pa->pair_compl_any);
+      COMPARE_ALIGN_SCORE("PRIMER_PAIR_END", pa->pair_compl_end);
+      COMPARE_INT("P3_FILE_FLAG", res->file_flag);
+      COMPARE_INT("PRIMER_SHOW_OLIGO_PROBLEMS", res->show_oligo_problems);
+      COMPARE_INT("PRIMER_PICK_ANYWAY", pa->pick_anyway);
+      COMPARE_INT("PRIMER_GC_CLAMP", pa->gc_clamp);
+      COMPARE_INT("PRIMER_EXPLAIN_FLAG", res->explain_flag);
+      COMPARE_INT("PRIMER_LIBERAL_BASE", pa->liberal_base);
+      COMPARE_INT("PRIMER_FIRST_BASE_INDEX", pa->first_base_index);
+      COMPARE_INT("PRIMER_NUM_RETURN", pa->num_return);
+      COMPARE_INT("PRIMER_MIN_QUALITY", pa->p_args.min_quality);
+      COMPARE_INT("PRIMER_MIN_END_QUALITY", pa->p_args.min_end_quality);
+      COMPARE_INT("PRIMER_MIN_THREE_PRIME_DISTANCE", 
+                  pa->min_three_prime_distance);
+      COMPARE_INT("PRIMER_PRIMERS_IN_PAIRS_MUST_BE_UNIQUE", 
+                  pa->primers_in_pairs_must_be_unique);
+      if (file_type == settings) {
+        COMPARE_AND_MALLOC("P3_FILE_ID", pa->settings_file_id);
+      }
+      COMPARE_INT("PRIMER_QUALITY_RANGE_MIN", pa->quality_range_min);
+      COMPARE_INT("PRIMER_QUALITY_RANGE_MAX", pa->quality_range_max);
+      COMPARE_FLOAT("PRIMER_PRODUCT_MAX_TM", pa->product_max_tm);
+      COMPARE_FLOAT("PRIMER_PRODUCT_MIN_TM", pa->product_min_tm);
+      COMPARE_FLOAT("PRIMER_PRODUCT_OPT_TM", pa->product_opt_tm);
+      COMPARE_INT("PRIMER_SEQUENCING_LEAD", pa->sequencing.lead);
+      COMPARE_INT("PRIMER_SEQUENCING_SPACING", pa->sequencing.spacing);
+      COMPARE_INT("PRIMER_SEQUENCING_INTERVAL", pa->sequencing.interval);
+      COMPARE_INT("PRIMER_SEQUENCING_ACCURACY", pa->sequencing.accuracy);
+      COMPARE_AND_MALLOC("PRIMER_TASK", task_tmp);
+      COMPARE_INT("PRIMER_PICK_RIGHT_PRIMER", pa->pick_right_primer);
+      COMPARE_INT("PRIMER_PICK_INTERNAL_OLIGO", pa->pick_internal_oligo);
+      COMPARE_INT("PRIMER_PICK_LEFT_PRIMER", pa->pick_left_primer);
+      COMPARE_INT("PRIMER_INTERNAL_OLIGO_OPT_SIZE", pa->o_args.opt_size);
+      COMPARE_INT("PRIMER_INTERNAL_OLIGO_MAX_SIZE", pa->o_args.max_size);
+      COMPARE_INT("PRIMER_INTERNAL_OLIGO_MIN_SIZE", pa->o_args.min_size);
+      COMPARE_INT("PRIMER_INTERNAL_OLIGO_MAX_POLY_X", pa->o_args.max_poly_x);
+      COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_OPT_TM", pa->o_args.opt_tm);
+      COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_OPT_GC_PERCENT",
+                    pa->o_args.opt_gc_content);
+      COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MAX_TM", pa->o_args.max_tm);
+      COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MIN_TM", pa->o_args.min_tm);
+      COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MIN_GC", pa->o_args.min_gc);
+      COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MAX_GC", pa->o_args.max_gc);
+      COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_SALT_CONC",  pa->o_args.salt_conc);
+      COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DIVALENT_CONC",
+                    pa->o_args.divalent_conc); /* added by T.Koressaar */
+      COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DNTP_CONC",
+                    pa->o_args.dntp_conc); /* added by T.Koressaar */
+      COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DNA_CONC", pa->o_args.dna_conc);
+      COMPARE_INT("PRIMER_INTERNAL_OLIGO_NUM_NS", pa->o_args.num_ns_accepted);
+      COMPARE_INT("PRIMER_INTERNAL_OLIGO_MIN_QUALITY", pa->o_args.min_quality);
+      COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_SELF_ANY",
+                          pa->o_args.max_self_any);
+      COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_SELF_END", 
+                          pa->o_args.max_self_end);
+      COMPARE_ALIGN_SCORE("PRIMER_MAX_MISPRIMING",
+                          pa->p_args.max_repeat_compl);
+      COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_MAX_MISHYB",
+                          pa->o_args.max_repeat_compl);
+      COMPARE_ALIGN_SCORE("PRIMER_PAIR_MAX_MISPRIMING",
+                          pa->pair_repeat_compl);
+      /* Mispriming / mishybing in the template. */
+      COMPARE_ALIGN_SCORE("PRIMER_MAX_TEMPLATE_MISPRIMING",
+                          pa->p_args.max_template_mispriming);
+      COMPARE_ALIGN_SCORE("PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING",
+                          pa->pair_max_template_mispriming);
+      COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_MAX_TEMPLATE_MISHYB",
+                          pa->o_args.max_template_mispriming);
+       /* Control interpretation of ambiguity codes in mispriming
+         and mishyb libraries. */
+      COMPARE_INT("PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS",
+                  pa->lib_ambiguity_codes_consensus);
       COMPARE_FLOAT("PRIMER_INSIDE_PENALTY", pa->inside_penalty);
       COMPARE_FLOAT("PRIMER_OUTSIDE_PENALTY", pa->outside_penalty);
       if (COMPARE("PRIMER_MISPRIMING_LIBRARY")) {
@@ -503,7 +650,6 @@ read_boulder_record(FILE *file_input,
 
       COMPARE_INT("PRIMER_LOWERCASE_MASKING",
                   pa->lowercase_masking); /* added by T. Koressaar */
-
       /* weights for objective functions  */
       /* CHANGE TEMP/temp -> TM/tm */
       COMPARE_FLOAT("PRIMER_WT_TM_GT", pa->p_args.weights.temp_gt);
@@ -523,7 +669,6 @@ read_boulder_record(FILE *file_input,
                     pa->p_args.weights.end_stability);
       COMPARE_FLOAT("PRIMER_WT_TEMPLATE_MISPRIMING",
                     pa->p_args.weights.template_mispriming);
-
       COMPARE_FLOAT("PRIMER_IO_WT_TM_GT", pa->o_args.weights.temp_gt);
       COMPARE_FLOAT("PRIMER_IO_WT_TM_LT", pa->o_args.weights.temp_lt);
       COMPARE_FLOAT("PRIMER_IO_WT_GC_PERCENT_GT", pa->o_args.weights.gc_content_gt);
@@ -538,7 +683,6 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_IO_WT_END_QUAL", pa->o_args.weights.end_quality);
       COMPARE_FLOAT("PRIMER_IO_WT_TEMPLATE_MISHYB",
                     pa->o_args.weights.template_mispriming);
-
       COMPARE_FLOAT("PRIMER_PAIR_WT_PR_PENALTY", 
                     pa->pr_pair_weights.primer_quality);
       COMPARE_FLOAT("PRIMER_PAIR_WT_IO_PENALTY",
@@ -549,7 +693,6 @@ read_boulder_record(FILE *file_input,
                     pa->pr_pair_weights.compl_any);
       COMPARE_FLOAT("PRIMER_PAIR_WT_COMPL_END",
                     pa->pr_pair_weights.compl_end);
-
       COMPARE_FLOAT("PRIMER_PAIR_WT_PRODUCT_TM_LT",
                     pa->pr_pair_weights.product_tm_lt);
       COMPARE_FLOAT("PRIMER_PAIR_WT_PRODUCT_TM_GT",
@@ -558,10 +701,8 @@ read_boulder_record(FILE *file_input,
                     pa->pr_pair_weights.product_size_gt);
       COMPARE_FLOAT("PRIMER_PAIR_WT_PRODUCT_SIZE_LT",
                     pa->pr_pair_weights.product_size_lt);
-
       COMPARE_FLOAT("PRIMER_PAIR_WT_REP_SIM",
                     pa->pr_pair_weights.repeat_sim);
-
       COMPARE_FLOAT("PRIMER_PAIR_WT_TEMPLATE_MISPRIMING",
                     pa->pr_pair_weights.template_mispriming);
     }
