@@ -209,7 +209,7 @@ read_boulder_record(FILE *file_input,
       pr_append(glob_err, s);
     } 
     /* Read in the old tags used until primer3 version 2.0 */
-    else if (*io_version == 0) {
+    else if (*io_version == 3) {
       /* Get the tag and the value pointers */
       tag_len = n - s;
       datum = n + 1;
@@ -752,7 +752,7 @@ read_boulder_record(FILE *file_input,
       pa->pick_left_primer = 0;
       pa->pick_right_primer = 0;
       pa->pick_internal_oligo = 1;
-    } else if (*io_version == 0) {
+    } else if (*io_version == 3) {
       pr_append_new_chunk(glob_err, "Unrecognized PRIMER_TASK");
     } else if (!strcmp_nocase(task_tmp, "pick_detection_primers")) {
       pa->primer_task = pick_detection_primers;
@@ -828,7 +828,7 @@ read_boulder_record(FILE *file_input,
   }
 
   /* Fix very old tags for backward compatibility */
-  if (*io_version == 0) {
+  if (*io_version == 3) {
     /* This next belongs here rather than libprimer3, because it deals
        with potential incompatibility with old tags (kept for backward
        compatibility, and new tags.  */
@@ -890,7 +890,7 @@ int read_p3_file(const char *file_name,
   int echo_output = 0;
   int ret_par = 1;
   int strict_tags = 0;
-  int io_version = 1;
+  int io_version = 4;
     
   /* Check if a file name was provided */
   PR_ASSERT(NULL != file_name);

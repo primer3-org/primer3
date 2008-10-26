@@ -94,7 +94,7 @@ print_boulder(int io_version,
   char *new_oligo_name = "INTERNAL";
   char *old_oligo_name = "INTERNAL_OLIGO";
   char *int_oligo = new_oligo_name;
-  if (io_version == 0) {
+  if (io_version == 3) {
     int_oligo = old_oligo_name;
   }
         
@@ -217,7 +217,7 @@ print_boulder(int io_version,
     }
       
     /* Get the number for pimer counting in suffix[0] */
-    if ((i == 0) && (io_version < 1) ){
+    if ((i == 0) && (io_version == 3) ){
       suffix[0] = '\0';
     } else { 
       sprintf(suffix, "_%d", i);
@@ -225,7 +225,7 @@ print_boulder(int io_version,
 
     /* Print out the Pair Penalties */
     if (retval->output_type == primer_pairs) {
-      if (io_version < 1) {
+      if (io_version == 3) {
         printf("PRIMER_PAIR_PENALTY%s=%.4f\n", suffix,
                retval->best_pairs.pairs[i].pair_quality);
       } else {
@@ -391,7 +391,7 @@ print_boulder(int io_version,
       printf("PRIMER_PAIR%s_COMPL_END=%.2f\n", suffix,
              retval->best_pairs.pairs[i].compl_end  / PR_ALIGN_SCORE_PRECISION);
 
-      if (io_version == 0) {
+      if (io_version == 3) {
         /* Print product size */
         printf("PRIMER_PRODUCT_SIZE%s=%d\n", suffix,
                retval->best_pairs.pairs[i].product_size);
@@ -470,7 +470,7 @@ print_all_explain(const p3_global_settings *pa,
   if ( pa->pick_internal_oligo == 1
       && !(pa->pick_anyway && sa->internal_input)) 
     printf("PRIMER_INTERNAL_%sEXPLAIN=%s\n",
-           (io_version == 0 ? "OLIGO_" : ""),
+           (io_version == 3 ? "OLIGO_" : ""),
            p3_get_oligo_array_explain_string(p3_get_rv_intl(retval)));
 
   if (pa->pick_right_primer == 1 

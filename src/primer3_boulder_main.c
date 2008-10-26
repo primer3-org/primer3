@@ -63,7 +63,7 @@ main(argc,argv)
   int format_output = 0;
   int strict_tags = 0;
   int dump_args = 0 ; /* set to 1 if dumping arguments to choose_primers */
-  int io_version = 0;
+  int io_version = 3;
 
   /* Some space for file names */
   char *tmp_file_name = NULL;
@@ -137,9 +137,6 @@ main(argc,argv)
       if (io_version==2){
           printf( "PRIMER_ERROR=flag -io_version=2 is no longer supported\n=\n");
           exit (-1);
-      }
-      if (io_version==3){
-          io_version=0;
       }
     } else if (!strncmp(*argv, "-p3_settings_file=", 18)) {
       tmp_file_name = strchr(*argv,'=') + 1;
