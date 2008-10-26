@@ -441,5 +441,5 @@ sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_rep_sim($gs, $v) };
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_template_mispriming($gs, $v) };
 $dispatch{'COMMENT'} = sub ($) {};
 $dispatch{'PRIMER_COMMENT'} = sub ($) {};
-$dispatch{'P3_SHOW_OLIGO_PROBLEMS'} = sub { $show_oligo_problems = 1; };
+$dispatch{'PRIMER_SHOW_OLIGO_PROBLEMS'} = sub { $show_oligo_problems = 1; };
 }

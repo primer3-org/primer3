@@ -1,3 +1,17 @@
+release 2.0.0 alpha ??? ================================================
+
+  Major Release
+  
+- INPUT/OUTPUT TAGS
+  renaming of many tags for clarification and easier 
+  integration into scripts
+  
+- PRIMER3 FILES
+  primer3 supports settings files which are read in 
+  at program start and overwrite the default values.
+  
+
+
 release 1.1.2 2007-06-10 ================================================
 
  Updates to dpal.c so that no error forces an exit.
