@@ -283,6 +283,9 @@ foreach my $si_file (@files) {
 	$input = $si_file ."_input";
 	$output = $si_file ."_input_tr";
 	translate_file($input,$output);
+	$input = $si_file ."_output";
+	$output = $si_file ."_output_tr";
+	translate_file($input,$output);
 
 }
 #translate_file("primer_task_input","primer_task_input_tr");
@@ -322,22 +325,28 @@ sub translate_file {
 		if ($line eq "="){
 			$text_output .= "=\n";
 		} 
-		
+		# Now handle lines ending with =
 		elsif ($line =~ /=$/) {
 			$line =~ s/=$//;
 			$text_output .= $docTags{$line}."=\n";
 		}
-		
-		elsif (!($line =~ /.+?=.+/)) {
+		# Catch lines without a = (should not happen)
+		elsif (!($line =~ /=/)) {
 			print "\nError in Line: ". $line."\n\n";
 		}
 		# Translate the old tags into new tags
 		else {
 			@lineA = split '=', $line;
-			
-			$text_output .= $docTags{$lineA[0]}."=".$lineA[1]."\n";
+			if (defined $docTags{$lineA[0]}){
+				$text_output .= $docTags{$lineA[0]}."=".$lineA[1]."\n";
+			} else {
+				print "Error - not define: ".$lineA[0]."\n";
+			}
 		}
 	}
+	
+	# $text_output
+	
 	# Save the file
 	$error = string2file($target, $text_output);
 	if ($error ne "0"){
