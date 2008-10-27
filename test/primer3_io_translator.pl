@@ -279,13 +279,13 @@ my $input;
 my $output;
 
 foreach my $si_file (@files) {
-	print $si_file."\n";
+	#print $si_file."\n";
 	$input = $si_file ."_input";
-	$output = $si_file ."_input";
+	$output = $si_file ."_input_tr";
 	translate_file($input,$output);
 
 }
-translate_file("primer_task_input","primer_task_input_tr");
+#translate_file("primer_task_input","primer_task_input_tr");
 
 
 print ("\nTranslation finished\n");
@@ -304,12 +304,13 @@ sub translate_file {
 	my $text_input = "";
 	my $text_output = "";
 	my @string_array;
-	my @line;
+	my @lineA;
 	
 	# Read the file in a string
 	$error = read2String(\$file, \$text_input);
-	if ($error != 0){
+	if ($error ne "0"){
 		print $error;
+		return $error;
 	}
 	
 	# Split the string into single lines
@@ -321,16 +322,25 @@ sub translate_file {
 		if ($line eq "="){
 			$text_output .= "=\n";
 		} 
+		
+		elsif ($line =~ /=$/) {
+			$line =~ s/=$//;
+			$text_output .= $docTags{$line}."=\n";
+		}
+		
+		elsif (!($line =~ /.+?=.+/)) {
+			print "\nError in Line: ". $line."\n\n";
+		}
 		# Translate the old tags into new tags
 		else {
-			@line = split '=', $line;
+			@lineA = split '=', $line;
 			
-			$text_output .= $docTags{$line[0]}."=".$line[1]."\n";
+			$text_output .= $docTags{$lineA[0]}."=".$lineA[1]."\n";
 		}
 	}
 	# Save the file
 	$error = string2file($target, $text_output);
-	if ($error != 0){
+	if ($error ne "0"){
 		print $error;
 	}
 
@@ -346,7 +356,7 @@ sub translate_file {
 sub read2String {
 	my $file = shift;	# File Name
 	my $target = shift; # String to save in
-	my $error = 0;
+	my $error = "0";
 	
 	if (open (FILE, ("<".${$file}))) { 
 		while (<FILE>) {
