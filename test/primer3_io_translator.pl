@@ -1,9 +1,9 @@
 #!/usr/bin/perl -w
 
-# Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
-# Whitehead Institute for Biomedical Research, Steve Rozen
-# (http://jura.wi.mit.edu/rozen), and Helen Skaletsky All rights
-# reserved.
+# (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006,2007, 2008
+# Whitehead Institute for Biomedical Research, Steve Rozen, 
+# Andreas Untergasser and Helen Skaletsky
+# All rights reserved.
 # 
 #     This file is part of the primer3 suite and libraries.
 # 
