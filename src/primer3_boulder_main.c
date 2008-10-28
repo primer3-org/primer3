@@ -1,7 +1,7 @@
 /*
 Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
 Whitehead Institute for Biomedical Research, Steve Rozen
-(http://jura.wi.mit.edu/rozen), and Helen Skaletsky
+(http://jura.wi.mit.edu/rozen), Andreas Untergasser and Helen Skaletsky
 All rights reserved.
 
     This file is part of primer3 and the libprimer3 library.
@@ -115,29 +115,10 @@ main(argc,argv)
     } else if (!strcmp(*argv, "-2x_compat")) {
           printf( "PRIMER_ERROR=flag -2x_compat is no longer supported\n=\n");
           exit (-1);
-    } else if (!strncmp(*argv, "-io_version=", 10)) {
-      /* This reads in the version number required for extended io functions */
-      /* There may be a better way, but it works */
-      char tag2int[20];
-      strncpy (tag2int,*argv,19);
-      int counter = 12;
-      while (isdigit(tag2int[counter])) {
-        if (isdigit(tag2int[counter])) {
-          io_version=10*io_version+(tag2int[counter] - '0');
-        }
-        if ( counter > 20 ) {
-          break; /* Just to be safe */
-        }
-        counter++;
-      }
-      if (io_version==1){
-          printf( "PRIMER_ERROR=flag -io_version=1 is no longer supported\n=\n");
-          exit (-1);
-      }
-      if (io_version==2){
-          printf( "PRIMER_ERROR=flag -io_version=2 is no longer supported\n=\n");
-          exit (-1);
-      }
+    } else if (!strcmp(*argv, "-io_version=3")) {
+    	  io_version = 3;
+    } else if (!strcmp(*argv, "-io_version=4")) {
+    	  io_version = 4;
     } else if (!strncmp(*argv, "-p3_settings_file=", 18)) {
       tmp_file_name = strchr(*argv,'=') + 1;
       strncpy (p3_settings_file,tmp_file_name,FILE_NAME_SIZE-1);
