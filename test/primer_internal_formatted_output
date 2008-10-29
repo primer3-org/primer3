@@ -33,7 +33,7 @@ Right     35    33     0     0     0     0     0     0     0     0     0     0  
 Intl      60    57     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
 considered 4, unacceptable product size 1, no internal oligo 2, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_01
@@ -71,7 +71,7 @@ Right     30    29     0     0     0     0     0     0     0     0     0     0  
 Intl      60    57     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
 considered 2, unacceptable product size 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_02
@@ -109,7 +109,7 @@ Right      5     4     0     0     0     0     0     0     0     0     0     0  
 Intl      60    57     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_05
@@ -147,7 +147,7 @@ Right      5     3     0     0     0     0     0     0     0     0     0     0  
 Intl      60    57     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
 considered 4, unacceptable product size 3, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_11
@@ -174,7 +174,7 @@ Right      5     1     0     0     0     0     0     0     0     0     0     0  
 Intl      60    59     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 8, unacceptable product size 6, no internal oligo 2, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_11
@@ -219,7 +219,7 @@ Right      5     0     0     0     0     0     0     0     0     0     0     0  
 Intl      60    52     0     0     0     0     0     0     0     0     0     0     8
 Pair Stats:
 considered 10, unacceptable product size 8, ok 2
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_12
@@ -264,7 +264,7 @@ Right      5     0     0     0     0     0     0     0     0     0     0     0  
 Intl      60    52     0     0     0     0     0     0     0     0     0     0     8
 Pair Stats:
 considered 10, unacceptable product size 8, ok 2
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_13
@@ -302,7 +302,7 @@ Right      5     3     0     0     0     0     0     0     0     0     0     0  
 Intl      60    23     0     0     0     0     0     0     0     0     0     0    37
 Pair Stats:
 considered 4, unacceptable product size 3, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_14
@@ -340,7 +340,7 @@ Right      5     3     0     0     0     0     0     0     0     0     0     0  
 Intl      60    25     0     0     0     0     0     0     0     0     0     0    35
 Pair Stats:
 considered 6, unacceptable product size 5, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_15
@@ -378,7 +378,7 @@ Right      5     2     0     0     0     0     0     0     0     0     0     0  
 Intl      60    25     0     0     0     0     0     0     0     0     0     0    35
 Pair Stats:
 considered 6, unacceptable product size 5, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_16
@@ -404,7 +404,7 @@ Right     10     8     0     0     0     0     0     0     0     0     0     0  
 Intl      35     0     0     0     0     0     0     0     0     0     0     0    35
 Pair Stats:
 considered 4, no internal oligo 4, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_17
@@ -431,7 +431,7 @@ Right     35    31     0     0     0     0     0     0     0     0     0     0  
 Intl      60     0     0     0    29     0     0     0     0     0     0     0    31
 Pair Stats:
 considered 16, unacceptable product size 4, no internal oligo 12, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_18
@@ -465,7 +465,7 @@ Right     62    53     0     0     0     0     0     0     0     0     0     0  
 Intl      87    39     0    40     0     0     0     0     0     0     0     0     8
 Pair Stats:
 considered 81, unacceptable product size 49, no internal oligo 32, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_19
@@ -527,7 +527,7 @@ Right     66    57     0     0     0     0     0     0     0     0     0     0  
 Intl      91    84     0     5     0     0     0     0     0     0     0     0     2
 Pair Stats:
 considered 18, unacceptable product size 3, no internal oligo 8, ok 7
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_20
@@ -599,7 +599,7 @@ Right    151   148     0     0     0     0     0     0     0     0     0     0  
 Intl     226   175     0    47     0     0     0     0     0     0     0     0     4
 Pair Stats:
 considered 23, no internal oligo 15, ok 8
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_21
@@ -662,7 +662,7 @@ Right     77    28     0     0     0     0     0     0     0     0     0     0  
 Intl     152    57     0     0     0     0     1    93     0     0     0     0     1
 Pair Stats:
 considered 323, unacceptable product size 223, no internal oligo 87, ok 13
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_22
@@ -700,7 +700,7 @@ Right      5     4     0     0     0     0     0     0     0     0     0     0  
 Intl      60    57     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_23
@@ -743,7 +743,7 @@ Right      1     0     0     0     0     0     0     0     0     0     0     0  
 Intl      56    53     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_24
@@ -784,7 +784,7 @@ Right      1     0     0     0     0     0     0     0     0     0     0     0  
 Intl      56    53     0     1     0     0     0     0     0     0     0     0     2
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_25
@@ -827,7 +827,7 @@ Right      1     0     0     0     0     0     0     0     0     0     0     0  
 Intl      56    53     0     1     0     0     0     0     0     0     0     0     2
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_26
@@ -868,7 +868,7 @@ Right      1     0     0     0     0     0     0     0     0     0     0     0  
 Intl      56    53     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_27
@@ -903,7 +903,7 @@ Right      1     0     0     0     0     0     0     0     0     0     0     0  
 Intl      56    53     0     1     0     0     0     0     0     0     0     0     2
 Pair Stats:
 considered 1, no internal oligo 1, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_28
@@ -938,7 +938,7 @@ Right      1     0     0     0     0     0     0     0     0     0     0     0  
 Intl      56    53     0     1     0     0     0     0     0     0     0     0     2
 Pair Stats:
 considered 1, no internal oligo 1, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_29
@@ -979,7 +979,7 @@ Right      1     0     0     0     0     0     0     0     0     0     0     0  
 Intl      56    53     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_30
@@ -1020,7 +1020,7 @@ Right      1     0     0     0     0     0     0     0     0     0     0     0  
 Intl      56    53     0     1     0     0     0     0     0     0     0     0     2
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_31
@@ -1063,7 +1063,7 @@ Right      1     0     0     0     0     0     0     0     0     0     0     0  
 Intl      56    53     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_32
@@ -1106,7 +1106,7 @@ Right      1     0     0     0     0     0     0     0     0     0     0     0  
 Intl      56    53     0     1     0     0     0     0     0     0     0     0     2
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_33
@@ -1147,10 +1147,10 @@ Right      1     0     0     0     0     0     0     0     0     0     0     0  
 Intl      56    53     0     1     0     0     0     0     0     0     0     0     2
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_34
 
-INPUT PROBLEM: Too many elements for tag PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION
+INPUT PROBLEM: Too many elements for tag SEQUENCE_INTERNAL_EXCLUDED_REGION
 

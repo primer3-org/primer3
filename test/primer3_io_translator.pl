@@ -315,6 +315,11 @@ sub translate_file {
 		print $error;
 		return $error;
 	}
+	my $backup = $file."_bakup";
+	$error = string2file($backup, $text_input);
+	if ($error ne "0"){
+		print $error;
+	}
 	
 	# Split the string into single lines
 	@string_array = split '\n', $text_input;

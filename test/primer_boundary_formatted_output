@@ -26,7 +26,7 @@ Left      10     9     0     0     0     0     0     0     0     0     0     0  
 Right     10     9     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_01
@@ -57,7 +57,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_02
@@ -88,7 +88,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_03
@@ -112,7 +112,7 @@ Left       4     3     0     0     0     0     0     0     0     0     0     0  
 Right      4     3     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, unacceptable product size 1, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_04
@@ -136,7 +136,7 @@ Left      10     9     0     0     0     0     0     0     0     0     0     0  
 Right     10     9     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, unacceptable product size 1, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_05
@@ -167,7 +167,7 @@ Left       5     3     0     0     0     0     0     0     0     0     0     0  
 Right      5     3     0     0     0     0     0     0     0     0     0     0     2
 Pair Stats:
 considered 4, unacceptable product size 3, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_06
@@ -191,7 +191,7 @@ Left       5     5     0     0     0     0     0     0     0     0     0     0  
 Right      5     5     0     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_07
@@ -223,7 +223,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_08
@@ -251,7 +251,7 @@ Left       6     6     0     0     0     0     0     0     0     0     0     0  
 Right      6     5     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_09
@@ -279,7 +279,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     5     0     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_10
@@ -303,7 +303,7 @@ Left       5     5     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_11
@@ -334,7 +334,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     2     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
 considered 3, unacceptable product size 2, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_11
@@ -358,7 +358,7 @@ Left       5     5     0     0     0     0     0     0     0     0     0     0  
 Right      5     2     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_12
@@ -389,7 +389,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
 considered 5, unacceptable product size 4, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_13
@@ -420,7 +420,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_14
@@ -444,7 +444,7 @@ Left       5     4     0     0     1     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_15
@@ -475,7 +475,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_16
@@ -499,7 +499,7 @@ Left       5     4     0     0     1     0     0     0     0     0     0     0  
 Right      5     4     0     0     1     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_17
@@ -531,7 +531,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_18
@@ -559,7 +559,7 @@ Left       1     1     0     0     0     0     0     0     0     0     0     0  
 Right      1     1     0     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_19
@@ -591,7 +591,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     1     0     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_21
@@ -624,7 +624,7 @@ Left       3     2     0     0     0     0     0     0     0     0     0     0  
 Right      3     2     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_22
@@ -653,7 +653,7 @@ Left       2     2     0     0     0     0     0     0     0     0     0     0  
 Right      3     2     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_23
@@ -682,7 +682,7 @@ Left       3     2     0     0     0     0     0     0     0     0     0     0  
 Right      2     2     0     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_24
@@ -711,7 +711,7 @@ Left       4     3     0     0     0     0     0     0     0     0     0     0  
 Right      2     2     0     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_25
@@ -744,7 +744,7 @@ Left       4     3     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_26
@@ -773,7 +773,7 @@ Left       3     2     1     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_27
@@ -802,7 +802,7 @@ Left       4     3     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     1     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_28
@@ -831,7 +831,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     1     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_29
@@ -864,7 +864,7 @@ Left       4     3     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_30
@@ -897,7 +897,7 @@ Left       4     3     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_31
@@ -926,7 +926,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, no target 1, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_32
@@ -959,7 +959,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_33
@@ -988,7 +988,7 @@ Left       5     4     0     1     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_34
@@ -1017,7 +1017,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     1     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_35
@@ -1046,7 +1046,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     1     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_36
@@ -1079,7 +1079,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_37
@@ -1108,7 +1108,7 @@ Left       5     4     0     1     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_37
@@ -1137,7 +1137,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     1     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_38
@@ -1166,7 +1166,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     1     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_39
@@ -1199,7 +1199,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_40
@@ -1232,7 +1232,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_41
@@ -1258,7 +1258,7 @@ Left       5     4     0     1     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_42
@@ -1291,7 +1291,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_43
@@ -1320,7 +1320,7 @@ Left       5     4     0     0     0     0     0     0     0     1     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_44
@@ -1353,7 +1353,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_45
@@ -1386,7 +1386,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_46
@@ -1415,7 +1415,7 @@ Left       5     4     0     0     0     0     0     0     1     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_47
@@ -1448,7 +1448,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_48
@@ -1477,7 +1477,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     1     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_49
@@ -1510,7 +1510,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_50
@@ -1539,7 +1539,7 @@ Left       5     4     0     0     0     1     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_51
@@ -1572,7 +1572,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_52
@@ -1605,7 +1605,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_53
@@ -1634,7 +1634,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, tm diff too large 1, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_54
@@ -1669,7 +1669,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_55
@@ -1702,7 +1702,7 @@ Right    138     0     0     0     0     0     0     0     0     0   138     0  
 Intl       0     0     0     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR poly_x_2
@@ -1765,7 +1765,7 @@ Right    131     0     0     0     0     0     0     0     0     0     0     0  
 Intl    1585     0     0     0     0     0     0     0     0     0     0     0  1585
 Pair Stats:
 considered 72, unacceptable product size 52, ok 20
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR poly_x_3
@@ -1794,7 +1794,7 @@ Right    155     0     0     0     0     0     0     0     0     0    72     0  
 Intl     187     0     0     0     0     0     0     0     0     0   187     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_59
@@ -1827,7 +1827,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_60
@@ -1853,7 +1853,7 @@ Left       5     4     0     1     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_61
@@ -1893,7 +1893,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_63
@@ -1923,7 +1923,7 @@ Left       1     0     0     1     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_64
@@ -1963,7 +1963,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_66
@@ -1993,7 +1993,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     1     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_67
@@ -2025,7 +2025,7 @@ Left       6     5     0     0     0     0     0     0     0     0     0     0  
 Right      6     5     0     1     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_68
@@ -2058,7 +2058,7 @@ Left       3     2     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_69
@@ -2084,7 +2084,7 @@ Left       2     2     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_70
@@ -2120,7 +2120,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, no target 1, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_72
@@ -2150,7 +2150,7 @@ Left       1     0     1     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_73
@@ -2186,7 +2186,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, no target 1, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_75
@@ -2216,7 +2216,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      0     0     0     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_76
@@ -2248,7 +2248,7 @@ Left       6     5     0     0     0     0     0     0     0     0     0     0  
 Right      6     5     1     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_77
@@ -2282,7 +2282,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_78
@@ -2316,7 +2316,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_79
@@ -2350,7 +2350,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      6     5     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_80
@@ -2384,7 +2384,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_81
@@ -2418,7 +2418,7 @@ Left       6     5     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_82
@@ -2451,7 +2451,7 @@ Left      10     9     0     0     0     0     0     0     0     0     0     0  
 Right     10     9     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_83
@@ -2480,7 +2480,7 @@ Left      10     9     0     0     0     0     0     0     0     0     0     0  
 Right     10     9     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, no target 1, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_84
@@ -2513,7 +2513,7 @@ Left       8     7     0     0     0     0     0     0     0     0     0     0  
 Right     10     9     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_85
@@ -2546,7 +2546,7 @@ Left      10     9     0     0     0     0     0     0     0     0     0     0  
 Right      3     2     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_86
@@ -2580,7 +2580,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_71
@@ -2616,7 +2616,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_72
@@ -2648,7 +2648,7 @@ Left       3     2     0     0     0     0     0     0     0     0     0     0  
 Right      3     2     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 3, unacceptable product size 2, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_73
@@ -2676,7 +2676,7 @@ Left       3     2     0     0     0     0     0     0     0     0     0     0  
 Right      3     2     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 2, unacceptable product size 2, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_74
@@ -2708,7 +2708,7 @@ Left       3     2     0     0     0     0     0     0     0     0     0     0  
 Right      3     2     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 2, ok 2
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_75
@@ -2740,7 +2740,7 @@ Left       2     1     0     0     0     0     0     0     0     0     0     0  
 Right      2     1     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 2, unacceptable product size 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_76
@@ -2772,7 +2772,7 @@ Left       2     1     0     0     0     0     0     0     0     0     0     0  
 Right      2     1     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 2, unacceptable product size 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_77
@@ -2813,7 +2813,7 @@ Left      28    27     0     0     0     0     0     0     0     0     0     0  
 Right     28    26     0     0     0     0     0     0     0     0     0     0     2
 Pair Stats:
 considered 4, unacceptable product size 2, ok 2
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_78
@@ -2854,7 +2854,7 @@ Left      28    27     0     0     0     0     0     0     0     0     0     0  
 Right     28    26     0     0     0     0     0     0     0     0     0     0     2
 Pair Stats:
 considered 4, unacceptable product size 2, ok 2
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_79
@@ -2895,7 +2895,7 @@ Left      28    27     0     0     0     0     0     0     0     0     0     0  
 Right     28    26     0     0     0     0     0     0     0     0     0     0     2
 Pair Stats:
 considered 4, unacceptable product size 1, ok 3
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_80
@@ -2936,7 +2936,7 @@ Left      28    27     0     0     0     0     0     0     0     0     0     0  
 Right     28    26     0     0     0     0     0     0     0     0     0     0     2
 Pair Stats:
 considered 4, unacceptable product size 1, ok 3
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_81
@@ -2968,7 +2968,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_82
@@ -2996,7 +2996,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, high any compl 1, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_83
@@ -3028,7 +3028,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_84
@@ -3056,7 +3056,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, high end compl 1, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_85
@@ -3088,7 +3088,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 200, ok 200
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_86
@@ -3122,12 +3122,12 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_87
 
-INPUT PROBLEM: Too many elements for tag TARGET
+INPUT PROBLEM: Too many elements for tag SEQUENCE_TARGET
 
 PRIMER PICKING RESULTS FOR boundary_test_88
 
@@ -3160,12 +3160,12 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_89
 
-INPUT PROBLEM: Too many elements for tag EXCLUDED_REGION
+INPUT PROBLEM: Too many elements for tag SEQUENCE_EXCLUDED_REGION
 
 PRIMER PICKING RESULTS FOR boundary_test_90
 
@@ -3195,7 +3195,7 @@ Left      10     9     0     0     0     0     0     0     0     0     0     0  
 Right     10     9     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_91
@@ -3219,7 +3219,7 @@ Left      10     9     0     0     0     0     0     0     0     0     0     1  
 Right     10     9     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_92
@@ -3254,7 +3254,7 @@ Left       5     2     0     0     0     0     0     0     0     0     0     0  
 Right      5     2     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
 considered 9, unacceptable product size 8, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_93
@@ -3289,7 +3289,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
 considered 5, unacceptable product size 4, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_94
@@ -3324,7 +3324,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
 considered 5, unacceptable product size 4, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_95
@@ -3359,7 +3359,7 @@ Left       5     0     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 5, unacceptable product size 4, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_96
@@ -3394,7 +3394,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
 considered 5, unacceptable product size 4, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR boundary_test_97
@@ -3429,7 +3429,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
 considered 5, unacceptable product size 4, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR test_098
@@ -3461,7 +3461,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
 considered 5, unacceptable product size 4, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR test_099
@@ -3485,7 +3485,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
 considered 5, unacceptable product size 4, high product Tm 1, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR test_100
@@ -3516,7 +3516,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
 considered 5, unacceptable product size 4, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR test_101
@@ -3548,7 +3548,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
 considered 5, unacceptable product size 4, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR test_102
@@ -3572,7 +3572,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
 considered 5, unacceptable product size 4, low product Tm 1, ok 0
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
 PRIMER PICKING RESULTS FOR test_103
@@ -3603,6 +3603,6 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
 considered 5, unacceptable product size 4, ok 1
-primer3 release 1.1.1
+primer3 release 1.1.2
 
 
