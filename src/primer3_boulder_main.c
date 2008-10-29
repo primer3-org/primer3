@@ -63,7 +63,7 @@ main(argc,argv)
   int format_output = 0;
   int strict_tags = 0;
   int dump_args = 0 ; /* set to 1 if dumping arguments to choose_primers */
-  int io_version = 3;
+  int io_version = 4;
 
   /* Some space for file names */
   char *tmp_file_name = NULL;
