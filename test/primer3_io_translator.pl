@@ -304,13 +304,13 @@ foreach my $si_file (@directoryFiles) {
 	if ($si_file =~ /.in$/) {
 #		print $si_file."\n";
 		$input = $si_file;
-		$output = $si_file."_tr";
+		$output = $si_file;
 		translate_file($input,$output);
 	}
 	if ($si_file =~ /.out$/) {
 #		print $si_file."\n";
 		$input = $si_file;
-		$output = $si_file."_tr";
+		$output = $si_file;
 		translate_file($input,$output);
 	}
 }
@@ -328,6 +328,7 @@ print ("\nTranslation finished\n");
 sub translate_file {
 	my $file = shift;	# File to read
 	my $target = shift; # File to save in
+	my $fin_target = $target;
 	my $error = 0;
 
 	my $text_input = "";
@@ -363,7 +364,8 @@ sub translate_file {
 		}
 		# Catch lines without a = (should not happen)
 		elsif (!($line =~ /=/)) {
-			print "\nError in Line: ". $line."\n\n";
+			print "\nError in $file at Line: ". $line."\n\n";
+			$fin_target = $target."_error";
 		}
 		# Translate the old tags into new tags
 		else {
@@ -371,7 +373,8 @@ sub translate_file {
 			if (defined $docTags{$lineA[0]}){
 				$text_output .= $docTags{$lineA[0]}."=".$lineA[1]."\n";
 			} else {
-				print "Error - not define: ".$lineA[0]."\n";
+				print "Error - in $file unknown Tag ".$lineA[0]." is used.\n";
+				$fin_target = $target."_error";
 			}
 		}
 	}
@@ -379,7 +382,7 @@ sub translate_file {
 	# $text_output
 	
 	# Save the file
-	$error = string2file($target, $text_output);
+	$error = string2file($fin_target, $text_output);
 	if ($error ne "0"){
 		print $error;
 	}
