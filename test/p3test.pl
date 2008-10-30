@@ -153,6 +153,8 @@ sub main() {
 		  'primer_internal1',
 		  'primer_task',
 		  'primer_task_formatted',
+		  'primer_renewed_tasks',
+		  'primer_new_tasks',
 		  'primer_boundary1_formatted',
 		  'primer_internal1_formatted',
 		  'primer_check',
@@ -178,9 +180,6 @@ sub main() {
 		  'primer_position_penalty',
 		  'primer_position_penalty_formatted',
 		  'p3-tmpl-mispriming',
-		  'v4_old_tasks',
-		  'v4_renewed_tasks',
-		  'v4_new_tasks',
 		  # Put primer_lib_amb_codes last because it is slow
 		  'primer_lib_amb_codes',
 		  ) {
@@ -243,9 +242,6 @@ sub main() {
 	    $r = _nowarn_system($tmpCmd);
 	    # back to main directory
 	    chdir "../";
-	} elsif ($test =~ /^v4_/) {
-	    my $cmd = "$valgrind_prefix$exe -strict_tags -io_version=4 <$input >$tmp";
-	    $r = _nowarn_system($cmd);
 	} elsif ($test =~ /formatted$/) {
 	    my $cmd = "$valgrind_prefix$exe -strict_tags -format_output <$input >$tmp";
 	    $r = _nowarn_system($cmd);
