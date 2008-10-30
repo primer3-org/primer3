@@ -273,19 +273,21 @@ my @files = ( 'primer_boundary', # Put the quickest tests first.
 		  # Put primer_lib_amb_codes last because it is slow
 		  'primer_lib_amb_codes');
 
+my @other_files = ( 'p3_3_prime_0');
+
 
 print ("Start Translation...\n");
 my $input;
 my $output;
 
-foreach my $si_file (@files) {
+foreach my $si_file (@other_files) {
 	#print $si_file."\n";
 	$input = $si_file ."_input";
 	$output = $si_file ."_input_tr";
 	translate_file($input,$output);
-	$input = $si_file ."_output";
-	$output = $si_file ."_output_tr";
-	translate_file($input,$output);
+#	$input = $si_file ."_output";
+#	$output = $si_file ."_output_tr";
+#	translate_file($input,$output);
 
 }
 #translate_file("primer_task_input","primer_task_input_tr");
