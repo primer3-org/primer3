@@ -43,6 +43,7 @@ use File::Copy;
 my %docTags = (PRIMER_SEQUENCE_ID => "SEQUENCE_ID",
 MARKER_NAME => "SEQUENCE_ID",
 SEQUENCE_ID => "SEQUENCE_ID",
+PRIMER_ERROR => "PRIMER_ERROR",
 SEQUENCE => "SEQUENCE_TEMPLATE",
 SEQUENCE_TEMPLATE => "SEQUENCE_TEMPLATE",
 INCLUDED_REGION => "SEQUENCE_INCLUDED_REGION",
@@ -273,22 +274,45 @@ my @files = ( 'primer_boundary', # Put the quickest tests first.
 		  # Put primer_lib_amb_codes last because it is slow
 		  'primer_lib_amb_codes');
 
-my @other_files = ( 'p3_3_prime_0');
+
+# Directory Name
+my $directory = cwd;
+
+my @directoryFiles;
+
+if ( opendir(DIR, $directory)) { 
+	push @directoryFiles, readdir(DIR);
+	closedir(DIR);
+} else {
+	print "Couldn't open $directory for reading!\n";
+}
+	
+
+
 
 
 print ("Start Translation...\n");
 my $input;
 my $output;
 
-foreach my $si_file (@other_files) {
-	#print $si_file."\n";
-	$input = $si_file ."_input";
-	$output = $si_file ."_input_tr";
-	translate_file($input,$output);
-#	$input = $si_file ."_output";
-#	$output = $si_file ."_output_tr";
-#	translate_file($input,$output);
-
+foreach my $si_file (@directoryFiles) {
+	if (($si_file eq ".") or ($si_file eq "..")
+		or ($si_file eq ".svn")) {
+		next;
+	}
+#	print $si_file."\n";
+	if ($si_file =~ /.in$/) {
+#		print $si_file."\n";
+		$input = $si_file;
+		$output = $si_file."_tr";
+		translate_file($input,$output);
+	}
+	if ($si_file =~ /.out$/) {
+#		print $si_file."\n";
+		$input = $si_file;
+		$output = $si_file."_tr";
+		translate_file($input,$output);
+	}
 }
 #translate_file("primer_task_input","primer_task_input_tr");
 
@@ -318,7 +342,7 @@ sub translate_file {
 		return $error;
 	}
 	my $backup = $file."_bakup";
-	$error = string2file($backup, $text_input);
+#	$error = string2file($backup, $text_input);
 	if ($error ne "0"){
 		print $error;
 	}
