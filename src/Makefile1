@@ -121,8 +121,8 @@ $(LIBPRIMER3_DYN): libprimer3.o p3_seq_lib.o
 $(PRIMER_EXE): $(PRIMER_OBJECTS)
 	g++ $(LDFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
 
-libprimer3.o: libp3.cp libprimer3.h p3_seq_lib.h dpal.h oligotm.h
-	g++ -c $(CFLAGS) $(P_DEFINES) -o $@ libp3.cp
+libprimer3.o: libp3.cpp libprimer3.h p3_seq_lib.h dpal.h oligotm.h
+	g++ -c $(CFLAGS) $(P_DEFINES) -o $@ libp3.cpp
 
 ntdpal: ntdpal_main.o dpal.o
 	$(CC) $(LDFLAGS) -o $@ ntdpal_main.o dpal.o
