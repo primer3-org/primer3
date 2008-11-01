@@ -2794,7 +2794,8 @@ p_obj_fn(const p3_global_settings *pa,
       if (pa->p_args.weights.template_mispriming) {
         PR_ASSERT(oligo_max_template_mispriming(h) != ALIGN_SCORE_UNDEF);
         sum += pa->p_args.weights.template_mispriming * 
-          oligo_max_template_mispriming(h);
+          oligo_max_template_mispriming(h)
+          / PR_ALIGN_SCORE_PRECISION;
       }
 
       return sum;
@@ -3296,7 +3297,8 @@ obj_fn(const p3_global_settings *pa, primer_pair *h)
   if (pa->pr_pair_weights.template_mispriming) {
     PR_ASSERT(pa->pr_pair_weights.template_mispriming >= 0.0);
     PR_ASSERT(h->template_mispriming >= 0);
-    sum += pa->pr_pair_weights.template_mispriming * h->template_mispriming;
+    sum += pa->pr_pair_weights.template_mispriming * h->template_mispriming
+    / PR_ALIGN_SCORE_PRECISION;
   }
 
   PR_ASSERT(sum >= 0.0);
