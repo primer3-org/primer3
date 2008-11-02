@@ -657,8 +657,8 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_WT_GC_PERCENT_LT", pa->p_args.weights.gc_content_lt);
       COMPARE_FLOAT("PRIMER_WT_SIZE_LT", pa->p_args.weights.length_lt);
       COMPARE_FLOAT("PRIMER_WT_SIZE_GT", pa->p_args.weights.length_gt);
-      COMPARE_FLOAT("PRIMER_WT_COMPL_ANY", pa->p_args.weights.compl_any);
-      COMPARE_FLOAT("PRIMER_WT_COMPL_END", pa->p_args.weights.compl_end);
+      COMPARE_FLOAT("PRIMER_WT_SELF_ANY", pa->p_args.weights.compl_any);
+      COMPARE_FLOAT("PRIMER_WT_SELF_END", pa->p_args.weights.compl_end);
       COMPARE_FLOAT("PRIMER_WT_NUM_NS", pa->p_args.weights.num_ns);
       COMPARE_FLOAT("PRIMER_WT_REP_SIM", pa->p_args.weights.repeat_sim);
       COMPARE_FLOAT("PRIMER_WT_SEQ_QUAL", pa->p_args.weights.seq_quality);
@@ -674,8 +674,8 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_GC_PERCENT_LT", pa->o_args.weights.gc_content_lt);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_SIZE_LT", pa->o_args.weights.length_lt);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_SIZE_GT", pa->o_args.weights.length_gt);
-      COMPARE_FLOAT("PRIMER_INTERNAL_WT_COMPL_ANY", pa->o_args.weights.compl_any);
-      COMPARE_FLOAT("PRIMER_INTERNAL_WT_COMPL_END", pa->o_args.weights.compl_end);
+      COMPARE_FLOAT("PRIMER_INTERNAL_WT_SELF_ANY", pa->o_args.weights.compl_any);
+      COMPARE_FLOAT("PRIMER_INTERNAL_WT_SELF_END", pa->o_args.weights.compl_end);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_NUM_NS", pa->o_args.weights.num_ns);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_REP_SIM", pa->o_args.weights.repeat_sim);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_SEQ_QUAL", pa->o_args.weights.seq_quality);
