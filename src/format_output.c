@@ -738,6 +738,7 @@ format_oligos(FILE *f,
   primer_rec  *h = NULL;
   pair_array_t *best_pairs;
   primer_rec *p;
+  int rest_count = 0;
 
   PR_ASSERT(NULL != f);
   PR_ASSERT(NULL != pa);
@@ -794,53 +795,53 @@ format_oligos(FILE *f,
     fprintf(f, "WARNING: %s\n\n", warning);
     free(warning);
   }
-  if ((print_primers == 1) && (pa->primer_task != pick_primer_list )) { 
-    print_oligo_header(f, "OLIGO", print_lib_sim);
-  }
-  if (pa->primer_task != pick_primer_list ) {  
+  if ((pa->primer_task != pick_primer_list )
+         && (pa->primer_task != pick_sequencing_primers)) { 
+    if (print_primers == 1) { 
+      print_oligo_header(f, "OLIGO", print_lib_sim);
+    }
     /* Print out the first line with the best primers */
     if ((pa->pick_left_primer) && (&retval->fwd != NULL )
                && (retval->fwd.num_elem > 0)){
       print_oligo(f, "LEFT_PRIMER", sa, retval->fwd.oligo, FORWARD, 
                   pa, pa->p_args.repeat_lib, print_lib_sim);
       h = retval->fwd.oligo;
+      rest_count = 1;
     }
     if ((pa->pick_internal_oligo) && (&retval->intl != NULL )
              && (retval->intl.num_elem > 0)){
       print_oligo(f, "INTERNAL_OLIGO", sa, retval->intl.oligo, FORWARD, 
                   pa, pa->p_args.repeat_lib, print_lib_sim);
       h = retval->intl.oligo;
+      rest_count = 1;
     }
     if ((pa->pick_right_primer) && (&retval->rev != NULL )
              && (retval->rev.num_elem > 0)) {
       print_oligo(f, "RIGHT_PRIMER", sa, retval->rev.oligo, REVERSE, 
                   pa, pa->p_args.repeat_lib, print_lib_sim);
 	  h = retval->rev.oligo;
+	  rest_count = 1;
     }
   }
   if(print_primers == 1) { 
     fprintf(f, "SEQUENCE SIZE: %d\n", strlen(sa->sequence));
     fprintf(f, "INCLUDED REGION SIZE: %d\n\n", sa->incl_l);
-
     print_pair_array(f, "TARGETS", sa->tar2.count, sa->tar2.pairs, pa, sa);
     print_pair_array(f, "EXCLUDED REGIONS", sa->excl2.count, sa->excl2.pairs, pa, sa);
     print_pair_array(f, "INTERNAL OLIGO EXCLUDED REGIONS",
             sa->excl_internal2.count, sa->excl_internal2.pairs, pa, sa);
   }
-  if (pa->primer_task != pick_primer_list ) {
+  if ((pa->primer_task != pick_primer_list )
+         && (pa->primer_task != pick_sequencing_primers)) {
     if (print_seq(f, pa, sa, h, best_pairs, 0)) exit(-2); /* ENOMEM */
-    fprintf(f, "\n");
   }
-  int rest_count = 1;
-  if (pa->primer_task == pick_primer_list ) {  
-    rest_count = 0;
-  }
+  fprintf(f, "\n");
   /* Print out the other primers */
   if ((pa->pick_left_primer) && (&retval->fwd != NULL )
              && (retval->fwd.num_elem > rest_count)){
     int n = retval->fwd.num_elem;
     h = retval->fwd.oligo;
-    if (pa->primer_task != pick_primer_list ) {  
+    if (rest_count == 1) {  
       fprintf(f, "ADDITIONAL OLIGOS\n");
     }
     fprintf(f, "   "); print_oligo_header(f, "", print_lib_sim);
@@ -851,7 +852,7 @@ format_oligos(FILE *f,
       print_oligo(f, "LEFT_PRIMER", sa, p, FORWARD, pa,
                   pa->p_args.repeat_lib, print_lib_sim);
     }
-    if (pa->primer_task == pick_primer_list ) {  
+    if (rest_count == 0) {  
       fprintf(f, "\n ");
     }
   }
@@ -859,7 +860,7 @@ format_oligos(FILE *f,
            && (retval->intl.num_elem > rest_count)){
     int n = retval->intl.num_elem;
     h = retval->intl.oligo;  
-    if (pa->primer_task != pick_primer_list ) {  
+    if (rest_count == 1) {  
       fprintf(f, "ADDITIONAL OLIGOS\n");
     }
     fprintf(f, "   "); print_oligo_header(f, "", print_lib_sim);
@@ -870,7 +871,7 @@ format_oligos(FILE *f,
       print_oligo(f, "INTERNAL_OLIGO", sa, p, FORWARD, pa,
                   pa->p_args.repeat_lib, print_lib_sim);
       }
-    if (pa->primer_task == pick_primer_list ) {  
+    if (rest_count == 0) {  
       fprintf(f, "\n ");
     }
   }
@@ -878,7 +879,7 @@ format_oligos(FILE *f,
            && (retval->rev.num_elem > rest_count)) {
     int n = retval->rev.num_elem;
     h = retval->rev.oligo; 
-    if (pa->primer_task != pick_primer_list ) {  
+    if (rest_count == 1) {  
       fprintf(f, "ADDITIONAL OLIGOS\n");
     }
     fprintf(f, "   "); print_oligo_header(f, "", print_lib_sim);
