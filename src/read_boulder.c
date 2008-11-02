@@ -187,6 +187,7 @@ read_boulder_record(FILE *file_input,
       continue;
     }
     /* Read only the PRIMER tags if settings is selected */
+    /* Hint: strncomp returns 0 if both strings are equal */
     if (expected_file_type == settings && strncmp(s, "PRIMER_", 7)
         && strncmp(s, "P3_FILE_ID", 10)) {
       continue;

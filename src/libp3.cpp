@@ -110,7 +110,7 @@ static int _adjust_seq_args(const p3_global_settings *pa,
 
 static int any_5_prime_ol_extension_has_problem(const primer_rec *);
 
-static int fake_a_sequence(seq_args *sa);
+static int fake_a_sequence(seq_args *sa, const p3_global_settings *pa);
 
 static int    _pr_data_control(const p3_global_settings *,
                                const seq_args *,
@@ -4267,7 +4267,7 @@ _adjust_seq_args(const p3_global_settings *pa,
   /* Create a seq for check primers if needed */
   if (pa->primer_task == check_primers) {
           if (NULL == sa->sequence) {
-                  fake_a_sequence(sa);
+                  fake_a_sequence(sa, pa);
           }
   }
   if(pa->primer_task == pick_sequencing_primers && sa->incl_l != -1) {
@@ -4293,7 +4293,7 @@ _adjust_seq_args(const p3_global_settings *pa,
   */
   if (NULL == sa->sequence) {
         if (pa->primer_task == check_primers) {
-                pr_append_new_chunk(nonfatal_err, "Missing PRIMER tag");
+            pr_append_new_chunk(nonfatal_err, "No primers provided");
         } else {
             pr_append_new_chunk(nonfatal_err, "Missing SEQUENCE tag");
         }
@@ -4393,33 +4393,52 @@ _adjust_seq_args(const p3_global_settings *pa,
  */
 
 static int
-fake_a_sequence(seq_args *sa)
+fake_a_sequence(seq_args *sa, const p3_global_settings *pa)
 {
   /* Allocate space for everything */
-  int space = 1;
+  int product_size;
+  if ( pa->product_opt_size == PR_UNDEFINED_INT_OPT){
+	  product_size = pa->pr_max[0] - pa->pr_min[0];
+  } else {
+	  product_size = pa->product_opt_size;
+  } 
+  int space = product_size + 1;
+  int ns_to_fill = product_size;
   char *rev = NULL;
+  /* Calculate how many Ns have to be added */
   if (sa->left_input){
-    space = space + strlen(sa->left_input);
+	  ns_to_fill = ns_to_fill - strlen(sa->left_input);
   }
   if (sa->right_input){
-    space = space + strlen(sa->right_input);
+	  ns_to_fill = ns_to_fill - strlen(sa->right_input);
     rev = (char *) pr_safe_malloc(strlen(sa->right_input) + 1);
     p3_reverse_complement(sa->right_input, rev);
   }
   if (sa->internal_input){
-    space = space + strlen(sa->internal_input);
+	  ns_to_fill = ns_to_fill - strlen(sa->internal_input);
   }
-  if (space == 1){
+  /* Return if there are no primers provided */
+  if (ns_to_fill == product_size + 1){
     return 0;
   }
+  int ns_to_fill_first = ns_to_fill / 2;
+  int ns_to_fill_second = ns_to_fill - ns_to_fill_first;
+  /* Allocate the space for the sequence */  
   sa->sequence = (char *) pr_safe_malloc(space);
   *sa->sequence = '\0';
   /* Copy over the primers */
   if (sa->left_input){
     strcat(sa->sequence, sa->left_input);
   }
+  /* Add the Ns*/
+  for ( int i = 0; i < ns_to_fill_first; i++ ) {
+    strcat(sa->sequence, "N\0");
+  }
   if (sa->internal_input){
     strcat(sa->sequence, sa->internal_input);
+  }
+  for ( int i = 0; i < ns_to_fill_second; i++ ) {
+    strcat(sa->sequence, "N\0");
   }
   if (sa->right_input){
     strcat(sa->sequence, rev);
