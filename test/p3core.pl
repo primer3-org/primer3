@@ -333,11 +333,11 @@ sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_min_quality($g
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_self_any($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_SELF_END'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_self_end($gs, $v) };          
-   $dispatch{'PRIMER_MAX_MISPRIMING'} = 
+   $dispatch{'PRIMER_MAX_LIBRARY_MISPRIMING'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_mispriming($gs, $v) };          
    $dispatch{'PRIMER_INTERNAL_OLIGO_MAX_MISHYB'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_internal_oligo_max_mishyb($gs, $v) };          
-   $dispatch{'PRIMER_PAIR_MAX_MISPRIMING'} = 
+   $dispatch{'PRIMER_PAIR_MAX_LIBRARY_MISPRIMING'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_max_mispriming($gs, $v) };          
    $dispatch{'PRIMER_MAX_TEMPLATE_MISPRIMING'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_max_template_mispriming($gs, $v) };          
@@ -377,7 +377,7 @@ sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_compl_any($gs, $v) };
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_compl_end($gs, $v) };          
    $dispatch{'PRIMER_WT_NUM_NS'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_num_ns($gs, $v) };          
-   $dispatch{'PRIMER_WT_REP_SIM'} = 
+   $dispatch{'PRIMER_WT_LIBRARY_MISPRIMING'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_rep_sim($gs, $v) };          
    $dispatch{'PRIMER_WT_SEQ_QUAL'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_wt_seq_qual($gs, $v) };          
@@ -407,7 +407,7 @@ sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_compl_any($gs, $v) };
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_compl_end($gs, $v) };          
    $dispatch{'PRIMER_IO_WT_NUM_NS'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_num_ns($gs, $v) };          
-   $dispatch{'PRIMER_IO_WT_REP_SIM'} = 
+   $dispatch{'PRIMER_IO_WT_LIBRARY_MISPRIMING'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_rep_sim($gs, $v) };          
    $dispatch{'PRIMER_IO_WT_SEQ_QUAL'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_io_wt_seq_qual($gs, $v) };          
@@ -433,7 +433,7 @@ sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_product_tm_gt($gs, $v
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_product_size_gt($gs, $v) };          
    $dispatch{'PRIMER_PAIR_WT_PRODUCT_SIZE_LT'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_product_size_lt($gs, $v) };          
-   $dispatch{'PRIMER_PAIR_WT_REP_SIM'} = 
+   $dispatch{'PRIMER_PAIR_WT_LIBRARY_MISPRIMING'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_rep_sim($gs, $v) };          
    $dispatch{'PRIMER_PAIR_WT_TEMPLATE_MISPRIMING'} = 
 sub ($) { my $v = shift;  my $i = pl_set_gs_primer_pair_wt_template_mispriming($gs, $v) };

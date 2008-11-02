@@ -601,11 +601,11 @@ read_boulder_record(FILE *file_input,
                           pa->o_args.max_self_any);
       COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_SELF_END", 
                           pa->o_args.max_self_end);
-      COMPARE_ALIGN_SCORE("PRIMER_MAX_MISPRIMING",
+      COMPARE_ALIGN_SCORE("PRIMER_MAX_LIBRARY_MISPRIMING",
                           pa->p_args.max_repeat_compl);
-      COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_MAX_MISHYB",
+      COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_MAX_LIBRARY_MISHYB",
                           pa->o_args.max_repeat_compl);
-      COMPARE_ALIGN_SCORE("PRIMER_PAIR_MAX_MISPRIMING",
+      COMPARE_ALIGN_SCORE("PRIMER_PAIR_MAX_LIBRARY_MISPRIMING",
                           pa->pair_repeat_compl);
       /* Mispriming / mishybing in the template. */
       COMPARE_ALIGN_SCORE("PRIMER_MAX_TEMPLATE_MISPRIMING",
@@ -660,7 +660,7 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_WT_SELF_ANY", pa->p_args.weights.compl_any);
       COMPARE_FLOAT("PRIMER_WT_SELF_END", pa->p_args.weights.compl_end);
       COMPARE_FLOAT("PRIMER_WT_NUM_NS", pa->p_args.weights.num_ns);
-      COMPARE_FLOAT("PRIMER_WT_REP_SIM", pa->p_args.weights.repeat_sim);
+      COMPARE_FLOAT("PRIMER_WT_LIBRARY_MISPRIMING", pa->p_args.weights.repeat_sim);
       COMPARE_FLOAT("PRIMER_WT_SEQ_QUAL", pa->p_args.weights.seq_quality);
       COMPARE_FLOAT("PRIMER_WT_END_QUAL", pa->p_args.weights.end_quality);
       COMPARE_FLOAT("PRIMER_WT_POS_PENALTY", pa->p_args.weights.pos_penalty);
@@ -677,7 +677,7 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_SELF_ANY", pa->o_args.weights.compl_any);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_SELF_END", pa->o_args.weights.compl_end);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_NUM_NS", pa->o_args.weights.num_ns);
-      COMPARE_FLOAT("PRIMER_INTERNAL_WT_REP_SIM", pa->o_args.weights.repeat_sim);
+      COMPARE_FLOAT("PRIMER_INTERNAL_WT_LIBRARY_MISPRIMING", pa->o_args.weights.repeat_sim);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_SEQ_QUAL", pa->o_args.weights.seq_quality);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_END_QUAL", pa->o_args.weights.end_quality);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_TEMPLATE_MISHYB",
@@ -700,7 +700,7 @@ read_boulder_record(FILE *file_input,
                     pa->pr_pair_weights.product_size_gt);
       COMPARE_FLOAT("PRIMER_PAIR_WT_PRODUCT_SIZE_LT",
                     pa->pr_pair_weights.product_size_lt);
-      COMPARE_FLOAT("PRIMER_PAIR_WT_REP_SIM",
+      COMPARE_FLOAT("PRIMER_PAIR_WT_LIBRARY_MISPRIMING",
                     pa->pr_pair_weights.repeat_sim);
       COMPARE_FLOAT("PRIMER_PAIR_WT_TEMPLATE_MISPRIMING",
                     pa->pr_pair_weights.template_mispriming);
