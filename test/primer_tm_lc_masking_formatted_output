@@ -77,7 +77,7 @@ PRIMER PICKING RESULTS FOR 100
 
 No mispriming library specified
 Using 0-based sequence positions
-NO OLIGOS FOUND
+NO LEFT PRIMER FOUND
 
     0 TCCTTGTGAt
 
@@ -220,7 +220,7 @@ PRIMER PICKING RESULTS FOR 110
 
 No mispriming library specified
 Using 0-based sequence positions
-NO OLIGOS FOUND
+NO LEFT PRIMER FOUND
 
     0 TCCTTGTGAt
 

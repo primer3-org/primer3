@@ -84,9 +84,6 @@ static void print_seq_lines(FILE *, const char *s, const char *n, int, int,
 static void print_stat_line(FILE *, const char *, oligo_stats s, int, int);
 static void print_summary(FILE *, const p3_global_settings *, 
                           const seq_args *, const pair_array_t *, int);
-static void print_oligo_summary(FILE *, const p3_global_settings *, 
-                          const seq_args *, primer_rec *, 
-                          oligo_type, int);
 
 void
 print_format_output(FILE *f,
@@ -748,12 +745,10 @@ format_oligos(FILE *f,
               const pr_append_str *combined_retval_err,
               int explain_flag)
 {
-  primer_rec  *h = oligo_list->oligo;
-  int n = oligo_list->num_elem;
-  oligo_type l = oligo_list->type;
   char *warning;
   int print_lib_sim = lib_sim_specified(pa);
   int i;
+  int printed_primers = 0;
   pair_array_t *best_pairs;
   primer_rec *p;
   char type[20];
@@ -771,39 +766,77 @@ format_oligos(FILE *f,
 
   if (NULL != sa->sequence_name)
     fprintf(f, "PRIMER PICKING RESULTS FOR %s\n\n", sa->sequence_name);
-  if (l != OT_INTL ) {
+  if (pa->pick_left_primer || pa->pick_right_primer) {
     if (pa->p_args.repeat_lib != NULL)
       fprintf(f, "Using mispriming library %s\n",
               pa->p_args.repeat_lib->repeat_file);
     else
       fprintf(f, "No mispriming library specified\n");
-  } else {
-          /* FIX ME AU: You can never enter here: 
-  unnecessar if:  if ( pa->primer_task == 1 ) {
-      if (pa->o_args.repeat_lib->repeat_file != NULL)
+  } 
+  if (pa->pick_internal_oligo) {
+      if (pa->o_args.repeat_lib != NULL)
         fprintf(f, "Using internal oligo mishyb library %s\n",
                 pa->o_args.repeat_lib->repeat_file);
       else
         fprintf(f, "No internal oligo mishyb library specified\n");
-    } */
   }
-
-  if(l == OT_LEFT) strcpy(type, "LEFT_PRIMER");
-  else if(l == OT_RIGHT) strcpy(type, "RIGHT_PRIMER");
-  else strcpy(type, "INTERNAL_OLIGO");
-
   fprintf(f, "Using %d-based sequence positions\n",
           pa->first_base_index);
-  if (n == 0) fprintf(f, "NO OLIGOS FOUND\n\n");
+
+  if (pa->pick_left_primer) {
+	  if (retval->fwd.num_elem == 0){
+		  fprintf(f, "NO LEFT PRIMER FOUND\n\n");
+	  } 
+  }
+  if (pa->pick_internal_oligo) {
+	  if (retval->intl.num_elem == 0){
+		  fprintf(f, "NO INTERNAL OLIGO FOUND\n\n");
+	  }
+   }
+  if (pa->pick_right_primer) {
+	  if (retval->rev.num_elem == 0){
+		  fprintf(f, "NO RIGHT PRIMER FOUND\n\n");
+	  } 
+  }
   if ((warning = p3_get_rv_and_gs_warnings(retval, pa)) != NULL) {
     fprintf(f, "WARNING: %s\n\n", warning);
     free(warning);
   }
+  
+  primer_rec  *h = oligo_list->oligo;
+  int n = oligo_list->num_elem;
 
-  if(n > 0) print_oligo_summary(f, pa, sa, h, l, 0);
+  if(oligo_list->type == OT_LEFT) strcpy(type, "LEFT_PRIMER");
+  else if(oligo_list->type == OT_RIGHT) strcpy(type, "RIGHT_PRIMER");
+  else strcpy(type, "INTERNAL_OLIGO");
+
+  if(n > 0) { 
+    print_oligo_header(f, "OLIGO", print_lib_sim);
+    if(oligo_list->type == OT_LEFT || oligo_list->type == OT_INTL)
+            print_oligo(f, type, sa, h, FORWARD, pa, pa->p_args.repeat_lib,
+                    print_lib_sim);
+    else print_oligo(f, type, sa, h, REVERSE, pa, pa->p_args.repeat_lib,
+                    print_lib_sim);
+    
+    
+    
+    
+    printed_primers = 1;
+  }
   else h = NULL;
-  if (print_seq(f, pa, sa, h, best_pairs, 0)) exit(-2); /* ENOMEM */
-  fprintf(f, "\n");
+  if(printed_primers == 1) { 
+    fprintf(f, "SEQUENCE SIZE: %d\n", strlen(sa->sequence));
+    fprintf(f, "INCLUDED REGION SIZE: %d\n\n", sa->incl_l);
+
+    print_pair_array(f, "TARGETS", sa->tar2.count, sa->tar2.pairs, pa, sa);
+    print_pair_array(f, "EXCLUDED REGIONS", sa->excl2.count, sa->excl2.pairs, pa, sa);
+    print_pair_array(f, "INTERNAL OLIGO EXCLUDED REGIONS",
+            sa->excl_internal2.count, sa->excl_internal2.pairs, pa, sa);
+  }
+  if (pa->primer_task != pick_primer_list ) {
+    if (print_seq(f, pa, sa, h, best_pairs, 0)) exit(-2); /* ENOMEM */
+    fprintf(f, "\n");
+  }
   if(n > 1) {
     fprintf(f, "ADDITIONAL OLIGOS\n");
     fprintf(f, "   "); print_oligo_header(f, "", print_lib_sim);
@@ -811,7 +844,7 @@ format_oligos(FILE *f,
       if(i > n-1) break;
       p = h + i;
       fprintf(f, "%2d ", i);
-      if (OT_LEFT == l || OT_INTL == l)
+      if (OT_LEFT == oligo_list->type || OT_INTL == oligo_list->type)
         print_oligo(f, type, sa, p, FORWARD, pa,
                     pa->p_args.repeat_lib, print_lib_sim);
       else 
@@ -828,41 +861,3 @@ format_oligos(FILE *f,
   }
 }
 
-static void
-print_oligo_summary(f, pa, sa, h, l, num)
-    FILE *f;
-    const p3_global_settings *pa;
-    const seq_args *sa;
-    primer_rec *h;
-    oligo_type l;
-    int num;
-{
-    int seq_len = strlen(sa->sequence);
-    int print_lib_sim = lib_sim_specified(pa);
-    primer_rec *p;
-    char type[20];
-
-    if(l == OT_LEFT) strcpy(type, "LEFT_PRIMER");
-    else if(l == OT_RIGHT) strcpy(type, "RIGHT_PRIMER");
-    else strcpy(type, "INTERNAL_OLIGO");
-
-    p = h + num;
-        /* 
-         * If the following format changes, also change the format in
-         * print_oligo.
-         */
-    print_oligo_header(f, "OLIGO", print_lib_sim);
-    if(OT_LEFT == l || OT_INTL == l)
-            print_oligo(f, type, sa, p, FORWARD, pa, pa->p_args.repeat_lib,
-                    print_lib_sim);
-    else print_oligo(f, type, sa, p, REVERSE, pa, pa->p_args.repeat_lib,
-                    print_lib_sim);
-    
-    fprintf(f, "SEQUENCE SIZE: %d\n", seq_len);
-    fprintf(f, "INCLUDED REGION SIZE: %d\n\n", sa->incl_l);
-
-    print_pair_array(f, "TARGETS", sa->tar2.count, sa->tar2.pairs, pa, sa);
-    print_pair_array(f, "EXCLUDED REGIONS", sa->excl2.count, sa->excl2.pairs, pa, sa);
-    print_pair_array(f, "INTERNAL OLIGO EXCLUDED REGIONS",
-             sa->excl_internal2.count, sa->excl_internal2.pairs, pa, sa);
-}
