@@ -58,7 +58,6 @@ static void format_oligos(FILE *,
                           const p3_global_settings *, 
                           const seq_args *, 
                           const p3retval *retval, 
-                          const oligo_array *, 
                           const char*,
                           const pr_append_str *combined_retval_err,
                           int explain_flag);
@@ -116,20 +115,8 @@ print_format_output(FILE *f,
     
     /* Print as primer list */
   } else {
-    /* Figure out which primer to print */
-    if (pa->pick_left_primer) {
-      format_oligos(stdout, pa, sa, retval, &retval->fwd, pr_release,
-                    combined_retval_err, explain_flag);
-    } else if (pa->pick_right_primer) {
-      format_oligos(stdout, pa, sa, retval, &retval->rev, pr_release,
-                    combined_retval_err, explain_flag);
-    } else if (pa->pick_internal_oligo) {
-      format_oligos(stdout, pa, sa, retval, &retval->intl, pr_release,
-                    combined_retval_err, explain_flag);
-    } else {
-      fprintf(stderr, "%s: fatal programming error\n", pr_program_name);
-      abort();
-    }
+    format_oligos(stdout, pa, sa, retval, pr_release,
+                  combined_retval_err, explain_flag);
   }
 
   destroy_pr_append_str(combined_retval_err);
@@ -740,7 +727,6 @@ format_oligos(FILE *f,
               const p3_global_settings *pa,
               const seq_args    *sa,
               const p3retval *retval,
-              const oligo_array *oligo_list,
               const char* pr_release,
               const pr_append_str *combined_retval_err,
               int explain_flag)
@@ -748,10 +734,10 @@ format_oligos(FILE *f,
   char *warning;
   int print_lib_sim = lib_sim_specified(pa);
   int i;
-  int printed_primers = 0;
+  int print_primers = 0;
+  primer_rec  *h = NULL;
   pair_array_t *best_pairs;
   primer_rec *p;
-  char type[20];
 
   PR_ASSERT(NULL != f);
   PR_ASSERT(NULL != pa);
@@ -774,57 +760,65 @@ format_oligos(FILE *f,
       fprintf(f, "No mispriming library specified\n");
   } 
   if (pa->pick_internal_oligo) {
-      if (pa->o_args.repeat_lib != NULL)
-        fprintf(f, "Using internal oligo mishyb library %s\n",
-                pa->o_args.repeat_lib->repeat_file);
-      else
-        fprintf(f, "No internal oligo mishyb library specified\n");
+    if (pa->o_args.repeat_lib != NULL)
+      fprintf(f, "Using internal oligo mishyb library %s\n",
+              pa->o_args.repeat_lib->repeat_file);
+    else
+      fprintf(f, "No internal oligo mishyb library specified\n");
   }
   fprintf(f, "Using %d-based sequence positions\n",
           pa->first_base_index);
 
   if (pa->pick_left_primer) {
-	  if (retval->fwd.num_elem == 0){
-		  fprintf(f, "NO LEFT PRIMER FOUND\n\n");
-	  } 
+    if (retval->fwd.num_elem == 0){
+        fprintf(f, "NO LEFT PRIMER FOUND\n\n");
+    } else {
+        print_primers = 1;
+    }
   }
   if (pa->pick_internal_oligo) {
-	  if (retval->intl.num_elem == 0){
-		  fprintf(f, "NO INTERNAL OLIGO FOUND\n\n");
-	  }
-   }
+    if (retval->intl.num_elem == 0){
+      fprintf(f, "NO INTERNAL OLIGO FOUND\n\n");
+    } else {
+      print_primers = 1;
+    }
+  }
   if (pa->pick_right_primer) {
-	  if (retval->rev.num_elem == 0){
-		  fprintf(f, "NO RIGHT PRIMER FOUND\n\n");
-	  } 
+    if (retval->rev.num_elem == 0){
+      fprintf(f, "NO RIGHT PRIMER FOUND\n\n");
+    } else {
+      print_primers = 1;
+    }
   }
   if ((warning = p3_get_rv_and_gs_warnings(retval, pa)) != NULL) {
     fprintf(f, "WARNING: %s\n\n", warning);
     free(warning);
   }
-  
-  primer_rec  *h = oligo_list->oligo;
-  int n = oligo_list->num_elem;
-
-  if(oligo_list->type == OT_LEFT) strcpy(type, "LEFT_PRIMER");
-  else if(oligo_list->type == OT_RIGHT) strcpy(type, "RIGHT_PRIMER");
-  else strcpy(type, "INTERNAL_OLIGO");
-
-  if(n > 0) { 
+  if ((print_primers == 1) && (pa->primer_task != pick_primer_list )) { 
     print_oligo_header(f, "OLIGO", print_lib_sim);
-    if(oligo_list->type == OT_LEFT || oligo_list->type == OT_INTL)
-            print_oligo(f, type, sa, h, FORWARD, pa, pa->p_args.repeat_lib,
-                    print_lib_sim);
-    else print_oligo(f, type, sa, h, REVERSE, pa, pa->p_args.repeat_lib,
-                    print_lib_sim);
-    
-    
-    
-    
-    printed_primers = 1;
   }
-  else h = NULL;
-  if(printed_primers == 1) { 
+  if (pa->primer_task != pick_primer_list ) {  
+    /* Print out the first line with the best primers */
+    if ((pa->pick_left_primer) && (&retval->fwd != NULL )
+               && (retval->fwd.num_elem > 0)){
+      print_oligo(f, "LEFT_PRIMER", sa, retval->fwd.oligo, FORWARD, 
+                  pa, pa->p_args.repeat_lib, print_lib_sim);
+      h = retval->fwd.oligo;
+    }
+    if ((pa->pick_internal_oligo) && (&retval->intl != NULL )
+             && (retval->intl.num_elem > 0)){
+      print_oligo(f, "INTERNAL_OLIGO", sa, retval->intl.oligo, FORWARD, 
+                  pa, pa->p_args.repeat_lib, print_lib_sim);
+      h = retval->intl.oligo;
+    }
+    if ((pa->pick_right_primer) && (&retval->rev != NULL )
+             && (retval->rev.num_elem > 0)) {
+      print_oligo(f, "RIGHT_PRIMER", sa, retval->rev.oligo, REVERSE, 
+                  pa, pa->p_args.repeat_lib, print_lib_sim);
+	  h = retval->rev.oligo;
+    }
+  }
+  if(print_primers == 1) { 
     fprintf(f, "SEQUENCE SIZE: %d\n", strlen(sa->sequence));
     fprintf(f, "INCLUDED REGION SIZE: %d\n\n", sa->incl_l);
 
@@ -837,20 +831,64 @@ format_oligos(FILE *f,
     if (print_seq(f, pa, sa, h, best_pairs, 0)) exit(-2); /* ENOMEM */
     fprintf(f, "\n");
   }
-  if(n > 1) {
-    fprintf(f, "ADDITIONAL OLIGOS\n");
+  int rest_count = 1;
+  if (pa->primer_task == pick_primer_list ) {  
+    rest_count = 0;
+  }
+  /* Print out the other primers */
+  if ((pa->pick_left_primer) && (&retval->fwd != NULL )
+             && (retval->fwd.num_elem > rest_count)){
+    int n = retval->fwd.num_elem;
+    h = retval->fwd.oligo;
+    if (pa->primer_task != pick_primer_list ) {  
+      fprintf(f, "ADDITIONAL OLIGOS\n");
+    }
     fprintf(f, "   "); print_oligo_header(f, "", print_lib_sim);
-    for (i = 1; i < pa->num_return; i++) {
+    for (i = rest_count; i < pa->num_return; i++) {
       if(i > n-1) break;
       p = h + i;
-      fprintf(f, "%2d ", i);
-      if (OT_LEFT == oligo_list->type || OT_INTL == oligo_list->type)
-        print_oligo(f, type, sa, p, FORWARD, pa,
-                    pa->p_args.repeat_lib, print_lib_sim);
-      else 
-        print_oligo(f, type, sa, p, REVERSE, pa, 
-                    pa->p_args.repeat_lib, print_lib_sim);
+      fprintf(f, "%2d ", i + 1 - rest_count);
+      print_oligo(f, "LEFT_PRIMER", sa, p, FORWARD, pa,
+                  pa->p_args.repeat_lib, print_lib_sim);
     }
+    if (pa->primer_task == pick_primer_list ) {  
+      fprintf(f, "\n ");
+    }
+  }
+  if ((pa->pick_internal_oligo) && (&retval->intl != NULL )
+           && (retval->intl.num_elem > rest_count)){
+    int n = retval->intl.num_elem;
+    h = retval->intl.oligo;  
+    if (pa->primer_task != pick_primer_list ) {  
+      fprintf(f, "ADDITIONAL OLIGOS\n");
+    }
+    fprintf(f, "   "); print_oligo_header(f, "", print_lib_sim);
+    for (i = rest_count; i < pa->num_return; i++) {
+      if(i > n-1) break;
+      p = h + i;
+      fprintf(f, "%2d ", i + 1 - rest_count);
+      print_oligo(f, "INTERNAL_OLIGO", sa, p, FORWARD, pa,
+                  pa->p_args.repeat_lib, print_lib_sim);
+      }
+    if (pa->primer_task == pick_primer_list ) {  
+      fprintf(f, "\n ");
+    }
+  }
+  if ((pa->pick_right_primer) && (&retval->rev != NULL )
+           && (retval->rev.num_elem > rest_count)) {
+    int n = retval->rev.num_elem;
+    h = retval->rev.oligo; 
+    if (pa->primer_task != pick_primer_list ) {  
+      fprintf(f, "ADDITIONAL OLIGOS\n");
+    }
+    fprintf(f, "   "); print_oligo_header(f, "", print_lib_sim);
+    for (i = rest_count; i < pa->num_return; i++) {
+      if(i > n-1) break;
+      p = h + i;
+      fprintf(f, "%2d ", i + 1 - rest_count);
+      print_oligo(f, "RIGHT_PRIMER", sa, p, REVERSE, pa, 
+                  pa->p_args.repeat_lib, print_lib_sim);
+     }
   }
   if (explain_flag) 
     print_explain(f, pa, sa, retval, print_lib_sim, pr_release);
