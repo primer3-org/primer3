@@ -317,26 +317,49 @@ print_boulder(int io_version,
              intl->self_end / PR_ALIGN_SCORE_PRECISION);
         
     /*Print out primer mispriming scores */
-    if (seq_lib_num_seq(pa->p_args.repeat_lib) > 0) {
-      if (go_fwd == 1)
-        printf("PRIMER_LEFT%s_MISPRIMING_SCORE=%.2f, %s\n", suffix,
-               fwd->repeat_sim.score[fwd->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
-               fwd->repeat_sim.name);
-      if (go_rev == 1)
-        printf("PRIMER_RIGHT%s_MISPRIMING_SCORE=%.2f, %s\n", suffix,
-               rev->repeat_sim.score[rev->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
-               rev->repeat_sim.name);
-      if (retval->output_type == primer_pairs)
-        printf("PRIMER_PAIR%s_MISPRIMING_SCORE=%.2f, %s\n", suffix,
-               retval->best_pairs.pairs[i].repeat_sim / PR_ALIGN_SCORE_PRECISION,
-               retval->best_pairs.pairs[i].rep_name);
-    }
+    if (io_version == 3) {
+		if (seq_lib_num_seq(pa->p_args.repeat_lib) > 0) {
+		  if (go_fwd == 1)
+		    printf("PRIMER_LEFT%s_MISPRIMING_SCORE=%.2f, %s\n", suffix,
+		           fwd->repeat_sim.score[fwd->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
+		           fwd->repeat_sim.name);
+		  if (go_rev == 1)
+		    printf("PRIMER_RIGHT%s_MISPRIMING_SCORE=%.2f, %s\n", suffix,
+		           rev->repeat_sim.score[rev->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
+		           rev->repeat_sim.name);
+		  if (retval->output_type == primer_pairs)
+		    printf("PRIMER_PAIR%s_MISPRIMING_SCORE=%.2f, %s\n", suffix,
+		           retval->best_pairs.pairs[i].repeat_sim / PR_ALIGN_SCORE_PRECISION,
+		           retval->best_pairs.pairs[i].rep_name);
+		}
     
-    /* Print out internal oligo mispriming scores */
-    if (go_int == 1 && seq_lib_num_seq(pa->o_args.repeat_lib) > 0)
-      printf("PRIMER_%s%s_MISHYB_SCORE=%.2f, %s\n", int_oligo, suffix,
-             intl->repeat_sim.score[intl->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
-             intl->repeat_sim.name);
+		/* Print out internal oligo mispriming scores */
+		if (go_int == 1 && seq_lib_num_seq(pa->o_args.repeat_lib) > 0)
+		  printf("PRIMER_%s%s_MISHYB_SCORE=%.2f, %s\n", int_oligo, suffix,
+		         intl->repeat_sim.score[intl->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
+		         intl->repeat_sim.name);
+    } else {
+		if (seq_lib_num_seq(pa->p_args.repeat_lib) > 0) {
+		  if (go_fwd == 1)
+		    printf("PRIMER_LEFT%s_LIBRARY_MISPRIMING=%.2f, %s\n", suffix,
+		           fwd->repeat_sim.score[fwd->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
+		           fwd->repeat_sim.name);
+		  if (go_rev == 1)
+		    printf("PRIMER_RIGHT%s_LIBRARY_MISPRIMING=%.2f, %s\n", suffix,
+		           rev->repeat_sim.score[rev->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
+		           rev->repeat_sim.name);
+		  if (retval->output_type == primer_pairs)
+		    printf("PRIMER_PAIR%s_LIBRARY_MISPRIMING=%.2f, %s\n", suffix,
+		           retval->best_pairs.pairs[i].repeat_sim / PR_ALIGN_SCORE_PRECISION,
+		           retval->best_pairs.pairs[i].rep_name);
+		}
+		
+		/* Print out internal oligo mispriming scores */
+		if (go_int == 1 && seq_lib_num_seq(pa->o_args.repeat_lib) > 0)
+		  printf("PRIMER_%s%s_LIBRARY_MISHYB=%.2f, %s\n", int_oligo, suffix,
+		         intl->repeat_sim.score[intl->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
+		         intl->repeat_sim.name);
+    }
 
     /* If a sequence quality was provided, print it*/
     if (NULL != sa->quality){

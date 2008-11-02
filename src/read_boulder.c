@@ -677,7 +677,7 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_SELF_ANY", pa->o_args.weights.compl_any);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_SELF_END", pa->o_args.weights.compl_end);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_NUM_NS", pa->o_args.weights.num_ns);
-      COMPARE_FLOAT("PRIMER_INTERNAL_WT_LIBRARY_MISPRIMING", pa->o_args.weights.repeat_sim);
+      COMPARE_FLOAT("PRIMER_INTERNAL_WT_LIBRARY_MISHYB", pa->o_args.weights.repeat_sim);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_SEQ_QUAL", pa->o_args.weights.seq_quality);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_END_QUAL", pa->o_args.weights.end_quality);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_TEMPLATE_MISHYB",
