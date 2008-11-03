@@ -1787,6 +1787,13 @@ pick_sequencing_primer_list(p3retval *retval,
 
   } /* End of Target Loop */
 
+  /* Print an error if not all primers will be printed */
+  if (retval->fwd.num_elem > pa->num_return 
+		  || retval->rev.num_elem > pa->num_return) {
+    pr_append_new_chunk( &retval->warnings,
+     "Increase PRIMER_NUM_RETURN to obtain all sequencing primers");
+  }
+    
   return 0;
 } /* pick_sequencing_primer_list */
 
