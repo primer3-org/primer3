@@ -77,7 +77,8 @@ static void print_pair_array(FILE *, const char*, int,
 static void print_rest(FILE *, const p3_global_settings *, 
                        const seq_args *,  const pair_array_t *);
 static int  print_seq(FILE *, const p3_global_settings *, const seq_args *, 
-                            primer_rec *h, const pair_array_t *, int);
+                      const p3retval *retval, primer_rec *h,
+                      const pair_array_t *, int);
 static void print_seq_lines(FILE *, const char *s, const char *n, int, int,
                             int, const p3_global_settings *);
 static void print_stat_line(FILE *, const char *, oligo_stats s, int, int);
@@ -186,7 +187,7 @@ format_pairs(FILE *f,
   fprintf(f, "\n");
 
   /* Print nicely out the sequence with the best pair */
-  if (print_seq(f, pa, sa, h, best_pairs, 0)) exit(-2); /* ENOMEM */
+  if (print_seq(f, pa, sa, retval, h, best_pairs, 0)) exit(-2); /* ENOMEM */
   
   /* Print out the alternative pairs */
   if (best_pairs->num_pairs > 1 ) print_rest(f, pa, sa, best_pairs);
@@ -320,22 +321,25 @@ print_pair_array(f, title, num, array, pa, sa)
 /* Prints out the asci picture of the sequence */
 /* Return 1 on ENOMEM. Otherwise return 0. */
 static int
-print_seq(f, pa, sa, h, best_pairs, num)
-    FILE *f;
-    const p3_global_settings *pa;
-    const seq_args *sa;
-    primer_rec *h;
-    const pair_array_t *best_pairs;
-    int num;  /* The number of primer pair to print. */
+print_seq(FILE *f,
+    const p3_global_settings *pa,
+    const seq_args *sa,
+    const p3retval *retval,
+    primer_rec *h,
+    const pair_array_t *best_pairs,
+    int num)  /* The number of primer pair to print. */
 {
+	primer_rec *h2 = NULL;
+	primer_rec *h3 = NULL;
     int len, i, j, start;
     int something_found = 0, vector_found = 0;
     int *notes;
     char *notestr;
     primer_pair *p;
     p = NULL;
-    if(pa->pick_left_primer == 1 && pa->pick_right_primer == 1)
-              p = best_pairs->pairs + num;
+    if(retval->output_type == primer_pairs) {
+      p = best_pairs->pairs + num;
+    }
     len = strlen(sa->sequence);
     if (!(notes = malloc(sizeof(*notes) * len))) return 1;
     memset(notes, 0, sizeof(*notes) * len);
@@ -347,7 +351,7 @@ print_seq(f, pa, sa, h, best_pairs, num)
         if (i < sa->incl_s || i >= sa->incl_s + sa->incl_l)
             notes[i] |= VECTOR;
 
-        if (pa->pick_left_primer == 1 && pa->pick_right_primer == 1 &&
+        if (retval->output_type == primer_pairs && 
             best_pairs->num_pairs > 0) {
             if (i >= p->left->start + sa->incl_s
                 && i < p->left->start + p->left->length + sa->incl_s)
@@ -365,14 +369,38 @@ print_seq(f, pa, sa, h, best_pairs, num)
                i < h->start + h->length + sa->incl_s &&
                i >= h->start + sa->incl_s)
                notes[i] |= LEFT_OLIGO;
-        else if(pa->pick_right_primer == 1 &&
+            else if(pa->pick_right_primer == 1 &&
                i >= h->start - h->length + 1 + sa->incl_s
                && i <= h->start + sa->incl_s)
                notes[i] |= RIGHT_OLIGO;
-        else if(pa->pick_internal_oligo == 1 &&
+            else if(pa->pick_internal_oligo == 1 &&
                  i >= h->start + sa->incl_s                &&
                  i < h->start + h->length + sa->incl_s)
                notes[i] |= INTL_OLIGO;
+        } else if (pa->primer_task == pick_sequencing_primers) {
+    	    if (pa->pick_right_primer && &retval->rev != NULL 
+    	             && retval->rev.num_elem > 0){
+    	      h2 = retval->rev.oligo;
+              for (j = 0; j < pa->num_return; j++) {
+    	        if(j > retval->rev.num_elem -1) break;
+    	        h3 = h2 + j;
+                if(i >= h3->start - h3->length + 1 + sa->incl_s
+                        && i <= h3->start + sa->incl_s)
+                   notes[i] |= RIGHT_OLIGO;
+    	      }
+            }   	
+    	    if (pa->pick_left_primer && &retval->fwd != NULL 
+    	             && retval->fwd.num_elem > 0){
+    	      h2 = retval->fwd.oligo;
+              for (j = 0; j < pa->num_return; j++) {
+    	        if(j > retval->fwd.num_elem -1) break;
+    	        h3 = h2 + j;
+                if(i < h3->start + h3->length + sa->incl_s &&
+                   i >= h3->start + sa->incl_s) {
+                   notes[i] |= LEFT_OLIGO;
+                }
+    	      }
+            }       	
         }
 
         for (j = 0; j < sa->tar2.count; j++) {
@@ -391,7 +419,6 @@ print_seq(f, pa, sa, h, best_pairs, num)
                 notes[i] |= INTL_EXCL_REGION;
         }
     }
-
     for (i = 0; i < len; i++) {
         if (notes[i] & VECTOR) {
             vector_found = 1;
@@ -401,6 +428,19 @@ print_seq(f, pa, sa, h, best_pairs, num)
             notestr[i] = 'X';
         else if (notes[i] & INTL_EXCL_REGION)
             notestr[i] = 'x';
+        else if ((notes[i] & TARGET) 
+                && (pa->primer_task == pick_sequencing_primers)
+                && (notes[i] & LEFT_OLIGO)
+                && (notes[i] & RIGHT_OLIGO))
+          notestr[i] = '^';
+        else if ((notes[i] & TARGET) 
+                && (pa->primer_task == pick_sequencing_primers)
+                && (notes[i] & LEFT_OLIGO))
+          notestr[i] = '>';
+        else if ((notes[i] & TARGET) 
+                && (pa->primer_task == pick_sequencing_primers)
+                && (notes[i] & RIGHT_OLIGO))
+          notestr[i] = '<';
         else if ((notes[i] & TARGET) && (notes[i] & LEFT_OLIGO))
           notestr[i] = ')';
         else if ((notes[i] & TARGET) && (notes[i] & RIGHT_OLIGO))
@@ -434,12 +474,17 @@ print_seq(f, pa, sa, h, best_pairs, num)
     if (sa->tar2.count > 0)
         fprintf(f, "****** target\n");
 
-    if (pa->pick_left_primer == 1 && pa->pick_right_primer == 1 &&
+    if (retval->output_type == primer_pairs &&
         best_pairs->num_pairs > 0) {
            fprintf(f, ">>>>>> left primer\n");
            fprintf(f, "<<<<<< right primer\n");
            if ( pa->pick_internal_oligo == 1 )
               fprintf(f, "^^^^^^ internal oligo\n");
+    } else if (pa->primer_task == pick_sequencing_primers) {
+        fprintf(f, ">>>>>> left primer\n");
+        fprintf(f, "<<<<<< right primer\n");
+        fprintf(f, "^^^^^^ left primer / right primer overlap\n");
+    	
     }
     else if (pa->pick_left_primer == 1 && h != NULL)
            fprintf(f, ">>>>>> left primer\n");
@@ -831,9 +876,8 @@ format_oligos(FILE *f,
     print_pair_array(f, "INTERNAL OLIGO EXCLUDED REGIONS",
             sa->excl_internal2.count, sa->excl_internal2.pairs, pa, sa);
   }
-  if ((pa->primer_task != pick_primer_list )
-         && (pa->primer_task != pick_sequencing_primers)) {
-    if (print_seq(f, pa, sa, h, best_pairs, 0)) exit(-2); /* ENOMEM */
+  if (pa->primer_task != pick_primer_list ) {
+    if (print_seq(f, pa, sa, retval, h, best_pairs, 0)) exit(-2); /* ENOMEM */
   }
   fprintf(f, "\n");
   /* Print out the other primers */
