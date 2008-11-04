@@ -56,6 +56,7 @@ sub _nowarn_system($);
 
 our $def_executable = "../src/primer3_core";
 our $exe = '../src/primer3_core';
+our $set_files = '../test/';
 our ($verbose, $do_valgrind, $winFlag, $fastFlag);
 
 our %signo;
@@ -122,6 +123,7 @@ sub main() {
 
     if ($winFlag) {
 	$exe = '..\\src\\primer3_core.exe';
+	$set_files = '..\\test\\';
 	# $def_executable = $exe; # keep things happy @ line 237 Brant probably not necessary any more
 	# Also, line numbers of particular statements are not very stable.
     }
@@ -155,6 +157,9 @@ sub main() {
 		  'primer_task_formatted',
 		  'primer_renewed_tasks',
 		  'primer_new_tasks',
+		  'primer_all_settingsfiles',
+		  'primer_high_tm_load_set',
+		  'primer_high_gc_load_set',
 		  'primer_boundary1_formatted',
 		  'primer_internal1_formatted',
 		  'primer_check',
@@ -244,6 +249,9 @@ sub main() {
 	    chdir "../";
 	} elsif ($test =~ /formatted$/) {
 	    my $cmd = "$valgrind_prefix$exe -strict_tags -format_output <$input >$tmp";
+	    $r = _nowarn_system($cmd);
+	} elsif ($test =~ /_load_set/) {
+	    my $cmd = "$valgrind_prefix$exe -strict_tags -p3_settings_file=$set_files$test.set <$input >$tmp";
 	    $r = _nowarn_system($cmd);
 	} else {
 	    my $cmd = "$valgrind_prefix$exe -strict_tags <$input >$tmp";

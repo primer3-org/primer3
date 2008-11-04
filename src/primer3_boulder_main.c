@@ -206,7 +206,7 @@ main(argc,argv)
                             !format_output, 
                             all_parameters,
                             global_pa, 
-			    sarg, 
+                            sarg, 
                             &fatal_parse_err, 
                             &nonfatal_parse_err,
                             &read_boulder_record_res)) {

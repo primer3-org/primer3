@@ -1,0 +1,8 @@
+Primer3 File - http://primer3.sourceforge.net
+P3_FILE_TYPE=settings
+
+P3_FILE_ID=Test with higher Tm
+PRIMER_MIN_TM=63
+PRIMER_OPT_TM=65
+PRIMER_MAX_TM=67
+=

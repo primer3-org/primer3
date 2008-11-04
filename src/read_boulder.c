@@ -138,7 +138,7 @@ read_boulder_record(FILE *file_input,
                     const int *strict_tags,
                     const int *io_version,
                     int   echo_output, /* should be echo_input */
-                    const p3_file_type expected_file_type,
+                    const p3_file_type file_type,
                     p3_global_settings *pa, 
                     seq_args *sa, 
                     pr_append_str *glob_err,  /* Really should be called fatal_parse_err */
@@ -147,7 +147,6 @@ read_boulder_record(FILE *file_input,
   int line_len;
   int tag_len, datum_len;
   int data_found = 0;
-  p3_file_type file_type = all_parameters;
   int pick_internal_oligo = 2;
   char *s, *n, *datum, *task_tmp = NULL;
   const char *p;
@@ -159,36 +158,9 @@ read_boulder_record(FILE *file_input,
   non_fatal_err = nonfatal_parse_err;
 
   while ((s = p3_read_line(file_input)) != NULL && strcmp(s,"=")) {
-    /* Deal with the file headers */
-    if ((strcmp(s,"Primer3 File - http://primer3.sourceforge.net")) == 0) {
-      /* read FILE_TYPE */
-      if ((s = p3_read_line(file_input)) == NULL && !(strcmp(s,"=")))
-        break;
-      if ((strcmp(s,"P3_FILE_TYPE=all_parameters")) == 0) {
-        file_type = all_parameters;
-      }
-      else if ((strcmp(s,"P3_FILE_TYPE=sequence")) == 0) {
-        file_type = sequence;
-      }
-      else if ((strcmp(s,"P3_FILE_TYPE=settings")) == 0) {
-        file_type = settings;
-      }
-      else {
-        pr_append_new_chunk(glob_err, "Unknown P3_FILE_TYPE");
-      }
-      /* read the empty line */
-      if ((s = p3_read_line(file_input)) == NULL && !(strcmp(s,"=")))
-        break;
-      /* Check if the file type matches the expected type */
-      if (file_type != expected_file_type && echo_output){
-        pr_append_new_chunk(nonfatal_parse_err, 
-                            "Unexpected P3 file type parsed");
-      }
-      continue;
-    }
     /* Read only the PRIMER tags if settings is selected */
     /* Hint: strncomp returns 0 if both strings are equal */
-    if (expected_file_type == settings && strncmp(s, "PRIMER_", 7)
+    if (file_type == settings && strncmp(s, "PRIMER_", 7)
         && strncmp(s, "P3_FILE_ID", 10)) {
       continue;
     }
@@ -879,7 +851,7 @@ read_boulder_record(FILE *file_input,
 #undef COMPARE_INTERVAL_LIST
 
 int read_p3_file(const char *file_name,
-                 const p3_file_type file_type,
+                 const p3_file_type expected_file_type,
                  p3_global_settings *pa, 
                  seq_args *sa,
                  pr_append_str *fatal_err,
@@ -888,20 +860,54 @@ int read_p3_file(const char *file_name,
   /* Parameter for read_boulder_record */
   FILE *file;
   int echo_output = 0;
-  int ret_par = 1;
+  int ret_par = 0;
   int strict_tags = 0;
   int io_version = 4;
+  char first_line[80];
+  char second_line[80];
+  int error = 0;
+  p3_file_type file_type = all_parameters;
     
   /* Check if a file name was provided */
   PR_ASSERT(NULL != file_name);
   /* Open the file */
   if((file = fopen(file_name,"r")) != NULL) {
-    ret_par = read_boulder_record(file, &strict_tags, &io_version, echo_output, 
-                                  file_type, pa, sa, fatal_err, nonfatal_err,
-                                  read_boulder_record_res);
+	/* Deal with the file headers */
+    strncpy (first_line, p3_read_line(file), 79);
+    strncpy (second_line, p3_read_line(file), 79);
+    p3_read_line(file);
+
+    if (strncmp(first_line,"Primer3 File - http://primer3.sourceforge.net", 45)) {
+    	error = 1;
+    }
+    if (!strncmp(second_line,"P3_FILE_TYPE=all_parameters", 27)) {
+      file_type = all_parameters;
+    }
+    else if (!strncmp(second_line,"P3_FILE_TYPE=sequence", 21)) {
+      file_type = sequence;
+    }
+    else if (!strncmp(second_line,"P3_FILE_TYPE=settings", 21)) {
+      file_type = settings;
+    }
+    else {
+      error = 1;
+    }
+    /* Check if the file type matches the expected type */
+    if (file_type != expected_file_type){
+      pr_append_new_chunk(nonfatal_err, 
+                          "Unexpected P3 file type parsed");
+    }
+    /* read FILE_TYPE */
+    if (error == 0){
+      ret_par = read_boulder_record(file, &strict_tags, &io_version, 
+                           echo_output, expected_file_type, pa, sa, fatal_err, 
+                           nonfatal_err, read_boulder_record_res);
+    } else {
+		    pr_append_new_chunk(fatal_err, "Incorrect file format in ");
+		    pr_append(fatal_err, file_name);
+	}
   } else {
-    pr_append_new_chunk(fatal_err,
-                        "Cannot open ");
+    pr_append_new_chunk(fatal_err, "Cannot open ");
     pr_append(fatal_err, file_name);
   }
   if (file) fclose(file);
