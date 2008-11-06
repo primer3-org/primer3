@@ -110,6 +110,8 @@ static int _adjust_seq_args(const p3_global_settings *pa,
 
 static int any_5_prime_ol_extension_has_problem(const primer_rec *);
 
+static int p3_ol_is_uninitialized(const primer_rec *);
+
 static int fake_a_sequence(seq_args *sa, const p3_global_settings *pa);
 
 static int    _pr_data_control(const p3_global_settings *,
@@ -2554,8 +2556,8 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
                 stats, dpal_arg_to_use,
                 oligo_seq, revc_oligo_seq);
 
-    if (h->ok != OV_UNINITIALIZED && !must_use) {
-      PR_ASSERT(h->ok != OV_OK);
+    if ((!(p3_ol_is_uninitialized(h))) && !must_use) {
+      PR_ASSERT(!p3_ol_is_ok(h));
       return;
     }
   } else {
@@ -2588,9 +2590,6 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
     if (!must_use) return;
   }
 
-  if (OV_UNINITIALIZED == h->ok) {  /* FIX ME, USE NEW INFORMATION OR FN */
-    h->ok = OV_OK;
-  }
   op_set_completely_written(h);
 
 } /* calc_and_check_oligo_features */
@@ -6155,7 +6154,6 @@ p3_add_to_gs_product_size_range(p3_global_settings *pgs,
 
 static void
 initialize_op(primer_rec *oligo) {
-  oligo->ok = OV_UNINITIALIZED;
   oligo->problems.prob = 0UL;  /* 0UL is the unsigned long zero */
 }
 
@@ -6172,45 +6170,57 @@ initialize_op(primer_rec *oligo) {
 #define BF_OVERLAPS_TARGET                  (1UL <<  2)
 #define BF_OVERLAPS_EXCL_REGION             (1UL <<  3)
 #define BF_INFINITE_POSITION_PENALTY        (1UL <<  4)
+/* Spcace fore more bitfields */
 
-#define OP_TOO_MANY_NS                      (1UL <<  5)
-#define OP_OVERLAPS_TARGET                  (1UL <<  6)
-#define OP_HIGH_GC_CONTENT                  (1UL <<  7)
-#define OP_LOW_GC_CONTENT                   (1UL <<  8)
-#define OP_HIGH_TM                          (1UL <<  9)
-#define OP_LOW_TM                           (1UL << 10)
-#define OP_OVERLAPS_EXCL_REGION             (1UL << 11)
-#define OP_HIGH_SELF_ANY                    (1UL << 12)
-#define OP_HIGH_SELF_END                    (1UL << 13)
-#define OP_NO_GC_CLAMP                      (1UL << 14)
-#define OP_HIGH_END_STABILITY               (1UL << 15)
-#define OP_HIGH_POLY_X                      (1UL << 16)
-#define OP_LOW_SEQUENCE_QUALITY             (1UL << 17)
-#define OP_LOW_END_SEQUENCE_QUALITY         (1UL << 18)
-#define OP_HIGH_SIM_TO_NON_TEMPLATE_SEQ     (1UL << 19)
-#define OP_HIGH_SIM_TO_MULTI_TEMPLATE_SITES (1UL << 20)
-#define OP_OVERLAPS_MASKED_SEQ              (1UL << 21)
-#define OP_TOO_LONG                         (1UL << 22)
-#define OP_TOO_SHORT                        (1UL << 23)
-#define OP_DOES_NOT_AMPLIFY_ORF             (1UL << 24)
+#define OP_TOO_MANY_NS                      (1UL <<  8) /* 5prime problem*/
+#define OP_OVERLAPS_TARGET                  (1UL <<  9) /* 5prime problem*/
+#define OP_HIGH_GC_CONTENT                  (1UL << 10)
+#define OP_LOW_GC_CONTENT                   (1UL << 11)
+#define OP_HIGH_TM                          (1UL << 12)
+#define OP_LOW_TM                           (1UL << 13)
+#define OP_OVERLAPS_EXCL_REGION             (1UL << 14) /* 5prime problem*/
+#define OP_HIGH_SELF_ANY                    (1UL << 15) /* 5prime problem*/
+#define OP_HIGH_SELF_END                    (1UL << 16)
+#define OP_NO_GC_CLAMP                      (1UL << 17) /* 5prime problem*/
+#define OP_HIGH_END_STABILITY               (1UL << 18) /* 5prime problem*/
+#define OP_HIGH_POLY_X                      (1UL << 19) /* 5prime problem*/
+#define OP_LOW_SEQUENCE_QUALITY             (1UL << 20) /* 5prime problem*/
+#define OP_LOW_END_SEQUENCE_QUALITY         (1UL << 21) /* 5prime problem*/
+#define OP_HIGH_SIM_TO_NON_TEMPLATE_SEQ     (1UL << 22) /* 5prime problem*/
+#define OP_HIGH_SIM_TO_MULTI_TEMPLATE_SITES (1UL << 23)
+#define OP_OVERLAPS_MASKED_SEQ              (1UL << 24)
+#define OP_TOO_LONG                         (1UL << 25)
+#define OP_TOO_SHORT                        (1UL << 26)
+#define OP_DOES_NOT_AMPLIFY_ORF             (1UL << 27)
+/* Space for more Errors */
 
-static unsigned long int any_problem = (~0UL) ^ 31UL; /* all bits 1 except bits 0 to 4 */
+/* Tip: the calculator of windows (in scientific mode) can easily convert 
+   between decimal and binary numbers */
+
+/* all bits 1 except bits 0 to 7 */
+/* (~0UL) ^ 255UL = 1111 1111  1111 1111  1111 1111  0000 0000 */
+static unsigned long int any_problem = (~0UL) ^ 255UL;
+/* 8307456UL = 0000 0000  0111 1110  1100 0011  0000 0000 */
+static unsigned long int five_prime_problem = 8307456UL;
+
+int
+p3_ol_is_uninitialized(const primer_rec *oligo) {
+  return (oligo->problems.prob == 0UL);
+}
+
+int
+p3_ol_is_ok(const primer_rec *oligo) {
+  return (oligo->problems.prob & OP_COMPLETELY_WRITTEN) != 0;
+}
 
 int
 p3_ol_has_any_problem(const primer_rec *oligo) {
   return (oligo->problems.prob & any_problem) != 0;
 }
 
-int
-any_5_prime_ol_extension_has_problem(const primer_rec *oligo)
-{
-  return (/* (oligo->problems.prob | OP_TOO_MANY_NS) || */
-          oligo->ok==OV_TOO_MANY_NS    || oligo->ok==OV_INTERSECT_TARGET
-          || oligo->ok==OV_SELF_ANY    || oligo->ok==OV_POLY_X
-          || oligo->ok==OV_EXCL_REGION || oligo->ok==OV_GC_CLAMP
-          || oligo->ok==OV_SEQ_QUALITY || oligo->ok==OV_LIB_SIM
-          || oligo->ok==OV_END_STAB
-          );
+static int
+any_5_prime_ol_extension_has_problem(const primer_rec *oligo) {
+  return (oligo->problems.prob & five_prime_problem) != 0;
 }
 
 /*  returns a pointer to static storage, which
@@ -6295,70 +6305,60 @@ op_set_completely_written(primer_rec *oligo) {
 
 static void
 op_set_too_many_ns(primer_rec *oligo) {
-  oligo->ok = OV_TOO_MANY_NS;
   oligo->problems.prob |= OP_TOO_MANY_NS;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_overlaps_target(primer_rec *oligo) {
-  oligo->ok = OV_INTERSECT_TARGET;
   oligo->problems.prob |= OP_OVERLAPS_TARGET;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_high_gc_content(primer_rec *oligo) {
-  oligo->ok = OV_GC_CONTENT;
   oligo->problems.prob |= OP_HIGH_GC_CONTENT;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_low_gc_content(primer_rec *oligo) {
-  oligo->ok = OV_GC_CONTENT;
   oligo->problems.prob |= OP_LOW_GC_CONTENT;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_high_tm(primer_rec *oligo) {
-  oligo->ok = OV_TM_HIGH;
   oligo->problems.prob |= OP_HIGH_TM;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_low_tm(primer_rec *oligo) {
-  oligo->ok = OV_TM_LOW;
   oligo->problems.prob |= OP_LOW_TM;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_overlaps_excluded_region(primer_rec *oligo) {
-  oligo->ok = OV_EXCL_REGION;
   oligo->problems.prob |= OP_OVERLAPS_EXCL_REGION;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_high_self_any(primer_rec *oligo) {
-  oligo->ok = OV_SELF_ANY;
   oligo->problems.prob |= OP_HIGH_SELF_ANY;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_high_self_end(primer_rec *oligo) {
-  oligo->ok = OV_SELF_END;
   oligo->problems.prob |= OP_HIGH_SELF_END;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_no_gc_glamp(primer_rec *oligo) {
-  oligo->ok =   OV_GC_CLAMP;
   oligo->problems.prob |= OP_NO_GC_CLAMP;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
@@ -6366,63 +6366,54 @@ op_set_no_gc_glamp(primer_rec *oligo) {
 /* Must not be called on a hybridization probe / internal oligo */
 static void
 op_set_high_end_stability(primer_rec *oligo) {
-  oligo->ok = OV_END_STAB;
   oligo->problems.prob |= OP_HIGH_END_STABILITY;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_high_poly_x(primer_rec *oligo) {
-  oligo->ok = OV_POLY_X;
   oligo->problems.prob |= OP_HIGH_POLY_X;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_low_sequence_quality(primer_rec *oligo) {
-  oligo->ok = OV_SEQ_QUALITY;
   oligo->problems.prob |= OP_LOW_SEQUENCE_QUALITY;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_low_end_sequence_quality(primer_rec *oligo) {
-  oligo->ok = OV_SEQ_QUALITY;
   oligo->problems.prob |= OP_LOW_END_SEQUENCE_QUALITY;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_high_similarity_to_non_template_seq(primer_rec *oligo) {
-  oligo->ok = OV_LIB_SIM;
   oligo->problems.prob |= OP_HIGH_SIM_TO_NON_TEMPLATE_SEQ;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_high_similarity_to_multiple_template_sites(primer_rec *oligo) {
-  oligo->ok = OV_TEMPLATE_MISPRIMING;
   oligo->problems.prob |= OP_HIGH_SIM_TO_MULTI_TEMPLATE_SITES;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_overlaps_masked_sequence(primer_rec *oligo) {
-  oligo->ok = OV_GMASKED;
   oligo->problems.prob |= OP_OVERLAPS_MASKED_SEQ;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_too_long(primer_rec *oligo) {
-  oligo->ok = OV_TOO_LONG;
   oligo->problems.prob |= OP_TOO_LONG;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
 op_set_too_short(primer_rec *oligo) {
-  oligo->ok = OV_TOO_SHORT;
   oligo->problems.prob |= OP_TOO_SHORT;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }

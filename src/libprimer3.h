@@ -430,30 +430,6 @@ typedef struct p3_global_settings {
 typedef enum oligo_type { OT_LEFT = 0, OT_RIGHT = 1, OT_INTL = 2 }
   oligo_type;
 
-/* olgio_violation needs to be in the header file
-   because it is used in primer_rec */
-typedef enum oligo_violation { 
-  OV_UNINITIALIZED = -1,
-  OV_OK=0, 
-  OV_TOO_MANY_NS=1, 
-  OV_INTERSECT_TARGET=2,
-  OV_GC_CONTENT=3, 
-  OV_TM_LOW=4, 
-  OV_TM_HIGH=5, 
-  OV_SELF_ANY=6,
-  OV_SELF_END=7,
-  OV_EXCL_REGION=8,
-  OV_GC_CLAMP=9,
-  OV_END_STAB=10, 
-  OV_POLY_X=11,
-  OV_SEQ_QUALITY=12,
-  OV_LIB_SIM=13,
-  OV_TEMPLATE_MISPRIMING=14,
-  OV_GMASKED=15, /* edited by T. Koressaar for lowercase masking */
-  OV_TOO_SHORT=16,
-  OV_TOO_LONG=17
-} oligo_violation;
-
 typedef struct rep_sim {
   char *name;      /* Name of the sequence from given file in fasta
                     * format with maximum similarity to the oligo.
@@ -532,8 +508,6 @@ typedef struct primer_rec {
                     * does.
                     */
 
-  oligo_violation ok;
-
   char   length;   /* Length of the oligo. */
   char   num_ns;   /* Number of Ns in the oligo. */
   char   position_penalty_infinite; 
@@ -546,6 +520,8 @@ typedef struct primer_rec {
 
 const char *
 p3_primer_rec_problems_to_string(const primer_rec *);
+
+int p3_ol_is_ok(const primer_rec *);
 
 /* 
  * The structure for a pair of primers. (So that we can have a function 
