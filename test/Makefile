@@ -36,22 +36,21 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # ======================================================================
 
-# See ../src/Makefile for instructions on how to use VALGRIND_FLAG
+# See ../src/Makefile for instructions on how to use VAL
 
-# Got tired of typing VALGRIND and spelling it wrong:
 VAL =
-VALGRIND = 
+
 
 test: makeexes testtm testdpal testcore
 
 testcore:
-	-echo 'Testing primer3_core'; perl p3test.pl $(VALGRIND) $(VAL)
+	-echo 'Testing primer3_core'; perl p3test.pl $(VAL)
 
 testdpal:
-	-echo 'Testing alignment calcs'; perl dpal_test.pl $(VALGRIND); 
+	-echo 'Testing alignment calcs'; perl dpal_test.pl $(VAL); 
 
 testtm:
-	-echo 'Testing Tm calcs'; perl oligotm_test.pl $(VALGRIND);
+	-echo 'Testing Tm calcs'; perl oligotm_test.pl $(VAL);
 
 makeexes:
 	cd ../src; make
