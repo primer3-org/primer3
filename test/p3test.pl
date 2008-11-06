@@ -62,7 +62,7 @@ our ($verbose, $do_valgrind, $winFlag, $fastFlag);
 our %signo;
 
 our $valgrind_format;
-		   
+                   
 # Global variable for Errors
 my $all_ok;
 
@@ -78,28 +78,28 @@ sub main() {
     $start_time = time();
 
     if (defined $Config{sig_name}) {
-	  my $i = 0;
-	  for my $name (split(' ', $Config{sig_name})) {
-	    $signo{$name} = $i;
-	    $i++;
-	  }
+          my $i = 0;
+          for my $name (split(' ', $Config{sig_name})) {
+            $signo{$name} = $i;
+            $i++;
+          }
     }
 
     # GetOptions handles various flag abbreviations and formats,
     # such as  -e ../src/primer3_core, --exe ../src/primer3_core, 
     # --exe=.../src/primer3_core
     if (!GetOptions(\%args,
-		    'valgrind',
-		    'windows',
-		    'fast',
-		    'verbose',
-		    'executable=s',
-		    )) {
-	print "Usage: perl p3test.pl \\\n",
-	"    [--executable <primer3 executable>] [ --valgrind ] [  --verbose ] [--windows] [--fast]\n",
-	"\n",
-	"    where <primer3 executable> defaults to ../src/primer3_core\n";
-	exit -1;
+                    'valgrind',
+                    'windows',
+                    'fast',
+                    'verbose',
+                    'executable=s',
+                    )) {
+        print "Usage: perl p3test.pl \\\n",
+        "    [--executable <primer3 executable>] [ --valgrind ] [  --verbose ] [--windows] [--fast]\n",
+        "\n",
+        "    where <primer3 executable> defaults to ../src/primer3_core\n";
+        exit -1;
     }
 
     $exe = $args{'executable'} if defined$ args{'executable'};
@@ -108,24 +108,31 @@ sub main() {
     $fastFlag = defined $args{'fast'};
     $do_valgrind = $args{'valgrind'};
     if ($winFlag && $do_valgrind) {
-	print "$0: Cannot specify both --valgrind and --windows\n";
-	exit -1;
+        print "$0: Cannot specify both --valgrind and --windows\n";
+        exit -1;
     }
 
     my $valgrind_exe = "/usr/local/bin/valgrind";
-    if ((!-x $valgrind_exe) && ($do_valgrind))
-    	{ die "Cannot execute $valgrind_exe" }
+    if ((!-x $valgrind_exe) && ($do_valgrind)) { 
+        warn "Cannot find $valgrind_exe; will try `which valgrind`\n";
+        $valgrind_exe= `which valgrind`;
+        chomp($valgrind_exe);
+        if (!$valgrind_exe || ! -x $valgrind_exe) {
+            die "Cannot execute $valgrind_exe";
+        }
+    }
+
 
     # The following format works with valgrind-3.2.3:
     $valgrind_format  = $valgrind_exe
-	. " --leak-check=yes --show-reachable=yes "
-	. " --log-file-exactly=%s.vg ";
+        . " --leak-check=yes --show-reachable=yes "
+        . " --log-file-exactly=%s.vg ";
 
     if ($winFlag) {
-	$exe = '..\\src\\primer3_core.exe';
-	$set_files = '..\\test\\';
-	# $def_executable = $exe; # keep things happy @ line 237 Brant probably not necessary any more
-	# Also, line numbers of particular statements are not very stable.
+        $exe = '..\\src\\primer3_core.exe';
+        $set_files = '..\\test\\';
+        # $def_executable = $exe; # keep things happy @ line 237 Brant probably not necessary any more
+        # Also, line numbers of particular statements are not very stable.
     }
 
     my $exit_stat = 0;
@@ -133,8 +140,8 @@ sub main() {
     die "Cannot execute $exe" unless -x $exe;
 
     print 
-	"\n\n$0: testing $exe\n\n",
-	"START, ", scalar(localtime), "\n";
+        "\n\n$0: testing $exe\n\n",
+        "START, ", scalar(localtime), "\n";
     print "verbose mode\n" if $verbose;
     print "valgrind mode\n" if $do_valgrind;
 
@@ -143,163 +150,163 @@ sub main() {
     # The range of this for loop is a set of test names
     # that get translated into file names inside the loop.
     for my $test (
-		  'primer_boundary', # Put the quickest tests first.
-		  'p3_3_prime_n',
-		  'primer_tm_lc_masking',
-		  'primer_tm_lc_masking_formatted',
-		  'primer_internal',
-		  'primer_boundary_formatted',
-		  'primer_internal_formatted',
-		  'primer_start_codon',
-		  'primer_boundary1',
-		  'primer_internal1',
-		  'primer_task',
-		  'primer_task_formatted',
-		  'primer_renewed_tasks',
-		  'primer_new_tasks',
-		  'primer_all_settingsfiles',
-		  'primer_high_tm_load_set',
-		  'primer_high_gc_load_set',
-		  'primer_boundary1_formatted',
-		  'primer_internal1_formatted',
-		  'primer_check',
-		  'primer_must_use',
-		  'primer_must_use_formatted',
-		  'primer_syntax',
-		  'primer_end_pathology',
-		  'primer_num_best',
-		  'primer_quality_boundary',
-		  'primer_obj_fn',
-		  'primer',
-		  'primer1',
-		  'primer_mispriming',
-		  'primer_mispriming_formatted',
-		  'primer_mispriming_boundary1',
-		  'primer_mispriming_boundary1_formatted',
-		  'primer_mispriming_boundary2',
-		  'primer_mispriming_boundary2_formatted',
-		  'primer_mispriming_long_lib',
-		  'primer_rat',
-		  'primer_human',
-		  'long_seq',
-		  'primer_position_penalty',
-		  'primer_position_penalty_formatted',
-		  'p3-tmpl-mispriming',
-		  # Put primer_lib_amb_codes last because it is slow
-		  'primer_lib_amb_codes',
-		  ) {
+                  'primer_boundary', # Put the quickest tests first.
+                  'p3_3_prime_n',
+                  'primer_tm_lc_masking',
+                  'primer_tm_lc_masking_formatted',
+                  'primer_internal',
+                  'primer_boundary_formatted',
+                  'primer_internal_formatted',
+                  'primer_start_codon',
+                  'primer_boundary1',
+                  'primer_internal1',
+                  'primer_task',
+                  'primer_task_formatted',
+                  'primer_renewed_tasks',
+                  'primer_new_tasks',
+                  'primer_all_settingsfiles',
+                  'primer_high_tm_load_set',
+                  'primer_high_gc_load_set',
+                  'primer_boundary1_formatted',
+                  'primer_internal1_formatted',
+                  'primer_check',
+                  'primer_must_use',
+                  'primer_must_use_formatted',
+                  'primer_syntax',
+                  'primer_end_pathology',
+                  'primer_num_best',
+                  'primer_quality_boundary',
+                  'primer_obj_fn',
+                  'primer',
+                  'primer1',
+                  'primer_mispriming',
+                  'primer_mispriming_formatted',
+                  'primer_mispriming_boundary1',
+                  'primer_mispriming_boundary1_formatted',
+                  'primer_mispriming_boundary2',
+                  'primer_mispriming_boundary2_formatted',
+                  'primer_mispriming_long_lib',
+                  'primer_rat',
+                  'primer_human',
+                  'long_seq',
+                  'primer_position_penalty',
+                  'primer_position_penalty_formatted',
+                  'p3-tmpl-mispriming',
+                  # Put primer_lib_amb_codes last because it is slow
+                  'primer_lib_amb_codes',
+                  ) {
 
-	# We are inside the for loop here....
-	print "$test...";
+        # We are inside the for loop here....
+        print "$test...";
 
-	if ($test eq 'primer_lib_amb_codes') {
-	    if ($fastFlag) {
-		print "[skiped in fast mode]\n ";	
-		next;
-	    }
-	    print 
-		"\nNOTE: this test takes _much_ longer than the others ",
-		"(10 to 20 minutes or more).\n",
-		"starting $test at ", scalar(localtime), "...";
-	}
-	my $valgrind_prefix
-	    = $do_valgrind ? sprintf $valgrind_format, $test : '';
+        if ($test eq 'primer_lib_amb_codes') {
+            if ($fastFlag) {
+                print "[skiped in fast mode]\n ";       
+                next;
+            }
+            print 
+                "\nNOTE: this test takes _much_ longer than the others ",
+                "(10 to 20 minutes or more).\n",
+                "starting $test at ", scalar(localtime), "...";
+        }
+        my $valgrind_prefix
+            = $do_valgrind ? sprintf $valgrind_format, $test : '';
 
-	# Figure out what the files are called for a particular test
-	my $testx = $test;
-	$testx =~ s/_formatted$//;
-	my $input = $testx . '_input';
-	my $output = $test . '_output';
-	my $tmp = $test . '.tmp';
+        # Figure out what the files are called for a particular test
+        my $testx = $test;
+        $testx =~ s/_formatted$//;
+        my $input = $testx . '_input';
+        my $output = $test . '_output';
+        my $tmp = $test . '.tmp';
 
-	# Make sure that needed files are present and readable
-	die "Cannot read $input"  unless -r $input;
-	die "Cannot read $output"  unless -r $output;
+        # Make sure that needed files are present and readable
+        die "Cannot read $input"  unless -r $input;
+        die "Cannot read $output"  unless -r $output;
 
-	my $r;			# Return value for tests
+        my $r;                  # Return value for tests
 
-	if ($test eq 'primer' || $test eq 'primer1') {
-	    # These tests generate primer lists, which
-	    # need to be checked separately.
+        if ($test eq 'primer' || $test eq 'primer1') {
+            # These tests generate primer lists, which
+            # need to be checked separately.
 
-	    my $list_tmp = $test.'_list_tmp';
-	    # We need to chdir below because primer3 puts the 'list' files
-	    # in the current working directory. 
+            my $list_tmp = $test.'_list_tmp';
+            # We need to chdir below because primer3 puts the 'list' files
+            # in the current working directory. 
 
-	    # get a list of the files to remove (if any) in this directory 
-	    my @tempList = glob('./' . $test.'_list_tmp/*');
-	    # delete them
-	    for my $t (@tempList) {
-        	unlink $t;
-	    }
-	    # go down into primer|primer1 list_tmp directory
-	    chdir $list_tmp;
+            # get a list of the files to remove (if any) in this directory 
+            my @tempList = glob('./' . $test.'_list_tmp/*');
+            # delete them
+            for my $t (@tempList) {
+                unlink $t;
+            }
+            # go down into primer|primer1 list_tmp directory
+            chdir $list_tmp;
 
-	    my $tmpCmd;
-	    # generate the necc. files; If $winFlag is 
-	    # set, run command with Windows backslashes
-	    # in path.
-	    if ($winFlag) {
-	        $tmpCmd = "..\\$exe -strict_tags <../$input >../$tmp";
-	    }  else {
-		$tmpCmd = "$valgrind_prefix ../$exe -strict_tags <../$input >../$tmp";
-	    }
-	    $r = _nowarn_system($tmpCmd);
-	    # back to main directory
-	    chdir "../";
-	} elsif ($test =~ /formatted$/) {
-	    my $cmd = "$valgrind_prefix$exe -strict_tags -format_output <$input >$tmp";
-	    $r = _nowarn_system($cmd);
-	} elsif ($test =~ /_load_set/) {
-	    my $cmd = "$valgrind_prefix$exe -strict_tags -p3_settings_file=$set_files$test.set <$input >$tmp";
-	    $r = _nowarn_system($cmd);
-	} else {
-	    my $cmd = "$valgrind_prefix$exe -strict_tags <$input >$tmp";
-	    $r = _nowarn_system($cmd);
-	}
+            my $tmpCmd;
+            # generate the necc. files; If $winFlag is 
+            # set, run command with Windows backslashes
+            # in path.
+            if ($winFlag) {
+                $tmpCmd = "..\\$exe -strict_tags <../$input >../$tmp";
+            }  else {
+                $tmpCmd = "$valgrind_prefix ../$exe -strict_tags <../$input >../$tmp";
+            }
+            $r = _nowarn_system($tmpCmd);
+            # back to main directory
+            chdir "../";
+        } elsif ($test =~ /formatted$/) {
+            my $cmd = "$valgrind_prefix$exe -strict_tags -format_output <$input >$tmp";
+            $r = _nowarn_system($cmd);
+        } elsif ($test =~ /_load_set/) {
+            my $cmd = "$valgrind_prefix$exe -strict_tags -p3_settings_file=$set_files$test.set <$input >$tmp";
+            $r = _nowarn_system($cmd);
+        } else {
+            my $cmd = "$valgrind_prefix$exe -strict_tags <$input >$tmp";
+            $r = _nowarn_system($cmd);
+        }
 
-	unless ($r == 0) {
-	    $all_ok = 0;
-	    print "NON-0 EXIT: $r [FAILED]\n";
-	    $exit_stat = -1;
-	    next;
-	}
+        unless ($r == 0) {
+            $all_ok = 0;
+            print "NON-0 EXIT: $r [FAILED]\n";
+            $exit_stat = -1;
+            next;
+        }
 
-	$r = perldiff $output, $tmp;
-	if ($r == 0) {
-	    print "[OK]\n";
-	} else {
-	    $all_ok = 0;
-	    print "[FAILED]\n";
-	    $exit_stat = -1;
-	}
+        $r = perldiff $output, $tmp;
+        if ($r == 0) {
+            print "[OK]\n";
+        } else {
+            $all_ok = 0;
+            print "[FAILED]\n";
+            $exit_stat = -1;
+        }
 
-	if ($test eq 'primer' || $test eq 'primer1') {
-	    my $list_tmp = $test.'_list_tmp';
-	    my $list_last = $test.'_list_last';
-	    my @tempList = glob($list_last.'/*');
-	    # do _file by file_ comparison within primer_list_last to primer_list_tmp
-	    # since we are not using diff - diff used to do directory comparison
-	    for my $t (@tempList) {
-		# sneakily get correct paths since glob of primer_list_last returns
-		# primer_list_last/filename_within_primer_list_last
-		my $regex = "[^/]+/";
-		$t=~ s/$regex//g;
-		if (perldiff $list_tmp."/".$t, $list_last."/".$t) {
-		    $r = 1;
-		}
-	    }
-	    print $test. "_list_files...";
-	    if ($r == 0) {
-		print "[OK]\n";
-	    } 
-	    else {
-		$all_ok = 0;
-		print "[FAILED]\n";
-		$exit_stat = -1;
-	    }
-	}
-    }		      # End of long for loop, for my $test in (.....) 
+        if ($test eq 'primer' || $test eq 'primer1') {
+            my $list_tmp = $test.'_list_tmp';
+            my $list_last = $test.'_list_last';
+            my @tempList = glob($list_last.'/*');
+            # do _file by file_ comparison within primer_list_last to primer_list_tmp
+            # since we are not using diff - diff used to do directory comparison
+            for my $t (@tempList) {
+                # sneakily get correct paths since glob of primer_list_last returns
+                # primer_list_last/filename_within_primer_list_last
+                my $regex = "[^/]+/";
+                $t=~ s/$regex//g;
+                if (perldiff $list_tmp."/".$t, $list_last."/".$t) {
+                    $r = 1;
+                }
+            }
+            print $test. "_list_files...";
+            if ($r == 0) {
+                print "[OK]\n";
+            } 
+            else {
+                $all_ok = 0;
+                print "[FAILED]\n";
+                $exit_stat = -1;
+            }
+        }
+    }                 # End of long for loop, for my $test in (.....) 
 
     # ================================================== 
     # If we were running under valgrind to look for memory-related
@@ -307,21 +314,21 @@ sub main() {
     # an array, etc) or leaks, then we look through the valgrind
     # logs to summarize errors and leaks.
     if ($do_valgrind) {
-	# Assume this is Unix/Linux envrionment, so
-	# we have grep.
-	my $r = system "grep ERROR *.vg */*.vg | grep -v 'ERROR SUMMARY: 0 errors'";
-	if (!$r) { # !$r because grep returns 0 if something is found,
-	    # and if something is found, we have a problem.
-	    $exit_stat = -1;
-	}
-	$r = system "grep 'definitely lost' *.vg */*.vg | grep -v ' 0 bytes'";
-	if (!$r) {
-	    $exit_stat = -1;
-	}
-	$r = system "grep 'possibly lost' *.vg */*.vg   | grep -v ' 0 bytes'";
-	if (!$r) {
-	    $exit_stat = -1;
-	}
+        # Assume this is Unix/Linux envrionment, so
+        # we have grep.
+        my $r = system "grep ERROR *.vg */*.vg | grep -v 'ERROR SUMMARY: 0 errors'";
+        if (!$r) { # !$r because grep returns 0 if something is found,
+            # and if something is found, we have a problem.
+            $exit_stat = -1;
+        }
+        $r = system "grep 'definitely lost' *.vg */*.vg | grep -v ' 0 bytes'";
+        if (!$r) {
+            $exit_stat = -1;
+        }
+        $r = system "grep 'possibly lost' *.vg */*.vg   | grep -v ' 0 bytes'";
+        if (!$r) {
+            $exit_stat = -1;
+        }
     }
     print $all_ok ? "\nPassed all tests - [OK]\n" : "\nAt least one test failed - [FAILED]\n";
     print "Tests run for ", (time() - $start_time), " seconds.\n";
@@ -340,7 +347,7 @@ sub perldiff($$) {
     my @f2 = <F2>;
     # If different number of lines, return FAIL.
     if (@f1 != @f2) {
-	print "Different number of lines\n";
+        print "Different number of lines\n";
         return 1;
     }
     # check for differences on the lines, themselves
@@ -348,59 +355,59 @@ sub perldiff($$) {
     my $line_end_diff = 0;
     # iterate using lines in file1
     while (@f1) {
-	$linenumber++;
+        $linenumber++;
 
-	# get the lines from each respective file
-	my $l1 = shift @f1;
-	my $l2 = shift @f2;
-	my $l1_orig = $l1;
-	my $l2_orig = $l2;
+        # get the lines from each respective file
+        my $l1 = shift @f1;
+        my $l2 = shift @f2;
+        my $l1_orig = $l1;
+        my $l2_orig = $l2;
 
-	# Handle the diff in empty_1.{out2,tmp2} due to
-	# different executable names.
-	if ($exe ne $def_executable && $l1 =~/^USAGE:\s+\S+/) {
-	    $l1 =~ s/^USAGE:\s+\S+/USAGE: ... /i;
-	    $l2 =~ s/^USAGE:\s+\S+/USAGE: ... /i;
-	    if ($verbose) {
-		print "removing executable name from\n",
-		"$l1_orig\n$l2_orig\n";
-	    }
-	}
+        # Handle the diff in empty_1.{out2,tmp2} due to
+        # different executable names.
+        if ($exe ne $def_executable && $l1 =~/^USAGE:\s+\S+/) {
+            $l1 =~ s/^USAGE:\s+\S+/USAGE: ... /i;
+            $l2 =~ s/^USAGE:\s+\S+/USAGE: ... /i;
+            if ($verbose) {
+                print "removing executable name from\n",
+                "$l1_orig\n$l2_orig\n";
+            }
+        }
 
-	# Remove everything up to and including the first
-	# colon, which removes the executable name.
+        # Remove everything up to and including the first
+        # colon, which removes the executable name.
         # This substitution must follow the USAGE
-	# substitution, above
-	my $regex = "[^:]+:";
+        # substitution, above
+        my $regex = "[^:]+:";
 
-	my $quoteexe = quotemeta($def_executable);
+        my $quoteexe = quotemeta($def_executable);
 
-	# Edit executable name
-	if ($exe ne $def_executable && ($l1 =~ /$quoteexe/ || $l2  =~ /$quoteexe/)) {
-	    $l1 =~ s/$regex//g;
-	    $l2 =~ s/$regex//g;
-	    if ($verbose) {
-		print "removing <executable>: from\n",
-		"$l1_orig\n$l2_orig\n";
-	    }
-	}
+        # Edit executable name
+        if ($exe ne $def_executable && ($l1 =~ /$quoteexe/ || $l2  =~ /$quoteexe/)) {
+            $l1 =~ s/$regex//g;
+            $l2 =~ s/$regex//g;
+            if ($verbose) {
+                print "removing <executable>: from\n",
+                "$l1_orig\n$l2_orig\n";
+            }
+        }
 
-	# Edit release number
-	if ($l1 ne $l2) {
-	    if ($l1 =~ /primer3 release \d+\.\d+\.\d+/
-		&& $l2 =~ /primer3 release \d+\.\d+\.\d+/) {
-		$l1 =~ s/primer3 release \d+\.\d+\.\d+//;
-		$l2 =~ s/primer3 release \d+\.\d+\.\d+//;
-	    }
-	}
+        # Edit release number
+        if ($l1 ne $l2) {
+            if ($l1 =~ /primer3 release \d+\.\d+\.\d+/
+                && $l2 =~ /primer3 release \d+\.\d+\.\d+/) {
+                $l1 =~ s/primer3 release \d+\.\d+\.\d+//;
+                $l2 =~ s/primer3 release \d+\.\d+\.\d+//;
+            }
+        }
 
         $linenumber++;
-	# Check for difference between two edited lines (line by line)
-	if ($l1 ne $l2) {
-	    print 
-		"Difference found at line $linenumber:\n<  $l1_orig\n>  $l2_orig\n";
-	    return 1;
-	}
+        # Check for difference between two edited lines (line by line)
+        if ($l1 ne $l2) {
+            print 
+                "Difference found at line $linenumber:\n<  $l1_orig\n>  $l2_orig\n";
+            return 1;
+        }
     }
     return 0;
 }
@@ -416,36 +423,36 @@ sub test_fatal_errors() {
         my ($root) = /(.*)\.in$/;  # Hint, the parens around $root give
                                    # the result of the match in
                                    # an array context.
-	print "  $root\n";
-	my $valgrind_prefix
-	    = $do_valgrind ? sprintf $valgrind_format, $root : '';
+        print "  $root\n";
+        my $valgrind_prefix
+            = $do_valgrind ? sprintf $valgrind_format, $root : '';
 
-	my $cmd = "$valgrind_prefix$exe <$_ > $root.tmp 2> $root.tmp2";
-	if ($winFlag) {
-	    $r = _nowarn_system($cmd);  # FIX ME --- both branches are the same
-	}
-	else {
-	    $r = _nowarn_system($cmd);
-	}
-	if ($? == 0) {
-	    my $r = $? >> 8;
-	    print
-		"\nErroneous 0 exit status ($?) from command $cmd\n";
-	    $problem = 1;
-	}
-	if (perldiff "$root.tmp", "$root.out") {
-	    print
-		"Difference found between $root.out and $root.tmp\nfrom $cmd\n\n";
-	    $problem = 1;
-	}
-	if (perldiff "$root.tmp2", "$root.out2") {
-	    print 
-		"\nDifference found between $root.out2 and $root.tmp2\nfrom $cmd\n\n";
-	    $problem = 1;
-	}
+        my $cmd = "$valgrind_prefix$exe <$_ > $root.tmp 2> $root.tmp2";
+        if ($winFlag) {
+            $r = _nowarn_system($cmd);  # FIX ME --- both branches are the same
+        }
+        else {
+            $r = _nowarn_system($cmd);
+        }
+        if ($? == 0) {
+            my $r = $? >> 8;
+            print
+                "\nErroneous 0 exit status ($?) from command $cmd\n";
+            $problem = 1;
+        }
+        if (perldiff "$root.tmp", "$root.out") {
+            print
+                "Difference found between $root.out and $root.tmp\nfrom $cmd\n\n";
+            $problem = 1;
+        }
+        if (perldiff "$root.tmp2", "$root.out2") {
+            print 
+                "\nDifference found between $root.out2 and $root.tmp2\nfrom $cmd\n\n";
+            $problem = 1;
+        }
     }
     if ($problem == 1){
-    	$all_ok = 0;
+        $all_ok = 0;
     }
     print $problem ? "[FAILED]" : "[OK]" ,"\n";
 }
@@ -457,21 +464,21 @@ sub _nowarn_system($) {
     my $r = system $cmd;
     my $r2 = $?;
     if (!$winFlag && WIFEXITED($r2)) {
-	$r = WEXITSTATUS($r2);
-	if (defined $signo{'INT'}) {
-	    if ($r == $signo{'INT'}) {
-		print "\nCommand: $cmd\n";
+        $r = WEXITSTATUS($r2);
+        if (defined $signo{'INT'}) {
+            if ($r == $signo{'INT'}) {
+                print "\nCommand: $cmd\n";
                 print "generated exit value $r\n";
-		print "Presumably caused by catching SIGINT\n";
-		print "Tests halted\n\n";
-		print "\nWARNING: not all tests executed ... [FAILED]\n";
-		exit;
-	    }
-	}
+                print "Presumably caused by catching SIGINT\n";
+                print "Tests halted\n\n";
+                print "\nWARNING: not all tests executed ... [FAILED]\n";
+                exit;
+            }
+        }
     }
     if (!$winFlag && WIFSIGNALED($r2)) {
-	my $r2 = WTERMSIG($r2);
-	print "Exited with signal $r2\n";
+        my $r2 = WTERMSIG($r2);
+        print "Exited with signal $r2\n";
     }
     $r;
 }

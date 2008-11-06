@@ -36,8 +36,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # ======================================================================
 
-# See ../src/Makefile for instructions on how to use VAL
-
+# See ../src/Makefile for detailed instructions on how to use VAL
+# The only valid non-empty value for VAL is --valgrind
 VAL =
 
 

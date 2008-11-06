@@ -36,7 +36,9 @@
 use strict;
 use warnings 'all';
 use Getopt::Long;
+use Carp;
 use constant EPSILON => 1e-5;
+
 
 my $do_valgrind;
 
@@ -44,8 +46,20 @@ if (!GetOptions('valgrind', \$do_valgrind)) {
     print STDERR "Usage: $0 [ --valgrind ]\n";
     exit -1;
 }
+
+my $valgrind_exe = "/usr/local/bin/valgrind";
+if ((!-x $valgrind_exe) && ($do_valgrind)) { 
+    warn "Cannot find $valgrind_exe; will try `which valgrind`\n";
+    $valgrind_exe= `which valgrind`;
+    chomp($valgrind_exe);
+    if (!$valgrind_exe || ! -x $valgrind_exe) {
+        die "Cannot execute $valgrind_exe";
+    }
+}
+
+
 my $valgrind_format
-    = "/usr/local/bin/valgrind --leak-check=yes "
+    = "$valgrind_exe --leak-check=yes "
     . " --show-reachable=yes --log-file-exactly=oligotm.%0.3d.valg ";
 
 my $nr=1;
@@ -62,21 +76,21 @@ while(<F>){
     my @tmp=split(/\t/);
     my $valgrind_prefix = $do_valgrind ? sprintf($valgrind_format, $nr) : '';
     my $cmd = 
-	"$valgrind_prefix "
-	. " ../src/oligotm -tp $tmp[1] -sc $tmp[2] -mv $tmp[3] "
-	. " -dv $tmp[4] -n $tmp[5] $tmp[0] |";
+        "$valgrind_prefix "
+        . " ../src/oligotm -tp $tmp[1] -sc $tmp[2] -mv $tmp[3] "
+        . " -dv $tmp[4] -n $tmp[5] $tmp[0] |";
     open(CMD, $cmd); # execute the command and take the output
     my $tm=<CMD>;
     chomp $tm;
     close(CMD);
     if($tm){
-	if(($tm-$tmp[6])>EPSILON) {
-	    $failure++;
-	    print STDERR "$cmd FAILED (expected $tm, got $tmp[6])\n";
-	}
+        if(($tm-$tmp[6])>EPSILON) {
+            $failure++;
+            print STDERR "$cmd FAILED (expected $tm, got $tmp[6])\n";
+        }
     } else {
-	$failure++;
-	print STDERR  "$cmd FAILED (no output)\n";
+        $failure++;
+        print STDERR  "$cmd FAILED (no output)\n";
     }
     $nr++;
 }
@@ -87,9 +101,9 @@ $nr--;
 if ($do_valgrind) {
     my $r = system "grep ERROR *.valg | grep -v 'ERROR SUMMARY: 0 errors'";
     if (!$r) { 
-	# !$r because grep returns 0 if something is found,
-	# and if something is found, we have a problem.
-	print STDERR "valgrind found errors\n";
+        # !$r because grep returns 0 if something is found,
+        # and if something is found, we have a problem.
+        print STDERR "valgrind found errors\n";
     }
 }
 

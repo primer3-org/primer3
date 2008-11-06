@@ -48,9 +48,10 @@ use Carp;
 our $test_count = 0;
 our $exit_status = 0;
 our $do_valgrind;
-our $valgrind_format
-    = "/usr/local/bin/valgrind --leak-check=yes "
-    . " --show-reachable=yes --log-file-exactly=ntdpal.%0.4d.valg ";
+
+
+our $valgrind_exe = "/usr/local/bin/valgrind";
+our $valgrind_format;
 
 sub main();
 
@@ -65,10 +66,10 @@ sub runtest($$$$$) {
     open OLDOUT, ">&STDOUT" or confess "Cannot dup STDOUT: $!";
     open STDOUT, '>', $outfile or confess "open STDOUT '>' $outfile: $!";
     while (my $in = <Q>) {
-	$test_count++;
-	my $valgrind_prefix 
-	    = $do_valgrind ? sprintf($valgrind_format, $test_count) : '';
-	system "$valgrind_prefix ../src/ntdpal $ntdpal_args $in";
+        $test_count++;
+        my $valgrind_prefix 
+            = $do_valgrind ? sprintf($valgrind_format, $test_count) : '';
+        system "$valgrind_prefix ../src/ntdpal $ntdpal_args $in";
     }
     close Q;
     open STDOUT, ">&OLDOUT" or confess "Cannot dup OLDOUT: $!";
@@ -80,12 +81,26 @@ sub runtest($$$$$) {
 
 sub main() {
 
-    select STDERR;		# By default, print to STDERR
+    select STDERR;              # By default, print to STDERR
 
     if (!GetOptions('valgrind', \$do_valgrind)) {
-	print "Usage: $0 [ --valgrind ]\n";
-	exit -1;
+        print "Usage: $0 [ --valgrind ]\n";
+        exit -1;
     }
+
+    if ((!-x $valgrind_exe) && ($do_valgrind)) { 
+        warn "Cannot find $valgrind_exe; will try `which valgrind`\n";
+        $valgrind_exe= `which valgrind`;
+        chomp($valgrind_exe);
+        if (!$valgrind_exe || ! -x $valgrind_exe) {
+            die "Cannot execute $valgrind_exe";
+        }
+    }
+
+    $valgrind_format
+        = "$valgrind_exe --leak-check=yes "
+        . " --show-reachable=yes --log-file-exactly=ntdpal.%0.4d.valg ";
+
 
     # Look for the ntdpal executable
     die "Cannot execute ../src/ntdpal" unless -x '../src/ntdpal';
@@ -98,50 +113,50 @@ sub main() {
     # Test error handling on over-long input sequence:
     print 'Error handling of too-long sequence...';
     my $r = system '$valgrind_prefeix ../src/ntdpal ACGTGTTCGTCGTAAATAACATGCTATATT GACGTAGACAACCCTGTGTTTAGCCTGCGTTTTGTGCCATCCTAATGCTTTACTAGATCACTGAGCCACCTCCCAAGGACTACACCTAGCGGTATTTCGTACATTAACTAGGATCCTTTTCCACATGGACTACAATGTCTGCCGAGCATGCGATGGGGTACCGCGCCCGCGCACATACGCGCGCAGAGCTTTTGGAGGCATACCTACACCGGCGAGGGGCTGCGGTTTATTGACACTGAAACGGGATAACGAGTCGCTGAATTGAGCCAAAAATATGCAAGCGTCACAAATTGTGACAAAAATTTTAAAGGAAAAATTAGACCATTGATTCTGAAGTGGTGCGTATAGGACCAGTCGTGGCAATGAGACCGATTTGAGTAGCACTAGCTCAAACACTGTCTGGGTCGCCATCAAGGCCACAAGAACTTAAGCAGCCGTCACCCTATAGAAGGTTAAGCGACGGTTAGGGCTTCTGGCAACGAAAGTTGTCGGTTCGTCCTGTGCCAACGTGTGGCAAAGTCTACTATGATTCGATTGTTGACGTGTCGACAGGCTGTTTCGCTGGATACCCCACCTTGATAATTTTTCTCGTCGAACGCTAGCAGTTTTTTTTTCAACGGCCCGGAATCTGTAAGAGGCCGTTGCAGGAACGCGTGTGTATGTAAATGCCCACTACTTCTGTTATGTACCCAAATGGCGTGCGGCGTGGATGTATAGTGTCGACCCTCCATAATCGGGCGGACGGTCGTGGGGTATGTATGATCTTCGGCACTGATTCGCCTCGAGTCTATATGTTCTTAATCCAGACCTTCGGGGAAAGCCTACTTTCCATCCGTTGTCTAGCGTCATGCCAGTGACTACTGTTGTATTGTCTGGTTCCTAAGATAGCCATGGATTCCGGACATCGACGATGCACAAGAGCGTTAGCGCTGGTGTGCAACGCAACGTCGCGAAGGCTGGGTTACAGCGTGATCTCCTGGCTGCACCCAGATGCAGAGGGACATACCTACGATGAATAGGTGCGTCTGTTTATAAACGCCCAATCCTAGCAAAAATCACAACTAAGACAGTGTATGGAAGACCCACCAGTTGTGGGCGAATGGTCAGGTATACAAGATCGTGTCAAGACGGAACTTAAGCTTCTGTGCGCTCTCCATGCGAGCTGGTACGTCTGGACGGCGAGGTATGAGTGAATGACCATCCATGGCAACTTTCGTGTTCTACGACAGATACGAGCTCGACGGACGACCTGGTGACCAGTAGTATATGCGCGTCCGTCGGCCAGACTTTCCAAACGCCCTTTCAACGAGATACATGCGAACACGCTACAATTTCTCGTTCCGTCTAAAGTCGATACTCGCAAGCCCAGGCCCGTTACTACAACGCTGTTAATAGGATCAGAAGGGCCATAAGACTTTGGCAGCGGTAGCTAGGAAAGTGATGGTTGTGATGGCCCTAGTAAGGAGTCAGCCATCTACCCAACTATTTGAATGGGACCATAGCCAAGGGACCCAGCTGTTCCTTAGAAACCTGGTGACTCCCTTAGCCAATTGTGTAACTTCGTGCGTGCCAGTATTACACCTATAATCACAAGACCCCTTCAATACGAGTCCTGTGGCGTAGTGTTCCATCAAAACAATCAAGAACAGATTTCCGGTCCCCGTTGTGTTGGGATCTAGCGGACGTTGTCGGTAGATCAATAACGTAAATGCGAATCGAAGTTCTCTGGCCTAAAACAACTGCGCGCAGGGCCTCCGGTCATTGCATCTTTCTTGTCTCTCGTGAGGGCGTGATTCGTTTACCTGGAGCGAGCCGGGCACAAGAGCTATGGATTATTGGCTGGTGCAAAAACCATTCTAGCTACAATTATACTCGCGTGTCGACGATAAGAGTGAAATCACTGCGTAGGCAAACTGCCGGGTCACCAAGAGAGGCTGATACCGCGGTTCACCC l > dpal.tmp 2>&1';
-    open X, 'dpal.tmp';		# Get the test output
-    my @foo = <X>;		# Snarf it
+    open X, 'dpal.tmp';         # Get the test output
+    my @foo = <X>;              # Snarf it
     close X;
    # Check the output.....
     if ($foo[0] eq "Error: Sequence 2 longer than DPAL_MAX_ALIGN and alignment is requested\n") {
-	print "OK\n"
-	} else {
-	    print "FAILED\n";
-	    $exit_status = -1;
-	}
+        print "OK\n"
+        } else {
+            print "FAILED\n";
+            $exit_status = -1;
+        }
 
     # ==================================================
     # Additiona tests using runtest()
     runtest('Default implementations + alignment',
-	    "",  "dpal_input", 'dpal_output',
-	    'dpal_output1.tmp');
+            "",  "dpal_input", 'dpal_output',
+            'dpal_output1.tmp');
 
     runtest('Default implementations + NO alignment 1',
-	    "-s",  'dpal_input', 'dpal_score_output',
-	    'dpal_score_output1.tmp');
+            "-s",  'dpal_input', 'dpal_score_output',
+            'dpal_score_output1.tmp');
 
     runtest('Default implementations + NO alignment 2',
-	    "-s", "dpal_long_input", 'dpal_long_score_output',
-	    "dpal_long_score_output1.tmp");
+            "-s", "dpal_long_input", 'dpal_long_score_output',
+            "dpal_long_score_output1.tmp");
 
     runtest('Force _dpal_generic',
-	    '-s -f1', "dpal_input", 'dpal_score_output',
-	    "dpal_score_output4.tmp");
+            '-s -f1', "dpal_input", 'dpal_score_output',
+            "dpal_score_output4.tmp");
 
     runtest('Force _dpal_long_nopath_generic 1',
-	    '-s -f2', "dpal_input", 'dpal_score_output',
-	    "dpal_score_output2.tmp");
+            '-s -f2', "dpal_input", 'dpal_score_output',
+            "dpal_score_output2.tmp");
 
     runtest('Force _dpal_long_nopath_generic 2',
-	    '-s -f2', "dpal_long_input", 'dpal_long_score_output',
-	    "dpal_long_score_output2.tmp");
+            '-s -f2', "dpal_long_input", 'dpal_long_score_output',
+            "dpal_long_score_output2.tmp");
 
     runtest('Force long maxgap1 functions 1',
-	    '-s -f3',  "dpal_input", 'dpal_score_output',
-	    "dpal_score_output3.tmp");
+            '-s -f3',  "dpal_input", 'dpal_score_output',
+            "dpal_score_output3.tmp");
 
     runtest('Force long maxgap1 functions 2',
-	    '-s -f3',  "dpal_long_input", 'dpal_long_score_output', 
-	    "dpal_long_score_output3.tmp");
+            '-s -f3',  "dpal_long_input", 'dpal_long_score_output', 
+            "dpal_long_score_output3.tmp");
 
 
 
@@ -151,21 +166,21 @@ sub main() {
     # an array, etc) or leaks, then we look through the valgrind
     # logs to summarize errors and leaks.
     if ($do_valgrind) {
-	# Assume this is Unix/Linux envrionment, so
-	# we have grep.
-	my $r = system "grep ERROR ntdpal.*.*valg | grep -v 'ERROR SUMMARY: 0 errors'";
-	if (!$r) { # !$r because grep returns 0 if something is found,
-	    # and if something is found, we have a problem.
-	    $exit_status = -1;
-	}
-	$r = system "grep 'definitely lost' ntdpal.*.*valg | grep -v '0 bytes'";
-	if (!$r) {
-	    $exit_status = -1;
-	}
-	$r = system "grep 'possibly lost' ntdpal.*.*valg  | grep -v '0 bytes'";
-	if (!$r) {
-	    $exit_status = -1;
-	}
+        # Assume this is Unix/Linux envrionment, so
+        # we have grep.
+        my $r = system "grep ERROR ntdpal.*.*valg | grep -v 'ERROR SUMMARY: 0 errors'";
+        if (!$r) { # !$r because grep returns 0 if something is found,
+            # and if something is found, we have a problem.
+            $exit_status = -1;
+        }
+        $r = system "grep 'definitely lost' ntdpal.*.*valg | grep -v '0 bytes'";
+        if (!$r) {
+            $exit_status = -1;
+        }
+        $r = system "grep 'possibly lost' ntdpal.*.*valg  | grep -v '0 bytes'";
+        if (!$r) {
+            $exit_status = -1;
+        }
     }
 
     exit $exit_status;
