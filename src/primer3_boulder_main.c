@@ -269,7 +269,7 @@ main(argc,argv)
        unacceptable, then add warnings. */
     /* FIX ME, what about warnings for a primer pair that does not
          satisfy constraints? */
-    if (global_pa->pick_anyway) {
+    if (global_pa->pick_anyway && io_version == 4) {
       if (sarg->left_input) {
         add_must_use_warnings(&retval->warnings,
                               "Left primer", &retval->fwd.expl);

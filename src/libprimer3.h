@@ -462,10 +462,8 @@ typedef struct primer_rec {
    * and corresponding alignment score.
    */
 
-  double temp;     /* 
-                    * The oligo melting temperature calculated for the
-                    * primer.
-                    */
+  double temp; /* The oligo melting temperature calculated for the
+                * primer. */
 
   double gc_content;
 
@@ -499,19 +497,10 @@ typedef struct primer_rec {
   /* Max 3' complementarity to any ectopic site in the
      template on the reverse complement of the given template
      strand. */
-  char   target;   /* 
-                    * 0 if this primer does not overlap any target, 1 if it
-                    * does.
-                    */
-  char   excl;     /* 
-                    * 0 if does not overlap any excluded region, 1 if it
-                    * does.
-                    */
 
   char   length;   /* Length of the oligo. */
   char   num_ns;   /* Number of Ns in the oligo. */
-  char   position_penalty_infinite; 
-  /* Non-0 if the position penalty is infinite. */
+
   char   must_use; /* Non-0 if the oligo must be used even if it is illegal. */
 
   oligo_problems problems;

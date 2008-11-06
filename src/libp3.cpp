@@ -316,6 +316,13 @@ static int    is_lowercase_masked(int position,
 
 static void set_retval_both_stop_codons(const seq_args *sa, p3retval *retval);
 
+/* Functions to set bitfield parameters for oligos (or primers) */
+static void bf_set_overlaps_target(primer_rec *, int);
+static int bf_get_overlaps_target(const primer_rec *);
+static void bf_set_overlaps_excl_region(primer_rec *, int);
+static int bf_get_overlaps_excl_region(const primer_rec *);
+static void bf_set_infinite_pos_penalty(primer_rec *, int);
+static int bf_get_infinite_pos_penalty(const primer_rec *);
 
 /* Functions to record problems with oligos (or primers) */
 static void initialize_op(primer_rec *);
@@ -2316,8 +2323,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   /* Initial slots in h */
   initialize_op(h);
   h->repeat_sim.score = NULL;
-  h->target = 0;
-  h->gc_content = h->num_ns = h->excl = 0;
+  h->gc_content = h->num_ns = 0;
   h->template_mispriming = h->template_mispriming_r = ALIGN_SCORE_UNDEF;
 
   PR_ASSERT(OT_LEFT == l || OT_RIGHT == l || OT_INTL == l);
@@ -2384,20 +2390,21 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
 
   if (pa->primer_task == pick_sequencing_primers) {
     h->position_penalty = 0.0;
-    h->position_penalty_infinite = '\0';
   } else if (l != OT_INTL
              && _PR_DEFAULT_POSITION_PENALTIES(pa)
              && oligo_overlaps_interval(j, k-j+1, sa->tar2.pairs, sa->tar2.count)) {
     h->position_penalty = 0.0;
-    h->position_penalty_infinite = '\1';
-    h->target = 1;
+    bf_set_infinite_pos_penalty(h,1);
+    bf_set_overlaps_target(h,1);
   } else if (l != OT_INTL && !_PR_DEFAULT_POSITION_PENALTIES(pa)
              && 1 == sa->tar2.count) {
     compute_position_penalty(pa, sa, h, l);
-    if (h->position_penalty_infinite) h->target = 1;
+    if (bf_get_infinite_pos_penalty(h)) {
+    	bf_set_overlaps_target(h,1);
+    }
   } else {
     h->position_penalty = 0.0;
-    h->position_penalty_infinite = '\0';
+    bf_set_infinite_pos_penalty(h,0);
   }
 
   if (!PR_START_CODON_POS_IS_NULL(sa)) {
@@ -2426,20 +2433,20 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   /* FIX ME CLEAN UP LOGIC HERE */
   if (l != OT_INTL
       && oligo_overlaps_interval(j, k-j+1, sa->excl2.pairs, sa->excl2.count))
-    h->excl = 1;
+    bf_set_overlaps_excl_region(h,1);
 
   if (l == OT_INTL
       && oligo_overlaps_interval(j, k-j+1, sa->excl_internal2.pairs,
                                               sa->excl_internal2.count))
-    h->excl = 1;
+    bf_set_overlaps_excl_region(h,1);
 
-  if(l != OT_INTL && h->target==1) {
+  if(l != OT_INTL && bf_get_overlaps_target(h)) {
     op_set_overlaps_target(h);
     stats->target++;
     if (!must_use) return;
   }
 
-  if(h->excl==1){
+  if(bf_get_overlaps_excl_region(h)){
     op_set_overlaps_excluded_region(h);
     stats->excluded++;
     if (!must_use) return;
@@ -2761,11 +2768,11 @@ p_obj_fn(const p3_global_settings *pa,
            sum += pa->p_args.weights.repeat_sim
              * h->repeat_sim.score[h->repeat_sim.max]
              / PR_ALIGN_SCORE_PRECISION;
-      if (!h->target) {
+      if (!bf_get_overlaps_target(h)) {
         /* We might be evaluating p_obj_fn with h->target if
            the client supplied 'pick_anyway' and specified
            a primer or oligo. */
-        PR_ASSERT(!h->position_penalty_infinite);
+        PR_ASSERT(!(bf_get_infinite_pos_penalty(h)));
         if(pa->p_args.weights.pos_penalty)
           sum += pa->p_args.weights.pos_penalty * h->position_penalty;
       }
@@ -3228,12 +3235,12 @@ compute_position_penalty(const p3_global_settings *pa,
 
   three_prime_base = OT_LEFT == o_type
     ? h->start + h->length - 1 : h->start - h->length + 1;
-  h->position_penalty_infinite = '\1';
+  bf_set_infinite_pos_penalty(h,1);
   h->position_penalty = 0.0;
 
   if (OT_LEFT == o_type) {
     if (three_prime_base <= target_end) {
-      h->position_penalty_infinite = '\0';
+      bf_set_infinite_pos_penalty(h,0);
       if (three_prime_base < target_begin)
         h->position_penalty = target_begin - three_prime_base - 1;
       else {
@@ -3243,7 +3250,7 @@ compute_position_penalty(const p3_global_settings *pa,
     }
   } else { /* OT_RIGHT == o_type */
     if (three_prime_base >= target_begin) {
-      h->position_penalty_infinite = '\0';
+      bf_set_infinite_pos_penalty(h,0);
       if (three_prime_base > target_end) {
         h->position_penalty = three_prime_base - target_end - 1;
       } else {
@@ -6291,6 +6298,52 @@ p3_get_ol_problem_string(const primer_rec *oligo) {
   return output;
 }
 #undef ADD_OP_STR
+
+static void 
+bf_set_overlaps_target(primer_rec *oligo, int val){
+  if (val == 0) {
+    oligo->problems.prob |= BF_OVERLAPS_TARGET;
+    oligo->problems.prob ^= BF_OVERLAPS_TARGET;  
+  } else {
+    oligo->problems.prob |= BF_OVERLAPS_TARGET;
+  }
+}
+
+static int
+bf_get_overlaps_target(const primer_rec *oligo) {
+  return (oligo->problems.prob & BF_OVERLAPS_TARGET) != 0;
+}
+
+static void 
+bf_set_overlaps_excl_region(primer_rec *oligo, int val){
+  if (val == 0) {
+    oligo->problems.prob |= BF_OVERLAPS_EXCL_REGION;
+    oligo->problems.prob ^= BF_OVERLAPS_EXCL_REGION;  
+  } else {
+    oligo->problems.prob |= BF_OVERLAPS_EXCL_REGION;
+  }
+}
+
+static int
+bf_get_overlaps_excl_region(const primer_rec *oligo) {
+  return (oligo->problems.prob & BF_OVERLAPS_EXCL_REGION) != 0;
+}
+
+static void 
+bf_set_infinite_pos_penalty(primer_rec *oligo, int val){
+  if (val == 0) {
+    oligo->problems.prob |= BF_INFINITE_POSITION_PENALTY;
+    oligo->problems.prob ^= BF_INFINITE_POSITION_PENALTY;  
+  } else {
+    oligo->problems.prob |= BF_INFINITE_POSITION_PENALTY;
+  }
+}
+
+static int
+bf_get_infinite_pos_penalty(const primer_rec *oligo) {
+  return (oligo->problems.prob & BF_INFINITE_POSITION_PENALTY) != 0;
+}
+
 
 static void
 op_set_does_not_amplify_orf(primer_rec *oligo) {
