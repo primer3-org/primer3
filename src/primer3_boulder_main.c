@@ -261,6 +261,29 @@ main(argc,argv)
 			       read_boulder_record_res.file_flag);
     retval = choose_primers(global_pa, sarg);  
     if (NULL == retval) exit(-2); /* Out of memory. */
+    
+    /* This is old code to make it compartibel with version 3 input.
+       In future versions it can be deleted!
+       If it was necessary to use a left_input, right_input,
+       or internal_oligo_input primer that was
+       unacceptable, then add warnings. */
+    /* FIX ME, what about warnings for a primer pair that does not
+         satisfy constraints? */
+    if (global_pa->pick_anyway) {
+      if (sarg->left_input) {
+        add_must_use_warnings(&retval->warnings,
+                              "Left primer", &retval->fwd.expl);
+      }
+      if (sarg->right_input) {
+        add_must_use_warnings(&retval->warnings,
+                              "Right primer", &retval->rev.expl);
+      }
+      if (sarg->internal_input) {
+        add_must_use_warnings(&retval->warnings,
+                              "Hybridization probe", &retval->intl.expl);
+      }
+    }
+    /* End of the old code for compartibility. */
 
     if (pr_is_empty(&retval->glob_err)
         && pr_is_empty(&retval->per_sequence_err)) {

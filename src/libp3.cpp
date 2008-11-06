@@ -144,10 +144,6 @@ static int    _check_and_adjust_1_interval(const char *,
 static void   sort_primer_array(oligo_array *);
 
 
-static void   add_must_use_warnings(pr_append_str *,
-                                    const char *,
-                                    const oligo_stats *);
-
 static void   add_pair(const primer_pair *, pair_array_t *);
 
 static short  align(const char *, const char*, const dpal_args *a);
@@ -967,26 +963,6 @@ choose_primers(const p3_global_settings *pa,
     } /* end of loop over product size ranges */
   }
 
-  /* If it was necessary to use a left_input, right_input,
-     or internal_oligo_input primer that was
-     unacceptable, then add warnings. */
-  /* FIX ME, what about warnings for a primer pair that does not
-       satisfy constraints? */
-  if (pa->pick_anyway) {
-    if (sa->left_input) {
-      add_must_use_warnings(&retval->warnings,
-                            "Left primer", &retval->fwd.expl);
-    }
-    if (sa->right_input) {
-      add_must_use_warnings(&retval->warnings,
-                            "Right primer", &retval->rev.expl);
-    }
-    if (sa->internal_input) {
-      add_must_use_warnings(&retval->warnings,
-                            "Hybridization probe", &retval->intl.expl);
-    }
-  }
-
   if (0 != a_pair_array.storage_size) free(a_pair_array.pairs);
 
   return retval;
@@ -1220,7 +1196,7 @@ choose_internal_oligo(p3retval *retval,
    i.e. that primer was supplied by the caller
    and pick_anyway is set. */
 /* Translate the values in the struct into an warning sting message */
-static void
+void
 add_must_use_warnings(pr_append_str *warning,
                       const char* text,
                       const oligo_stats *stats)
@@ -2407,13 +2383,13 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   if (pa->primer_task == pick_sequencing_primers) {
     h->position_penalty = 0.0;
     h->position_penalty_infinite = '\0';
-  } else if (l < 2
+  } else if (l != OT_INTL
              && _PR_DEFAULT_POSITION_PENALTIES(pa)
              && oligo_overlaps_interval(j, k-j+1, sa->tar2.pairs, sa->tar2.count)) {
     h->position_penalty = 0.0;
     h->position_penalty_infinite = '\1';
     h->target = 1;
-  } else if (l < 2 && !_PR_DEFAULT_POSITION_PENALTIES(pa)
+  } else if (l != OT_INTL && !_PR_DEFAULT_POSITION_PENALTIES(pa)
              && 1 == sa->tar2.count) {
     compute_position_penalty(pa, sa, h, l);
     if (h->position_penalty_infinite) h->target = 1;
@@ -2455,7 +2431,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
                                               sa->excl_internal2.count))
     h->excl = 1;
 
-  if(l < 2 && h->target==1) {
+  if(l != OT_INTL && h->target==1) {
     op_set_overlaps_target(h);
     stats->target++;
     if (!must_use) return;
@@ -6183,31 +6159,42 @@ initialize_op(primer_rec *oligo) {
   oligo->problems.prob = 0UL;  /* 0UL is the unsigned long zero */
 }
 
+/* We use bitfields to store all primer data. The idea is that 
+ * a primer is uninitialized if all bits are 0. It was evaluated 
+ * if OP_PARTIALLY_WRITTEN is true. If OP_COMPLETELY_WRITTEN is
+ * also true the primer was evaluated till the end - meaning if 
+ * all OP_... are false, the primer is OK, if some are true 
+ * primer3 was forced to use it (must_use). */
+
+
 #define OP_PARTIALLY_WRITTEN                (1UL <<  0)
 #define OP_COMPLETELY_WRITTEN               (1UL <<  1)
+#define BF_OVERLAPS_TARGET                  (1UL <<  2)
+#define BF_OVERLAPS_EXCL_REGION             (1UL <<  3)
+#define BF_INFINITE_POSITION_PENALTY        (1UL <<  4)
 
-#define OP_TOO_MANY_NS                      (1UL <<  2)
-#define OP_OVERLAPS_TARGET                  (1UL <<  3)
-#define OP_HIGH_GC_CONTENT                  (1UL <<  4)
-#define OP_LOW_GC_CONTENT                   (1UL <<  5)
-#define OP_HIGH_TM                          (1UL <<  6)
-#define OP_LOW_TM                           (1UL <<  7)
-#define OP_OVERLAPS_EXCL_REGION             (1UL <<  8)
-#define OP_HIGH_SELF_ANY                    (1UL <<  9)
-#define OP_HIGH_SELF_END                    (1UL << 10)
-#define OP_NO_GC_CLAMP                      (1UL << 11)
-#define OP_HIGH_END_STABILITY               (1UL << 12)
-#define OP_HIGH_POLY_X                      (1UL << 13)
-#define OP_LOW_SEQUENCE_QUALITY             (1UL << 14)
-#define OP_LOW_END_SEQUENCE_QUALITY         (1UL << 15)
-#define OP_HIGH_SIM_TO_NON_TEMPLATE_SEQ     (1UL << 16)
-#define OP_HIGH_SIM_TO_MULTI_TEMPLATE_SITES (1UL << 17)
-#define OP_OVERLAPS_MASKED_SEQ              (1UL << 18)
-#define OP_TOO_LONG                         (1UL << 19)
-#define OP_TOO_SHORT                        (1UL << 20)
-#define OP_DOES_NOT_AMPLIFY_ORF             (1UL << 21)
+#define OP_TOO_MANY_NS                      (1UL <<  5)
+#define OP_OVERLAPS_TARGET                  (1UL <<  6)
+#define OP_HIGH_GC_CONTENT                  (1UL <<  7)
+#define OP_LOW_GC_CONTENT                   (1UL <<  8)
+#define OP_HIGH_TM                          (1UL <<  9)
+#define OP_LOW_TM                           (1UL << 10)
+#define OP_OVERLAPS_EXCL_REGION             (1UL << 11)
+#define OP_HIGH_SELF_ANY                    (1UL << 12)
+#define OP_HIGH_SELF_END                    (1UL << 13)
+#define OP_NO_GC_CLAMP                      (1UL << 14)
+#define OP_HIGH_END_STABILITY               (1UL << 15)
+#define OP_HIGH_POLY_X                      (1UL << 16)
+#define OP_LOW_SEQUENCE_QUALITY             (1UL << 17)
+#define OP_LOW_END_SEQUENCE_QUALITY         (1UL << 18)
+#define OP_HIGH_SIM_TO_NON_TEMPLATE_SEQ     (1UL << 19)
+#define OP_HIGH_SIM_TO_MULTI_TEMPLATE_SITES (1UL << 20)
+#define OP_OVERLAPS_MASKED_SEQ              (1UL << 21)
+#define OP_TOO_LONG                         (1UL << 22)
+#define OP_TOO_SHORT                        (1UL << 23)
+#define OP_DOES_NOT_AMPLIFY_ORF             (1UL << 24)
 
-static unsigned long int any_problem = (~0UL) ^ 3UL; /* all bits 1 except bits 0 and 1 */
+static unsigned long int any_problem = (~0UL) ^ 31UL; /* all bits 1 except bits 0 to 4 */
 
 int
 p3_ol_has_any_problem(const primer_rec *oligo) {

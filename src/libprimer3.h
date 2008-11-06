@@ -1096,6 +1096,14 @@ int    p3_print_oligo_lists(const p3retval*,
                             pr_append_str *err,
                             const char* file_name);
 
+/* Must be called from main to allow dependency on 
+ * input version=3 in future version can it be 
+ * deleted.                                       */
+void add_must_use_warnings(pr_append_str *warning,
+                      const char* text,
+                      const oligo_stats *stats);
+
+
 
 /* Reverse and complement the sequence seq and put the result in s.
    WARNING: It is up the caller to ensure that s points to enough
