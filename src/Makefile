@@ -190,8 +190,9 @@ test: $(PRIMER_EXE) ntdpal
 #
 # $ valgrind --leak-check=yes --show-reachable=yes --log-file-exactly=p3vg ./primer3_core < ../example
 #
-# Check output in file p3vg.pid[0-9]+. Valgrind is at /usr/local/bin/valgrind
-# at WI
+# Check output in file p3vg 
+#
+# Note: Valgrind is at /usr/local/bin/valgrind at WI
 # 
 # OK, now for the real tests:
 #
