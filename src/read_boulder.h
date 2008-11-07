@@ -48,7 +48,6 @@ typedef enum p3_file_type {
 typedef struct read_boulder_record_results {
   int explain_flag;
   int file_flag;
-  int show_oligo_problems;
 } read_boulder_record_results;
 
 /* 

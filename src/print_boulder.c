@@ -52,8 +52,7 @@ print_boulder(int io_version,
               const p3_global_settings *pa,
               const seq_args *sa,
               const p3retval *retval,
-              int   explain_flag,
-              int   show_oligo_problems) {
+              int   explain_flag) {
   /* The pointers to warning tag */
   char *warning;
 
@@ -243,12 +242,12 @@ print_boulder(int io_version,
       printf("PRIMER_%s%s_PENALTY=%f\n", int_oligo, suffix, intl->quality);
 
     /* Print the oligo_problems */
-    if (show_oligo_problems) {
-      if (go_fwd == 1)
+    if (io_version == 4) {
+      if (go_fwd == 1 && p3_ol_has_any_problem(fwd))
         printf("PRIMER_LEFT%s_PROBLEMS=%s\n", suffix, p3_get_ol_problem_string(fwd));
-      if (go_rev == 1)
+      if (go_rev == 1 && p3_ol_has_any_problem(rev))
         printf("PRIMER_RIGHT%s_PROBLEMS=%s\n", suffix, p3_get_ol_problem_string(rev));
-      if (go_int == 1)
+      if (go_int == 1 && p3_ol_has_any_problem(intl))
         printf("PRIMER_%s%s_PROBLEMS=%s\n", int_oligo, suffix, p3_get_ol_problem_string(intl));
     }
 

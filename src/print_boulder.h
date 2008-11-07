@@ -43,8 +43,7 @@ void   print_boulder(int,
                      const p3_global_settings *, 
                      const seq_args *, 
                      const p3retval *,
-                     int   exaplain_flag,
-                     int   show_olio_problems);
+                     int   exaplain_flag);
 
 void   print_boulder_error(const char *err);
 

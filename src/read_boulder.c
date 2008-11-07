@@ -276,7 +276,6 @@ read_boulder_record(FILE *file_input,
       COMPARE_ALIGN_SCORE("PRIMER_PAIR_ANY", pa->pair_compl_any);
       COMPARE_ALIGN_SCORE("PRIMER_PAIR_END", pa->pair_compl_end);
       COMPARE_INT("PRIMER_FILE_FLAG", res->file_flag);
-      COMPARE_INT("PRIMER_SHOW_OLIGO_PROBLEMS", res->show_oligo_problems);
       COMPARE_INT("PRIMER_PICK_ANYWAY", pa->pick_anyway);
       COMPARE_INT("PRIMER_GC_CLAMP", pa->gc_clamp);
       COMPARE_INT("PRIMER_EXPLAIN_FLAG", res->explain_flag);
@@ -521,7 +520,6 @@ read_boulder_record(FILE *file_input,
       COMPARE_ALIGN_SCORE("PRIMER_PAIR_ANY", pa->pair_compl_any);
       COMPARE_ALIGN_SCORE("PRIMER_PAIR_END", pa->pair_compl_end);
       COMPARE_INT("P3_FILE_FLAG", res->file_flag);
-      COMPARE_INT("PRIMER_SHOW_OLIGO_PROBLEMS", res->show_oligo_problems);
       COMPARE_INT("PRIMER_PICK_ANYWAY", pa->pick_anyway);
       COMPARE_INT("PRIMER_GC_CLAMP", pa->gc_clamp);
       COMPARE_INT("PRIMER_EXPLAIN_FLAG", res->explain_flag);

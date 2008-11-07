@@ -74,7 +74,7 @@ main(argc,argv)
 
   p3_global_settings *global_pa;
   seq_args *sarg;
-  read_boulder_record_results read_boulder_record_res = {0,0,0};
+  read_boulder_record_results read_boulder_record_res = {0,0};
 
   pr_append_str fatal_parse_err;
   pr_append_str nonfatal_parse_err;
@@ -269,7 +269,8 @@ main(argc,argv)
        unacceptable, then add warnings. */
     /* FIX ME, what about warnings for a primer pair that does not
          satisfy constraints? */
-    if (global_pa->pick_anyway && io_version == 4) {
+    if (global_pa->pick_anyway && (io_version == 3
+    		|| format_output)) {
       if (sarg->left_input) {
         add_must_use_warnings(&retval->warnings,
                               "Left primer", &retval->fwd.expl);
@@ -306,8 +307,7 @@ main(argc,argv)
     } else {
       /* Use boulder output */
       print_boulder(/* & */io_version, global_pa, sarg, retval, 
-                    read_boulder_record_res.explain_flag,
-                    read_boulder_record_res.show_oligo_problems);
+                    read_boulder_record_res.explain_flag);
     }
 
   loop_wrap_up: /* Here the failed loops join in again */
