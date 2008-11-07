@@ -1707,10 +1707,16 @@ pick_sequencing_primer_list(p3retval *retval,
       pr_position_f = sa->tar2.pairs[tar_n][0] - extra_seq
         + ( pa->sequencing.spacing * step_nr )
         - pa->sequencing.lead;
-      pr_position_r = sa->tar2.pairs[tar_n][0] - extra_seq
-        + ( pa->sequencing.spacing * step_nr )
-        + pa->sequencing.interval
-        + pa->sequencing.lead;
+      if ((pa->pick_left_primer) && (pa->pick_right_primer)) {
+        pr_position_r = sa->tar2.pairs[tar_n][0] - extra_seq
+          + ( pa->sequencing.spacing * step_nr )
+          + pa->sequencing.interval
+          + pa->sequencing.lead;
+      } else {
+          pr_position_r = sa->tar2.pairs[tar_n][0] - extra_seq
+            + ( pa->sequencing.spacing * (step_nr+1))
+            + pa->sequencing.lead;	  
+      }
       /* Check if calculated positions make sense */
       /* position_f can not be outside included region */
       if (pr_position_f < (pa->p_args.min_size -1)) {

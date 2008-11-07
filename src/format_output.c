@@ -428,17 +428,14 @@ print_seq(FILE *f,
             notestr[i] = 'X';
         else if (notes[i] & INTL_EXCL_REGION)
             notestr[i] = 'x';
-        else if ((notes[i] & TARGET) 
-                && (pa->primer_task == pick_sequencing_primers)
+        else if ((pa->primer_task == pick_sequencing_primers)
                 && (notes[i] & LEFT_OLIGO)
                 && (notes[i] & RIGHT_OLIGO))
           notestr[i] = '^';
-        else if ((notes[i] & TARGET) 
-                && (pa->primer_task == pick_sequencing_primers)
+        else if ((pa->primer_task == pick_sequencing_primers)
                 && (notes[i] & LEFT_OLIGO))
           notestr[i] = '>';
-        else if ((notes[i] & TARGET) 
-                && (pa->primer_task == pick_sequencing_primers)
+        else if ((pa->primer_task == pick_sequencing_primers)
                 && (notes[i] & RIGHT_OLIGO))
           notestr[i] = '<';
         else if ((notes[i] & TARGET) && (notes[i] & LEFT_OLIGO))
