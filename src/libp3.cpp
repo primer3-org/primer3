@@ -161,7 +161,6 @@ static int    choose_pair_or_triple(p3retval *,
                                     const p3_global_settings *,
                                     const seq_args *,
                                     const dpal_arg_holder *,
-                                    int,
                                     pair_array_t *);
 
 static int    sequence_quality_is_ok(const p3_global_settings *, primer_rec *,
@@ -817,11 +816,6 @@ p3retval *
 choose_primers(const p3_global_settings *pa,
                seq_args *sa)
 {
-  int          i;               /* Loop index. */
-  int          prod_size_range; /* Product size range indexr. */
-  pair_array_t a_pair_array;    /* Array for primer pairs */
-  pair_array_t *best_pairs;     /* Pointer to best primer pairs */
-
   if (pa->dump)
     p3_print_args(pa, sa) ;
 
@@ -840,9 +834,6 @@ choose_primers(const p3_global_settings *pa,
   }
 
   if (retval == NULL)  return NULL;
-
-  /* Create an alias for &retval->best_pairs */
-  best_pairs = &retval->best_pairs;
 
   /*
    * For catching ENOMEM.  WARNING: We can only use longjmp to escape
@@ -933,46 +924,11 @@ choose_primers(const p3_global_settings *pa,
   if (retval->output_type == primer_list && pa->pick_internal_oligo == 1)
     sort_primer_array(&retval->intl);
 
-  a_pair_array.storage_size = a_pair_array.num_pairs = 0;
 
   if (retval->output_type == primer_pairs) {
-
-    /* Iterate over each product-size-range until we
-       run out of size_range's or until we get pa->num_return
-       pairs.  */
-    for (prod_size_range=0;
-         prod_size_range < pa->num_intervals;
-         prod_size_range++) {
-
-      if (choose_pair_or_triple(retval, pa, sa,
-                                dpal_arg_to_use, prod_size_range,
-                                &a_pair_array)
-          !=0)
-        continue;
-
-      for (i = 0;
-           i < a_pair_array.num_pairs
-             && best_pairs->num_pairs < pa->num_return;
-           i++) {
-
-        if (
-            !oligo_pair_seen(&a_pair_array.pairs[i], best_pairs)
-            &&
-            !oligo_in_pair_overlaps_seen_oligo(&a_pair_array.pairs[i],
-                                               best_pairs,
-                                               pa->min_three_prime_distance)
-            ) {
-          add_pair(&a_pair_array.pairs[i], best_pairs);
-        } /* if .... */
-
-      } /* for (i = 0 .... */
-
-      if (pa->num_return == best_pairs->num_pairs) break;
-      a_pair_array.num_pairs = 0;
-    } /* end of loop over product size ranges */
+    choose_pair_or_triple(retval, pa, sa, dpal_arg_to_use,
+                          &retval->best_pairs);
   }
-
-  if (0 != a_pair_array.storage_size) free(a_pair_array.pairs);
 
   return retval;
 }
@@ -992,10 +948,8 @@ choose_pair_or_triple(p3retval *retval,
                       const p3_global_settings *pa,
                       const seq_args *sa,
                       const dpal_arg_holder *dpal_arg_to_use,
-                      int int_num,
-                      pair_array_t *p)
-{
-  int i,j;
+                      pair_array_t *best_pairs) {
+  int i,j; /* Loop index. */
   int num_in_p ; /*
                   * The number of acceptable primer pairs saved in p.
                   * at any one time (num_in_p <= pa->num_return.)
@@ -1006,6 +960,16 @@ choose_pair_or_triple(p3retval *retval,
 
   primer_pair h;
   pair_stats *pair_expl = &retval->best_pairs.expl;
+  
+  int int_num; /* Product size range indexr. */
+  pair_array_t the_pair_array;  /* Array for primer pairs */
+  the_pair_array.storage_size = the_pair_array.num_pairs = 0;
+  pair_array_t *p = &the_pair_array; /* Pointer to primer pairs */
+
+  /* Iterate over each product-size-range until we
+     run out of size_range's or until we get pa->num_return
+     pairs.  */
+  for (int_num=0 ; int_num < pa->num_intervals ; int_num++) {
 
   num_in_p = 0;
 
@@ -1128,9 +1092,30 @@ choose_pair_or_triple(p3retval *retval,
           compare_primer_pair);
   }
   p->num_pairs = num_in_p;
-  if (num_in_p == 0) return 1;
-  else return 0;
-}
+  if (num_in_p == 0) continue;
+
+  for (i = 0 ; 
+       i < p->num_pairs && best_pairs->num_pairs < pa->num_return;
+       i++) {
+
+     if (
+         !oligo_pair_seen(&p->pairs[i], best_pairs)
+         &&
+         !oligo_in_pair_overlaps_seen_oligo(&p->pairs[i],
+                                            best_pairs,
+                                            pa->min_three_prime_distance)
+         ) {
+       add_pair(&p->pairs[i], best_pairs);
+     } /* if .... */
+
+   } /* for (i = 0 .... */
+
+   if (pa->num_return == best_pairs->num_pairs) break;
+   p->num_pairs = 0;
+ } /* end of loop over product size ranges */
+
+ if (0 != the_pair_array.storage_size) free(the_pair_array.pairs);
+ }
 /* ============================================================ */
 /* END choose_pair_or_triple                                    */
 /* ============================================================ */
