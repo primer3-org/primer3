@@ -163,6 +163,18 @@ static int    choose_pair_or_triple(p3retval *,
                                     const dpal_arg_holder *,
                                     pair_array_t *);
 
+static int    au1_choose_pair_or_triple(p3retval *,
+                                    const p3_global_settings *,
+                                    const seq_args *,
+                                    const dpal_arg_holder *,
+                                    pair_array_t *);
+
+static int    au2_choose_pair_or_triple(p3retval *,
+                                    const p3_global_settings *,
+                                    const seq_args *,
+                                    const dpal_arg_holder *,
+                                    pair_array_t *);
+
 static int    sequence_quality_is_ok(const p3_global_settings *, primer_rec *,
                                      oligo_type,
                                      const seq_args *, int, int,
@@ -924,8 +936,9 @@ choose_primers(const p3_global_settings *pa,
   if (retval->output_type == primer_list && pa->pick_internal_oligo == 1)
     sort_primer_array(&retval->intl);
 
-
+  /* Select primer pairs if needed */
   if (retval->output_type == primer_pairs) {
+	/* STEVE CHANGE HERE TO TRY */
     choose_pair_or_triple(retval, pa, sa, dpal_arg_to_use,
                           &retval->best_pairs);
   }
@@ -1013,34 +1026,24 @@ choose_pair_or_triple(p3retval *retval,
       if (PAIR_OK ==
           characterize_pair(retval, pa, sa, j, i, int_num, &h, dpal_arg_to_use)) {
 
-        if (!pa->pr_pair_weights.io_quality) {
-          h.pair_quality = obj_fn(pa, &h);
-          PR_ASSERT(h.pair_quality >= 0.0);
-        }
-
         if (pa->pick_right_primer && pa->pick_left_primer
-            && pa->pick_internal_oligo
-            && (choose_internal_oligo(retval,
-                                      h.left, h.right,
-                                      &n_int, sa, pa,
-                                      dpal_arg_to_use)!=0)) {
-          pair_expl->internal++;
-          continue;
+            && pa->pick_internal_oligo) {
+          if (choose_internal_oligo(retval,
+                                    h.left, h.right,
+                                    &n_int, sa, pa,
+                                    dpal_arg_to_use)!=0) {
+            pair_expl->internal++;
+            continue;
+          } else {
+            h.intl = &retval->intl.oligo[n_int];
+          }
         }
-
         pair_expl->ok++;
+       
+        h.pair_quality = obj_fn(pa, &h);
+        PR_ASSERT(h.pair_quality >= 0.0);
 
         if (num_in_p < pa->num_return) {
-
-          if (pa->pick_right_primer && pa->pick_left_primer
-                                && pa->pick_internal_oligo)
-            h.intl = &retval->intl.oligo[n_int];
-
-          if (pa->pr_pair_weights.io_quality) {
-            h.pair_quality = obj_fn(pa, &h);
-            PR_ASSERT(h.pair_quality >= 0.0);
-          }
-
           add_pair(&h, p);
 
           if (num_in_p == 0 || compare_primer_pair(&h, &worst_pair) > 0) {
@@ -1050,15 +1053,6 @@ choose_pair_or_triple(p3retval *retval,
           num_in_p++;
         } else {
           /* num_in_p >= pa->num_return */
-          if (pa->pick_right_primer && pa->pick_left_primer
-              && pa->pick_internal_oligo) {
-            h.intl = &retval->intl.oligo[n_int];
-          }
-
-          if (pa->pr_pair_weights.io_quality) {
-            h.pair_quality = obj_fn(pa, &h);
-            PR_ASSERT(h.pair_quality >= 0.0);
-          }
 
           /* FIX me, check whether a left (resp. right) primer overlaps
              an existing left (resp. right) primer.  If so, we
@@ -1119,6 +1113,291 @@ choose_pair_or_triple(p3retval *retval,
 /* ============================================================ */
 /* END choose_pair_or_triple                                    */
 /* ============================================================ */
+
+static int
+au1_choose_pair_or_triple(p3retval *retval,
+                      const p3_global_settings *pa,
+                      const seq_args *sa,
+                      const dpal_arg_holder *dpal_arg_to_use,
+                      pair_array_t *best_pairs) {
+	  int i,j; /* Loop index. */
+	  int num_in_p ; /*
+	                  * The number of acceptable primer pairs saved in p.
+	                  * at any one time (num_in_p <= pa->num_return.)
+	                  */
+	  int i0, n_last, n_int;
+	  primer_pair worst_pair; /* The worst pair among those being "remembered". */
+	  int i_worst;            /* The index within p of worst_pair. */
+
+	  primer_pair h;
+	  pair_stats *pair_expl = &retval->best_pairs.expl;
+	  
+	  int int_num; /* Product size range indexr. */
+	  pair_array_t the_pair_array;  /* Array for primer pairs */
+	  the_pair_array.storage_size = the_pair_array.num_pairs = 0;
+	  pair_array_t *p = &the_pair_array; /* Pointer to primer pairs */
+
+	  int continue_trying = 1;
+	  int_num = 0;
+	  
+	  int goup_pick = pa->num_return; /* double of the needed */
+	  
+	  /* Iterate over each product-size-range until we
+	     run out of size_range's or until we get pa->num_return
+	     pairs.  */
+	  while(continue_trying == 1) {
+
+	  num_in_p = 0;
+	  worst_pair.pair_quality = DBL_MAX;
+	  i_worst = 0;
+	  n_last = retval->fwd.num_elem;
+
+	  for (i=0; i<retval->rev.num_elem; i++) {
+
+	    if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) continue;
+
+	    /*
+	     * Make a cut based on the the quality of the best left
+	     * primer.
+	     * worst_pair must be defined if k >= pa->num_return.
+	     */
+	    if ((num_in_p >= goup_pick)
+	        && (pa->pr_pair_weights.primer_quality *
+	           (retval->rev.oligo[i].quality + retval->fwd.oligo[0].quality)
+	             > worst_pair.pair_quality))
+	      break;
+
+	    for (j=0; j<n_last; j++) {
+	      /*
+	       * Invariant: if 2 pairs in p have the same pair_quality, then the
+	       * pair discovered second will have a higher index within p.
+	       *
+	       * This invariant is needed to produce consistent results when 2
+	       * pairs have the same pair_quality.
+	       */
+
+	      if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) break;
+	      if (!OK_OR_MUST_USE(&retval->fwd.oligo[j])) continue;
+	      if ((num_in_p >= goup_pick)
+	          && (pa->pr_pair_weights.primer_quality *
+	        	 (retval->fwd.oligo[j].quality + retval->rev.oligo[i].quality) 
+	        	   > worst_pair.pair_quality)) {
+	        /* worst_pair must be defined if k >= pa->num_return. */
+	        n_last=j;
+	        break;
+	      }
+
+	      if (PAIR_OK ==
+	          characterize_pair(retval, pa, sa, j, i, int_num, &h, dpal_arg_to_use)) {
+
+	        if (pa->pick_right_primer && pa->pick_left_primer
+	            && pa->pick_internal_oligo) {
+	          if (choose_internal_oligo(retval,
+	                                    h.left, h.right,
+	                                    &n_int, sa, pa,
+	                                    dpal_arg_to_use)!=0) {
+	            pair_expl->internal++;
+	            continue;
+	          } else {
+	            h.intl = &retval->intl.oligo[n_int];
+	          }
+	        }
+	        pair_expl->ok++;
+	       
+	        h.pair_quality = obj_fn(pa, &h);
+	        PR_ASSERT(h.pair_quality >= 0.0);
+
+	        if (num_in_p < goup_pick) {
+		      if (  !oligo_pair_seen(&h, best_pairs)
+			         &&
+			         !oligo_in_pair_overlaps_seen_oligo(&h,
+			                                            best_pairs,
+			                                            pa->min_three_prime_distance)) {
+
+		        	  add_pair(&h, p);
+		           
+		          if (num_in_p == 0 || compare_primer_pair(&h, &worst_pair) > 0) {
+		            worst_pair = h;
+		            i_worst = num_in_p;
+		          }
+		          num_in_p++;
+		      }
+	        } else {
+	          /* num_in_p >= pa->num_return */
+
+	          /* FIX me, check whether a left (resp. right) primer overlaps
+	             an existing left (resp. right) primer.  If so, we
+	             compare the quality of the pair containing the existing
+	             primer.  If better, we skip the new  pair.  If worse
+	             we remove the previous pair (and re-sort?). */
+	          if ((compare_primer_pair(&h, &worst_pair) < 0)
+	        		  && !oligo_pair_seen(&h, best_pairs)
+				         &&
+				         !oligo_in_pair_overlaps_seen_oligo(&h,
+				                                            best_pairs,
+				                                            pa->min_three_prime_distance)) {
+	            /*
+	             * There are already pa->num_return results, and vl is better than
+	             * the pa->num_return the quality found so far.
+	             */
+	            p->pairs[i_worst] = h;
+	            worst_pair = h; /* h is a lower bound on the worst pair. */
+
+	            for (i0 = 0; i0<goup_pick; i0++) {
+	              if (compare_primer_pair(&p->pairs[i0], &worst_pair) > 0) {
+	                i_worst = i0;
+	                worst_pair = p->pairs[i0];
+	              }
+	            }
+
+	          }
+	        }
+	      }
+	    }  /* for (j=0; j<n_last; j++) -- inner loop */
+
+	  } /* for (i=0; i<retval->rev.num_elem; i++) --- outer loop */
+
+	  if (num_in_p != 0) {
+	    qsort(p->pairs, num_in_p, sizeof(primer_pair),
+	          compare_primer_pair);
+	  }
+	  p->num_pairs = num_in_p;
+	  if (num_in_p == 0){
+		  int_num++;
+	  } else {
+
+	  int saved = 0;
+	  for (i = 0 ; 
+	       i < p->num_pairs && best_pairs->num_pairs < pa->num_return;
+	       i++) {
+
+	     if (
+	         !oligo_pair_seen(&p->pairs[i], best_pairs)
+	         &&
+	         !oligo_in_pair_overlaps_seen_oligo(&p->pairs[i],
+	                                            best_pairs,
+	                                            pa->min_three_prime_distance)
+	         ) {
+	       add_pair(&p->pairs[i], best_pairs);
+	       saved = 1;
+	     } /* if .... */
+
+	   } /* for (i = 0 .... */
+	  if (saved == 0 ){
+		  int_num++;
+	  }
+	   if (pa->num_return == best_pairs->num_pairs) {
+		   continue_trying = 0;
+	   }
+	   p->num_pairs = 0;
+	  }
+	  if (!(int_num < pa->num_intervals)) {
+		  continue_trying = 0;
+	  }
+	 } /* end of loop over product size ranges */
+
+	 if (0 != the_pair_array.storage_size) free(the_pair_array.pairs);
+}
+
+static int
+au2_choose_pair_or_triple(p3retval *retval,
+                      const p3_global_settings *pa,
+                      const seq_args *sa,
+                      const dpal_arg_holder *dpal_arg_to_use,
+                      pair_array_t *best_pairs) {
+  int i,j; /* Loop index. */
+  int n_int; /* Index of the internal oligo */
+  primer_pair h; /* The current pair which is being evaluated. */
+  primer_pair the_best_pair; /* The best pair is being "remembered". */
+  pair_stats *pair_expl = &retval->best_pairs.expl; /* For statistics */
+
+  int int_num = 0; /* Product size range index. */
+  int continue_trying = 1;
+  
+  /* Pick pairs till we have enough (continue_trying == 0) */  	  
+  while(continue_trying == 1) {
+    /* To start put penalty to the maximum */
+    the_best_pair.pair_quality = DBL_MAX;
+    /* Loop over all reverse primer */
+    for (i = 0; i < retval->rev.num_elem; i++) {
+      /* Only use primers which are OK */
+      if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) continue;
+      /* If the pair can not be better than the one already 
+       * selected, choose a new pair*/
+      if (pa->pr_pair_weights.primer_quality *
+           (retval->rev.oligo[i].quality + retval->fwd.oligo[0].quality)
+              > the_best_pair.pair_quality) {
+        continue;
+      }
+      /* Loop over all forward primer */
+      for (j=0; j<retval->fwd.num_elem; j++) {
+        /* Invariant: if 2 pairs in p have the same pair_quality, then the
+         * pair discovered second will have a higher index within p.
+         *
+         * This invariant is needed to produce consistent results when 2
+         * pairs have the same pair_quality.    */
+        /* Only use primers which are OK */
+        if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) break;
+        if (!OK_OR_MUST_USE(&retval->fwd.oligo[j])) continue;
+        /* If the pair can not be better than the one already 
+         * selected, choose a new pair*/
+        if (pa->pr_pair_weights.primer_quality *
+             (retval->fwd.oligo[j].quality + retval->rev.oligo[i].quality) 
+                > the_best_pair.pair_quality) {
+          continue;
+        }
+        /* Characterize the pair */
+        if (PAIR_OK ==
+            characterize_pair(retval, pa, sa, j, i, int_num, &h, dpal_arg_to_use)) {
+
+          /* Choose internal oligo if needed */
+          if (pa->pick_right_primer && pa->pick_left_primer
+	            && pa->pick_internal_oligo) {
+            if (choose_internal_oligo(retval, h.left, h.right,
+                                      &n_int, sa, pa,
+                                      dpal_arg_to_use)!=0) {
+              pair_expl->internal++;
+              continue;
+            } else {
+              h.intl = &retval->intl.oligo[n_int];
+            }
+          }
+          pair_expl->ok++;
+	      
+          /* Calculate the pair penalty */
+          h.pair_quality = obj_fn(pa, &h);
+          PR_ASSERT(h.pair_quality >= 0.0);
+
+          /* Only keep the pair if it does not interfere 
+           * with already selected pairs */
+          if ((compare_primer_pair(&h, &the_best_pair) < 0)
+              && !oligo_pair_seen(&h, best_pairs)
+              && !oligo_in_pair_overlaps_seen_oligo(&h, best_pairs,
+                        pa->min_three_prime_distance)) {
+            the_best_pair = h;
+          }  
+        } 
+      }  /* for (j=0; j<retval->fwd.num_elem; j++) -- inner loop */
+
+    } /* for (i = 0; i < retval->rev.num_elem; i++) --- outer loop */
+
+    if (the_best_pair.pair_quality == DBL_MAX){
+      /* If no pair was found, try a other product-size-range */
+      int_num++;
+    } else {
+      /* Store the best primer for output */
+	  add_pair(&the_best_pair, best_pairs);
+      /* If we have enough stop the while loop */
+	  if (pa->num_return == best_pairs->num_pairs) {
+        continue_trying = 0;
+      }
+    }
+    /* End the while loop if there are no more product-size-ranges */
+    if (!(int_num < pa->num_intervals)) {
+      continue_trying = 0;
+    }
+  } /* end of while(continue_trying == 1) */
+}
 
 
 /* ============================================================ */

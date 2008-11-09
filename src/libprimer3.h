@@ -517,9 +517,9 @@ int p3_ol_is_ok(const primer_rec *);
  * that returns a pair of primers.)
  */
 typedef struct primer_pair {
-  double pair_quality;
-  double compl_measure; /* 
-                         * A measure of self-complementarity of left and right
+  double pair_quality;  /* Penalty value of the primer pair */
+
+  double compl_measure; /* A measure of self-complementarity of left and right
                          * primers in the pair, as well as complementarity
                          * between left and right primers.  The function
                          * choice returns pairs with the minimal value for
