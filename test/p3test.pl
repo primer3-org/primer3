@@ -113,20 +113,27 @@ sub main() {
     }
 
     my $valgrind_exe = "/usr/local/bin/valgrind";
-    if ((!-x $valgrind_exe) && ($do_valgrind)) { 
-        warn "Cannot find $valgrind_exe; will try `which valgrind`\n";
-        $valgrind_exe= `which valgrind`;
-        chomp($valgrind_exe);
-        if (!$valgrind_exe || ! -x $valgrind_exe) {
-            die "Cannot execute $valgrind_exe";
-        }
+    my $log_file_arg_for_valgrind = "--log-file-exactly";
+    if ($do_valgrind) {
+	if (!-x $valgrind_exe) { 
+	    warn "Cannot find $valgrind_exe; will try `which valgrind`\n";
+	    $valgrind_exe= `which valgrind`;
+	    chomp($valgrind_exe);
+	    if (!$valgrind_exe || ! -x $valgrind_exe) {
+		die "Cannot execute $valgrind_exe";
+	    }
+	}
+	# Need to deal with different arguments in 
+	# different version of valgrind
+	my $valgrind_version = `$valgrind_exe --version`;
+	if ($valgrind_version =~ /3\.3\./) {
+	    $log_file_arg_for_valgrind = "--log-file";
+	}
     }
 
-
-    # The following format works with valgrind-3.2.3:
     $valgrind_format  = $valgrind_exe
         . " --leak-check=yes --show-reachable=yes "
-        . " --log-file-exactly=%s.vg ";
+        . "$log_file_arg_for_valgrind=%s.vg ";
 
     if ($winFlag) {
         $exe = '..\\src\\primer3_core.exe';
