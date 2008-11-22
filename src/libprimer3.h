@@ -513,8 +513,8 @@ p3_primer_rec_problems_to_string(const primer_rec *);
 int p3_ol_is_ok(const primer_rec *);
 
 /* 
- * The structure for a pair of primers. (So that we can have a function 
- * that returns a pair of primers.)
+ * The structure for a pair of primers and for a pair of
+ * primers plus an internal oligo.
  */
 typedef struct primer_pair {
   double pair_quality;  /* Penalty value of the primer pair */
