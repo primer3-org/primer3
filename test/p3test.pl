@@ -194,7 +194,7 @@ sub main() {
                   'primer_position_penalty_formatted',
                   'p3-tmpl-mispriming',
                   # Put primer_lib_amb_codes last because it is slow
-                  # 'primer_lib_amb_codes',
+                  'primer_lib_amb_codes',
                   ) {
 
         # We are inside the for loop here....
