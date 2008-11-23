@@ -32,7 +32,7 @@ Left      35    33     0     0     0     0     0     0     0     0     0     0  
 Right     35    33     0     0     0     0     0     0     0     0     0     0     2
 Intl      60    57     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
-considered 4, unacceptable product size 1, no internal oligo 2, ok 1
+considered 5, unacceptable product size 1, no internal oligo 2, ok 2
 primer3 release 1.1.2
 
 
@@ -70,7 +70,7 @@ Left      30    28     0     0     0     0     0     0     0     0     0     0  
 Right     30    29     0     0     0     0     0     0     0     0     0     0     1
 Intl      60    57     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
-considered 2, unacceptable product size 1, ok 1
+considered 4, unacceptable product size 2, ok 2
 primer3 release 1.1.2
 
 
@@ -108,7 +108,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Intl      60    57     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -146,7 +146,7 @@ Left       5     3     0     0     0     0     0     0     0     0     0     0  
 Right      5     3     0     0     0     0     0     0     0     0     0     0     2
 Intl      60    57     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
-considered 4, unacceptable product size 3, ok 1
+considered 6, unacceptable product size 4, ok 2
 primer3 release 1.1.2
 
 
@@ -218,7 +218,7 @@ Left       5     3     0     0     0     0     0     0     0     0     0     0  
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Intl      60    52     0     0     0     0     0     0     0     0     0     0     8
 Pair Stats:
-considered 10, unacceptable product size 8, ok 2
+considered 22, unacceptable product size 17, ok 5
 primer3 release 1.1.2
 
 
@@ -263,7 +263,7 @@ Left       5     3     0     0     0     0     0     0     0     0     0     0  
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Intl      60    52     0     0     0     0     0     0     0     0     0     0     8
 Pair Stats:
-considered 10, unacceptable product size 8, ok 2
+considered 22, unacceptable product size 17, ok 5
 primer3 release 1.1.2
 
 
@@ -301,7 +301,7 @@ Left       5     3     0     0     0     0     0     0     0     0     0     0  
 Right      5     3     0     0     0     0     0     0     0     0     0     0     2
 Intl      60    23     0     0     0     0     0     0     0     0     0     0    37
 Pair Stats:
-considered 4, unacceptable product size 3, ok 1
+considered 6, unacceptable product size 4, ok 2
 primer3 release 1.1.2
 
 
@@ -339,7 +339,7 @@ Left       5     2     0     0     0     0     0     0     0     0     0     0  
 Right      5     3     0     0     0     0     0     0     0     0     0     0     2
 Intl      60    25     0     0     0     0     0     0     0     0     0     0    35
 Pair Stats:
-considered 6, unacceptable product size 5, ok 1
+considered 8, unacceptable product size 6, ok 2
 primer3 release 1.1.2
 
 
@@ -377,7 +377,7 @@ Left       5     3     0     0     0     0     0     0     0     0     0     0  
 Right      5     2     0     0     0     0     0     0     0     0     0     0     3
 Intl      60    25     0     0     0     0     0     0     0     0     0     0    35
 Pair Stats:
-considered 6, unacceptable product size 5, ok 1
+considered 8, unacceptable product size 6, ok 2
 primer3 release 1.1.2
 
 
@@ -526,7 +526,7 @@ Left      66    57     0     0     0     0     0     0     0     0     0     0  
 Right     66    57     0     0     0     0     0     0     0     0     0     0     9
 Intl      91    84     0     5     0     0     0     0     0     0     0     0     2
 Pair Stats:
-considered 18, unacceptable product size 3, no internal oligo 8, ok 7
+considered 34, unacceptable product size 3, no internal oligo 12, ok 19
 primer3 release 1.1.2
 
 
@@ -598,7 +598,7 @@ Left     151    99     0     0     0     0     0     0     0     0     0     0  
 Right    151   148     0     0     0     0     0     0     0     0     0     0     3
 Intl     226   175     0    47     0     0     0     0     0     0     0     0     4
 Pair Stats:
-considered 23, no internal oligo 15, ok 8
+considered 38, no internal oligo 19, ok 19
 primer3 release 1.1.2
 
 
@@ -661,7 +661,7 @@ Left      77    27     0     0     0     0     0     0     0     0     0     0  
 Right     77    28     0     0     0     0     0     0     0     0     0     0    49
 Intl     152    57     0     0     0     0     1    93     0     0     0     0     1
 Pair Stats:
-considered 323, unacceptable product size 223, no internal oligo 87, ok 13
+considered 435, unacceptable product size 227, no internal oligo 165, ok 43
 primer3 release 1.1.2
 
 
@@ -699,7 +699,7 @@ Left       5     4     0     0     0     0     0     0     0     0     0     0  
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Intl      60    57     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -742,7 +742,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      56    53     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -783,7 +783,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      56    53     0     1     0     0     0     0     0     0     0     0     2
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -826,7 +826,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      56    53     0     1     0     0     0     0     0     0     0     0     2
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -867,7 +867,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      56    53     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -978,7 +978,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      56    53     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -1019,7 +1019,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      56    53     0     1     0     0     0     0     0     0     0     0     2
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -1062,7 +1062,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      56    53     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -1105,7 +1105,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      56    53     0     1     0     0     0     0     0     0     0     0     2
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -1146,7 +1146,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      56    53     0     1     0     0     0     0     0     0     0     0     2
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 

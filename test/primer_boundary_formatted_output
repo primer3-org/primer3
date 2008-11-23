@@ -25,7 +25,7 @@ Statistics
 Left      10     9     0     0     0     0     0     0     0     0     0     0     1
 Right     10     9     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -56,7 +56,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -87,7 +87,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -166,7 +166,7 @@ Statistics
 Left       5     3     0     0     0     0     0     0     0     0     0     0     2
 Right      5     3     0     0     0     0     0     0     0     0     0     0     2
 Pair Stats:
-considered 4, unacceptable product size 3, ok 1
+considered 6, unacceptable product size 4, ok 2
 primer3 release 1.1.2
 
 
@@ -222,7 +222,7 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -333,7 +333,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     2     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
-considered 3, unacceptable product size 2, ok 1
+considered 5, unacceptable product size 3, ok 2
 primer3 release 1.1.2
 
 
@@ -388,7 +388,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
-considered 5, unacceptable product size 4, ok 1
+considered 7, unacceptable product size 5, ok 2
 primer3 release 1.1.2
 
 
@@ -419,7 +419,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -474,7 +474,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -530,7 +530,7 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -623,7 +623,7 @@ Statistics
 Left       3     2     0     0     0     0     0     0     0     0     0     0     1
 Right      3     2     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -743,7 +743,7 @@ Statistics
 Left       4     3     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -863,7 +863,7 @@ Statistics
 Left       4     3     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -896,7 +896,7 @@ Statistics
 Left       4     3     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -958,7 +958,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -1078,7 +1078,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -1198,7 +1198,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -1231,7 +1231,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -1290,7 +1290,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -1352,7 +1352,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -1385,7 +1385,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -1447,7 +1447,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -1509,7 +1509,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -1571,7 +1571,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -1604,7 +1604,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -1668,7 +1668,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -1764,7 +1764,7 @@ Left     131     0     0     0     0     0     0     0     0     0     0     0  
 Right    131     0     0     0     0     0     0     0     0     0     0     0   131
 Intl    1585     0     0     0     0     0     0     0     0     0     0     0  1585
 Pair Stats:
-considered 72, unacceptable product size 52, ok 20
+considered 320, unacceptable product size 240, ok 80
 primer3 release 1.1.2
 
 
@@ -1826,7 +1826,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -1892,7 +1892,7 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -1962,7 +1962,7 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -2057,7 +2057,7 @@ Statistics
 Left       3     2     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -2281,7 +2281,7 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -2315,7 +2315,7 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -2349,7 +2349,7 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
 Right      6     5     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -2383,7 +2383,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -2417,7 +2417,7 @@ Statistics
 Left       6     5     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -2450,7 +2450,7 @@ Statistics
 Left      10     9     0     0     0     0     0     0     0     0     0     0     1
 Right     10     9     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -2512,7 +2512,7 @@ Statistics
 Left       8     7     0     0     0     0     0     0     0     0     0     0     1
 Right     10     9     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -2545,7 +2545,7 @@ Statistics
 Left      10     9     0     0     0     0     0     0     0     0     0     0     1
 Right      3     2     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -2579,7 +2579,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -2615,7 +2615,7 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -2647,7 +2647,7 @@ Statistics
 Left       3     2     0     0     0     0     0     0     0     0     0     0     1
 Right      3     2     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 3, unacceptable product size 2, ok 1
+considered 4, unacceptable product size 2, ok 2
 primer3 release 1.1.2
 
 
@@ -2707,7 +2707,7 @@ Statistics
 Left       3     2     0     0     0     0     0     0     0     0     0     0     1
 Right      3     2     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 2, ok 2
+considered 3, ok 3
 primer3 release 1.1.2
 
 
@@ -2739,7 +2739,7 @@ Statistics
 Left       2     1     0     0     0     0     0     0     0     0     0     0     1
 Right      2     1     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 2, unacceptable product size 1, ok 1
+considered 3, unacceptable product size 1, ok 2
 primer3 release 1.1.2
 
 
@@ -2771,7 +2771,7 @@ Statistics
 Left       2     1     0     0     0     0     0     0     0     0     0     0     1
 Right      2     1     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 2, unacceptable product size 1, ok 1
+considered 3, unacceptable product size 1, ok 2
 primer3 release 1.1.2
 
 
@@ -2812,7 +2812,7 @@ Statistics
 Left      28    27     0     0     0     0     0     0     0     0     0     0     1
 Right     28    26     0     0     0     0     0     0     0     0     0     0     2
 Pair Stats:
-considered 4, unacceptable product size 2, ok 2
+considered 8, unacceptable product size 4, ok 4
 primer3 release 1.1.2
 
 
@@ -2853,7 +2853,7 @@ Statistics
 Left      28    27     0     0     0     0     0     0     0     0     0     0     1
 Right     28    26     0     0     0     0     0     0     0     0     0     0     2
 Pair Stats:
-considered 4, unacceptable product size 2, ok 2
+considered 8, unacceptable product size 4, ok 4
 primer3 release 1.1.2
 
 
@@ -2894,7 +2894,7 @@ Statistics
 Left      28    27     0     0     0     0     0     0     0     0     0     0     1
 Right     28    26     0     0     0     0     0     0     0     0     0     0     2
 Pair Stats:
-considered 4, unacceptable product size 1, ok 3
+considered 8, unacceptable product size 2, ok 6
 primer3 release 1.1.2
 
 
@@ -2935,7 +2935,7 @@ Statistics
 Left      28    27     0     0     0     0     0     0     0     0     0     0     1
 Right     28    26     0     0     0     0     0     0     0     0     0     0     2
 Pair Stats:
-considered 4, unacceptable product size 1, ok 3
+considered 8, unacceptable product size 2, ok 6
 primer3 release 1.1.2
 
 
@@ -2967,7 +2967,7 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -3027,7 +3027,7 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -3087,7 +3087,7 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 200, ok 200
+considered 201, ok 201
 primer3 release 1.1.2
 
 
@@ -3121,7 +3121,7 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -3159,7 +3159,7 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -3194,7 +3194,7 @@ Statistics
 Left      10     9     0     0     0     0     0     0     0     0     0     0     1
 Right     10     9     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 1, ok 1
+considered 2, ok 2
 primer3 release 1.1.2
 
 
@@ -3253,7 +3253,7 @@ Statistics
 Left       5     2     0     0     0     0     0     0     0     0     0     0     3
 Right      5     2     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
-considered 9, unacceptable product size 8, ok 1
+considered 10, unacceptable product size 8, ok 2
 primer3 release 1.1.2
 
 
@@ -3288,7 +3288,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
-considered 5, unacceptable product size 4, ok 1
+considered 6, unacceptable product size 4, ok 2
 primer3 release 1.1.2
 
 
@@ -3323,7 +3323,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
-considered 5, unacceptable product size 4, ok 1
+considered 8, unacceptable product size 6, ok 2
 primer3 release 1.1.2
 
 
@@ -3358,7 +3358,7 @@ Statistics
 Left       5     0     0     0     0     0     0     0     0     0     0     0     5
 Right      5     4     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 5, unacceptable product size 4, ok 1
+considered 6, unacceptable product size 4, ok 2
 primer3 release 1.1.2
 
 
@@ -3393,7 +3393,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
-considered 5, unacceptable product size 4, ok 1
+considered 6, unacceptable product size 4, ok 2
 primer3 release 1.1.2
 
 
@@ -3428,7 +3428,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
-considered 5, unacceptable product size 4, ok 1
+considered 10, unacceptable product size 8, ok 2
 primer3 release 1.1.2
 
 
@@ -3460,7 +3460,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
-considered 5, unacceptable product size 4, ok 1
+considered 10, unacceptable product size 8, ok 2
 primer3 release 1.1.2
 
 
@@ -3515,7 +3515,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
-considered 5, unacceptable product size 4, ok 1
+considered 10, unacceptable product size 8, ok 2
 primer3 release 1.1.2
 
 
@@ -3547,7 +3547,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
-considered 5, unacceptable product size 4, ok 1
+considered 10, unacceptable product size 8, ok 2
 primer3 release 1.1.2
 
 
@@ -3602,7 +3602,7 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     1
 Right      5     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
-considered 5, unacceptable product size 4, ok 1
+considered 10, unacceptable product size 8, ok 2
 primer3 release 1.1.2
 
 

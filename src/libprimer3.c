@@ -159,12 +159,6 @@ static int    choose_pair_or_triple(p3retval *,
                                     const dpal_arg_holder *,
                                     pair_array_t *);
 
-static void    au2_choose_pair_or_triple(p3retval *,
-                                    const p3_global_settings *,
-                                    const seq_args *,
-                                    const dpal_arg_holder *,
-                                    pair_array_t *);
-
 static int    sequence_quality_is_ok(const p3_global_settings *, primer_rec *,
                                      oligo_type,
                                      const seq_args *, int, int,
@@ -925,11 +919,8 @@ choose_primers(const p3_global_settings *pa,
 
   /* Select primer pairs if needed */
   if (retval->output_type == primer_pairs) {
-	/* STEVE CHANGE HERE TO TRY */
     choose_pair_or_triple(retval, pa, sa, dpal_arg_to_use,
        &retval->best_pairs);
-    /* au2_choose_pair_or_triple(retval, pa, sa, dpal_arg_to_use, 
-       &retval->best_pairs); */
   }
 
   return retval;
@@ -945,6 +936,9 @@ choose_primers(const p3_global_settings *pa,
    This function then sorts through the pairs or
    triples to find pa->num_return pairs or triples. */
 /* ============================================================ */
+
+/* Old pair selection (1) versus new pair selection (0) */
+#if (0)
 static int
 choose_pair_or_triple(p3retval *retval,
                       const p3_global_settings *pa,
@@ -1104,8 +1098,9 @@ choose_pair_or_triple(p3retval *retval,
 /* ============================================================ */
 
 /* Results are returned in best_pairs and in retval->best_pairs.expl */
-static void
-au2_choose_pair_or_triple(p3retval *retval,
+#else
+static int
+choose_pair_or_triple(p3retval *retval,
 			  const p3_global_settings *pa,
 			  const seq_args *sa,
 			  const dpal_arg_holder *dpal_arg_to_use,
@@ -1135,12 +1130,13 @@ au2_choose_pair_or_triple(p3retval *retval,
       if (pa->pr_pair_weights.primer_quality *
            (retval->rev.oligo[i].quality + retval->fwd.oligo[0].quality)
               > the_best_pair.pair_quality) {
-        continue;  /* Change to break */
+        break;  /* Change to break */
       }
       /* Loop over all forward primer */
       for (j=0; j<retval->fwd.num_elem; j++) {
 
-        if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) break;  /* FIX ME Remove me */
+        if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) break; 
+        /* FIX ME Removing this really changes the results! */
 
 	/* Only use a primer that is legal, or that the caller
 	   has provided and specified as "must use". */
@@ -1151,7 +1147,7 @@ au2_choose_pair_or_triple(p3retval *retval,
         if (pa->pr_pair_weights.primer_quality *
              (retval->fwd.oligo[j].quality + retval->rev.oligo[i].quality) 
                 > the_best_pair.pair_quality) {
-          continue;  /*  FIX ME change to break... */
+          break;
         }
 
         /* Characterize the pair */
@@ -1187,8 +1183,16 @@ au2_choose_pair_or_triple(p3retval *retval,
               && !oligo_in_pair_overlaps_seen_oligo(&h, best_pairs,
                         pa->min_three_prime_distance)) {
             the_best_pair = h;
-          }  
+          }
+          /* There can not be a better pair */
+          if (the_best_pair.pair_quality == 0) {
+        	  break;
+          }
         } 
+        /* There can not be a better pair */
+        if (the_best_pair.pair_quality == 0) {
+      	  break;
+        }
       }  /* for (j=0; j<retval->fwd.num_elem; j++) -- inner loop */
 
     } /* for (i = 0; i < retval->rev.num_elem; i++) --- outer loop */
@@ -1215,6 +1219,8 @@ au2_choose_pair_or_triple(p3retval *retval,
     }
   } /* end of while(continue_trying == 1) */
 }
+
+#endif
 
 /* ============================================================ */
 /* BEGIN choose_internal_oligo */

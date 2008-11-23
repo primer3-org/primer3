@@ -1938,5 +1938,15 @@ KEYS (in order of precedence):
 >>>>>> left primer
 <<<<<< right primer
 
+ADDITIONAL OLIGOS
+                    start  len      tm     gc%   any    3' seq
+
+ 1 LEFT PRIMER         15   19   59.11   47.37  9.00  2.00 atggatgccatcaatgacc
+   RIGHT PRIMER       125   20   59.97   55.00  3.00  2.00 gttgacgatgggagaccagt
+   PRODUCT SIZE: 111, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+ 2 LEFT PRIMER         15   21   62.05   47.62  9.00  6.00 atggatgccatcaatgacctc
+   RIGHT PRIMER       126   20   60.11   55.00  3.00  1.00 agttgacgatgggagaccag
+   PRODUCT SIZE: 112, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
 
 

@@ -158,7 +158,6 @@ sub main() {
     # that get translated into file names inside the loop.
     for my $test (
                   'primer_boundary', # Put the quickest tests first.
-                  'p3_3_prime_n',
                   'primer_tm_lc_masking',
                   'primer_tm_lc_masking_formatted',
                   'primer_internal',
@@ -184,7 +183,6 @@ sub main() {
                   'primer_end_pathology',
                   'primer_num_best',
                   'primer_quality_boundary',
-                  'primer_obj_fn',
                   'primer',
                   'primer1',
                   'primer_mispriming',
@@ -200,16 +198,24 @@ sub main() {
                   'primer_position_penalty',
                   'primer_position_penalty_formatted',
                   'p3-tmpl-mispriming',
-                  # Put primer_lib_amb_codes last because it is slow
+                  # Put slow tests last
+                  'primer_obj_fn',
+                  'p3_3_prime_n',
                   'primer_lib_amb_codes',
                   ) {
 
         # We are inside the for loop here....
         print "$test...";
 
+        if ($fastFlag && (($test eq 'p3_3_prime_n')
+                || ($test eq 'primer_obj_fn'))) {
+            print "[skiped in fast mode]\n";
+            next;
+        }
+
         if ($test eq 'primer_lib_amb_codes') {
             if ($fastFlag) {
-                print "[skiped in fast mode]\n ";       
+                print "[skiped in fast mode]\n";       
                 next;
             }
             print 

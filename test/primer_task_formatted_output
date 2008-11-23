@@ -43,7 +43,7 @@ Statistics
 Left      10     0     0     0     0     0     7     0     0     0     0     0     3
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
-considered 3, ok 3
+considered 9, ok 9
 primer3 release 1.1.2
 
 
@@ -112,7 +112,7 @@ Left     281   210     0     0     0     0    30    29     0     0     0     0  
 Right    284   210     0     0     0     0     7    44     0     0     0     0    23
 Intl     393   280     0     0     0     0    30    46     0     0     3     0    34
 Pair Stats:
-considered 7, ok 7
+considered 17, ok 17
 primer3 release 1.1.2
 
 
