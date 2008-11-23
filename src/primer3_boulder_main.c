@@ -51,7 +51,7 @@ static void   print_usage();
 static void   sig_handler(int);
 
 /* Other global variables. */
-static const char * pr_release = "primer3 release 1.1.2";
+static const char * pr_release = "primer3 release 2.0.0";
 static const char *pr_program_name;
 
 int

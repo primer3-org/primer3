@@ -129,6 +129,12 @@ static int    _check_and_adjust_intervals(seq_args *sa,
                                           pr_append_str * nonfatal_err,
                                           pr_append_str *warning);
 
+static int    _check_and_adjust_overlap_pos(seq_args *sa,
+                                            int seq_len,
+                                            int first_index,
+                                            pr_append_str * nonfatal_err,
+                                            pr_append_str *warning);
+
 static int    _check_and_adjust_1_interval(const char *,
                                            int num,
                                            interval_array_t,
@@ -316,6 +322,8 @@ static void bf_set_overlaps_excl_region(primer_rec *, int);
 static int bf_get_overlaps_excl_region(const primer_rec *);
 static void bf_set_infinite_pos_penalty(primer_rec *, int);
 static int bf_get_infinite_pos_penalty(const primer_rec *);
+static void bf_set_overlaps_overlap_region(primer_rec *);
+static int bf_get_overlaps_overlap_region(const primer_rec *);
 
 /* Functions to record problems with oligos (or primers) */
 static void initialize_op(primer_rec *);
@@ -563,6 +571,9 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->sequencing.spacing              = 500;
   a->sequencing.interval             = 250;
   a->sequencing.accuracy             = 20;
+  
+  a->pos_overlap_primer_end          = 5;
+    
 }
 
 /* Add a pair of integers to an  array of intervals */
@@ -770,6 +781,7 @@ create_seq_arg() {
   r->force_left_end = -1; /* Indicates logical NULL. */
   r->force_right_start = -1; /* Indicates logical NULL. */
   r->force_right_end = -1; /* Indicates logical NULL. */
+  r->primer_overlap_pos[0] = -1; /* Indicates logical NULL. */
 
   r->n_quality = 0;
   r->quality = NULL;
@@ -1148,6 +1160,12 @@ choose_pair_or_triple(p3retval *retval,
              (retval->fwd.oligo[j].quality + retval->rev.oligo[i].quality) 
                 > the_best_pair.pair_quality) {
           break;
+        }
+        /* Only evaluate pairs which overlap at least one overlap region */
+        if ((sa->primer_overlap_pos[0] != -1)
+             && !(bf_get_overlaps_overlap_region(&retval->rev.oligo[i])
+                  || bf_get_overlaps_overlap_region(&retval->fwd.oligo[j]))){
+          continue;
         }
 
         /* Characterize the pair */
@@ -2397,8 +2415,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
                               const char *input_oligo_seq
                               )
 {
-  int i;
-  int j, k;
+  int i, j, k, for_i;
   int five_prime_pos; /* position of 5' base of oligo */
   int three_prime_pos; /* position of 3' base of oligo */
   oligo_type l = otype;
@@ -2687,6 +2704,25 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
     op_set_too_short(h);
     stats->size_min ++;
     if (!must_use) return;
+  }
+  
+  if (sa->primer_overlap_pos[0] != -1) {
+    for (for_i=0; for_i < sa->primer_overlap_pos_count; for_i++) {
+      if (OT_LEFT == l 
+          && ((h->start + pa->pos_overlap_primer_end - 1) 
+                  < sa->primer_overlap_pos[for_i])
+          && ((h->start + h->length - pa->pos_overlap_primer_end))
+                  > sa->primer_overlap_pos[for_i]) {
+        bf_set_overlaps_overlap_region(h);
+      }
+      if (OT_RIGHT == l
+          && ((h->start - h->length + pa->pos_overlap_primer_end) 
+                  < sa->primer_overlap_pos[for_i])
+          && ((h->start - pa->pos_overlap_primer_end + 1))
+                  > sa->primer_overlap_pos[for_i]) {
+        bf_set_overlaps_overlap_region(h);
+      }
+    }
   }
 
   op_set_completely_written(h);
@@ -4460,6 +4496,12 @@ _adjust_seq_args(const p3_global_settings *pa,
     return 1;
   }
 
+  if (_check_and_adjust_overlap_pos(sa,
+                                seq_len,
+                                pa->first_base_index,
+                                nonfatal_err, warning)) {
+    return 1;
+  }
   return 0;
 }
 
@@ -5019,22 +5061,26 @@ _pr_data_control(const p3_global_settings *pa,
                         "PRIMER_SEQUENCING_INTERVAL > PRIMER_SEQUENCING_SPACING");
     return 1;
   }
+
   if(pa->sequencing.accuracy > pa->sequencing.spacing) {
     pr_append_new_chunk(glob_err,
                         "PRIMER_SEQUENCING_ACCURACY > PRIMER_SEQUENCING_SPACING");
     return 1;
   }
+
   if(pa->sequencing.lead > pa->sequencing.spacing) {
     pr_append_new_chunk(glob_err,
                         "PRIMER_SEQUENCING_LEAD > PRIMER_SEQUENCING_SPACING");
     return 1;
   }
+
   if((sa->force_left_start > -1) && (sa->force_left_end > -1)
      && (sa->force_left_start > sa->force_left_end)) {
     pr_append_new_chunk(glob_err,
                         "SEQUENCE_FORCE_LEFT_START > SEQUENCE_FORCE_LEFT_END");
     return 1;
   }
+
   if((sa->force_right_end > -1) && (sa->force_right_start > -1)
      && (sa->force_right_end > sa->force_right_start)) {
     pr_append_new_chunk(glob_err,
@@ -5042,8 +5088,64 @@ _pr_data_control(const p3_global_settings *pa,
     return 1;
   }
 
+  if (pa->pos_overlap_primer_end < 1) {
+    pr_append_new_chunk(glob_err,
+                        "Illegal value for PRIMER_POS_OVERLAP_TO_END_DIST");
+    return 1;
+  }
+
+  if (pa->pos_overlap_primer_end > (pa->p_args.max_size / 2)) {
+    pr_append_new_chunk(glob_err,
+                        "PRIMER_POS_OVERLAP_TO_END_DIST > PRIMER_MAX_SIZE / 2");
+    return 1;
+  }
+
   return (NULL == nonfatal_err->data && NULL == /* pa->*/ glob_err->data) ? 0 : 1;
 } /* _pr_data_control */
+
+static int
+_check_and_adjust_overlap_pos(seq_args *sa,
+                          int seq_len,
+                          int first_index,
+                          pr_append_str * nonfatal_err,
+                          pr_append_str *warning) {
+  int i;
+  int outside_warning_issued = 0;
+
+  if (sa->primer_overlap_pos[0] == -1) {
+    return 0;
+  }
+
+  /* Substracts the first_index of the intron positions */
+  for (i = 0; i < sa->primer_overlap_pos_count; i++) {
+	  sa->primer_overlap_pos[i] -= first_index;
+  }
+
+  for (i=0; i < sa->primer_overlap_pos_count; i++) {
+    if (sa->primer_overlap_pos[i] >= seq_len) {
+      pr_append_new_chunk(nonfatal_err,
+             "SEQUENCE_PRIMER_OVERLAP_POS beyond end of sequence");
+      return 1;
+    }
+    if (sa->primer_overlap_pos[i] < 0) {
+      pr_append_new_chunk(nonfatal_err, 
+             "Negative SEQUENCE_PRIMER_OVERLAP_POS length");
+      return 1;
+    }
+    /* Cause the intron positions to be relative to the included region. */
+    sa->primer_overlap_pos[i] -= sa->incl_s;
+    /* Check that intron positions are within the included region. */
+    if (sa->primer_overlap_pos[i] < 0 || sa->primer_overlap_pos[i] > sa->incl_l) {
+      if (!outside_warning_issued) {
+        pr_append_new_chunk(warning, 
+             "SEQUENCE_PRIMER_OVERLAP_POS outside of INCLUDED_REGION");
+        outside_warning_issued = 1;
+      }
+    }
+  }
+
+  return 0;
+}
 
 static int
 _check_and_adjust_intervals(seq_args *sa,
@@ -6269,6 +6371,7 @@ initialize_op(primer_rec *oligo) {
 #define BF_OVERLAPS_TARGET                  (1UL <<  2)
 #define BF_OVERLAPS_EXCL_REGION             (1UL <<  3)
 #define BF_INFINITE_POSITION_PENALTY        (1UL <<  4)
+#define BF_OVERLAPS_OVERLAP_REGION          (1UL <<  5)
 /* Spcace fore more bitfields */
 
 #define OP_TOO_MANY_NS                      (1UL <<  8) /* 5prime problem*/
@@ -6434,6 +6537,16 @@ bf_set_infinite_pos_penalty(primer_rec *oligo, int val){
 static int
 bf_get_infinite_pos_penalty(const primer_rec *oligo) {
   return (oligo->problems.prob & BF_INFINITE_POSITION_PENALTY) != 0;
+}
+
+static void 
+bf_set_overlaps_overlap_region(primer_rec *oligo){
+  oligo->problems.prob |= BF_OVERLAPS_OVERLAP_REGION;
+}
+
+static int
+bf_get_overlaps_overlap_region(const primer_rec *oligo) {
+  return (oligo->problems.prob & BF_OVERLAPS_OVERLAP_REGION) != 0;
 }
 
 

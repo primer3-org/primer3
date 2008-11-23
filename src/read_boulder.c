@@ -66,6 +66,8 @@ static void   parse_interval_list(const char *tag_name,
                                   interval_array_t2 *interval_arr,
                                   pr_append_str *err);
 
+static int    parse_intron_list(char *, seq_args *);
+
 static void   parse_product_size(const char *, char *, p3_global_settings *,
                                  pr_append_str *);
 
@@ -461,6 +463,13 @@ read_boulder_record(FILE *file_input,
       COMPARE_INTERVAL_LIST("SEQUENCE_EXCLUDED_REGION", &sa->excl2);
       COMPARE_INTERVAL_LIST("SEQUENCE_INTERNAL_EXCLUDED_REGION",
                               &sa->excl_internal2);
+      if (COMPARE("SEQUENCE_PRIMER_OVERLAP_POS")) {
+        if (parse_intron_list(datum, sa) == 0) {
+          pr_append_new_chunk(parse_err,
+                     "Error in SEQUENCE_PRIMER_OVERLAP_POS list");
+        }
+        continue;
+      }
       if (COMPARE("SEQUENCE_INCLUDED_REGION")) {
         p = parse_int_pair("SEQUENCE_INCLUDED_REGION", datum, ',',
                            &sa->incl_s, &sa->incl_l, parse_err);
@@ -544,6 +553,7 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_SEQUENCING_SPACING", pa->sequencing.spacing);
       COMPARE_INT("PRIMER_SEQUENCING_INTERVAL", pa->sequencing.interval);
       COMPARE_INT("PRIMER_SEQUENCING_ACCURACY", pa->sequencing.accuracy);
+      COMPARE_INT("PRIMER_POS_OVERLAP_TO_END_DIST", pa->pos_overlap_primer_end);
       COMPARE_AND_MALLOC("PRIMER_TASK", task_tmp);
       COMPARE_INT("PRIMER_PICK_RIGHT_PRIMER", pa->pick_right_primer);
       COMPARE_INT("PRIMER_PICK_INTERNAL_OLIGO", pa->pick_internal_oligo);
@@ -1075,6 +1085,40 @@ parse_interval_list(const char *tag_name,
     }
   }
 }
+
+static int
+parse_intron_list(char *s,
+        seq_args *sargs) {
+  long t;
+  char *p, *q;
+
+  sargs->primer_overlap_pos_count = 0;
+
+  p = q = s;
+
+  while (*q != '\0' && *q != '\n') {
+    t = strtol(p, &q, 10);
+    if (q == p) {
+      while (*q != '\0') {
+        if (!isspace(*q)) {
+        	sargs->primer_overlap_pos_count = 0;
+          return 0; 
+        }
+        q++;
+      }
+      return sargs->primer_overlap_pos_count;
+    }
+    if (t > INT_MAX || t < INT_MIN) {
+        return 0;
+    }
+    sargs->primer_overlap_pos[sargs->primer_overlap_pos_count] = t;
+    sargs->primer_overlap_pos_count++;
+
+    p = q;
+  }
+  return sargs->primer_overlap_pos_count;
+}
+
 
 static void
 parse_product_size(tag_name, in, pa, err)

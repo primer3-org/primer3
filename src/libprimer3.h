@@ -92,7 +92,7 @@ typedef enum task {
   pick_detection_primers         = 5,
   pick_cloning_primers           = 6,
   pick_discriminative_primers    = 7,    
-  pick_sequencing_primers        = 8,  /* ANDREAS, we need to change the name of this one; pick_primers_for_tiled_sequence ? */
+  pick_sequencing_primers        = 8,
   pick_primer_list               = 9,
   check_primers                  = 10,
 } task;
@@ -417,8 +417,11 @@ typedef struct p3_global_settings {
      to the 3' end of right primer in an existing pair)
   */
   int    min_three_prime_distance; 
-
-  /* If non-0, the left primer in a pair must be unique with respect
+  
+  /* The number of basepairs the primer has to overlap an overlap position. */
+  int    pos_overlap_primer_end; 
+ 
+/* If non-0, the left primer in a pair must be unique with respect
      to any previously generated left primer, and the analagous
      condition must hold for right primers. */
   int    primers_in_pairs_must_be_unique;
@@ -649,6 +652,9 @@ typedef struct seq_args {
   interval_array_t2 excl_internal2; 
                           /* Number of excluded regions for internal
                              oligo; similar to excl2.*/
+  
+  int primer_overlap_pos[PR_MAX_INTERVAL_ARRAY]; /* List of overlap positions. */
+  int primer_overlap_pos_count; /* The number of intron sites. */
 
   int incl_s;             /* The 0-based start of included region. */
   int incl_l;             /* 

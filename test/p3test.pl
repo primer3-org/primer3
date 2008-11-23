@@ -172,6 +172,7 @@ sub main() {
                   'primer_new_tasks',
                   'primer_new_tasks_formatted',
                   'primer_all_settingsfiles',
+                  'primer_intron',
                   'primer_high_tm_load_set',
                   'primer_high_gc_load_set',
                   'primer_boundary1_formatted',
