@@ -912,6 +912,13 @@ choose_primers(const p3_global_settings *pa,
       }
     }
   }
+  
+  /* Add a warning if no primers were found */
+  if (retval->fwd.num_elem == 0 && retval->intl.num_elem == 0
+         && retval->rev.num_elem == 0){
+    pr_append_new_chunk(&retval->warnings,
+	     "No primers found. Try more relaxed parameters.");
+  }
 
   if (pa->pick_right_primer &&
       (pa->primer_task != pick_sequencing_primers))
