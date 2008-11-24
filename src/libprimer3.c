@@ -159,7 +159,7 @@ static int    characterize_pair(p3retval *p,
                                 primer_pair *,
                                 const dpal_arg_holder*);
 
-static int    choose_pair_or_triple(p3retval *,
+static void    choose_pair_or_triple(p3retval *,
                                     const p3_global_settings *,
                                     const seq_args *,
                                     const dpal_arg_holder *,
@@ -1111,7 +1111,7 @@ choose_pair_or_triple(p3retval *retval,
 
 /* Results are returned in best_pairs and in retval->best_pairs.expl */
 #else
-static int
+static void
 choose_pair_or_triple(p3retval *retval,
 			  const p3_global_settings *pa,
 			  const seq_args *sa,
@@ -3036,6 +3036,8 @@ compare_primer_pair(const void *x1, const void *x2)
   return 0;
 }
 
+#if 0
+/* Used in previous versions.  Not currently used. */
 /* Compare function for sorting primer records. */
 static int
 compare_primer_pair_or_triple(const void *x1, const void *x2)
@@ -3080,7 +3082,7 @@ compare_primer_pair_or_triple(const void *x1, const void *x2)
 
   return 0;
 }
-
+#endif
 
 /*
  * Defines parameter values for given primer pair. Returns PAIR_OK if the pair is
