@@ -157,7 +157,8 @@ static int    characterize_pair(p3retval *p,
                                 const seq_args *,
                                 int, int, int,
                                 primer_pair *,
-                                const dpal_arg_holder*);
+                                const dpal_arg_holder*,
+				int update_stats);
 
 static void    choose_pair_or_triple(p3retval *,
                                     const p3_global_settings *,
@@ -912,13 +913,6 @@ choose_primers(const p3_global_settings *pa,
       }
     }
   }
-  
-  /* Add a warning if no primers were found */
-  if (retval->fwd.num_elem == 0 && retval->intl.num_elem == 0
-         && retval->rev.num_elem == 0){
-    pr_append_new_chunk(&retval->warnings,
-	     "No primers found. Try more relaxed parameters.");
-  }
 
   if (pa->pick_right_primer &&
       (pa->primer_task != pick_sequencing_primers))
@@ -1126,13 +1120,21 @@ choose_pair_or_triple(p3retval *retval,
 			  pair_array_t *best_pairs) {
   int i,j; /* Loop index. */
   int n_int; /* Index of the internal oligo */
-  primer_pair h; /* The current pair which is being evaluated. */
+  int max_i_seen = -1; /* Maximum i seen on any iteration of the outer
+			 while loop, below.  Used to avoid double
+			 counting in the "stats". */
+  int max_j_seen = -1; /* Analogous to max_i_seen. */
+  int update_stats; /* Flag to indicate whether pair_stats
+		       should be updated. */
+  primer_pair h;             /* The current pair which is being evaluated. */
   primer_pair the_best_pair; /* The best pair is being "remembered". */
   pair_stats *pair_expl = &retval->best_pairs.expl; /* For statistics */
 
-  int int_num = 0; /* Product size range index. */
+  int product_size_range_index = 0; /* Product size range index. */
   int continue_trying = 1;
   
+  memset(&the_best_pair, 0, sizeof(the_best_pair));
+
   /* Pick pairs till we have enough (continue_trying == 0) */  	  
   while(continue_trying == 1) {
     /* To start put penalty to the maximum */
@@ -1142,16 +1144,18 @@ choose_pair_or_triple(p3retval *retval,
 
       /* Only use a primer that is legal, or that the caller
 	 has provided and specified as "must use". */
-      if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) continue;
+      if (!OK_OR_MUST_USE(&retval->rev.oligo[i]))
+	continue;
 
       /* If the pair can not be better than the one already 
        * selected, choose a new pair*/
       if (pa->pr_pair_weights.primer_quality *
            (retval->rev.oligo[i].quality + retval->fwd.oligo[0].quality)
               > the_best_pair.pair_quality) {
-        break;  /* Change to break */
+        break;
       }
-      /* Loop over all forward primer */
+
+      /* Loop over all forward primers */
       for (j=0; j<retval->fwd.num_elem; j++) {
 
         if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) break; 
@@ -1164,8 +1168,8 @@ choose_pair_or_triple(p3retval *retval,
         /* If the pair can not be better than the one already 
          * selected, choose a new pair*/
         if (pa->pr_pair_weights.primer_quality *
-             (retval->fwd.oligo[j].quality + retval->rev.oligo[i].quality) 
-                > the_best_pair.pair_quality) {
+	    (retval->fwd.oligo[j].quality + retval->rev.oligo[i].quality) 
+	    > the_best_pair.pair_quality) {
           break;
         }
         /* Only evaluate pairs which overlap at least one overlap region */
@@ -1175,23 +1179,35 @@ choose_pair_or_triple(p3retval *retval,
           continue;
         }
 
+	if (i > max_i_seen || j > max_j_seen) {
+	  update_stats = 1;
+	} else {
+	  update_stats = 0;
+	}
+	
         /* Characterize the pair */
         if (PAIR_OK ==
-            characterize_pair(retval, pa, sa, j, i, int_num, &h, dpal_arg_to_use)) {
+            characterize_pair(retval, pa, sa, j, i, product_size_range_index, &h, dpal_arg_to_use, update_stats)) {
 
           /* Choose internal oligo if needed */
           if (pa->pick_right_primer && pa->pick_left_primer
-	            && pa->pick_internal_oligo) {
+	      && pa->pick_internal_oligo) {
             if (choose_internal_oligo(retval, h.left, h.right,
                                       &n_int, sa, pa,
                                       dpal_arg_to_use)!=0) {
-              pair_expl->internal++;
+
+	      if (update_stats) { 
+		pair_expl->internal++;
+	      }
+
               continue;
             } else {
               h.intl = &retval->intl.oligo[n_int];
             }
           }
-          pair_expl->ok++;
+	  if (update_stats) { 
+	    pair_expl->ok++;
+	  }
 	      
           /* Calculate the pair penalty */
           h.pair_quality = obj_fn(pa, &h);
@@ -1208,16 +1224,24 @@ choose_pair_or_triple(p3retval *retval,
               && !oligo_in_pair_overlaps_seen_oligo(&h, best_pairs,
                         pa->min_three_prime_distance)) {
             the_best_pair = h;
+	    if (i > max_i_seen)
+	      max_i_seen = i;
+	    if (j > max_j_seen)
+	      max_j_seen = j;
+
           }
-          /* There can not be a better pair */
+          /* There cannot be a better pair */
           if (the_best_pair.pair_quality == 0) {
         	  break;
           }
         } 
+	/* Andreas, if we got here, then
+	   either quality != 0 or the pair is not legal, correct? */
+
         /* There can not be a better pair */
-        if (the_best_pair.pair_quality == 0) {
-      	  break;
-        }
+        /* if (the_best_pair.pair_quality == 0) { */
+      	/*  break; */
+        /* } */
       }  /* for (j=0; j<retval->fwd.num_elem; j++) -- inner loop */
 
     } /* for (i = 0; i < retval->rev.num_elem; i++) --- outer loop */
@@ -1226,9 +1250,13 @@ choose_pair_or_triple(p3retval *retval,
 
       /* No pair was found. Try another product-size-range,
        if one exists. */
-      int_num++;
+      product_size_range_index++;
+      /* Re-set the high-water marks for the indices
+	 for reverse and forward primers:  */
+      max_i_seen = -1;
+      max_j_seen = -1;
 
-      if (!(int_num < pa->num_intervals)) {
+      if (!(product_size_range_index < pa->num_intervals)) {
 	/* We have run out of product-size-ranges.
 	   End the while loop. */
 	continue_trying = 0;
@@ -3015,9 +3043,9 @@ compare_primer_pair(const void *x1, const void *x2)
   if (a1->compl_measure > a2->compl_measure) return 1;
 
   /*
-   * The following statements ensure that sorting
-   * produces the same order on all systems regardless
-   * of whether the sorting function is stable.
+   * The following statements ensure that we 
+   * get stable order and one that is the same
+   * on all systems
    */
 
   y1 = a1->left->start;
@@ -3101,7 +3129,8 @@ characterize_pair(p3retval *retval,
                   const seq_args *sa,
                   int m, int n, int int_num,
                   primer_pair *ppair,
-                  const dpal_arg_holder *dpal_arg_to_use) {
+                  const dpal_arg_holder *dpal_arg_to_use,
+		  int update_stats) {
   char s1[MAX_PRIMER_LENGTH+1], s2[MAX_PRIMER_LENGTH+1],
     s1_rev[MAX_PRIMER_LENGTH+1], s2_rev[MAX_PRIMER_LENGTH+1];
   short compl_end;
@@ -3122,7 +3151,7 @@ characterize_pair(p3retval *retval,
   ppair->target = 0;
   ppair->compl_any = ppair->compl_end = 0;
 
-  pair_expl->considered++;
+  if (update_stats) { pair_expl->considered++; }
 
   if (ppair->left->must_use != 0 &&
                   ppair->right->must_use != 0) {
@@ -3131,7 +3160,7 @@ characterize_pair(p3retval *retval,
 
   if(ppair->product_size < pa->pr_min[int_num] ||
      ppair->product_size > pa->pr_max[int_num]) {
-    pair_expl->product++;
+    if (update_stats) {pair_expl->product++; }
     ppair->product_size = -1;  /* FIX ME: Why do we do this? */
     if (!must_use) return PAIR_FAILED;
     else pair_failed_flag = 1;
@@ -3142,7 +3171,7 @@ characterize_pair(p3retval *retval,
       ppair->target = 1;
     else {
       ppair->target = -1;
-      /* sa-> */ pair_expl->target++;
+      if (update_stats) { pair_expl->target++; }
       if (!must_use) return PAIR_FAILED;
       else pair_failed_flag = 1;
     }
@@ -3167,21 +3196,21 @@ characterize_pair(p3retval *retval,
 
   if (pa->product_min_tm != PR_DEFAULT_PRODUCT_MIN_TM
       && ppair->product_tm < pa->product_min_tm) {
-    pair_expl->low_tm++;
+    if (update_stats) { pair_expl->low_tm++; }
     if (!must_use) return PAIR_FAILED;
     else pair_failed_flag = 1;
   }
 
   if (pa->product_max_tm != PR_DEFAULT_PRODUCT_MAX_TM
       && ppair->product_tm > pa->product_max_tm) {
-    pair_expl->high_tm++;
+    if (update_stats) { pair_expl->high_tm++; }
     if (!must_use) return PAIR_FAILED;
     else pair_failed_flag = 1;
   }
 
   ppair->diff_tm = fabs(retval->fwd.oligo[m].temp - retval->rev.oligo[n].temp);
   if (ppair->diff_tm > pa->max_diff_tm) {
-    pair_expl->temp_diff++;
+    if (update_stats) { pair_expl->temp_diff++; }
     if (!must_use) return PAIR_FAILED;
     else pair_failed_flag = 1;
   }
@@ -3277,14 +3306,14 @@ characterize_pair(p3retval *retval,
    */
   ppair->compl_any = align(s1,s2, dpal_arg_to_use->local);
   if (ppair->compl_any > pa->p_args.max_self_any) {
-    /* sa-> */ pair_expl->compl_any++;
+    if (update_stats) { pair_expl->compl_any++; }
     if (!must_use) return PAIR_FAILED;
     else pair_failed_flag = 1;
   }
 
   if ((ppair->compl_end = align(s1, s2, dpal_arg_to_use->end))
       > pa->p_args.max_self_end) {
-    pair_expl->compl_end++;
+    if (update_stats) { pair_expl->compl_end++; }
     if (!must_use) return PAIR_FAILED;
     else pair_failed_flag = 1;
   }
@@ -3296,7 +3325,7 @@ characterize_pair(p3retval *retval,
   if ((compl_end = align(s2_rev, s1_rev, dpal_arg_to_use->end))
       > ppair->compl_end) {
     if (compl_end > pa->p_args.max_self_end) {
-      pair_expl->compl_end++;
+      if (update_stats) { pair_expl->compl_end++; }
       if (!must_use) return PAIR_FAILED;
       else pair_failed_flag = 1;
     }
@@ -3309,7 +3338,7 @@ characterize_pair(p3retval *retval,
 
   if ((ppair->repeat_sim = pair_repeat_sim(ppair, pa))
       > pa->pair_repeat_compl) {
-    pair_expl->repeat_sim++;
+    if (update_stats) { pair_expl->repeat_sim++; }
     if (!must_use) return PAIR_FAILED;
     else pair_failed_flag = 1;
   }
@@ -3335,7 +3364,7 @@ characterize_pair(p3retval *retval,
 
     if (pa->pair_max_template_mispriming >= 0.0
         && ppair->template_mispriming > pa->pair_max_template_mispriming) {
-      pair_expl->template_mispriming++;
+      if (update_stats) { pair_expl->template_mispriming++; }
       if (!must_use) return PAIR_FAILED;
       else pair_failed_flag = 1;
     }
