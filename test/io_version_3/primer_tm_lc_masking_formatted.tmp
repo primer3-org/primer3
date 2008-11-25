@@ -1,0 +1,286 @@
+PRIMER PICKING RESULTS FOR 000
+
+No mispriming library specified
+Using 0-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT_PRIMER          0   10   15.11   40.00  2.00  2.00 TCCTTGTGAT
+SEQUENCE SIZE: 10
+INCLUDED REGION SIZE: 10
+
+    0 TCCTTGTGAT
+      >>>>>>>>>>
+
+KEYS (in order of precedence):
+>>>>>> left primer
+
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR 001
+
+No mispriming library specified
+Using 0-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT_PRIMER          0   10   22.87   40.00  2.00  2.00 TCCTTGTGAT
+SEQUENCE SIZE: 10
+INCLUDED REGION SIZE: 10
+
+    0 TCCTTGTGAT
+      >>>>>>>>>>
+
+KEYS (in order of precedence):
+>>>>>> left primer
+
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR 002
+
+No mispriming library specified
+Using 0-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT_PRIMER          0   10   22.82   40.00  2.00  2.00 TCCTTGTGAT
+SEQUENCE SIZE: 10
+INCLUDED REGION SIZE: 10
+
+    0 TCCTTGTGAT
+      >>>>>>>>>>
+
+KEYS (in order of precedence):
+>>>>>> left primer
+
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR 100
+
+No mispriming library specified
+Using 0-based sequence positions
+NO LEFT PRIMER FOUND
+
+    0 TCCTTGTGAt
+
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1     0
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR 101
+
+No mispriming library specified
+Using 0-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT_PRIMER          0   10   22.87   40.00  2.00  2.00 TCCTTGTGaT
+SEQUENCE SIZE: 10
+INCLUDED REGION SIZE: 10
+
+    0 TCCTTGTGaT
+      >>>>>>>>>>
+
+KEYS (in order of precedence):
+>>>>>> left primer
+
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR 102
+
+No mispriming library specified
+Using 0-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT_PRIMER          0   10   22.82   40.00  2.00  2.00 tccttgtgat
+SEQUENCE SIZE: 10
+INCLUDED REGION SIZE: 10
+
+    0 tccttgtgat
+      >>>>>>>>>>
+
+KEYS (in order of precedence):
+>>>>>> left primer
+
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR 010
+
+No mispriming library specified
+Using 0-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT_PRIMER          0   10    9.73   40.00  2.00  2.00 TCCTTGTGAT
+SEQUENCE SIZE: 10
+INCLUDED REGION SIZE: 10
+
+    0 TCCTTGTGAT
+      >>>>>>>>>>
+
+KEYS (in order of precedence):
+>>>>>> left primer
+
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR 011
+
+No mispriming library specified
+Using 0-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT_PRIMER          0   10   20.94   50.00  2.00  0.00 TCCTTGTGAG
+SEQUENCE SIZE: 10
+INCLUDED REGION SIZE: 10
+
+    0 TCCTTGTGAG
+      >>>>>>>>>>
+
+KEYS (in order of precedence):
+>>>>>> left primer
+
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR 012
+
+No mispriming library specified
+Using 0-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT_PRIMER          0   10   26.08   60.00  2.00  0.00 GCCTTGTGAG
+SEQUENCE SIZE: 10
+INCLUDED REGION SIZE: 10
+
+    0 GCCTTGTGAG
+      >>>>>>>>>>
+
+KEYS (in order of precedence):
+>>>>>> left primer
+
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR 110
+
+No mispriming library specified
+Using 0-based sequence positions
+NO LEFT PRIMER FOUND
+
+    0 TCCTTGTGAt
+
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1     0
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR 111
+
+No mispriming library specified
+Using 0-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT_PRIMER          0   10   18.40   40.00  2.00  2.00 TCCTTGTGaT
+SEQUENCE SIZE: 10
+INCLUDED REGION SIZE: 10
+
+    0 TCCTTGTGaT
+      >>>>>>>>>>
+
+KEYS (in order of precedence):
+>>>>>> left primer
+
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR 112
+
+No mispriming library specified
+Using 0-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT_PRIMER          0   10   17.92   40.00  2.00  2.00 tccttgtgat
+SEQUENCE SIZE: 10
+INCLUDED REGION SIZE: 10
+
+    0 tccttgtgat
+      >>>>>>>>>>
+
+KEYS (in order of precedence):
+>>>>>> left primer
+
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+primer3 release 2.0.0
+
+
