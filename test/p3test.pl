@@ -71,7 +71,7 @@ main();
 sub main() {
     my %args;
 
-    select STDERR;
+    select STDERR; $| = 1;
 
     $all_ok = 1;
     my $start_time;
