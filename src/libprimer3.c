@@ -1123,8 +1123,8 @@ choose_pair_or_triple(p3retval *retval,
   int max_i_seen = -1; /* Maximum i seen on any iteration of the outer
 			 while loop, below.  Used to avoid double
 			 counting in the "stats". */
-  int max_j_seen = -1; /* Analogous to max_i_seen. */
-  int update_stats; /* Flag to indicate whether pair_stats
+  int *max_j_seen;   /* Analogous to max_i_seen, one slot for each i */
+  int update_stats;  /* Flag to indicate whether pair_stats
 		       should be updated. */
   primer_pair h;             /* The current pair which is being evaluated. */
   primer_pair the_best_pair; /* The best pair is being "remembered". */
@@ -1132,14 +1132,18 @@ choose_pair_or_triple(p3retval *retval,
 
   int product_size_range_index = 0; /* Product size range index. */
   int continue_trying = 1;
+  int trace_me = 0;
   
   memset(&the_best_pair, 0, sizeof(the_best_pair));
+  max_j_seen = malloc(sizeof(int) * retval->rev.num_elem);
+  for (i = 0; i < retval->rev.num_elem; i++) max_j_seen[i] = -1;
 
   /* Pick pairs till we have enough (continue_trying == 0) */  	  
   while(continue_trying == 1) {
     /* To start put penalty to the maximum */
     the_best_pair.pair_quality = DBL_MAX;
-    /* Loop over all reverse primer */
+
+    /* Iterate over the reverse primers. */
     for (i = 0; i < retval->rev.num_elem; i++) {
 
       /* Only use a primer that is legal, or that the caller
@@ -1179,9 +1183,24 @@ choose_pair_or_triple(p3retval *retval,
           continue;
         }
 
-	if (i > max_i_seen || j > max_j_seen) {
+	if (i > max_i_seen || j > max_j_seen[i]) {
+	  if (trace_me)
+	    fprintf(stderr, "turning on updates i=%d, j=%d, max_i_seen=%d, max_j_seen[%d]=%d\n", i, j, max_i_seen, i, max_j_seen[i]);
+	  if (i > max_i_seen) {
+	    max_i_seen = i;
+	    max_j_seen[i] = j;
+	    if (trace_me)
+	      fprintf(stderr, "incrementing max_i_seen to %d and changing max_j_seen[%d] to %d\n", max_i_seen, i, max_j_seen[i]);
+	  }
+	  if (j > max_j_seen[i]) {
+	    max_j_seen[i] = j;
+	    if (trace_me)
+	      fprintf(stderr, "incrementing max_j_seen[%d] to %d\n", i, max_j_seen[i]);
+	  }
 	  update_stats = 1;
 	} else {
+	  if (trace_me)
+	    fprintf(stderr, "turning off updates i=%d, j=%d, max_i_seen=%d, max_j_seen=%d\n", i, j, max_i_seen, max_j_seen[i]);
 	  update_stats = 0;
 	}
 	
@@ -1205,7 +1224,10 @@ choose_pair_or_triple(p3retval *retval,
               h.intl = &retval->intl.oligo[n_int];
             }
           }
+
 	  if (update_stats) { 
+	    if (trace_me)
+	      fprintf(stderr, "incrementing ok\n");
 	    pair_expl->ok++;
 	  }
 	      
@@ -1215,7 +1237,7 @@ choose_pair_or_triple(p3retval *retval,
 
           /* The current pair (h) is the new best pair if it is:
 	     1. Better than the best pair so far,
-	     2. Not already in pest_pair, and
+	     2. Not already in pest_pairs, and
 	     3. Legal with respect to overlap
 	        with better pairs.
 	  */
@@ -1224,16 +1246,11 @@ choose_pair_or_triple(p3retval *retval,
               && !oligo_in_pair_overlaps_seen_oligo(&h, best_pairs,
                         pa->min_three_prime_distance)) {
             the_best_pair = h;
-	    if (i > max_i_seen)
-	      max_i_seen = i;
-	    if (j > max_j_seen)
-	      max_j_seen = j;
-
           }
           /* There cannot be a better pair */
-          if (the_best_pair.pair_quality == 0) {
-        	  break;
-          }
+	  if (the_best_pair.pair_quality == 0) {
+	    break;
+	  }
         } 
 	/* Andreas, if we got here, then
 	   either quality != 0 or the pair is not legal, correct? */
@@ -1247,23 +1264,29 @@ choose_pair_or_triple(p3retval *retval,
     } /* for (i = 0; i < retval->rev.num_elem; i++) --- outer loop */
 
     if (the_best_pair.pair_quality == DBL_MAX){
-
       /* No pair was found. Try another product-size-range,
        if one exists. */
+
       product_size_range_index++;
       /* Re-set the high-water marks for the indices
 	 for reverse and forward primers:  */
       max_i_seen = -1;
-      max_j_seen = -1;
+      for (i = 0; i < retval->rev.num_elem; i++) max_j_seen[i] = -1;
 
       if (!(product_size_range_index < pa->num_intervals)) {
 	/* We have run out of product-size-ranges.
 	   End the while loop. */
 	continue_trying = 0;
+	/* Our bookkeeping was incorrect.unless the assertion below is true */
+	PR_ASSERT(!(pa->num_intervals == 1) || (best_pairs->num_pairs >= pair_expl->ok));
       }
 
     } else {
       /* Store the best primer for output */
+
+      if (trace_me)
+	fprintf(stderr, "adding pair i=%d, j=%d\n", i, j);
+
       add_pair(&the_best_pair, best_pairs);
       /* If we have enough stop the while loop */
       if (pa->num_return == best_pairs->num_pairs) {
@@ -3135,15 +3158,14 @@ characterize_pair(p3retval *retval,
     s1_rev[MAX_PRIMER_LENGTH+1], s2_rev[MAX_PRIMER_LENGTH+1];
   short compl_end;
   pair_stats *pair_expl = &retval->best_pairs.expl;
-
-  /* FIX ME / FUTURE CODE: we must use the pair if the caller specifed
-     both the left and the right primer. */
   int must_use = 0;
+  int pair_failed_flag = 0;
+  double min_oligo_tm;
+
+  /* FIX ME, move this lower */
   if (pa->primer_task == check_primers) {
           must_use = 1;
   }
-  int pair_failed_flag = 0;
-  double min_oligo_tm;
 
   ppair->left = &retval->fwd.oligo[m];
   ppair->right = &retval->rev.oligo[n];
@@ -3153,6 +3175,8 @@ characterize_pair(p3retval *retval,
 
   if (update_stats) { pair_expl->considered++; }
 
+  /* We must use the pair if the caller specifed
+     both the left and the right primer. */
   if (ppair->left->must_use != 0 &&
                   ppair->right->must_use != 0) {
           must_use = 1;
@@ -3220,7 +3244,8 @@ characterize_pair(p3retval *retval,
 
 
   /* ============================================================= */
-  /* Secondary structure and primer-dimer. */
+  /* Estimate secondary structure and primer-dimer of _individual_
+     primers if not already calculated. */
 
   /* s1 is the forward oligo. */
   _pr_substr(sa->trimmed_seq,
@@ -3233,7 +3258,6 @@ characterize_pair(p3retval *retval,
              retval->rev.oligo[n].start - retval->rev.oligo[n].length + 1,
              retval->rev.oligo[n].length,
              s2);
-
 
   p3_reverse_complement(s1, s1_rev);
   p3_reverse_complement(s2, s2_rev);
@@ -3265,7 +3289,8 @@ characterize_pair(p3retval *retval,
     }
   }
 
-  /* End of secondary structure and primer-dimer. */
+  /* End of secondary structure and primer-dimer of _individual_ 
+     primers. */
   /* ============================================================= */
 
 
@@ -3319,7 +3344,7 @@ characterize_pair(p3retval *retval,
   }
 
   /*
-   * It is conceivable (though very unlikely in practice) that
+   * It is conceivable (though unlikely) that
    * align(s2_rev, s1_rev, end_args) > align(s1,s2,end_args).
    */
   if ((compl_end = align(s2_rev, s1_rev, dpal_arg_to_use->end))
