@@ -56,8 +56,7 @@ sub _nowarn_system($);
 
 our $def_executable = "../../src/primer3_core";
 our $exe = '../../src/primer3_core';
-our $set_files = '../test/';
-our ($verbose, $do_valgrind, $winFlag, $fastFlag);
+our ($verbose, $do_valgrind, $fastFlag);
 
 our %signo;
 
@@ -103,14 +102,10 @@ sub main() {
     }
 
     $exe = $args{'executable'} if defined$ args{'executable'};
-    $winFlag = defined $args{'windows'};
     $verbose = defined $args{'verbose'};
     $fastFlag = defined $args{'fast'};
     $do_valgrind = $args{'valgrind'};
-    if ($winFlag && $do_valgrind) {
-        print "$0: Cannot specify both --valgrind and --windows\n";
-        exit -1;
-    }
+
 
     my $valgrind_exe = "/usr/local/bin/valgrind";
     my $log_file_arg_for_valgrind = "--log-file-exactly";
@@ -134,13 +129,6 @@ sub main() {
     $valgrind_format  = $valgrind_exe
         . " --leak-check=yes --show-reachable=yes "
         . "$log_file_arg_for_valgrind=%s.vg ";
-
-    if ($winFlag) {
-        $exe = '..\\src\\primer3_core.exe';
-        $set_files = '..\\test\\';
-        # $def_executable = $exe; # keep things happy @ line 237 Brant probably not necessary any more
-        # Also, line numbers of particular statements are not very stable.
-    }
 
     my $exit_stat = 0;
 
@@ -168,13 +156,6 @@ sub main() {
                   'primer_internal1',
                   'primer_task',
                   'primer_task_formatted',
-                  'primer_renewed_tasks',
-                  'primer_new_tasks',
-                  'primer_new_tasks_formatted',
-                  'primer_all_settingsfiles',
-                  'primer_intron',
-                  'primer_high_tm_load_set',
-                  'primer_high_gc_load_set',
                   'primer_boundary1_formatted',
                   'primer_internal1_formatted',
                   'primer_check',
@@ -201,7 +182,6 @@ sub main() {
                   'p3-tmpl-mispriming',
                   # Put slow tests last
                   'primer_obj_fn',
-                  'p3_3_prime_n',
                   'primer_lib_amb_codes',
                   ) {
 
@@ -240,7 +220,7 @@ sub main() {
 
         my $r;                  # Return value for tests
 
-        if ($test eq 'primer' || $test eq 'primer1') {
+        if (0 && ($test eq 'primer' || $test eq 'primer1')) {
             # These tests generate primer lists, which
             # need to be checked separately.
 
@@ -258,22 +238,13 @@ sub main() {
             chdir $list_tmp;
 
             my $tmpCmd;
-            # generate the necc. files; If $winFlag is 
-            # set, run command with Windows backslashes
-            # in path.
-            if ($winFlag) {
-                $tmpCmd = "..\\$exe -strict_tags -io_version=3 <../$input >../$tmp";
-            }  else {
-                $tmpCmd = "$valgrind_prefix ../$exe -strict_tags -io_version=3 <../$input >../$tmp";
-            }
+
+	    $tmpCmd = "$valgrind_prefix ../$exe -strict_tags -io_version=3 <../$input >../$tmp";
             $r = _nowarn_system($tmpCmd);
             # back to main directory
             chdir "../";
         } elsif ($test =~ /formatted$/) {
             my $cmd = "$valgrind_prefix$exe -strict_tags -io_version=3 -format_output <$input >$tmp";
-            $r = _nowarn_system($cmd);
-        } elsif ($test =~ /_load_set/) {
-            my $cmd = "$valgrind_prefix$exe -strict_tags -io_version=3  -p3_settings_file=$set_files$test.set <$input >$tmp";
             $r = _nowarn_system($cmd);
         } else {
             my $cmd = "$valgrind_prefix$exe -strict_tags -io_version=3  <$input >$tmp";
@@ -443,12 +414,9 @@ sub test_fatal_errors() {
             = $do_valgrind ? sprintf $valgrind_format, $root : '';
 
         my $cmd = "$valgrind_prefix$exe <$_ > $root.tmp 2> $root.tmp2";
-        if ($winFlag) {
-            $r = _nowarn_system($cmd);  # FIX ME --- both branches are the same
-        }
-        else {
-            $r = _nowarn_system($cmd);
-        }
+
+	$r = _nowarn_system($cmd);
+
         if ($? == 0) {
             my $r = $? >> 8;
             print
@@ -478,7 +446,7 @@ sub _nowarn_system($) {
     no warnings 'all';
     my $r = system $cmd;
     my $r2 = $?;
-    if (!$winFlag && WIFEXITED($r2)) {
+    if (WIFEXITED($r2)) {
         $r = WEXITSTATUS($r2);
         if (defined $signo{'INT'}) {
             if ($r == $signo{'INT'}) {
@@ -491,7 +459,7 @@ sub _nowarn_system($) {
             }
         }
     }
-    if (!$winFlag && WIFSIGNALED($r2)) {
+    if (WIFSIGNALED($r2)) {
         my $r2 = WTERMSIG($r2);
         print "Exited with signal $r2\n";
     }
