@@ -1112,6 +1112,7 @@ choose_pair_or_triple(p3retval *retval,
 
 /* Results are returned in best_pairs and in retval->best_pairs.expl */
 #else
+#define OLDER_VERSION 1
 static void
 choose_pair_or_triple(p3retval *retval,
 			  const p3_global_settings *pa,
@@ -1162,6 +1163,19 @@ choose_pair_or_triple(p3retval *retval,
       /* Loop over all forward primers */
       for (j=0; j<retval->fwd.num_elem; j++) {
 
+#ifdef NEW_VERSION
+	update_stats = 0;
+	if (j > max_j_seen[i]) {
+	  if (trace_me)
+	    fprintf(stderr, "turning on updates i=%d, j=%d, max_j_seen[%d]=%d\n", i, j, i, max_j_seen[i]);
+	  max_j_seen[i] = j;
+	  if (trace_me)
+	    fprintf(stderr, "incrementing max_j_seen[%d] to %d\n", i, max_j_seen[i]);
+	  if (trace_me) fprintf(stderr, "updates on\n");
+	  update_stats = 1;
+	}
+#endif
+
         if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) break; 
         /* FIX ME Removing this really changes the results! */
 
@@ -1183,6 +1197,7 @@ choose_pair_or_triple(p3retval *retval,
           continue;
         }
 
+#ifdef OLDER_VERSION
 	if (i > max_i_seen || j > max_j_seen[i]) {
 	  if (trace_me)
 	    fprintf(stderr, "turning on updates i=%d, j=%d, max_i_seen=%d, max_j_seen[%d]=%d\n", i, j, max_i_seen, i, max_j_seen[i]);
@@ -1203,6 +1218,7 @@ choose_pair_or_triple(p3retval *retval,
 	    fprintf(stderr, "turning off updates i=%d, j=%d, max_i_seen=%d, max_j_seen=%d\n", i, j, max_i_seen, max_j_seen[i]);
 	  update_stats = 0;
 	}
+#endif
 	
         /* Characterize the pair */
         if (PAIR_OK ==
