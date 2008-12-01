@@ -408,7 +408,7 @@ typedef struct p3_global_settings {
 
      n > 0 indicates that a primer pair is ok if:
 
-     NOT (3' end of left primer closer than n to the 3' end a left
+     NOT (3' end of left primer closer than n to the 3' end of a left
      primer in an existing pair)
 
      AND
@@ -619,7 +619,14 @@ typedef struct pair_stats {
   int repeat_sim;          /* Complementarity with repeat sequence too high.*/
   int high_tm;             /* Product Tm too high.                          */
   int low_tm;              /* Product Tm too low.                           */
-  int template_mispriming; /* Sum of template mispriming scores too hihg.   */
+  int template_mispriming; /* Sum of template mispriming scores too high.   */
+
+  /* Neither oligo in the pairs overlaps one of the "required sites".       */
+  int does_not_overlap_a_required_site;
+
+  /* One of the oligos in the pair overlaps an oligo in a better_pair:       */
+  int overlaps_oligo_in_better_pair;
+
   int ok;                  /* Number that were ok.                          */
 } pair_stats;
 
