@@ -63,8 +63,8 @@ Statistics
 Left     877     1     0    91     7     0     2   399     0     0     0     0     0   377
 Right   1012    19     0    58    25     0     0   702     0     0     0     0     0   208
 Pair Stats:
-considered 72, unacceptable product size 55, ok 17
-primer3 release 1.1.2
+considered 23, unacceptable product size 17, ok 6
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR exon2
@@ -129,8 +129,8 @@ Statistics
 Left     728     0     0    69     2     0   126     0     0     0     1    23     0   507
 Right    827     0     0    72   314     0   236     0     0     0     0     0     0   205
 Pair Stats:
-considered 28, unacceptable product size 10, ok 18
-primer3 release 1.1.2
+considered 9, unacceptable product size 4, ok 5
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR exon2
@@ -203,11 +203,11 @@ Left     728     0     0    69     2     0   126     0     0     0     1    23  
 Right    827     0     0    72   314     0   236     0     0     0     0     0     0   205
 Intl    3079     0     0     0   316     0   517   178     0     0     0    23     0  2045
 Pair Stats:
-considered 28, unacceptable product size 10, ok 18
-primer3 release 1.1.2
+considered 9, unacceptable product size 4, ok 5
+primer3 release 2.0.0
 
 
-PRIMER PICKING RESULTS FOR exon1
+PRIMER PICKING RESULTS FOR exon1_2
 
 Using mispriming library not_for_production.lib
 No internal oligo mishyb library specified
@@ -280,11 +280,11 @@ Left     877     1     0    91     7     0     2   399     0     0     0     0  
 Right   1012    19     0    58    25     0     0   702     0     0     0     0     0   208
 Intl    3237    27     0     0    32     0    23  1880     0     0     0     0     0  1275
 Pair Stats:
-considered 98, unacceptable product size 70, high mispriming library similarity 9, ok 19
-primer3 release 1.1.2
+considered 26, unacceptable product size 17, high mispriming library similarity 2, ok 7
+primer3 release 2.0.0
 
 
-PRIMER PICKING RESULTS FOR exon2
+PRIMER PICKING RESULTS FOR exon2_2
 
 Using mispriming library not_for_production.lib
 No internal oligo mishyb library specified
@@ -346,19 +346,29 @@ ADDITIONAL OLIGOS
    INTERNAL OLIGO     127   20   59.94   40.00  6.00  2.00       GTTTGGCATGATTTTGCCTT
    PRODUCT SIZE: 247, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 2.00
 
+ 5 LEFT PRIMER         24   18   55.03   50.00  6.00  6.00  8.00 AAGTTTGTAACAGGGCCC
+   RIGHT PRIMER       268   24   54.78   29.17  6.00  6.00  9.00 ATGATGTCTACTTTCCAAATTACA
+   INTERNAL OLIGO     127   20   59.94   40.00  6.00  2.00       GTTTGGCATGATTTTGCCTT
+   PRODUCT SIZE: 245, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+ 6 LEFT PRIMER         23   19   55.24   47.37  6.00  6.00  8.00 TAAGTTTGTAACAGGGCCC
+   RIGHT PRIMER       269   25   54.96   28.00  6.00  6.00  9.00 TATGATGTCTACTTTCCAAATTACA
+   INTERNAL OLIGO     127   20   59.94   40.00  6.00  2.00       GTTTGGCATGATTTTGCCTT
+   PRODUCT SIZE: 247, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 3.00
+
 Statistics
          con   too    in    in          no    tm    tm  high  high  high        high      
          sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
         ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left     728     0     0    69     2     0   126     0     0     0    14    23     0   494
-Right    827     0     0    72   314     0   236     0     0     0    10     0     0   195
+Right    827     0     0    72   314     0   236     0     0     0    19     0     0   186
 Intl    3079     0     0     0   316     0   517   178     0     0     0    23     0  2045
 Pair Stats:
-considered 255, unacceptable product size 158, tm diff too large 9, high mispriming library similarity 71, ok 17
-primer3 release 1.1.2
+considered 167, unacceptable product size 101, tm diff too large 12, high mispriming library similarity 46, ok 8
+primer3 release 2.0.0
 
 
-PRIMER PICKING RESULTS FOR exon2
+PRIMER PICKING RESULTS FOR exon2_3
 
 Using mispriming library not_for_production.lib
 No internal oligo mishyb library specified
@@ -401,6 +411,6 @@ Right    827     0     0    72   314     0   236     0     0     0   176     0  
 Intl    3079     0     0     0   316     0   517   178     0     0     0    23     0  2045
 Pair Stats:
 considered 12459, unacceptable product size 6872, tm diff too large 4075, high mispriming library similarity 1512, ok 0
-primer3 release 1.1.2
+primer3 release 2.0.0
 
 

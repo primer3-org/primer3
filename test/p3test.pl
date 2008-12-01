@@ -158,25 +158,34 @@ sub main() {
     # that get translated into file names inside the loop.
     for my $test (
                   'primer_boundary', # Put the quickest tests first.
+                  'primer_boundary1',
+                  'primer_boundary_formatted',
+                  'primer_boundary1_formatted',
+
+                  'primer_internal',
+                  'primer_internal1',
+                  'primer_internal_formatted',
+                  'primer_internal1_formatted',
+
                   'primer_tm_lc_masking',
                   'primer_tm_lc_masking_formatted',
-                  'primer_internal',
-                  'primer_boundary_formatted',
-                  'primer_internal_formatted',
+
                   'primer_start_codon',
-                  'primer_boundary1',
-                  'primer_internal1',
+
                   'primer_task',
                   'primer_task_formatted',
                   'primer_renewed_tasks',
                   'primer_new_tasks',
                   'primer_new_tasks_formatted',
+
                   'primer_all_settingsfiles',
-                  'primer_intron',
+
+                  # 'primer_intron',
+
                   'primer_high_tm_load_set',
                   'primer_high_gc_load_set',
-                  'primer_boundary1_formatted',
-                  'primer_internal1_formatted',
+
+
                   'primer_check',
                   'primer_must_use',
                   'primer_must_use_formatted',
@@ -200,8 +209,11 @@ sub main() {
                   'primer_position_penalty_formatted',
                   'p3-tmpl-mispriming',
                   # Put slow tests last
-                  'primer_obj_fn',
+
                   'p3_3_prime_n',
+
+                  'primer_obj_fn',
+
                   'primer_lib_amb_codes',
                   ) {
 
