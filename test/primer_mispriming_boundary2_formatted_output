@@ -38,8 +38,8 @@ Left      83     0     0     0     0     0     0     0     0     0    82     0  
 Right     83     0     0     0     0     0     0     0     0     0    71     0     0    12
 Intl     163     0     0     0     0     0     0     0     0     0   121     0     0    42
 Pair Stats:
-considered 760, unacceptable product size 738, no internal oligo 20, ok 2
-primer3 release 1.1.2
+considered 381, unacceptable product size 369, no internal oligo 11, ok 1
+primer3 release 1.1.1
 
 
 PRIMER PICKING RESULTS FOR pair_0
@@ -67,6 +67,6 @@ Right     64     0     0     0     0     0     0     0     0     0     0     0  
 Intl     144     0     0     0     0     0     0     0     0     0     0     0     0   144
 Pair Stats:
 considered 32, unacceptable product size 32, ok 0
-primer3 release 1.1.2
+primer3 release 1.1.1
 
 
