@@ -1174,6 +1174,7 @@ choose_pair_or_triple(p3retval *retval,
       }
     }
   } /* end of while(continue_trying == 1) */
+  free(max_j_seen);
 }
 /* ============================================================ */
 /* END choose_pair_or_triple                                    */
@@ -4086,11 +4087,17 @@ strstr_nocase(char *s1, char *s2) {
 }
 
 #define CHECK  if (r > bsize || r < 0) return "Internal error, not enough space for \"explain\" string";  bufp += r; bsize -= r
-#define SP_AND_CHECK(FMT, VAL) { r = snprintf(bufp, bsize, FMT, VAL); CHECK; }
+#define SP_AND_CHECK(FMT, VAL) { r = sprintf(bufp, FMT, VAL); CHECK; }
 #define IF_SP_AND_CHECK(FMT, VAL) { if (VAL) { SP_AND_CHECK(FMT, VAL) } }
 const char *
 p3_pair_explain_string(const pair_stats *pair_expl)
 {
+  /* WARNING WARNING WARNING
+
+  Static, fixed-size buffer.  If you add more calls to SP_AND_CHECK or
+  IF_SP_AND_CHECK, you need to make sure the buffer cannot overflow.
+  */
+
   static char buf[10000];
   char *bufp = buf;
   size_t bsize = 10000;
@@ -4107,6 +4114,10 @@ p3_pair_explain_string(const pair_stats *pair_expl)
     IF_SP_AND_CHECK(", no internal oligo %d", pair_expl->internal)
     IF_SP_AND_CHECK(", high mispriming library similarity %d",
                     pair_expl->repeat_sim)
+    IF_SP_AND_CHECK(", no overlap of required point %d",
+		    pair_expl->does_not_overlap_a_required_point)
+    IF_SP_AND_CHECK(", primer in pair overlaps a primer in a better pair %d",
+		    pair_expl->overlaps_oligo_in_better_pair)
     IF_SP_AND_CHECK(", high template mispriming score %d",
                     pair_expl->template_mispriming);
   SP_AND_CHECK(", ok %d", pair_expl->ok)
@@ -4116,6 +4127,12 @@ p3_pair_explain_string(const pair_stats *pair_expl)
 const char *
 p3_oligo_explain_string(const oligo_stats *stat)
 {
+  /* WARNING WARNING WARNING
+
+  Static, fixed-size buffer.  If you add more calls to SP_AND_CHECK or
+  IF_SP_AND_CHECK, you need to make sure the buffer cannot overflow.
+  */
+
   static char buf[10000];
   char *bufp = buf;
   size_t bsize = 10000;

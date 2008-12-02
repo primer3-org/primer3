@@ -1,7 +1,7 @@
 /*
 Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
 Whitehead Institute for Biomedical Research, Steve Rozen
-(http://jura.wi.mit.edu/rozen), Andreas Untergasser and Helen Skaletsky
+(http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky
 All rights reserved.
 
     This file is part of primer3 and the libprimer3 library.
@@ -622,7 +622,7 @@ typedef struct pair_stats {
   int template_mispriming; /* Sum of template mispriming scores too high.   */
 
   /* Neither oligo in the pairs overlaps one of the "required sites".       */
-  int does_not_overlap_a_required_site;
+  int does_not_overlap_a_required_point;
 
   /* One of the oligos in the pair overlaps an oligo in a better_pair:       */
   int overlaps_oligo_in_better_pair;
