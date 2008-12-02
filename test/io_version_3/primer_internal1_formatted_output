@@ -1,0 +1,1156 @@
+PRIMER PICKING RESULTS FOR boundary_test_00
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          3   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
+RIGHT PRIMER        82   25   60.65   36.00  4.00  3.00 GAATTGTTTGGAAATGACAGTGAGT
+INTERNAL OLIGO      31   25   71.50   56.00 12.00  8.00 ACGTACGTACGTTGCAGTCGACGCA
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 84
+
+PRODUCT SIZE: 80, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 1.00
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNNACGTACGTACGTTGCAGTCGACGCANNACT
+        >>>>>>>>>>>>>>>>>>>>>>>>>   ^^^^^^^^^^^^^^^^^^^^^^^^^  <<<
+
+   61 CACTGTCATTTCCAAACAATTCNN
+      <<<<<<<<<<<<<<<<<<<<<<  
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left      35    33     0     0     0     0     0     0     0     0     0     0     2
+Right     35    33     0     0     0     0     0     0     0     0     0     0     2
+Intl      60    57     0     0     0     0     0     0     0     0     0     0     3
+Pair Stats:
+considered 4, unacceptable product size 1, no internal oligo 2, ok 1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_01
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          3   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
+RIGHT PRIMER        82   25   60.65   36.00  4.00  3.00 GAATTGTTTGGAAATGACAGTGAGT
+INTERNAL OLIGO      30   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 84
+
+PRODUCT SIZE: 80, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 1.00
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNCACGTCATCTCATCAAATTTGATTGNNNACT
+        >>>>>>>>>>>>>>>>>>>>>>>>>  ^^^^^^^^^^^^^^^^^^^^^^^^^   <<<
+
+   61 CACTGTCATTTCCAAACAATTCNN
+      <<<<<<<<<<<<<<<<<<<<<<  
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left      30    28     0     0     0     0     0     0     0     0     0     0     2
+Right     30    29     0     0     0     0     0     0     0     0     0     0     1
+Intl      60    57     0     0     0     0     0     0     0     0     0     0     3
+Pair Stats:
+considered 2, unacceptable product size 1, ok 1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_02
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          3   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
+RIGHT PRIMER        82   25   60.65   36.00  4.00  3.00 GAATTGTTTGGAAATGACAGTGAGT
+INTERNAL OLIGO      30   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 84
+
+PRODUCT SIZE: 80, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 1.00
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNCACGTCATCTCATCAAATTTGATTGNNNACT
+        >>>>>>>>>>>>>>>>>>>>>>>>>  ^^^^^^^^^^^^^^^^^^^^^^^^^   <<<
+
+   61 CACTGTCATTTCCAAACAATTCNN
+      <<<<<<<<<<<<<<<<<<<<<<  
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+Intl      60    57     0     0     0     0     0     0     0     0     0     0     3
+Pair Stats:
+considered 1, ok 1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_05
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          3   24   60.24   33.33 12.00 10.00 CACGTCATCTCATCAAATTTGATT
+RIGHT PRIMER        82   24   59.91   37.50  4.00  1.00 GAATTGTTTGGAAATGACAGTGAG
+INTERNAL OLIGO      30   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 84
+
+PRODUCT SIZE: 80, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 2.00
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNCACGTCATCTCATCAAATTTGATTGNNNACT
+        >>>>>>>>>>>>>>>>>>>>>>>>   ^^^^^^^^^^^^^^^^^^^^^^^^^    <<
+
+   61 CACTGTCATTTCCAAACAATTCNN
+      <<<<<<<<<<<<<<<<<<<<<<  
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     3     0     0     0     0     0     0     0     0     0     0     2
+Right      5     3     0     0     0     0     0     0     0     0     0     0     2
+Intl      60    57     0     0     0     0     0     0     0     0     0     0     3
+Pair Stats:
+considered 4, unacceptable product size 3, ok 1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_11
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+NO PRIMERS FOUND
+
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 84
+
+
+    1 NNCACGTCATCTNATCAAATTTGATTGNNCACGTCATCTNATCAAATTTGATTGNNNACT
+   61 CACTGTCATTTCCAAACAATTCNN
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     3     0     0     0     0     0     0     0     0     0     0     2
+Right      5     1     0     0     0     0     0     0     0     0     0     0     4
+Intl      60    59     0     0     0     0     0     0     0     0     0     0     1
+Pair Stats:
+considered 8, unacceptable product size 6, no internal oligo 2, ok 0
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_11
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          3   24   60.81   31.82 12.00 11.50 CACGTCATCNNATCAAATTTGATT
+RIGHT PRIMER        82   24   59.91   37.50  4.00  1.00 GAATTGTTTGGAAATGACAGTGAG
+INTERNAL OLIGO      30   25   63.22   34.78 12.00 11.00 CACGTCATCNNATCAAATTTGATTG
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 84
+
+PRODUCT SIZE: 80, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 2.00
+
+    1 NNCACGTCATCNNATCAAATTTGATTGNNCACGTCATCNNATCAAATTTGATTGNNNACT
+        >>>>>>>>>>>>>>>>>>>>>>>>   ^^^^^^^^^^^^^^^^^^^^^^^^^    <<
+
+   61 CACTGTCATTTCCAAACAATTCNN
+      <<<<<<<<<<<<<<<<<<<<<<  
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+ADDITIONAL OLIGOS
+                    start  len      tm     gc%   any    3' seq
+
+ 1 LEFT PRIMER          4   24   60.81   31.82 12.00 11.00 ACGTCATCNNATCAAATTTGATTG
+   RIGHT PRIMER        83   24   61.74   34.78  4.00  3.00 NGAATTGTTTGGAAATGACAGTGA
+   INTERNAL OLIGO      30   25   63.22   34.78 12.00 11.00 CACGTCATCNNATCAAATTTGATTG
+   PRODUCT SIZE: 80, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     3     0     0     0     0     0     0     0     0     0     0     2
+Right      5     0     0     0     0     0     0     0     0     0     0     0     5
+Intl      60    52     0     0     0     0     0     0     0     0     0     0     8
+Pair Stats:
+considered 10, unacceptable product size 8, ok 2
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_12
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          3   24   60.81   31.82 12.00 11.50 CACGTCATCNNATCAAATTTGATT
+RIGHT PRIMER        82   24   59.91   37.50  4.00  1.00 GAATTGTTTGGAAATGACAGTGAG
+INTERNAL OLIGO      30   25   63.22   34.78 12.00 11.00 CACGTCATCNNATCAAATTTGATTG
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 84
+
+PRODUCT SIZE: 80, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 2.00
+
+    1 NNCACGTCATCNNATCAAATTTGATTGNNCACGTCATCNNATCAAATTTGATTGNNNACT
+        >>>>>>>>>>>>>>>>>>>>>>>>   ^^^^^^^^^^^^^^^^^^^^^^^^^    <<
+
+   61 CACTGTCATTTCCAAACAATTCNN
+      <<<<<<<<<<<<<<<<<<<<<<  
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+ADDITIONAL OLIGOS
+                    start  len      tm     gc%   any    3' seq
+
+ 1 LEFT PRIMER          4   24   60.81   31.82 12.00 11.00 ACGTCATCNNATCAAATTTGATTG
+   RIGHT PRIMER        83   24   61.74   34.78  4.00  3.00 NGAATTGTTTGGAAATGACAGTGA
+   INTERNAL OLIGO      30   25   63.22   34.78 12.00 11.00 CACGTCATCNNATCAAATTTGATTG
+   PRODUCT SIZE: 80, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     3     0     0     0     0     0     0     0     0     0     0     2
+Right      5     0     0     0     0     0     0     0     0     0     0     0     5
+Intl      60    52     0     0     0     0     0     0     0     0     0     0     8
+Pair Stats:
+considered 10, unacceptable product size 8, ok 2
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_13
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          3   24   54.69    0.00  0.00  0.00 AAAAAAAAAAAAAAAAAAAAAAAA
+RIGHT PRIMER        82   24   59.91   37.50  4.00  1.00 GAATTGTTTGGAAATGACAGTGAG
+INTERNAL OLIGO      32   25   56.20    0.00  0.00  0.00 TTTTTTTTTTTTTTTTTTTTTTTNN
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 84
+
+PRODUCT SIZE: 80, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 0.00
+
+    1 NNAAAAAAAAAAAAAAAAAAAAAAAAANNTTTTTTTTTTTTTTTTTTTTTTTTTNNNACT
+        >>>>>>>>>>>>>>>>>>>>>>>>     ^^^^^^^^^^^^^^^^^^^^^^^^^  <<
+
+   61 CACTGTCATTTCCAAACAATTCNN
+      <<<<<<<<<<<<<<<<<<<<<<  
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     3     0     0     0     0     0     0     0     0     0     0     2
+Right      5     3     0     0     0     0     0     0     0     0     0     0     2
+Intl      60    23     0     0     0     0     0     0     0     0     0     0    37
+Pair Stats:
+considered 4, unacceptable product size 3, ok 1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_14
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          3   24   55.24    4.17  0.00  0.00 AAAAAAAAAAAAAAAAACAAAAAA
+RIGHT PRIMER        82   24   59.91   37.50  4.00  1.00 GAATTGTTTGGAAATGACAGTGAG
+INTERNAL OLIGO      30   25   56.20    0.00  0.00  0.00 TTTTTTTTTTTTTTTTTTTTTTTNN
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 84
+
+PRODUCT SIZE: 80, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 0.00
+
+    1 NNAAAAAAAAAAAAAAAAACAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTNNNNNACT
+        >>>>>>>>>>>>>>>>>>>>>>>>   ^^^^^^^^^^^^^^^^^^^^^^^^^    <<
+
+   61 CACTGTCATTTCCAAACAATTCNN
+      <<<<<<<<<<<<<<<<<<<<<<  
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     2     0     0     0     0     0     0     0     0     0     0     3
+Right      5     3     0     0     0     0     0     0     0     0     0     0     2
+Intl      60    25     0     0     0     0     0     0     0     0     0     0    35
+Pair Stats:
+considered 6, unacceptable product size 5, ok 1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_15
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          3   24   89.31  100.00  0.00  0.00 GGGGGGGGGGGGGGGGGGGGGGGG
+RIGHT PRIMER        82   24   59.91   37.50  4.00  1.00 GAATTGTTTGGAAATGACAGTGAG
+INTERNAL OLIGO      33   25   55.84    0.00  0.00  0.00 TTTTTTTTTTTTTTTTTTTTTTTTT
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 84
+
+PRODUCT SIZE: 80, PAIR ANY COMPL: 1.00, PAIR 3' COMPL: 0.00
+
+    1 NNGGGGGGGGGGGGGGGGGGGGGGGGGNNNNNTTTTTTTTTTTTTTTTTTTTTTTTTACT
+        >>>>>>>>>>>>>>>>>>>>>>>>      ^^^^^^^^^^^^^^^^^^^^^^^^^ <<
+
+   61 CACTGTCATTTCCAAACAATTCNN
+      <<<<<<<<<<<<<<<<<<<<<<  
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     3     0     0     0     0     0     0     0     0     0     0     2
+Right      5     2     0     0     0     0     0     0     0     0     0     0     3
+Intl      60    25     0     0     0     0     0     0     0     0     0     0    35
+Pair Stats:
+considered 6, unacceptable product size 5, ok 1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_16
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+NO PRIMERS FOUND
+
+SEQUENCE SIZE: 59
+INCLUDED REGION SIZE: 59
+
+
+    1 NNGGGGGGGGGGGGGGGGGGGGGGGGGNNNNNACTCACTGTCATTTCCAAACAATTCNN
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left      10     8     0     0     0     0     0     0     0     0     0     0     2
+Right     10     8     0     0     0     0     0     0     0     0     0     0     2
+Intl      35     0     0     0     0     0     0     0     0     0     0     0    35
+Pair Stats:
+considered 4, no internal oligo 4, ok 0
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_17
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+NO PRIMERS FOUND
+
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 84
+
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNTTTTTTTTTTTTTTTTTTTTTTTTGNNNACT
+   61 CACTGTCATTTCCAAACAATTCNN
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left      35    31     0     0     0     0     0     0     0     0     0     0     4
+Right     35    31     0     0     0     0     0     0     0     0     0     0     4
+Intl      60     0     0     0    29     0     0     0     0     0     0     0    31
+Pair Stats:
+considered 16, unacceptable product size 4, no internal oligo 12, ok 0
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_18
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+NO PRIMERS FOUND
+
+SEQUENCE SIZE: 111
+INCLUDED REGION SIZE: 111
+
+INTERNAL OLIGO EXCLUDED REGIONS (start, len)*: 11,50
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNACCGCTATTGGGCCATTTGCCCATTGCATGN
+                xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+   61 NNNNNNNNNNNNNNNNNNNNNNNNACTCACTGTCATTTCCAAACAATTCNN
+                                                         
+
+KEYS (in order of precedence):
+xxxxxx excluded region for internal oligo
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left      62    53     0     0     0     0     0     0     0     0     0     0     9
+Right     62    53     0     0     0     0     0     0     0     0     0     0     9
+Intl      87    39     0    40     0     0     0     0     0     0     0     0     8
+Pair Stats:
+considered 81, unacceptable product size 49, no internal oligo 32, ok 0
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_19
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          4   24   60.24   33.33 12.00 10.00 ACGTCATCTCATCAAATTTGATTG
+RIGHT PRIMER       113   24   59.91   37.50  4.00  1.00 GAATTGTTTGGAAATGACAGTGAG
+INTERNAL OLIGO      61   25   65.58   52.00  6.00  1.00 CCGTTAGGTGCTAGCCGTGTAGATT
+SEQUENCE SIZE: 115
+INCLUDED REGION SIZE: 115
+
+PRODUCT SIZE: 110, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 1.00
+INTERNAL OLIGO EXCLUDED REGIONS (start, len)*: 11,50
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNAAGCTAAGCTTGCCCGTATCCCCTGGATNNN
+         >>>>>>>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+   61 CCGTTAGGTGCTAGCCGTGTAGATTNNNACTCACTGTCATTTCCAAACAATTCNN
+      ^^^^^^^^^^^^^^^^^^^^^^^^^    <<<<<<<<<<<<<<<<<<<<<<<<  
+
+KEYS (in order of precedence):
+xxxxxx excluded region for internal oligo
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+ADDITIONAL OLIGOS
+                    start  len      tm     gc%   any    3' seq
+
+ 1 LEFT PRIMER          3   24   60.24   33.33 12.00 10.00 CACGTCATCTCATCAAATTTGATT
+   RIGHT PRIMER       113   24   59.91   37.50  4.00  1.00 GAATTGTTTGGAAATGACAGTGAG
+   INTERNAL OLIGO      61   25   65.58   52.00  6.00  1.00 CCGTTAGGTGCTAGCCGTGTAGATT
+   PRODUCT SIZE: 111, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 2.00
+
+ 2 LEFT PRIMER          4   24   60.24   33.33 12.00 10.00 ACGTCATCTCATCAAATTTGATTG
+   RIGHT PRIMER       112   24   58.98   33.33  4.00  3.00 AATTGTTTGGAAATGACAGTGAGT
+   INTERNAL OLIGO      61   25   65.58   52.00  6.00  1.00 CCGTTAGGTGCTAGCCGTGTAGATT
+   PRODUCT SIZE: 109, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 1.00
+
+ 3 LEFT PRIMER          3   24   60.24   33.33 12.00 10.00 CACGTCATCTCATCAAATTTGATT
+   RIGHT PRIMER       112   24   58.98   33.33  4.00  3.00 AATTGTTTGGAAATGACAGTGAGT
+   INTERNAL OLIGO      61   25   65.58   52.00  6.00  1.00 CCGTTAGGTGCTAGCCGTGTAGATT
+   PRODUCT SIZE: 110, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 2.00
+
+ 4 LEFT PRIMER         30   24   67.92   54.17  9.00  0.00 AAGCTAAGCTTGCCCGTATCCCCT
+   RIGHT PRIMER       113   24   59.91   37.50  4.00  1.00 GAATTGTTTGGAAATGACAGTGAG
+   INTERNAL OLIGO      61   25   65.58   52.00  6.00  1.00 CCGTTAGGTGCTAGCCGTGTAGATT
+   PRODUCT SIZE: 84, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 2.00
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left      66    57     0     0     0     0     0     0     0     0     0     0     9
+Right     66    57     0     0     0     0     0     0     0     0     0     0     9
+Intl      91    84     0     5     0     0     0     0     0     0     0     0     2
+Pair Stats:
+considered 16, unacceptable product size 3, no internal oligo 8, ok 5
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_20
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          4   24   60.24   33.33 12.00 10.00 ACGTCATCTCATCAAATTTGATTG
+RIGHT PRIMER       252   24   59.91   37.50  4.00  1.00 GAATTGTTTGGAAATGACAGTGAG
+INTERNAL OLIGO      76   25   63.81   52.00 12.00 12.00 CTGGTCAAAGCTAGCGGTAGCTTAG
+SEQUENCE SIZE: 291
+INCLUDED REGION SIZE: 250
+
+PRODUCT SIZE: 249, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 1.00
+INTERNAL OLIGO EXCLUDED REGIONS (start, len)*: 6,50 61,15
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNAAGCTAAGCTGTCGATGCGGTGGAGACGATA
+      .. >>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     
+
+   61 CGGTAAGCTAGCTAACTGGTCAAAGCTAGCGGTAGCTTAGCTNNNNNNNNNNNNNNNNNN
+      xxxxxxxxxxxxxxx^^^^^^^^^^^^^^^^^^^^^^^^^                    
+
+  121 NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+                                                                  
+
+  181 NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNACTCACTGTCATT
+                                                      <<<<<<<<<<<<
+
+  241 TCCAAACAATTCATCTCTCTCTCATATATATATATATATATATATATATAT
+      <<<<<<<<<<<<.......................................
+
+KEYS (in order of precedence):
+...... vector sequence
+xxxxxx excluded region for internal oligo
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+ADDITIONAL OLIGOS
+                    start  len      tm     gc%   any    3' seq
+
+ 1 LEFT PRIMER          3   24   60.24   33.33 12.00 10.00 CACGTCATCTCATCAAATTTGATT
+   RIGHT PRIMER       252   24   59.91   37.50  4.00  1.00 GAATTGTTTGGAAATGACAGTGAG
+   INTERNAL OLIGO      76   25   63.81   52.00 12.00 12.00 CTGGTCAAAGCTAGCGGTAGCTTAG
+   PRODUCT SIZE: 250, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 2.00
+
+ 2 LEFT PRIMER         51   24   60.30   50.00  8.00  6.00 GGAGACGATACGGTAAGCTAGCTA
+   RIGHT PRIMER       252   24   59.91   37.50  4.00  1.00 GAATTGTTTGGAAATGACAGTGAG
+   INTERNAL OLIGO      76   25   63.81   52.00 12.00 12.00 CTGGTCAAAGCTAGCGGTAGCTTAG
+   PRODUCT SIZE: 202, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+ 3 LEFT PRIMER          4   24   60.24   33.33 12.00 10.00 ACGTCATCTCATCAAATTTGATTG
+   RIGHT PRIMER       251   24   58.98   33.33  4.00  3.00 AATTGTTTGGAAATGACAGTGAGT
+   INTERNAL OLIGO      76   25   63.81   52.00 12.00 12.00 CTGGTCAAAGCTAGCGGTAGCTTAG
+   PRODUCT SIZE: 248, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 1.00
+
+ 4 LEFT PRIMER          3   24   60.24   33.33 12.00 10.00 CACGTCATCTCATCAAATTTGATT
+   RIGHT PRIMER       251   24   58.98   33.33  4.00  3.00 AATTGTTTGGAAATGACAGTGAGT
+   INTERNAL OLIGO      76   25   63.81   52.00 12.00 12.00 CTGGTCAAAGCTAGCGGTAGCTTAG
+   PRODUCT SIZE: 249, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 2.00
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left     151    99     0     0     0     0     0     0     0     0     0     0    52
+Right    151   148     0     0     0     0     0     0     0     0     0     0     3
+Intl     226   175     0    47     0     0     0     0     0     0     0     0     4
+Pair Stats:
+considered 14, no internal oligo 8, ok 6
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_21
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          4   24   60.24   33.33 12.00 10.00 ACGTCATCTCATCAAATTTGATTG
+RIGHT PRIMER       174   24   59.91   37.50  4.00  1.00 GAATTGTTTGGAAATGACAGTGAG
+INTERNAL OLIGO      62   25   55.84    0.00  0.00  0.00 AAAAAAAAAAAAAAAAAAAAAAAAA
+SEQUENCE SIZE: 176
+INCLUDED REGION SIZE: 176
+
+PRODUCT SIZE: 171, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 1.00
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+         >>>>>>>>>>>>>>>>>>>>>>>>                                 
+
+   61 GAAAAAAAAAAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+       ^^^^^^^^^^^^^^^^^^^^^^^^^                                  
+
+  121 GGGGGGGGGGGGGGGGGGGGGGGGGGNNNACTCACTGTCATTTCCAAACAATTCNN
+                                    <<<<<<<<<<<<<<<<<<<<<<<<  
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+ADDITIONAL OLIGOS
+                    start  len      tm     gc%   any    3' seq
+
+ 1 LEFT PRIMER          3   24   60.24   33.33 12.00 10.00 CACGTCATCTCATCAAATTTGATT
+   RIGHT PRIMER       174   24   59.91   37.50  4.00  1.00 GAATTGTTTGGAAATGACAGTGAG
+   INTERNAL OLIGO      62   25   55.84    0.00  0.00  0.00 AAAAAAAAAAAAAAAAAAAAAAAAA
+   PRODUCT SIZE: 172, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 2.00
+
+ 2 LEFT PRIMER          4   24   60.24   33.33 12.00 10.00 ACGTCATCTCATCAAATTTGATTG
+   RIGHT PRIMER       173   24   58.98   33.33  4.00  3.00 AATTGTTTGGAAATGACAGTGAGT
+   INTERNAL OLIGO      62   25   55.84    0.00  0.00  0.00 AAAAAAAAAAAAAAAAAAAAAAAAA
+   PRODUCT SIZE: 170, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 1.00
+
+ 3 LEFT PRIMER          3   24   60.24   33.33 12.00 10.00 CACGTCATCTCATCAAATTTGATT
+   RIGHT PRIMER       173   24   58.98   33.33  4.00  3.00 AATTGTTTGGAAATGACAGTGAGT
+   INTERNAL OLIGO      62   25   55.84    0.00  0.00  0.00 AAAAAAAAAAAAAAAAAAAAAAAAA
+   PRODUCT SIZE: 171, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 2.00
+
+ 4 LEFT PRIMER         38   24   89.31  100.00  0.00  0.00 GGGGGGGGGGGGGGGGGGGGGGGG
+   RIGHT PRIMER       174   24   59.91   37.50  4.00  1.00 GAATTGTTTGGAAATGACAGTGAG
+   INTERNAL OLIGO      62   25   55.84    0.00  0.00  0.00 AAAAAAAAAAAAAAAAAAAAAAAAA
+   PRODUCT SIZE: 137, PAIR ANY COMPL: 1.00, PAIR 3' COMPL: 0.00
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left      77    27     0     0     0     0     0     0     0     0     0     0    50
+Right     77    28     0     0     0     0     0     0     0     0     0     0    49
+Intl     152    57     0     0     0     0     1    93     0     0     0     0     1
+Pair Stats:
+considered 323, unacceptable product size 223, no internal oligo 87, ok 13
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_22
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          3   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
+RIGHT PRIMER        82   25   60.65   36.00  4.00  3.00 GAATTGTTTGGAAATGACAGTGAGT
+INTERNAL OLIGO      31   25   71.50   56.00 12.00  8.00 ACGTACGTACGTTGCAGTCGACGCA
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 84
+
+PRODUCT SIZE: 80, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 1.00
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNNACGTACGTACGTTGCAGTCGACGCANNACT
+        >>>>>>>>>>>>>>>>>>>>>>>>>   ^^^^^^^^^^^^^^^^^^^^^^^^^  <<<
+
+   61 CACTGTCATTTCCAAACAATTCNN
+      <<<<<<<<<<<<<<<<<<<<<<  
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+Intl      60    57     0     0     0     0     0     0     0     0     0     0     3
+Pair Stats:
+considered 1, ok 1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_23
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+WARNING: PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION outside of INCLUDED_REGION
+
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          3   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
+RIGHT PRIMER        82   25   60.65   36.00  4.00  3.00 GAATTGTTTGGAAATGACAGTGAGT
+INTERNAL OLIGO      31   25   71.50   56.00 12.00  8.00 ACGTACGTACGTTGCAGTCGACGCA
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 80
+
+PRODUCT SIZE: 80, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 1.00
+INTERNAL OLIGO EXCLUDED REGIONS (start, len)*: 2,1
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNNACGTACGTACGTTGCAGTCGACGCANNACT
+      ..>>>>>>>>>>>>>>>>>>>>>>>>>   ^^^^^^^^^^^^^^^^^^^^^^^^^  <<<
+
+   61 CACTGTCATTTCCAAACAATTCNN
+      <<<<<<<<<<<<<<<<<<<<<<..
+
+KEYS (in order of precedence):
+...... vector sequence
+xxxxxx excluded region for internal oligo
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+Intl      56    53     0     0     0     0     0     0     0     0     0     0     3
+Pair Stats:
+considered 1, ok 1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_24
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          3   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
+RIGHT PRIMER        82   25   60.65   36.00  4.00  3.00 GAATTGTTTGGAAATGACAGTGAGT
+INTERNAL OLIGO      31   25   71.50   56.00 12.00  8.00 ACGTACGTACGTTGCAGTCGACGCA
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 80
+
+PRODUCT SIZE: 80, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 1.00
+INTERNAL OLIGO EXCLUDED REGIONS (start, len)*: 3,1
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNNACGTACGTACGTTGCAGTCGACGCANNACT
+      ..x>>>>>>>>>>>>>>>>>>>>>>>>   ^^^^^^^^^^^^^^^^^^^^^^^^^  <<<
+
+   61 CACTGTCATTTCCAAACAATTCNN
+      <<<<<<<<<<<<<<<<<<<<<<..
+
+KEYS (in order of precedence):
+...... vector sequence
+xxxxxx excluded region for internal oligo
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+Intl      56    53     0     1     0     0     0     0     0     0     0     0     2
+Pair Stats:
+considered 1, ok 1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_25
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+WARNING: PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION outside of INCLUDED_REGION
+
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          3   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
+RIGHT PRIMER        82   25   60.65   36.00  4.00  3.00 GAATTGTTTGGAAATGACAGTGAGT
+INTERNAL OLIGO      31   25   71.50   56.00 12.00  8.00 ACGTACGTACGTTGCAGTCGACGCA
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 80
+
+PRODUCT SIZE: 80, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 1.00
+INTERNAL OLIGO EXCLUDED REGIONS (start, len)*: 1,3
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNNACGTACGTACGTTGCAGTCGACGCANNACT
+      ..x>>>>>>>>>>>>>>>>>>>>>>>>   ^^^^^^^^^^^^^^^^^^^^^^^^^  <<<
+
+   61 CACTGTCATTTCCAAACAATTCNN
+      <<<<<<<<<<<<<<<<<<<<<<..
+
+KEYS (in order of precedence):
+...... vector sequence
+xxxxxx excluded region for internal oligo
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+Intl      56    53     0     1     0     0     0     0     0     0     0     0     2
+Pair Stats:
+considered 1, ok 1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_26
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          3   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
+RIGHT PRIMER        82   25   60.65   36.00  4.00  3.00 GAATTGTTTGGAAATGACAGTGAGT
+INTERNAL OLIGO      31   25   71.50   56.00 12.00  8.00 ACGTACGTACGTTGCAGTCGACGCA
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 80
+
+PRODUCT SIZE: 80, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 1.00
+INTERNAL OLIGO EXCLUDED REGIONS (start, len)*: 30,1
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNNACGTACGTACGTTGCAGTCGACGCANNACT
+      ..>>>>>>>>>>>>>>>>>>>>>>>>>  x^^^^^^^^^^^^^^^^^^^^^^^^^  <<<
+
+   61 CACTGTCATTTCCAAACAATTCNN
+      <<<<<<<<<<<<<<<<<<<<<<..
+
+KEYS (in order of precedence):
+...... vector sequence
+xxxxxx excluded region for internal oligo
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+Intl      56    53     0     0     0     0     0     0     0     0     0     0     3
+Pair Stats:
+considered 1, ok 1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_27
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+NO PRIMERS FOUND
+
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 80
+
+INTERNAL OLIGO EXCLUDED REGIONS (start, len)*: 31,1
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNNACGTACGTACGTTGCAGTCGACGCANNACT
+      ..                            x                             
+
+   61 CACTGTCATTTCCAAACAATTCNN
+                            ..
+
+KEYS (in order of precedence):
+...... vector sequence
+xxxxxx excluded region for internal oligo
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+Intl      56    53     0     1     0     0     0     0     0     0     0     0     2
+Pair Stats:
+considered 1, no internal oligo 1, ok 0
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_28
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+NO PRIMERS FOUND
+
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 80
+
+INTERNAL OLIGO EXCLUDED REGIONS (start, len)*: 55,1
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNNACGTACGTACGTTGCAGTCGACGCANNACT
+      ..                                                    x     
+
+   61 CACTGTCATTTCCAAACAATTCNN
+                            ..
+
+KEYS (in order of precedence):
+...... vector sequence
+xxxxxx excluded region for internal oligo
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+Intl      56    53     0     1     0     0     0     0     0     0     0     0     2
+Pair Stats:
+considered 1, no internal oligo 1, ok 0
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_29
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          3   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
+RIGHT PRIMER        82   25   60.65   36.00  4.00  3.00 GAATTGTTTGGAAATGACAGTGAGT
+INTERNAL OLIGO      31   25   71.50   56.00 12.00  8.00 ACGTACGTACGTTGCAGTCGACGCA
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 80
+
+PRODUCT SIZE: 80, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 1.00
+INTERNAL OLIGO EXCLUDED REGIONS (start, len)*: 56,1
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNNACGTACGTACGTTGCAGTCGACGCANNACT
+      ..>>>>>>>>>>>>>>>>>>>>>>>>>   ^^^^^^^^^^^^^^^^^^^^^^^^^x <<<
+
+   61 CACTGTCATTTCCAAACAATTCNN
+      <<<<<<<<<<<<<<<<<<<<<<..
+
+KEYS (in order of precedence):
+...... vector sequence
+xxxxxx excluded region for internal oligo
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+Intl      56    53     0     0     0     0     0     0     0     0     0     0     3
+Pair Stats:
+considered 1, ok 1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_30
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          3   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
+RIGHT PRIMER        82   25   60.65   36.00  4.00  3.00 GAATTGTTTGGAAATGACAGTGAGT
+INTERNAL OLIGO      31   25   71.50   56.00 12.00  8.00 ACGTACGTACGTTGCAGTCGACGCA
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 80
+
+PRODUCT SIZE: 80, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 1.00
+INTERNAL OLIGO EXCLUDED REGIONS (start, len)*: 82,1
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNNACGTACGTACGTTGCAGTCGACGCANNACT
+      ..>>>>>>>>>>>>>>>>>>>>>>>>>   ^^^^^^^^^^^^^^^^^^^^^^^^^  <<<
+
+   61 CACTGTCATTTCCAAACAATTCNN
+      <<<<<<<<<<<<<<<<<<<<<x..
+
+KEYS (in order of precedence):
+...... vector sequence
+xxxxxx excluded region for internal oligo
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+Intl      56    53     0     1     0     0     0     0     0     0     0     0     2
+Pair Stats:
+considered 1, ok 1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_31
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+WARNING: PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION outside of INCLUDED_REGION
+
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          3   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
+RIGHT PRIMER        82   25   60.65   36.00  4.00  3.00 GAATTGTTTGGAAATGACAGTGAGT
+INTERNAL OLIGO      31   25   71.50   56.00 12.00  8.00 ACGTACGTACGTTGCAGTCGACGCA
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 80
+
+PRODUCT SIZE: 80, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 1.00
+INTERNAL OLIGO EXCLUDED REGIONS (start, len)*: 83,1
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNNACGTACGTACGTTGCAGTCGACGCANNACT
+      ..>>>>>>>>>>>>>>>>>>>>>>>>>   ^^^^^^^^^^^^^^^^^^^^^^^^^  <<<
+
+   61 CACTGTCATTTCCAAACAATTCNN
+      <<<<<<<<<<<<<<<<<<<<<<..
+
+KEYS (in order of precedence):
+...... vector sequence
+xxxxxx excluded region for internal oligo
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+Intl      56    53     0     0     0     0     0     0     0     0     0     0     3
+Pair Stats:
+considered 1, ok 1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_32
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+WARNING: PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION outside of INCLUDED_REGION
+
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          3   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
+RIGHT PRIMER        82   25   60.65   36.00  4.00  3.00 GAATTGTTTGGAAATGACAGTGAGT
+INTERNAL OLIGO      31   25   71.50   56.00 12.00  8.00 ACGTACGTACGTTGCAGTCGACGCA
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 80
+
+PRODUCT SIZE: 80, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 1.00
+INTERNAL OLIGO EXCLUDED REGIONS (start, len)*: 82,2
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNNACGTACGTACGTTGCAGTCGACGCANNACT
+      ..>>>>>>>>>>>>>>>>>>>>>>>>>   ^^^^^^^^^^^^^^^^^^^^^^^^^  <<<
+
+   61 CACTGTCATTTCCAAACAATTCNN
+      <<<<<<<<<<<<<<<<<<<<<x..
+
+KEYS (in order of precedence):
+...... vector sequence
+xxxxxx excluded region for internal oligo
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+Intl      56    53     0     1     0     0     0     0     0     0     0     0     2
+Pair Stats:
+considered 1, ok 1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_33
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          3   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
+RIGHT PRIMER        82   25   60.65   36.00  4.00  3.00 GAATTGTTTGGAAATGACAGTGAGT
+INTERNAL OLIGO      31   25   71.50   56.00 12.00  8.00 ACGTACGTACGTTGCAGTCGACGCA
+SEQUENCE SIZE: 84
+INCLUDED REGION SIZE: 80
+
+PRODUCT SIZE: 80, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 1.00
+INTERNAL OLIGO EXCLUDED REGIONS (start, len)*: 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1 82,1
+
+    1 NNCACGTCATCTCATCAAATTTGATTGNNNACGTACGTACGTTGCAGTCGACGCANNACT
+      ..>>>>>>>>>>>>>>>>>>>>>>>>>   ^^^^^^^^^^^^^^^^^^^^^^^^^  <<<
+
+   61 CACTGTCATTTCCAAACAATTCNN
+      <<<<<<<<<<<<<<<<<<<<<x..
+
+KEYS (in order of precedence):
+...... vector sequence
+xxxxxx excluded region for internal oligo
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+
+Statistics
+         con   too    in    in          no    tm    tm  high  high        high      
+         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+Intl      56    53     0     1     0     0     0     0     0     0     0     0     2
+Pair Stats:
+considered 1, ok 1
+primer3 release 2.0.0
+
+
+PRIMER PICKING RESULTS FOR boundary_test_34
+
+INPUT PROBLEM: Too many elements for tag PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION
+
