@@ -1764,7 +1764,7 @@ Left     131     0     0     0     0     0     0     0     0     0     0     0  
 Right    131     0     0     0     0     0     0     0     0     0     0     0   131
 Intl    1585     0     0     0     0     0     0     0     0     0     0     0  1585
 Pair Stats:
-considered 189, unacceptable product size 176, ok 13
+considered 64, unacceptable product size 48, ok 16
 primer3 release 2.0.0
 
 
@@ -2812,7 +2812,7 @@ Statistics
 Left      28    27     0     0     0     0     0     0     0     0     0     0     1
 Right     28    26     0     0     0     0     0     0     0     0     0     0     2
 Pair Stats:
-considered 5, unacceptable product size 3, ok 2
+considered 4, unacceptable product size 2, ok 2
 primer3 release 2.0.0
 
 
@@ -2853,7 +2853,7 @@ Statistics
 Left      28    27     0     0     0     0     0     0     0     0     0     0     1
 Right     28    26     0     0     0     0     0     0     0     0     0     0     2
 Pair Stats:
-considered 5, unacceptable product size 3, ok 2
+considered 4, unacceptable product size 2, ok 2
 primer3 release 2.0.0
 
 
@@ -2894,7 +2894,7 @@ Statistics
 Left      28    27     0     0     0     0     0     0     0     0     0     0     1
 Right     28    26     0     0     0     0     0     0     0     0     0     0     2
 Pair Stats:
-considered 5, unacceptable product size 1, ok 4
+considered 4, unacceptable product size 1, ok 3
 primer3 release 2.0.0
 
 
@@ -2935,7 +2935,7 @@ Statistics
 Left      28    27     0     0     0     0     0     0     0     0     0     0     1
 Right     28    26     0     0     0     0     0     0     0     0     0     0     2
 Pair Stats:
-considered 5, unacceptable product size 2, ok 3
+considered 4, unacceptable product size 1, ok 3
 primer3 release 2.0.0
 
 
