@@ -904,6 +904,14 @@ choose_primers(const p3_global_settings *pa,
     if (make_detection_primer_lists(retval, pa, sa,
                                     dpal_arg_to_use) != 0) {
       /* There was an error */
+#if (0)
+      /* Add a warning if no primers were found */
+      if (retval->fwd.num_elem == 0
+            && retval->rev.num_elem == 0){
+          pr_append_new_chunk(&retval->warnings,
+            "No primers found. Try more relaxed parameters.");
+      }
+#endif
       return retval;
     }
     /* Populate the internal oligo lists */
@@ -911,6 +919,13 @@ choose_primers(const p3_global_settings *pa,
       if (make_internal_oligo_list(retval, pa, sa,
                                    dpal_arg_to_use) != 0) {
         /* There was an error*/
+#if (0)
+        /* Add a warning if no primers were found */
+        if (retval->intl.num_elem == 0){
+            pr_append_new_chunk(&retval->warnings,
+              "No internal oligo found. Try more relaxed parameters.");
+        }
+#endif
         return retval;
       }
     }
@@ -1572,7 +1587,9 @@ make_detection_primer_lists(p3retval *retval,
   if ((pa->pick_left_primer && 0 == retval->fwd.num_elem)
       || ((pa->pick_right_primer)  && 0 == retval->rev.num_elem)) {
     return 1;
-  } else if (pa->pick_left_primer
+  } else if (!((sa->right_input)
+                && (sa->left_input))
+             && pa->pick_left_primer
              && pa->pick_right_primer
              && (right - left) < (pr_min - 1)) {
     pair_expl->product    = 1;
@@ -3085,7 +3102,6 @@ characterize_pair(p3retval *retval,
   if(ppair->product_size < pa->pr_min[int_num] ||
      ppair->product_size > pa->pr_max[int_num]) {
     if (update_stats) {pair_expl->product++; }
-    ppair->product_size = -1;  /* FIX ME: Why do we do this? */
     if (!must_use) return PAIR_FAILED;
     else pair_failed_flag = 1;
   }
