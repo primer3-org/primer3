@@ -146,27 +146,36 @@ sub main() {
     # that get translated into file names inside the loop.
     for my $test (
                   'primer_boundary', # Put the quickest tests first.
+                  'primer_boundary_formatted',
+                  'primer_boundary1',
+                  'primer_boundary1_formatted',
+
+                  'primer_internal',
+                  'primer_internal1',
+                  'primer_internal_formatted',
+                  'primer_internal1_formatted',
+
                   'primer_tm_lc_masking',
                   'primer_tm_lc_masking_formatted',
-                  'primer_internal',
-                  'primer_boundary_formatted',
-                  'primer_internal_formatted',
+
                   'primer_start_codon',
-                  'primer_boundary1',
-                  'primer_internal1',
+
                   'primer_task',
                   'primer_task_formatted',
-                  'primer_boundary1_formatted',
-                  'primer_internal1_formatted',
+
                   'primer_check',
                   'primer_must_use',
                   'primer_must_use_formatted',
+
                   'primer_syntax',
+
                   'primer_end_pathology',
                   'primer_num_best',
                   'primer_quality_boundary',
+
                   'primer',
                   'primer1',
+
                   'primer_mispriming',
                   'primer_mispriming_formatted',
                   'primer_mispriming_boundary1',
@@ -174,6 +183,7 @@ sub main() {
                   'primer_mispriming_boundary2',
                   'primer_mispriming_boundary2_formatted',
                   'primer_mispriming_long_lib',
+
                   'primer_rat',
                   'primer_human',
                   'long_seq',
