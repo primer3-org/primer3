@@ -960,12 +960,18 @@ choose_primers(const p3_global_settings *pa,
 /* ============================================================ */
 
 /* ============================================================ */
-/* BEGIN choose_pair_or_triple */
-/* This function uses retval->fwd.num_elem and rev.num_elem
-   (and posibly intl.num_elem...also see choose_internal_oligo()).
-   This function then sorts through the pairs or
-   triples to find pa->num_return pairs or triples.
-   Results are returned in best_pairs and in 
+/* BEGIN choose_pair_or_triple
+
+   This function uses retval->fwd and retval->rev and
+   updates the the oligos in these array.
+
+   This function posibly uses retval->intl and updates its
+   elements via choose_internal_oligo().
+
+   This function examimes primer pairs or triples to find
+   pa->num_return pairs or triples to return.
+
+   Results are returned in best_pairs and in
    retval->best_pairs.expl */
 /* ============================================================ */
 static void
@@ -994,7 +1000,7 @@ choose_pair_or_triple(p3retval *retval,
   for (i = 0; i < retval->rev.num_elem; i++) max_j_seen[i] = -1;
 
   /* Pick pairs till we have enough (continue_trying == 0) */     
-  while(1 /* continue_trying == 1*/ ) {
+  while(1) {
 
     memset(&the_best_pair, 0, sizeof(the_best_pair));
     the_best_i = -1;
@@ -1054,15 +1060,7 @@ choose_pair_or_triple(p3retval *retval,
           update_stats = 1;
         }
         
-        /* Only evaluate pairs which overlap at least one overlap region */
-        if ((sa->primer_overlap_pos[0] != -1)
-             && !(bf_get_overlaps_overlap_region(&retval->rev.oligo[i])
-                  || bf_get_overlaps_overlap_region(&retval->fwd.oligo[j]))){
-          continue;
-        }
-
-	if (1 && 
-	    oligo_in_pair_overlaps_used_oligo(&retval->fwd.oligo[j],
+	if (oligo_in_pair_overlaps_used_oligo(&retval->fwd.oligo[j],
 					      &retval->rev.oligo[i],
 					      best_pairs,
 					      pa->min_three_prime_distance)) {
@@ -2511,7 +2509,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
     }
   }
 
-  /* FIX ME CLEAN UP LOGIC HERE */
+  /* FIX ME Simplify logic here */
   if (l != OT_INTL
       && oligo_overlaps_interval(j, k-j+1, sa->excl2.pairs, sa->excl2.count))
     bf_set_overlaps_excl_region(h,1);
@@ -2980,9 +2978,8 @@ compare_primer_pair(const void *x1, const void *x2)
   if (a1->compl_measure > a2->compl_measure) return 1;
 
   /*
-   * The following statements ensure that we 
-   * get stable order and one that is the same
-   * on all systems
+   * The following statements ensure that we get a stable order that
+   * is the same on all systems.
    */
 
   y1 = a1->left->start;
@@ -3007,54 +3004,6 @@ compare_primer_pair(const void *x1, const void *x2)
 
   return 0;
 }
-
-#if 0
-/* Used in previous versions.  Not currently used. */
-/* Compare function for sorting primer records. */
-static int
-compare_primer_pair_or_triple(const void *x1, const void *x2)
-{
-  const primer_pair *a1 = (const primer_pair *) x1;
-  const primer_pair *a2 = (const primer_pair *) x2;
-  int y1, y2;
-
-  if(a1->pair_quality < a2->pair_quality) return -1;
-  if (a1->pair_quality > a2->pair_quality) return 1;
-
-  if (a1->compl_measure < a2->compl_measure) return -1;
-  if (a1->compl_measure > a2->compl_measure) return 1;
-
-  /*
-   * The following statements ensure that sorting
-   * produces the same order on all systems regardless
-   * of whether the sorting function is stable.
-   */
-
-  y1 = a1->left->start;
-  y2 = a2->left->start;
-  if (y1 > y2) return -1;  /* prefer left primers to the right. */
-  if (y1 < y2) return 1;
-
-  y1 = a1->right->start;
-  y2 = a2->right->start;
-  if (y1 < y2) return -1; /* prefer right primers to the left. */
-  if (y1 > y2) return 1;
-
-  y1 = a1->left->length;
-  y2 = a2->left->length;
-  if (y1 < y2) return -1;  /* prefer shorter primers. */
-  if (y1 > y2) return 1;
-
-  y1 = a1->right->length;
-  y2 = a2->right->length;
-  if (y1 < y2) return -1; /* prefer shorter primers. */
-  if (y1 > y2) return 1;
-
-  /* ..... FIX ME ..... */
-
-  return 0;
-}
-#endif
 
 /*
  * Defines parameter values for given primer pair. Returns PAIR_OK if the pair is
@@ -3118,6 +3067,21 @@ characterize_pair(p3retval *retval,
   }
 
   /* ============================================================= */
+  /* Determine if overlap with an overlap point is required, and
+     if so, whether one of the primers in the pairs overlaps
+     that point. */
+
+  if ((sa->primer_overlap_pos[0] != -1)
+      && 
+      !(bf_get_overlaps_overlap_region(ppair->right)
+	|| bf_get_overlaps_overlap_region(ppair->left))
+      ) {
+    if (update_stats) { pair_expl->does_not_overlap_a_required_point++; }
+    if (!must_use) return PAIR_FAILED;
+    else pair_failed_flag = 1;
+  }
+
+  /* ============================================================= */
   /* Compute product Tm and related parameters; check constraints. */
 
   ppair->product_tm
@@ -3158,6 +3122,12 @@ characterize_pair(p3retval *retval,
   /* End of product-temperature related computations. */
   /* ============================================================= */
 
+
+  /* ============================================================= */
+  /* BEGIN "EXPENSIVE" computations on _individual_ primers
+     in the pair.  These have been postponed until
+     this point in the interests of efficiency.
+  */
 
   /* ============================================================= */
   /* Estimate secondary structure and primer-dimer of _individual_
@@ -6367,7 +6337,7 @@ initialize_op(primer_rec *oligo) {
 #define BF_OVERLAPS_EXCL_REGION             (1UL <<  3)
 #define BF_INFINITE_POSITION_PENALTY        (1UL <<  4)
 #define BF_OVERLAPS_OVERLAP_REGION          (1UL <<  5)
-/* Spcace fore more bitfields */
+/* Space for more bitfields */
 
 #define OP_TOO_MANY_NS                      (1UL <<  8) /* 5prime problem*/
 #define OP_OVERLAPS_TARGET                  (1UL <<  9) /* 5prime problem*/
