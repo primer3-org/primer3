@@ -55,10 +55,7 @@ static const char * pr_release = "primer3 release 2.0.0";
 static const char *pr_program_name;
 
 int
-main(argc,argv)
-    int argc;
-    char *argv[]; 
-{ 
+main(int argc, char *argv[]) { 
   /* Setup the input data structures handlers */
   int format_output = 0;
   int strict_tags = 0;
@@ -69,8 +66,6 @@ main(argc,argv)
   char *tmp_file_name = NULL;
   char p3_all_file[FILE_NAME_SIZE];
   char p3_settings_file[FILE_NAME_SIZE];
-  p3_all_file[0] = '\0';
-  p3_settings_file[0] = '\0';
 
   p3_global_settings *global_pa;
   seq_args *sarg;
@@ -82,6 +77,9 @@ main(argc,argv)
   /* Retval will point to the return value from choose_primers(). */
   p3retval *retval = NULL;
   int input_found=0;
+
+  p3_all_file[0] = '\0';
+  p3_settings_file[0] = '\0';
 
   init_pr_append_str(&fatal_parse_err);
   init_pr_append_str(&nonfatal_parse_err);

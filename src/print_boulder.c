@@ -85,14 +85,15 @@ print_boulder(int io_version,
   /* That links to the included region */
   int i, incl_s = sa->incl_s;
     
-  /* Check: are all pointers linked to something*/
-  PR_ASSERT(NULL != pa);
-  PR_ASSERT(NULL != sa);
-    
   /* This deals with the renaming of the internal oligo */
   char *new_oligo_name = "INTERNAL";
   char *old_oligo_name = "INTERNAL_OLIGO";
   char *int_oligo = new_oligo_name;
+
+  /* Check: are all pointers linked to something*/
+  PR_ASSERT(NULL != pa);
+  PR_ASSERT(NULL != sa);
+    
   if (io_version == 3) {
     int_oligo = old_oligo_name;
   }

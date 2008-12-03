@@ -2156,6 +2156,9 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
   /* Array to store one primer sequences in */
   char oligo_seq[MAX_PRIMER_LENGTH+1] , test_oligo[MAX_PRIMER_LENGTH+1];
 
+  /* Struct to store the primer parameters in */
+  primer_rec h;
+
   /* Copy *primer into test_oligo */
   test_oligo[0] = '\0';
   if (oligo->type != OT_RIGHT) {
@@ -2163,9 +2166,6 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
   } else {
     p3_reverse_complement(primer, test_oligo);
   }
-
-  /* Struct to store the primer parameters in */
-  primer_rec h;
 
   PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
 
@@ -2254,14 +2254,15 @@ add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oli
   /* Variables for the loop */
   int i, j;
   int n, found_primer;
-  /* Retun 1 for no primer found */
-  found_primer = 1;
 
   /* Array to store one primer sequences in */
   char oligo_seq[MAX_PRIMER_LENGTH+1];
 
   /* Struct to store the primer parameters in */
   primer_rec h;
+
+  /* Retun 1 for no primer found */
+  found_primer = 1;
 
   PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
 
@@ -4361,6 +4362,7 @@ _adjust_seq_args(const p3_global_settings *pa,
                    pr_append_str *warning)
 {
   int seq_len, inc_len;
+  char offending_char = '\0';
 
   /* Create a seq for check primers if needed */
   if (pa->primer_task == check_primers) {
@@ -4446,8 +4448,6 @@ _adjust_seq_args(const p3_global_settings *pa,
   sa->force_right_end -= sa->incl_s;
 
 
-  char offending_char = '\0';
-
   inc_len = sa->incl_s + sa->incl_l - 1;
 
   if ((sa->incl_l < INT_MAX) && (sa->incl_s > -1)
@@ -4501,6 +4501,7 @@ fake_a_sequence(seq_args *sa, const p3_global_settings *pa)
 {
   int i, product_size, space, ns_to_fill;
   char *rev = NULL;
+  int ns_to_fill_first, ns_to_fill_second;
 
   /* Determine the product size */
   if ( pa->product_opt_size == PR_UNDEFINED_INT_OPT){
@@ -4529,8 +4530,8 @@ fake_a_sequence(seq_args *sa, const p3_global_settings *pa)
   if (ns_to_fill == product_size + 1){
     return 0;
   }
-  int ns_to_fill_first = ns_to_fill / 2;
-  int ns_to_fill_second = ns_to_fill - ns_to_fill_first;
+  ns_to_fill_first = ns_to_fill / 2;
+  ns_to_fill_second = ns_to_fill - ns_to_fill_first;
   /* Allocate the space for the sequence */  
   sa->sequence = (char *) pr_safe_malloc(space);
   *sa->sequence = '\0';

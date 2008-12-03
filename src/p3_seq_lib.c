@@ -176,7 +176,7 @@ read_and_create_seq_lib(const char * filename, const char *errfrag) {
     char  *p;
     FILE *file;
     char *seq_id_plus = NULL;
-    char *seq = NULL;;
+    char *seq = NULL;
     size_t seq_storage_size;
     size_t seq_len;
 
