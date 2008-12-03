@@ -180,7 +180,7 @@ sub main() {
 
                   'primer_all_settingsfiles',
 
-                  # 'primer_intron',
+                  'primer_must_overlap_point',
 
                   'primer_high_tm_load_set',
                   'primer_high_gc_load_set',
