@@ -907,9 +907,17 @@ choose_primers(const p3_global_settings *pa,
 #if (0)
       /* Add a warning if no primers were found */
       if (retval->fwd.num_elem == 0
-            && retval->rev.num_elem == 0){
-          pr_append_new_chunk(&retval->warnings,
-            "No primers found. Try more relaxed parameters.");
+           && retval->rev.num_elem == 0){
+        pr_append_new_chunk(&retval->warnings,
+           "No primers found. Try more relaxed parameters.");
+      }
+      else if (retval->fwd.num_elem == 0){
+        pr_append_new_chunk(&retval->warnings,
+           "No forward primers found. Try more relaxed parameters.");
+      }
+      else if (retval->rev.num_elem == 0){
+        pr_append_new_chunk(&retval->warnings,
+           "No reverse primers found. Try more relaxed parameters.");
       }
 #endif
       return retval;
@@ -1164,6 +1172,13 @@ choose_pair_or_triple(p3retval *retval,
       for (i = 0; i < retval->rev.num_elem; i++) max_j_seen[i] = -1;
 
       if (!(product_size_range_index < pa->num_intervals)) {
+#if (0)
+        /* Add a warning if no pair was found */
+        if (best_pairs->num_pairs == 0){
+          pr_append_new_chunk(&retval->warnings,
+             "No primer pair found. Try more relaxed parameters.");
+        }
+#endif
         /* We ran out of product-size-ranges. End the while loop. */
         /* continue_trying = 0; */ break;
 
@@ -1897,6 +1912,9 @@ pick_only_best_primer(const int start,
   /* Variables for the loop */
   int i, j, primer_size_small, primer_size_large;
   int n, found_primer;
+  char number[20];
+  char *p_number = &number[0];
+  int temp_value;
 
   /* Array to store one primer sequences in */
   char oligo_seq[MAX_PRIMER_LENGTH+1];
@@ -1989,13 +2007,16 @@ pick_only_best_primer(const int start,
     /* Update statistics with how many primers are good */
     oligo->expl.ok = oligo->expl.ok + 1;
   } else {
-    /* FIX ME: make a apropriate warning */
-    pr_append_new_chunk(&retval->warnings,
-                        "No primer found in range x - x" /*,
-                                                           start + pa->first_base_index,
-                                                           start + length + pa->first_base_index*/);
+    pr_append_new_chunk(&retval->warnings, "No primer found in range ");
+    temp_value = start + pa->first_base_index;
+    sprintf(p_number, "%d", temp_value);
+    pr_append(&retval->warnings, p_number);
+    pr_append(&retval->warnings, " - ");
+    temp_value = start + length + pa->first_base_index;
+    sprintf(p_number, "%d", temp_value);
+    pr_append(&retval->warnings, p_number);
   }
-  /* return -1 for error Gaaaak, fix me, this comment makes no sense. */
+  /* return -1 if no primer was found. */
   if (oligo->num_elem == 0) return 1;
   else return 0;
 } /* pick_only_best_primer */
