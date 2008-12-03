@@ -44,7 +44,7 @@ Left      10     0     0     0     0     0     7     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 3, ok 3
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR pcr_primers_and_io
@@ -112,8 +112,8 @@ Left     281   210     0     0     0     0    30    29     0     0     0     0  
 Right    284   210     0     0     0     0     7    44     0     0     0     0    23
 Intl     393   280     0     0     0     0    30    46     0     0     3     0    34
 Pair Stats:
-considered 7, ok 7
-primer3 release 1.1.1
+considered 5, ok 5
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR left_only
@@ -152,7 +152,7 @@ Statistics
          sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left    1121    38    23     0     0     0    42   866     0     0     0     0   152
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR right_only
@@ -191,11 +191,12 @@ Statistics
          sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
 Right    623    27    36     0     5     0   230   145     0     6     0     0   174
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR hyb_probe_only
 
+No internal oligo mishyb library specified
 Using 0-based sequence positions
 OLIGO            start  len      tm     gc%   any    3' seq
 INTERNAL_OLIGO      64   20   59.73   55.00  6.00  0.00 CTGCAGGTTTAGAAGGGGTG
@@ -213,6 +214,7 @@ INTERNAL OLIGO EXCLUDED REGIONS (start, len)*: 90,20
                                                              
 
 KEYS (in order of precedence):
+xxxxxx excluded region for internal oligo
 ^^^^^^ internal oligo
 
 
@@ -228,7 +230,7 @@ Statistics
          sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
 Intl    1040    27     0    33     0     0    44   804     0     0     0     0   132
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR left_only
@@ -253,7 +255,7 @@ Statistics
          sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR right_only
@@ -278,7 +280,7 @@ Statistics
          sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR hyb_probe_only
@@ -303,6 +305,6 @@ Statistics
          sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
