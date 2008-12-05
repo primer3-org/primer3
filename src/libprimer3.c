@@ -913,11 +913,11 @@ choose_primers(const p3_global_settings *pa,
       }
       else if (retval->fwd.num_elem == 0){
         pr_append_new_chunk(&retval->warnings,
-           "No forward primers found. Try more relaxed parameters.");
+           "No left primers found. Try more relaxed parameters.");
       }
       else if (retval->rev.num_elem == 0){
         pr_append_new_chunk(&retval->warnings,
-           "No reverse primers found. Try more relaxed parameters.");
+           "No right primers found. Try more relaxed parameters.");
       }
 #endif
       return retval;
