@@ -69,7 +69,7 @@ print_boulder(int io_version,
   primer_rec *fwd, *rev, *intl;
  
   /* Variables only used for Primer Lists */
-  int num_fwd, num_rev, num_int, num_print;
+  int num_fwd, num_rev, num_int, num_pair, num_print;
   int print_fwd = 0;
   int print_rev = 0;
   int print_int = 0;
@@ -129,6 +129,12 @@ print_boulder(int io_version,
   }
   destroy_pr_append_str(combined_retval_err);
 
+  /* Get how many primers are in the array */
+  num_fwd = retval->fwd.num_elem;
+  num_rev = retval->rev.num_elem;
+  num_int = retval->intl.num_elem;
+  num_pair = retval->best_pairs.num_pairs;
+
   /* Prints out statistics about the primers */
   if (explain_flag) print_all_explain(pa, sa, retval, io_version);
     
@@ -142,10 +148,6 @@ print_boulder(int io_version,
      * the array that can be printed. If more than needed,
      * set it to the number requested. */
 
-    /* Get how many primers are in the array */
-    num_fwd = retval->fwd.num_elem;
-    num_rev = retval->rev.num_elem;
-    num_int = retval->intl.num_elem;
     /* Get how may primers should be printed */
     num_print = pa->num_return;
     /* Set how many primers will be printed */
@@ -166,10 +168,24 @@ print_boulder(int io_version,
     /* Now the vars are there how often we have to go
      * through the loop and how many of each primer can
      * be printed. */
+    num_pair = 0;
   } else {
-    loop_max = retval->best_pairs.num_pairs;
+    loop_max = num_pair;
+    /* Set how many primers will be printed */
+    print_fwd = num_pair;
+    print_rev = num_pair;
+    if (num_int != 0) {
+      print_int = num_pair;
+    }
   }
-    
+
+  if (io_version == 4) {
+    printf("PRIMER_LEFT_NUM_RETURNED=%d\n", print_fwd);
+    printf("PRIMER_RIGHT_NUM_RETURNED=%d\n",  print_rev);
+    printf("PRIMER_%s_NUM_RETURNED=%d\n", int_oligo, print_int);
+    printf("PRIMER_PAIR_NUM_RETURNED=%d\n", num_pair);
+  }
+  
   /* --------------------------------------- */
   /* Start of the loop printing all pairs or primers or oligos */
   for(i=0; i<loop_max; i++) {
@@ -229,7 +245,7 @@ print_boulder(int io_version,
         printf("PRIMER_PAIR_PENALTY%s=%.4f\n", suffix,
                retval->best_pairs.pairs[i].pair_quality);
       } else {
-        printf("PRIMER_PAIR%s_PENALTY=%.4f\n", suffix,
+        printf("PRIMER_PAIR%s_PENALTY=%f\n", suffix,
                retval->best_pairs.pairs[i].pair_quality);
       }
     }

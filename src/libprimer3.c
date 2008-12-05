@@ -904,22 +904,6 @@ choose_primers(const p3_global_settings *pa,
     if (make_detection_primer_lists(retval, pa, sa,
                                     dpal_arg_to_use) != 0) {
       /* There was an error */
-#if (0)
-      /* Add a warning if no primers were found */
-      if (retval->fwd.num_elem == 0
-           && retval->rev.num_elem == 0){
-        pr_append_new_chunk(&retval->warnings,
-           "No primers found. Try more relaxed parameters.");
-      }
-      else if (retval->fwd.num_elem == 0){
-        pr_append_new_chunk(&retval->warnings,
-           "No left primers found. Try more relaxed parameters.");
-      }
-      else if (retval->rev.num_elem == 0){
-        pr_append_new_chunk(&retval->warnings,
-           "No right primers found. Try more relaxed parameters.");
-      }
-#endif
       return retval;
     }
     /* Populate the internal oligo lists */
@@ -927,13 +911,6 @@ choose_primers(const p3_global_settings *pa,
       if (make_internal_oligo_list(retval, pa, sa,
                                    dpal_arg_to_use) != 0) {
         /* There was an error*/
-#if (0)
-        /* Add a warning if no primers were found */
-        if (retval->intl.num_elem == 0){
-            pr_append_new_chunk(&retval->warnings,
-              "No internal oligo found. Try more relaxed parameters.");
-        }
-#endif
         return retval;
       }
     }
@@ -1172,13 +1149,6 @@ choose_pair_or_triple(p3retval *retval,
       for (i = 0; i < retval->rev.num_elem; i++) max_j_seen[i] = -1;
 
       if (!(product_size_range_index < pa->num_intervals)) {
-#if (0)
-        /* Add a warning if no pair was found */
-        if (best_pairs->num_pairs == 0){
-          pr_append_new_chunk(&retval->warnings,
-             "No primer pair found. Try more relaxed parameters.");
-        }
-#endif
         /* We ran out of product-size-ranges. End the while loop. */
         /* continue_trying = 0; */ break;
 
