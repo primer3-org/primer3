@@ -573,7 +573,6 @@ pr_set_default_global_args(p3_global_settings *a) {
   */
 
   a->min_three_prime_distance        = -1;
-  a->primers_in_pairs_must_be_unique = 0;
 
   a->settings_file_id                = NULL;
 
