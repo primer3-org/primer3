@@ -3207,14 +3207,14 @@ characterize_pair(p3retval *retval,
    * s2's complement and s1.  (Both s1 and s2 are taken from the same strand.)
    */
   ppair->compl_any = align(s1,s2, dpal_arg_to_use->local);
-  if (ppair->compl_any > pa->p_args.max_self_any) {
+  if (ppair->compl_any > pa->pair_compl_any) {
     if (update_stats) { pair_expl->compl_any++; }
     if (!must_use) return PAIR_FAILED;
     else pair_failed_flag = 1;
   }
 
-  if ((ppair->compl_end = align(s1, s2, dpal_arg_to_use->end))
-      > pa->p_args.max_self_end) {
+  ppair->compl_end = align(s1, s2, dpal_arg_to_use->end);
+  if (ppair->compl_end > pa->pair_compl_end) {
     if (update_stats) { pair_expl->compl_end++; }
     if (!must_use) return PAIR_FAILED;
     else pair_failed_flag = 1;
