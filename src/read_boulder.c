@@ -524,8 +524,8 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_PRODUCT_OPT_SIZE", pa->product_opt_size);
       COMPARE_ALIGN_SCORE("PRIMER_SELF_ANY", pa->p_args.max_self_any);
       COMPARE_ALIGN_SCORE("PRIMER_SELF_END", pa->p_args.max_self_end);
-      COMPARE_ALIGN_SCORE("PRIMER_PAIR_ANY", pa->pair_compl_any);
-      COMPARE_ALIGN_SCORE("PRIMER_PAIR_END", pa->pair_compl_end);
+      COMPARE_ALIGN_SCORE("PRIMER_PAIR_COMPL_ANY", pa->pair_compl_any);
+      COMPARE_ALIGN_SCORE("PRIMER_PAIR_COMPL_END", pa->pair_compl_end);
       COMPARE_INT("P3_FILE_FLAG", res->file_flag);
       COMPARE_INT("PRIMER_PICK_ANYWAY", pa->pick_anyway);
       COMPARE_INT("PRIMER_GC_CLAMP", pa->gc_clamp);
