@@ -529,6 +529,7 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("P3_FILE_FLAG", res->file_flag);
       COMPARE_INT("PRIMER_PICK_ANYWAY", pa->pick_anyway);
       COMPARE_INT("PRIMER_GC_CLAMP", pa->gc_clamp);
+      COMPARE_INT("PRIMER_MAX_END_GC", pa->max_end_gc);
       COMPARE_INT("PRIMER_EXPLAIN_FLAG", res->explain_flag);
       COMPARE_INT("PRIMER_LIBERAL_BASE", pa->liberal_base);
       COMPARE_INT("PRIMER_FIRST_BASE_INDEX", pa->first_base_index);

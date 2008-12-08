@@ -341,6 +341,7 @@ static void op_set_overlaps_excluded_region(primer_rec *);
 static void op_set_high_self_any(primer_rec *oligo);
 static void op_set_high_self_end(primer_rec *oligo);
 static void op_set_no_gc_glamp(primer_rec *);
+static void op_set_too_many_gc_at_end(primer_rec *);
 static void op_set_high_end_stability(primer_rec *);
 static void op_set_high_poly_x(primer_rec *);
 static void op_set_low_sequence_quality(primer_rec *);
@@ -487,6 +488,7 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->pair_compl_any      = 800;
   a->pair_compl_end      = 300;
   a->gc_clamp            = 0;
+  a->max_end_gc          = 5;
   a->liberal_base        = 0;
   a->primer_task         = pick_detection_primers;
   a->pick_left_primer    = 1;
@@ -2376,7 +2378,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
                               const char *input_oligo_seq
                               )
 {
-  int i, j, k, for_i;
+  int i, j, k, for_i, gc_count;
   int five_prime_pos; /* position of 5' base of oligo */
   int three_prime_pos; /* position of 3' base of oligo */
   oligo_type l = otype;
@@ -2565,6 +2567,25 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
     }
   }
 #endif
+
+  if (pa->max_end_gc != 5 
+          && (OT_LEFT == l || OT_RIGHT == l)) {
+    /* The CGs are only counted in the END of primers (as opposed
+       to primers and hybridzations oligos. */
+    gc_count=0;
+    for (i = 0; i < 5; i++) {
+      /* We want to look at the 3' end of the oligo being
+         assessed, so we look in the 5' end of its reverse-complement */
+      if (revc_oligo_seq[i] == 'G' || revc_oligo_seq[i] == 'C') {
+        gc_count++;
+      }
+    }
+    if (gc_count > pa->max_end_gc) {
+      op_set_too_many_gc_at_end(h);
+      stats->gc_end++;
+      if (!must_use) return;
+    }
+  }
 
   /* Tentative interface for generic oligo  testing
      function */
@@ -4128,12 +4149,12 @@ p3_oligo_explain_string(const oligo_stats *stat)
   IF_SP_AND_CHECK(", high end compl %d", stat->compl_end)
   IF_SP_AND_CHECK(", high repeat similarity %d", stat->repeat_score)
   IF_SP_AND_CHECK(", long poly-x seq %d", stat->poly_x)
-  IF_SP_AND_CHECK(",low sequence quality %d", stat->seq_quality)
-  IF_SP_AND_CHECK(",high 3' stability %d", stat->stability)
-  IF_SP_AND_CHECK(",high template mispriming score %d",
+  IF_SP_AND_CHECK(", low sequence quality %d", stat->seq_quality)
+  IF_SP_AND_CHECK(", high 3' stability %d", stat->stability)
+  IF_SP_AND_CHECK(", high template mispriming score %d",
                   stat->template_mispriming)
   /* edited by T. Koressaar for lowercase masking */
-  IF_SP_AND_CHECK(",lowercase masking of 3' end %d",stat->gmasked)
+  IF_SP_AND_CHECK(", lowercase masking of 3' end %d",stat->gmasked)
   SP_AND_CHECK(", ok %d", stat->ok)
                return buf;
 }
@@ -4611,6 +4632,14 @@ _pr_data_control(const p3_global_settings *pa,
   if (pa->gc_clamp > pa->p_args.min_size) {
     pr_append_new_chunk(glob_err,
                         "PRIMER_GC_CLAMP > PRIMER_MIN_SIZE");
+    return 1;
+  }
+
+  /* The PRIMER_MAX_END_GC must be 0 - 5 */
+  if ((pa->max_end_gc < 0) 
+		 || (pa->max_end_gc > 5)) {
+    pr_append_new_chunk(glob_err,
+                        "PRIMER_MAX_END_GC must be between 0 to 5");
     return 1;
   }
 
@@ -6330,26 +6359,27 @@ initialize_op(primer_rec *oligo) {
 #define BF_OVERLAPS_OVERLAP_REGION          (1UL <<  5)
 /* Space for more bitfields */
 
-#define OP_TOO_MANY_NS                      (1UL <<  8) /* 5prime problem*/
-#define OP_OVERLAPS_TARGET                  (1UL <<  9) /* 5prime problem*/
+#define OP_TOO_MANY_NS                      (1UL <<  8) /* 3prime problem*/
+#define OP_OVERLAPS_TARGET                  (1UL <<  9) /* 3prime problem*/
 #define OP_HIGH_GC_CONTENT                  (1UL << 10)
 #define OP_LOW_GC_CONTENT                   (1UL << 11)
 #define OP_HIGH_TM                          (1UL << 12)
 #define OP_LOW_TM                           (1UL << 13)
-#define OP_OVERLAPS_EXCL_REGION             (1UL << 14) /* 5prime problem*/
-#define OP_HIGH_SELF_ANY                    (1UL << 15) /* 5prime problem*/
+#define OP_OVERLAPS_EXCL_REGION             (1UL << 14) /* 3prime problem*/
+#define OP_HIGH_SELF_ANY                    (1UL << 15) /* 3prime problem*/
 #define OP_HIGH_SELF_END                    (1UL << 16)
-#define OP_NO_GC_CLAMP                      (1UL << 17) /* 5prime problem*/
-#define OP_HIGH_END_STABILITY               (1UL << 18) /* 5prime problem*/
-#define OP_HIGH_POLY_X                      (1UL << 19) /* 5prime problem*/
-#define OP_LOW_SEQUENCE_QUALITY             (1UL << 20) /* 5prime problem*/
-#define OP_LOW_END_SEQUENCE_QUALITY         (1UL << 21) /* 5prime problem*/
-#define OP_HIGH_SIM_TO_NON_TEMPLATE_SEQ     (1UL << 22) /* 5prime problem*/
+#define OP_NO_GC_CLAMP                      (1UL << 17) /* 3prime problem*/
+#define OP_HIGH_END_STABILITY               (1UL << 18) /* 3prime problem*/
+#define OP_HIGH_POLY_X                      (1UL << 19) /* 3prime problem*/
+#define OP_LOW_SEQUENCE_QUALITY             (1UL << 20) /* 3prime problem*/
+#define OP_LOW_END_SEQUENCE_QUALITY         (1UL << 21) /* 3prime problem*/
+#define OP_HIGH_SIM_TO_NON_TEMPLATE_SEQ     (1UL << 22) /* 3prime problem*/
 #define OP_HIGH_SIM_TO_MULTI_TEMPLATE_SITES (1UL << 23)
 #define OP_OVERLAPS_MASKED_SEQ              (1UL << 24)
-#define OP_TOO_LONG                         (1UL << 25)
+#define OP_TOO_LONG                         (1UL << 25) /* 3prime problem*/
 #define OP_TOO_SHORT                        (1UL << 26)
 #define OP_DOES_NOT_AMPLIFY_ORF             (1UL << 27)
+#define OP_TOO_MANY_GC_AT_END               (1UL << 28) /* 3prime problem*/
 /* Space for more Errors */
 
 /* Tip: the calculator of windows (in scientific mode) can easily convert 
@@ -6358,8 +6388,8 @@ initialize_op(primer_rec *oligo) {
 /* all bits 1 except bits 0 to 7 */
 /* (~0UL) ^ 255UL = 1111 1111  1111 1111  1111 1111  0000 0000 */
 static unsigned long int any_problem = (~0UL) ^ 255UL;
-/* 8307456UL = 0000 0000  0111 1110  1100 0011  0000 0000 */
-static unsigned long int five_prime_problem = 8307456UL;
+/* 310297344UL = 0001 0010  0111 1110  1100 0011  0000 0000 */
+static unsigned long int five_prime_problem = 310297344UL;
 
 int
 p3_ol_is_uninitialized(const primer_rec *oligo) {
@@ -6407,45 +6437,47 @@ p3_get_ol_problem_string(const primer_rec *oligo) {
   {
     ADD_OP_STR(OP_TOO_MANY_NS,
                " Too many Ns;")
-      ADD_OP_STR(OP_OVERLAPS_TARGET,
-                 " Overlaps target;")
-      ADD_OP_STR(OP_HIGH_GC_CONTENT,
-                 " GC content too high;")
-      ADD_OP_STR(OP_LOW_GC_CONTENT,
-                 " GC content too low;")
-      ADD_OP_STR(OP_HIGH_TM,
-                 " Temperature too high;")
-      ADD_OP_STR(OP_LOW_TM,
-                 " Temperature too low;")
-      ADD_OP_STR(OP_OVERLAPS_EXCL_REGION,
-                 " Overlaps an excluded region;")
-      ADD_OP_STR(OP_HIGH_SELF_ANY,
-                 " Similarity to self too high;")
-      ADD_OP_STR(OP_HIGH_SELF_END,
-                 " Similary to 3' end of self too high;")
-      ADD_OP_STR(OP_NO_GC_CLAMP,
-                 " No 3' GC clamp;")
-      ADD_OP_STR(OP_HIGH_END_STABILITY,
-                 " 3' end too stable (delta-G too high);")
-      ADD_OP_STR(OP_HIGH_POLY_X,
-                 " Contains too-long poly nucleotide tract;")
-      ADD_OP_STR(OP_LOW_SEQUENCE_QUALITY,
-                 " Template sequence quality too low;")
-      ADD_OP_STR(OP_LOW_END_SEQUENCE_QUALITY,
-                 " Template sequence quality at 3' end too low;")
-      ADD_OP_STR(OP_HIGH_SIM_TO_NON_TEMPLATE_SEQ,
-                 " Similarity to non-template sequence too high;")
-      ADD_OP_STR(OP_HIGH_SIM_TO_MULTI_TEMPLATE_SITES,
-                 " Similarity to multiple sites in template;")
-      ADD_OP_STR(OP_OVERLAPS_MASKED_SEQ,
-                 " 3' base overlaps masked sequence;")
-      ADD_OP_STR(OP_TOO_LONG,
-                 " Too long;")
-      ADD_OP_STR(OP_TOO_SHORT,
-                 " Too short;")
-      ADD_OP_STR(OP_DOES_NOT_AMPLIFY_ORF,
-                 " Would not amplify an open reading frame;")
-      }
+    ADD_OP_STR(OP_OVERLAPS_TARGET,
+               " Overlaps target;")
+    ADD_OP_STR(OP_HIGH_GC_CONTENT,
+               " GC content too high;")
+    ADD_OP_STR(OP_LOW_GC_CONTENT,
+               " GC content too low;")
+    ADD_OP_STR(OP_HIGH_TM,
+               " Temperature too high;")
+    ADD_OP_STR(OP_LOW_TM,
+               " Temperature too low;")
+    ADD_OP_STR(OP_OVERLAPS_EXCL_REGION,
+               " Overlaps an excluded region;")
+    ADD_OP_STR(OP_HIGH_SELF_ANY,
+               " Similarity to self too high;")
+    ADD_OP_STR(OP_HIGH_SELF_END,
+               " Similary to 3' end of self too high;")
+    ADD_OP_STR(OP_NO_GC_CLAMP,
+               " No 3' GC clamp;")
+    ADD_OP_STR(OP_TOO_MANY_GC_AT_END,
+               " Too many GCs at 3' end;")
+    ADD_OP_STR(OP_HIGH_END_STABILITY,
+               " 3' end too stable (delta-G too high);")
+    ADD_OP_STR(OP_HIGH_POLY_X,
+               " Contains too-long poly nucleotide tract;")
+    ADD_OP_STR(OP_LOW_SEQUENCE_QUALITY,
+               " Template sequence quality too low;")
+    ADD_OP_STR(OP_LOW_END_SEQUENCE_QUALITY,
+               " Template sequence quality at 3' end too low;")
+    ADD_OP_STR(OP_HIGH_SIM_TO_NON_TEMPLATE_SEQ,
+               " Similarity to non-template sequence too high;")
+    ADD_OP_STR(OP_HIGH_SIM_TO_MULTI_TEMPLATE_SITES,
+               " Similarity to multiple sites in template;")
+    ADD_OP_STR(OP_OVERLAPS_MASKED_SEQ,
+               " 3' base overlaps masked sequence;")
+    ADD_OP_STR(OP_TOO_LONG,
+               " Too long;")
+    ADD_OP_STR(OP_TOO_SHORT,
+               " Too short;")
+    ADD_OP_STR(OP_DOES_NOT_AMPLIFY_ORF,
+               " Would not amplify an open reading frame;")
+    }
   return output;
 }
 #undef ADD_OP_STR
@@ -6574,6 +6606,12 @@ op_set_high_self_end(primer_rec *oligo) {
 static void
 op_set_no_gc_glamp(primer_rec *oligo) {
   oligo->problems.prob |= OP_NO_GC_CLAMP;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
+}
+
+static void
+op_set_too_many_gc_at_end(primer_rec *oligo) {
+  oligo->problems.prob |= OP_TOO_MANY_GC_AT_END;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 

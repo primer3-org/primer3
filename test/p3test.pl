@@ -178,14 +178,14 @@ sub main() {
                   'primer_new_tasks',
                   'primer_new_tasks_formatted',
 
-                  'primer_all_settingsfiles',
-
                   'primer_must_overlap_point',
 
+                  'primer_all_settingsfiles',
                   'primer_high_tm_load_set',
                   'primer_high_gc_load_set',
 
 
+                  'primer_gc_end',
                   'primer_check',
                   'primer_must_use',
                   'primer_must_use_formatted',

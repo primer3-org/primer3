@@ -327,6 +327,11 @@ typedef struct p3_global_settings {
    * a primer.
    */
 
+  int    max_end_gc;
+  /* The maximum number of allowed G or C
+   * for the 5 3' bases of a primer.
+   */
+
   int    gc_clamp;              /* Required number of GCs at 3' end. */
 
   /* ================================================== */
@@ -586,6 +591,7 @@ typedef struct oligo_stats {
   int excluded;            /* Overlapping excluded regions.                 */
   int gc;                  /* Unacceptable GC content.                      */
   int gc_clamp;            /* Don't have required number of GCs at 3' end.  */
+  int gc_end;              /* Have too much GCs at the 3' end.              */
   int temp_min;            /* Melting temperature below t_min.              */
   int temp_max;            /* Melting temperature more than t_max.          */
   int size_min;            /* Primer shorter than minimal size.             */
