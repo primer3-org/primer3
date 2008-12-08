@@ -146,7 +146,7 @@ sub translate_file {
 		# Now handle lines ending with =
 		elsif ($line =~ /=$/) {
 			$line =~ s/=$//;
-			$text_output .= $docTags{$line}."=\n";
+			$text_output .= $line."=\n";
 		}
 		# Catch lines without a = (should not happen)
 		elsif (!($line =~ /=/)) {
