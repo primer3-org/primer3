@@ -69,7 +69,9 @@ my $output;
 
 foreach my $si_file (@directoryFiles) {
 	if (($si_file eq ".") or ($si_file eq "..")
-		or ($si_file eq ".svn")) {
+		or ($si_file eq ".svn")
+		or ($si_file =~ /_formatted_output$/)
+		or ($si_file =~ /^dpal_/)) {
 		next;
 	}
 #	print $si_file."\n";
