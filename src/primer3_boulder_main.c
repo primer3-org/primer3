@@ -1,7 +1,7 @@
 /*
 Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
 Whitehead Institute for Biomedical Research, Steve Rozen
-(http://jura.wi.mit.edu/rozen), Andreas Untergasser and Helen Skaletsky
+(http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky
 All rights reserved.
 
     This file is part of primer3 and the libprimer3 library.
@@ -128,18 +128,8 @@ main(int argc, char *argv[]) {
     }
   }
 
-  /* Create  empty error messages */
-#if 0
-  fatal_parse_err     = create_pr_append_str();
-  nonfatal_parse_err  = create_pr_append_str();
-  if (NULL == fatal_parse_err 
-      || NULL == nonfatal_parse_err ) {
-    exit(-2); /* Out of memory */
-  }
-#endif
-
-  /* Settings files have to be read in here */
-  /* The functions need a temporary sarg */
+  /* Settings files have to be read in just below, and
+     the functions need a temporary sarg */
   if (!(sarg = create_seq_arg())) {
     exit(-2);
   }
@@ -260,7 +250,7 @@ main(int argc, char *argv[]) {
     retval = choose_primers(global_pa, sarg);  
     if (NULL == retval) exit(-2); /* Out of memory. */
     
-    /* This is old code to make it compartibel with version 3 input.
+    /* This is old code to make it compatible with version 3 input.
        In future versions it can be deleted!
        If it was necessary to use a left_input, right_input,
        or internal_oligo_input primer that was
