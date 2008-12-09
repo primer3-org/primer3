@@ -273,10 +273,33 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_DNA_CONC", pa->p_args.dna_conc);
       COMPARE_INT("PRIMER_NUM_NS_ACCEPTED", pa->p_args.num_ns_accepted);
       COMPARE_INT("PRIMER_PRODUCT_OPT_SIZE", pa->product_opt_size);
-      COMPARE_ALIGN_SCORE("PRIMER_SELF_ANY", pa->p_args.max_self_any);
-      COMPARE_ALIGN_SCORE("PRIMER_SELF_END", pa->p_args.max_self_end);
+
+      /* =============================================================== */
+      /* Special handlng to presever backward compatible behavior
+         for io version 3. */
+      /* Old code was...
+         COMPARE_ALIGN_SCORE("PRIMER_SELF_ANY", pa->p_args.max_self_any); */
+      if (COMPARE("PRIMER_SELF_ANY")) {
+        parse_align_score("PRIMER_SELF_ANY", datum, 
+                          &(pa->p_args.max_self_any), parse_err);
+        pa->pair_compl_any = pa->p_args.max_self_any;
+        continue;
+      }
+
+      /* Old code was... 
+         COMPARE_ALIGN_SCORE("PRIMER_SELF_END", pa->p_args.max_self_end); */
+      if (COMPARE("PRIMER_SELF_END")) {
+        parse_align_score("PRIMER_SELF_END", datum,
+                          &(pa->p_args.max_self_end), parse_err);
+        pa->pair_compl_end = pa->p_args.max_self_end;
+        continue;
+      }
+      /* End of special handling. */
+      /* =============================================================== */
+
       COMPARE_ALIGN_SCORE("PRIMER_PAIR_ANY", pa->pair_compl_any);
       COMPARE_ALIGN_SCORE("PRIMER_PAIR_END", pa->pair_compl_end);
+
       COMPARE_INT("PRIMER_FILE_FLAG", res->file_flag);
       COMPARE_INT("PRIMER_PICK_ANYWAY", pa->pick_anyway);
       COMPARE_INT("PRIMER_GC_CLAMP", pa->gc_clamp);
@@ -567,7 +590,7 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_INTERNAL_MIN_GC", pa->o_args.min_gc);
       COMPARE_FLOAT("PRIMER_INTERNAL_MAX_GC", pa->o_args.max_gc);
       COMPARE_FLOAT("PRIMER_INTERNAL_SALT_MONOVALENT",
-    		        pa->o_args.salt_conc);
+                        pa->o_args.salt_conc);
       COMPARE_FLOAT("PRIMER_INTERNAL_SALT_DIVALENT",
                     pa->o_args.divalent_conc); /* added by T.Koressaar */
       COMPARE_FLOAT("PRIMER_INTERNAL_DNTP_CONC",
@@ -877,13 +900,13 @@ int read_p3_file(const char *file_name,
   PR_ASSERT(NULL != file_name);
   /* Open the file */
   if((file = fopen(file_name,"r")) != NULL) {
-	/* Deal with the file headers */
+        /* Deal with the file headers */
     strncpy (first_line, p3_read_line(file), 79);
     strncpy (second_line, p3_read_line(file), 79);
     p3_read_line(file);
 
     if (strncmp(first_line,"Primer3 File - http://primer3.sourceforge.net", 45)) {
-    	error = 1;
+        error = 1;
     }
     if (!strncmp(second_line,"P3_FILE_TYPE=all_parameters", 27)) {
       file_type = all_parameters;
@@ -908,9 +931,9 @@ int read_p3_file(const char *file_name,
                            echo_output, expected_file_type, pa, sa, fatal_err, 
                            nonfatal_err, read_boulder_record_res);
     } else {
-		    pr_append_new_chunk(fatal_err, "Incorrect file format in ");
-		    pr_append(fatal_err, file_name);
-	}
+                    pr_append_new_chunk(fatal_err, "Incorrect file format in ");
+                    pr_append(fatal_err, file_name);
+        }
   } else {
     pr_append_new_chunk(fatal_err, "Cannot open ");
     pr_append(fatal_err, file_name);
@@ -1098,7 +1121,7 @@ parse_intron_list(char *s,
     if (q == p) {
       while (*q != '\0') {
         if (!isspace(*q)) {
-        	sargs->primer_overlap_pos_count = 0;
+                sargs->primer_overlap_pos_count = 0;
           return 0; 
         }
         q++;
@@ -1115,7 +1138,6 @@ parse_intron_list(char *s,
   }
   return sargs->primer_overlap_pos_count;
 }
-
 
 static void
 parse_product_size(tag_name, in, pa, err)
@@ -1160,9 +1182,8 @@ parse_product_size(tag_name, in, pa, err)
     pa->num_intervals = i;
 }
 
-/* FIX ME -- TEST THIS A BIT MORE WITH
-   off-by-one errors on length of the 
-   quality score */
+/* Would be worthwhile to test this a bit more off-by-one errors on
+   length of the quality score */
 
 /* This function returns the number of elements in
    the sequence quality vector, and updates
