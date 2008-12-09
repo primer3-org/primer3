@@ -522,13 +522,6 @@ int p3_ol_is_ok(const primer_rec *);
 typedef struct primer_pair {
   double pair_quality;  /* Penalty value of the primer pair */
 
-  double compl_measure; /* A measure of self-complementarity of left and right
-                         * primers in the pair, as well as complementarity
-                         * between left and right primers.  The function
-                         * choice returns pairs with the minimal value for
-                         * this field when 2 pairs have the same
-                         * pair_quality.
-                         */
   double diff_tm;       /* Absolute value of the difference between melting
                          * temperatures for left and right primers. 
                          */

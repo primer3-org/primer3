@@ -2986,9 +2986,6 @@ compare_primer_pair(const void *x1, const void *x2)
   if(a1->pair_quality < a2->pair_quality) return -1;
   if (a1->pair_quality > a2->pair_quality) return 1;
 
-  if (a1->compl_measure < a2->compl_measure) return -1;
-  if (a1->compl_measure > a2->compl_measure) return 1;
-
   /*
    * The following statements ensure that we get a stable order that
    * is the same on all systems.
@@ -3254,10 +3251,6 @@ characterize_pair(p3retval *retval,
     }
     ppair->compl_end = compl_end;
   }
-
-  ppair->compl_measure =
-    (ppair->right->self_end  + ppair->left->self_end + ppair->compl_end) * 1.1
-    + ppair->right->self_any + ppair->left->self_any + ppair->compl_any;
 
   if ((ppair->repeat_sim = pair_repeat_sim(ppair, pa))
       > pa->pair_repeat_compl) {
