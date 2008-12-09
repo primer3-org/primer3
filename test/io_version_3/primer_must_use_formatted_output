@@ -316,7 +316,7 @@ PRIMER PICKING RESULTS FOR internal_too_short
 No mispriming library specified
 No internal oligo mishyb library specified
 Using 0-based sequence positions
-WARNING: Specified internal oligo < PRIMER_INTERNAL_OLIGO_MIN_SIZE; Left primer is unacceptable: Tm too high/High self complementarity; Right primer is unacceptable: Overlaps Target/Unacceptable GC content; Hybridization probe is unacceptable: Too short/Tm too low
+WARNING: Specified internal oligo < PRIMER_INTERNAL_MIN_SIZE; Left primer is unacceptable: Tm too high/High self complementarity; Right primer is unacceptable: Overlaps Target/Unacceptable GC content; Hybridization probe is unacceptable: Too short/Tm too low
 
 OLIGO            start  len      tm     gc%   any    3' seq
 LEFT PRIMER          0   21   60.12   47.62 12.00  0.00 TCCTACAGCTGTGGGAAAATG
