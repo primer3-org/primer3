@@ -70,4 +70,4 @@ clean:
 	-rm -f *.vg */*.vg     # valgrind output from p3test{,z}.pl --valgrind
 	-rm -f *.vg.core.*     # core files from crashed valgrind test
 	-rm -f ./core # in case we crashed and left a core file
-	cd io_version_; make clean
+	cd io_version_3; make clean
