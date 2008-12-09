@@ -165,7 +165,7 @@ typedef struct args_for_one_oligo_or_primer {
   double max_gc;
   double min_gc;
 
-  /* FIX ME -- skewed -- also used for product Tm */
+  /* Warning: also used for product Tm (FIX ME) */
   double salt_conc;
 
   /*
@@ -584,7 +584,7 @@ typedef struct oligo_stats {
   int excluded;            /* Overlapping excluded regions.                 */
   int gc;                  /* Unacceptable GC content.                      */
   int gc_clamp;            /* Don't have required number of GCs at 3' end.  */
-  int gc_end;              /* Have too much GCs at the 3' end.              */
+  int gc_end_high;         /* Too many G+Cs at the 3' end.                  */
   int temp_min;            /* Melting temperature below t_min.              */
   int temp_max;            /* Melting temperature more than t_max.          */
   int size_min;            /* Primer shorter than minimal size.             */

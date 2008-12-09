@@ -253,7 +253,7 @@ static int   pick_primers_by_position(const int, const int,
 static double obj_fn(const p3_global_settings *, primer_pair *);
 
 static int    oligo_in_pair_overlaps_used_oligo(const primer_rec *left,
-						const primer_rec *right,
+                                                const primer_rec *right,
                                                 const pair_array_t *retpair,
                                                 int min_dist);
 
@@ -464,6 +464,11 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->p_args.max_template_mispriming
     = PR_UNDEFINED_ALIGN_OPT;
 
+  /* The following apply only to primers (and not to internal
+     oligos). */
+  a->gc_clamp                 = 0;
+  a->max_end_gc               = 5;
+
 /* Weights for objective functions for oligos and pairs. */
   a->p_args.weights.temp_gt       = 1;
   a->p_args.weights.temp_lt       = 1;
@@ -487,8 +492,6 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->salt_corrections    = schildkraut;
   a->pair_compl_any      = 800;
   a->pair_compl_end      = 300;
-  a->gc_clamp            = 0;
-  a->max_end_gc          = 5;
   a->liberal_base        = 0;
   a->primer_task         = pick_detection_primers;
   a->pick_left_primer    = 1;
@@ -1015,9 +1018,9 @@ choose_pair_or_triple(p3retval *retval,
       /* Loop over forward primers */
       for (j=0; j<retval->fwd.num_elem; j++) {
 
-	/* We check the reverse oligo again, because we may
-	   determined that it is "not ok", even though
-	   (as a far as we knew), it was ok above. */
+        /* We check the reverse oligo again, because we may
+           determined that it is "not ok", even though
+           (as a far as we knew), it was ok above. */
         if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) break;
 
         /* Only use a primer that is legal, or that the caller
@@ -1046,23 +1049,23 @@ choose_pair_or_triple(p3retval *retval,
           update_stats = 1;
         }
         
-	if (oligo_in_pair_overlaps_used_oligo(&retval->fwd.oligo[j],
-					      &retval->rev.oligo[i],
-					      best_pairs,
-					      pa->min_three_prime_distance)) {
-	  /* The stats will not keep track of the pair correctly
-	     after the first pass, because an oligo might
-	     have been legal on one pass but become illegal on
-	     a subsequent pass. */
-	  if (update_stats) {
-	    if (trace_me)
-	      fprintf(stderr,
-		      "i=%d, j=%d, overlaps_oligo_in_better_pair++\n",
-		      i, j);
-	    pair_expl->overlaps_oligo_in_better_pair++;
-	  }
-	  continue;
-	}
+        if (oligo_in_pair_overlaps_used_oligo(&retval->fwd.oligo[j],
+                                              &retval->rev.oligo[i],
+                                              best_pairs,
+                                              pa->min_three_prime_distance)) {
+          /* The stats will not keep track of the pair correctly
+             after the first pass, because an oligo might
+             have been legal on one pass but become illegal on
+             a subsequent pass. */
+          if (update_stats) {
+            if (trace_me)
+              fprintf(stderr,
+                      "i=%d, j=%d, overlaps_oligo_in_better_pair++\n",
+                      i, j);
+            pair_expl->overlaps_oligo_in_better_pair++;
+          }
+          continue;
+        }
 
         /* Characterize the pair. h is intitialized by this
            call. */
@@ -1078,15 +1081,15 @@ choose_pair_or_triple(p3retval *retval,
                                       &n_int, sa, pa,
                                       dpal_arg_to_use)!=0) {
 
-	      /* We were UNable to choose an internal oligo. */
+              /* We were UNable to choose an internal oligo. */
               if (update_stats) { 
                 pair_expl->internal++;
               }
 
               continue;
             } else {
-	      /* We DID choose an internal oligo, and we
-		 set h.intl to point to it. */
+              /* We DID choose an internal oligo, and we
+                 set h.intl to point to it. */
               h.intl = &retval->intl.oligo[n_int];
             }
           }
@@ -1109,25 +1112,25 @@ choose_pair_or_triple(p3retval *retval,
           if ((compare_primer_pair(&h, &the_best_pair) < 0)
               && !oligo_pair_seen(&h, best_pairs)) {
 
-	    if (!oligo_in_pair_overlaps_used_oligo(h.left,
-						   h.right,
-						   best_pairs,
-						   pa->min_three_prime_distance)) {
-	      the_best_pair = h;
-	      the_best_i = i;
-	      the_best_j = j;
+            if (!oligo_in_pair_overlaps_used_oligo(h.left,
+                                                   h.right,
+                                                   best_pairs,
+                                                   pa->min_three_prime_distance)) {
+              the_best_pair = h;
+              the_best_i = i;
+              the_best_j = j;
 
-	    } else {
-	      if (update_stats) {
-		if (trace_me)
-		  fprintf(stderr,
-			  "ok--, i=%d, j=%d because an oligo in the pair"
-			  " overlaps an oligo already in best_pairs\n",
-			  i, j);
-		pair_expl->ok--;
-		pair_expl->overlaps_oligo_in_better_pair++;
-	      }
-	    }
+            } else {
+              if (update_stats) {
+                if (trace_me)
+                  fprintf(stderr,
+                          "ok--, i=%d, j=%d because an oligo in the pair"
+                          " overlaps an oligo already in best_pairs\n",
+                          i, j);
+                pair_expl->ok--;
+                pair_expl->overlaps_oligo_in_better_pair++;
+              }
+            }
           }
 
           /* There cannot be a better pair */
@@ -1154,10 +1157,10 @@ choose_pair_or_triple(p3retval *retval,
         /* continue_trying = 0; */ break;
 
         /* Our bookkeeping was incorrect unless the assertion below is true */
-	/* num_intervals > 1 and min_three_prime_distance > -1 both artifically
-	   affect the statistics. */
+        /* num_intervals > 1 and min_three_prime_distance > -1 both artifically
+           affect the statistics. */
         PR_ASSERT(!((pa->num_intervals == 1) && (pa->min_three_prime_distance == -1))
-		  || (best_pairs->num_pairs == pair_expl->ok));
+                  || (best_pairs->num_pairs == pair_expl->ok));
       }
 
     } else {
@@ -1348,7 +1351,7 @@ FIX ME --  comment from here down will be obsolete
 */
 static int
 oligo_in_pair_overlaps_used_oligo(const primer_rec *left,
-				  const primer_rec *right,
+                                  const primer_rec *right,
                                   const pair_array_t *retpair,
                                   int min_dist)
 {
@@ -1376,11 +1379,11 @@ oligo_in_pair_overlaps_used_oligo(const primer_rec *left,
     /* pair_pos = pair->left->start + pair->left->length -  1; */
 
     if ((abs(q_pos - pair_pos) < min_dist)
-	&& (min_dist != 0)) { return 1; }
+        && (min_dist != 0)) { return 1; }
 
     if ((q->left->length == left->length)
-	&& (q->left->start == left->start)
-	&& (min_dist == 0)) {
+        && (q->left->start == left->start)
+        && (min_dist == 0)) {
       return 1;
     }
 
@@ -1393,8 +1396,8 @@ oligo_in_pair_overlaps_used_oligo(const primer_rec *left,
              && (min_dist != 0)) { return 1; }
 
     if ((q->right->length == right->length)
-	&& (q->right->start == right->start)
-	&& (min_dist == 0)) { 
+        && (q->right->start == right->start)
+        && (min_dist == 0)) { 
       return 1;
     }
 
@@ -2568,8 +2571,8 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   }
 #endif
 
-  if (pa->max_end_gc != 5 
-          && (OT_LEFT == l || OT_RIGHT == l)) {
+  if (pa->max_end_gc < 5 
+      && (OT_LEFT == l || OT_RIGHT == l)) {
     /* The CGs are only counted in the END of primers (as opposed
        to primers and hybridzations oligos. */
     gc_count=0;
@@ -2582,7 +2585,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
     }
     if (gc_count > pa->max_end_gc) {
       op_set_too_many_gc_at_end(h);
-      stats->gc_end++;
+      stats->gc_end_high++;
       if (!must_use) return;
     }
   }
@@ -2944,7 +2947,6 @@ oligo_max_template_mispriming(const primer_rec *h) {
     h->template_mispriming : h->template_mispriming_r;
 }
 
-
 /* Sort a given primer array by penalty */
 static void
 sort_primer_array(oligo_array *oligo)
@@ -3083,7 +3085,7 @@ characterize_pair(p3retval *retval,
   if ((sa->primer_overlap_pos[0] != -1)
       && 
       !(bf_get_overlaps_overlap_region(ppair->right)
-	|| bf_get_overlaps_overlap_region(ppair->left))
+        || bf_get_overlaps_overlap_region(ppair->left))
       ) {
     if (update_stats) { pair_expl->does_not_overlap_a_required_point++; }
     if (!must_use) return PAIR_FAILED;
@@ -4106,9 +4108,9 @@ p3_pair_explain_string(const pair_stats *pair_expl)
     IF_SP_AND_CHECK(", high mispriming library similarity %d",
                     pair_expl->repeat_sim)
     IF_SP_AND_CHECK(", no overlap of required point %d",
-		    pair_expl->does_not_overlap_a_required_point)
+                    pair_expl->does_not_overlap_a_required_point)
     IF_SP_AND_CHECK(", primer in pair overlaps a primer in a better pair %d",
-		    pair_expl->overlaps_oligo_in_better_pair)
+                    pair_expl->overlaps_oligo_in_better_pair)
     IF_SP_AND_CHECK(", high template mispriming score %d",
                     pair_expl->template_mispriming);
   SP_AND_CHECK(", ok %d", pair_expl->ok)
@@ -4628,9 +4630,9 @@ _pr_data_control(const p3_global_settings *pa,
     return 1;
   }
 
-  /* The PRIMER_MAX_END_GC must be 0 - 5 */
+  /* PRIMER_MAX_END_GC must be >= 0 and <= 5 */
   if ((pa->max_end_gc < 0) 
-		 || (pa->max_end_gc > 5)) {
+      || (pa->max_end_gc > 5)) {
     pr_append_new_chunk(glob_err,
                         "PRIMER_MAX_END_GC must be between 0 to 5");
     return 1;
@@ -6832,6 +6834,7 @@ void p3_print_args(const p3_global_settings *p, seq_args *s)
   printf("salt_corrections %i\n", p->salt_corrections) ;
   printf("max_end_stability %f\n", p->max_end_stability) ;
   printf("gc_clamp %i\n", p->gc_clamp) ;
+  printf("max_end_gc %i\n", p->max_end_gc);
   printf("lowercase_masking %i\n", p->lowercase_masking) ;
   printf("outside_penalty %f\n", p->outside_penalty) ;
   printf("inside_penalty %f\n", p->inside_penalty) ;
@@ -6864,7 +6867,9 @@ void p3_print_args(const p3_global_settings *p, seq_args *s)
   printf("end pair_weights\n") ;
 
   printf("min_three_prime_distance %i\n", p->min_three_prime_distance) ;
+  printf("pos_overlap_primer_end %i\n" , p->pos_overlap_primer_end);
   printf("settings_file_id %s\n", p->settings_file_id) ;
+  printf("dump %i\n", p->dump);
   printf("end global args\n") ;
 
   printf("begin sequence args\n") ;
