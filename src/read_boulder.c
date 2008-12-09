@@ -501,7 +501,7 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_OPT_GC_PERCENT", pa->p_args.opt_gc_content);
       COMPARE_FLOAT("PRIMER_MIN_TM", pa->p_args.min_tm);
       COMPARE_FLOAT("PRIMER_MAX_TM", pa->p_args.max_tm);
-      COMPARE_FLOAT("PRIMER_MAX_DIFF_TM", pa->max_diff_tm);
+      COMPARE_FLOAT("PRIMER_PAIR_MAX_DIFF_TM", pa->max_diff_tm);
       if (COMPARE("PRIMER_TM_FORMULA")) {
           parse_int("PRIMER_TM_FORMULA", datum, &tmp_int, parse_err);
           pa->tm_santalucia = tmp_int;    /* added by T.Koressaar */
@@ -520,12 +520,12 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_DNTP_CONC", pa->p_args.dntp_conc);
       /* end of added by T.Koressaar: */
       COMPARE_FLOAT("PRIMER_DNA_CONC", pa->p_args.dna_conc);
-      COMPARE_INT("PRIMER_NUM_NS_ACCEPTED", pa->p_args.num_ns_accepted);
+      COMPARE_INT("PRIMER_MAX_NS_ACCEPTED", pa->p_args.num_ns_accepted);
       COMPARE_INT("PRIMER_PRODUCT_OPT_SIZE", pa->product_opt_size);
-      COMPARE_ALIGN_SCORE("PRIMER_SELF_ANY", pa->p_args.max_self_any);
-      COMPARE_ALIGN_SCORE("PRIMER_SELF_END", pa->p_args.max_self_end);
-      COMPARE_ALIGN_SCORE("PRIMER_PAIR_COMPL_ANY", pa->pair_compl_any);
-      COMPARE_ALIGN_SCORE("PRIMER_PAIR_COMPL_END", pa->pair_compl_end);
+      COMPARE_ALIGN_SCORE("PRIMER_MAX_SELF_ANY", pa->p_args.max_self_any);
+      COMPARE_ALIGN_SCORE("PRIMER_MAX_SELF_END", pa->p_args.max_self_end);
+      COMPARE_ALIGN_SCORE("PRIMER_PAIR_MAX_COMPL_ANY", pa->pair_compl_any);
+      COMPARE_ALIGN_SCORE("PRIMER_PAIR_MAX_COMPL_END", pa->pair_compl_end);
       COMPARE_INT("P3_FILE_FLAG", res->file_flag);
       COMPARE_INT("PRIMER_PICK_ANYWAY", pa->pick_anyway);
       COMPARE_INT("PRIMER_GC_CLAMP", pa->gc_clamp);
@@ -573,11 +573,11 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_INTERNAL_DNTP_CONC",
                     pa->o_args.dntp_conc); /* added by T.Koressaar */
       COMPARE_FLOAT("PRIMER_INTERNAL_DNA_CONC", pa->o_args.dna_conc);
-      COMPARE_INT("PRIMER_INTERNAL_NUM_NS_ACCEPTED", pa->o_args.num_ns_accepted);
+      COMPARE_INT("PRIMER_INTERNAL_MAX_NS_ACCEPTED", pa->o_args.num_ns_accepted);
       COMPARE_INT("PRIMER_INTERNAL_MIN_QUALITY", pa->o_args.min_quality);
-      COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_SELF_ANY",
+      COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_MAX_SELF_ANY",
                           pa->o_args.max_self_any);
-      COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_SELF_END", 
+      COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_MAX_SELF_END", 
                           pa->o_args.max_self_end);
       COMPARE_ALIGN_SCORE("PRIMER_MAX_LIBRARY_MISPRIMING",
                           pa->p_args.max_repeat_compl);

@@ -247,9 +247,9 @@ main(int argc, char *argv[]) {
       /* We will not have a base name for the files */
       if (format_output) {
         format_error(stdout, NULL, 
-                     "Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG != 0");
+                     "Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG is not 0");
       } else {
-        print_boulder_error("Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG != 0");
+        print_boulder_error("Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG is not 0");
       }
       goto loop_wrap_up;
     }

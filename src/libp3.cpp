@@ -4983,7 +4983,7 @@ _pr_data_control(const p3_global_settings *pa,
   }
   if (pa->p_args.num_ns_accepted < 0) {
     pr_append_new_chunk(glob_err,
-                        "Illegal value for PRIMER_NUM_NS_ACCEPTED");
+                        "Illegal value for PRIMER_MAX_NS_ACCEPTED");
     return 1;
   }
   if (pa->o_args.num_ns_accepted < 0){
