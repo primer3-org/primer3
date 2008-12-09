@@ -4586,7 +4586,7 @@ _pr_data_control(const p3_global_settings *pa,
 
   if (pa->o_args.max_template_mispriming >= 0)
     pr_append_new_chunk(glob_err,
-                        "PRIMER_INTERNAL_OLIGO_MAX_TEMPLATE_MISHYB is not supported");
+                        "PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB is not supported");
 
   if (pa->p_args.min_size < 1)
     pr_append_new_chunk(glob_err, "PRIMER_MIN_SIZE must be >= 1");
@@ -4612,19 +4612,19 @@ _pr_data_control(const p3_global_settings *pa,
 
   if (pa->o_args.max_size > MAX_PRIMER_LENGTH) {
     pr_append_new_chunk(glob_err,
-                        "PRIMER_INTERNAL_OLIGO_MAX_SIZE exceeds built-in maximum");
+                        "PRIMER_INTERNAL_MAX_SIZE exceeds built-in maximum");
     return 1;
   }
 
   if (pa->o_args.opt_size > pa->o_args.max_size) {
     pr_append_new_chunk(glob_err,
-                        "PRIMER_INTERNAL_OLIGO_{OPT,DEFAULT}_SIZE > MAX_SIZE");
+                        "PRIMER_INTERNAL_{OPT,DEFAULT}_SIZE > MAX_SIZE");
     return 1;
   }
 
   if (pa->o_args.opt_size < pa->o_args.min_size) {
     pr_append_new_chunk(glob_err,
-                        "PRIMER_INTERNAL_OLIGO_{OPT,DEFAULT}_SIZE < MIN_SIZE");
+                        "PRIMER_INTERNAL_{OPT,DEFAULT}_SIZE < MIN_SIZE");
     return 1;
   }
 
@@ -4671,7 +4671,7 @@ _pr_data_control(const p3_global_settings *pa,
   if ((pa->pick_internal_oligo == 1 )
       && pa->o_args.max_size > pr_min) {
     pr_append_new_chunk(glob_err,
-                        "PRIMER_INTERNAL_OLIGO_MAX_SIZE > min PRIMER_PRODUCT_SIZE_RANGE");
+                        "PRIMER_INTERNAL_MAX_SIZE > min PRIMER_PRODUCT_SIZE_RANGE");
     return 1;
   }
 
@@ -4683,13 +4683,13 @@ _pr_data_control(const p3_global_settings *pa,
   }
 
   if (sa->incl_l >= INT_MAX) {
-    pr_append_new_chunk(nonfatal_err, "Value for INCLUDED_REGION too large");
+    pr_append_new_chunk(nonfatal_err, "Value for SEQUENCE_INCLUDED_REGION too large");
     return 1;
   }
 
   if (sa->incl_s < 0 || sa->incl_l < 0
       || sa->incl_s + sa->incl_l > seq_len) {
-    pr_append_new_chunk(nonfatal_err, "Illegal value for INCLUDED_REGION");
+    pr_append_new_chunk(nonfatal_err, "Illegal value for SEQUENCE_INCLUDED_REGION");
     return 1;
   }
 
@@ -4698,10 +4698,10 @@ _pr_data_control(const p3_global_settings *pa,
       && pa->pick_right_primer == 1) {
     if (pa->primer_task == check_primers) {
       pr_append_new_chunk(warning,
-                          "INCLUDED_REGION length < min PRIMER_PRODUCT_SIZE_RANGE");
+                          "SEQUENCE_INCLUDED_REGION length < min PRIMER_PRODUCT_SIZE_RANGE");
     } else if (pa->primer_task != pick_primer_list) {
       pr_append_new_chunk(nonfatal_err,
-                          "INCLUDED_REGION length < min PRIMER_PRODUCT_SIZE_RANGE");
+                          "SEQUENCE_INCLUDED_REGION length < min PRIMER_PRODUCT_SIZE_RANGE");
     }
 
     if (pa->primer_task == pick_detection_primers) {
@@ -4719,13 +4719,13 @@ _pr_data_control(const p3_global_settings *pa,
   if (!PR_START_CODON_POS_IS_NULL(sa)) {
     if (!PR_POSITION_PENALTY_IS_NULL(pa)) {
       pr_append_new_chunk(nonfatal_err,
-                          "Cannot accept both PRIMER_START_CODON_POSITION and non-default ");
+                          "Cannot accept both SEQUENCE_START_CODON_POSITION and non-default ");
       pr_append(nonfatal_err,
                 "arguments for PRIMER_INSIDE_PENALTY or PRIMER_OUTSIDE_PENALTY");
     }
     if (sa->start_codon_pos  > (sa->incl_s + sa->incl_l - 3)) {
       pr_append_new_chunk(nonfatal_err,
-                          "Start codon position not contained in INCLUDED_REGION");
+                          "Start codon position not contained in SEQUENCE_INCLUDED_REGION");
       return 1;
     } else {
       if (sa->start_codon_pos >= 0
@@ -4736,7 +4736,7 @@ _pr_data_control(const p3_global_settings *pa,
               || (sa->sequence[sa->start_codon_pos + 2] != 'G'
                   && sa->sequence[sa->start_codon_pos + 2] != 'g'))) {
         pr_append_new_chunk(nonfatal_err,
-                            "No start codon at PRIMER_START_CODON_POSITION");
+                            "No start codon at SEQUENCE_START_CODON_POSITION");
         return 1;
       }
     }
@@ -4755,12 +4755,12 @@ _pr_data_control(const p3_global_settings *pa,
     }
     if (pa->o_args.min_quality != 0 && pa->o_args.min_quality <pa->quality_range_min) {
       pr_append_new_chunk(glob_err,
-                          "PRIMER_INTERNAL_OLIGO_MIN_QUALITY < PRIMER_QUALITY_RANGE_MIN");
+                          "PRIMER_INTERNAL_MIN_QUALITY < PRIMER_QUALITY_RANGE_MIN");
       return 1;
     }
     if (pa->o_args.min_quality != 0 && pa->o_args.min_quality > pa->quality_range_max) {
       pr_append_new_chunk(glob_err,
-                          "PRIMER_INTERNAL_OLIGO_MIN_QUALITY > PRIMER_QUALITY_RANGE_MAX");
+                          "PRIMER_INTERNAL_MIN_QUALITY > PRIMER_QUALITY_RANGE_MAX");
       return 1;
     }
     for(i=0; i < sa->n_quality; i++) {
@@ -4800,7 +4800,7 @@ _pr_data_control(const p3_global_settings *pa,
   if (pa->o_args.opt_tm < pa->o_args.min_tm
       || pa->o_args.opt_tm > pa->o_args.max_tm) {
     pr_append_new_chunk(glob_err,
-                        "Illegal values for PRIMER_INTERNAL_OLIGO_TM");
+                        "Illegal values for PRIMER_INTERNAL_TM");
     return 1;
   }
 
@@ -4892,11 +4892,11 @@ _pr_data_control(const p3_global_settings *pa,
     }
     if (strlen(sa->internal_input) > pa->o_args.max_size)
       pr_append_new_chunk(warning,
-                          "Specified internal oligo > PRIMER_INTERNAL_OLIGO_MAX_SIZE");
+                          "Specified internal oligo > PRIMER_INTERNAL_MAX_SIZE");
 
     if (strlen(sa->internal_input) < pa->o_args.min_size)
       pr_append_new_chunk(warning,
-                          "Specified internal oligo < PRIMER_INTERNAL_OLIGO_MIN_SIZE");
+                          "Specified internal oligo < PRIMER_INTERNAL_MIN_SIZE");
 
     if (!strstr_nocase(sa->sequence, sa->internal_input))
       pr_append_new_chunk(nonfatal_err,
