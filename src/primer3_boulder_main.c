@@ -114,9 +114,9 @@ main(int argc, char *argv[]) {
           printf( "PRIMER_ERROR=flag -2x_compat is no longer supported\n=\n");
           exit (-1);
     } else if (!strcmp(*argv, "-io_version=3")) {
-    	  io_version = 3;
+          io_version = 3;
     } else if (!strcmp(*argv, "-io_version=4")) {
-    	  io_version = 4;
+          io_version = 4;
     } else if (!strncmp(*argv, "-p3_settings_file=", 18)) {
       tmp_file_name = strchr(*argv,'=') + 1;
       strncpy (p3_settings_file,tmp_file_name,FILE_NAME_SIZE-1);
@@ -246,7 +246,7 @@ main(int argc, char *argv[]) {
 
     /* Pick the primers - the central function */
     p3_set_gs_primer_file_flag(global_pa, 
-			       read_boulder_record_res.file_flag);
+                               read_boulder_record_res.file_flag);
     retval = choose_primers(global_pa, sarg);  
     if (NULL == retval) exit(-2); /* Out of memory. */
     
@@ -255,10 +255,9 @@ main(int argc, char *argv[]) {
        If it was necessary to use a left_input, right_input,
        or internal_oligo_input primer that was
        unacceptable, then add warnings. */
-    /* FIX ME, what about warnings for a primer pair that does not
-         satisfy constraints? */
+
     if (global_pa->pick_anyway && (io_version == 3
-    		|| format_output)) {
+                || format_output)) {
       if (sarg->left_input) {
         add_must_use_warnings(&retval->warnings,
                               "Left primer", &retval->fwd.expl);
@@ -276,12 +275,11 @@ main(int argc, char *argv[]) {
 
     if (pr_is_empty(&retval->glob_err)
         && pr_is_empty(&retval->per_sequence_err)) {
-      /* We need to test for error first, because
-         p3_print_oligo_lists does not handle
-         partial outputs in retval.  FIX ME?, 
-         move test inside  */
-      /* Create files with left, right, and internal oligos. */
+      /* We need to test for errors before we call
+         p3_print_oligo_lists. This function only works on retval as
+         returned when there were no errors. */
       if (read_boulder_record_res.file_flag) {
+        /* Create files with left, right, and internal oligos. */
         p3_print_oligo_lists(retval, sarg, global_pa,
                              &retval->per_sequence_err,
                              sarg->sequence_name);
@@ -309,16 +307,13 @@ main(int argc, char *argv[]) {
       }
     }
 
-    /* FIX ME LEAK -- need to call destroy_pr_append_str_data 
-       here on the parse error strings */
-
     destroy_p3retval(retval); /* This works even if retval is NULL */
     retval = NULL;
     destroy_seq_args(sarg);
     sarg = NULL;
 
-  }   /* while (1) (processing boulder io records) 
-       * End of the primary working loop */
+  }   /* while (1) (processing boulder io records) ...
+         End of the primary working loop */
 
   /* To avoid being distracted when looking for leaks: */
   p3_destroy_global_settings(global_pa);
