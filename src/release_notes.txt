@@ -1,16 +1,63 @@
-release 2.0.0 alpha ??? ================================================
+release 2.0.0 alpha 2008-12-15 ==========================================
 
-  Major Release
-  
-- INPUT/OUTPUT TAGS
-  renaming of many tags for clarification and easier 
-  integration into scripts
-  
-- PRIMER3 FILES
-  primer3 supports settings files which are read in 
-  at program start and overwrite the default values.
-  
+ This is major release, involving enhancements to functionality,
+  software architecture, and input and output conventions.
 
+ * A new command line flag, -io_version=3 will provide
+   backward compatible behavior for boulder IO input,
+   and boulder IO output is backward compatible except
+   for error messages, warnings, and the text of
+   PRIMER...EXPLAIN tags.
+
+ * -io_version=3 IS NOT the default -- you must specify it on the
+   command line.
+  
+ We renamed many Boulder IO INPUT/OUTPUT TAGS for clarification
+   and easier integration into scripts
+  
+ PRIMER3 'SETTINGS' FILES were added.  The files in at program start
+  to over-ride default values parameter settings.  Our intent is that
+  parameter values suitable for particular primer design objections
+  can be easily stored and re-used.
+
+ NEW OR IMPROVED FUNCTIONALITY:
+   
+ It is possible to request only unique primers when multiple primer
+  pairs are requested.  (In the past, each _pair_ was unique, but the
+  same primer might occur in more than one pair).  The user also has
+  some control over what constitutes a 'unique' primer. See tag
+  PRIMER_MIN_THREE_PRIME_DISTANCE.
+
+ When an illegal primer is specified for checking primer3, now assess
+  it.  In the past primer3 assessed individual primers if they
+  violated a constraint, but in some cases not pairs that violated
+  constraints on pairs (such as product size).
+
+ We added new functionality with tags 
+  SEQUENCE_PRIMER_OVERLAP_POS, PRIMER_POS_OVERLAP_TO_END_DIST,
+  PRIMER_MAX_END_GC.  Please see the documentation.
+
+ We add tags PRIMER_PAIR_MAX_COMPL_END and 
+  PRIMER_PAIR_MAX_COMPL_ANY, which used to
+  take the same values as PRIMER_SELF_{END,ANY}
+
+ OTHER CHANGES TO BEHAVIOR:
+
+ We corrected a few errors and a mis-feature in the ways in which
+  primer3 searches for primer pairs, which will cause this version of
+  primer3 to return different sets of primer pairs in a few instances.
+  
+ INTERNAL CHANGES:
+
+ It is now possible to use the main primer3 functionality from a
+  single C function. We cleanly separated the functionality of reading
+  in Boulder IO records from the primer choosing / designing
+  functionality.  We also substantially simplified the the
+  organization and documentation of the main primer picking code, now
+  in libprimer3.[ch].  The file libprimer3.h contains the external
+  interface, although it is not separately documented. It also
+  possible to create a binary library file that provides this
+  functionality (libprimer3.a or libprimer3.so in Unix/Linux).
 
 release 1.1.2 2007-06-10 ================================================
 
