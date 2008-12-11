@@ -1,7 +1,7 @@
 
 Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
 Whitehead Institute for Biomedical Research, Steve Rozen
-(http://jura.wi.mit.edu/rozen), Andreas Untergasser and Helen Skaletsky
+(http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky
 All rights reserved.
 
     This file is part of the primer3 suite and libraries.
@@ -36,8 +36,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 
-USAGE: ../src/primer3_core [-format_output] [-io_version=xxx] [-p3_settings_file=xxx] [-strict_tags]
-This is primer3 (primer3 release 1.1.2)
+USAGE: ../src/primer3_core [-format_output] [-io_version=3|-io_version=4] [-p3_settings_file=<file_path>] [-strict_tags]
+This is primer3 (primer3 release 2.0.0)
 Input must be provided on standard input.
 For example:
 $ primer3_core < my_input_file
