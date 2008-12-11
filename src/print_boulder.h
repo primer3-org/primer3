@@ -1,12 +1,12 @@
 /*
 Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
 Whitehead Institute for Biomedical Research, Steve Rozen
-(http://jura.wi.mit.edu/rozen), Andreas Untergasser and Helen Skaletsky
+(http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky
 All rights reserved.
 
-    This file is part of primer3.
+    This file is part of primer3 and the primer3 suite.
 
-    Primer3 and the libprimer3 library are free software;
+    Primer3 and the primer3 suite are free software;
     you can redistribute them and/or modify them under the terms
     of the GNU General Public License as published by the Free
     Software Foundation; either version 2 of the License, or (at

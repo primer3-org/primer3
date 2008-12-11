@@ -358,7 +358,7 @@ static void op_set_does_not_amplify_orf(primer_rec *);
 static const char *primer3_copyright_char_star = "\n"
 "Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008\n"
 "Whitehead Institute for Biomedical Research, Steve Rozen\n"
-"(http://jura.wi.mit.edu/rozen), Andreas Untergasser and Helen Skaletsky\n"
+"(http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky\n"
 "All rights reserved.\n"
 "\n"
 "    This file is part of the primer3 suite and libraries.\n"
@@ -4795,7 +4795,7 @@ _pr_data_control(const p3_global_settings *pa,
   if (pa->o_args.opt_tm < pa->o_args.min_tm
       || pa->o_args.opt_tm > pa->o_args.max_tm) {
     pr_append_new_chunk(glob_err,
-                        "Illegal values for PRIMER_INTERNAL_TM");
+                        "Optimum internal oligo Tm lower than minimum or higher than maximum");
     return 1;
   }
 

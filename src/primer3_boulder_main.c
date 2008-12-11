@@ -342,7 +342,7 @@ print_usage()
   fprintf(stderr, primer3_copyright());
 
   fprintf(stderr, "\n\nUSAGE: %s %s %s %s %s\n", pr_program_name,
-          "[-format_output]", "[-io_version=xxx]", "[-p3_settings_file=xxx]", "[-strict_tags]");
+          "[-format_output]", "[-io_version=3|-io_version=4]", "[-p3_settings_file=<file_path>]", "[-strict_tags]");
   fprintf(stderr, "This is primer3 (%s)\n", pr_release);
   fprintf(stderr, "Input must be provided on standard input.\n");
   fprintf(stderr, "For example:\n");

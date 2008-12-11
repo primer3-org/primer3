@@ -1,7 +1,7 @@
 /*
 Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
 Whitehead Institute for Biomedical Research, Steve Rozen
-(http://jura.wi.mit.edu/rozen), Andreas Untergasser and Helen Skaletsky.
+(http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky.
 All rights reserved.
 
     This file is part of the primer3 suite and libraries.
@@ -96,7 +96,7 @@ main(int argc, char **argv)
    char *copyright = 
 "Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006\n"
 "Whitehead Institute for Biomedical Research, Steve Rozen\n"
-"(http://jura.wi.mit.edu/rozen), Andreas Untergasser and Helen Skaletsky\n"
+"(http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky\n"
 "All rights reserved.\n"
 "\n"
 "    This file is part of the oligotm library.\n"
