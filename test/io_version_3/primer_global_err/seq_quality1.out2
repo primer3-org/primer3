@@ -1,0 +1,1 @@
+../src/primer3_core: PRIMER_MIN_QUALITY < PRIMER_QUALITY_RANGE_MIN
