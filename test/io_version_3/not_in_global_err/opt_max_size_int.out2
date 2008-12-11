@@ -1,0 +1,1 @@
+../src/primer3_core: PRIMER_INTERNAL_OLIGO_{OPT,DEFAULT}_SIZE > MAX_SIZE
