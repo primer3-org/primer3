@@ -22,6 +22,10 @@ release 2.0.0 alpha 2008-12-15 ==========================================
 
  NEW OR IMPROVED FUNCTIONALITY:
    
+ We added some new tasks allowing the selection of primer lists,
+  sequencing primers, cloning primers or to check primers in 
+  absence of a target sequence. See tag PRIMER_TASK.
+ 
  It is possible to request only unique primers when multiple primer
   pairs are requested.  (In the past, each _pair_ was unique, but the
   same primer might occur in more than one pair).  The user also has
@@ -58,6 +62,7 @@ release 2.0.0 alpha 2008-12-15 ==========================================
   interface, although it is not separately documented. It also
   possible to create a binary library file that provides this
   functionality (libprimer3.a or libprimer3.so in Unix/Linux).
+  All C code is now ANSI C and should compile on any system.
 
 release 1.1.2 2007-06-10 ================================================
 
