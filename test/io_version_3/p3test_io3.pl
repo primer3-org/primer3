@@ -1,5 +1,6 @@
 
-# Regression test driver for the primer3_core executable.
+# Regression test driver for the primer3_core executable
+# FOR -io_verions=3 THIS IS A TEMPORARY TEST DRIVER
 #
 # For usage, see the usage statement in the code, below.
 #
@@ -54,8 +55,10 @@ sub main();
 # Call system() with warnings turned off; needed for ActiveState / MS Windows.
 sub _nowarn_system($); 
 
-our $def_executable = "../../src/primer3_core";
-our $exe = '../../src/primer3_core';
+# our $def_executable = "../../src/primer3_core";
+our $def_executable = "../src/primer3_core";
+# our $exe = $def_executable;
+our $exe = "../../src/primer3_core";
 our ($verbose, $do_valgrind, $fastFlag);
 
 our %signo;
@@ -423,7 +426,7 @@ sub test_fatal_errors() {
         my $valgrind_prefix
             = $do_valgrind ? sprintf $valgrind_format, $root : '';
 
-        my $cmd = "$valgrind_prefix$exe <$_ > $root.tmp 2> $root.tmp2";
+        my $cmd = "$valgrind_prefix$exe -io_version=3 <$_ > $root.tmp 2> $root.tmp2";
 
 	$r = _nowarn_system($cmd);
 
