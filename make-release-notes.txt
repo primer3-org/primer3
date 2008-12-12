@@ -1,4 +1,13 @@
-# go to ..../primer3/trunk/..
+# do a new checkout:
+svn co https://primer3.svn.sourceforge.net/svnroot/primer3
+# go to .../primer3/documentation/trunk/
+perl create_tag_files_and_doc.pl
+# go to script_output/
+# make sure the file primer3_manual.htm is intact
+# (there is a problem in RedHat)
+# go to .../primer3/trunk/..  and get the manual for the distribution
+cp ../../documentation/trunk/script_output/primer3_manual.htm  .
+# Create the tags directory
 svn cp trunk tags/release-<release number> -m 'tagged release <release number>'
 cd tags/release-<release number>/src
 make test
@@ -10,7 +19,7 @@ cp -rf release-<release number> primer3-<release number>
 rm -rf */.svn
 rm -rf */*/.svn
 rm -rf */*/*/.svn
-rm -rf */*/*/*/.svn  # I think that is enough levels down
+
 tar cvf primer3-<release number>.tar primer3-<release number>
 gzip primer3-<release number>.tar
 # take primer3-<release number>.tar.gz to another location, unzip, and test
