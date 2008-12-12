@@ -1,27 +1,51 @@
-# do a new checkout:
+# 1 DO A CLEAN CHECKOUT AND TEST IT
 svn co https://primer3.svn.sourceforge.net/svnroot/primer3
-# go to .../primer3/documentation/trunk/
-perl create_tag_files_and_doc.pl
-# go to script_output/
-# make sure the file primer3_manual.htm is intact
-# (there is a problem in RedHat)
-# go to .../primer3/trunk/..  and get the manual for the distribution
-cp ../../documentation/trunk/script_output/primer3_manual.htm  .
-# Create the tags directory
-svn cp trunk tags/release-<release number> -m 'tagged release <release number>'
-cd tags/release-<release number>/src
+
+# go to primer3/primer3/trunc/src and do
+make test
+# go to io_version_3 and do
+make test
+
+# 2 TAG THE RELEASE -- create the directory under primer3/primer3/tags/
+cd primer3/primer3
+svn cp trunk tags/release-<release number>
+svn ci  -m 'tagged release <release number>'
+
+# 3 TEST TAGGED RELEASE
+svn co https://primer3.svn.sourceforge.net/svnroot/primer3
+cd primer3/primer3/tags/release-<release number>/src
+# test it all again in the primer3/primer3/tags/release-<release number> directory
+make test
+cd io_version_3
 make test
 make clean
 cd .. 
 rm *.~  # make clean does not take care of emacs backup files in the top level
 cd ../../.. 
-cp -rf release-<release number> primer3-<release number>
+
+cp -rfp release-<release number> primer3-<release number>
+
+# Get rid of the svn stuff
+cd primer3-<release number>
 rm -rf */.svn
 rm -rf */*/.svn
 rm -rf */*/*/.svn
+rm make-release-notes.txt
+
+go to primer3/documentation/trunk/
+perl create_tag_files_and_doc.pl
+# make sure the file script_ouput/primer3_manual.htm is intact, e.g.
+firefox script_output/primer3_manual.htm
+
+go to primer3/primer3/tags/primer3-<release number>
+cp ../../../documentation/trunk/script_output/primer3_manual.htm .
+
 
 tar cvf primer3-<release number>.tar primer3-<release number>
 gzip primer3-<release number>.tar
+
+
+# TEST THE tar'ed source release
 # take primer3-<release number>.tar.gz to another location, unzip, and test
 # do the upload
 ftp upload.sourceforge.net (anonymous)
