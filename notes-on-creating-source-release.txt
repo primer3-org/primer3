@@ -9,6 +9,11 @@ make test
 # 2 TAG THE RELEASE -- create the directory under primer3/primer3/tags/
 cd primer3/primer3
 svn cp trunk tags/release-<release number>
+svn ci  -m 'tagged DOCUMENTATION release <release number>'
+
+# 2.1 WE ALSO HAVE TO TAG THE DOCUMENTATION RELEASE\
+cd primer3/documentation
+svn cp trunk tags/release-<release number>
 svn ci  -m 'tagged release <release number>'
 
 # 3 TEST TAGGED RELEASE
