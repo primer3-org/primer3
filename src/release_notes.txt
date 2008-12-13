@@ -3,66 +3,66 @@ release 2.0.0 alpha 2008-12-15 ==========================================
  This is major release, involving enhancements to functionality,
   software architecture, and input and output conventions.
 
- * A new command line flag, -io_version=3 will provide
-   backward compatible behavior for boulder IO input,
-   and boulder IO output is backward compatible except
-   for error messages, warnings, and the text of
-   PRIMER...EXPLAIN tags.
+ * A new command line flag, -io_version=3 will provide backward
+   compatible behavior for boulder IO input, and boulder IO output is
+   backward compatible except for error messages, warnings, and the
+   text of PRIMER...EXPLAIN tags.
 
  * -io_version=3 IS NOT the default -- you must specify it on the
    command line.
   
- We renamed many Boulder IO INPUT/OUTPUT TAGS for clarification
-   and easier integration into scripts
+ For the new default IO, we renamed many Boulder IO INPUT/OUTPUT TAGS
+  for clarification and easier integration into scripts
   
- PRIMER3 'SETTINGS' FILES were added.  The files in at program start
-  to over-ride default values parameter settings.  Our intent is that
-  parameter values suitable for particular primer design objections
+ PRIMER3 'SETTINGS' FILES were added.  A settings file can be read in
+  at program start up to set global parameters.  Our intent is that
+  parameter values suitable for particular primer design objectives
   can be easily stored and re-used.
 
  NEW OR IMPROVED FUNCTIONALITY:
    
- We added some new tasks allowing the selection of primer lists,
-  sequencing primers, cloning primers or to check primers in 
-  absence of a target sequence. See tag PRIMER_TASK.
+ We added new "tasks" such as selection of primer lists, sequencing
+  primers, or cloning primers, or the checking primers or primer pairs
+  in the absence of a target sequence. See tag PRIMER_TASK.
  
- It is possible to request only unique primers when multiple primer
-  pairs are requested.  (In the past, each _pair_ was unique, but the
-  same primer might occur in more than one pair).  The user also has
-  some control over what constitutes a 'unique' primer. See tag
-  PRIMER_MIN_THREE_PRIME_DISTANCE.
+ It is now possible to request only unique primers when multiple
+  primer pairs are requested.  (In the past, each _pair_ was unique,
+  but the same primer might occur in more than one pair).  The user
+  also has some control over what constitutes a 'unique' primer. See
+  tag PRIMER_MIN_THREE_PRIME_DISTANCE.
 
- When an illegal primer is specified for checking primer3, now assess
-  it.  In the past primer3 assessed individual primers if they
-  violated a constraint, but in some cases not pairs that violated
-  constraints on pairs (such as product size).
+ When an illegal primer pair is specified for checking primer3, the
+  program now assess it.  In the past, primer3 assessed individual
+  primers if they violated a constraint, but in some cases not pairs
+  that violated constraints on pairs (such as product size).
 
  We added new functionality with tags 
   SEQUENCE_PRIMER_OVERLAP_POS, PRIMER_POS_OVERLAP_TO_END_DIST,
   PRIMER_MAX_END_GC.  Please see the documentation.
 
- We add tags PRIMER_PAIR_MAX_COMPL_END and 
-  PRIMER_PAIR_MAX_COMPL_ANY, which used to
-  take the same values as PRIMER_SELF_{END,ANY}
+ We added tags PRIMER_PAIR_MAX_COMPL_END and
+  PRIMER_PAIR_MAX_COMPL_ANY, which previously took the same values as
+  PRIMER_SELF_{END,ANY}
 
  OTHER CHANGES TO BEHAVIOR:
 
  We corrected a few errors and a mis-feature in the ways in which
-  primer3 searches for primer pairs, which will cause this version of
-  primer3 to return different sets of primer pairs in a few instances.
+  primer3 searches for primer pairs. Consequently, the latest version
+  of primer3 will return different sets of primer pairs in a few
+  instances.
   
  INTERNAL CHANGES:
 
  It is now possible to use the main primer3 functionality from a
   single C function. We cleanly separated the functionality of reading
   in Boulder IO records from the primer choosing / designing
-  functionality.  We also substantially simplified the the
-  organization and documentation of the main primer picking code, now
-  in libprimer3.[ch].  The file libprimer3.h contains the external
-  interface, although it is not separately documented. It also
+  functionality.  We also substantially simplified the organization
+  and documentation of the main primer picking code, now in
+  libprimer3.[ch].  The file libprimer3.h specifies the external
+  interface, although it is not separately documented. It is also
   possible to create a binary library file that provides this
-  functionality (libprimer3.a or libprimer3.so in Unix/Linux).
-  All C code is now ANSI C and should compile on any system.
+  functionality (libprimer3.a or libprimer3.so in Unix/Linux).  All C
+  code is now ANSI C and should compile on any system.
 
 release 1.1.2 2007-06-10 ================================================
 
