@@ -41,7 +41,10 @@
 VAL =
 
 
-test: makeexes testtm testdpal testcore
+test: makeexes testtm testdpal testcore test_io_v3
+
+test_io_v3:
+	cd io_version_3; echo 'TESTING IO VERSION 3'; make test
 
 testcore:
 	-echo 'Testing primer3_core'; perl p3test.pl $(VAL)
