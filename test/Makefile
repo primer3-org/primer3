@@ -1,5 +1,5 @@
 # ======================================================================
-# (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006,2007, 2008
+# (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
 # Whitehead Institute for Biomedical Research, Steve Rozen, 
 # Andreas Untergasser and Helen Skaletsky
 # All rights reserved.
@@ -44,21 +44,22 @@ VAL =
 test: makeexes testtm testdpal testcore test_io_v3
 
 test_io_v3:
-	cd io_version_3; echo 'TESTING IO VERSION 3'; make test
+	cd io_version_3; make test
 
 testcore:
-	-echo 'Testing primer3_core'; perl p3test.pl $(VAL)
+	echo; echo; echo 'TESTING primer3_core'; echo; perl p3test.pl $(VAL)
 
 testdpal:
-	-echo 'Testing alignment calcs'; perl dpal_test.pl $(VAL); 
+	echo; echo; echo 'TESTING ALIGNMENT CALCS'; echo; perl dpal_test.pl $(VAL); 
 
 testtm:
-	-echo 'Testing Tm calcs'; perl oligotm_test.pl $(VAL);
+	echo; echo; echo 'TESTING Tm CALCS'; echo; perl oligotm_test.pl $(VAL);
 
 makeexes:
 	cd ../src; make
 
 clean:
+	echo; echo; echo 'CLEAN UP TEST DIRECTORIES'; echo; echo;
 	-rm -rf primer_list_tmp/*
 	-rm -rf primer1_list_tmp/*
 	-rm -f primer_global_err/*.tmp primer_global_err/*.tmp2 primer_global_err/*.bak
