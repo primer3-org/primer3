@@ -55,11 +55,9 @@ sub main();
 # Call system() with warnings turned off; needed for ActiveState / MS Windows.
 sub _nowarn_system($); 
 
-# our $def_executable = "../../src/primer3_core";
 our $def_executable = "../src/primer3_core";
-# our $exe = $def_executable;
 our $exe = "../../src/primer3_core";
-our ($verbose, $do_valgrind, $fastFlag);
+our ($verbose, $do_valgrind, $winFlag, $fastFlag);
 
 our %signo;
 
@@ -105,10 +103,14 @@ sub main() {
     }
 
     $exe = $args{'executable'} if defined$ args{'executable'};
+    $winFlag = defined $args{'windows'};
     $verbose = defined $args{'verbose'};
     $fastFlag = defined $args{'fast'};
     $do_valgrind = $args{'valgrind'};
-
+    if ($winFlag && $do_valgrind) {
+        print "$0: Cannot specify both --valgrind and --windows\n";
+        exit -1;
+    }
 
     my $valgrind_exe = "/usr/local/bin/valgrind";
     my $log_file_arg_for_valgrind = "--log-file-exactly";
@@ -132,6 +134,10 @@ sub main() {
     $valgrind_format  = $valgrind_exe
         . " --leak-check=yes --show-reachable=yes "
         . "$log_file_arg_for_valgrind=%s.vg ";
+
+    if ($winFlag) {
+        $exe = '..\\..\\src\\primer3_core.exe';
+    }
 
     my $exit_stat = 0;
 
@@ -233,7 +239,7 @@ sub main() {
 
         my $r;                  # Return value for tests
 
-        if (0 && ($test eq 'primer' || $test eq 'primer1')) {
+        if (0 && ($test eq 'primer' || $test eq 'primer1')) { # Skipping these tests
             # These tests generate primer lists, which
             # need to be checked separately.
 
@@ -260,7 +266,7 @@ sub main() {
             my $cmd = "$valgrind_prefix$exe -strict_tags -io_version=3 -format_output <$input >$tmp";
             $r = _nowarn_system($cmd);
         } else {
-            my $cmd = "$valgrind_prefix$exe -strict_tags -io_version=3  <$input >$tmp";
+            my $cmd = "$valgrind_prefix$exe -strict_tags -io_version=3 <$input >$tmp";
             $r = _nowarn_system($cmd);
         }
 
@@ -329,9 +335,11 @@ sub main() {
             $exit_stat = -1;
         }
     }
-    print $all_ok ? "\nPassed all tests - [OK]\n" : "\nAt least one test failed - [FAILED]\n";
-    print "Tests run for ", (time() - $start_time), " seconds.\n";
-    print "DONE ", scalar(localtime), "\n";
+    print "Tests ran for ", (time() - $start_time), " seconds.\n";
+    print "\n\nDONE ", scalar(localtime), " ";
+
+    print $all_ok ? "Passed all tests - [OK]\n\n\n" : "At least one test failed - [FAILED]\n\n\n";
+
     exit $exit_stat;
 }
 
@@ -459,7 +467,7 @@ sub _nowarn_system($) {
     no warnings 'all';
     my $r = system $cmd;
     my $r2 = $?;
-    if (WIFEXITED($r2)) {
+    if (!$winFlag && WIFEXITED($r2)) {
         $r = WEXITSTATUS($r2);
         if (defined $signo{'INT'}) {
             if ($r == $signo{'INT'}) {
@@ -472,7 +480,7 @@ sub _nowarn_system($) {
             }
         }
     }
-    if (WIFSIGNALED($r2)) {
+    if (!$winFlag && WIFSIGNALED($r2)) {
         my $r2 = WTERMSIG($r2);
         print "Exited with signal $r2\n";
     }

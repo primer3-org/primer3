@@ -99,10 +99,10 @@ static jmp_buf _jmp_buf;
 
 /* Function declarations. */
 
-static int _adjust_seq_args(const p3_global_settings *pa,
-                            seq_args *sa,
-                            pr_append_str *nonfatal_err,
-                            pr_append_str *warning);
+static void _adjust_seq_args(const p3_global_settings *pa,
+                             seq_args *sa,
+                             pr_append_str *nonfatal_err,
+                             pr_append_str *warning);
 
 static int any_5_prime_ol_extension_has_problem(const primer_rec *);
 
@@ -867,14 +867,16 @@ choose_primers(const p3_global_settings *pa,
   }
 
   /* Change some parameters to fit the task */
-  _adjust_seq_args(pa, sa, &retval->per_sequence_err, /*nonfatal_parse_err, */
-                   &retval->warnings /* adjust_seq_args_warnings*/ );
+  _adjust_seq_args(pa, sa, &retval->per_sequence_err,&retval->warnings);
+
 
   if (!pr_is_empty(&retval->per_sequence_err)) return retval;
 
-  /* FIX ME -- move this to pr_data_control and make it a warning only */
+  /* TO DO -- move the check below to pr_data_control and issue a
+     warning if it fails. */
   /* if (pa->p_args.min_quality != 0
      && pa->p_args.min_end_quality < pa->p_args.min_quality)
+       ... issue warning ...
      pa->p_args.min_end_quality = pa->p_args.min_quality; */
 
   /* Check if the input in sa and pa makes sense */
@@ -1322,31 +1324,27 @@ oligo_pair_seen(const primer_pair *pair,
 
 
 /*
-   See the documentation in librimer3.h,
+   Also see the documentation in librimer3.h,
    p3_global_settings.min_three_prime_distance.
 
-   Return 1 if EITHER:
+   If min_dist == -1, return 0
 
-   (1) The 3' end of the left primer in pair is
-       < min_dist from the 3' end of any left primer
-       in retpair and min_dist > 0
+   If min_dist ==  0:
+     Return 1 if the left or the right
+     primer is identical to another left or right
+     primer (respectively) in retpair.
 
+     Otherwise return 0.
+
+   If min_dist > 0:
+     Return 1 if EITHER:
+     (1) The 3' end of the left primer in pair is
+         < min_dist from the 3' end of any left primer
+         in retpair
      OR
-
-   (2) The 3' end of the right primer in pair is
-       < min_dist from the 3' end of any right primer
-       in retpair and min_dist > 0
-
-FIX ME --  comment from here down will be obsolete
-
-     OR
-
-   (3) If min_dist is set to 0 and the left or the right
-       primer are identical to one in the pair.
-
-   Return 0 if EITHER:
-
-   (1) The min_dist is set to -1 for backward compartibility
+     (2) The 3' end of the right primer in pair is
+         < min_dist from the 3' end of any right primer
+         in retpair
 
 */
 static int
@@ -1357,8 +1355,6 @@ oligo_in_pair_overlaps_used_oligo(const primer_rec *left,
 {
   const primer_pair *q, *stop;
   int q_pos, pair_pos;
-
-  /* fprintf(stderr, "oip, %d,%d  %d,%d\n", left->start, left->length, right->start, right->length); */
 
   /* retpair might not have any pairs in it yet. (add_pair
      allocates memory for retpair->pairs.) */
@@ -1861,7 +1857,7 @@ add_oligo_to_oligo_array(oligo_array *oarray, primer_rec orec) {
       pr_safe_malloc(sizeof(*oarray->oligo) * oarray->storage_size);
   }
   /* If there is no space on the array, allocate new space */
-  if ((oarray->num_elem + 1) >= oarray->storage_size) { /* FIX ME, is +1 really needed? */
+  if ((oarray->num_elem + 1) >= oarray->storage_size) { /* TO DO, is +1 really needed? */
     oarray->storage_size += (oarray->storage_size >> 1);
     oarray->oligo
       = (primer_rec *)
@@ -1990,7 +1986,6 @@ pick_only_best_primer(const int start,
     sprintf(p_number, "%d", temp_value);
     pr_append(&retval->warnings, p_number);
   }
-  /* return -1 if no primer was found. */
   if (oligo->num_elem == 0) return 1;
   else return 0;
 } /* pick_only_best_primer */
@@ -2107,8 +2102,6 @@ pick_primer_range(const int start, const int length, int *extreme,
   /* Update statistics with how many primers are good */
   oligo->expl.ok = oligo->num_elem;
 
-  /* return -1 for error FIX ME, comment makes no sense.
-   Also return value is ignored at most calls. */
   if (oligo->num_elem == 0) return 1;
   else return 0;
 } /* pick_primer_range */
@@ -2437,7 +2430,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
           || (retval->stop_codon_pos != -1
               && h->start >= retval->stop_codon_pos))) {
     stats->no_orf++;
-    op_set_does_not_amplify_orf(h); /* FIX ME, make sure this is tested. */
+    op_set_does_not_amplify_orf(h);
     if (!pa->pick_anyway) return;
   }
 
@@ -2505,7 +2498,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
     }
   }
 
-  /* FIX ME Simplify logic here */
+  /* TO DO Simplify logic here */
   if (l != OT_INTL
       && oligo_overlaps_interval(j, k-j+1, sa->excl2.pairs, sa->excl2.count))
     bf_set_overlaps_excl_region(h,1);
@@ -3037,11 +3030,6 @@ characterize_pair(p3retval *retval,
   int pair_failed_flag = 0;
   double min_oligo_tm;
 
-  /* FIX ME, move this lower */
-  if (pa->primer_task == check_primers) {
-          must_use = 1;
-  }
-
   memset(ppair, 0, sizeof(*ppair));
 
   ppair->left = &retval->fwd.oligo[m];
@@ -3052,11 +3040,15 @@ characterize_pair(p3retval *retval,
 
   if (update_stats) { pair_expl->considered++; }
 
+  if (pa->primer_task == check_primers) {
+    must_use = 1;
+  }
+
   /* We must use the pair if the caller specifed
      both the left and the right primer. */
   if (ppair->left->must_use != 0 &&
-                  ppair->right->must_use != 0) {
-          must_use = 1;
+      ppair->right->must_use != 0) {
+    must_use = 1;
   }
 
   if(ppair->product_size < pa->pr_min[int_num] ||
@@ -3098,7 +3090,8 @@ characterize_pair(p3retval *retval,
   ppair->product_tm
     = long_seq_tm(sa->trimmed_seq, ppair->left->start,
                   ppair->right->start - ppair->left->start + 1,
-                  pa->p_args.salt_conc,  /* FIX ME -- skewed, should not use p_args elements here */
+                  /* TO DO -- skewed, it would be better to not use p_args elements here */
+                  pa->p_args.salt_conc,
                   pa->p_args.divalent_conc,
                   pa->p_args.dntp_conc);
 
@@ -3441,7 +3434,7 @@ align(const char *s1,
       /* For extremely short alignments we simply
          max out the score, because the dpal subroutines
          for these cannot handle this case.
-         FIX: this can probably be corrected in dpal. */
+         TO DO: this can probably be corrected in dpal. */
       return (short) (100 * strlen(s2));
     }
   }
@@ -3452,10 +3445,11 @@ align(const char *s1,
     if (errno == ENOMEM) {
       longjmp(_jmp_buf, 1);
     } else {
+      /* This branch is taken only if there is a programming error, in
+	 that s1 or s2 were NULL or contained an illegal character. We
+	 try to print some debugging information before aborting. */
       fprintf(stderr, r.msg);
-      /* Fix this later, when error handling
-         in "primer_choice" is updated to
-         no longer exit. */
+      /* Always false, causes an abort: */
       PR_ASSERT(r.score != DPAL_ERROR_SCORE);
     }
   }
@@ -3710,7 +3704,7 @@ oligo_mispriming(primer_rec *h,
 
 
       if (w > SHRT_MAX || w < SHRT_MIN) {
-        abort(); /* Fix me, propagate error */
+        abort(); /* TO DO, propagate error */
         /* This check is necessary for the next 9 lines */
       }
       h->repeat_sim.score[i] = (short int) w;
@@ -4014,10 +4008,15 @@ _pr_need_pair_template_mispriming(const p3_global_settings *pa)
     || pa->pr_pair_weights.template_mispriming > 0.0;
 }
 
-/* Upcase a DNA string, s, in place.  If amibiguity_code_ok is false the
-   string can consist of acgtnACGTN.  If it is true then the IUB/IUPAC
-   ambiguity codes are are allowed.  Return the first unrecognized letter if
-   any is seen (and turn it to 'N' in s).  Otherwise return '\0'.  */
+/* Upcase a DNA string, s, in place.  If amibiguity_code_ok is false,
+   then the characters acgtnACGTN are 'recognized' and upcased.  If
+   ambiguity_code_ok is true, then the IUB/IUPAC ambiguity codes are
+   also 'recognized' and upcased.
+
+   Change any unrecognized letters in *s to 'N"
+
+   Return the first unrecognized letter, if
+   any, that is seen. Otherwise return '\0'. */
 static char
 dna_to_upper(char * s, int ambiguity_code_ok)
 {
@@ -4340,14 +4339,13 @@ pr_safe_realloc(void *p, size_t x)
 /* ============================================================ */
 
 /* Fuction to set the included region and fix the start positions */
-static int
+static void
 _adjust_seq_args(const p3_global_settings *pa,
-                   seq_args *sa,
-                   pr_append_str *nonfatal_err,
-                   pr_append_str *warning)
+                 seq_args *sa,
+                 pr_append_str *nonfatal_err,
+                 pr_append_str *warning)
 {
   int seq_len, inc_len;
-  char offending_char = '\0';
 
   /* Create a seq for check primers if needed */
   if (pa->primer_task == check_primers) {
@@ -4358,17 +4356,17 @@ _adjust_seq_args(const p3_global_settings *pa,
   if(pa->primer_task == pick_sequencing_primers && sa->incl_l != -1) {
           pr_append_new_chunk(nonfatal_err,
            "Task pick_sequencing_primers can not be combined with included region");
-      return 1;
+      return;
   }
   if(pa->primer_task == pick_cloning_primers && sa->incl_l == -1) {
           pr_append_new_chunk(nonfatal_err,
            "Task pick_cloning_primers requires a included region");
-      return 1;
+      return;
   }
   if(pa->primer_task == pick_discriminative_primers && sa->incl_l == -1) {
           pr_append_new_chunk(nonfatal_err,
            "Task pick_discriminative_primers requires a included region");
-      return 1;
+      return;
   }
 
   /*
@@ -4382,7 +4380,7 @@ _adjust_seq_args(const p3_global_settings *pa,
         } else {
             pr_append_new_chunk(nonfatal_err, "Missing SEQUENCE tag");
         }
-    return 1;
+    return;
   }
 
   seq_len = strlen(sa->sequence);
@@ -4432,7 +4430,6 @@ _adjust_seq_args(const p3_global_settings *pa,
   sa->force_right_start -= sa->incl_s;
   sa->force_right_end -= sa->incl_s;
 
-
   inc_len = sa->incl_s + sa->incl_l - 1;
 
   if ((sa->incl_l < INT_MAX) && (sa->incl_s > -1)
@@ -4449,11 +4446,10 @@ _adjust_seq_args(const p3_global_settings *pa,
     /* Copies the whole sequence into upcased_seq */
     sa->upcased_seq = (char *) pr_safe_malloc(strlen(sa->sequence) + 1);
     strcpy(sa->upcased_seq, sa->sequence);
-    if ((offending_char = dna_to_upper(sa->upcased_seq, 1))) {
-      offending_char = '\0';
-      /* TODO add warning or error (depending on liberal base)
-         here. */
-    }
+    dna_to_upper(sa->upcased_seq, 1);
+    /* We do not need to check for illegal characters in the return
+       from dna_to_upper(), because errors are checked in
+       _pr_data_control sa->trimmed_seq. */
 
     /* Copies the reverse complement of the whole sequence into upcased_seq_r */
     sa->upcased_seq_r = (char *) pr_safe_malloc(strlen(sa->sequence) + 1);
@@ -4464,16 +4460,15 @@ _adjust_seq_args(const p3_global_settings *pa,
                                   seq_len,
                                   pa->first_base_index,
                                   nonfatal_err, warning)) {
-    return 1;
+    return;
   }
 
   if (_check_and_adjust_overlap_pos(sa,
-                                seq_len,
-                                pa->first_base_index,
-                                nonfatal_err, warning)) {
-    return 1;
+                                    seq_len,
+                                    pa->first_base_index,
+                                    nonfatal_err, warning)) {
+    return;
   }
-  return 0;
 }
 
 /*
@@ -4548,7 +4543,7 @@ fake_a_sequence(seq_args *sa, const p3_global_settings *pa)
 /*
  * Return 1 on error, 0 on success.  Set sa->trimmed_seq and possibly modify
  * sa->tar.  Upcase and check all bases in sa->trimmed_seq.
- * FIX ME -- this would probably be cleaner if it only
+ * TO DO -- this would probably be cleaner if it only
  * checked, rather than updated, sa.
  */
 /* Check if the input in sa and pa makes sense */
@@ -4775,7 +4770,7 @@ _pr_data_control(const p3_global_settings *pa,
 
   if ((offending_char = dna_to_upper(sa->trimmed_seq, 0))) {
     if (pa->liberal_base) {
-      pr_append_new_chunk(/* &sa->*/ warning,
+      pr_append_new_chunk(warning,
                           "Unrecognized base in input sequence");
     }
     else {
@@ -5080,15 +5075,15 @@ _pr_data_control(const p3_global_settings *pa,
     return 1;
   }
 
-  return (NULL == nonfatal_err->data && NULL == /* pa->*/ glob_err->data) ? 0 : 1;
+  return (NULL == nonfatal_err->data && NULL == glob_err->data) ? 0 : 1;
 } /* _pr_data_control */
 
 static int
 _check_and_adjust_overlap_pos(seq_args *sa,
-                          int seq_len,
-                          int first_index,
-                          pr_append_str * nonfatal_err,
-                          pr_append_str *warning) {
+                              int seq_len,
+                              int first_index,
+                              pr_append_str * nonfatal_err,
+                              pr_append_str *warning) {
   int i;
   int outside_warning_issued = 0;
 
@@ -5096,26 +5091,28 @@ _check_and_adjust_overlap_pos(seq_args *sa,
     return 0;
   }
 
-  /* Substracts the first_index of the intron positions */
   for (i = 0; i < sa->primer_overlap_pos_count; i++) {
-          sa->primer_overlap_pos[i] -= first_index;
-  }
+    /* Subtract first_index from the "must overlap" positions */
+    sa->primer_overlap_pos[i] -= first_index;
 
-  for (i=0; i < sa->primer_overlap_pos_count; i++) {
     if (sa->primer_overlap_pos[i] >= seq_len) {
       pr_append_new_chunk(nonfatal_err,
              "SEQUENCE_PRIMER_OVERLAP_POS beyond end of sequence");
       return 1;
     }
+
     if (sa->primer_overlap_pos[i] < 0) {
       pr_append_new_chunk(nonfatal_err, 
              "Negative SEQUENCE_PRIMER_OVERLAP_POS length");
       return 1;
     }
+
     /* Cause the intron positions to be relative to the included region. */
     sa->primer_overlap_pos[i] -= sa->incl_s;
+
     /* Check that intron positions are within the included region. */
-    if (sa->primer_overlap_pos[i] < 0 || sa->primer_overlap_pos[i] > sa->incl_l) {
+    if (sa->primer_overlap_pos[i] < 0 
+        || sa->primer_overlap_pos[i] > sa->incl_l) {
       if (!outside_warning_issued) {
         pr_append_new_chunk(warning, 
              "SEQUENCE_PRIMER_OVERLAP_POS outside of INCLUDED_REGION");
@@ -5134,17 +5131,24 @@ _check_and_adjust_intervals(seq_args *sa,
                             pr_append_str * nonfatal_err,
                             pr_append_str *warning) {
 
-  if (_check_and_adjust_1_interval("TARGET", sa->tar2.count, sa->tar2.pairs, seq_len,
-                                   first_index,  nonfatal_err, sa, warning)
+  if (_check_and_adjust_1_interval("TARGET",
+                                   sa->tar2.count, 
+                                   sa->tar2.pairs,
+                                   seq_len,
+                                   first_index,
+                                   nonfatal_err, sa, warning)
       == 1) return 1;
   sa->start_codon_pos -= sa->incl_s;
 
-  if (_check_and_adjust_1_interval("EXCLUDED_REGION", sa->excl2.count, sa->excl2.pairs,
-                                   seq_len, first_index, nonfatal_err, sa, warning)
+  if (_check_and_adjust_1_interval("EXCLUDED_REGION",
+                                   sa->excl2.count, sa->excl2.pairs,
+                                   seq_len, first_index, 
+                                   nonfatal_err, sa, warning)
       == 1) return 1;
 
   if (_check_and_adjust_1_interval("PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION",
-                                   sa->excl_internal2.count, sa->excl_internal2.pairs,
+                                   sa->excl_internal2.count,
+                                   sa->excl_internal2.pairs,
                                    seq_len,
                                    first_index,
                                    nonfatal_err, sa, warning)
@@ -5159,18 +5163,19 @@ _check_and_adjust_intervals(seq_args *sa,
  */
 static int
 _check_and_adjust_1_interval(const char *tag_name,
-                                int num_intervals,
-                                interval_array_t intervals,
-                                int seq_len,
-                                int first_index,
-                                pr_append_str *err,
-                                seq_args *sa,
-                                pr_append_str *warning)
+                             int num_intervals,
+                             interval_array_t intervals,
+                             int seq_len,
+                             int first_index,
+                             pr_append_str *err,
+                             seq_args *sa,
+                             pr_append_str *warning)
 {
   int i;
   int outside_warning_issued = 0;
 
-/* Substracts the first_index of the start positions in an array */
+  /* Subtract the first_index from the start positions in the interval
+     array */
   for (i = 0; i < num_intervals; i++) intervals[i][0] -= first_index;
 
   for (i=0; i < num_intervals; i++) {
@@ -5295,8 +5300,9 @@ p3_print_oligo_lists(const p3retval *retval,
     }
     /* Print the content to the file */
     ret = p3_print_one_oligo_list(sa, retval->intl.num_elem,
-                          retval->intl.oligo, OT_INTL,
-                                  first_base_index, NULL != pa->o_args.repeat_lib, fh);
+                                  retval->intl.oligo, OT_INTL,
+                                  first_base_index, 
+                                  NULL != pa->o_args.repeat_lib, fh);
     fclose(fh);
     if (ret) return 1;
   }
@@ -5389,7 +5395,8 @@ print_oligo(FILE *fh,
                   h->num_ns, h->gc_content, h->temp,
                   h->self_any / PR_ALIGN_SCORE_PRECISION,
                   h->self_end / PR_ALIGN_SCORE_PRECISION,
-                  h->repeat_sim.score[h->repeat_sim.max] /PR_ALIGN_SCORE_PRECISION,
+                  h->repeat_sim.score[h->repeat_sim.max] 
+                  / PR_ALIGN_SCORE_PRECISION,
                   h->quality);
   } else {
     ret = fprintf(fh,
@@ -5752,8 +5759,7 @@ p3_set_gs_primer_self_end(p3_global_settings * p , double val)
   p->p_args.max_self_end = (short) (val * 100);
 }
 
-void   /* FIX ME -- REMOVE ASAP SR 2008-01-22;
-          called in primer3_boulder_main.c */
+void   /* Called in primer3_boulder_main.c. */
 p3_set_gs_primer_file_flag(p3_global_settings * p , int file_flag)
 {
   p->file_flag = file_flag;
@@ -6013,13 +6019,13 @@ p3_set_gs_primer_outside_penalty(p3_global_settings * p , double val) {
 
 void
 p3_set_gs_primer_mispriming_library(p3_global_settings * p , char * path) {
-  /* fix this ?? */
+  /* TO DO: Re-factor this? */
   p->p_args.repeat_lib = read_and_create_seq_lib(path, "mispriming library") ;
 }
 
 void
 p3_set_gs_primer_internal_oligo_mishyb_library(p3_global_settings * p , char * path) {
-  /* fix this ?? */
+  /* TO DO: Re-factor this? */
   p->o_args.repeat_lib = read_and_create_seq_lib(path, "internal oligio mishyb library") ;
 }
 
@@ -6273,17 +6279,17 @@ p3_set_gs_pair_max_template_mispriming(p3_global_settings * p,
   p->pair_max_template_mispriming = (short) (pair_max_template_mispriming * 100);
 }
 
-void /* FIX ME HOOK THIS CODE UP? ; used in read_boulder_record?*/
+void
 p3_set_gs_pair_repeat_compl(p3_global_settings * p, double pair_repeat_compl){
   p->pair_repeat_compl = (short) ( pair_repeat_compl * 100);
 }
 
-void /* FIX ME HOOK THIS CODE UP? used in read_boulder_record?*/
+void
 p3_set_gs_pair_compl_any(p3_global_settings * p , double pair_compl_any){
   p->pair_compl_any = (short) (pair_compl_any * 100);
 }
 
-void /* FIX ME HOOK THIS CODE UP? used in read_boulder_record?*/
+void
 p3_set_gs_pair_compl_end(p3_global_settings * p , double  pair_compl_end){
   p->pair_compl_end =(short) (pair_compl_end * 100);
 }
@@ -6532,7 +6538,6 @@ bf_get_overlaps_overlap_region(const primer_rec *oligo) {
   return (oligo->problems.prob & BF_OVERLAPS_OVERLAP_REGION) != 0;
 }
 
-
 static void
 op_set_does_not_amplify_orf(primer_rec *oligo) {
   oligo->problems.prob |= OP_DOES_NOT_AMPLIFY_ORF;
@@ -6727,181 +6732,199 @@ p3_get_rv_stop_codon_pos(p3retval *r) {
 /* END functions for getting values from p3retvals            */
 /* ============================================================ */
 
-void p3_print_args(const p3_global_settings *p, seq_args *s)
+void 
+p3_print_args(const p3_global_settings *p, seq_args *s)
 {
   int i;
 
-  printf("begin global args\n") ;
-  printf("primer_task %i\n", p->primer_task);
-  printf("pick_left_primer %i\n", p->pick_left_primer);
-  printf("pick_right_primer %i\n", p->pick_right_primer);
-  printf("pick_internal_oligo %i\n", p->pick_internal_oligo);
-  printf("file_flag %i\n", p->file_flag) ;
-  printf("first_base_index %i\n", p->first_base_index);
-  printf("liberal_base %i\n", p->liberal_base );
-  printf("num_return %i\n", p->num_return) ;
-  printf("pick_anyway %i\n", p->pick_anyway);
-  printf("lib_ambiguity_codes_consensus %i\n", p->lib_ambiguity_codes_consensus) ;
-  printf("quality_range_min %i\n", p->quality_range_min) ;
-  printf("quality_range_max %i\n", p->quality_range_max) ;
+  if (p != NULL) {
+    printf("begin global args\n") ;
+    printf("primer_task %i\n", p->primer_task);
+    printf("pick_left_primer %i\n", p->pick_left_primer);
+    printf("pick_right_primer %i\n", p->pick_right_primer);
+    printf("pick_internal_oligo %i\n", p->pick_internal_oligo);
+    printf("file_flag %i\n", p->file_flag) ;
+    printf("first_base_index %i\n", p->first_base_index);
+    printf("liberal_base %i\n", p->liberal_base );
+    printf("num_return %i\n", p->num_return) ;
+    printf("pick_anyway %i\n", p->pick_anyway);
+    printf("lib_ambiguity_codes_consensus %i\n",
+           p->lib_ambiguity_codes_consensus) ;
+    printf("quality_range_min %i\n", p->quality_range_min) ;
+    printf("quality_range_max %i\n", p->quality_range_max) ;
 
-  printf("begin p_args\n");
+    printf("begin primer_args\n");
 
-  printf("begin oligo_weights\n");
-  printf("temp_gt %f\n", p->p_args.weights.temp_gt ) ;
-  printf("temp_gt %f\n", p->p_args.weights.temp_gt) ;
-  printf("temp_lt %f\n", p->p_args.weights.temp_lt) ;
-  printf("gc_content_gt %f\n", p->p_args.weights.gc_content_gt) ;
-  printf("gc_content_lt %f\n", p->p_args.weights.gc_content_lt) ;
-  printf("compl_any %f\n", p->p_args.weights.compl_any) ;
-  printf("compl_end %f\n", p->p_args.weights.compl_end) ;
-  printf("repeat_sim %f\n", p->p_args.weights.repeat_sim) ;
-  printf("length_lt %f\n", p->p_args.weights.length_lt) ;
-  printf("length_gt %f\n", p->p_args.weights.length_gt) ;
-  printf("seq_quality %f\n", p->p_args.weights.seq_quality) ;
-  printf("end_quality %f\n", p->p_args.weights.end_quality) ;
-  printf("pos_penalty %f\n", p->p_args.weights.pos_penalty) ;
-  printf("end_stability %f\n", p->p_args.weights.end_stability) ;
-  printf("num_ns %f\n", p->p_args.weights.num_ns) ;
-  printf("template_mispriming %f\n", p->p_args.weights.template_mispriming) ;
-  printf("end oligo_weights\n") ;
+    printf("begin oligo_weights\n");
+    printf("temp_gt %f\n", p->p_args.weights.temp_gt ) ;
+    printf("temp_gt %f\n", p->p_args.weights.temp_gt) ;
+    printf("temp_lt %f\n", p->p_args.weights.temp_lt) ;
+    printf("gc_content_gt %f\n", p->p_args.weights.gc_content_gt) ;
+    printf("gc_content_lt %f\n", p->p_args.weights.gc_content_lt) ;
+    printf("compl_any %f\n", p->p_args.weights.compl_any) ;
+    printf("compl_end %f\n", p->p_args.weights.compl_end) ;
+    printf("repeat_sim %f\n", p->p_args.weights.repeat_sim) ;
+    printf("length_lt %f\n", p->p_args.weights.length_lt) ;
+    printf("length_gt %f\n", p->p_args.weights.length_gt) ;
+    printf("seq_quality %f\n", p->p_args.weights.seq_quality) ;
+    printf("end_quality %f\n", p->p_args.weights.end_quality) ;
+    printf("pos_penalty %f\n", p->p_args.weights.pos_penalty) ;
+    printf("end_stability %f\n", p->p_args.weights.end_stability) ;
+    printf("num_ns %f\n", p->p_args.weights.num_ns) ;
+    printf("template_mispriming %f\n", p->p_args.weights.template_mispriming) ;
+    printf("end oligo_weights\n") ;
 
-  printf("opt_tm %f\n", p->p_args.opt_tm) ;
-  printf("min_tm %f\n", p->p_args.min_tm) ;
-  printf("max_tm %f\n", p->p_args.max_tm) ;
-  printf("opt_gc_content %f\n", p->p_args.opt_gc_content) ;
-  printf("max_gc %f\n", p->p_args.max_gc) ;
-  printf("min_gc %f\n", p->p_args.min_gc) ;
-  printf("divalent_conc %f\n", p->p_args.divalent_conc) ;
-  printf("dntp_conc %f\n", p->p_args.dntp_conc) ;
-  printf("dna_conc %f\n", p->p_args.dna_conc) ;
-  printf("num_ns_accepted %i\n", p->p_args.num_ns_accepted) ;
-  printf("opt_size %i\n", p->p_args.opt_size) ;
-  printf("min_size %i\n", p->p_args.min_size) ;
-  printf("max_size %i\n", p->p_args.max_size) ;
-  printf("max_poly_x %i\n", p->p_args.max_poly_x) ;
-  printf("min_end_quality %i\n", p->p_args.min_end_quality) ;
-  printf("min_quality %i\n", p->p_args.min_quality) ;
-  printf("max_self_any %i\n", p->p_args.max_self_any) ;
-  printf("max_self_end %i\n", p->p_args.max_self_end) ;
-  printf("max_repeat_compl %i\n", p->p_args.max_repeat_compl) ;
-  printf("max_template_mispriming %i\n", p->p_args.max_template_mispriming) ;
-  printf("end p_args\n") ;
+    printf("opt_tm %f\n", p->p_args.opt_tm) ;
+    printf("min_tm %f\n", p->p_args.min_tm) ;
+    printf("max_tm %f\n", p->p_args.max_tm) ;
+    printf("opt_gc_content %f\n", p->p_args.opt_gc_content) ;
+    printf("max_gc %f\n", p->p_args.max_gc) ;
+    printf("min_gc %f\n", p->p_args.min_gc) ;
+    printf("divalent_conc %f\n", p->p_args.divalent_conc) ;
+    printf("dntp_conc %f\n", p->p_args.dntp_conc) ;
+    printf("dna_conc %f\n", p->p_args.dna_conc) ;
+    printf("num_ns_accepted %i\n", p->p_args.num_ns_accepted) ;
+    printf("opt_size %i\n", p->p_args.opt_size) ;
+    printf("min_size %i\n", p->p_args.min_size) ;
+    printf("max_size %i\n", p->p_args.max_size) ;
+    printf("max_poly_x %i\n", p->p_args.max_poly_x) ;
+    printf("min_end_quality %i\n", p->p_args.min_end_quality) ;
+    printf("min_quality %i\n", p->p_args.min_quality) ;
+    printf("max_self_any %i\n", p->p_args.max_self_any) ;
+    printf("max_self_end %i\n", p->p_args.max_self_end) ;
+    printf("max_repeat_compl %i\n", p->p_args.max_repeat_compl) ;
+    printf("max_template_mispriming %i\n", p->p_args.max_template_mispriming) ;
+    printf("end primer args\n") ;
 
-  printf("begin o_args\n") ;
+    printf("begin internal oligo args\n") ;
 
-  printf("begin oligo_weights\n") ;
-  printf("temp_gt %f\n", p->o_args.weights.temp_gt) ;
-  printf("temp_lt %f\n", p->o_args.weights.temp_lt) ;
-  printf("gc_content_gt %f\n", p->o_args.weights.gc_content_gt) ;
-  printf("gc_content_lt %f\n", p->o_args.weights.gc_content_lt) ;
-  printf("compl_any %f\n", p->o_args.weights.compl_any) ;
-  printf("compl_end %f\n", p->o_args.weights.compl_end) ;
-  printf("repeat_sim %f\n", p->o_args.weights.repeat_sim) ;
-  printf("length_lt %f\n", p->o_args.weights.length_lt) ;
-  printf("length_gt %f\n", p->o_args.weights.length_gt) ;
-  printf("seq_quality %f\n", p->o_args.weights.seq_quality) ;
-  printf("end_quality %f\n", p->o_args.weights.end_quality) ;
-  printf("pos_penalty %f\n", p->o_args.weights.pos_penalty) ;
-  printf("end_stability %f\n", p->o_args.weights.end_stability) ;
-  printf("num_ns %f\n", p->o_args.weights.num_ns) ;
-  printf("template_mispriming %f\n", p->o_args.weights.template_mispriming) ;
-  printf("end oligo_weights\n") ;
+    printf("begin oligo_weights\n") ;
+    printf("temp_gt %f\n", p->o_args.weights.temp_gt) ;
+    printf("temp_lt %f\n", p->o_args.weights.temp_lt) ;
+    printf("gc_content_gt %f\n", p->o_args.weights.gc_content_gt) ;
+    printf("gc_content_lt %f\n", p->o_args.weights.gc_content_lt) ;
+    printf("compl_any %f\n", p->o_args.weights.compl_any) ;
+    printf("compl_end %f\n", p->o_args.weights.compl_end) ;
+    printf("repeat_sim %f\n", p->o_args.weights.repeat_sim) ;
+    printf("length_lt %f\n", p->o_args.weights.length_lt) ;
+    printf("length_gt %f\n", p->o_args.weights.length_gt) ;
+    printf("seq_quality %f\n", p->o_args.weights.seq_quality) ;
+    printf("end_quality %f\n", p->o_args.weights.end_quality) ;
+    printf("pos_penalty %f\n", p->o_args.weights.pos_penalty) ;
+    printf("end_stability %f\n", p->o_args.weights.end_stability) ;
+    printf("num_ns %f\n", p->o_args.weights.num_ns) ;
+    printf("template_mispriming %f\n", p->o_args.weights.template_mispriming) ;
+    printf("end oligo_weights\n") ;
 
-  printf("opt_tm %f\n", p->o_args.opt_tm) ;
-  printf("min_tm %f\n", p->o_args.min_tm) ;
-  printf("max_tm %f\n", p->o_args.max_tm) ;
-  printf("opt_gc_content %f\n", p->o_args.opt_gc_content) ;
-  printf("max_gc %f\n", p->o_args.max_gc) ;
-  printf("min_gc %f\n", p->o_args.min_gc) ;
-  printf("divalent_conc %f\n", p->o_args.divalent_conc) ;
-  printf("dntp_conc %f\n", p->o_args.dntp_conc) ;
-  printf("dna_conc %f\n", p->o_args.dna_conc) ;
-  printf("num_ns_accepted %i\n", p->o_args.num_ns_accepted) ;
-  printf("opt_size %i\n", p->o_args.opt_size) ;
-  printf("min_size %i\n", p->o_args.min_size) ;
-  printf("max_size %i\n", p->o_args.max_size) ;
-  printf("max_poly_x %i\n", p->o_args.max_poly_x) ;
-  printf("min_end_quality %i\n", p->o_args.min_end_quality) ;
-  printf("min_quality %i\n", p->o_args.min_quality) ;
-  printf("max_self_any %i\n", p->o_args.max_self_any) ;
-  printf("max_self_end %i\n", p->o_args.max_self_end) ;
-  printf("max_repeat_compl %i\n", p->o_args.max_repeat_compl) ;
-  printf("max_template_mispriming %i\n", p->o_args.max_template_mispriming) ;
-  printf("end o_args\n") ;
+    printf("opt_tm %f\n", p->o_args.opt_tm) ;
+    printf("min_tm %f\n", p->o_args.min_tm) ;
+    printf("max_tm %f\n", p->o_args.max_tm) ;
+    printf("opt_gc_content %f\n", p->o_args.opt_gc_content) ;
+    printf("max_gc %f\n", p->o_args.max_gc) ;
+    printf("min_gc %f\n", p->o_args.min_gc) ;
+    printf("divalent_conc %f\n", p->o_args.divalent_conc) ;
+    printf("dntp_conc %f\n", p->o_args.dntp_conc) ;
+    printf("dna_conc %f\n", p->o_args.dna_conc) ;
+    printf("num_ns_accepted %i\n", p->o_args.num_ns_accepted) ;
+    printf("opt_size %i\n", p->o_args.opt_size) ;
+    printf("min_size %i\n", p->o_args.min_size) ;
+    printf("max_size %i\n", p->o_args.max_size) ;
+    printf("max_poly_x %i\n", p->o_args.max_poly_x) ;
+    printf("min_end_quality %i\n", p->o_args.min_end_quality) ;
+    printf("min_quality %i\n", p->o_args.min_quality) ;
+    printf("max_self_any %i\n", p->o_args.max_self_any) ;
+    printf("max_self_end %i\n", p->o_args.max_self_end) ;
+    printf("max_repeat_compl %i\n", p->o_args.max_repeat_compl) ;
+    printf("max_template_mispriming %i\n", p->o_args.max_template_mispriming) ;
+    printf("end internal oligo args\n") ;
 
-  printf("tm_santalucia %i\n", p->tm_santalucia) ;
-  printf("salt_corrections %i\n", p->salt_corrections) ;
-  printf("max_end_stability %f\n", p->max_end_stability) ;
-  printf("gc_clamp %i\n", p->gc_clamp) ;
-  printf("max_end_gc %i\n", p->max_end_gc);
-  printf("lowercase_masking %i\n", p->lowercase_masking) ;
-  printf("outside_penalty %f\n", p->outside_penalty) ;
-  printf("inside_penalty %f\n", p->inside_penalty) ;
-  printf("number of product size ranges: %d\n", p->num_intervals);
-  printf("product size ranges:\n");
-  for (i = 0; i < p->num_intervals; i++) {
-    printf("%d - %d \n", p->pr_min[0], p->pr_max[0]);
+    printf("tm_santalucia %i\n", p->tm_santalucia) ;
+    printf("salt_corrections %i\n", p->salt_corrections) ;
+    printf("max_end_stability %f\n", p->max_end_stability) ;
+    printf("gc_clamp %i\n", p->gc_clamp) ;
+    printf("max_end_gc %i\n", p->max_end_gc);
+    printf("lowercase_masking %i\n", p->lowercase_masking) ;
+    printf("outside_penalty %f\n", p->outside_penalty) ;
+    printf("inside_penalty %f\n", p->inside_penalty) ;
+    printf("number of product size ranges: %d\n", p->num_intervals);
+    printf("product size ranges:\n");
+    for (i = 0; i < p->num_intervals; i++) {
+      printf("%d - %d \n", p->pr_min[0], p->pr_max[0]);
+    }
+    printf("product_opt_size %i\n", p->product_opt_size) ;
+    printf("product_max_tm %f\n", p->product_max_tm) ;
+    printf("product_min_tm %f\n", p->product_min_tm) ;
+    printf("product_opt_tm %f\n", p->product_opt_tm) ;
+    printf("pair_max_template_mispriming %i\n", p->pair_max_template_mispriming) ;
+    printf("pair_repeat_compl %i\n", p->pair_repeat_compl) ;
+    printf("pair_compl_any %i\n", p->pair_compl_any) ;
+    printf("pair_compl_end %i\n", p->pair_compl_end) ;
+
+    printf("begin pr_pair_weights\n") ;
+    printf("primer_quality %f\n", p->pr_pair_weights.primer_quality) ;
+    printf("io_quality %f\n", p->pr_pair_weights.io_quality) ;
+    printf("diff_tm %f\n", p->pr_pair_weights.diff_tm) ;
+    printf("compl_any %f\n", p->pr_pair_weights.compl_any) ;
+    printf("compl_end %f\n", p->pr_pair_weights.compl_end) ;
+    printf("product_tm_lt %f\n", p->pr_pair_weights.product_tm_lt) ;
+    printf("product_tm_gt %f\n", p->pr_pair_weights.product_tm_gt) ;
+    printf("product_size_lt %f\n", p->pr_pair_weights.product_size_lt) ;
+    printf("product_size_gt %f\n", p->pr_pair_weights.product_size_gt) ;
+    printf("repeat_sim %f\n", p->pr_pair_weights.repeat_sim) ;
+    printf("template_mispriming %f\n", p->pr_pair_weights.template_mispriming) ;
+    printf("end pair_weights\n") ;
+
+    printf("min_three_prime_distance %i\n", p->min_three_prime_distance) ;
+    printf("pos_overlap_primer_end %i\n" , p->pos_overlap_primer_end);
+    printf("settings_file_id %s\n", p->settings_file_id) ;
+    printf("dump %i\n", p->dump);
+    printf("end global args\n") ;
   }
-  printf("product_opt_size %i\n", p->product_opt_size) ;
-  printf("product_max_tm %f\n", p->product_max_tm) ;
-  printf("product_min_tm %f\n", p->product_min_tm) ;
-  printf("product_opt_tm %f\n", p->product_opt_tm) ;
-  printf("pair_max_template_mispriming %i\n", p->pair_max_template_mispriming) ;
-  printf("pair_repeat_compl %i\n", p->pair_repeat_compl) ;
-  printf("pair_compl_any %i\n", p->pair_compl_any) ;
-  printf("pair_compl_end %i\n", p->pair_compl_end) ;
 
-  printf("begin pr_pair_weights\n") ;
-  printf("primer_quality %f\n", p->pr_pair_weights.primer_quality) ;
-  printf("io_quality %f\n", p->pr_pair_weights.io_quality) ;
-  printf("diff_tm %f\n", p->pr_pair_weights.diff_tm) ;
-  printf("compl_any %f\n", p->pr_pair_weights.compl_any) ;
-  printf("compl_end %f\n", p->pr_pair_weights.compl_end) ;
-  printf("product_tm_lt %f\n", p->pr_pair_weights.product_tm_lt) ;
-  printf("product_tm_gt %f\n", p->pr_pair_weights.product_tm_gt) ;
-  printf("product_size_lt %f\n", p->pr_pair_weights.product_size_lt) ;
-  printf("product_size_gt %f\n", p->pr_pair_weights.product_size_gt) ;
-  printf("repeat_sim %f\n", p->pr_pair_weights.repeat_sim) ;
-  printf("template_mispriming %f\n", p->pr_pair_weights.template_mispriming) ;
-  printf("end pair_weights\n") ;
+  if (s != NULL) {
+    printf("\nbegin sequence args\n") ;
+    /* TO DO: complete the statments for dumping this data
+       printf("interval_array_t2 tar2 %i\n",
+       int pairs[PR_MAX_INTERVAL_ARRAY][2]) ;
+       int count) ;
+       printf("interval_array_t2 excl2 %i\n",
+       int pairs[PR_MAX_INTERVAL_ARRAY][2]) ;
+       int count) ;
+       printf("interval_array_t2 excl_internal2 %i\n",
+       int pairs[PR_MAX_INTERVAL_ARRAY][2]) ;
+       int count) ;
+    */
 
-  printf("min_three_prime_distance %i\n", p->min_three_prime_distance) ;
-  printf("pos_overlap_primer_end %i\n" , p->pos_overlap_primer_end);
-  printf("settings_file_id %s\n", p->settings_file_id) ;
-  printf("dump %i\n", p->dump);
-  printf("end global args\n") ;
+    printf("primer_overlap_pos_count %i\n",
+           s->primer_overlap_pos_count);
+    if (s->primer_overlap_pos_count > 0) {
+      printf("primer_overlap_pos [\n");
+      for (i = 0; i < s->primer_overlap_pos_count; i++) {
+        printf("   %i\n", s->primer_overlap_pos[i]);
+      }
+      printf("]\n");
+    }
 
-  printf("begin sequence args\n") ;
-  /* FIX printf("interval_array_t2 tar2 %i\n",
-     int pairs[PR_MAX_INTERVAL_ARRAY][2]) ;
-     int count) ;
-     printf("interval_array_t2 excl2 %i\n",
-     int pairs[PR_MAX_INTERVAL_ARRAY][2]) ;
-     int count) ;
-     printf("interval_array_t2 excl_internal2 %i\n",
-     int pairs[PR_MAX_INTERVAL_ARRAY][2]) ;
-     int count) ;
-  */
-  printf("incl_s %i\n", s->incl_s) ;
-  printf("incl_l %i\n", s->incl_l) ;
-  printf("start_codon_pos %i\n", s->start_codon_pos) ;
-  /* FIX printf("quality%i\", s->quality) ; */
-  printf("n_quality %i\n", s->n_quality) ;
-  printf("quality_storage_size %i\n", s->quality_storage_size) ;
-  printf("*sequence %s\n", s->sequence) ;
-  printf("*sequence_name %s\n", s->sequence_name) ;
-  printf("*sequence_file %s\n", s->sequence_file) ;
-  printf("*trimmed_seq %s\n", s->trimmed_seq) ;
-  printf("*trimmed_orig_seq %s\n", s->trimmed_orig_seq) ;
-  printf("*upcased_seq %s\n", s->upcased_seq) ;
-  printf("*upcased_seq_r %s\n", s->upcased_seq_r) ;
-  printf("*left_input %s\n", s->left_input) ;
-  printf("*right_input %s\n", s->right_input) ;
-  printf("*internal_input %s\n", s->internal_input) ;
-  printf("force_left_start %i\n", s->force_left_start) ;
-  printf("force_left_end %i\n", s->force_left_end) ;
-  printf("force_right_start %i\n", s->force_right_start) ;
-  printf("force_right_end %i\n", s->force_right_end) ;
-  printf("end sequence args\n") ;
+    printf("incl_s %i\n", s->incl_s) ;
+    printf("incl_l %i\n", s->incl_l) ;
+    printf("start_codon_pos %i\n", s->start_codon_pos) ;
+    printf("n_quality %i\n", s->n_quality) ;
+    /* TO DO printf("quality%i\", s->quality) ; */
+    printf("quality_storage_size %i\n", s->quality_storage_size) ;
+    printf("*sequence %s\n", s->sequence) ;
+    printf("*sequence_name %s\n", s->sequence_name) ;
+    printf("*sequence_file %s\n", s->sequence_file) ;
+    printf("*trimmed_seq %s\n", s->trimmed_seq) ;
+    printf("*trimmed_orig_seq %s\n", s->trimmed_orig_seq) ;
+    printf("*upcased_seq %s\n", s->upcased_seq) ;
+    printf("*upcased_seq_r %s\n", s->upcased_seq_r) ;
+    printf("*left_input %s\n", s->left_input) ;
+    printf("*right_input %s\n", s->right_input) ;
+    printf("*internal_input %s\n", s->internal_input) ;
+    printf("force_left_start %i\n", s->force_left_start) ;
+    printf("force_left_end %i\n", s->force_left_end) ;
+    printf("force_right_start %i\n", s->force_right_start) ;
+    printf("force_right_end %i\n", s->force_right_end) ;
+    printf("end sequence args\n\n") ;
+  }
 }

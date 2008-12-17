@@ -165,7 +165,7 @@ typedef struct args_for_one_oligo_or_primer {
   double max_gc;
   double min_gc;
 
-  /* Warning: also used for product Tm (FIX ME) */
+  /* Warning: also used for product Tm (TO DO: factor this out) */
   double salt_conc;
 
   /*
@@ -226,8 +226,7 @@ typedef struct p3_global_settings {
   int    pick_right_primer;
   int    pick_internal_oligo;
 
-  int    file_flag;   /* FIX ME -- This probably does not belong here */
-  /* int    explain_flag;  */
+  int    file_flag;   /* TO DO, See if this can be factored out. */
 
   int    first_base_index;  /* 
                              * The index of the first base in the input
@@ -637,12 +636,11 @@ typedef struct pair_array_t {
  */
 typedef struct seq_args {
 
-                          /*  These FIX ME UPDATE THIS COMMENT, applies to next 3 slots
-                           * are presented as indexes within the
-                           * sequence slot, but 
-                           * they are recalculated to be
-                           * indexes within trimmed_seq.
-                           *
+                          /* The net next 3 slots are presented as
+                           * indexes within the sequence slot, but
+                           * they are recalculated to be indexes
+                           * within trimmed_seq (i.e. within the
+			   * "included region").
                            */
 
   interval_array_t2 tar2; /* The targets.  tar2->pairs[i][0] s the start
@@ -745,7 +743,7 @@ typedef struct p3retval {
    */
   int stop_codon_pos;
 
-  int upstream_stop_codon;  /* FIX ME needs docs */
+  int upstream_stop_codon;  /* TO DO needs docs */
 
 } p3retval;
 
@@ -759,7 +757,7 @@ const oligo_array *p3_get_rv_fwd(const p3retval *r);
 const oligo_array *p3_get_rv_intl(const p3retval *r);
 const oligo_array *p3_get_rv_rev(const p3retval *r);
 
-/* FIX ME -- needs more documentation
+/* TO DO -- needs more documentation
    It is the responsibility of caller to free the return value. */
 char *p3_get_rv_and_gs_warnings(const p3retval *retval, 
                                       const p3_global_settings *pa);
@@ -767,18 +765,18 @@ char *p3_get_rv_and_gs_warnings(const p3retval *retval,
 /* Return a char * describing global errors (usually/always?)  errors
    caused by problems detected in the p3_global_settings * argument to
    choose primers. Returned storage is free'ed on calling
-   destroy_p3retval(r). FIX ME? currently NULL if no error. */
+   destroy_p3retval(r).  Returns NULL if no error. */
 const char *p3_get_rv_global_errors(const p3retval *r);
 
 /* Return a char * describing per-sequence errors (usually/always?)
    errors caused by problems detected in the seq_args * argument to
    choose primers. Returned storage is free'ed on calling
-   destroy_p3retval(r). FIX ME? current NULL if no error. */
+   destroy_p3retval(r). Returns NULL if no error. */
 const char *p3_get_rv_per_sequence_errors(const p3retval *r);
 
 /* Return a char * describing warnings generated in
    choose_primers. Returned storage is free'ed on calling
-   destroy_p3retval(r). FIX ME? currently NULL if no warnings. */
+   destroy_p3retval(r). Returns NULL if no warnings. */
 const char *p3_get_rv_warnings(const p3retval *r);
 
 p3_output_type p3_get_rv_output_type(const p3retval *r);

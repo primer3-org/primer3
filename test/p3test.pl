@@ -138,8 +138,6 @@ sub main() {
     if ($winFlag) {
         $exe = '..\\src\\primer3_core.exe';
         $set_files = '..\\test\\';
-        # $def_executable = $exe; # keep things happy @ line 237 Brant probably not necessary any more
-        # Also, line numbers of particular statements are not very stable.
     }
 
     my $exit_stat = 0;
@@ -357,9 +355,11 @@ sub main() {
             $exit_stat = -1;
         }
     }
-    print $all_ok ? "\nPassed all tests - [OK]\n" : "\nAt least one test failed - [FAILED]\n";
-    print "Tests run for ", (time() - $start_time), " seconds.\n";
-    print "DONE ", scalar(localtime), "\n";
+    print "Tests ran for ", (time() - $start_time), " seconds.\n";
+    print "\n\nDONE ", scalar(localtime), " ";
+
+    print $all_ok ? "Passed all tests - [OK]\n\n\n" : "At least one test failed - [FAILED]\n\n\n";
+
     exit $exit_stat;
 }
 
@@ -455,12 +455,9 @@ sub test_fatal_errors() {
             = $do_valgrind ? sprintf $valgrind_format, $root : '';
 
         my $cmd = "$valgrind_prefix$exe <$_ > $root.tmp 2> $root.tmp2";
-        if ($winFlag) {
-            $r = _nowarn_system($cmd);  # FIX ME --- both branches are the same
-        }
-        else {
-            $r = _nowarn_system($cmd);
-        }
+
+	$r = _nowarn_system($cmd);
+
         if ($? == 0) {
             my $r = $? >> 8;
             print
