@@ -30,13 +30,15 @@ cd ../../..
 
 cp -rfp release-<release number> primer3-<release number>
 
+cd primer3-<release number>
+
 # Get rid of the svn stuff
 cd primer3-<release number>
 rm -rf .svn
 rm -rf */.svn
 rm -rf */*/.svn
 rm -rf */*/*/.svn
-rm make-release-notes.txt
+rm notes-on-creating-source-release.txt
 
 # look for other hidden L/Unix files
 ls -ld .??*
