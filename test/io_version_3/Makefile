@@ -44,7 +44,7 @@ VAL =
 test: testcore
 
 testcore:
-	echo; echo; echo 'TESTING primer3_core, IO VERSION 3'; echo; perl p3test_io3.pl
+	echo; echo; echo 'TESTING primer3_core, IO VERSION 3'; echo; perl p3test_io3.pl $(VAL)
 
 clean:
 	echo; echo; echo 'CLEAN UP IO VERSION 3 TEST DIRECTORY'; echo;
