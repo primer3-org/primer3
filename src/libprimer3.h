@@ -480,8 +480,9 @@ typedef struct primer_rec {
   double end_stability;
   /* Delta G of disription of 5 3' bases. */
 
-  int    start;    /* The 0-based index of the leftmost base of the primer
-                      WITH RESPECT TO THE seq_args FIELD trimmed_seq. */
+  int    start;    /* Position of the 5'-most base within the primer
+                      WITH RESPECT TO THE seq_args FIELD
+                      trimmed_seq. */
 
   int    seq_quality; /* Minimum quality score of bases included. */   
   int    seq_end_quality;  /* Minimum quality core of the 5 3' bases. */

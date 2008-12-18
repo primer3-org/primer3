@@ -990,7 +990,7 @@ choose_pair_or_triple(p3retval *retval,
   max_j_seen = malloc(sizeof(int) * retval->rev.num_elem);
   for (i = 0; i < retval->rev.num_elem; i++) max_j_seen[i] = -1;
 
-  /* Pick pairs till we have enough (continue_trying == 0) */     
+  /* Pick pairs till we have enough. */     
   while(1) {
 
     memset(&the_best_pair, 0, sizeof(the_best_pair));
@@ -1155,8 +1155,8 @@ choose_pair_or_triple(p3retval *retval,
       for (i = 0; i < retval->rev.num_elem; i++) max_j_seen[i] = -1;
 
       if (!(product_size_range_index < pa->num_intervals)) {
-        /* We ran out of product-size-ranges. End the while loop. */
-        /* continue_trying = 0; */ break;
+        /* We ran out of product-size-ranges. Exit the while loop. */
+        break;
 
         /* Our bookkeeping was incorrect unless the assertion below is true */
         /* num_intervals > 1 and min_three_prime_distance > -1 both artifically
@@ -1174,7 +1174,7 @@ choose_pair_or_triple(p3retval *retval,
       add_pair(&the_best_pair, best_pairs);
       /* If we have enough stop the while loop */
       if (pa->num_return == best_pairs->num_pairs) {
-        /* continue_trying = 0; */ break;
+	break;
       }
     }
   } /* end of while(continue_trying == 1) */
@@ -1372,7 +1372,6 @@ oligo_in_pair_overlaps_used_oligo(const primer_rec *left,
     q_pos =  q->left->start + q->left->length - 1;
 
     pair_pos = left->start + left->length -  1;
-    /* pair_pos = pair->left->start + pair->left->length -  1; */
 
     if ((abs(q_pos - pair_pos) < min_dist)
         && (min_dist != 0)) { return 1; }
@@ -1385,7 +1384,6 @@ oligo_in_pair_overlaps_used_oligo(const primer_rec *left,
 
     q_pos = q->right->start - q->right->length + 1;
 
-    /* pair_pos = pair->right->start - pair->right->length + 1; */
     pair_pos = right->start - right->length + 1;
 
     if ((abs(q_pos - pair_pos) < min_dist)
@@ -2976,10 +2974,11 @@ compare_primer_pair(const void *x1, const void *x2)
 {
   const primer_pair *a1 = (const primer_pair *) x1;
   const primer_pair *a2 = (const primer_pair *) x2;
+  const double epsilon = 1e-6;
   int y1, y2;
 
-  if(a1->pair_quality < a2->pair_quality) return -1;
-  if (a1->pair_quality > a2->pair_quality) return 1;
+  if ((a1->pair_quality + epsilon) < a2->pair_quality) return -1;
+  if (a1->pair_quality > (a2->pair_quality + epsilon)) return 1;
 
   /*
    * The following statements ensure that we get a stable order that
