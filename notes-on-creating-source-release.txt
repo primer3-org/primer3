@@ -9,12 +9,12 @@ make test
 # 2 TAG THE RELEASE -- create the directory under primer3/primer3/tags/
 cd primer3/primer3
 svn cp trunk tags/release-<release number>
-svn ci  -m 'tagged DOCUMENTATION release <release number>'
+svn ci  -m 'tagged release <release number>'
 
 # 2.1 WE ALSO HAVE TO TAG THE DOCUMENTATION RELEASE\
 cd primer3/documentation
 svn cp trunk tags/release-<release number>
-svn ci  -m 'tagged release <release number>'
+svn ci  -m 'tagged DOCUMENTATION release <release number>'
 
 # 3 TEST TAGGED RELEASE
 svn co https://primer3.svn.sourceforge.net/svnroot/primer3
@@ -70,5 +70,10 @@ cd /incoming
 put primer3-<repease number>.tar.gz
 quit
 
-# Then log in to the sourceforge web site, go to the admin tab,
-# etc.   
+# Then log in to the sourceforge web site, go to upload site
+# https://frs.sourceforge.net/webupload/ log in and up load
+# the file.  THen log into the main SourceForge site,
+# go to primer3, then the "Admin" tab,  "File Releases"
+# menu selection, etc.  You can set the release as "Hidden"
+# until all pieces in place.
+
