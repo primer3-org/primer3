@@ -49,13 +49,10 @@
 # For VALGRIND -- see end of this makefile for testing primer3_core
 # with valgrind, a leak and memory access checker.
 
-MAX_PRIMER_LENGTH = 36
-
 LDLIBS = -lm
 CC      = gcc
 O_OPTS  = -O2
 CC_OPTS = -g -Wall -D__USE_FIXED_PROTOTYPES__
-# P_DEFINES = -DDPAL_MAX_ALIGN=$(MAX_PRIMER_LENGTH) -DMAX_PRIMER_LENGTH=$(MAX_PRIMER_LENGTH)
 P_DEFINES =
 
 CFLAGS  = $(CC_OPTS) $(O_OPTS)

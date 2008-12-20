@@ -3,8 +3,10 @@ release 2.0.0 alpha 2008-12-15 ==========================================
  This is major release, involving enhancements to functionality,
   software architecture, and input and output conventions.
 
- * A new command line flag, -io_version=3 will provide backward
-   compatible behavior for boulder IO input, and boulder IO output is
+ INPUT/OUTPUT CHANGES:
+
+ * A new command line flag, -io_version=3 provides backward compatible
+   behavior for boulder IO input, and boulder IO output that is
    backward compatible except for error messages, warnings, and the
    text of PRIMER...EXPLAIN tags.
 
@@ -14,15 +16,15 @@ release 2.0.0 alpha 2008-12-15 ==========================================
  For the new default IO, we renamed many Boulder IO INPUT/OUTPUT TAGS
   for clarification and easier integration into scripts
   
- PRIMER3 'SETTINGS' FILES were added.  A settings file can be read in
+ NEW OR IMPROVED FUNCTIONALITY:
+   
+ Primer3 'settings' files were added.  A settings file can be read in
   at program start up to set global parameters.  Our intent is that
   parameter values suitable for particular primer design objectives
   can be easily stored and re-used.
 
- NEW OR IMPROVED FUNCTIONALITY:
-   
  We added new "tasks" such as selection of primer lists, sequencing
-  primers, or cloning primers, or the checking primers or primer pairs
+  primers, or cloning primers, or the checking of primers or primer pairs
   in the absence of a target sequence. See tag PRIMER_TASK.
  
  It is now possible to request only unique primers when multiple
@@ -62,7 +64,7 @@ release 2.0.0 alpha 2008-12-15 ==========================================
   interface, although it is not separately documented. It is also
   possible to create a binary library file that provides this
   functionality (libprimer3.a or libprimer3.so in Unix/Linux).  All C
-  code is now ANSI C and should compile on any system.
+  code is ANSI C.
 
 release 1.1.2 2007-06-10 ================================================
 
