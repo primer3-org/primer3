@@ -239,7 +239,7 @@ sub main() {
 
         my $r;                  # Return value for tests
 
-        if (0 && ($test eq 'primer' || $test eq 'primer1')) { # Skipping these tests
+        if ($test eq 'primer' || $test eq 'primer1') {
             # These tests generate primer lists, which
             # need to be checked separately.
 
