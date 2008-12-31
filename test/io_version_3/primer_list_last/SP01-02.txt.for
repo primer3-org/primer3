@@ -1,0 +1,15 @@
+ACCEPTABLE LEFT PRIMERS
+                                  0-based     #               self  self  qual-
+   # sequence                       start ln  N   GC%     Tm   any   end   lity
+   0 TGTTTCACACTTACGGAAATGG             9 22  0 40.91 59.898  6.00  4.00  2.102
+   1 TTTCACACTTACGGAAATGGA             11 21  0 38.10 58.134  6.00  6.00  2.866
+   2 GTTTCACACTTACGGAAATGGA            10 22  0 40.91 58.997  6.00  6.00  3.003
+   3 GCTGTTTCACACTTACGGAAA              7 21  0 42.86 57.947  4.00  3.00  3.053
+   4 GCTGTTTCACACTTACGGAAAT             7 22  0 40.91 58.314  4.00  4.00  3.686
+   5 CTGTTTCACACTTACGGAAATGG            8 23  0 43.48 60.784  6.00  4.00  3.784
+   6 GTTTCACACTTACGGAAATGG             10 21  0 42.86 57.142  6.00  4.00  3.858
+   7 GCTGTTTCACACTTACGGAAATG            7 23  0 43.48 60.918  6.00  6.00  3.918
+   8 TGTTTCACACTTACGGAAATGGA            9 23  0 39.13 61.623  6.00  6.00  4.623
+   9 CTGTTTCACACTTACGGAAATG             8 22  0 40.91 57.367  6.00  6.00  4.633
+  10 CTTAGCGTGCGTGGGGTC               141 18  0 66.67 62.798  3.00  1.00  4.798
+  11 CTGTTTCACACTTACGGAAATGGA           8 24  0 41.67 62.411  6.00  6.00  6.411
