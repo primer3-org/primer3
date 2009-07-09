@@ -2,7 +2,7 @@ Primer3 File - http://primer3.sourceforge.net
 P3_FILE_TYPE=settings
 
 P3_FILE_ID=Default settings of primer3 version 1.1.4
-PRIMER_TASK=pick_pcr_primers
+PRIMER_TASK=pick_detection_primers
 PRIMER_PICK_LEFT_PRIMER=1
 PRIMER_PICK_INTERNAL_OLIGO=0
 PRIMER_PICK_RIGHT_PRIMER=1
