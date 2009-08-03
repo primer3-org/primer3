@@ -41,7 +41,7 @@
 VAL =
 
 
-test: makeexes testtm testdpal testcore test_io_v3
+test: makeexes testtm testdpal testthal testcore test_io_v3
 
 test_io_v3:
 	cd io_version_3; make test
@@ -51,6 +51,9 @@ testcore:
 
 testdpal:
 	echo; echo; echo 'TESTING ALIGNMENT CALCS'; echo; perl dpal_test.pl $(VAL); 
+	
+testthal:
+	 echo; echo; echo 'TESTING THERMODYNAMICAL ALIGNMENT CALCS'; echo; perl thal_test.pl $(VAL);
 
 testtm:
 	echo; echo; echo 'TESTING Tm CALCS'; echo; perl oligotm_test.pl $(VAL);
@@ -71,6 +74,7 @@ clean:
 	-rm -f syntax[0-1][0-9].for syntax[0-1][0-9].int syntax[0-1][0-9].rev
 	-rm -f oligotm.*.valg  # valgrind output from oligotm_test.pl --valgrind
 	-rm -f ntdpal.*.valg   # valgrind output from dpal_test.pl --valgrind
+	-rm -f ntthal.*.valg   # valgrind output from thal_test.pl --valgrind
 	-rm -f *.vg */*.vg     # valgrind output from p3test{,z}.pl --valgrind
 	-rm -f *.vg.core.*     # core files from crashed valgrind test
 	-rm -f ./core # in case we crashed and left a core file

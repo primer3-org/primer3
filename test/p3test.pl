@@ -113,7 +113,8 @@ sub main() {
     }
 
     my $valgrind_exe = "/usr/local/bin/valgrind";
-    my $log_file_arg_for_valgrind = "--log-file-exactly";
+    # my $log_file_arg_for_valgrind = "--log-file-exactly";
+    my $log_file_arg_for_valgrind = "--log-file";
     if ($do_valgrind) {
 	if (!-x $valgrind_exe) { 
 	    warn "Cannot find $valgrind_exe; will try `which valgrind`\n";
@@ -210,6 +211,9 @@ sub main() {
 
                   'p3_3_prime_n',
 
+	          'primer_thermod_align',
+	          'primer_thermod_align_formatted',
+	
                   'primer_obj_fn',
 
                   'primer_lib_amb_codes',
@@ -219,7 +223,9 @@ sub main() {
         print "$test...";
 
         if ($fastFlag && (($test eq 'p3_3_prime_n')
-                || ($test eq 'primer_obj_fn'))) {
+                || ($test eq 'primer_obj_fn')
+	        || ($test eq 'primer_thermod_align')
+	        || ($test eq 'primer_thermod_align_formatted'))) {
             print "[skiped in fast mode]\n";
             next;
         }
