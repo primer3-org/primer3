@@ -306,7 +306,6 @@ main(int argc, char *argv[]) {
         exit(-4);
       }
     }
-
     destroy_p3retval(retval); /* This works even if retval is NULL */
     retval = NULL;
     destroy_seq_args(sarg);
@@ -321,7 +320,7 @@ main(int argc, char *argv[]) {
   destroy_seq_args(sarg);
   destroy_pr_append_str_data(&nonfatal_parse_err);
   destroy_pr_append_str_data(&fatal_parse_err);
-  
+  destroy_dpal_thal_arg_holder();
   /* If it could not read input complain and die */
   if (0 == input_found) {
     print_usage();

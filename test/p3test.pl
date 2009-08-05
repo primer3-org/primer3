@@ -113,7 +113,6 @@ sub main() {
     }
 
     my $valgrind_exe = "/usr/local/bin/valgrind";
-    # my $log_file_arg_for_valgrind = "--log-file-exactly";
     my $log_file_arg_for_valgrind = "--log-file";
     if ($do_valgrind) {
 	if (!-x $valgrind_exe) { 
@@ -156,7 +155,8 @@ sub main() {
     # The range of this for loop is a set of test names
     # that get translated into file names inside the loop.
     for my $test (
-                  'primer_boundary', # Put the quickest tests first.
+	
+	 'primer_boundary', # Put the quickest tests first.
                   'primer_boundary1',
                   'primer_boundary_formatted',
                   'primer_boundary1_formatted',
@@ -210,8 +210,8 @@ sub main() {
                   # Put slow tests last
 
                   'p3_3_prime_n',
-
-	          'primer_thermod_align',
+	
+	          'primer_thermod_align',             
 	          'primer_thermod_align_formatted',
 	
                   'primer_obj_fn',
@@ -235,6 +235,7 @@ sub main() {
                 print "[skiped in fast mode]\n";       
                 next;
             }
+	    next;
             print 
                 "\nNOTE: this test takes _much_ longer than the others ",
                 "(10 to 20 minutes or more).\n",

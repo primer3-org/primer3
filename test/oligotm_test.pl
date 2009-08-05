@@ -60,7 +60,7 @@ if ((!-x $valgrind_exe) && ($do_valgrind)) {
 
 my $valgrind_format
     = "$valgrind_exe --leak-check=yes "
-    . " --show-reachable=yes --log-file-exactly=oligotm.%0.3d.valg ";
+    . " --show-reachable=yes --log-file=oligotm.%0.3d.valg ";
 
 my $nr=1;
 my $failure=0;
