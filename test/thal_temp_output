@@ -1,0 +1,682 @@
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+71.091765
+71.091765
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+Warning: the maximum size of secondary structures loop was set to minimum size of allowed loop length (0)
+15.744496
+15.744496
+15.744496
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+33.557456
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+20.908521
+23.974756
+2.053418
+44.555895
+13.456125
+Error: Sequences longer than THAL_MAX_ALIGN for thermodynamical alignment (nearest-neighbor approach)
+0.000000
+0.000000
+0.000000
+0.000000
+-128.190694
+-136.976485
+-128.190694
+-8.162596
+-3.843450
+5.910727
+7.208293
+7.208293
+0.000000
+0.000000
+0.000000
+0.000000
+-34.030495
+-35.489927
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+47.838549
+0.000000
+0.000000
+0.000000
+-149.430011
+61.077688
+0.000000
+-254.658083
+0.000000
+-170.694738
+0.000000
+0.000000
+21.229518
+5.841287
+-26.170973
+0.000000
+0.000000
+-211.654136
+0.000000
+-211.654136
+0.000000
+0.000000
+-233.286079
+0.000000
+0.000000
+0.000000
+0.000000
+17.398517
+15.503218
+18.003397
+0.000000
+0.000000
+-146.235483
+-232.218519
+0.000000
+0.000000
+0.000000
+-164.051405
+0.000000
+-164.051405
+0.000000
+0.000000
+-189.756879
+0.000000
+0.000000
+0.000000
+0.000000
+-189.756879
+0.000000
+0.000000
+0.000000
+0.000000
+-164.051405
+0.000000
+-164.051405
+0.000000
+0.000000
+-178.782973
+0.000000
+0.000000
+0.000000
+0.000000
+-146.235483
+-232.218519
+0.000000
+0.000000
+0.000000
+23.974756
+18.635353
+-15.102937
+44.555895
+44.418634
+7.208293
+0.000000
+-2.676339
+0.000000
+0.000000
+-53.413601
+-86.088279
+-64.719636
+47.838549
+0.000000
+-149.430011
+0.000000
+-149.430011
+61.077688
+0.000000
+-170.694738
+-254.658083
+0.000000
+0.000000
+0.000000
+21.013970
+-76.120841
+20.403230
+0.000000
+0.000000
+21.229518
+5.841287
+-126.556128
+0.000000
+0.000000
+-211.654136
+0.000000
+-211.654136
+0.000000
+0.000000
+-233.286079
+0.000000
+0.000000
+0.000000
+0.000000
+18.003397
+10.998182
+18.003397
+0.000000
+0.000000
+-146.235483
+-232.218519
+0.000000
+0.000000
+0.000000
+-164.051405
+0.000000
+-164.051405
+0.000000
+0.000000
+-189.756879
+0.000000
+0.000000
+0.000000
+0.000000
+-189.756879
+0.000000
+0.000000
+0.000000
+0.000000
+-164.051405
+0.000000
+-164.051405
+0.000000
+0.000000
+-178.782973
+0.000000
+0.000000
+0.000000
+0.000000
+-146.235483
+-232.218519
+0.000000
+0.000000
+0.000000
+23.974756
+-21.764798
+-83.778360
+44.555895
+44.418634
+-3.843450
+0.000000
+-13.088883
+0.000000
+0.000000
+-48.774822
+-102.915345
+-76.426607
+47.838549
+0.000000
+-149.430011
+0.000000
+-149.430011
+61.077688
+0.000000
+-170.694738
+-254.658083
+0.000000
+0.000000
+0.000000
+10.370451
+-76.120841
+4.467386
+0.000000
+0.000000
+21.229518
+-1.962659
+-126.556128
+0.000000
+0.000000
+-211.654136
+0.000000
+-211.654136
+0.000000
+0.000000
+-233.286079
+0.000000
+0.000000
+0.000000
+0.000000
+18.003397
+10.562998
+18.003397
+0.000000
+0.000000
+-146.235483
+-232.218519
+0.000000
+0.000000
+0.000000
+-164.051405
+0.000000
+-164.051405
+0.000000
+0.000000
+-189.756879
+0.000000
+0.000000
+0.000000
+0.000000
+-189.756879
+0.000000
+0.000000
+0.000000
+0.000000
+-164.051405
+0.000000
+-164.051405
+0.000000
+0.000000
+-178.782973
+0.000000
+0.000000
+0.000000
+0.000000
+-146.235483
+-232.218519
+0.000000
+0.000000
+0.000000
+23.974756
+-60.074519
+-83.778360
+44.555895
+44.418634
+-8.162596
+0.000000
+-89.041560
+0.000000
+0.000000
+-66.405200
+-102.915345
+-88.321738
+47.838549
+0.000000
+-149.430011
+0.000000
+-149.430011
+61.077688
+0.000000
+-170.694738
+-254.658083
+0.000000
+0.000000
+0.000000
+3.564153
+-76.120841
+-0.889075
+0.000000
+0.000000
+21.229518
+-144.596533
+-126.556128
+0.000000
+0.000000
+-211.654136
+0.000000
+-211.654136
+0.000000
+0.000000
+-233.286079
+0.000000
+0.000000
+0.000000
+0.000000
+0.410002
+-1.764173
+2.585498
+0.000000
+0.000000
+-146.235483
+-232.218519
+0.000000
+0.000000
+0.000000
+-164.051405
+0.000000
+-164.051405
+0.000000
+0.000000
+-189.756879
+0.000000
+0.000000
+0.000000
+0.000000
+-189.756879
+0.000000
+0.000000
+0.000000
+0.000000
+-164.051405
+0.000000
+-164.051405
+0.000000
+0.000000
+-178.782973
+0.000000
+0.000000
+0.000000
+0.000000
+-146.235483
+-232.218519
+0.000000
+0.000000
+0.000000
+28.467807
+29.210876
+32.832767
+51.604449
+58.635140
+2.014351
+-9.645452
+-9.645452
+0.000000
+0.000000
+30.670966
+23.335163
+28.271771
+58.635140
+58.635140
+-21.988617
+-21.988617
+-21.988617
+0.000000
+0.000000
+-12.463272
+-11.982652
+-17.567903
+-17.567903
+-21.102727
+-15.090237
+-4.272967
+-21.988617
+-21.988617
+-21.988617
+-21.988617
+0.000000
+0.000000
+0.000000
+0.000000
+0.000000
+14.259034
+-10.443833
+-3.960565
+-2.758408
+-10.443833
+-10.443833
+-10.443833

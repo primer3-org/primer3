@@ -1,0 +1,1375 @@
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+Calculated thermodynamical parameters for dimer:	16	dS = -146.99	dH = -50600	dG = -5011.14	t = 71.0918
+SEQ	//////----\\\\\\
+STR	CCGCAGTAAGCTGCGG
+Calculated thermodynamical parameters for dimer:	16	dS = -146.99	dH = -50600	dG = -5011.14	t = 71.0918
+SEQ	//////----\\\\\\
+STR	CCGCAGTAAGCTGCGG
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+Warning: the maximum size of secondary structures loop was set to minimum size of allowed loop length (0)
+Calculated thermodynamical parameters for dimer:	dS = -153.512	dH = -54000	dG = -6388.21	t = 15.7445
+SEQ	      TAAGCTGCGG
+SEQ	CCGCAG          
+STR	GGCGTC          
+STR	      GAATGACGCC
+Calculated thermodynamical parameters for dimer:	dS = -153.512	dH = -54000	dG = -6388.21	t = 15.7445
+SEQ	      TAAGCTGCGG
+SEQ	CCGCAG          
+STR	GGCGTC          
+STR	      GAATGACGCC
+Calculated thermodynamical parameters for dimer:	dS = -153.512	dH = -54000	dG = -6388.21	t = 15.7445
+SEQ	      TAAGCTGCGG
+SEQ	CCGCAG          
+STR	GGCGTC          
+STR	      GAATGACGCC
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+Calculated thermodynamical parameters for dimer:	dS = -295.897	dH = -101000	dG = -20471.7	t = 33.5575
+SEQ	      TAAG      
+SEQ	CCGCAG    CTGCGG
+STR	GGCGTC    GACGCC
+STR	      GAAT      
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+Calculated thermodynamical parameters for dimer:	dS = -280.782	dH = -93200	dG = -6115.6	t = 20.9085
+SEQ	AAAACCCGC         TA-  ----
+SEQ	         TTTGCTAGC   CG    
+STR	         AAACGATCG   GC    
+STR	    AAAAA         TTC  CCAA
+Calculated thermodynamical parameters for dimer:	dS = -229.719	dH = -79000	dG = -7752.52	t = 23.9748
+SEQ	AAAACCCGC         TACG-----
+SEQ	         TTTGCTAGC         
+STR	         AAACGATCG         
+STR	    AAAAA         TTCGCCCAA
+Calculated thermodynamical parameters for dimer:	dS = -270.157	dH = -84300	dG = -510.892	t = 2.05342
+SEQ	AACC  C T       AAAAA  ---------
+SEQ	    CG T GCTAGCA     AA         
+STR	    GC A CGATCGT     TT         
+STR	      - T       -----  CGCCCAAAA
+Calculated thermodynamical parameters for dimer:	22	dS = -77.7449	dH = -24700	dG = -587.432	t = 44.5559
+SEQ	-------///-----\\\----
+STR	AAAACCCGCTTTGCTAGCTACG
+Calculated thermodynamical parameters for dimer:	dS = -259.714	dH = -84800	dG = -4249.61	t = 13.4561
+SEQ	AACCCGCTTGCTAGCAAAAAAAAAACCCGCTTGCTAGCAAAAAAAAAACCCGCTTGCTAGCAAAAAAAAAACCCGCTTGCTAGCAAAAAAAAAACC  C T        ----------
+SEQ	                                                                                                CG T GCTAGCAA          
+STR	                                                                                                GC A CGATCGTT          
+STR	                                                                                                  - T        TCGCCCAAAA
+Error: Sequences longer than THAL_MAX_ALIGN for thermodynamical alignment (nearest-neighbor approach)
+No predicted secondary structures for given sequences
+Calculated thermodynamical parameters for dimer:	dS = -34.2024	dH = -10200	dG = 407.884	t = -128.191
+SEQ	  A
+SEQ	AT 
+STR	TA 
+STR	  T
+Calculated thermodynamical parameters for dimer:	dS = -35.8049	dH = -9800	dG = 1304.88	t = -136.976
+SEQ	   
+SEQ	ATA
+STR	TAT
+STR	   
+Calculated thermodynamical parameters for dimer:	dS = -34.2024	dH = -10200	dG = 407.884	t = -128.191
+SEQ	T  
+SEQ	 AT
+STR	 TA
+STR	A  
+Calculated thermodynamical parameters for dimer:	dS = -126.11	dH = -43000	dG = -3887.07	t = -8.1626
+SEQ	         A     ACACACACACT
+SEQ	          AACAC           
+STR	          TTGTG           
+STR	GGTGTTGGGG     GGGGT------
+Calculated thermodynamical parameters for dimer:	dS = -192.202	dH = -61500	dG = -1888.5	t = -3.84345
+SEQ	AAA    C  ACACACT------
+SEQ	   CACA AC             
+STR	   GTGT TG             
+STR	  G    -  GGGTTGTGGGGGT
+Calculated thermodynamical parameters for dimer:	dS = -265.564	dH = -84200	dG = -1835.23	t = 5.91073
+SEQ	AAA    -- A  C    T----
+SEQ	   CACA  C CA ACAC     
+STR	   GTGT  G GT TGTG     
+STR	  G    TG G  -    GGGGT
+Calculated thermodynamical parameters for dimer:	dS = -331.582	dH = -103100	dG = -259.976	t = 7.20829
+SEQ	AAA    C  A- -    T----
+SEQ	   CACA AC  C ACAC     
+STR	   GTGT TG  G TGTG     
+STR	  G    -  GG T    GGGGT
+Calculated thermodynamical parameters for dimer:	dS = -331.582	dH = -103100	dG = -259.976	t = 7.20829
+SEQ	AAA    C  A- -    T----
+SEQ	   CACA AC  C ACAC     
+STR	   GTGT TG  G TGTG     
+STR	  G    -  GG T    GGGGT
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -277.07	dH = -74900	dG = 11033.4	t = -34.0305
+SEQ	AAAC  TC T-  CGTTTC  T--  
+SEQ	    GA  G  AG      AG   CT
+STR	    CT  C  TC      TC   GA
+STR	  CT  CT TC  TC----  TCT  
+Calculated thermodynamical parameters for dimer:	dS = -311.393	dH = -82600	dG = 13978.6	t = -35.4899
+SEQ	A TCT  CT-- TCT  - TC  ----
+SEQ	 G   CT    C   CT C  TC    
+STR	 C   GA    G   GA G  AG    
+STR	T T--  CTTT C--  T CT  CAAA
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+Calculated thermodynamical parameters for dimer:	23	dS = -101.25	dH = -32500	dG = -1097.4	t = 47.8385
+SEQ	/////-------\\\\\------
+STR	AAACGATCGTAGCGTTTCAGTCT
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -28.5	dH = -8000	dG = 839.275	t = -149.43
+SEQ	ACGCCGTTGCGCGC GCTGCG------------
+SEQ	              T                  
+STR	              A                  
+STR	               TTTTTTTTTTTTTTTTTT
+Calculated thermodynamical parameters for dimer:	21	dS = -80.1849	dH = -26800	dG = -1930.67	t = 61.0777
+SEQ	-///----\\\----------
+STR	ACGCCGTTGCGCGCTGCTGCG
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -7.1	dH = -800	dG = 1402.06	t = -254.658
+SEQ	TTTTTTTTTTATTTTTTTT ---------
+SEQ	                   T         
+STR	                   A         
+STR	          GGGGGGGGG GGGGGGGGG
+Calculated thermodynamical parameters for dimer:	dS = -22.4	dH = -6000	dG = 947.36	t = -170.695
+SEQ	TTTTTTTTTTA TTTTTTTT-
+SEQ	           T         
+STR	           A         
+STR	  GGGGGGGGG GGGGGGGGG
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -172.412	dH = -61400	dG = -7926.37	t = 21.2295
+SEQ	  AAA      ATTTT
+SEQ	     CGATCG     
+STR	     GCTAGC     
+STR	CCCCA      AAA--
+Calculated thermodynamical parameters for dimer:	dS = -194.669	dH = -64400	dG = -4023.27	t = 5.84129
+SEQ	  AAA      AT   
+SEQ	     CGATCG  TTT
+STR	     GCTAGC  AAA
+STR	CCCCA      --   
+Calculated thermodynamical parameters for dimer:	dS = -186.529	dH = -55000	dG = 2851.92	t = -26.171
+SEQ	A  CG     CCC ----
+SEQ	 AA  ATCGA   C    
+STR	 TT  TAGCT   G    
+STR	   T-     A-- CAAA
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -17.5	dH = -3300	dG = 2127.62	t = -211.654
+SEQ	AAAAAAAAAAAAAA T------------
+SEQ	              A             
+STR	              T             
+STR	               CCCCCCCCCCCCC
+No predicted secondary structures for given sequences
+Calculated thermodynamical parameters for dimer:	dS = -17.5	dH = -3300	dG = 2127.62	t = -211.654
+SEQ	CCCCCCCCCCCCC --------------
+SEQ	             T              
+STR	             A              
+STR	            T AAAAAAAAAAAAAA
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -11.5	dH = -1900	dG = 1666.72	t = -233.286
+SEQ	AAAAAAAAAAAAAA T
+SEQ	              A 
+STR	              T 
+STR	 CCCCCCCCCCCCC -
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -297.689	dH = -97000	dG = -4671.71	t = 17.3985
+SEQ	A      ----   --    A
+SEQ	 CACACA    CAC  ACAC 
+STR	 GTGTGT    GTG  TGTG 
+STR	       TGTT   GT    T
+Calculated thermodynamical parameters for dimer:	dS = -284.292	dH = -92500	dG = -4326.97	t = 15.5032
+SEQ	A      ----   --     
+SEQ	 CACACA    CAC  ACACA
+STR	 GTGTGT    GTG  TGTGT
+STR	       TGTT   GT     
+Calculated thermodynamical parameters for dimer:	dS = -335.807	dH = -108300	dG = -4149.54	t = 18.0034
+SEQ	TGTGTTG   T   -      -
+SEQ	       GTG TGT TGTGTG 
+STR	       CAC ACA ACACAC 
+STR	      A   -   C      A
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -31.6	dH = -8600	dG = 1200.74	t = -146.235
+SEQ	        T AAAAAAAAAAAAA
+SEQ	         A             
+STR	         T             
+STR	GGGGGGGGG GGGGGGG------
+Calculated thermodynamical parameters for dimer:	dS = -12.7	dH = -2000	dG = 1938.9	t = -232.219
+SEQ	TAAAAAAAAAAAAA -------
+SEQ	              A       
+STR	              T       
+STR	     GGGGGGGGG GGGGGGG
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -28	dH = -7000	dG = 1684.2	t = -164.051
+SEQ	T AAAAAAAAAAAAA-
+SEQ	 A              
+STR	 T              
+STR	  GGGGGGGGGGGGGG
+Calculated thermodynamical parameters for dimer:	dS = -28	dH = -7000	dG = 1684.2	t = -164.051
+SEQ	GGGGGGGGGGGGGG -
+SEQ	              T 
+STR	              A 
+STR	 AAAAAAAAAAAAA T
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -16.6	dH = -4400	dG = 748.49	t = -189.757
+SEQ	              T AAAAAAAAAAAAA
+SEQ	               A             
+STR	               T             
+STR	GGGGGGGGGGGGGGG -------------
+No predicted secondary structures for given sequences
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -16.6	dH = -4400	dG = 748.49	t = -189.757
+SEQ	       AAAAAAAT AAAAAA
+SEQ	               A      
+STR	               T      
+STR	GGGGGGGGGGGGGGG ------
+No predicted secondary structures for given sequences
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -28	dH = -7000	dG = 1684.2	t = -164.051
+SEQ	AAAAAAAT AAAAAA--------
+SEQ	        A              
+STR	        T              
+STR	         GGGGGGGGGGGGGG
+No predicted secondary structures for given sequences
+Calculated thermodynamical parameters for dimer:	dS = -28	dH = -7000	dG = 1684.2	t = -164.051
+SEQ	GGGGGGGGGGGGGG --------
+SEQ	              T        
+STR	              A        
+STR	        AAAAAA TAAAAAAA
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -25.3	dH = -5800	dG = 2046.79	t = -178.783
+SEQ	AAAAAAAAAAAAA T-----
+SEQ	             A      
+STR	             T      
+STR	     GGGGGGGG GGGGGG
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -31.6	dH = -8600	dG = 1200.74	t = -146.235
+SEQ	       T AAAAAAAAAAAAA
+SEQ	        A             
+STR	        T             
+STR	GGGGGGGG GGGGGG-------
+Calculated thermodynamical parameters for dimer:	dS = -12.7	dH = -2000	dG = 1938.9	t = -232.219
+SEQ	TAAAAAAAAAAAAA ------
+SEQ	              A      
+STR	              T      
+STR	      GGGGGGGG GGGGGG
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -229.719	dH = -79000	dG = -7752.52	t = 23.9748
+SEQ	AAAACCCGC         TACG-----
+SEQ	         TTTGCTAGC         
+STR	         AAACGATCG         
+STR	    AAAAA         TTCGCCCAA
+Calculated thermodynamical parameters for dimer:	dS = -296.617	dH = -97100	dG = -5104.32	t = 18.6354
+SEQ	AAAACCCGC         T -  ----
+SEQ	         TTTGCTAGC A CG    
+STR	         AAACGATCG T GC    
+STR	    AAAAA         T C  CCAA
+Calculated thermodynamical parameters for dimer:	dS = -242.857	dH = -72000	dG = 3322.01	t = -15.1029
+SEQ	AACC  C T       AAA AA ---------
+SEQ	    CG T GCTAGCA   A  A         
+STR	    GC A CGATCGT   T  T         
+STR	      - T       --- -- CGCCCAAAA
+Calculated thermodynamical parameters for dimer:	22	dS = -77.7449	dH = -24700	dG = -587.432	t = 44.5559
+SEQ	-------///-----\\\----
+STR	AAAACCCGCTTTGCTAGCTACG
+Calculated thermodynamical parameters for dimer:	23	dS = -73.6849	dH = -23400	dG = -546.641	t = 44.4186
+SEQ	-----///----\\\--------
+STR	AACCCGCTTGCTAGCAAAAAAAA
+Calculated thermodynamical parameters for dimer:	dS = -331.582	dH = -103100	dG = -259.976	t = 7.20829
+SEQ	AAA    C  A- -    T----
+SEQ	   CACA AC  C ACAC     
+STR	   GTGT TG  G TGTG     
+STR	  G    -  GG T    GGGGT
+Calculated thermodynamical parameters for dimer:	dS = -330.972	dH = -99300	dG = 3350.83	t = -2.67634
+SEQ	TGGGG   T  GG T    - ---
+SEQ	     GTG TG  G TGTG G   
+STR	     CAC AC  C ACAC C   
+STR	    T   -  A- -    A AAA
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -147.239	dH = -40300	dG = 5366.31	t = -53.4136
+SEQ	AAAC  TC T-  C TTTCAGTCT
+SEQ	    GA  G  AG G         
+STR	    CT  C  TC C         
+STR	  CT  -- TC  T TCTCTCTGA
+Calculated thermodynamical parameters for dimer:	dS = -63.8049	dH = -18700	dG = 1089.08	t = -86.0883
+SEQ	AAACGATCGTAGCGTTTCA T  
+SEQ	                   G CT
+STR	                   C GA
+STR	   CTCTCTCTCTCTCTCT T  
+Calculated thermodynamical parameters for dimer:	dS = -132.239	dH = -35100	dG = 5914.06	t = -64.7196
+SEQ	AGTCTCTCTCT T  CT --  ----
+SEQ	           C CT  C  TC    
+STR	           G GA  G  AG    
+STR	  TCTGACTTT C  T- CT  CAAA
+Calculated thermodynamical parameters for dimer:	23	dS = -101.25	dH = -32500	dG = -1097.4	t = 47.8385
+SEQ	/////-------\\\\\------
+STR	AAACGATCGTAGCGTTTCAGTCT
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -28.5	dH = -8000	dG = 839.275	t = -149.43
+SEQ	ACGCCGTTGCGCGC GCTGCG------------
+SEQ	              T                  
+STR	              A                  
+STR	               TTTTTTTTTTTTTTTTTT
+Calculated thermodynamical parameters for dimer:	dS = -28.5	dH = -8000	dG = 839.275	t = -149.43
+SEQ	TTTTTTTTTTTTTTTTTT -----------------
+SEQ	                  A                 
+STR	                  T                 
+STR	               GCG CGTCGCGCGTTGCCGCA
+Calculated thermodynamical parameters for dimer:	21	dS = -80.1849	dH = -26800	dG = -1930.67	t = 61.0777
+SEQ	-///----\\\----------
+STR	ACGCCGTTGCGCGCTGCTGCG
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -22.4	dH = -6000	dG = 947.36	t = -170.695
+SEQ	TTTTTTTTTTA TTTTTTTT
+SEQ	           T        
+STR	           A        
+STR	  GGGGGGGGG GGGGGGGG
+Calculated thermodynamical parameters for dimer:	dS = -7.1	dH = -800	dG = 1402.06	t = -254.658
+SEQ	TTTTTTTTTTATTTTTTTT --------
+SEQ	                   T        
+STR	                   A        
+STR	          GGGGGGGGG GGGGGGGG
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -321.122	dH = -105100	dG = -5504.14	t = 21.014
+SEQ	AA    G C         CC--
+SEQ	  CCGG T TTTTTTTAA    
+STR	  GGCC A AAAAAAATT    
+STR	      A -         CCAA
+Calculated thermodynamical parameters for dimer:	dS = -55.7024	dH = -18100	dG = -823.891	t = -76.1208
+SEQ	AACCGGGTCTTTTTTTAA  -----------------
+SEQ	                  CC                 
+STR	                  GG                 
+STR	                    CCAAAAAAAAATTCCAA
+Calculated thermodynamical parameters for dimer:	dS = -298.019	dH = -98100	dG = -5669.36	t = 20.4032
+SEQ	AACCT        - A    --
+SEQ	     TAAAAAAA A CCGG  
+STR	     ATTTTTTT T GGCC  
+STR	  CCA        C G    AA
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -172.412	dH = -61400	dG = -7926.37	t = 21.2295
+SEQ	  AAA      ATTTT
+SEQ	     CGATCG     
+STR	     GCTAGC     
+STR	CCCCA      AAA--
+Calculated thermodynamical parameters for dimer:	dS = -194.669	dH = -64400	dG = -4023.27	t = 5.84129
+SEQ	  AAA      AT   
+SEQ	     CGATCG  TTT
+STR	     GCTAGC  AAA
+STR	CCCCA      --   
+Calculated thermodynamical parameters for dimer:	dS = -34.1	dH = -10300	dG = 276.115	t = -126.556
+SEQ	AAACGATCGACCC --------
+SEQ	             C        
+STR	             G        
+STR	        TTTTA CTAGCAAA
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -17.5	dH = -3300	dG = 2127.62	t = -211.654
+SEQ	AAAAAAAAAAAAAA T------------
+SEQ	              A             
+STR	              T             
+STR	               CCCCCCCCCCCCC
+No predicted secondary structures for given sequences
+Calculated thermodynamical parameters for dimer:	dS = -17.5	dH = -3300	dG = 2127.62	t = -211.654
+SEQ	CCCCCCCCCCCCC --------------
+SEQ	             T              
+STR	             A              
+STR	            T AAAAAAAAAAAAAA
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -11.5	dH = -1900	dG = 1666.72	t = -233.286
+SEQ	AAAAAAAAAAAAAA T
+SEQ	              A 
+STR	              T 
+STR	 CCCCCCCCCCCCC -
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -335.807	dH = -108300	dG = -4149.54	t = 18.0034
+SEQ	A      C  -    A------
+SEQ	 CACACA AC ACAC       
+STR	 GTGTGT TG TGTG       
+STR	       -  T    GTTGTGT
+Calculated thermodynamical parameters for dimer:	dS = -342.162	dH = -107500	dG = -1378.58	t = 10.9982
+SEQ	 A   -  -    --     
+SEQ	  CAC AC ACAC  ACACA
+STR	  GTG TG TGTG  TGTGT
+STR	GT   T  T    GT     
+Calculated thermodynamical parameters for dimer:	dS = -335.807	dH = -108300	dG = -4149.54	t = 18.0034
+SEQ	TGTGTTG   T   -      -
+SEQ	       GTG TGT TGTGTG 
+STR	       CAC ACA ACACAC 
+STR	      A   -   C      A
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -31.6	dH = -8600	dG = 1200.74	t = -146.235
+SEQ	        T AAAAAAAAAAAAA
+SEQ	         A             
+STR	         T             
+STR	GGGGGGGGG GGGGGGG------
+Calculated thermodynamical parameters for dimer:	dS = -12.7	dH = -2000	dG = 1938.9	t = -232.219
+SEQ	TAAAAAAAAAAAAA -------
+SEQ	              A       
+STR	              T       
+STR	     GGGGGGGGG GGGGGGG
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -28	dH = -7000	dG = 1684.2	t = -164.051
+SEQ	T AAAAAAAAAAAAA-
+SEQ	 A              
+STR	 T              
+STR	  GGGGGGGGGGGGGG
+Calculated thermodynamical parameters for dimer:	dS = -28	dH = -7000	dG = 1684.2	t = -164.051
+SEQ	GGGGGGGGGGGGGG -
+SEQ	              T 
+STR	              A 
+STR	 AAAAAAAAAAAAA T
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -16.6	dH = -4400	dG = 748.49	t = -189.757
+SEQ	              T AAAAAAAAAAAAA
+SEQ	               A             
+STR	               T             
+STR	GGGGGGGGGGGGGGG -------------
+No predicted secondary structures for given sequences
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -16.6	dH = -4400	dG = 748.49	t = -189.757
+SEQ	       AAAAAAAT AAAAAA
+SEQ	               A      
+STR	               T      
+STR	GGGGGGGGGGGGGGG ------
+No predicted secondary structures for given sequences
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -28	dH = -7000	dG = 1684.2	t = -164.051
+SEQ	AAAAAAAT AAAAAA--------
+SEQ	        A              
+STR	        T              
+STR	         GGGGGGGGGGGGGG
+No predicted secondary structures for given sequences
+Calculated thermodynamical parameters for dimer:	dS = -28	dH = -7000	dG = 1684.2	t = -164.051
+SEQ	GGGGGGGGGGGGGG --------
+SEQ	              T        
+STR	              A        
+STR	        AAAAAA TAAAAAAA
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -25.3	dH = -5800	dG = 2046.79	t = -178.783
+SEQ	AAAAAAAAAAAAA T-----
+SEQ	             A      
+STR	             T      
+STR	     GGGGGGGG GGGGGG
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -31.6	dH = -8600	dG = 1200.74	t = -146.235
+SEQ	       T AAAAAAAAAAAAA
+SEQ	        A             
+STR	        T             
+STR	GGGGGGGG GGGGGG-------
+Calculated thermodynamical parameters for dimer:	dS = -12.7	dH = -2000	dG = 1938.9	t = -232.219
+SEQ	TAAAAAAAAAAAAA ------
+SEQ	              A      
+STR	              T      
+STR	      GGGGGGGG GGGGGG
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -229.719	dH = -79000	dG = -7752.52	t = 23.9748
+SEQ	AAAACCCGC         TACG-----
+SEQ	         TTTGCTAGC         
+STR	         AAACGATCG         
+STR	    AAAAA         TTCGCCCAA
+Calculated thermodynamical parameters for dimer:	dS = -151.2	dH = -47100	dG = -205.407	t = -21.7648
+SEQ	AAAACCCGCTTTGCTA    C ----------
+SEQ	                GCTA G          
+STR	                CGAT C          
+STR	        AAAAAAAA    - GTTCGCCCAA
+Calculated thermodynamical parameters for dimer:	dS = -57.3049	dH = -17700	dG = 73.102	t = -83.7784
+SEQ	AACCCGCTTGCTAGCAAAAA   ---------
+SEQ	                    AAA         
+STR	                    TTT         
+STR	          GCATCGATCG   CGCCCAAAA
+Calculated thermodynamical parameters for dimer:	22	dS = -77.7449	dH = -24700	dG = -587.432	t = 44.5559
+SEQ	-------///-----\\\----
+STR	AAAACCCGCTTTGCTAGCTACG
+Calculated thermodynamical parameters for dimer:	23	dS = -73.6849	dH = -23400	dG = -546.641	t = 44.4186
+SEQ	-----///----\\\--------
+STR	AACCCGCTTGCTAGCAAAAAAAA
+Calculated thermodynamical parameters for dimer:	dS = -192.202	dH = -61500	dG = -1888.5	t = -3.84345
+SEQ	AAA    C  ACACACT------
+SEQ	   CACA AC             
+STR	   GTGT TG             
+STR	  G    -  GGGTTGTGGGGGT
+Calculated thermodynamical parameters for dimer:	dS = -213.395	dH = -64900	dG = 1284.33	t = -13.0889
+SEQ	TGGGGGTGTTGGG  -    - -------
+SEQ	             GT TGTG G       
+STR	             CA ACAC C       
+STR	            T  C    A ACACAAA
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -149.687	dH = -41700	dG = 4725.51	t = -48.7748
+SEQ	      AAACGATC T  - GTTTCAGTCT
+SEQ	              G AG C          
+STR	              C TC G          
+STR	CTCTCTCTCTCTCT -  T A---------
+Calculated thermodynamical parameters for dimer:	dS = -44.9024	dH = -13800	dG = 126.489	t = -102.915
+SEQ	AAACGATCGTAGCGTTTCAGT  
+SEQ	                     CT
+STR	                     GA
+STR	   CTCTCTCTCTCTCTCTCT  
+Calculated thermodynamical parameters for dimer:	dS = -89.3949	dH = -24700	dG = 3025.82	t = -76.4266
+SEQ	AGTCTCTCTCTCTCTCT  - --------
+SEQ	                 CT C        
+STR	                 GA G        
+STR	      TCTGACTTTGC  T CTAGCAAA
+Calculated thermodynamical parameters for dimer:	23	dS = -101.25	dH = -32500	dG = -1097.4	t = 47.8385
+SEQ	/////-------\\\\\------
+STR	AAACGATCGTAGCGTTTCAGTCT
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -28.5	dH = -8000	dG = 839.275	t = -149.43
+SEQ	ACGCCGTTGCGCGC GCTGCG------------
+SEQ	              T                  
+STR	              A                  
+STR	               TTTTTTTTTTTTTTTTTT
+Calculated thermodynamical parameters for dimer:	dS = -28.5	dH = -8000	dG = 839.275	t = -149.43
+SEQ	TTTTTTTTTTTTTTTTTT -----------------
+SEQ	                  A                 
+STR	                  T                 
+STR	               GCG CGTCGCGCGTTGCCGCA
+Calculated thermodynamical parameters for dimer:	21	dS = -80.1849	dH = -26800	dG = -1930.67	t = 61.0777
+SEQ	-///----\\\----------
+STR	ACGCCGTTGCGCGCTGCTGCG
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -22.4	dH = -6000	dG = 947.36	t = -170.695
+SEQ	TTTTTTTTTTA TTTTTTTT
+SEQ	           T        
+STR	           A        
+STR	  GGGGGGGGG GGGGGGGG
+Calculated thermodynamical parameters for dimer:	dS = -7.1	dH = -800	dG = 1402.06	t = -254.658
+SEQ	TTTTTTTTTTATTTTTTTT --------
+SEQ	                   T        
+STR	                   A        
+STR	          GGGGGGGGG GGGGGGGG
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -304.907	dH = -96700	dG = -2133.18	t = 10.3705
+SEQ	AA  G   C       AACC---
+SEQ	  CC GGT TTTTTTT       
+STR	  GG CCA AAAAAAA       
+STR	    -   -       ATTCCAA
+Calculated thermodynamical parameters for dimer:	dS = -55.7024	dH = -18100	dG = -823.891	t = -76.1208
+SEQ	AACCGGGTCTTTTTTTAA  -----------------
+SEQ	                  CC                 
+STR	                  GG                 
+STR	                    CCAAAAAAAAATTCCAA
+Calculated thermodynamical parameters for dimer:	dS = -347.099	dH = -106400	dG = 1252.8	t = 4.46739
+SEQ	AACCT A       - -    --
+SEQ	     T AAAAAAA A CCGG  
+STR	     A TTTTTTT T GGCC  
+STR	  CCA -       C G    AA
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -172.412	dH = -61400	dG = -7926.37	t = 21.2295
+SEQ	  AAA      ATTTT
+SEQ	     CGATCG     
+STR	     GCTAGC     
+STR	CCCCA      AAA--
+Calculated thermodynamical parameters for dimer:	dS = -240.399	dH = -75000	dG = -440.115	t = -1.96266
+SEQ	  AAA      A T  
+SEQ	     CGATCG T TT
+STR	     GCTAGC A AA
+STR	CCCCA      - -  
+Calculated thermodynamical parameters for dimer:	dS = -34.1	dH = -10300	dG = 276.115	t = -126.556
+SEQ	AAACGATCGACCC --------
+SEQ	             C        
+STR	             G        
+STR	        TTTTA CTAGCAAA
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -17.5	dH = -3300	dG = 2127.62	t = -211.654
+SEQ	AAAAAAAAAAAAAA T------------
+SEQ	              A             
+STR	              T             
+STR	               CCCCCCCCCCCCC
+No predicted secondary structures for given sequences
+Calculated thermodynamical parameters for dimer:	dS = -17.5	dH = -3300	dG = 2127.62	t = -211.654
+SEQ	CCCCCCCCCCCCC --------------
+SEQ	             T              
+STR	             A              
+STR	            T AAAAAAAAAAAAAA
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -11.5	dH = -1900	dG = 1666.72	t = -233.286
+SEQ	AAAAAAAAAAAAAA T
+SEQ	              A 
+STR	              T 
+STR	 CCCCCCCCCCCCC -
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -335.807	dH = -108300	dG = -4149.54	t = 18.0034
+SEQ	A      C  -    A------
+SEQ	 CACACA AC ACAC       
+STR	 GTGTGT TG TGTG       
+STR	       -  T    GTTGTGT
+Calculated thermodynamical parameters for dimer:	dS = -316.307	dH = -100000	dG = -1897.47	t = 10.563
+SEQ	A      C   C   --------
+SEQ	 CACACA ACA ACA        
+STR	 GTGTGT TGT TGT        
+STR	       -   -   GGTTGTGT
+Calculated thermodynamical parameters for dimer:	dS = -335.807	dH = -108300	dG = -4149.54	t = 18.0034
+SEQ	TGTGTTG   T   -      -
+SEQ	       GTG TGT TGTGTG 
+STR	       CAC ACA ACACAC 
+STR	      A   -   C      A
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -31.6	dH = -8600	dG = 1200.74	t = -146.235
+SEQ	        T AAAAAAAAAAAAA
+SEQ	         A             
+STR	         T             
+STR	GGGGGGGGG GGGGGGG------
+Calculated thermodynamical parameters for dimer:	dS = -12.7	dH = -2000	dG = 1938.9	t = -232.219
+SEQ	TAAAAAAAAAAAAA -------
+SEQ	              A       
+STR	              T       
+STR	     GGGGGGGGG GGGGGGG
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -28	dH = -7000	dG = 1684.2	t = -164.051
+SEQ	T AAAAAAAAAAAAA-
+SEQ	 A              
+STR	 T              
+STR	  GGGGGGGGGGGGGG
+Calculated thermodynamical parameters for dimer:	dS = -28	dH = -7000	dG = 1684.2	t = -164.051
+SEQ	GGGGGGGGGGGGGG -
+SEQ	              T 
+STR	              A 
+STR	 AAAAAAAAAAAAA T
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -16.6	dH = -4400	dG = 748.49	t = -189.757
+SEQ	              T AAAAAAAAAAAAA
+SEQ	               A             
+STR	               T             
+STR	GGGGGGGGGGGGGGG -------------
+No predicted secondary structures for given sequences
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -16.6	dH = -4400	dG = 748.49	t = -189.757
+SEQ	       AAAAAAAT AAAAAA
+SEQ	               A      
+STR	               T      
+STR	GGGGGGGGGGGGGGG ------
+No predicted secondary structures for given sequences
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -28	dH = -7000	dG = 1684.2	t = -164.051
+SEQ	AAAAAAAT AAAAAA--------
+SEQ	        A              
+STR	        T              
+STR	         GGGGGGGGGGGGGG
+No predicted secondary structures for given sequences
+Calculated thermodynamical parameters for dimer:	dS = -28	dH = -7000	dG = 1684.2	t = -164.051
+SEQ	GGGGGGGGGGGGGG --------
+SEQ	              T        
+STR	              A        
+STR	        AAAAAA TAAAAAAA
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -25.3	dH = -5800	dG = 2046.79	t = -178.783
+SEQ	AAAAAAAAAAAAA T-----
+SEQ	             A      
+STR	             T      
+STR	     GGGGGGGG GGGGGG
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -31.6	dH = -8600	dG = 1200.74	t = -146.235
+SEQ	       T AAAAAAAAAAAAA
+SEQ	        A             
+STR	        T             
+STR	GGGGGGGG GGGGGG-------
+Calculated thermodynamical parameters for dimer:	dS = -12.7	dH = -2000	dG = 1938.9	t = -232.219
+SEQ	TAAAAAAAAAAAAA ------
+SEQ	              A      
+STR	              T      
+STR	      GGGGGGGG GGGGGG
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -229.719	dH = -79000	dG = -7752.52	t = 23.9748
+SEQ	AAAACCCGC         TACG-----
+SEQ	         TTTGCTAGC         
+STR	         AAACGATCG         
+STR	    AAAAA         TTCGCCCAA
+Calculated thermodynamical parameters for dimer:	dS = -63.8024	dH = -21300	dG = -1511.68	t = -60.0745
+SEQ	AAAACCCGCTTTGCTAGCTA  ----
+SEQ	                    CG    
+STR	                    GC    
+STR	   AAAAAAAACGATCGTTC  CCAA
+Calculated thermodynamical parameters for dimer:	dS = -57.3049	dH = -17700	dG = 73.102	t = -83.7784
+SEQ	AACCCGCTTGCTAGCAAAAA   ---------
+SEQ	                    AAA         
+STR	                    TTT         
+STR	          GCATCGATCG   CGCCCAAAA
+Calculated thermodynamical parameters for dimer:	22	dS = -77.7449	dH = -24700	dG = -587.432	t = 44.5559
+SEQ	-------///-----\\\----
+STR	AAAACCCGCTTTGCTAGCTACG
+Calculated thermodynamical parameters for dimer:	23	dS = -73.6849	dH = -23400	dG = -546.641	t = 44.4186
+SEQ	-----///----\\\--------
+STR	AACCCGCTTGCTAGCAAAAAAAA
+Calculated thermodynamical parameters for dimer:	dS = -126.11	dH = -43000	dG = -3887.07	t = -8.1626
+SEQ	         A     ACACACACACT
+SEQ	          AACAC           
+STR	          TTGTG           
+STR	GGTGTTGGGG     GGGGT------
+Calculated thermodynamical parameters for dimer:	dS = -50.2	dH = -15900	dG = -330.47	t = -89.0416
+SEQ	TGGGGGTGTTGGGGTTGTG -------------
+SEQ	                   G             
+STR	                   C             
+STR	                TCA ACACACACACAAA
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -74.6024	dH = -22900	dG = 237.944	t = -66.4052
+SEQ	AAAC  TCGTAGCGTTTCAGTCT
+SEQ	    GA                 
+STR	    CT                 
+STR	  CT  CTCTCTCTCTCTCTGA-
+Calculated thermodynamical parameters for dimer:	dS = -44.9024	dH = -13800	dG = 126.489	t = -102.915
+SEQ	AAACGATCGTAGCGTTTCAGT  
+SEQ	                     CT
+STR	                     GA
+STR	   CTCTCTCTCTCTCTCTCT  
+Calculated thermodynamical parameters for dimer:	dS = -59.6024	dH = -17700	dG = 785.694	t = -88.3217
+SEQ	AGTCTCTCTCTCTCTCTC  ----
+SEQ	                  TC    
+STR	                  AG    
+STR	 TCTGACTTTGCGATGCT  CAAA
+Calculated thermodynamical parameters for dimer:	23	dS = -101.25	dH = -32500	dG = -1097.4	t = 47.8385
+SEQ	/////-------\\\\\------
+STR	AAACGATCGTAGCGTTTCAGTCT
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -28.5	dH = -8000	dG = 839.275	t = -149.43
+SEQ	ACGCCGTTGCGCGC GCTGCG------------
+SEQ	              T                  
+STR	              A                  
+STR	               TTTTTTTTTTTTTTTTTT
+Calculated thermodynamical parameters for dimer:	dS = -28.5	dH = -8000	dG = 839.275	t = -149.43
+SEQ	TTTTTTTTTTTTTTTTTT -----------------
+SEQ	                  A                 
+STR	                  T                 
+STR	               GCG CGTCGCGCGTTGCCGCA
+Calculated thermodynamical parameters for dimer:	21	dS = -80.1849	dH = -26800	dG = -1930.67	t = 61.0777
+SEQ	-///----\\\----------
+STR	ACGCCGTTGCGCGCTGCTGCG
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -22.4	dH = -6000	dG = 947.36	t = -170.695
+SEQ	TTTTTTTTTTA TTTTTTTT
+SEQ	           T        
+STR	           A        
+STR	  GGGGGGGGG GGGGGGGG
+Calculated thermodynamical parameters for dimer:	dS = -7.1	dH = -800	dG = 1402.06	t = -254.658
+SEQ	TTTTTTTTTTATTTTTTTT --------
+SEQ	                   T        
+STR	                   A        
+STR	          GGGGGGGGG GGGGGGGG
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -204.519	dH = -66600	dG = -3168.3	t = 3.56415
+SEQ	AACCGGGTC         CC--
+SEQ	         TTTTTTTAA    
+STR	         AAAAAAATT    
+STR	   GGCCAA         CCAA
+Calculated thermodynamical parameters for dimer:	dS = -55.7024	dH = -18100	dG = -823.891	t = -76.1208
+SEQ	AACCGGGTCTTTTTTTAA  -----------------
+SEQ	                  CC                 
+STR	                  GG                 
+STR	                    CCAAAAAAAAATTCCAA
+Calculated thermodynamical parameters for dimer:	dS = -121.407	dH = -42900	dG = -5245.53	t = -0.889075
+SEQ	AACCTTAAAAAAAAA    --
+SEQ	               CCGG  
+STR	               GGCC  
+STR	 CCAATTTTTTTCTG    AA
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -172.412	dH = -61400	dG = -7926.37	t = 21.2295
+SEQ	  AAA      ATTTT
+SEQ	     CGATCG     
+STR	     GCTAGC     
+STR	CCCCA      AAA--
+Calculated thermodynamical parameters for dimer:	dS = -28.4024	dH = -8300	dG = 509.014	t = -144.597
+SEQ	AAACGATCGATT  
+SEQ	            TT
+STR	            AA
+STR	CCCCAGCTAGCA  
+Calculated thermodynamical parameters for dimer:	dS = -34.1	dH = -10300	dG = 276.115	t = -126.556
+SEQ	AAACGATCGACCC --------
+SEQ	             C        
+STR	             G        
+STR	        TTTTA CTAGCAAA
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -17.5	dH = -3300	dG = 2127.62	t = -211.654
+SEQ	AAAAAAAAAAAAAA T------------
+SEQ	              A             
+STR	              T             
+STR	               CCCCCCCCCCCCC
+No predicted secondary structures for given sequences
+Calculated thermodynamical parameters for dimer:	dS = -17.5	dH = -3300	dG = 2127.62	t = -211.654
+SEQ	CCCCCCCCCCCCC --------------
+SEQ	             T              
+STR	             A              
+STR	            T AAAAAAAAAAAAAA
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -11.5	dH = -1900	dG = 1666.72	t = -233.286
+SEQ	AAAAAAAAAAAAAA T
+SEQ	              A 
+STR	              T 
+STR	 CCCCCCCCCCCCC -
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -136.012	dH = -47100	dG = -4915.83	t = 0.410002
+SEQ	A      CACACACA------
+SEQ	 CACACA              
+STR	 GTGTGT              
+STR	       TGTTGTGGTTGTGT
+Calculated thermodynamical parameters for dimer:	dS = -134.812	dH = -46400	dG = -4588.01	t = -1.76417
+SEQ	ACACACACA      --------------
+SEQ	         CACACA              
+STR	         GTGTGT              
+STR	               TGTTGTGGTTGTGT
+Calculated thermodynamical parameters for dimer:	dS = -147.71	dH = -50700	dG = -4887.83	t = 2.5855
+SEQ	TGTGTTGGTGTTGTT     ---------
+SEQ	               GTGTG         
+STR	               CACAC         
+STR	              A     ACACACACA
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -31.6	dH = -8600	dG = 1200.74	t = -146.235
+SEQ	        T AAAAAAAAAAAAA
+SEQ	         A             
+STR	         T             
+STR	GGGGGGGGG GGGGGGG------
+Calculated thermodynamical parameters for dimer:	dS = -12.7	dH = -2000	dG = 1938.9	t = -232.219
+SEQ	TAAAAAAAAAAAAA -------
+SEQ	              A       
+STR	              T       
+STR	     GGGGGGGGG GGGGGGG
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -28	dH = -7000	dG = 1684.2	t = -164.051
+SEQ	T AAAAAAAAAAAAA-
+SEQ	 A              
+STR	 T              
+STR	  GGGGGGGGGGGGGG
+Calculated thermodynamical parameters for dimer:	dS = -28	dH = -7000	dG = 1684.2	t = -164.051
+SEQ	GGGGGGGGGGGGGG -
+SEQ	              T 
+STR	              A 
+STR	 AAAAAAAAAAAAA T
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -16.6	dH = -4400	dG = 748.49	t = -189.757
+SEQ	              T AAAAAAAAAAAAA
+SEQ	               A             
+STR	               T             
+STR	GGGGGGGGGGGGGGG -------------
+No predicted secondary structures for given sequences
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -16.6	dH = -4400	dG = 748.49	t = -189.757
+SEQ	       AAAAAAAT AAAAAA
+SEQ	               A      
+STR	               T      
+STR	GGGGGGGGGGGGGGG ------
+No predicted secondary structures for given sequences
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -28	dH = -7000	dG = 1684.2	t = -164.051
+SEQ	AAAAAAAT AAAAAA--------
+SEQ	        A              
+STR	        T              
+STR	         GGGGGGGGGGGGGG
+No predicted secondary structures for given sequences
+Calculated thermodynamical parameters for dimer:	dS = -28	dH = -7000	dG = 1684.2	t = -164.051
+SEQ	GGGGGGGGGGGGGG --------
+SEQ	              T        
+STR	              A        
+STR	        AAAAAA TAAAAAAA
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -25.3	dH = -5800	dG = 2046.79	t = -178.783
+SEQ	AAAAAAAAAAAAA T-----
+SEQ	             A      
+STR	             T      
+STR	     GGGGGGGG GGGGGG
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -31.6	dH = -8600	dG = 1200.74	t = -146.235
+SEQ	       T AAAAAAAAAAAAA
+SEQ	        A             
+STR	        T             
+STR	GGGGGGGG GGGGGG-------
+Calculated thermodynamical parameters for dimer:	dS = -12.7	dH = -2000	dG = 1938.9	t = -232.219
+SEQ	TAAAAAAAAAAAAA ------
+SEQ	              A      
+STR	              T      
+STR	      GGGGGGGG GGGGGG
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -336.826	dH = -112500	dG = -8033.28	t = 28.4678
+SEQ	         A C            AGC--------
+SEQ	      AAG T AGCTAGCTAGCT           
+STR	      TTC A TCGATCGATCGA           
+STR	TTTTTT   G -            CTAGAATTTTT
+Calculated thermodynamical parameters for dimer:	dS = -412.309	dH = -135600	dG = -7722.5	t = 29.2109
+SEQ	     G TC               ------------
+SEQ	   AA A  AGCTAGCTAGCTAGC            
+STR	   TT T  TCGATCGATCGATCG            
+STR	TTT  - T-               ACTAGAATTTTT
+Calculated thermodynamical parameters for dimer:	dS = -383.796	dH = -128500	dG = -9465.63	t = 32.8328
+SEQ	TTTTTAAGATCA               TTTTT  
+SEQ	            GCTAGCTAGCTAGCT     TT
+STR	            CGATCGATCGATCGA     AA
+STR	                           CTAG-  
+Calculated thermodynamical parameters for dimer:	21	dS = -84.9873	dH = -27600	dG = -1241.19	t = 51.6044
+SEQ	------////----\\\\---
+STR	AAGATCAGCTAGCTAGCTAGC
+Calculated thermodynamical parameters for dimer:	34	dS = -127.492	dH = -42300	dG = -2758.31	t = 58.6351
+SEQ	-----------//////----\\\\\\-------
+STR	TTTTTAAGATCAGCTAGCTAGCTAGCTTTTTTTT
+Calculated thermodynamical parameters for dimer:	dS = -184.797	dH = -60800	dG = -3485.3	t = 2.01435
+SEQ	 G TC        TTTT------
+SEQ	  A  AGCTAGCT          
+STR	  T  TCGATCGA          
+STR	TT T-        CTAGTTTTTT
+Calculated thermodynamical parameters for dimer:	dS = -207.856	dH = -64300	dG = 166.667	t = -9.64545
+SEQ	 G TC        TTT -------
+SEQ	  A  AGCTAGCT   T       
+STR	  T  TCGATCGA   A       
+STR	TT T-        CT- GTTTTTT
+Calculated thermodynamical parameters for dimer:	dS = -207.856	dH = -64300	dG = 166.667	t = -9.64545
+SEQ	TTTTTTG TC        TTT -
+SEQ	       A  AGCTAGCT   T 
+STR	       T  TCGATCGA   A 
+STR	     TT T-        CT- G
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -418.711	dH = -138200	dG = -8336.78	t = 30.671
+SEQ	    G TC                TTTT-------
+SEQ	  AA A  AGCTAGCTAGCTAGCT           
+STR	  TT T  TCGATCGATCGATCGA           
+STR	TT  - T-                CTAGCCTTTTT
+Calculated thermodynamical parameters for dimer:	dS = -441.771	dH = -141700	dG = -4684.81	t = 23.3352
+SEQ	    G TC                TTT --------
+SEQ	  AA A  AGCTAGCTAGCTAGCT   T        
+STR	  TT T  TCGATCGATCGATCGA   A        
+STR	TT  - T-                CT- GCCTTTTT
+Calculated thermodynamical parameters for dimer:	dS = -417.023	dH = -136600	dG = -7260.18	t = 28.2718
+SEQ	TTTTTCCG TC                TT T  
+SEQ	        A  AGCTAGCTAGCTAGCT  T TT
+STR	        T  TCGATCGATCGATCGA  A AA
+STR	      TT T-                CT G  
+Calculated thermodynamical parameters for dimer:	26	dS = -127.492	dH = -42300	dG = -2758.31	t = 58.6351
+SEQ	------//////----\\\\\\----
+STR	AAGATCAGCTAGCTAGCTAGCTTTTT
+Calculated thermodynamical parameters for dimer:	33	dS = -127.492	dH = -42300	dG = -2758.31	t = 58.6351
+SEQ	-----------//////----\\\\\\------
+STR	TTTTTCCGATCAGCTAGCTAGCTAGCTTTTTTT
+Calculated thermodynamical parameters for dimer:	dS = -235.376	dH = -68200	dG = 4801.99	t = -21.9886
+SEQ	CGA    TTT-  TC-    ---
+SEQ	   TATA    GG   TATA   
+STR	   ATAT    CC   ATAT   
+STR	       CTGG  TTT    AGC
+Calculated thermodynamical parameters for dimer:	dS = -235.376	dH = -68200	dG = 4801.99	t = -21.9886
+SEQ	CGA    TTT-  TC-    ---
+SEQ	   TATA    GG   TATA   
+STR	   ATAT    CC   ATAT   
+STR	       CTGG  TTT    AGC
+Calculated thermodynamical parameters for dimer:	dS = -235.376	dH = -68200	dG = 4801.99	t = -21.9886
+SEQ	CGA    TTT  GGTC    ---
+SEQ	   TATA   CC    TATA   
+STR	   ATAT   GG    ATAT   
+STR	       CT-  TTT-    AGC
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -225.455	dH = -68200	dG = 1724.73	t = -12.4633
+SEQ	CGA    TTT-  TC-    ---
+SEQ	   TATA    GG   TATA   
+STR	   ATAT    CC   ATAT   
+STR	       CTGG  TTT    AGC
+Calculated thermodynamical parameters for dimer:	dS = -224.973	dH = -68200	dG = 1575.41	t = -11.9827
+SEQ	CGA    TTT-  TC-    ---
+SEQ	   TATA    GG   TATA   
+STR	   ATAT    CC   ATAT   
+STR	       CTGG  TTT    AGC
+Calculated thermodynamical parameters for dimer:	dS = -230.68	dH = -68200	dG = 3345.31	t = -17.5679
+SEQ	CGA    TTT-  TC-    ---
+SEQ	   TATA    GG   TATA   
+STR	   ATAT    CC   ATAT   
+STR	       CTGG  TTT    AGC
+Calculated thermodynamical parameters for dimer:	dS = -230.68	dH = -68200	dG = 3345.31	t = -17.5679
+SEQ	CGA    TTT-  TC-    ---
+SEQ	   TATA    GG   TATA   
+STR	   ATAT    CC   ATAT   
+STR	       CTGG  TTT    AGC
+Calculated thermodynamical parameters for dimer:	dS = -161.607	dH = -49500	dG = 622.413	t = -21.1027
+SEQ	         ---      TTGGTCTATA
+SEQ	       CG   ATATAT          
+STR	       GC   TATATA          
+STR	ATATCTG  CTT      GC--------
+Calculated thermodynamical parameters for dimer:	dS = -161.607	dH = -49500	dG = 622.413	t = -15.0902
+SEQ	         ---      TTGGTCTATA
+SEQ	       CG   ATATAT          
+STR	       GC   TATATA          
+STR	ATATCTG  CTT      GC--------
+Calculated thermodynamical parameters for dimer:	dS = -153.89	dH = -49500	dG = -1771.02	t = -4.27297
+SEQ	         ---      TTGGTCTATA
+SEQ	       CG   ATATAT          
+STR	       GC   TATATA          
+STR	ATATCTG  CTT      GC--------
+Calculated thermodynamical parameters for dimer:	dS = -235.376	dH = -68200	dG = -1553.17	t = -21.9886
+SEQ	CGA    TTT-  TC-    ---
+SEQ	   TATA    GG   TATA   
+STR	   ATAT    CC   ATAT   
+STR	       CTGG  TTT    AGC
+Calculated thermodynamical parameters for dimer:	dS = -235.376	dH = -68200	dG = 4801.99	t = -21.9886
+SEQ	CGA    TTT-  TC-    ---
+SEQ	   TATA    GG   TATA   
+STR	   ATAT    CC   ATAT   
+STR	       CTGG  TTT    AGC
+Calculated thermodynamical parameters for dimer:	dS = -235.376	dH = -68200	dG = 9038.77	t = -21.9886
+SEQ	CGA    TTT-  TC-    ---
+SEQ	   TATA    GG   TATA   
+STR	   ATAT    CC   ATAT   
+STR	       CTGG  TTT    AGC
+Calculated thermodynamical parameters for dimer:	dS = -235.376	dH = -68200	dG = 19630.7	t = -21.9886
+SEQ	CGA    TTT-  TC-    ---
+SEQ	   TATA    GG   TATA   
+STR	   ATAT    CC   ATAT   
+STR	       CTGG  TTT    AGC
+No secondary structure could be calculated
+No secondary structure could be calculated
+No secondary structure could be calculated
+No secondary structure could be calculated
+No secondary structure could be calculated
+Calculated thermodynamical parameters for dimer:	dS = -186.517	dH = -64000	dG = -6151.75	t = 14.259
+SEQ	GT        
+SEQ	  GTGCAAAA
+STR	  CACGTTTT
+STR	 C        
+Calculated thermodynamical parameters for dimer:	dS = -149.687	dH = -48100	dG = -1674.58	t = -10.4438
+SEQ	AGTGTA T-    -----
+SEQ	      G  ACGG     
+STR	      C  TGCC     
+STR	       TG    AAAAC
+Calculated thermodynamical parameters for dimer:	dS = -145.277	dH = -48100	dG = -3042.25	t = -3.96056
+SEQ	AGTGTA T-    -----
+SEQ	      G  ACGG     
+STR	      C  TGCC     
+STR	       TG    AAAAC
+Calculated thermodynamical parameters for dimer:	dS = -112.307	dH = -39400	dG = -4567.89	t = -2.75841
+SEQ	AGTGTAGT    -----
+SEQ	        ACGG     
+STR	        TGCC     
+STR	     CTG    AAAAC
+Calculated thermodynamical parameters for dimer:	dS = -149.687	dH = -48100	dG = -1674.58	t = -10.4438
+SEQ	AGTGTA T-    -----
+SEQ	      G  ACGG     
+STR	      C  TGCC     
+STR	       TG    AAAAC
+Calculated thermodynamical parameters for dimer:	dS = -149.687	dH = -48100	dG = -1674.58	t = -10.4438
+SEQ	AGTGTA T-    -----
+SEQ	      G  ACGG     
+STR	      C  TGCC     
+STR	       TG    AAAAC
+Calculated thermodynamical parameters for dimer:	dS = -149.687	dH = -48100	dG = -1674.58	t = -10.4438
+SEQ	CAAAA    GT ------
+SEQ	     CCGT  C      
+STR	     GGCA  G      
+STR	         T- ATGTGA
