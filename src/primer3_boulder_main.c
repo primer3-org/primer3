@@ -39,6 +39,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ctype.h>
 #include <string.h> /* strcmp() */
 #include <stdlib.h> /* free() */
+#include <getopt.h> /* getopt() */
 #include "format_output.h"
 #include "libprimer3.h"
 #include "read_boulder.h"
@@ -63,7 +64,6 @@ main(int argc, char *argv[]) {
   int io_version = 4;
 
   /* Some space for file names */
-  char *tmp_file_name = NULL;
   char p3_all_file[FILE_NAME_SIZE];
   char p3_settings_file[FILE_NAME_SIZE];
 
@@ -73,6 +73,20 @@ main(int argc, char *argv[]) {
 
   pr_append_str fatal_parse_err;
   pr_append_str nonfatal_parse_err;
+
+  /* Some variables needed by getopt */
+  int opt, option_index = 0;
+  struct option long_options[] = {
+    {"about", no_argument, 0, 'a'},
+    {"format_output", no_argument, &format_output, 1},
+    {"strict_tags", no_argument, &strict_tags, 1},
+    {"p3_settings_file", required_argument, 0, 'p'},
+    {"io_version", required_argument, 0, 'i'},
+    {"2x_compat", no_argument, 0, '2'},
+    {"output", required_argument, 0, 'o'},
+    {"error", required_argument, 0, 'e'},
+    {0, 0, 0, 0}
+  };
   
   /* Retval will point to the return value from choose_primers(). */
   p3retval *retval = NULL;
@@ -103,30 +117,63 @@ main(int argc, char *argv[]) {
   if (dump_args) global_pa->dump = 1 ;
   
   /* Read in the flags provided with the program call */
-  while (--argc > 0) {
-    argv++;
-    if (!strcmp(*argv, "-format_output")) {
-      format_output = 1;
-    } else if (!strcmp(*argv, "-about")) {
-          printf( "%s\n", pr_release);
-          exit (0);
-    } else if (!strcmp(*argv, "-2x_compat")) {
-          printf( "PRIMER_ERROR=flag -2x_compat is no longer supported\n=\n");
-          exit (-1);
-    } else if (!strcmp(*argv, "-io_version=3")) {
-          io_version = 3;
-    } else if (!strcmp(*argv, "-io_version=4")) {
-          io_version = 4;
-    } else if (!strncmp(*argv, "-p3_settings_file=", 18)) {
-      tmp_file_name = strchr(*argv,'=') + 1;
-      strncpy (p3_settings_file,tmp_file_name,FILE_NAME_SIZE-1);
-    } else if (!strcmp(*argv, "-strict_tags")) {
-      strict_tags = 1;
-    } else  {
+  while ((opt = getopt_long_only(argc, argv, "", long_options, &option_index)) != -1) {
+    switch (opt) {
+    case 'a':
+      printf("%s\n", pr_release);
+      exit(0);
+    case 'p':
+      strncpy(p3_settings_file, optarg, FILE_NAME_SIZE - 1);
+      break;
+    case 'i':
+      if (!strcmp(optarg, "3"))
+        io_version = 3;
+      else if (!strcmp(optarg, "4"))
+	io_version = 4;
+      else {
+	print_usage();
+	exit(-1);
+      }
+      break;
+    case '2':
+      printf("PRIMER_ERROR=flag -2x_compat is no longer supported\n=\n");
+      exit(-1);
+    case 'o':
+      /* reassign stdout */                                                                         
+      if (freopen(optarg, "w", stdout) == NULL) {
+        fprintf(stderr, "Error creating file %s\n", optarg);
+        perror("freopen");
+        exit(-1);
+      }
+      break;
+    case 'e':
+      /* reassign stderr */                                                                        
+      if (freopen(optarg, "w", stderr) == NULL) {
+        fprintf(stderr, "Error creating file %s\n", optarg);
+        perror("freopen");
+        exit(-1);
+      }
+      break;
+    case '?':
+      print_usage();
+      exit(-1);
+      break;
+    }
+  }
+
+  /* Check if an input file has been specified */
+  if (optind < argc) {
+    if (optind + 1 != argc) {
       print_usage();
       exit(-1);
     }
+    if (freopen(argv[optind], "r", stdin) == NULL) {
+      fprintf(stderr, "Error opening file %s\n", argv[optind]);
+      perror("freopen");
+      exit(-1);
+    }
   }
+  
 
   /* Settings files have to be read in just below, and
      the functions need a temporary sarg */
@@ -336,10 +383,11 @@ print_usage()
 {
   fprintf(stderr, primer3_copyright());
 
-  fprintf(stderr, "\n\nUSAGE: %s %s %s %s %s\n", pr_program_name,
-          "[-format_output]", "[-io_version=3|-io_version=4]", "[-p3_settings_file=<file_path>]", "[-strict_tags]");
+  fprintf(stderr, "\n\nUSAGE: %s %s %s %s %s %s %s %s\n", pr_program_name,
+          "[-format_output]", "[-io_version=3|-io_version=4]", "[-p3_settings_file=<file_path>]", "[-strict_tags]",
+	  "[-output=<file_path>]", "[-error=<file_path>]", "[input_file]");
   fprintf(stderr, "This is primer3 (%s)\n", pr_release);
-  fprintf(stderr, "Input must be provided on standard input.\n");
+  fprintf(stderr, "Input can also be provided on standard input.\n");
   fprintf(stderr, "For example:\n");
   fprintf(stderr, "$ primer3_core < my_input_file\n");
 }
