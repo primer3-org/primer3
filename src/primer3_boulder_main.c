@@ -87,6 +87,8 @@ main(int argc, char *argv[]) {
     {"error", required_argument, 0, 'e'},
     {0, 0, 0, 0}
   };
+  int about = 0, output = 0, error = 0, compat = 0, invalid_flag = 0;
+  char output_file[FILE_NAME_SIZE], error_file[FILE_NAME_SIZE];
   
   /* Retval will point to the return value from choose_primers(). */
   p3retval *retval = NULL;
@@ -117,11 +119,12 @@ main(int argc, char *argv[]) {
   if (dump_args) global_pa->dump = 1 ;
   
   /* Read in the flags provided with the program call */
+  opterr = 0;
   while ((opt = getopt_long_only(argc, argv, "", long_options, &option_index)) != -1) {
     switch (opt) {
     case 'a':
-      printf("%s\n", pr_release);
-      exit(0);
+      about = 1;
+      break;
     case 'p':
       strncpy(p3_settings_file, optarg, FILE_NAME_SIZE - 1);
       break;
@@ -130,37 +133,55 @@ main(int argc, char *argv[]) {
         io_version = 3;
       else if (!strcmp(optarg, "4"))
 	io_version = 4;
-      else {
-	print_usage();
-	exit(-1);
-      }
+      else
+	io_version = -1;
       break;
     case '2':
-      printf("PRIMER_ERROR=flag -2x_compat is no longer supported\n=\n");
-      exit(-1);
+      compat = 1;
+      break;
     case 'o':
-      /* reassign stdout */                                                                         
-      if (freopen(optarg, "w", stdout) == NULL) {
-        fprintf(stderr, "Error creating file %s\n", optarg);
-        perror("freopen");
-        exit(-1);
-      }
+      output = 1;
+      strncpy(output_file, optarg, FILE_NAME_SIZE - 1);
       break;
     case 'e':
-      /* reassign stderr */                                                                        
-      if (freopen(optarg, "w", stderr) == NULL) {
-        fprintf(stderr, "Error creating file %s\n", optarg);
-        perror("freopen");
-        exit(-1);
-      }
+      error = 1;
+      strncpy(error_file, optarg, FILE_NAME_SIZE - 1);
       break;
     case '?':
-      print_usage();
-      exit(-1);
+      invalid_flag = 1;
       break;
     }
   }
-
+  /* Open the output and error files specified */
+  if (error == 1) {
+    /* reassign stderr */
+    if (freopen(error_file, "w", stderr) == NULL) {
+      fprintf(stderr, "Error creating file %s\n", error_file);
+      perror("freopen");
+      exit(-1);
+    }
+  }
+  if (output == 1) {
+    /* reassign stdout */
+    if (freopen(output_file, "w", stdout) == NULL) {
+      fprintf(stderr, "Error creating file %s\n", output_file);
+      perror("freopen");
+      exit(-1);
+    }
+  }
+  /* We do any printing after redirecting stdout and stderr */
+  if (about == 1) {
+    printf("%s\n", pr_release);
+    exit(0);
+  }
+  if ((io_version == -1) || (invalid_flag == 1)) {
+    print_usage();
+    exit(-1);
+  }
+  if (compat == 1) {
+    printf("PRIMER_ERROR=flag -2x_compat is no longer supported\n=\n");
+    exit(-1);
+  }
   /* Check if an input file has been specified */
   if (optind < argc) {
     if (optind + 1 != argc) {
