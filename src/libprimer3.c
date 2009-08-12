@@ -1098,7 +1098,7 @@ choose_pair_or_triple(p3retval *retval,
                           pair_array_t *best_pairs) {
   int i,j; /* Loop index. */
   int n_int; /* Index of the internal oligo */
-  int *max_j_seen;   /* The maxium value j (loop index for forward primers)
+  int *max_j_seen;   /* The maxium value of j (loop index for forward primers)
                         that has been examined for every reverse primer
                         index (i) */
   int update_stats;  /* Flag to indicate whether pair_stats
@@ -1112,12 +1112,13 @@ choose_pair_or_triple(p3retval *retval,
   int the_best_i, the_best_j;
   
   memset(&the_best_pair, 0, sizeof(the_best_pair));
-  max_j_seen = malloc(sizeof(int) * retval->rev.num_elem);
+  max_j_seen = (int *) malloc(sizeof(int) * retval->rev.num_elem);
   for (i = 0; i < retval->rev.num_elem; i++) max_j_seen[i] = -1;
 
   /* Pick pairs till we have enough. */     
   while(1) {
-     memset(&the_best_pair, 0, sizeof(the_best_pair));
+    /* FIX ME, is this memset really needed?  Apparently slow */
+    memset(&the_best_pair, 0, sizeof(the_best_pair));
     the_best_i = -1;
     the_best_j = -1;
     /* To start put penalty to the maximum */
@@ -1161,7 +1162,7 @@ choose_pair_or_triple(p3retval *retval,
           break;
         }
 
-        /* Need to have this hear because if we break just above then,
+        /* Need to have this here because if we break just above then,
            at a latter iteration, we may need to examine the oligo
            pair with reverse oligo at i and forward oligo at j. */
         update_stats = 0;
