@@ -157,7 +157,6 @@ main(int argc, char *argv[]) {
     /* reassign stderr */
     if (freopen(error_file, "w", stderr) == NULL) {
       fprintf(stderr, "Error creating file %s\n", error_file);
-      perror("freopen");
       exit(-1);
     }
   }
@@ -165,7 +164,6 @@ main(int argc, char *argv[]) {
     /* reassign stdout */
     if (freopen(output_file, "w", stdout) == NULL) {
       fprintf(stderr, "Error creating file %s\n", output_file);
-      perror("freopen");
       exit(-1);
     }
   }
@@ -190,7 +188,6 @@ main(int argc, char *argv[]) {
     }
     if (freopen(argv[optind], "r", stdin) == NULL) {
       fprintf(stderr, "Error opening file %s\n", argv[optind]);
-      perror("freopen");
       exit(-1);
     }
   }

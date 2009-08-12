@@ -214,6 +214,9 @@ sub runtest($$$$) {
     print "Test $i... ";
     
     $r = _nowarn_system($cmd);
+    if ($winFlag) {
+	$r = $r >> 8;
+    }
         
     unless ($r == $exit) {
         $all_ok = 0;
