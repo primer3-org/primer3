@@ -41,7 +41,10 @@
 VAL =
 
 
-test: makeexes testtm testdpal testcore test_io_v3
+test: makeexes testcmdline testtm testdpal testcore test_io_v3
+
+testcmdline:
+	echo; echo; echo 'TESTING command line arguments'; echo; perl cmdline_test.pl $(VAL)
 
 test_io_v3:
 	cd io_version_3; make test
