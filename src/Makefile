@@ -53,7 +53,7 @@ LDLIBS     = -lm
 CC         = gcc
 O_OPTS     = -O0
 CC_OPTS    = -g -Wall -D__USE_FIXED_PROTOTYPES__
-CC_TH_OPTS = -DPARAMFILES
+CC_TH_OPTS = -DPARAMFILES=\"/home/ioana/primer3/primer3/tags/release-2.1.0-beta/src/tables/\"
 P_DEFINES  =
 
 CFLAGS  = $(CC_OPTS) $(CC_TH_OPTS) $(O_OPTS)
