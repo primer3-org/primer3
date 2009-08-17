@@ -676,6 +676,7 @@ read_boulder_record(FILE *file_input,
                   pa->lowercase_masking); 
       /* added by T. Koressaar */
       COMPARE_INT("PRIMER_THERMODYNAMICAL_ALIGNMENT", pa->thermodynamical_alignment);
+      COMPARE_AND_MALLOC("PRIMER_THERMODYNAMICAL_PARAMETERS_PATH", pa->thermodynamic_params_path);
       /* weights for objective functions  */
       /* CHANGE TEMP/temp -> TM/tm */
       COMPARE_FLOAT("PRIMER_WT_TM_GT", pa->p_args.weights.temp_gt);

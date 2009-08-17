@@ -2,25 +2,25 @@
  Whitehead Institute for Biomedical Research, Steve Rozen
  (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
  All rights reserved.
- 
+
      This file is part the primer3 software suite.
- 
+
      This software suite is free software;
      you can redistribute is and/or modify it under the terms
      of the GNU General Public License as published by the Free
      Software Foundation; either version 2 of the License, or (at
      your option) any later version.
- 
+
      This software is distributed in the hope that it will be useful,
      but WITHOUT ANY WARRANTY; without even the implied warranty of
      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
      GNU General Public License for more details.
- 
+
      You should have received a copy of the GNU General Public License
      along with this file (file gpl-2.0.txt in the source
      distribution); if not, write to the Free Software
      Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- 
+
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -43,7 +43,7 @@
 
 
 #ifndef THAL_ERROR_SCORE
-# define THAL_ERROR_SCORE -INFINITY
+# define THAL_ERROR_SCORE -_INFINITY
 #endif
 
 #ifndef THAL_MAX_ALIGN
@@ -52,9 +52,9 @@
 
 /*** BEGIN CONSTANTS ***/
 
-extern const double INFINITY;
+extern const double _INFINITY;
 extern const double ABSOLUTE_ZERO;
-extern const int MAX_LOOP; /* the maximum size of loop that can be calculated; 
+extern const int MAX_LOOP; /* the maximum size of loop that can be calculated;
 			    for larger loops formula must be implemented */
 extern const int MIN_LOOP;
 
@@ -72,10 +72,10 @@ typedef enum thal_alignment_type {
 /* Structure for passing arguments to THermodynamic ALignment calculation */
 typedef struct {
    int debug; /* if non zero, print debugging info to stderr */
-   thal_alignment_type type; /* one of the 
+   thal_alignment_type type; /* one of the
 	      1 THAL_ANY, (by default)
-	      2 THAL_END1, 
-	      3 THAL_END2, 
+	      2 THAL_END1,
+	      3 THAL_END2,
 	      4 THAL_HAIRPIN */
    int maxLoop;  /* maximum size of loop to consider; longer than 30 bp are not allowed */
    double mv; /* concentration of monovalent cations */
@@ -100,7 +100,7 @@ typedef struct {
 
 void set_thal_default_args(thal_args *a);
 
-void get_thermodynamic_values(thal_results *o, int fail_stop);
+void get_thermodynamic_values(char* path, thal_results *o, int fail_stop);
 
 void destroy_thal_structures();
 

@@ -40,17 +40,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h> /* strcmp() */
 #include <stdlib.h> /* free() */
 #include <getopt.h> /* getopt() */
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include "thal.h"
 #include "format_output.h"
 #include "libprimer3.h"
 #include "read_boulder.h"
 #include "print_boulder.h"
 
+/* Check on which OS we compile */
+#if defined(_WIN32) || defined(WIN32) || defined (__WIN32__) || defined(__CYGWIN__) || defined(__MINGW32__)
+#define OS_WIN
+#endif
+
 #define FILE_NAME_SIZE 80
 
 /* Some function prototypes */
 static void   print_usage();
 static void   sig_handler(int);
+static void   read_thermodynamic_params(p3_global_settings *);
 
 /* Other global variables. */
 static const char * pr_release = "primer3 release 2.0.0";
@@ -207,14 +216,8 @@ main(int argc, char *argv[]) {
                  sarg, &fatal_parse_err, &nonfatal_parse_err,
                  &read_boulder_record_res);
     /* Check if the thermodynamical alignment flag was given */ 
-    if (global_pa->thermodynamical_alignment == 1) {
-      thal_results o;
-      /* TO DO: check that the path to the param folder was given */
-      /* read in the thermodynamical parameters */
-      get_thermodynamic_values(&o, 1);
-      /* mark as read, so we do not read them again */
-      global_pa->read_thermodynamical_params = 1;
-    }
+    if (global_pa->thermodynamical_alignment == 1)
+      read_thermodynamic_params(global_pa);
   }
 
   /* We also need to print out errors here because the loop erases all
@@ -277,16 +280,8 @@ main(int argc, char *argv[]) {
     }
 
     /* Check if the thermodynamical alignment flag was given */
-    if (global_pa->thermodynamical_alignment == 1) {
-      /* if have not already done this, read in the thermodynamical parameters */
-      if (global_pa->read_thermodynamical_params == 0) {
-	thal_results o;
-	/* TO DO: check that the path to the param folder was given */
-	get_thermodynamic_values(&o, 1);
-	/* mark as read, so we do not read them again */
-	global_pa->read_thermodynamical_params = 1;
-      }
-    }
+    if (global_pa->thermodynamical_alignment == 1)
+      read_thermodynamic_params(global_pa);
     
     input_found = 1;
     if ((global_pa->primer_task == pick_detection_primers) 
@@ -416,6 +411,39 @@ main(int argc, char *argv[]) {
     exit(-3);
   }
   return 0;
+}
+
+/* Reads the thermodynamic parameters if the thermodynamic alignment tag was set to 1 */
+static void read_thermodynamic_params(p3_global_settings *pa)
+{
+  thal_results o;
+  /* if already read the parameters, nothing to do */
+  if (pa->read_thermodynamical_params == 1)
+    return;
+  /* check that the path to the parameters folder was given */
+  if (pa->thermodynamic_params_path == NULL) {
+#ifndef OS_WIN
+    /* in linux, check for ./primer3_config and /opt/primer3_config */
+    struct stat st;
+    if ((stat("./primer3_config", &st) == 0) && S_ISDIR(st.st_mode)) {
+      pa->thermodynamic_params_path = (char*) malloc(strlen("./primer3_config/") * sizeof(char));
+      strcpy(pa->thermodynamic_params_path, "./primer3_config/");
+    } else if ((stat("/opt/primer3_config", &st) == 0)  && S_ISDIR(st.st_mode)) {
+      pa->thermodynamic_params_path = (char*) malloc(strlen("/opt/primer3_config/") * sizeof(char));
+      strcpy(pa->thermodynamic_params_path, "/opt/primer3_config/");
+    } else {
+#endif
+      /* no default directory found, error */
+      printf("PRIMER_ERROR=thermodynamic approach chosen, but path to thermodynamic parameters not specified\n=\n");	
+      exit(-1);
+#ifndef OS_WIN
+    }
+#endif
+  } 
+  /* read in the thermodynamic parameters */
+  get_thermodynamic_values(pa->thermodynamic_params_path, &o, 1);
+  /* mark as read, so we do not read them again */
+  pa->read_thermodynamical_params = 1;
 }
 
 /* Print out copyright and a short usage message*/

@@ -478,6 +478,8 @@ p3_destroy_global_settings(p3_global_settings *a) {
     destroy_seq_lib(a->o_args.repeat_lib);
     if (a->settings_file_id != NULL)
         free(a->settings_file_id);
+    if (a->thermodynamic_params_path)
+	free(a->thermodynamic_params_path);
     free(a);
   }
 }
@@ -554,7 +556,7 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->pair_hairpin        = 47.0;
   a->thermodynamical_alignment = 0;
   a->read_thermodynamical_params = 0;
-  a->thermodynamical_params_path = NULL;
+  a->thermodynamic_params_path = NULL;
   a->liberal_base        = 0;
   a->primer_task         = pick_detection_primers;
   a->pick_left_primer    = 1;
