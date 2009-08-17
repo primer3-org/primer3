@@ -553,6 +553,8 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->pair_compl_end_th   = 47.0;
   a->pair_hairpin        = 47.0;
   a->thermodynamical_alignment = 0;
+  a->read_thermodynamical_params = 0;
+  a->thermodynamical_params_path = NULL;
   a->liberal_base        = 0;
   a->primer_task         = pick_detection_primers;
   a->pick_left_primer    = 1;

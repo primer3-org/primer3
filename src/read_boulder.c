@@ -673,7 +673,8 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_MAX_END_STABILITY", pa->max_end_stability);
 
       COMPARE_INT("PRIMER_LOWERCASE_MASKING",
-                  pa->lowercase_masking); /* added by T. Koressaar */
+                  pa->lowercase_masking); 
+      /* added by T. Koressaar */
       COMPARE_INT("PRIMER_THERMODYNAMICAL_ALIGNMENT", pa->thermodynamical_alignment);
       /* weights for objective functions  */
       /* CHANGE TEMP/temp -> TM/tm */

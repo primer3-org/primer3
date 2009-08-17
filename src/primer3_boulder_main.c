@@ -40,6 +40,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h> /* strcmp() */
 #include <stdlib.h> /* free() */
 #include <getopt.h> /* getopt() */
+#include "thal.h"
 #include "format_output.h"
 #include "libprimer3.h"
 #include "read_boulder.h"
@@ -205,6 +206,15 @@ main(int argc, char *argv[]) {
     read_p3_file(p3_settings_file, settings, global_pa, 
                  sarg, &fatal_parse_err, &nonfatal_parse_err,
                  &read_boulder_record_res);
+    /* Check if the thermodynamical alignment flag was given */ 
+    if (global_pa->thermodynamical_alignment == 1) {
+      thal_results o;
+      /* TO DO: check that the path to the param folder was given */
+      /* read in the thermodynamical parameters */
+      get_thermodynamic_values(&o, 1);
+      /* mark as read, so we do not read them again */
+      global_pa->read_thermodynamical_params = 1;
+    }
   }
 
   /* We also need to print out errors here because the loop erases all
@@ -264,6 +274,18 @@ main(int argc, char *argv[]) {
                             &nonfatal_parse_err,
                             &read_boulder_record_res)) {
       break; /* There were no more boulder records */
+    }
+
+    /* Check if the thermodynamical alignment flag was given */
+    if (global_pa->thermodynamical_alignment == 1) {
+      /* if have not already done this, read in the thermodynamical parameters */
+      if (global_pa->read_thermodynamical_params == 0) {
+	thal_results o;
+	/* TO DO: check that the path to the param folder was given */
+	get_thermodynamic_values(&o, 1);
+	/* mark as read, so we do not read them again */
+	global_pa->read_thermodynamical_params = 1;
+      }
     }
     
     input_found = 1;
@@ -380,6 +402,8 @@ main(int argc, char *argv[]) {
          End of the primary working loop */
 
   /* To avoid being distracted when looking for leaks: */
+  if (global_pa->thermodynamical_alignment == 1)
+    destroy_thal_structures();
   p3_destroy_global_settings(global_pa);
   global_pa = NULL;
   destroy_seq_args(sarg);

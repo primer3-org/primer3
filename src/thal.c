@@ -51,6 +51,18 @@
 #define MIN_HRPN_LOOP 3 /*  minimum size of hairpin loop */
 #endif
 
+#ifndef PRECISION
+# define PRECISION 1
+#endif
+
+#ifndef THAL_EXIT_ON_ERROR
+#define THAL_EXIT_ON_ERROR 0
+#endif
+
+#ifndef THAL_MAX_SEQ
+#define THAL_MAX_SEQ   1600
+#endif
+
 /* table where bp-s enthalpies, that retrieve to the most stable Tm, are saved */
 #ifdef EnthalpyDPT
 # undef EnthalpyDPT
@@ -98,22 +110,22 @@ const double INFINITY = 999999.0;
 const double INFINITY = 1.0 / 0.0;
 # endif
 
-const double R = 1.9872; /* cal/Kmol */
-const double ILAS = (-300 / 310.15); /* Internal Loop Entropy ASymmetry correction -0.3kcal/mol*/
-const double ILAH = 0.0; /* Internal Loop EntHalpy Asymmetry correction */
-const double AT_H = 2200.0; /* AT penalty */
-const double AT_S = 6.9; /* AT penalty */
-const double MinEntropyCutoff = -2500.0; /* to filter out non-existing entropies */
-const double MinEntropy = -3224.0; /* initiation */
-const double G2 = 0.0; /* structures w higher G are considered to be unstabile */
+static const double R = 1.9872; /* cal/Kmol */
+static const double ILAS = (-300 / 310.15); /* Internal Loop Entropy ASymmetry correction -0.3kcal/mol*/
+static const double ILAH = 0.0; /* Internal Loop EntHalpy Asymmetry correction */
+static const double AT_H = 2200.0; /* AT penalty */
+static const double AT_S = 6.9; /* AT penalty */
+static const double MinEntropyCutoff = -2500.0; /* to filter out non-existing entropies */
+static const double MinEntropy = -3224.0; /* initiation */
+static const double G2 = 0.0; /* structures w higher G are considered to be unstabile */
 const double ABSOLUTE_ZERO = 273.15;
 const int MAX_LOOP = 30; /* the maximum size of loop that can be calculated; for larger loops formula must be implemented */
 const int MIN_LOOP = 0;
-const char BASES[5] = {'A', 'C', 'G', 'T', 'N'}; /* bases to be considered - N is every symbol that is not A, G, C,$
+static const char BASES[5] = {'A', 'C', 'G', 'T', 'N'}; /* bases to be considered - N is every symbol that is not A, G, C,$
 						  */ 
-const char BASE_PAIRS[4][4] = {"A-T", "C-G", "G-C", "T-A" }; /* allowed basepairs */
+static const char BASE_PAIRS[4][4] = {"A-T", "C-G", "G-C", "T-A" }; /* allowed basepairs */
 /* matrix for allowed; bp 0 - no bp, watson crick bp - 1 */
-const int BPI[5][5] =  {
+static const int BPI[5][5] =  {
      {0, 0, 0, 1, 0}, /* A, C, G, T, N; */
      {0, 0, 1, 0, 0},
      {0, 1, 0, 0, 0},
@@ -122,48 +134,196 @@ const int BPI[5][5] =  {
 
 /*** END OF CONSTANTS ***/
 
-int numTriloops; /* hairpin triloop penalties */
-int numTetraloops; /* hairpin tetraloop penalties */
-double atpS[5][5]; /* AT penalty */
-double atpH[5][5]; /* AT penalty */
-double *send5, *hend5; /* calc 5'  */
-/* w/o init not constant anymore, cause for unimolecular and bimolecular foldings there are different values */
-double dplx_init_H; /* initiation enthalpy; for duplex 200, for unimolecular structure 0 */
-double dplx_init_S; /* initiation entropy; for duplex -5.7, for unimoleculat structure 0 */
-double saltCorrection; /* value calculated by saltCorrectS, includes correction for monovalent and divalent cations */
-double RC; /* universal gas constant multiplied w DNA conc - for melting temperature */
-double SHleft; /* var that helps to find str w highest melting temperature */
-int bestI, bestJ; /* starting position of most stable str */
-double* enthalpyDPT; /* matrix for values of enthalpy */
-double* entropyDPT; /* matrix for values of entropy */
-int i;
-unsigned char *oligo1, *oligo2; /* inserted oligo sequenced */
-unsigned char *numSeq1, *numSeq2; /* same as oligo1 and oligo2 but converted to numbers */
-int len1, len2, len3; /* length of sequense 1 and 2 *//* 17.02.2009 int temponly;*/ /* print only temperature of the predicted structure */
-double dangleEntropies3[5][5][5]; /* thermodynamic paramteres for 3' dangling ends */
-double dangleEnthalpies3[5][5][5]; /* ther params for 3' dangling ends */
-double dangleEntropies5[5][5][5];  /* ther params for 5' dangling ends */
-double dangleEnthalpies5[5][5][5]; /* ther params for 5' dangling ends */
-double stackEntropies[5][5][5][5]; /* ther params for perfect match pairs */
-double stackEnthalpies[5][5][5][5]; /* ther params for perfect match pairs */
-double stackint2Entropies[5][5][5][5]; /*ther params for perfect match and internal mm */
-double stackint2Enthalpies[5][5][5][5]; /* ther params for perfect match and internal mm*/
-double interiorLoopEntropies[30]; /* interior loop params according to length of the loop */
-double bulgeLoopEntropies[30]; /* bulge loop params according to length of the loop */
-double hairpinLoopEntropies[30]; /* hairpin loop params accordint to length of the loop */
-double interiorLoopEnthalpies[30]; /* same as interiorLoopEntropies but values of entropy */
-double bulgeLoopEnthalpies[30]; /* same as bulgeLoopEntropies but values of entropy */
-double hairpinLoopEnthalpies[30]; /* same as hairpinLoopEntropies but values of entropy */
-double tstackEntropies[5][5][5][5]; /* ther params for terminal mismatches */
-double tstackEnthalpies[5][5][5][5]; /* ther params for terminal mismatches */
-double tstack2Entropies[5][5][5][5]; /* ther params for internal terminal mismatches */
-double tstack2Enthalpies[5][5][5][5]; /* ther params for internal terminal mismatches */
-struct triloop* triloopEntropies; /* ther penalties for given triloop seq-s */
-struct triloop* triloopEnthalpies; /* ther penalties for given triloop seq-s */
-struct tetraloop* tetraloopEntropies; /* ther penalties for given tetraloop seq-s */
-struct tetraloop* tetraloopEnthalpies; /* ther penalties for given tetraloop seq-s */
+/*** BEGIN STRUCTs ***/
 
-static void fail_action(int a, thal_results *o)  {
+struct triloop {
+  char loop[5];
+  double value; };
+
+struct tetraloop {
+  char loop[6];
+  double value; };
+
+struct tracer /* structure for tracebacku - unimolecular str */ {
+  int i;
+  int j;
+  int mtrx; /* [0 1] EntropyDPT/EnthalpyDPT*/
+  struct tracer* next;
+};
+
+/*** END STRUCTs ***/
+
+static int length_unsig_char(const unsigned char * str); /* returns length of unsigned char; to avoid warnings while compiling */
+
+static unsigned char str2int(char c); /* converts DNA sequence to int; 0-A, 1-C, 2-G, 3-T, 4-whatever */
+
+//static int seqcmp(unsigned char* seq1, unsigned char* seq2, int length);
+
+static double saltCorrectS (double mv, double dv, double dntp); /* part of calculating salt correction                                       
+							    for Tm by SantaLucia et al */
+//static int smallest(int a, int b, int c);
+
+//static int identic(unsigned char* a, unsigned char* b, int len); /* checks if two seq-s are identical */
+
+static FILE* openParamFile(char* name,thal_results* o,int a); /* file of thermodynamic params */
+
+/* get thermodynamic tables */
+static void getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5],thal_results* o,int a);
+
+//static void verifyStackTable(double stack[5][5][5][5], char* type); /* just for debugging; the method is turned off by default */
+
+static void getStackint2(double stackEntropiesint2[5][5][5][5], double stackint2Enthalpies[5][5][5][5],thal_results* o,int a);
+
+static void getDangle(double dangleEntropies3[5][5][5], double dangleEnthalpies3[5][5][5], double dangleEntropies5[5][5][5],
+	       double dangleEnthalpies5[5][5][5],thal_results* o,int a);
+
+static void getTstack(double tstackEntropies[5][5][5][5], double tstackEnthalpies[5][5][5][5],thal_results* o,int a);
+
+static void getTstack2(double tstack2Entropies[5][5][5][5], double tstack2Enthalpies[5][5][5][5],thal_results* o,int a);
+
+static void getTriloop(struct triloop**, struct triloop**, int* num,thal_results* o,int a);
+
+static void getTetraloop(struct tetraloop**, struct tetraloop**, int* num,thal_results* o,int a);
+
+static void getLoop(double hairpinLoopEnntropies[30], double interiorLoopEntropies[30], double bulgeLoopEntropiess[30],
+	     double hairpinLoopEnthalpies[30], double interiorLoopEnthalpies[30], double bulgeLoopEnthalpies[30],thal_results* o,int\
+	     a);
+
+static void tableStartATS(double atp_value, double atp[5][5]); /* creates table of entropy values for nucleotides                            
+							   to which AT-penlty must be applied */
+
+static void tableStartATH(double atp_value, double atp[5][5]);
+
+static int comp3loop(const void*, const void*); /* checks if sequnece consists of specific triloop */
+
+static int comp4loop(const void*, const void*); /* checks if sequnece consists of specific tetraloop */
+
+static void initMatrix(); /* initiates thermodynamic parameter tables of entropy and enthalpy for dimer */
+
+static void initMatrix2(); /* initiates thermodynamic parameter tables of entropy and enthalpy for monomer */
+
+static void fillMatrix(int maxLoop,thal_results* o, int a); /* calc-s thermod values into dynamic progr table (dimer) */
+
+static void fillMatrix2(int maxLoop, thal_results* o, int a); /* calc-s thermod values into dynamic progr table (monomer) */
+
+static void maxTM(int i, int j); /* finds max Tm while filling the dyn progr table using stacking S and stacking H (dimer) */
+
+static void maxTM2(int i, int j); /* finds max Tm while filling the dyn progr table using stacking S and stacking H (monomer) */
+
+/* calculates bulges and internal loops for dimer structures */
+static void calc_bulge_internal(int ii, int jj, int i, int j, double* EntropyEnthalpy, int traceback, int maxLoop);
+
+/* calculates bulges and internal loops for monomer structures */
+static void calc_bulge_internal2(int ii, int jj, int i, int j, double* EntropyEnthalpy, int traceback, int maxLoop);
+
+/* carries out Bulge and Internal loop and stack calculations to hairpin */
+static void CBI(int i, int j, double* EntropyEnthalpy, int traceback, int maxLoop);
+
+/* finds monomer structure that has maximum Tm */
+static void calc_hairpin(int i, int j, double* EntropyEnthalpy, int traceback);
+
+static double Ss(int i, int j, int k); /* returns stack entropy */
+static double Hs(int i, int j, int k); /* returns stack enthalpy */
+
+/* calculate terminal entropy S and terminal enthalpy H starting reading from 5'end (Left hand/3' end - Right end) */
+static void LSH(int i, int j, double* EntropyEnthalpy);
+static void RSH(int i, int j, double* EntropyEnthalpy);
+
+static void reverse(unsigned char *s);
+
+static int max5(double, double, double, double, double);
+
+/* Is sequence symmetrical */
+static int symmetry_thermo(const unsigned char* seq);
+
+/* traceback for dimers */
+static void traceback(int i, int j, double RT, int* ps1, int* ps2, int maxLoop,thal_results* o, int a);
+
+/* traceback for hairpins */
+static void tracebacku(int*, int,thal_results*, int);
+
+/* prints ascii output of dimer structure */
+static void drawDimer(int*, int*, double, double, double, int, double, thal_results *, int);
+
+/* prints ascii output of hairpin structure */
+static void drawHairpin(int*, double, double, int, double, thal_results *, int);
+
+static int equal(double a, double b);
+
+static void strcatc(char*, char);
+
+static void push(struct tracer**, int, int, int,thal_results*,int); /* to add elements to struct */
+
+/* terminal bp for monomer structure */
+static void calc_terminal_bp(double temp);
+
+/* executed in calc_terminal_bp; to find structure that corresponds to max Tm for terminal bp */
+static double END5_1(int,int); /* END5_1(X,1/2) - 1=Enthalpy, 2=Entropy*/
+static double END5_2(int,int);
+static double END5_3(int,int);
+static double END5_4(int,int);
+
+static double Hd5(int,int); /* returns thermodynamic value (H) for 5' dangling end */
+static double Hd3(int,int); /* returns thermodynamic value (H) for 3' dangling end */
+static double Sd5(int,int); /* returns thermodynamic value (S) for 5' dangling end */
+static double Sd3(int,int); /* returns thermodynamic value (S) for 3' dangling end */
+static double Ststack(int,int); /* returns entropy value for terminal stack */
+static double Htstack(int,int); /* returns enthalpy value for terminal stack */
+
+/* memory stuff */
+#ifndef XMALLOC_H
+# define XMALLOC_H
+static void* safe_calloc(size_t, size_t,thal_results* o, int a);
+static void* safe_malloc(size_t,thal_results* o, int a);
+static void* safe_realloc(void*, size_t,thal_results* o, int a);
+static double* safe_recalloc(double* ptr, int m, int n,thal_results* o, int a);
+#endif
+
+
+
+static int numTriloops; /* hairpin triloop penalties */
+static int numTetraloops; /* hairpin tetraloop penalties */
+static double atpS[5][5]; /* AT penalty */
+static double atpH[5][5]; /* AT penalty */
+static double *send5, *hend5; /* calc 5'  */
+/* w/o init not constant anymore, cause for unimolecular and bimolecular foldings there are different values */
+static double dplx_init_H; /* initiation enthalpy; for duplex 200, for unimolecular structure 0 */
+static double dplx_init_S; /* initiation entropy; for duplex -5.7, for unimoleculat structure 0 */
+static double saltCorrection; /* value calculated by saltCorrectS, includes correction for monovalent and divalent cations */
+static double RC; /* universal gas constant multiplied w DNA conc - for melting temperature */
+static double SHleft; /* var that helps to find str w highest melting temperature */
+static int bestI, bestJ; /* starting position of most stable str */
+static double* enthalpyDPT; /* matrix for values of enthalpy */
+static double* entropyDPT; /* matrix for values of entropy */
+static unsigned char *oligo1, *oligo2; /* inserted oligo sequenced */
+static unsigned char *numSeq1, *numSeq2; /* same as oligo1 and oligo2 but converted to numbers */
+static int len1, len2, len3; /* length of sequense 1 and 2 *//* 17.02.2009 int temponly;*/ /* print only temperature of the predicted structure */
+static double dangleEntropies3[5][5][5]; /* thermodynamic paramteres for 3' dangling ends */
+static double dangleEnthalpies3[5][5][5]; /* ther params for 3' dangling ends */
+static double dangleEntropies5[5][5][5];  /* ther params for 5' dangling ends */
+static double dangleEnthalpies5[5][5][5]; /* ther params for 5' dangling ends */
+static double stackEntropies[5][5][5][5]; /* ther params for perfect match pairs */
+static double stackEnthalpies[5][5][5][5]; /* ther params for perfect match pairs */
+static double stackint2Entropies[5][5][5][5]; /*ther params for perfect match and internal mm */
+static double stackint2Enthalpies[5][5][5][5]; /* ther params for perfect match and internal mm*/
+static double interiorLoopEntropies[30]; /* interior loop params according to length of the loop */
+static double bulgeLoopEntropies[30]; /* bulge loop params according to length of the loop */
+static double hairpinLoopEntropies[30]; /* hairpin loop params accordint to length of the loop */
+static double interiorLoopEnthalpies[30]; /* same as interiorLoopEntropies but values of entropy */
+static double bulgeLoopEnthalpies[30]; /* same as bulgeLoopEntropies but values of entropy */
+static double hairpinLoopEnthalpies[30]; /* same as hairpinLoopEntropies but values of entropy */
+static double tstackEntropies[5][5][5][5]; /* ther params for terminal mismatches */
+static double tstackEnthalpies[5][5][5][5]; /* ther params for terminal mismatches */
+static double tstack2Entropies[5][5][5][5]; /* ther params for internal terminal mismatches */
+static double tstack2Enthalpies[5][5][5][5]; /* ther params for internal terminal mismatches */
+static struct triloop* triloopEntropies = NULL; /* ther penalties for given triloop seq-s */
+static struct triloop* triloopEnthalpies = NULL; /* ther penalties for given triloop seq-s */
+static struct tetraloop* tetraloopEntropies = NULL; /* ther penalties for given tetraloop seq-s */
+static struct tetraloop* tetraloopEnthalpies = NULL; /* ther penalties for given tetraloop seq-s */
+
+
+static void fail_action(int a, thal_results *o)  
+{
    if (a) {
       fprintf(stderr, "\n%s\n", o->msg);
       exit(-1);
@@ -171,8 +331,40 @@ static void fail_action(int a, thal_results *o)  {
    o->temp=THAL_ERROR_SCORE;
 }
 
+/* function to read the thermodynamic values from the parameter files */
+void get_thermodynamic_values(thal_results *o, int fail_stop)
+{
+  getStack(stackEntropies, stackEnthalpies, o, fail_stop);
+  /* verifyStackTable(stackEntropies, "entropy");                                                                                                                                
+     verifyStackTable(stackEnthalpies, "enthalpy"); */ /* this is for code debugging */
+  getStackint2(stackint2Entropies, stackint2Enthalpies, o, fail_stop);
+  getDangle(dangleEntropies3, dangleEnthalpies3, dangleEntropies5, dangleEnthalpies5, o, fail_stop);
+  getLoop(hairpinLoopEntropies, interiorLoopEntropies, bulgeLoopEntropies, hairpinLoopEnthalpies,
+	  interiorLoopEnthalpies, bulgeLoopEnthalpies, o, fail_stop);
+  getTstack(tstackEntropies, tstackEnthalpies, o, fail_stop);
+  getTstack2(tstack2Entropies, tstack2Enthalpies, o, fail_stop);
+  getTriloop(&triloopEntropies, &triloopEnthalpies, &numTriloops, o, fail_stop);
+  getTetraloop(&tetraloopEntropies, &tetraloopEnthalpies, &numTetraloops, o, fail_stop);
+  /* getting the AT-penalties */
+  tableStartATS(AT_S,atpS);
+  tableStartATH(AT_H,atpH);
+}
+
+void destroy_thal_structures()
+{
+  if (triloopEntropies)
+    free(triloopEntropies);
+  if (triloopEnthalpies)
+    free(triloopEnthalpies);
+  if (tetraloopEntropies)
+    free(tetraloopEntropies);
+  if (tetraloopEnthalpies)
+    free(tetraloopEnthalpies);
+}
+
 /* central method: execute all sub-methods for calculating secondary structure for dimer or for monomer */
-void thal(const unsigned char *oligo_f, const unsigned char *oligo_r, const thal_args *a, thal_results *o) {
+void thal(const unsigned char *oligo_f, const unsigned char *oligo_r, const thal_args *a, thal_results *o) 
+{
    double* SH;
    int i, j;
    int len_f, len_r;
@@ -281,26 +473,7 @@ void thal(const unsigned char *oligo_f, const unsigned char *oligo_r, const thal
    /* convert nucleotides to numbers */
    numSeq1 = safe_realloc(numSeq1, len1 + 2,o,a->fail_stop);
    numSeq2 = safe_realloc(numSeq2, len2 + 2,o,a->fail_stop); 
-   
-   /*** BEGIN: get thermodynamic values ***/
-   
-   getStack(stackEntropies, stackEnthalpies,o,a->fail_stop);
-   /* verifyStackTable(stackEntropies, "entropy");
-    verifyStackTable(stackEnthalpies, "enthalpy"); */ /* this is for code debugging */
-   getStackint2(stackint2Entropies, stackint2Enthalpies,o,a->fail_stop);
-   getDangle(dangleEntropies3, dangleEnthalpies3, dangleEntropies5, dangleEnthalpies5,o,a->fail_stop);
-   getLoop(hairpinLoopEntropies, interiorLoopEntropies, bulgeLoopEntropies, hairpinLoopEnthalpies,
-	    interiorLoopEnthalpies, bulgeLoopEnthalpies,o,a->fail_stop);
-   getTstack(tstackEntropies, tstackEnthalpies,o,a->fail_stop);
-   getTstack2(tstack2Entropies, tstack2Enthalpies,o,a->fail_stop);
-   getTriloop(&triloopEntropies, &triloopEnthalpies, &numTriloops,o,a->fail_stop);
-   getTetraloop(&tetraloopEntropies, &tetraloopEnthalpies, &numTetraloops,o,a->fail_stop);
-   /* getting the AT-penalties */
-   tableStartATS(AT_S,atpS);
-   tableStartATH(AT_H,atpH);
-   
-   /*** END: get thermodynamic values ***/
-   
+      
    /*** Calc part of the salt correction ***/
    saltCorrection=saltCorrectS(a->mv,a->dv,a->dntp); /* salt correction for entropy, must be multiplied with N, which is
 						   the total number of phosphates in the duplex divided by 2; 8bp dplx N=7 */
@@ -337,10 +510,6 @@ void thal(const unsigned char *oligo_f, const unsigned char *oligo_r, const thal
       
       if(o->temp==-INFINITY && o->msg==NULL) o->temp=0.0; 
       free(bp);
-      free(triloopEntropies);
-      free(triloopEnthalpies);
-      free(tetraloopEntropies);
-      free(tetraloopEnthalpies);
       free(enthalpyDPT);
       free(entropyDPT);
       free(numSeq1);
@@ -423,10 +592,6 @@ void thal(const unsigned char *oligo_f, const unsigned char *oligo_r, const thal
       free(ps2);
       free(SH);
       free(oligo2_rev);
-      free(triloopEntropies);
-      free(triloopEnthalpies);
-      free(tetraloopEntropies);
-      free(tetraloopEnthalpies);
       free(enthalpyDPT);
       free(entropyDPT);
       free(numSeq1);
@@ -441,7 +606,8 @@ FAIL:
 /*** END thal() ***/
 
 /* Set default args */
-void set_thal_default_args(thal_args *a) {
+void set_thal_default_args(thal_args *a) 
+{
    memset(a, 0, sizeof(*a));
    a->debug = 0;
    a->type = 1; /* thal_alignment_type THAL_ANY */
@@ -456,7 +622,8 @@ void set_thal_default_args(thal_args *a) {
    a->fail_stop = THAL_EXIT_ON_ERROR;
 }
 
-unsigned char str2int(char c) {
+static unsigned char str2int(char c) 
+{
    switch (c) {
     case 'A': case '0':
       return 0;
@@ -470,7 +637,9 @@ unsigned char str2int(char c) {
    return 4;
 }
 
-int seqcmp(unsigned char* seq1, unsigned char* seq2, int length) {
+/*
+static int seqcmp(unsigned char* seq1, unsigned char* seq2, int length) 
+{
    int i;
    for (i = 0; i < length; ++i)
      if (seq1[i] < seq2[i])
@@ -479,62 +648,69 @@ int seqcmp(unsigned char* seq1, unsigned char* seq2, int length) {
      return 1;
    return 0;
 }
+*/
 
 /* memory stuff */
 
-double* safe_recalloc(double* ptr, int m, int n,thal_results* o, int a) {
+static double* safe_recalloc(double* ptr, int m, int n,thal_results* o, int a) 
+{
    return safe_realloc(ptr, m * n * sizeof(double),o,a);
 }
 
-void* safe_calloc(size_t m, size_t n,thal_results *o, int a) {
+static void* safe_calloc(size_t m, size_t n,thal_results *o, int a) 
+{
    void* ptr;
    if (!(ptr = calloc(m, n))) {
 #ifdef DEBUG
       fputs("Error in calloc()\n", stderr);
 #endif
       THAL_OOM_ERROR;
-      exit(EXIT_FAILURE);
+      exit(-2);
    }
    return ptr;
    
 FAIL:
    fail_action(a, o);
-   exit(EXIT_FAILURE);
+   exit(-2);
 }
 
-void* safe_malloc(size_t n,thal_results *o, int a) {
+static void* safe_malloc(size_t n,thal_results *o, int a) 
+{
    void* ptr;
    if (!(ptr = malloc(n))) {
 #ifdef DEBUG
       fputs("Error in malloc()\n", stderr);
 #endif
       THAL_OOM_ERROR;
-      exit(EXIT_FAILURE);
+      exit(-2);
    }
    return ptr;
    
 FAIL:
    fail_action(a, o);
-   exit(EXIT_FAILURE);
+   exit(-2);
 }
 
-void* safe_realloc(void* ptr, size_t n,thal_results *o, int a) {
+static void* safe_realloc(void* ptr, size_t n,thal_results *o, int a) 
+{
    ptr = realloc(ptr, n);
    if (ptr==NULL) {
 #ifdef DEBUG
       fputs("Error in realloc()\n", stderr);
 #endif
       THAL_OOM_ERROR;
-      exit(EXIT_FAILURE);
+      exit(-2);
    }
    return ptr;
 
 FAIL:
    fail_action(a, o);
-   exit(EXIT_FAILURE);
+   exit(-2);
 }
 
-int smallest(int a, int b, int c) {
+/*
+static int smallest(int a, int b, int c) 
+{
    if (a <= b && a <= c)
      return a;
    if (b <= c)
@@ -542,15 +718,18 @@ int smallest(int a, int b, int c) {
    return c;
 }
 
-int identic(unsigned char* a, unsigned char* b, int len) {
+static int identic(unsigned char* a, unsigned char* b, int len) 
+{
    int i;
    for (i = 1; i <= len; ++i)
      if (a[i] != b[i])
        return 0;
    return 1;
 }
+*/
 
-int max5(double a, double b, double c, double d, double e){
+static int max5(double a, double b, double c, double d, double e)
+{
    if(a > b && a > c && a > d && a > e) return 1;
    else if(b > c && b > d && b > e) return 2;
    else if(c > d && c > e) return 3;
@@ -558,7 +737,7 @@ int max5(double a, double b, double c, double d, double e){
    else return 5;
 }
 
-void push(struct tracer** stack, int i, int j, int mtrx,thal_results* o,int a)
+static void push(struct tracer** stack, int i, int j, int mtrx,thal_results* o,int a)
 {
    struct tracer* new_top;  
    new_top = safe_malloc(sizeof(struct tracer),o,a);
@@ -569,7 +748,8 @@ void push(struct tracer** stack, int i, int j, int mtrx,thal_results* o,int a)
    *stack = new_top;
 }
 
-void reverse(unsigned char *s) {
+static void reverse(unsigned char *s) 
+{
    int i,j;
    char c;
    for (i = 0, j = length_unsig_char(s)-1; i < j; i++, j--) {
@@ -579,7 +759,8 @@ void reverse(unsigned char *s) {
    }
 }
 
-FILE* openParamFile(char* fname,thal_results* o,int a) {
+static FILE* openParamFile(char* fname,thal_results* o,int a) 
+{
    FILE* file;
    char* paramdir;
    file = fopen(fname, "rt");
@@ -592,20 +773,22 @@ FILE* openParamFile(char* fname,thal_results* o,int a) {
 	 perror(paramdir);
 #endif
 	 free(paramdir);
-	 exit(EXIT_FAILURE);
+	 exit(-1);
       }
       free(paramdir);
    }
    return file;
 }
 
-double saltCorrectS (double mv, double dv, double dntp) {
+static double saltCorrectS (double mv, double dv, double dntp) 
+{
    if(dv<=0) dntp=dv;
    return 0.368*((log((mv+120*(sqrt(dv-dntp)))/1000)));
 }
 
 	
-void getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5],thal_results* o,int a) {
+static void getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5],thal_results* o,int a) 
+{
    int i, j, ii, jj;
    FILE *sFile, *hFile;
    sFile = openParamFile("stack.ds",o,a);
@@ -633,7 +816,8 @@ void getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5]
    fclose(hFile);
 }
 
-void getStackint2(double stackint2Entropies[5][5][5][5], double stackint2Enthalpies[5][5][5][5],thal_results* o,int a) {
+static void getStackint2(double stackint2Entropies[5][5][5][5], double stackint2Enthalpies[5][5][5][5],thal_results* o,int a) 
+{
    int i, j, ii, jj;
    FILE *sFile, *hFile;
    sFile = openParamFile("stackmm.ds",o,a);
@@ -661,8 +845,9 @@ void getStackint2(double stackint2Entropies[5][5][5][5], double stackint2Enthalp
    fclose(hFile);
 }
 
-
-void verifyStackTable(double stack[5][5][5][5], char* type) {
+/*
+static void verifyStackTable(double stack[5][5][5][5], char* type) 
+{
    
    int i, j, ii, jj;
    for (i = 0; i < 4; ++i)
@@ -676,10 +861,11 @@ void verifyStackTable(double stack[5][5][5][5], char* type) {
 		     BASES[i], BASES[j], BASES[ii], BASES[jj], type, stack[i][j][ii][jj], BASES[jj], 
 		     BASES[ii], BASES[j], BASES[i], type, stack[jj][ii][j][i]);
 }
+*/
 
-
-void getDangle(double dangleEntropies3[5][5][5], double dangleEnthalpies3[5][5][5], double dangleEntropies5[5][5][5], 
-		double dangleEnthalpies5[5][5][5],thal_results* o,int a) {
+static void getDangle(double dangleEntropies3[5][5][5], double dangleEnthalpies3[5][5][5], double dangleEntropies5[5][5][5], 
+		double dangleEnthalpies5[5][5][5],thal_results* o,int a) 
+{
    int i, j, k;
    FILE *sFile, *hFile;
    sFile = openParamFile("dangle.ds",o,a);
@@ -725,8 +911,9 @@ void getDangle(double dangleEntropies3[5][5][5], double dangleEnthalpies3[5][5][
    fclose(hFile);
 }
 
-void getLoop(double hairpinLoopEntropies[30], double interiorLoopEntropies[30], double bulgeLoopEntropies[30], 
-	      double hairpinLoopEnthalpies[30], double interiorLoopEnthalpies[30], double bulgeLoopEnthalpies[30],thal_results* o,int a) {
+static void getLoop(double hairpinLoopEntropies[30], double interiorLoopEntropies[30], double bulgeLoopEntropies[30], 
+	      double hairpinLoopEnthalpies[30], double interiorLoopEnthalpies[30], double bulgeLoopEnthalpies[30],thal_results* o,int a) 
+{
    int k;
    FILE *sFile, *hFile;
    sFile = openParamFile("loops.ds",o,a);
@@ -739,7 +926,8 @@ void getLoop(double hairpinLoopEntropies[30], double interiorLoopEntropies[30], 
    fclose(hFile);
 }
 
-void getTstack(double tstackEntropies[5][5][5][5], double tstackEnthalpies[5][5][5][5],thal_results* o,int a) {
+static void getTstack(double tstackEntropies[5][5][5][5], double tstackEnthalpies[5][5][5][5],thal_results* o,int a) 
+{
    int i1, j1, i2, j2;
    FILE *sFile, *hFile;
    sFile = openParamFile("tstack_tm_inf.ds",o,a);
@@ -766,7 +954,8 @@ void getTstack(double tstackEntropies[5][5][5][5], double tstackEnthalpies[5][5]
    fclose(hFile);
 }
 
-void getTstack2(double tstack2Entropies[5][5][5][5], double tstack2Enthalpies[5][5][5][5],thal_results* o,int a){
+static void getTstack2(double tstack2Entropies[5][5][5][5], double tstack2Enthalpies[5][5][5][5],thal_results* o,int a)
+{
    
    int i1, j1, i2, j2;
    FILE *sFile, *hFile;
@@ -795,7 +984,8 @@ void getTstack2(double tstack2Entropies[5][5][5][5], double tstack2Enthalpies[5]
    fclose(hFile);
 }
 
-void getTriloop(struct triloop** triloopEntropies, struct triloop** triloopEnthalpies, int* num,thal_results* o,int a) {
+static void getTriloop(struct triloop** triloopEntropies, struct triloop** triloopEnthalpies, int* num,thal_results* o,int a) 
+{
    FILE *sFile, *hFile;
    int i, size;
    double value;
@@ -838,7 +1028,8 @@ void getTriloop(struct triloop** triloopEntropies, struct triloop** triloopEntha
    fclose(hFile);
 }
 
-void getTetraloop(struct tetraloop** tetraloopEntropies, struct tetraloop** tetraloopEnthalpies, int* num,thal_results* o,int a) {
+static void getTetraloop(struct tetraloop** tetraloopEntropies, struct tetraloop** tetraloopEnthalpies, int* num,thal_results* o,int a) 
+{
    
    FILE *sFile, *hFile;
    int i, size;
@@ -879,7 +1070,8 @@ void getTetraloop(struct tetraloop** tetraloopEntropies, struct tetraloop** tetr
    fclose(hFile);
 }
 
-void tableStartATS(double atp_value, double atpS[5][5]){
+static void tableStartATS(double atp_value, double atpS[5][5])
+{
    
    int i, j;
    for (i = 0; i < 5; ++i)
@@ -889,7 +1081,8 @@ void tableStartATS(double atp_value, double atpS[5][5]){
 }
 
 
-void tableStartATH(double atp_value, double atpH[5][5]) {
+static void tableStartATH(double atp_value, double atpH[5][5]) 
+{
    
    int i, j;
    for (i = 0; i < 5; ++i)
@@ -899,7 +1092,7 @@ void tableStartATH(double atp_value, double atpH[5][5]) {
      atpH[0][3] = atpH[3][0] = atp_value;
 }
 
-int comp3loop(const void* loop1, const void* loop2)
+static int comp3loop(const void* loop1, const void* loop2)
 {
    
      int i;
@@ -915,7 +1108,8 @@ int comp3loop(const void* loop1, const void* loop2)
      return 0;
 }
 
-int comp4loop(const void* loop1, const void* loop2) {
+static int comp4loop(const void* loop1, const void* loop2) 
+{
    int i;
    const unsigned char* h1 = loop1;
    const struct tetraloop *h2 = loop2;
@@ -930,7 +1124,8 @@ int comp4loop(const void* loop1, const void* loop2) {
 }
 
 
-void initMatrix() {   
+static void initMatrix() 
+{   
    int i, j;
    for (i = 1; i <= len1; ++i) {
       for (j = 1; j <= len2; ++j) {
@@ -945,7 +1140,8 @@ void initMatrix() {
    }
 }
 
-void initMatrix2() {
+static void initMatrix2() 
+{
    int i, j;   
    for (i = 1; i <= len1; ++i)
      for (j = i; j <= len2; ++j)
@@ -959,7 +1155,8 @@ void initMatrix2() {
    
 }
 
-void fillMatrix(int maxLoop,thal_results *o, int a) {
+static void fillMatrix(int maxLoop,thal_results *o, int a) 
+{
    int d, i, j, ii, jj;
    double* SH;
    SH = safe_malloc(2 * sizeof(double),o,a);
@@ -1006,7 +1203,8 @@ void fillMatrix(int maxLoop,thal_results *o, int a) {
    free(SH);
 }
 
-void fillMatrix2(int maxLoop,thal_results* o, int a) {
+static void fillMatrix2(int maxLoop,thal_results* o, int a) 
+{
    int i, j;
    double* SH;
    SH = safe_malloc(2 * sizeof(double),o,a);
@@ -1034,7 +1232,8 @@ void fillMatrix2(int maxLoop,thal_results* o, int a) {
 }
 
 
-void maxTM(int i, int j) {
+static void maxTM(int i, int j) 
+{
    double T0, T1;
    double S0, S1;
    double H0, H1;
@@ -1069,7 +1268,8 @@ void maxTM(int i, int j) {
    }
 }
 
-void maxTM2(int i, int j) {
+static void maxTM2(int i, int j) 
+{
    double T0, T1;
    double S0, S1;
    double H0, H1;
@@ -1104,7 +1304,8 @@ void maxTM2(int i, int j) {
 }
 
 
-void LSH(int i, int j, double* EntropyEnthalpy) { 
+static void LSH(int i, int j, double* EntropyEnthalpy) 
+{ 
    double S1, H1, T1;
    double S2, H2, T2;
    S1 = S2 = -1.0;
@@ -1203,7 +1404,8 @@ void LSH(int i, int j, double* EntropyEnthalpy) {
    return;
 }
 
-void RSH(int i, int j, double* EntropyEnthalpy) { 
+static void RSH(int i, int j, double* EntropyEnthalpy) 
+{ 
    double S1, S2;
    double H1, H2;
    double T1, T2;
@@ -1306,7 +1508,8 @@ void RSH(int i, int j, double* EntropyEnthalpy) {
    return;
 }
 
-double Ss(int i, int j, int k) {   
+static double Ss(int i, int j, int k) 
+{   
    if(k==2) {
       if (i >= j)
 	return -1.0;
@@ -1324,7 +1527,8 @@ double Ss(int i, int j, int k) {
 }
 
 
-double Hs(int i, int j, int k) {
+static double Hs(int i, int j, int k) 
+{
    if(k==2) {
       if (i >= j)
 	return INFINITY;
@@ -1345,7 +1549,8 @@ double Hs(int i, int j, int k) {
    }
 }
 
-void CBI(int i, int j, double* EntropyEnthalpy, int traceback, int maxLoop) {
+static void CBI(int i, int j, double* EntropyEnthalpy, int traceback, int maxLoop) 
+{
    int d, ii, jj;
    for (d = j - i - 3; d >= MIN_HRPN_LOOP + 1 && d >= j - i - 2 - maxLoop; --d)
      for (ii = i + 1; ii < j - d && ii <= len1; ++ii) {
@@ -1371,7 +1576,8 @@ void CBI(int i, int j, double* EntropyEnthalpy, int traceback, int maxLoop) {
    return;
 }
 
-void calc_hairpin(int i, int j, double* EntropyEnthalpy, int traceback) {
+static void calc_hairpin(int i, int j, double* EntropyEnthalpy, int traceback) 
+{
    int loopSize = j - i - 1;
    double T1, T2;
    T1 = T2 = -INFINITY;
@@ -1437,7 +1643,8 @@ void calc_hairpin(int i, int j, double* EntropyEnthalpy, int traceback) {
 }
 
 
-void calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int traceback, int maxLoop) {
+static void calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int traceback, int maxLoop) 
+{
    int loopSize1, loopSize2, loopSize;
    double T1, T2;
    double S,H;
@@ -1569,7 +1776,8 @@ void calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, 
    return;
 }
 
-void calc_bulge_internal2(int i, int j, int ii, int jj, double* EntropyEnthalpy, int traceback, int maxLoop) {
+static void calc_bulge_internal2(int i, int j, int ii, int jj, double* EntropyEnthalpy, int traceback, int maxLoop) 
+{
    int loopSize1, loopSize2, loopSize;
    double T1, T2;
    double S,H;
@@ -1731,7 +1939,7 @@ void calc_bulge_internal2(int i, int j, int ii, int jj, double* EntropyEnthalpy,
    return;
 }
 
-void calc_terminal_bp(double temp) { /* compute exterior loop */
+static void calc_terminal_bp(double temp) { /* compute exterior loop */
    int i;
    int max;
    SEND5(0) = SEND5(1) = -1.0;
@@ -1807,7 +2015,8 @@ void calc_terminal_bp(double temp) { /* compute exterior loop */
    }
 }
 
-double END5_1(int i,int hs) {
+static double END5_1(int i,int hs) 
+{
    int k, max_tm_flag;
    double max_tm; /* energy min */
    double T1, T2;
@@ -1851,7 +2060,8 @@ double END5_1(int i,int hs) {
    return S_max;
 }
 
-double END5_2(int i,int hs) {
+static double END5_2(int i,int hs) 
+{
    int k,max_tm_flag;
    double max_tm;
    double T1, T2;
@@ -1894,7 +2104,8 @@ double END5_2(int i,int hs) {
    return S_max;
 }
 
-double END5_3(int i,int hs) {
+static double END5_3(int i,int hs) 
+{
    int k, max_tm_flag;
    double max_tm;
    double T1, T2;
@@ -1937,7 +2148,8 @@ double END5_3(int i,int hs) {
    return S_max;
 }
 
-double END5_4(int i,int hs){
+static double END5_4(int i,int hs)
+{
    int k, max_tm_flag;
    double max_tm;
    double T1, T2;
@@ -1981,32 +2193,39 @@ double END5_4(int i,int hs){
 }
 
 
-double Sd5(int i, int j) {
+static double Sd5(int i, int j) 
+{
    return dangleEntropies5[numSeq1[i]][numSeq1[j]][numSeq1[j - 1]];
 }
 
-double Hd5(int i, int j) {
+static double Hd5(int i, int j) 
+{
    return dangleEnthalpies5[numSeq1[i]][numSeq1[j]][numSeq1[j - 1]];
 }
 
-double Sd3(int i, int j) {
+static double Sd3(int i, int j) 
+{
    return dangleEntropies3[numSeq1[i]][numSeq1[i+1]][numSeq1[j]];
 }
 
-double Hd3(int i, int j) {
+static double Hd3(int i, int j) 
+{
    return dangleEnthalpies3[numSeq1[i]][numSeq1[i+1]][numSeq1[j]];
 }
 
-double Ststack(int i, int j) {
+static double Ststack(int i, int j) 
+{
    return tstack2Entropies[numSeq1[i]][numSeq1[i+1]][numSeq1[j]][numSeq1[j-1]];
 }
 
-double Htstack(int i, int j) { /* e.g AG_TC 210 */
+static double Htstack(int i, int j) 
+{ /* e.g AG_TC 210 */
    return tstack2Enthalpies[numSeq1[i]][numSeq1[i+1]][numSeq1[j]][numSeq1[j-1]];
 }
 
 /* Return 1 if string is symmetrical, 0 otherwise. */
-int symmetry_thermo(const unsigned char* seq) {
+static int symmetry_thermo(const unsigned char* seq) 
+{
    register char s;
    register char e;
    const unsigned char *seq_end=seq;
@@ -2040,7 +2259,8 @@ int symmetry_thermo(const unsigned char* seq) {
    return 1;
 }
 
-int length_unsig_char(const unsigned char * str) {
+static int length_unsig_char(const unsigned char * str) 
+{
    int i = 0;
    while(*(str++)) {
       i++;
@@ -2050,7 +2270,7 @@ int length_unsig_char(const unsigned char * str) {
    return i;
 }
 
-void tracebacku(int* bp, int maxLoop,thal_results* o, int a) /* traceback for unimolecular structure */
+static void tracebacku(int* bp, int maxLoop,thal_results* o, int a) /* traceback for unimolecular structure */
 {
    int i, j;
    i = j = 0;
@@ -2170,7 +2390,7 @@ void tracebacku(int* bp, int maxLoop,thal_results* o, int a) /* traceback for un
 }
 
 
-void traceback(int i, int j, double RT, int* ps1, int* ps2, int maxLoop,thal_results* o, int a)
+static void traceback(int i, int j, double RT, int* ps1, int* ps2, int maxLoop,thal_results* o, int a)
 {
    int d, ii, jj, done;
    double* SH;
@@ -2217,7 +2437,8 @@ void traceback(int i, int j, double RT, int* ps1, int* ps2, int maxLoop,thal_res
    free(SH);
 }
 
-void drawDimer(int* ps1, int* ps2, double temp, double H, double S, int temponly, double t37, thal_results *o, int a) {
+static void drawDimer(int* ps1, int* ps2, double temp, double H, double S, int temponly, double t37, thal_results *o, int a) 
+{
    int i, j, k, numSS1, numSS2, N;
    char* duplex[4];
    double G, t;
@@ -2340,7 +2561,7 @@ void drawDimer(int* ps1, int* ps2, double temp, double H, double S, int temponly
    return;
 }
 
-void drawHairpin(int* bp, double mh, double ms, int temponly, double temp, thal_results *o, int a)
+static void drawHairpin(int* bp, double mh, double ms, int temponly, double temp, thal_results *o, int a)
 {
    /* Plain text */
    int i, N;
@@ -2401,7 +2622,8 @@ void drawHairpin(int* bp, double mh, double ms, int temponly, double temp, thal_
 }
 
 
-int equal(double a, double b) {
+static int equal(double a, double b) 
+{
 #ifdef INTEGER
    return a == b;
 #endif
@@ -2414,7 +2636,8 @@ int equal(double a, double b) {
      return 1;
 }
 
-void strcatc(char* str, char c) {
+static void strcatc(char* str, char c) 
+{
    str[strlen(str) + 1] = 0;
    str[strlen(str)] = c;
 }

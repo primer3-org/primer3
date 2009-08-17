@@ -93,7 +93,7 @@ if(a.debug == 0) {
 #ifdef DEBUG
       fprintf(stderr, usage, argv[0]);
 #endif
-      return EXIT_FAILURE;
+      return -1;
    }
    /* BEGIN: READ the INPUT */
    for(i = 1; i < argc; ++i) {
@@ -261,6 +261,10 @@ if(a.debug == 0) {
       fprintf(stderr, usage, argv[0]);
       exit(-1);
    }
+   
+   /* read thermodynamic parameters */
+   get_thermodynamic_values(&o, a.fail_stop);
+
    /* execute thermodynamical alignemnt */
    if(a.dimer==0 && oligo1!=NULL){
       thal(oligo1,oligo1,&a,&o);   
@@ -276,5 +280,7 @@ if(a.debug == 0) {
    }
    if(a.temponly==1)
      printf("%f\n",o.temp);
+   /* cleanup */
+   destroy_thal_structures();
    return EXIT_SUCCESS;
 }
