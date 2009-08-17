@@ -16,6 +16,8 @@ USAGE: ../src/ntthal OPTIONS oligo
 -maxloop size        - the maximum size of secondary structures loops.
                        Default is 30 (this is maximum allowed length, currently).
 
+-path <path>         - the path to the thermodynamic parameter files
+
 -s1 DNA_oligomer
 
 -s2 DNA_oligomer
@@ -43,6 +45,8 @@ USAGE: ../src/ntthal OPTIONS oligo
 
 -maxloop size        - the maximum size of secondary structures loops.
                        Default is 30 (this is maximum allowed length, currently).
+
+-path <path>         - the path to the thermodynamic parameter files
 
 -s1 DNA_oligomer
 
@@ -82,27 +86,7 @@ USAGE: ../src/ntthal OPTIONS oligo
 -maxloop size        - the maximum size of secondary structures loops.
                        Default is 30 (this is maximum allowed length, currently).
 
--s1 DNA_oligomer
-
--s2 DNA_oligomer
-
-USAGE: ../src/ntthal OPTIONS oligo
--mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
-
--dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
-
--n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
-
--d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
-
--a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
-
--t  temp             - temperature at which duplex is calculated, by default 37C
-
--r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
-
--maxloop size        - the maximum size of secondary structures loops.
-                       Default is 30 (this is maximum allowed length, currently).
+-path <path>         - the path to the thermodynamic parameter files
 
 -s1 DNA_oligomer
 
@@ -126,27 +110,7 @@ USAGE: ../src/ntthal OPTIONS oligo
 -maxloop size        - the maximum size of secondary structures loops.
                        Default is 30 (this is maximum allowed length, currently).
 
--s1 DNA_oligomer
-
--s2 DNA_oligomer
-
-USAGE: ../src/ntthal OPTIONS oligo
--mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
-
--dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
-
--n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
-
--d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
-
--a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
-
--t  temp             - temperature at which duplex is calculated, by default 37C
-
--r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
-
--maxloop size        - the maximum size of secondary structures loops.
-                       Default is 30 (this is maximum allowed length, currently).
+-path <path>         - the path to the thermodynamic parameter files
 
 -s1 DNA_oligomer
 
@@ -170,27 +134,7 @@ USAGE: ../src/ntthal OPTIONS oligo
 -maxloop size        - the maximum size of secondary structures loops.
                        Default is 30 (this is maximum allowed length, currently).
 
--s1 DNA_oligomer
-
--s2 DNA_oligomer
-
-USAGE: ../src/ntthal OPTIONS oligo
--mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
-
--dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
-
--n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
-
--d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
-
--a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
-
--t  temp             - temperature at which duplex is calculated, by default 37C
-
--r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
-
--maxloop size        - the maximum size of secondary structures loops.
-                       Default is 30 (this is maximum allowed length, currently).
+-path <path>         - the path to the thermodynamic parameter files
 
 -s1 DNA_oligomer
 
@@ -214,27 +158,7 @@ USAGE: ../src/ntthal OPTIONS oligo
 -maxloop size        - the maximum size of secondary structures loops.
                        Default is 30 (this is maximum allowed length, currently).
 
--s1 DNA_oligomer
-
--s2 DNA_oligomer
-
-USAGE: ../src/ntthal OPTIONS oligo
--mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
-
--dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
-
--n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
-
--d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
-
--a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
-
--t  temp             - temperature at which duplex is calculated, by default 37C
-
--r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
-
--maxloop size        - the maximum size of secondary structures loops.
-                       Default is 30 (this is maximum allowed length, currently).
+-path <path>         - the path to the thermodynamic parameter files
 
 -s1 DNA_oligomer
 
@@ -257,6 +181,104 @@ USAGE: ../src/ntthal OPTIONS oligo
 
 -maxloop size        - the maximum size of secondary structures loops.
                        Default is 30 (this is maximum allowed length, currently).
+
+-path <path>         - the path to the thermodynamic parameter files
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-path <path>         - the path to the thermodynamic parameter files
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-path <path>         - the path to the thermodynamic parameter files
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-path <path>         - the path to the thermodynamic parameter files
+
+-s1 DNA_oligomer
+
+-s2 DNA_oligomer
+
+USAGE: ../src/ntthal OPTIONS oligo
+-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM
+
+-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM
+
+-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM
+
+-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM
+
+-a  mode             - alignment type, END1, END2, ANY and HAIRPIN, by default ANY (when duplex)
+
+-t  temp             - temperature at which duplex is calculated, by default 37C
+
+-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed
+
+-maxloop size        - the maximum size of secondary structures loops.
+                       Default is 30 (this is maximum allowed length, currently).
+
+-path <path>         - the path to the thermodynamic parameter files
 
 -s1 DNA_oligomer
 
@@ -284,6 +306,8 @@ USAGE: ../src/ntthal OPTIONS oligo
 
 -maxloop size        - the maximum size of secondary structures loops.
                        Default is 30 (this is maximum allowed length, currently).
+
+-path <path>         - the path to the thermodynamic parameter files
 
 -s1 DNA_oligomer
 
@@ -383,6 +407,8 @@ USAGE: ../src/ntthal OPTIONS oligo
 
 -maxloop size        - the maximum size of secondary structures loops.
                        Default is 30 (this is maximum allowed length, currently).
+
+-path <path>         - the path to the thermodynamic parameter files
 
 -s1 DNA_oligomer
 
