@@ -59,7 +59,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* Some function prototypes */
 static void   print_usage();
 static void   sig_handler(int);
-static void   read_thermodynamic_params(p3_global_settings *);
+static void   read_thermodynamic_parameters(p3_global_settings *);
 
 /* Other global variables. */
 static const char * pr_release = "primer3 release 2.0.0";
@@ -217,7 +217,7 @@ main(int argc, char *argv[]) {
                  &read_boulder_record_res);
     /* Check if the thermodynamical alignment flag was given */ 
     if (global_pa->thermodynamical_alignment == 1)
-      read_thermodynamic_params(global_pa);
+      read_thermodynamic_parameters(global_pa);
   }
 
   /* We also need to print out errors here because the loop erases all
@@ -279,9 +279,9 @@ main(int argc, char *argv[]) {
       break; /* There were no more boulder records */
     }
 
-    /* Check if the thermodynamical alignment flag was given */
-    if (global_pa->thermodynamical_alignment == 1)
-      read_thermodynamic_params(global_pa);
+    /* Check if the thermodynamical alignment flag was given and the parameters weren't read yet */
+    if ((global_pa->thermodynamical_alignment == 1) && (global_pa->read_thermodynamic_params == 0))
+      read_thermodynamic_parameters(global_pa);
     
     input_found = 1;
     if ((global_pa->primer_task == pick_detection_primers) 
@@ -414,12 +414,11 @@ main(int argc, char *argv[]) {
 }
 
 /* Reads the thermodynamic parameters if the thermodynamic alignment tag was set to 1 */
-static void read_thermodynamic_params(p3_global_settings *pa)
+static void read_thermodynamic_parameters(p3_global_settings *pa)
 {
   thal_results o;
   /* if already read the parameters, nothing to do */
-  if (pa->read_thermodynamical_params == 1)
-    return;
+  if (pa->read_thermodynamic_params == 1) return;
   /* check that the path to the parameters folder was given */
   if (pa->thermodynamic_params_path == NULL) {
 #ifndef OS_WIN
@@ -443,7 +442,7 @@ static void read_thermodynamic_params(p3_global_settings *pa)
   /* read in the thermodynamic parameters */
   get_thermodynamic_values(pa->thermodynamic_params_path, &o, 1);
   /* mark as read, so we do not read them again */
-  pa->read_thermodynamical_params = 1;
+  pa->read_thermodynamic_params = 1;
 }
 
 /* Print out copyright and a short usage message*/
