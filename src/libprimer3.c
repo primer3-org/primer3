@@ -103,13 +103,14 @@ typedef struct thal_arg_holder {
    thal_args *any;
    thal_args *end1;
    thal_args *end2;
-   thal_args *hairpin;
+   thal_args *hairpin_th;
 } thal_arg_holder;
 
 static jmp_buf _jmp_buf;
 
 /* Function declarations. */
 
+static void  pr_set_default_global_args(p3_global_settings *);
 static void _adjust_seq_args(const p3_global_settings *pa,
                              seq_args *sa,
                              pr_append_str *nonfatal_err,
@@ -389,7 +390,7 @@ static void op_set_low_tm(primer_rec *);
 static void op_set_overlaps_excluded_region(primer_rec *);
 static void op_set_high_self_any(primer_rec *oligo);
 static void op_set_high_self_end(primer_rec *oligo);
-static void op_set_high_hairpin(primer_rec *oligo);
+static void op_set_high_hairpin_th(primer_rec *oligo);
 static void op_set_no_gc_glamp(primer_rec *);
 static void op_set_too_many_gc_at_end(primer_rec *);
 static void op_set_high_end_stability(primer_rec *);
@@ -485,7 +486,7 @@ p3_destroy_global_settings(p3_global_settings *a) {
 }
 
 /* Write the default values in global settings */
-void
+static void
 pr_set_default_global_args(p3_global_settings *a) {
   memset(a, 0, sizeof(*a));
 
@@ -511,7 +512,7 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->p_args.max_self_end      = 300;
   a->p_args.max_self_any_th   = 47.0;
   a->p_args.max_self_end_th   = 47.0;
-  a->p_args.max_hairpin       = 47.0;
+  a->p_args.max_hairpin_th       = 47.0;
   a->p_args.max_poly_x        = 5;
   a->p_args.max_repeat_compl  = 1200;
   a->p_args.min_quality       = 0;
@@ -535,7 +536,7 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->p_args.weights.compl_end     = 0;
   a->p_args.weights.compl_any_th  = 0;
   a->p_args.weights.compl_end_th  = 0;
-  a->p_args.weights.hairpin       = 0;
+  a->p_args.weights.hairpin_th       = 0;
   a->p_args.weights.temp_cutoff   = 5;
   a->p_args.weights.num_ns        = 0;
   a->p_args.weights.repeat_sim    = 0;
@@ -553,9 +554,9 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->pair_compl_end      = 300;
   a->pair_compl_any_th   = 47.0;
   a->pair_compl_end_th   = 47.0;
-  a->pair_hairpin        = 47.0;
-  a->thermodynamical_alignment = 0;
-  a->read_thermodynamic_params = 0;
+  a->pair_hairpin_th        = 47.0;
+  a->thermodynamic_alignment = 0;
+  a->thermodynamic_path_changed = 1;   /* mark as changed first time so we read the parameter files if the thermodynamic model is selected */
   a->thermodynamic_params_path = NULL;
   a->liberal_base        = 0;
   a->primer_task         = pick_detection_primers;
@@ -600,7 +601,7 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->o_args.max_self_end    = 1200;
   a->o_args.max_self_any_th = 47.0;
   a->o_args.max_self_end_th = 47.0;
-  a->o_args.max_hairpin     = 47.0;
+  a->o_args.max_hairpin_th     = 47.0;
   a->o_args.max_repeat_compl= 1200;
 
   a->o_args.min_quality           = 0;
@@ -619,7 +620,7 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->o_args.weights.compl_end     = 0;
   a->o_args.weights.compl_any_th  = 0;
   a->o_args.weights.compl_end_th  = 0;
-  a->o_args.weights.hairpin       = 0;
+  a->o_args.weights.hairpin_th       = 0;
   a->o_args.weights.num_ns        = 0;
   a->o_args.weights.repeat_sim    = 0;
   a->o_args.weights.seq_quality   = 0;
@@ -632,7 +633,7 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->pr_pair_weights.compl_end       = 0;
   a->pr_pair_weights.compl_any_th    = 0;
   a->pr_pair_weights.compl_end_th    = 0;
-  a->pr_pair_weights.hairpin         = 0;
+  a->pr_pair_weights.hairpin_th         = 0;
   a->pr_pair_weights.temp_cutoff     = 5;
   a->pr_pair_weights.repeat_sim      = 0;
 
@@ -801,7 +802,7 @@ static dpal_arg_holder *dpal_arg_to_use = NULL;
 /* ============================================================ */
 /* Create the thal arg holder */
 thal_arg_holder *
-  create_thal_arg_holder () 
+create_thal_arg_holder () 
 {
    
    thal_arg_holder *h
@@ -819,20 +820,20 @@ thal_arg_holder *
    set_thal_default_args(h->end2);
    h->end2->type = 3;
    
-   h->hairpin  = (thal_args *) pr_safe_malloc(sizeof(*h->hairpin));
-   set_thal_default_args(h->hairpin); 
-   h->hairpin->type = 4;
+   h->hairpin_th  = (thal_args *) pr_safe_malloc(sizeof(*h->hairpin_th));
+   set_thal_default_args(h->hairpin_th); 
+   h->hairpin_th->type = 4;
    return h;
 }
 
 /* Free the thal arg holder */
 void
-  destroy_thal_arg_holder(thal_arg_holder *h) 
+destroy_thal_arg_holder(thal_arg_holder *h) 
 {  
    free(h->any);
    free(h->end1);
    free(h->end2);
-   free(h->hairpin);
+   free(h->hairpin_th);
    free(h);
 }
 
@@ -867,7 +868,8 @@ destroy_p3retval(p3retval *state)
   free(state);
 }
 
-void destroy_dpal_thal_arg_holder() {
+void 
+destroy_dpal_thal_arg_holder() {
    if(dpal_arg_to_use)
      destroy_dpal_arg_holder(dpal_arg_to_use);
    if(thal_arg_to_use)
@@ -1346,7 +1348,7 @@ choose_internal_oligo(p3retval *retval,
         && (h->quality < min)
         && (OK_OR_MUST_USE(h))) {
 
-      if (h->self_any == ALIGN_SCORE_UNDEF && pa->thermodynamical_alignment==0) {
+      if (h->self_any == ALIGN_SCORE_UNDEF && pa->thermodynamic_alignment==0) {
 
         _pr_substr(sa->trimmed_seq, h->start, h->length, oligo_seq);
         p3_reverse_complement(oligo_seq, revc_oligo_seq);
@@ -1356,7 +1358,7 @@ choose_internal_oligo(p3retval *retval,
         if (!OK_OR_MUST_USE(h)) continue;
       }
        
-       if (h->self_any_th == ALIGN_SCORE_UNDEF_TH && pa->thermodynamical_alignment==1) {
+       if (h->self_any_th == ALIGN_SCORE_UNDEF_TH && pa->thermodynamic_alignment==1) {
 	  _pr_substr(sa->trimmed_seq, h->start, h->length, oligo_seq);
 	  p3_reverse_complement(oligo_seq, revc_oligo_seq);
 	  
@@ -1423,7 +1425,7 @@ add_must_use_warnings(pr_append_str *warning,
   if (stats->compl_any_th) pr_append_w_sep(&s, sep, "High self complementarity (thermod. approach)");
      if (stats->compl_end_th)
      pr_append_w_sep(&s, sep, "High end self complementarity (thermod. approach)");
-  if (stats->hairpin) pr_append_w_sep(&s, sep, "High hairpin stability (thermod. approach)");
+  if (stats->hairpin_th) pr_append_w_sep(&s, sep, "High hairpin stability (thermod. approach)");
   if (stats->repeat_score)
     pr_append_w_sep(&s, sep, "High similarity to mispriming or mishyb library");
   if (stats->poly_x) pr_append_w_sep(&s, sep, "Long poly-X");
@@ -2362,7 +2364,7 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
  * calculates its length and it will add aprimer of any length to the
  * list */
 static int
-  add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oligo,
+add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oligo,
 			     const p3_global_settings *pa,
 			     const seq_args *sa,
 			     const dpal_arg_holder *dpal_arg_to_use,
@@ -2796,7 +2798,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
       || retval->output_type == primer_list
       || po_args->weights.compl_any
       || po_args->weights.compl_end)
-      && pa->thermodynamical_alignment==0) {
+      && pa->thermodynamic_alignment==0) {
 
     oligo_compl(h, po_args,
                 stats, dpal_arg_to_use,
@@ -2815,7 +2817,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
        || retval->output_type == primer_list
        || po_args->weights.compl_any_th
        || po_args->weights.compl_end_th)
-       && pa->thermodynamical_alignment==1
+       && pa->thermodynamic_alignment==1
        ) 
      {
 	oligo_compl_thermod(h, po_args,
@@ -2833,10 +2835,10 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
    if ((must_use
 	|| pa->file_flag
 	|| retval->output_type == primer_list
-	|| po_args->weights.hairpin
+	|| po_args->weights.hairpin_th
 	|| po_args->weights.compl_any_th
 	|| po_args->weights.compl_end_th)
-       && pa->thermodynamical_alignment==1
+       && pa->thermodynamic_alignment==1
        ) {
       oligo_hairpin(h, po_args,
 		    stats, thal_arg_to_use,
@@ -2847,7 +2849,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
 	 return;
       }
    } else   {
-      h->hairpin = ALIGN_SCORE_UNDEF_TH;
+      h->hairpin_th = ALIGN_SCORE_UNDEF_TH;
    }
    /* end of thermod. approach */
   if (((must_use
@@ -2856,7 +2858,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
       || po_args->weights.repeat_sim
       || ((OT_RIGHT == l || OT_LEFT == l)
           && pa->p_args.weights.template_mispriming))
-      && pa->thermodynamical_alignment==0) || (pa->thermodynamical_alignment==1 && po_args->weights.repeat_sim)) {
+      && pa->thermodynamic_alignment==0) || (pa->thermodynamic_alignment==1 && po_args->weights.repeat_sim)) {
 
     oligo_mispriming(h, pa, sa, l, stats,
                      dpal_arg_to_use->local_end,
@@ -2867,7 +2869,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
        || pa->file_flag
        || retval->output_type == primer_list
        || ((OT_RIGHT == l || OT_LEFT == l)
-	   && pa->p_args.weights.template_mispriming_th))  && pa->thermodynamical_alignment==1
+	   && pa->p_args.weights.template_mispriming_th))  && pa->thermodynamic_alignment==1
        ) {
       
       oligo_mispriming_thermod(h, pa, sa, l, stats,
@@ -3065,28 +3067,28 @@ p_obj_fn(const p3_global_settings *pa,
       if (pa->p_args.weights.length_gt && h->length > pa->p_args.opt_size)
            sum += pa->p_args.weights.length_gt * (h->length - pa->p_args.opt_size);
      /* BEGIN: secondary structures */
-      if (pa->p_args.weights.compl_any && pa->thermodynamical_alignment==0)
+      if (pa->p_args.weights.compl_any && pa->thermodynamic_alignment==0)
            sum += pa->p_args.weights.compl_any * h->self_any
              / PR_ALIGN_SCORE_PRECISION;
      
-     if (pa->p_args.weights.compl_any_th && pa->thermodynamical_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) <= h->self_any_th))
+     if (pa->p_args.weights.compl_any_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) <= h->self_any_th))
        sum += pa->p_args.weights.compl_any_th * (h->self_any_th - (h->temp - pa->p_args.weights.temp_cutoff - 1.0)); /* -0.5 is added for the case where == */
-     if (pa->p_args.weights.compl_any_th && pa->thermodynamical_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) > h->self_any_th))
+     if (pa->p_args.weights.compl_any_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) > h->self_any_th))
        sum += pa->p_args.weights.compl_any_th * (1/(h->temp - pa->p_args.weights.temp_cutoff + 1.0 - h->self_any_th));
      
-     if (pa->p_args.weights.compl_end && pa->thermodynamical_alignment==0)
+     if (pa->p_args.weights.compl_end && pa->thermodynamic_alignment==0)
            sum += pa->p_args.weights.compl_end * h->self_end
              / PR_ALIGN_SCORE_PRECISION;
      
-     if (pa->p_args.weights.compl_end_th && pa->thermodynamical_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) <= h->self_end_th))
+     if (pa->p_args.weights.compl_end_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) <= h->self_end_th))
        sum += pa->p_args.weights.compl_end_th * (h->self_end_th - (h->temp - pa->p_args.weights.temp_cutoff - 1.0));
-     if (pa->p_args.weights.compl_end_th && pa->thermodynamical_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) > h->self_end_th))
+     if (pa->p_args.weights.compl_end_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) > h->self_end_th))
        sum += pa->p_args.weights.compl_end_th * (1/(h->temp - pa->p_args.weights.temp_cutoff + 1.0 - h->self_end_th));
      
-     if (pa->p_args.weights.hairpin && pa->thermodynamical_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) <= h->hairpin))
-       sum += pa->p_args.weights.hairpin * (h->hairpin - (h->temp - pa->p_args.weights.temp_cutoff - 1.0));
-     if (pa->p_args.weights.hairpin && pa->thermodynamical_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) > h->hairpin))
-       sum += pa->p_args.weights.hairpin * (1/(h->temp - pa->p_args.weights.temp_cutoff + 1.0 - h->hairpin));
+     if (pa->p_args.weights.hairpin_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) <= h->hairpin_th))
+       sum += pa->p_args.weights.hairpin_th * (h->hairpin_th - (h->temp - pa->p_args.weights.temp_cutoff - 1.0));
+     if (pa->p_args.weights.hairpin_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) > h->hairpin_th))
+       sum += pa->p_args.weights.hairpin_th * (1/(h->temp - pa->p_args.weights.temp_cutoff + 1.0 - h->hairpin_th));
        /* END: secondary structures */
      
       if (pa->p_args.weights.num_ns)
@@ -3109,14 +3111,14 @@ p_obj_fn(const p3_global_settings *pa,
            sum += pa->p_args.weights.seq_quality *
                              (pa->quality_range_max - h->seq_quality);
 
-      if (pa->p_args.weights.template_mispriming && pa->thermodynamical_alignment==0) {
+      if (pa->p_args.weights.template_mispriming && pa->thermodynamic_alignment==0) {
         PR_ASSERT(oligo_max_template_mispriming(h) != ALIGN_SCORE_UNDEF);
         sum += pa->p_args.weights.template_mispriming *
           oligo_max_template_mispriming(h)
           / PR_ALIGN_SCORE_PRECISION;
       }
 					    
-      if (pa->p_args.weights.template_mispriming_th && pa->thermodynamical_alignment==1) {
+      if (pa->p_args.weights.template_mispriming_th && pa->thermodynamic_alignment==1) {
 	 PR_ASSERT(oligo_max_template_mispriming_thermod(h) != ALIGN_SCORE_UNDEF_TH);
 	 if((h->temp - pa->p_args.weights.temp_cutoff) <= oligo_max_template_mispriming_thermod(h))
 	 sum += pa->p_args.weights.template_mispriming_th * 
@@ -3143,25 +3145,25 @@ p_obj_fn(const p3_global_settings *pa,
          sum += pa->o_args.weights.length_lt * (pa->o_args.opt_size - h->length);
       if(pa->o_args.weights.length_gt && h->length  > pa->o_args.opt_size)
          sum += pa->o_args.weights.length_gt * (h->length - pa->o_args.opt_size);
-      if(pa->o_args.weights.compl_any && pa->thermodynamical_alignment==0)
+      if(pa->o_args.weights.compl_any && pa->thermodynamic_alignment==0)
          sum += pa->o_args.weights.compl_any * h->self_any / PR_ALIGN_SCORE_PRECISION;
-      if(pa->o_args.weights.compl_end && pa->thermodynamical_alignment==0)
+      if(pa->o_args.weights.compl_end && pa->thermodynamic_alignment==0)
          sum += pa->o_args.weights.compl_end * h->self_end / PR_ALIGN_SCORE_PRECISION;
      /* begin thermodynamical approach */
-     if (pa->o_args.weights.compl_any_th && pa->thermodynamical_alignment==1 && ((h->temp - pa->o_args.weights.temp_cutoff) <= h->self_any_th))
+     if (pa->o_args.weights.compl_any_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->o_args.weights.temp_cutoff) <= h->self_any_th))
        sum += pa->o_args.weights.compl_any_th * (h->self_any_th - (h->temp - pa->o_args.weights.temp_cutoff - 1.0)); /* -0.5 is added for the case where == */
-     if (pa->o_args.weights.compl_any_th && pa->thermodynamical_alignment==1 && ((h->temp - pa->o_args.weights.temp_cutoff) > h->self_any_th))
+     if (pa->o_args.weights.compl_any_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->o_args.weights.temp_cutoff) > h->self_any_th))
        sum += pa->o_args.weights.compl_any_th * (1/(h->temp - pa->o_args.weights.temp_cutoff + 1.0 - h->self_any_th));
      
-     if (pa->o_args.weights.compl_end_th && pa->thermodynamical_alignment==1 && ((h->temp - pa->o_args.weights.temp_cutoff) <= h->self_end_th))
+     if (pa->o_args.weights.compl_end_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->o_args.weights.temp_cutoff) <= h->self_end_th))
        sum += pa->o_args.weights.compl_end_th * (h->self_end_th - (h->temp - pa->o_args.weights.temp_cutoff - 1.0));
-     if (pa->o_args.weights.compl_end_th && pa->thermodynamical_alignment==1 && ((h->temp - pa->o_args.weights.temp_cutoff) > h->self_end_th))
+     if (pa->o_args.weights.compl_end_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->o_args.weights.temp_cutoff) > h->self_end_th))
        sum += pa->o_args.weights.compl_end_th * (1/(h->temp - pa->o_args.weights.temp_cutoff + 1.0 - h->self_end_th));
      
-     if (pa->o_args.weights.hairpin && pa->thermodynamical_alignment==1 && ((h->temp - pa->o_args.weights.temp_cutoff) <= h->hairpin))
-       sum += pa->o_args.weights.hairpin * (h->hairpin - (h->temp - pa->o_args.weights.temp_cutoff - 1.0));
-     if (pa->o_args.weights.hairpin && pa->thermodynamical_alignment==1 && ((h->temp - pa->o_args.weights.temp_cutoff) > h->hairpin))
-       sum += pa->o_args.weights.hairpin * (1/(h->temp - pa->o_args.weights.temp_cutoff + 1.0 - h->hairpin));
+     if (pa->o_args.weights.hairpin_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->o_args.weights.temp_cutoff) <= h->hairpin_th))
+       sum += pa->o_args.weights.hairpin_th * (h->hairpin_th - (h->temp - pa->o_args.weights.temp_cutoff - 1.0));
+     if (pa->o_args.weights.hairpin_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->o_args.weights.temp_cutoff) > h->hairpin_th))
+       sum += pa->o_args.weights.hairpin_th * (1/(h->temp - pa->o_args.weights.temp_cutoff + 1.0 - h->hairpin_th));
      /* end thermodynamical approach */
       if(pa->o_args.weights.num_ns)
          sum += pa->o_args.weights.num_ns * h->num_ns;
@@ -3180,12 +3182,14 @@ p_obj_fn(const p3_global_settings *pa,
 
 /* Return max of h->template_mispriming and h->template_mispriming_r (max
    template mispriming on either strand). */
-short oligo_max_template_mispriming(const primer_rec *h) {
+short 
+oligo_max_template_mispriming(const primer_rec *h) {
    return h->template_mispriming > h->template_mispriming_r ?
      h->template_mispriming : h->template_mispriming_r;
 }
 
-double oligo_max_template_mispriming_thermod(const primer_rec *h) {
+double 
+oligo_max_template_mispriming_thermod(const primer_rec *h) {
    return h->template_mispriming_th > h->template_mispriming_r_th ?
      h->template_mispriming_th : h->template_mispriming_r_th;
 }
@@ -3406,7 +3410,7 @@ characterize_pair(p3retval *retval,
   p3_reverse_complement(s2, s2_rev);
 
 
-  if (retval->fwd.oligo[m].self_any == ALIGN_SCORE_UNDEF && pa->thermodynamical_alignment==0) {
+  if (retval->fwd.oligo[m].self_any == ALIGN_SCORE_UNDEF && pa->thermodynamic_alignment==0) {
     /* We have not yet computed the 'self_any' paramter,
        which is an estimate of self primer-dimer and secondary
        structure propensity. */
@@ -3420,7 +3424,7 @@ characterize_pair(p3retval *retval,
     }
   }
    /* Thermodynamic approach, fwd-primer */
-   if (retval->fwd.oligo[m].self_any_th == ALIGN_SCORE_UNDEF_TH && pa->thermodynamical_alignment==1) {
+   if (retval->fwd.oligo[m].self_any_th == ALIGN_SCORE_UNDEF_TH && pa->thermodynamic_alignment==1) {
       oligo_compl_thermod(&retval->fwd.oligo[m], &pa->p_args,
 			  &retval->fwd.expl, thal_arg_to_use, s1, s1); /* ! s1, s1_rev */
       
@@ -3430,7 +3434,7 @@ characterize_pair(p3retval *retval,
 	 else pair_failed_flag = 1;
       }
    }   
-   if (retval->fwd.oligo[m].hairpin == ALIGN_SCORE_UNDEF_TH && pa->thermodynamical_alignment==1) {
+   if (retval->fwd.oligo[m].hairpin_th == ALIGN_SCORE_UNDEF_TH && pa->thermodynamic_alignment==1) {
       oligo_hairpin(&retval->fwd.oligo[m], &pa->p_args,
 			  &retval->fwd.expl, thal_arg_to_use, s1);
       if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
@@ -3442,7 +3446,7 @@ characterize_pair(p3retval *retval,
    
    /* End of thermodynamic approach */
    
-  if (retval->rev.oligo[n].self_any == ALIGN_SCORE_UNDEF && pa->thermodynamical_alignment==0) {
+  if (retval->rev.oligo[n].self_any == ALIGN_SCORE_UNDEF && pa->thermodynamic_alignment==0) {
     oligo_compl(&retval->rev.oligo[n], &pa->p_args,
                 &retval->rev.expl, dpal_arg_to_use, s2_rev, s2);
 
@@ -3453,7 +3457,7 @@ characterize_pair(p3retval *retval,
     }
   }
    /* Thermodynamic approach */
-   if (retval->rev.oligo[n].self_any_th == ALIGN_SCORE_UNDEF_TH && pa->thermodynamical_alignment==1) {
+   if (retval->rev.oligo[n].self_any_th == ALIGN_SCORE_UNDEF_TH && pa->thermodynamic_alignment==1) {
       oligo_compl_thermod(&retval->rev.oligo[n], &pa->p_args,
 			  &retval->rev.expl, thal_arg_to_use, s2_rev, s2_rev); /* s2_rev, s2 */
       
@@ -3463,7 +3467,7 @@ characterize_pair(p3retval *retval,
 	 else pair_failed_flag = 1;
       }  
    }
-   if (retval->rev.oligo[n].hairpin == ALIGN_SCORE_UNDEF_TH && pa->thermodynamical_alignment==1) {
+   if (retval->rev.oligo[n].hairpin_th == ALIGN_SCORE_UNDEF_TH && pa->thermodynamic_alignment==1) {
       oligo_hairpin(&retval->rev.oligo[n], &pa->p_args,
 		    &retval->rev.expl, thal_arg_to_use, s2_rev);
       if (!OK_OR_MUST_USE(&retval->rev.oligo[n])) {
@@ -3485,7 +3489,7 @@ characterize_pair(p3retval *retval,
 
   if (retval->fwd.oligo[m].repeat_sim.score == NULL) {
     /* We have not yet checked the olgio against the repeat library. */
-     /* if(pa->thermodynamical_alignment==0) { */
+     /* if(pa->thermodynamic_alignment==0) { */
 	oligo_mispriming(&retval->fwd.oligo[m], pa, sa, OT_LEFT,
 			 &retval->fwd.expl,dpal_arg_to_use->local_end, dpal_arg_to_use);
 	if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
@@ -3493,7 +3497,7 @@ characterize_pair(p3retval *retval,
 	   if (!must_use) return PAIR_FAILED;
 	   else pair_failed_flag = 1;
 	}
-     if(pa->thermodynamical_alignment==1) {     
+     if(pa->thermodynamic_alignment==1) {     
 	oligo_mispriming_thermod(&retval->fwd.oligo[m], pa, sa, OT_LEFT,
 				 &retval->fwd.expl,thal_arg_to_use->end1, thal_arg_to_use);
 	if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
@@ -3505,7 +3509,7 @@ characterize_pair(p3retval *retval,
   }
    
   if(retval->rev.oligo[n].repeat_sim.score == NULL){
-   /*  if(pa->thermodynamical_alignment==0) { */
+   /*  if(pa->thermodynamic_alignment==0) { */
 	oligo_mispriming(&retval->rev.oligo[n], pa, sa, OT_RIGHT,
 			 &retval->rev.expl, dpal_arg_to_use->local_end, dpal_arg_to_use);
 	if (!OK_OR_MUST_USE(&retval->rev.oligo[n])) {
@@ -3513,7 +3517,7 @@ characterize_pair(p3retval *retval,
 	   if (!must_use) return PAIR_FAILED;
 	   else pair_failed_flag = 1;
 	}
-     if(pa->thermodynamical_alignment==1) { 
+     if(pa->thermodynamic_alignment==1) { 
 	oligo_mispriming_thermod(&retval->rev.oligo[n], pa, sa, OT_RIGHT,
 				 &retval->rev.expl, thal_arg_to_use->end1, thal_arg_to_use);
 	if (!OK_OR_MUST_USE(&retval->rev.oligo[n])) {
@@ -3534,7 +3538,7 @@ characterize_pair(p3retval *retval,
    * Similarity between s1 and s2 is equivalent to complementarity between
    * s2's complement and s1.  (Both s1 and s2 are taken from the same strand.)
    */
-   if(pa->thermodynamical_alignment==0) {
+   if(pa->thermodynamic_alignment==0) {
       ppair->compl_any = align(s1, s2, dpal_arg_to_use->local);
       if (ppair->compl_any > pa->pair_compl_any) {
 	 if (update_stats) { pair_expl->compl_any++; }
@@ -3569,13 +3573,13 @@ characterize_pair(p3retval *retval,
 	 if (!must_use) return PAIR_FAILED;
 	 else pair_failed_flag = 1;
       }
-      ppair->hairpin = align_thermod(s1, s1, thal_arg_to_use->hairpin);
-      if(ppair->hairpin < align_thermod(s2_rev, s2_rev, thal_arg_to_use->hairpin)) {
-	 ppair->hairpin = align_thermod(s2_rev, s2_rev, thal_arg_to_use->hairpin);
+      ppair->hairpin_th = align_thermod(s1, s1, thal_arg_to_use->hairpin_th);
+      if(ppair->hairpin_th < align_thermod(s2_rev, s2_rev, thal_arg_to_use->hairpin_th)) {
+	 ppair->hairpin_th = align_thermod(s2_rev, s2_rev, thal_arg_to_use->hairpin_th);
       }
-      if (ppair->hairpin > pa->pair_hairpin) {
+      if (ppair->hairpin_th > pa->pair_hairpin_th) {
 	 if (update_stats) {
-	    pair_expl->hairpin++;
+	    pair_expl->hairpin_th++;
 	 }
 	 if (!must_use) return PAIR_FAILED;
 	 else pair_failed_flag = 1;
@@ -3586,7 +3590,7 @@ characterize_pair(p3retval *retval,
    * It is conceivable (though unlikely) that
    * align(s2_rev, s1_rev, end_args) > align(s1,s2,end_args).
    */
-  if (pa->thermodynamical_alignment==0 && (compl_end = align(s2_rev, s1_rev, dpal_arg_to_use->end))
+  if (pa->thermodynamic_alignment==0 && (compl_end = align(s2_rev, s1_rev, dpal_arg_to_use->end))
       > ppair->compl_end) {
     if (compl_end > pa->p_args.max_self_end) {
       if (update_stats) { pair_expl->compl_end++; }
@@ -3603,7 +3607,7 @@ characterize_pair(p3retval *retval,
     else pair_failed_flag = 1;
   }
    /* thermodynamic approach */
-   if (pa->thermodynamical_alignment==1 && ((compl_end_th = align_thermod(s2, s1_rev, thal_arg_to_use->end1))
+   if (pa->thermodynamic_alignment==1 && ((compl_end_th = align_thermod(s2, s1_rev, thal_arg_to_use->end1))
        > ppair->compl_end_th || (compl_end_th = align_thermod(s2, s1_rev, thal_arg_to_use->end2)) > ppair->compl_end_th)) {
       if (compl_end_th > pa->p_args.max_self_end_th) {
 	 if (update_stats) {
@@ -3621,7 +3625,7 @@ characterize_pair(p3retval *retval,
   /* ============================================================= */
   /* Calculate _pair_ mispriming, if necessary. */
       
-      if (pa->thermodynamical_alignment==1 || (!_pr_need_pair_template_mispriming(pa) && pa->thermodynamical_alignment==0))
+      if (pa->thermodynamic_alignment==1 || (!_pr_need_pair_template_mispriming(pa) && pa->thermodynamic_alignment==0))
 	ppair->template_mispriming = ALIGN_SCORE_UNDEF;
       else {
 	 PR_ASSERT(ppair->left->template_mispriming != ALIGN_SCORE_UNDEF);
@@ -3644,7 +3648,7 @@ characterize_pair(p3retval *retval,
       }
 
       /* Calculate _pair_ mispriming, if necessary. Thermodynamical approach */
-   if (pa->thermodynamical_alignment==0 || (!_pr_need_pair_template_mispriming_thermod(pa) && pa->thermodynamical_alignment==1))
+   if (pa->thermodynamic_alignment==0 || (!_pr_need_pair_template_mispriming_thermod(pa) && pa->thermodynamic_alignment==1))
      ppair->template_mispriming_th = ALIGN_SCORE_UNDEF_TH;
    else {
          PR_ASSERT(ppair->left->template_mispriming_th != ALIGN_SCORE_UNDEF_TH);
@@ -3774,26 +3778,26 @@ obj_fn(const p3_global_settings *pa, primer_pair *h)
   if(pa->pr_pair_weights.diff_tm)
     sum += pa->pr_pair_weights.diff_tm * h->diff_tm;
 
-  if(pa->pr_pair_weights.compl_any && pa->thermodynamical_alignment==0)
+  if(pa->pr_pair_weights.compl_any && pa->thermodynamic_alignment==0)
     sum += pa->pr_pair_weights.compl_any * h->compl_any / PR_ALIGN_SCORE_PRECISION;
    
-  if (pa->pr_pair_weights.compl_any_th && pa->thermodynamical_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) <= h->compl_any_th))
+  if (pa->pr_pair_weights.compl_any_th && pa->thermodynamic_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) <= h->compl_any_th))
      sum += pa->pr_pair_weights.compl_any_th * (h->compl_any_th - (lower_tm - pa->pr_pair_weights.temp_cutoff - 1.0));
-  if (pa->pr_pair_weights.compl_any_th && pa->thermodynamical_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) > h->compl_any_th))
+  if (pa->pr_pair_weights.compl_any_th && pa->thermodynamic_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) > h->compl_any_th))
      sum += pa->pr_pair_weights.compl_any_th * (1/(lower_tm - pa->pr_pair_weights.temp_cutoff + 1.0 - h->compl_any_th));
    
-  if(pa->pr_pair_weights.compl_end && pa->thermodynamical_alignment==0)
+  if(pa->pr_pair_weights.compl_end && pa->thermodynamic_alignment==0)
     sum += pa->pr_pair_weights.compl_end * h->compl_end / PR_ALIGN_SCORE_PRECISION;
    
-   if (pa->pr_pair_weights.compl_end_th && pa->thermodynamical_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) <= h->compl_end_th))
+   if (pa->pr_pair_weights.compl_end_th && pa->thermodynamic_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) <= h->compl_end_th))
      sum += pa->pr_pair_weights.compl_end_th * (h->compl_end_th - (lower_tm - pa->pr_pair_weights.temp_cutoff - 1.0));
-   if (pa->pr_pair_weights.compl_end_th && pa->thermodynamical_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) > h->compl_end_th))
+   if (pa->pr_pair_weights.compl_end_th && pa->thermodynamic_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) > h->compl_end_th))
      sum += pa->pr_pair_weights.compl_end_th * (1/(lower_tm - pa->pr_pair_weights.temp_cutoff + 1.0 - h->compl_end_th));
    
-   if (pa->pr_pair_weights.hairpin && pa->thermodynamical_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) <= h->hairpin))
-     sum += pa->pr_pair_weights.hairpin * (h->hairpin - (lower_tm - pa->pr_pair_weights.temp_cutoff - 1.0));
-   if (pa->pr_pair_weights.hairpin && pa->thermodynamical_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) > h->hairpin))
-     sum += pa->pr_pair_weights.hairpin * (1/(lower_tm - pa->pr_pair_weights.temp_cutoff + 1.0 - h->hairpin));
+   if (pa->pr_pair_weights.hairpin_th && pa->thermodynamic_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) <= h->hairpin_th))
+     sum += pa->pr_pair_weights.hairpin_th * (h->hairpin_th - (lower_tm - pa->pr_pair_weights.temp_cutoff - 1.0));
+   if (pa->pr_pair_weights.hairpin_th && pa->thermodynamic_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) > h->hairpin_th))
+     sum += pa->pr_pair_weights.hairpin_th * (1/(lower_tm - pa->pr_pair_weights.temp_cutoff + 1.0 - h->hairpin_th));
    
   if(pa->pr_pair_weights.product_tm_lt && h->product_tm < pa->product_opt_tm)
     sum += pa->pr_pair_weights.product_tm_lt *
@@ -3816,13 +3820,13 @@ obj_fn(const p3_global_settings *pa, primer_pair *h)
   if(pa->pr_pair_weights.repeat_sim)
     sum += pa->pr_pair_weights.repeat_sim * h->repeat_sim;
 
-  if (pa->pr_pair_weights.template_mispriming && pa->thermodynamical_alignment==0) {
+  if (pa->pr_pair_weights.template_mispriming && pa->thermodynamic_alignment==0) {
     PR_ASSERT(pa->pr_pair_weights.template_mispriming >= 0.0);
     PR_ASSERT(h->template_mispriming >= 0);
     sum += pa->pr_pair_weights.template_mispriming * h->template_mispriming
     / PR_ALIGN_SCORE_PRECISION;
   }
-   if (pa->pr_pair_weights.template_mispriming_th && pa->thermodynamical_alignment==1) {
+   if (pa->pr_pair_weights.template_mispriming_th && pa->thermodynamic_alignment==1) {
       PR_ASSERT(pa->pr_pair_weights.template_mispriming_th >= 0.0);
       PR_ASSERT(h->template_mispriming_th >= 0.0);
       if((lower_tm - pa->pr_pair_weights.temp_cutoff) <= h->template_mispriming_th)
@@ -3869,7 +3873,7 @@ align(const char *s1,
 }
 
 static double
-  align_thermod(const char *s1,
+align_thermod(const char *s1,
 		const char *s2,
 		const thal_args *a) 
 {  
@@ -3946,7 +3950,7 @@ pr_oligo_rev_c_sequence(const seq_args *sa,
    which we use as an approximation for both secondary structure and
    self primer-dimer. */
 static void
-  oligo_compl(primer_rec *h,
+oligo_compl(primer_rec *h,
 	      const args_for_one_oligo_or_primer *po_args,
 	      oligo_stats *ostats,
 	      const dpal_arg_holder *dpal_arg_to_use,
@@ -3973,12 +3977,12 @@ static void
 }
 
 static void
-  oligo_compl_thermod(primer_rec *h,
-		      const args_for_one_oligo_or_primer *po_args,
-		      oligo_stats *ostats,
-		      const thal_arg_holder *thal_arg_to_use,
-		      const char *oligo_seq,
-		      const char *revc_oligo_seq)
+oligo_compl_thermod(primer_rec *h,
+		    const args_for_one_oligo_or_primer *po_args,
+		    oligo_stats *ostats,
+		    const thal_arg_holder *thal_arg_to_use,
+		    const char *oligo_seq,
+		    const char *revc_oligo_seq)
 {
    
    PR_ASSERT(h != NULL);
@@ -3998,17 +4002,18 @@ static void
    }   
 }
 
-static void oligo_hairpin(primer_rec *h,
-			  const args_for_one_oligo_or_primer *po_args,
-			  oligo_stats *ostats,
-			  const thal_arg_holder *thal_arg_to_use,
-			  const char *oligo_seq)
+static void 
+oligo_hairpin(primer_rec *h,
+              const args_for_one_oligo_or_primer *po_args,
+              oligo_stats *ostats,
+              const thal_arg_holder *thal_arg_to_use,
+              const char *oligo_seq)
 {
    PR_ASSERT(h != NULL);
-   h->hairpin = align_thermod(oligo_seq, oligo_seq, thal_arg_to_use->hairpin);
-   if(h->hairpin > po_args->max_hairpin) {
-      op_set_high_hairpin(h);
-      ostats->hairpin++;
+   h->hairpin_th = align_thermod(oligo_seq, oligo_seq, thal_arg_to_use->hairpin_th);
+   if(h->hairpin_th > po_args->max_hairpin_th) {
+      op_set_high_hairpin_th(h);
+      ostats->hairpin_th++;
       ostats->ok--;
       return;
    }
@@ -4116,19 +4121,18 @@ primer_mispriming_to_template(primer_rec *h,
   }
 }
 static void
-  primer_mispriming_to_template_thermod(primer_rec *h,
-					const p3_global_settings *pa,
-					const seq_args *sa,
-					oligo_type l,
-					oligo_stats *ostats,
-					int first,
-					int last,
-					/* The oligo sequence: */
-					const char *s,
-					/* s reverse complemented: */
-					const char *s_r,
-					const thal_args *align_args
-					)
+primer_mispriming_to_template_thermod(primer_rec *h,
+			              const p3_global_settings *pa,
+				      const seq_args *sa,
+				      oligo_type l,
+				      oligo_stats *ostats,
+				      int first,
+				      int last,
+				      /* The oligo sequence: */
+				      const char *s,
+				      /* s reverse complemented: */
+				      const char *s_r,
+				      const thal_args *align_args)
 {   
    const char *oseq;
    char *target, *target_r;
@@ -4319,7 +4323,7 @@ oligo_mispriming(primer_rec *h,
     } /* for */
   } /* if library exists and is non-empty */
 
-  if (_pr_need_template_mispriming(pa) && (l == OT_RIGHT || l == OT_LEFT) && pa->thermodynamical_alignment==0) {
+  if (_pr_need_template_mispriming(pa) && (l == OT_RIGHT || l == OT_LEFT) && pa->thermodynamic_alignment==0) {
     /* Calculate maximum similarity to ectopic sites in the template. */
     primer_mispriming_to_template(h, pa, sa, l,
                                   ostats, first,
@@ -4328,7 +4332,7 @@ oligo_mispriming(primer_rec *h,
 }
 
 static void
-  oligo_mispriming_thermod(primer_rec *h,
+oligo_mispriming_thermod(primer_rec *h,
 			   const p3_global_settings *pa,
 			   const seq_args *sa,
 			   oligo_type l,
@@ -4355,7 +4359,7 @@ static void
     
      _pr_substr(sa->trimmed_seq, first, h->length, s);
    p3_reverse_complement(s, s_r);
-   if (_pr_need_template_mispriming_thermod(pa) && (l == OT_RIGHT || l == OT_LEFT) && pa->thermodynamical_alignment==1) {    
+   if (_pr_need_template_mispriming_thermod(pa) && (l == OT_RIGHT || l == OT_LEFT) && pa->thermodynamic_alignment==1) {    
       /* Calculate maximum similarity to ectopic sites in the template. */
       primer_mispriming_to_template_thermod(h, pa, sa, l,
 				    ostats, first,
@@ -4645,7 +4649,7 @@ _pr_need_pair_template_mispriming(const p3_global_settings *pa)
 }
 
 int
-  _pr_need_pair_template_mispriming_thermod(const p3_global_settings *pa)
+_pr_need_pair_template_mispriming_thermod(const p3_global_settings *pa)
 {   
    return
      pa->pair_max_template_mispriming_th >= 0
@@ -4749,7 +4753,7 @@ p3_pair_explain_string(const pair_stats *pair_expl)
     IF_SP_AND_CHECK(", high end compl %d", pair_expl->compl_end)
     IF_SP_AND_CHECK(", high any thermod compl %d", pair_expl->compl_any_th)
     IF_SP_AND_CHECK(", high end thermod compl %d", pair_expl->compl_end_th)
-    IF_SP_AND_CHECK(", high hairpin stability %d", pair_expl->hairpin)
+    IF_SP_AND_CHECK(", high hairpin stability %d", pair_expl->hairpin_th)
     IF_SP_AND_CHECK(", no internal oligo %d", pair_expl->internal)
     IF_SP_AND_CHECK(", high mispriming library similarity %d",
                     pair_expl->repeat_sim)
@@ -4792,7 +4796,7 @@ p3_oligo_explain_string(const oligo_stats *stat)
   IF_SP_AND_CHECK(", high end compl %d", stat->compl_end)
   IF_SP_AND_CHECK(", high any thermod compl %d", stat->compl_any_th)
   IF_SP_AND_CHECK(", high end thermod compl %d", stat->compl_end_th)
-  IF_SP_AND_CHECK(", high hairpin stability %d", stat->hairpin)
+  IF_SP_AND_CHECK(", high hairpin stability %d", stat->hairpin_th)
   IF_SP_AND_CHECK(", high repeat similarity %d", stat->repeat_score)
   IF_SP_AND_CHECK(", long poly-x seq %d", stat->poly_x)
   IF_SP_AND_CHECK(", low sequence quality %d", stat->seq_quality)
@@ -5227,10 +5231,10 @@ _pr_data_control(const p3_global_settings *pa,
       && sa->n_quality == 0)
     pr_append_new_chunk(nonfatal_err, "Sequence quality data missing");
 
-   if (pa->o_args.max_template_mispriming >= 0 && pa->thermodynamical_alignment==0)
+   if (pa->o_args.max_template_mispriming >= 0 && pa->thermodynamic_alignment==0)
      pr_append_new_chunk(glob_err,
 			 "PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB is not supported");
-   if (pa->o_args.max_template_mispriming_th >= 0 && pa->thermodynamical_alignment==1)
+   if (pa->o_args.max_template_mispriming_th >= 0 && pa->thermodynamic_alignment==1)
      pr_append_new_chunk(glob_err,
 			 "PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_TH is not supported");
    if (pa->p_args.min_size < 1)
@@ -5483,8 +5487,8 @@ _pr_data_control(const p3_global_settings *pa,
   }
   
    if (pa->p_args.max_self_any_th < 0
-       || pa->p_args.max_self_end_th < 0 || pa->p_args.max_hairpin < 0
-       || pa->pair_compl_any_th < 0 || pa->pair_compl_end_th < 0 || pa->pair_hairpin < 0) {
+       || pa->p_args.max_self_end_th < 0 || pa->p_args.max_hairpin_th < 0
+       || pa->pair_compl_any_th < 0 || pa->pair_compl_end_th < 0 || pa->pair_hairpin_th < 0) {
       pr_append_new_chunk(glob_err,
 			  "Illegal value for primer complementarity restrictions (thermod. approach)");
       return 1;
@@ -5497,7 +5501,7 @@ _pr_data_control(const p3_global_settings *pa,
     return 1;
   }
    if( pa->o_args.max_self_any_th < 0
-       || pa->o_args.max_self_end_th < 0 || pa->o_args.max_hairpin < 0) {
+       || pa->o_args.max_self_end_th < 0 || pa->o_args.max_hairpin_th < 0) {
       pr_append_new_chunk(glob_err,
 			  "Illegal value for internal oligo complementarity restrictions");
       return 1;
@@ -5931,7 +5935,7 @@ p3_print_oligo_lists(const p3retval *retval,
     /* Print the content to the file */
     ret = p3_print_one_oligo_list(sa, retval->fwd.num_elem,
                           retval->fwd.oligo, OT_LEFT,
-                          first_base_index, NULL != pa->p_args.repeat_lib, fh,pa->thermodynamical_alignment);
+                          first_base_index, NULL != pa->p_args.repeat_lib, fh,pa->thermodynamic_alignment);
     fclose(fh);
     if (ret) return 1;
   }
@@ -5950,7 +5954,7 @@ p3_print_oligo_lists(const p3retval *retval,
     /* Print the content to the file */
     ret = p3_print_one_oligo_list(sa, retval->rev.num_elem,
                           retval->rev.oligo, OT_RIGHT,
-                          first_base_index, NULL != pa->p_args.repeat_lib, fh, pa->thermodynamical_alignment);
+                          first_base_index, NULL != pa->p_args.repeat_lib, fh, pa->thermodynamic_alignment);
 
     fclose(fh);
     if (ret) return 1;
@@ -5973,7 +5977,7 @@ p3_print_oligo_lists(const p3retval *retval,
     ret = p3_print_one_oligo_list(sa, retval->intl.num_elem,
                                   retval->intl.oligo, OT_INTL,
                                   first_base_index, 
-                                  NULL != pa->o_args.repeat_lib, fh, pa->thermodynamical_alignment);
+                                  NULL != pa->o_args.repeat_lib, fh, pa->thermodynamic_alignment);
     fclose(fh);
     if (ret) return 1;
   }
@@ -5991,18 +5995,18 @@ p3_print_one_oligo_list(const seq_args *sa,
                         const int first_base_index,
                         const int print_lib_sim,
                         FILE  *fh,
-			const int thermodynamical_alignment)
+			const int thermodynamic_alignment)
 {
   int i;
 
   /* Print out the header for the table */
-  if (print_list_header(fh, o_type, first_base_index, print_lib_sim, thermodynamical_alignment))
+  if (print_list_header(fh, o_type, first_base_index, print_lib_sim, thermodynamic_alignment))
     return 1; /* error */
   /* Iterate over the array */
   for (i = 0; i < n; i++) {
     /* Print each single oligo */
     if (print_oligo(fh, sa, i, &oligo_arr[i], o_type,
-                    first_base_index, print_lib_sim, thermodynamical_alignment))
+                    first_base_index, print_lib_sim, thermodynamic_alignment))
       return 1; /* error */
   }
   return 0; /* success */
@@ -6013,7 +6017,7 @@ print_list_header(FILE *fh,
                   oligo_type type,
                   int first_base_index,
                   int print_lib_sim,
-		  int thermodynamical_alignment)
+		  int thermodynamic_alignment)
 {
   int ret;
   ret = fprintf(fh, "ACCEPTABLE %s\n",
@@ -6025,7 +6029,7 @@ print_list_header(FILE *fh,
                 first_base_index);
   if (ret < 0) return 1;
 
-   if(thermodynamical_alignment)
+   if(thermodynamic_alignment)
      ret = fprintf(fh, "#                self   self hair-");
    else 
      ret = fprintf(fh, "#               self  self");
@@ -6042,7 +6046,7 @@ print_list_header(FILE *fh,
    
    ret = fprintf(fh, "N   GC%%     Tm");
    if (ret < 0) return 1;
-   if(thermodynamical_alignment)
+   if(thermodynamic_alignment)
      ret = fprintf(fh, " any_th end_th   pin");
    else 
      ret = fprintf(fh, "   any   end");
@@ -6094,7 +6098,7 @@ print_oligo(FILE *fh,
 		      h->num_ns, h->gc_content, h->temp,
 		      h->self_any_th,
 		      h->self_end_th,
-		      h->hairpin,
+		      h->hairpin_th,
 		      h->repeat_sim.score[h->repeat_sim.max]
 		      / PR_ALIGN_SCORE_PRECISION,
 		      h->quality);
@@ -6118,7 +6122,7 @@ print_oligo(FILE *fh,
 		      h->num_ns, h->gc_content, h->temp,
 		      h->self_any_th,
 		      h->self_end_th,
-		      h->hairpin,
+		      h->hairpin_th,
 		      h->quality);
      }
      
@@ -6221,7 +6225,8 @@ p3_get_sa_excl_internal2(const seq_args *sargs) {
 /* END 'get' functions for seq_args                             */
 /* ============================================================ */
 
-int p3_get_sa_n_quality(seq_args *sargs) {
+int 
+p3_get_sa_n_quality(seq_args *sargs) {
   return sargs->n_quality ;
 }
 
@@ -6256,15 +6261,18 @@ p3_set_sa_sequence_name(seq_args *sargs, const char* sequence_name) {
  return _set_string(&sargs->sequence_name, sequence_name);
 }
 
-int p3_set_sa_left_input(seq_args *sargs, const char *s) {
+int 
+p3_set_sa_left_input(seq_args *sargs, const char *s) {
  return _set_string(&sargs->left_input, s);
 }
 
-int p3_set_sa_right_input(seq_args *sargs, const char *s) {
+int 
+p3_set_sa_right_input(seq_args *sargs, const char *s) {
  return _set_string(&sargs->right_input, s);
 }
 
-int p3_set_sa_internal_input(seq_args *sargs, const char *s) {
+int 
+p3_set_sa_internal_input(seq_args *sargs, const char *s) {
  return _set_string(&sargs->internal_input, s);
 }
 
@@ -6278,11 +6286,13 @@ p3_set_sa_incl_l(seq_args *sargs, int incl_l) {
   sargs->incl_l = incl_l;
 }
 
-void p3_set_sa_empty_quality(seq_args *sargs) {
+void 
+p3_set_sa_empty_quality(seq_args *sargs) {
   sargs->n_quality = 0;
 }
 
-void p3_sa_add_to_quality_array(seq_args *sargs, int quality) {
+void 
+p3_sa_add_to_quality_array(seq_args *sargs, int quality) {
   int n = sargs->n_quality;
   if (sargs->quality_storage_size == 0) {
     sargs->quality_storage_size = 3000;
@@ -6486,8 +6496,8 @@ p3_set_gs_primer_self_end_th(p3_global_settings * p , double val)
 }
 
 void
-p3_set_gs_primer_hairpin(p3_global_settings * p , double val) {
-   p->p_args.max_hairpin = val;
+p3_set_gs_primer_hairpin_th(p3_global_settings * p , double val) {
+   p->p_args.max_hairpin_th = val;
 }
 
 void   /* Called in primer3_boulder_main.c. */
@@ -6719,8 +6729,8 @@ p3_set_gs_primer_internal_oligo_self_end_th(p3_global_settings * p , double val)
 }
 
 void
-p3_set_gs_primer_internal_oligo_hairpin(p3_global_settings * p , double val) {
-      p->o_args.max_hairpin = val;
+p3_set_gs_primer_internal_oligo_hairpin_th(p3_global_settings * p , double val) {
+      p->o_args.max_hairpin_th = val;
 }
 
 
@@ -6797,8 +6807,8 @@ p3_set_gs_primer_lowercase_masking(p3_global_settings * p , int val) {
 }
 
 void
-p3_set_gs_primer_thermodynamical_alignment(p3_global_settings * p , int val) {   
-   p->thermodynamical_alignment = val ;
+p3_set_gs_primer_thermodynamic_alignment(p3_global_settings * p , int val) {   
+   p->thermodynamic_alignment = val ;
 }
 
 
@@ -6853,8 +6863,8 @@ p3_set_gs_primer_wt_compl_end_th(p3_global_settings * p , double val) {
 }
 
 void
-p3_set_gs_primer_wt_hairpin(p3_global_settings * p , double val) {
-   p->p_args.weights.hairpin = val ;
+p3_set_gs_primer_wt_hairpin_th(p3_global_settings * p , double val) {
+   p->p_args.weights.hairpin_th = val ;
 }
 
 void
@@ -6949,8 +6959,8 @@ p3_set_gs_primer_io_wt_compl_end_th(p3_global_settings * p , double val) {
 }
 
 void
-p3_set_gs_primer_io_wt_hairpin(p3_global_settings * p , double val) {   
-   p->o_args.weights.hairpin = val ;
+p3_set_gs_primer_io_wt_hairpin_th(p3_global_settings * p , double val) {   
+   p->o_args.weights.hairpin_th = val ;
 }
 
 void
@@ -7019,8 +7029,8 @@ p3_set_gs_primer_pair_wt_compl_end_th(p3_global_settings * p , double val) {
 }
 
 void
-p3_set_gs_primer_pair_wt_hairpin(p3_global_settings * p , double val) {
-   p->pr_pair_weights.hairpin = val ;
+p3_set_gs_primer_pair_wt_hairpin_th(p3_global_settings * p , double val) {
+   p->pr_pair_weights.hairpin_th = val ;
 }
 
 void
@@ -7086,8 +7096,8 @@ p3_set_gs_lowercase_masking(p3_global_settings * p , int lowercase_masking){
 }
 
 void
-p3_set_gs_thermodynamical_alignment(p3_global_settings * p , int thermodynamical_alignment) {   
-   p->thermodynamical_alignment = thermodynamical_alignment;
+p3_set_gs_thermodynamic_alignment(p3_global_settings * p , int thermodynamic_alignment) {   
+   p->thermodynamic_alignment = thermodynamic_alignment;
 }
 
 void
@@ -7141,8 +7151,8 @@ p3_set_gs_pair_compl_end_th(p3_global_settings * p , double  pair_compl_end_th) 
 }
 
 void
-p3_set_gs_pair_hairpin(p3_global_settings * p , double  pair_hairpin) {
-   p->pair_hairpin = pair_hairpin;
+p3_set_gs_pair_hairpin_th(p3_global_settings * p , double  pair_hairpin_th) {
+   p->pair_hairpin_th = pair_hairpin_th;
 }
       
 void
@@ -7459,7 +7469,7 @@ op_set_high_self_end(primer_rec *oligo) {
 }
 
 static void
-op_set_high_hairpin(primer_rec *oligo) {
+op_set_high_hairpin_th(primer_rec *oligo) {
    oligo->problems.prob |= OP_HIGH_HAIRPIN;
    oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
@@ -7626,7 +7636,7 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("compl_end %f\n", p->p_args.weights.compl_end) ;
     printf("compl_any_th %f\n", p->p_args.weights.compl_any_th) ;
     printf("compl_end_th %f\n", p->p_args.weights.compl_end_th) ;
-    printf("hairpin %f\n", p->p_args.weights.hairpin) ;
+    printf("hairpin %f\n", p->p_args.weights.hairpin_th) ;
     printf("repeat_sim %f\n", p->p_args.weights.repeat_sim) ;
     printf("length_lt %f\n", p->p_args.weights.length_lt) ;
     printf("length_gt %f\n", p->p_args.weights.length_gt) ;
@@ -7659,7 +7669,7 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("max_self_end %i\n", p->p_args.max_self_end) ;
     printf("max_self_any_th %f\n", p->p_args.max_self_any_th) ;
     printf("max_self_end_th %f\n", p->p_args.max_self_end_th) ;
-    printf("max_hairpin %f\n", p->p_args.max_hairpin) ;
+    printf("max_hairpin %f\n", p->p_args.max_hairpin_th) ;
     printf("max_repeat_compl %i\n", p->p_args.max_repeat_compl) ;
     printf("max_template_mispriming %i\n", p->p_args.max_template_mispriming) ;
     printf("max_template_mispriming_th %f\n", p->p_args.max_template_mispriming_th) ;
@@ -7676,7 +7686,7 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("compl_end %f\n", p->o_args.weights.compl_end) ;
     printf("compl_any_th %f\n", p->o_args.weights.compl_any_th) ;
     printf("compl_end_th %f\n", p->o_args.weights.compl_end_th) ;
-    printf("hairpin %f\n", p->o_args.weights.hairpin) ;
+    printf("hairpin %f\n", p->o_args.weights.hairpin_th) ;
     printf("repeat_sim %f\n", p->o_args.weights.repeat_sim) ;
     printf("length_lt %f\n", p->o_args.weights.length_lt) ;
     printf("length_gt %f\n", p->o_args.weights.length_gt) ;
@@ -7687,7 +7697,7 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("num_ns %f\n", p->o_args.weights.num_ns) ;
     printf("template_mispriming %f\n", p->o_args.weights.template_mispriming) ;
     printf("template_mispriming_th %f\n", p->o_args.weights.template_mispriming_th) ;
-     printf("end oligo_weights\n") ;
+    printf("end oligo_weights\n") ;
 
     printf("opt_tm %f\n", p->o_args.opt_tm) ;
     printf("min_tm %f\n", p->o_args.min_tm) ;
@@ -7718,7 +7728,7 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("gc_clamp %i\n", p->gc_clamp) ;
     printf("max_end_gc %i\n", p->max_end_gc);
     printf("lowercase_masking %i\n", p->lowercase_masking) ;
-    printf("thermodynamical_alignment %i\n", p->thermodynamical_alignment);
+    printf("thermodynamic_alignment %i\n", p->thermodynamic_alignment);
     printf("outside_penalty %f\n", p->outside_penalty) ;
     printf("inside_penalty %f\n", p->inside_penalty) ;
     printf("number of product size ranges: %d\n", p->num_intervals);
@@ -7737,7 +7747,7 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("pair_compl_end %i\n", p->pair_compl_end) ;
     printf("pair_compl_any_th %f\n", p->pair_compl_any_th) ;
     printf("pair_compl_end_th %f\n", p->pair_compl_end_th) ;
-    printf("pair_hairpin %f\n", p->pair_hairpin) ;
+    printf("pair_hairpin %f\n", p->pair_hairpin_th) ;
      
     printf("begin pr_pair_weights\n") ;
     printf("primer_quality %f\n", p->pr_pair_weights.primer_quality) ;
@@ -7747,7 +7757,7 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("compl_end %f\n", p->pr_pair_weights.compl_end) ;
     printf("compl_any_th %f\n", p->pr_pair_weights.compl_any_th) ;
     printf("compl_end_th %f\n", p->pr_pair_weights.compl_end_th) ;
-    printf("hairpin %f\n", p->pr_pair_weights.hairpin) ;
+    printf("hairpin %f\n", p->pr_pair_weights.hairpin_th) ;
     printf("product_tm_lt %f\n", p->pr_pair_weights.product_tm_lt) ;
     printf("product_tm_gt %f\n", p->pr_pair_weights.product_tm_gt) ;
     printf("product_size_lt %f\n", p->pr_pair_weights.product_size_lt) ;

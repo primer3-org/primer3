@@ -216,7 +216,7 @@ main(int argc, char *argv[]) {
                  sarg, &fatal_parse_err, &nonfatal_parse_err,
                  &read_boulder_record_res);
     /* Check if the thermodynamical alignment flag was given */ 
-    if (global_pa->thermodynamical_alignment == 1)
+    if (global_pa->thermodynamic_alignment == 1)
       read_thermodynamic_parameters(global_pa);
   }
 
@@ -279,8 +279,8 @@ main(int argc, char *argv[]) {
       break; /* There were no more boulder records */
     }
 
-    /* Check if the thermodynamical alignment flag was given and the parameters weren't read yet */
-    if ((global_pa->thermodynamical_alignment == 1) && (global_pa->read_thermodynamic_params == 0))
+    /* Check if the thermodynamical alignment flag was given and the path to the parameter files changed - we need to reread them */
+    if ((global_pa->thermodynamic_alignment == 1) && (global_pa->thermodynamic_path_changed == 1))
       read_thermodynamic_parameters(global_pa);
     
     input_found = 1;
@@ -397,7 +397,7 @@ main(int argc, char *argv[]) {
          End of the primary working loop */
 
   /* To avoid being distracted when looking for leaks: */
-  if (global_pa->thermodynamical_alignment == 1)
+  if (global_pa->thermodynamic_alignment == 1)
     destroy_thal_structures();
   p3_destroy_global_settings(global_pa);
   global_pa = NULL;
@@ -414,11 +414,12 @@ main(int argc, char *argv[]) {
 }
 
 /* Reads the thermodynamic parameters if the thermodynamic alignment tag was set to 1 */
-static void read_thermodynamic_parameters(p3_global_settings *pa)
+static void 
+read_thermodynamic_parameters(p3_global_settings *pa)
 {
   thal_results o;
-  /* if already read the parameters, nothing to do */
-  if (pa->read_thermodynamic_params == 1) return;
+  /* if the path to the parameter files did not change, we do not to read again */
+  if (pa->thermodynamic_path_changed == 0) return;
   /* check that the path to the parameters folder was given */
   if (pa->thermodynamic_params_path == NULL) {
 #ifndef OS_WIN
@@ -438,11 +439,11 @@ static void read_thermodynamic_parameters(p3_global_settings *pa)
 #ifndef OS_WIN
     }
 #endif
-  } 
+  }
   /* read in the thermodynamic parameters */
   get_thermodynamic_values(pa->thermodynamic_params_path, &o, 1);
-  /* mark as read, so we do not read them again */
-  pa->read_thermodynamic_params = 1;
+  /* mark that the last given path was used for reading the parameters */
+  pa->thermodynamic_path_changed = 0;
 }
 
 /* Print out copyright and a short usage message*/

@@ -311,55 +311,55 @@ print_boulder(int io_version,
              intl->gc_content);
 
     /* Print primer self_any */
-    if (go_fwd == 1 && pa->thermodynamical_alignment==0)
+    if (go_fwd == 1 && pa->thermodynamic_alignment==0)
       printf("PRIMER_LEFT%s_SELF_ANY=%.2f\n", suffix,
              fwd->self_any / PR_ALIGN_SCORE_PRECISION);
-    if (go_rev == 1 && pa->thermodynamical_alignment==0)
+    if (go_rev == 1 && pa->thermodynamic_alignment==0)
       printf("PRIMER_RIGHT%s_SELF_ANY=%.2f\n", suffix,
              rev->self_any / PR_ALIGN_SCORE_PRECISION);
-    if (go_int == 1 && pa->thermodynamical_alignment==0)
+    if (go_int == 1 && pa->thermodynamic_alignment==0)
       printf("PRIMER_%s%s_SELF_ANY=%.2f\n", int_oligo, suffix,
              intl->self_any / PR_ALIGN_SCORE_PRECISION);
-     if (go_int == 1 && pa->thermodynamical_alignment==1)
+     if (go_int == 1 && pa->thermodynamic_alignment==1)
        printf("PRIMER_%s%s_SELF_ANY_TH=%.2f\n", int_oligo, suffix,
 	      intl->self_any_th);
     /* Print primer self_any thermodynamical approach */
-     if (go_fwd == 1 && pa->thermodynamical_alignment==1)
+     if (go_fwd == 1 && pa->thermodynamic_alignment==1)
        printf("PRIMER_LEFT%s_SELF_ANY_TH=%.2f\n", suffix,
 	      fwd->self_any_th);
-     if (go_rev == 1 && pa->thermodynamical_alignment==1)
+     if (go_rev == 1 && pa->thermodynamic_alignment==1)
        printf("PRIMER_RIGHT%s_SELF_ANY_TH=%.2f\n", suffix,
 	      rev->self_any_th);
     /* Print primer self_end*/
-    if (go_fwd == 1 && pa->thermodynamical_alignment==0)
+    if (go_fwd == 1 && pa->thermodynamic_alignment==0)
       printf("PRIMER_LEFT%s_SELF_END=%.2f\n", suffix,
              fwd->self_end / PR_ALIGN_SCORE_PRECISION);
-    if (go_rev == 1 && pa->thermodynamical_alignment==0)
+    if (go_rev == 1 && pa->thermodynamic_alignment==0)
       printf("PRIMER_RIGHT%s_SELF_END=%.2f\n", suffix,
              rev->self_end / PR_ALIGN_SCORE_PRECISION);
-    if (go_int == 1 && pa->thermodynamical_alignment==0)
+    if (go_int == 1 && pa->thermodynamic_alignment==0)
       printf("PRIMER_%s%s_SELF_END=%.2f\n", int_oligo, suffix,
              intl->self_end / PR_ALIGN_SCORE_PRECISION);
-     if (go_int == 1 && pa->thermodynamical_alignment==1)
+     if (go_int == 1 && pa->thermodynamic_alignment==1)
        printf("PRIMER_%s%s_SELF_END_TH=%.2f\n", int_oligo, suffix,
 	      intl->self_end_th);
      /* Print primer self_end thermodynamical approach */
-     if (go_fwd == 1 && pa->thermodynamical_alignment==1)
+     if (go_fwd == 1 && pa->thermodynamic_alignment==1)
        printf("PRIMER_LEFT%s_SELF_END_TH=%.2f\n", suffix,
 	      fwd->self_end_th);
-     if (go_rev == 1 && pa->thermodynamical_alignment==1)
+     if (go_rev == 1 && pa->thermodynamic_alignment==1)
        printf("PRIMER_RIGHT%s_SELF_END_TH=%.2f\n", suffix,
 	      rev->self_end_th);
      /* Print primer hairpin */
-     if (go_fwd == 1 && pa->thermodynamical_alignment==1)
-       printf("PRIMER_LEFT%s_HAIRPIN=%.2f\n", suffix,
-	      fwd->hairpin);
-     if (go_rev == 1 && pa->thermodynamical_alignment==1)
-       printf("PRIMER_RIGHT%s_HAIRPIN=%.2f\n", suffix,
-	      rev->hairpin);
-     if (go_int == 1 && pa->thermodynamical_alignment==1)
-       printf("PRIMER_%s%s_HAIRPIN=%.2f\n", int_oligo, suffix,
-	      intl->hairpin);
+     if (go_fwd == 1 && pa->thermodynamic_alignment==1)
+       printf("PRIMER_LEFT%s_HAIRPIN_TH=%.2f\n", suffix,
+	      fwd->hairpin_th);
+     if (go_rev == 1 && pa->thermodynamic_alignment==1)
+       printf("PRIMER_RIGHT%s_HAIRPIN_TH=%.2f\n", suffix,
+	      rev->hairpin_th);
+     if (go_int == 1 && pa->thermodynamic_alignment==1)
+       printf("PRIMER_%s%s_HAIRPIN_TH=%.2f\n", int_oligo, suffix,
+	      intl->hairpin_th);
      /*Print out primer mispriming scores */
     if (io_version == 3) {
 		if (seq_lib_num_seq(pa->p_args.repeat_lib) > 0) {
@@ -461,22 +461,22 @@ print_boulder(int io_version,
         printf("PRIMER_%s%s_MIN_SEQ_QUALITY=%d\n", int_oligo,
                suffix, intl->seq_quality);
       /* Print pair comp_any */
-       if(pa->thermodynamical_alignment==0)
+       if(pa->thermodynamic_alignment==0)
 	 printf("PRIMER_PAIR%s_COMPL_ANY=%.2f\n", suffix,
 		retval->best_pairs.pairs[i].compl_any / PR_ALIGN_SCORE_PRECISION);
-       if(pa->thermodynamical_alignment==1)
+       if(pa->thermodynamic_alignment==1)
 	 printf("PRIMER_PAIR%s_COMPL_ANY_TH=%.2f\n", suffix,
 		retval->best_pairs.pairs[i].compl_any_th);
        /* Print pair comp_end */
-       if(pa->thermodynamical_alignment==0)
+       if(pa->thermodynamic_alignment==0)
 	 printf("PRIMER_PAIR%s_COMPL_END=%.2f\n", suffix,
 		retval->best_pairs.pairs[i].compl_end  / PR_ALIGN_SCORE_PRECISION);
-       if(pa->thermodynamical_alignment==1)
+       if(pa->thermodynamic_alignment==1)
 	 printf("PRIMER_PAIR%s_COMPL_END_TH=%.2f\n", suffix,
 		retval->best_pairs.pairs[i].compl_end_th);
-       if(pa->thermodynamical_alignment==1)
-	 printf("PRIMER_PAIR%s_HAIRPIN=%.2f\n", suffix,
-			 retval->best_pairs.pairs[i].hairpin);
+       if(pa->thermodynamic_alignment==1)
+	 printf("PRIMER_PAIR%s_HAIRPIN_TH=%.2f\n", suffix,
+			 retval->best_pairs.pairs[i].hairpin_th);
        if (io_version == 3) {
 	  /* Print product size */
 	  printf("PRIMER_PRODUCT_SIZE%s=%d\n", suffix,

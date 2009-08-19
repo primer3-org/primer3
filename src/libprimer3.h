@@ -125,7 +125,7 @@ typedef struct oligo_weights {
   double compl_any_th;
   double compl_end;
   double compl_end_th;
-  double hairpin;
+  double hairpin_th;
   double temp_cutoff;
   double repeat_sim;
   double length_lt;
@@ -147,7 +147,7 @@ typedef struct pair_weights {
   double compl_any_th;
   double compl_end;
   double compl_end_th;
-  double hairpin;
+  double hairpin_th;
   double temp_cutoff;
   double product_tm_lt;
   double product_tm_gt;
@@ -214,7 +214,7 @@ typedef struct args_for_one_oligo_or_primer {
   short  max_self_end;
   double max_self_any_th;
   double max_self_end_th;
-  double max_hairpin;
+  double max_hairpin_th;
   short  max_repeat_compl;   /* 
                               * Acceptable complementarity with repeat
                               * sequences.
@@ -411,15 +411,15 @@ typedef struct p3_global_settings {
   double pair_compl_any_th;
   short  pair_compl_end;
   double pair_compl_end_th;
-  double pair_hairpin;
+  double pair_hairpin_th;
    
   /* Enables to use approach of thermodynamical alignment for dimer and hairpin calculations
    0 - use alignment not based on thermodynamics - the only dimer calculation approach until primer3 2.0.0. 
        No hairpins are calculated 
    1 - use alignment based on thermodynamics. Hairpins are calculated  */
-  int thermodynamical_alignment;
-  int read_thermodynamic_params;
-  char *thermodynamic_params_path;
+  int thermodynamic_alignment;
+  char *thermodynamic_params_path; /* path to thermodynamic parameter files */
+  int thermodynamic_path_changed;  /* if this is set to 1, we need to reread the thermodynamic parameters from new path */
    
   /* Max difference between temperature of primer and temperature of
      product.  Cannot be calculated until product is known. */
@@ -522,7 +522,7 @@ typedef struct oligo_problems {
 	
 	double self_any_th; /* Self complementarity as thermodynamic local alignment * 100. */
 	double self_end_th; /* Self complementarity at 3' end * 100. Thermodynamical approach */
-	double hairpin; /* hairpin, thermodynamical approach and calculated as any */
+	double hairpin_th; /* hairpin, thermodynamical approach and calculated as any */
 	
 	short  template_mispriming;
 	/* Max 3' complementarity to any ectopic site in template
@@ -585,7 +585,7 @@ typedef struct primer_pair {
    
   double    template_mispriming_th;
   
-  double hairpin;
+  double hairpin_th;
 
   short  repeat_sim;    /* Maximum total similarity of both primers to the
                          * sequence from given file in fasta format.
@@ -631,7 +631,7 @@ typedef struct oligo_stats {
   int compl_end;           /* Self-complementarity at 3' end too high.      */
   int compl_any_th;     /* Self-complementarity too high. Thermodynamical approach */
   int compl_end_th;     /* Self-complementarity at 3' end too high. Thermodynamical approach */
-  int hairpin;          /* Hairpin structure too stabile. Thermodynamical approach */
+  int hairpin_th;          /* Hairpin structure too stabile. Thermodynamical approach */
   int repeat_score;        /* Complementarity with repeat sequence too high.*/
   int poly_x;              /* Long mononucleotide sequence inside.          */
   int seq_quality;         /* Low quality of bases included.                */
@@ -653,7 +653,7 @@ typedef struct pair_stats {
   int compl_end;           /* The same for 3' end complementarity.          */
   int compl_any_th;
   int compl_end_th;
-  int hairpin;
+  int hairpin_th;
   int internal;            /* Internal oligo was not found.                 */
   int repeat_sim;          /* Complementarity with repeat sequence too high.*/
   int high_tm;             /* Product Tm too high.                          */
@@ -915,8 +915,8 @@ void p3_set_gs_primer_self_any(p3_global_settings * p , double val);
 void p3_set_gs_primer_self_any_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_self_end(p3_global_settings * p , double val);
 void p3_set_gs_primer_self_end_th(p3_global_settings * p , double val);
-void p3_set_gs_primer_hairpin(p3_global_settings * p , double val);
-void p3_set_gs_primer_thermodynamical_alignment(p3_global_settings * p , int val);
+void p3_set_gs_primer_hairpin_th(p3_global_settings * p , double val);
+void p3_set_gs_primer_thermodynamic_alignment(p3_global_settings * p , int val);
 void p3_set_gs_primer_file_flag(p3_global_settings * p , int val);
 void p3_set_gs_primer_pick_anyway(p3_global_settings * p , int val);
 void p3_set_gs_primer_gc_clamp(p3_global_settings * p , int val);
@@ -979,7 +979,7 @@ void p3_set_gs_primer_wt_compl_any(p3_global_settings * p , double val);
 void p3_set_gs_primer_wt_compl_any_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_wt_compl_end(p3_global_settings * p , double val);
 void p3_set_gs_primer_wt_compl_end_th(p3_global_settings * p , double val);
-void p3_set_gs_primer_wt_hairpin(p3_global_settings * p , double val);
+void p3_set_gs_primer_wt_hairpin_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_wt_num_ns(p3_global_settings * p , double val);
 void p3_set_gs_primer_wt_rep_sim(p3_global_settings * p , double val);
 void p3_set_gs_primer_wt_seq_qual(p3_global_settings * p , double val);
@@ -998,7 +998,7 @@ void p3_set_gs_primer_io_wt_wt_coml_any(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_compl_end(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_wt_coml_any_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_compl_end_th(p3_global_settings * p , double val);
-void p3_set_gs_primer_io_wt_hairpin(p3_global_settings * p , double val);
+void p3_set_gs_primer_io_wt_hairpin_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_num_ns(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_rep_sim(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_seq_qual(p3_global_settings * p , double val);
@@ -1011,7 +1011,7 @@ void p3_set_gs_primer_pair_wt_compl_any(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_compl_any_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_compl_end(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_compl_end_th(p3_global_settings * p , double val);
-void p3_set_gs_primer_pair_wt_hairpin(p3_global_settings * p , double val);
+void p3_set_gs_primer_pair_wt_hairpin_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_product_tm_lt(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_product_tm_gt(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_product_size_gt(p3_global_settings * p , double val);
@@ -1040,7 +1040,7 @@ int p3_set_afogop_opt_tm(args_for_one_oligo_or_primer *, double);
 void p3_set_gs_max_end_stability(p3_global_settings * p , int max_end_stability);
 void p3_set_gs_gc_clamp(p3_global_settings * p , int gc_clamp);
 void p3_set_gs_lowercase_masking(p3_global_settings * p , int lowercase_masking);
-void p3_set_gs_thermodynamical_alignment(p3_global_settings * p , int thermodynamical_alignment);
+void p3_set_gs_thermodynamic_alignment(p3_global_settings * p , int thermodynamic_alignment);
 void p3_set_gs_outside_penalty(p3_global_settings * p , double outside_penalty);
 void p3_set_gs_inside_penalty(p3_global_settings * p , double inside_penalty);
 
@@ -1059,7 +1059,7 @@ void p3_set_gs_pair_compl_any(p3_global_settings * p , double  pair_compl_any);
 void p3_set_gs_pair_compl_end(p3_global_settings * p , double  pair_compl_end);
 void p3_set_gs_pair_compl_any_th(p3_global_settings * p , double  pair_compl_any_th);
 void p3_set_gs_pair_compl_end_th(p3_global_settings * p , double  pair_compl_end_th);
-void p3_set_gs_pair_hairpin(p3_global_settings * p , double  pair_hairpin);
+void p3_set_gs_pair_hairpin_th(p3_global_settings * p , double  pair_hairpin_th);
 
 void p3_set_gs_min_three_prime_distance(p3_global_settings *p, int min_distance);
 
@@ -1085,8 +1085,6 @@ int    p3_print_one_oligo_list(const seq_args *,
 char  *pr_oligo_sequence(const seq_args *, const primer_rec *);
 
 char  *pr_oligo_rev_c_sequence(const seq_args *, const primer_rec *);
-
-void  pr_set_default_global_args(p3_global_settings *);
 
 /* Return NULL on ENOMEM */
 pr_append_str *create_pr_append_str();

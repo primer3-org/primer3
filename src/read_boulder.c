@@ -555,12 +555,12 @@ read_boulder_record(FILE *file_input,
       COMPARE_ALIGN_SCORE("PRIMER_MAX_SELF_END", pa->p_args.max_self_end);
       COMPARE_ALIGN_SCORE_DBL("PRIMER_MAX_SELF_ANY_TH", pa->p_args.max_self_any_th);
       COMPARE_ALIGN_SCORE_DBL("PRIMER_MAX_SELF_END_TH", pa->p_args.max_self_end_th);
-      COMPARE_ALIGN_SCORE_DBL("PRIMER_MAX_HAIRPIN", pa->p_args.max_hairpin);   
+      COMPARE_ALIGN_SCORE_DBL("PRIMER_MAX_HAIRPIN_TH", pa->p_args.max_hairpin_th);   
       COMPARE_ALIGN_SCORE("PRIMER_PAIR_MAX_COMPL_ANY", pa->pair_compl_any);
       COMPARE_ALIGN_SCORE("PRIMER_PAIR_MAX_COMPL_END", pa->pair_compl_end);
       COMPARE_ALIGN_SCORE_DBL("PRIMER_PAIR_MAX_COMPL_ANY_TH", pa->pair_compl_any_th);
       COMPARE_ALIGN_SCORE_DBL("PRIMER_PAIR_MAX_COMPL_END_TH", pa->pair_compl_end_th);
-      COMPARE_ALIGN_SCORE_DBL("PRIMER_PAIR_MAX_HAIRPIN", pa->pair_hairpin);
+      COMPARE_ALIGN_SCORE_DBL("PRIMER_PAIR_MAX_HAIRPIN_TH", pa->pair_hairpin_th);
       COMPARE_INT("P3_FILE_FLAG", res->file_flag);
       COMPARE_INT("PRIMER_PICK_ANYWAY", pa->pick_anyway);
       COMPARE_INT("PRIMER_GC_CLAMP", pa->gc_clamp);
@@ -610,16 +610,16 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_INTERNAL_DNA_CONC", pa->o_args.dna_conc);
       COMPARE_INT("PRIMER_INTERNAL_MAX_NS_ACCEPTED", pa->o_args.num_ns_accepted);
       COMPARE_INT("PRIMER_INTERNAL_MIN_QUALITY", pa->o_args.min_quality);
-       COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_MAX_SELF_ANY",
+      COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_MAX_SELF_ANY",
 			   pa->o_args.max_self_any);
-       COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_MAX_SELF_END", 
+      COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_MAX_SELF_END", 
 			   pa->o_args.max_self_end);
-       COMPARE_ALIGN_SCORE_DBL("PRIMER_INTERNAL_MAX_SELF_ANY_TH",
+      COMPARE_ALIGN_SCORE_DBL("PRIMER_INTERNAL_MAX_SELF_ANY_TH",
 			   pa->o_args.max_self_any_th);
-       COMPARE_ALIGN_SCORE_DBL("PRIMER_INTERNAL_MAX_SELF_END_TH",
+      COMPARE_ALIGN_SCORE_DBL("PRIMER_INTERNAL_MAX_SELF_END_TH",
 				 pa->o_args.max_self_end_th);
-       COMPARE_ALIGN_SCORE_DBL("PRIMER_INTERNAL_MAX_HAIRPIN",
-			       pa->o_args.max_hairpin);
+      COMPARE_ALIGN_SCORE_DBL("PRIMER_INTERNAL_MAX_HAIRPIN_TH",
+			       pa->o_args.max_hairpin_th);
       COMPARE_ALIGN_SCORE("PRIMER_MAX_LIBRARY_MISPRIMING",
                           pa->p_args.max_repeat_compl);
       COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_MAX_LIBRARY_MISHYB",
@@ -637,7 +637,7 @@ read_boulder_record(FILE *file_input,
 			   pa->pair_max_template_mispriming_th);
       COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB",
                           pa->o_args.max_template_mispriming);
-       COMPARE_ALIGN_SCORE_DBL("PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_TH",
+      COMPARE_ALIGN_SCORE_DBL("PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_TH",
 			   pa->o_args.max_template_mispriming_th);
        /* Control interpretation of ambiguity codes in mispriming
          and mishyb libraries. */
@@ -675,7 +675,17 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_LOWERCASE_MASKING",
                   pa->lowercase_masking); 
       /* added by T. Koressaar */
-      COMPARE_INT("PRIMER_THERMODYNAMIC_ALIGNMENT", pa->thermodynamical_alignment);
+      COMPARE_INT("PRIMER_THERMODYNAMIC_ALIGNMENT", pa->thermodynamic_alignment);
+      if (COMPARE("PRIMER_THERMODYNAMIC_PARAMETERS_PATH")) {                             \
+        /* check if path changes */
+	if ((pa->thermodynamic_params_path) && (strcmp(pa->thermodynamic_params_path, datum))) {
+	  free(pa->thermodynamic_params_path);
+	  pa->thermodynamic_params_path = _rb_safe_malloc(datum_len + 1); 
+	  strcpy(pa->thermodynamic_params_path, datum);
+	  pa->thermodynamic_path_changed = 1;
+        } else pa->thermodynamic_path_changed = 0;
+        continue;
+      }
       COMPARE_AND_MALLOC("PRIMER_THERMODYNAMIC_PARAMETERS_PATH", pa->thermodynamic_params_path);
       /* weights for objective functions  */
       /* CHANGE TEMP/temp -> TM/tm */
@@ -689,7 +699,7 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_WT_SELF_END", pa->p_args.weights.compl_end);
       COMPARE_FLOAT("PRIMER_WT_SELF_ANY_TH", pa->p_args.weights.compl_any_th);
       COMPARE_FLOAT("PRIMER_WT_SELF_END_TH", pa->p_args.weights.compl_end_th);
-      COMPARE_FLOAT("PRIMER_WT_HAIRPIN", pa->p_args.weights.hairpin);
+      COMPARE_FLOAT("PRIMER_WT_HAIRPIN_TH", pa->p_args.weights.hairpin_th);
       COMPARE_FLOAT("PRIMER_WT_NUM_NS", pa->p_args.weights.num_ns);
       COMPARE_FLOAT("PRIMER_WT_LIBRARY_MISPRIMING", pa->p_args.weights.repeat_sim);
       COMPARE_FLOAT("PRIMER_WT_SEQ_QUAL", pa->p_args.weights.seq_quality);
@@ -711,7 +721,7 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_SELF_END", pa->o_args.weights.compl_end);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_SELF_ANY_TH", pa->o_args.weights.compl_any_th);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_SELF_END_TH", pa->o_args.weights.compl_end_th);
-      COMPARE_FLOAT("PRIMER_INTERNAL_WT_HAIRPIN", pa->o_args.weights.hairpin);
+      COMPARE_FLOAT("PRIMER_INTERNAL_WT_HAIRPIN_TH", pa->o_args.weights.hairpin_th);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_NUM_NS", pa->o_args.weights.num_ns);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_LIBRARY_MISHYB", pa->o_args.weights.repeat_sim);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_SEQ_QUAL", pa->o_args.weights.seq_quality);
@@ -732,8 +742,8 @@ read_boulder_record(FILE *file_input,
 		    pa->pr_pair_weights.compl_any_th);
       COMPARE_FLOAT("PRIMER_PAIR_WT_COMPL_END_TH",
 		    pa->pr_pair_weights.compl_end_th);
-      COMPARE_FLOAT("PRIMER_PAIR_WT_HAIRPIN",
-		    pa->pr_pair_weights.hairpin);
+      COMPARE_FLOAT("PRIMER_PAIR_WT_HAIRPIN_TH",
+		    pa->pr_pair_weights.hairpin_th);
       COMPARE_FLOAT("PRIMER_PAIR_WT_PRODUCT_TM_LT",
                     pa->pr_pair_weights.product_tm_lt);
       COMPARE_FLOAT("PRIMER_PAIR_WT_PRODUCT_TM_GT",
@@ -1017,7 +1027,7 @@ parse_align_score(tag_name, datum, out, err)
 }    
 
 static void
-  parse_align_score_double(tag_name, datum, out, err)
+parse_align_score_double(tag_name, datum, out, err)
     const char *datum, *tag_name;
     double *out;
     pr_append_str *err;
