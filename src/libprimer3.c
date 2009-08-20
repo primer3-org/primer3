@@ -86,8 +86,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* Undefined value for alignment score (meaning do not check) used for
    maximum template mispriming or mishyb. */
-#define PR_UNDEFINED_ALIGN_OPT        -100
-#define PR_UNDEFINED_ALIGN_OPT_TH     -100.0 /* double */
+#define PR_UNDEFINED_ALIGN_OPT        -100.0
 
 #define TRIMMED_SEQ_LEN(X) ((X)->incl_l)
 
@@ -163,7 +162,7 @@ static void   sort_primer_array(oligo_array *);
 
 static void   add_pair(const primer_pair *, pair_array_t *);
 
-static short  align(const char *, const char*, const dpal_args *a);
+static double align(const char *, const char*, const dpal_args *a);
 
 static double align_thermod(const char *, const char *, const thal_args *a);
 
@@ -508,18 +507,17 @@ pr_set_default_global_args(p3_global_settings *a) {
 
   a->p_args.dna_conc          = 50.0;
   a->p_args.num_ns_accepted   = 0;
-  a->p_args.max_self_any      = 800;
-  a->p_args.max_self_end      = 300;
+  a->p_args.max_self_any      = 8.0;
+  a->p_args.max_self_end      = 3.0;
   a->p_args.max_self_any_th   = 47.0;
   a->p_args.max_self_end_th   = 47.0;
-  a->p_args.max_hairpin_th       = 47.0;
+  a->p_args.max_hairpin_th    = 47.0;
   a->p_args.max_poly_x        = 5;
-  a->p_args.max_repeat_compl  = 1200;
+  a->p_args.max_repeat_compl  = 12.0;
   a->p_args.min_quality       = 0;
   a->p_args.min_end_quality   = 0;
-  a->p_args.max_template_mispriming
-    = PR_UNDEFINED_ALIGN_OPT;
-  a->p_args.max_template_mispriming_th = PR_UNDEFINED_ALIGN_OPT_TH;
+  a->p_args.max_template_mispriming = PR_UNDEFINED_ALIGN_OPT;
+  a->p_args.max_template_mispriming_th = PR_UNDEFINED_ALIGN_OPT;
   /* The following apply only to primers (and not to internal
      oligos). */
   a->gc_clamp                 = 0;
@@ -536,7 +534,7 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->p_args.weights.compl_end     = 0;
   a->p_args.weights.compl_any_th  = 0;
   a->p_args.weights.compl_end_th  = 0;
-  a->p_args.weights.hairpin_th       = 0;
+  a->p_args.weights.hairpin_th    = 0;
   a->p_args.weights.temp_cutoff   = 5;
   a->p_args.weights.num_ns        = 0;
   a->p_args.weights.repeat_sim    = 0;
@@ -550,11 +548,11 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->max_diff_tm         = 100.0;
   a->tm_santalucia       = breslauer_auto;
   a->salt_corrections    = schildkraut;
-  a->pair_compl_any      = 800;
-  a->pair_compl_end      = 300;
+  a->pair_compl_any      = 8.0;
+  a->pair_compl_end      = 3.0;
   a->pair_compl_any_th   = 47.0;
   a->pair_compl_end_th   = 47.0;
-  a->pair_hairpin_th        = 47.0;
+  a->pair_hairpin_th     = 47.0;
   a->thermodynamic_alignment = 0;
   a->thermodynamic_path_changed = 1;   /* mark as changed first time so we read the parameter files if the thermodynamic model is selected */
   a->thermodynamic_params_path = NULL;
@@ -568,7 +566,7 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->pr_min[0]           = 100;
   a->pr_max[0]           = 300;
   a->num_intervals       = 1;
-  a->pair_repeat_compl   = 2400;
+  a->pair_repeat_compl   = 24.0;
   a->quality_range_min   = 0;
   a->quality_range_max   = 100;
   a->outside_penalty     = PR_DEFAULT_OUTSIDE_PENALTY;
@@ -579,9 +577,8 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->product_min_tm      = PR_DEFAULT_PRODUCT_MIN_TM;
   a->product_opt_tm      = PR_UNDEFINED_DBL_OPT;
   a->product_opt_size    = PR_UNDEFINED_INT_OPT;
-  a->pair_max_template_mispriming
-    = PR_UNDEFINED_ALIGN_OPT;
-  a->pair_max_template_mispriming_th = PR_UNDEFINED_ALIGN_OPT_TH;
+  a->pair_max_template_mispriming = PR_UNDEFINED_ALIGN_OPT;
+  a->pair_max_template_mispriming_th = PR_UNDEFINED_ALIGN_OPT;
   a->o_args.opt_size        = 20;
   a->o_args.min_size        = 18;
   a->o_args.max_size        = 27;
@@ -597,19 +594,17 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->o_args.dntp_conc       = 0.0;
   a->o_args.dna_conc        = 50.0;
   a->o_args.num_ns_accepted = 0;
-  a->o_args.max_self_any    = 1200;
-  a->o_args.max_self_end    = 1200;
+  a->o_args.max_self_any    = 12.0;
+  a->o_args.max_self_end    = 12.0;
   a->o_args.max_self_any_th = 47.0;
   a->o_args.max_self_end_th = 47.0;
-  a->o_args.max_hairpin_th     = 47.0;
-  a->o_args.max_repeat_compl= 1200;
+  a->o_args.max_hairpin_th  = 47.0;
+  a->o_args.max_repeat_compl= 12.0;
 
   a->o_args.min_quality           = 0;
   a->o_args.min_end_quality       = 0;
-  a->o_args.max_template_mispriming
-    = PR_UNDEFINED_ALIGN_OPT;
-  a->o_args.max_template_mispriming_th 
-    = PR_UNDEFINED_ALIGN_OPT_TH;
+  a->o_args.max_template_mispriming = PR_UNDEFINED_ALIGN_OPT;
+  a->o_args.max_template_mispriming_th = PR_UNDEFINED_ALIGN_OPT;
   a->o_args.weights.temp_gt       = 1;
   a->o_args.weights.temp_lt       = 1;
   a->o_args.weights.length_gt     = 1;
@@ -620,7 +615,7 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->o_args.weights.compl_end     = 0;
   a->o_args.weights.compl_any_th  = 0;
   a->o_args.weights.compl_end_th  = 0;
-  a->o_args.weights.hairpin_th       = 0;
+  a->o_args.weights.hairpin_th    = 0;
   a->o_args.weights.num_ns        = 0;
   a->o_args.weights.repeat_sim    = 0;
   a->o_args.weights.seq_quality   = 0;
@@ -633,7 +628,7 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->pr_pair_weights.compl_end       = 0;
   a->pr_pair_weights.compl_any_th    = 0;
   a->pr_pair_weights.compl_end_th    = 0;
-  a->pr_pair_weights.hairpin_th         = 0;
+  a->pr_pair_weights.hairpin_th      = 0;
   a->pr_pair_weights.temp_cutoff     = 5;
   a->pr_pair_weights.repeat_sim      = 0;
 
@@ -1358,7 +1353,7 @@ choose_internal_oligo(p3retval *retval,
         if (!OK_OR_MUST_USE(h)) continue;
       }
        
-       if (h->self_any_th == ALIGN_SCORE_UNDEF_TH && pa->thermodynamic_alignment==1) {
+       if (h->self_any_th == ALIGN_SCORE_UNDEF && pa->thermodynamic_alignment==1) {
 	  _pr_substr(sa->trimmed_seq, h->start, h->length, oligo_seq);
 	  p3_reverse_complement(oligo_seq, revc_oligo_seq);
 	  
@@ -2547,7 +2542,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   h->repeat_sim.score = NULL;
   h->gc_content = h->num_ns = 0;
   h->template_mispriming = h->template_mispriming_r = ALIGN_SCORE_UNDEF;
-  h->template_mispriming_th = h->template_mispriming_r_th = ALIGN_SCORE_UNDEF_TH;
+  h->template_mispriming_th = h->template_mispriming_r_th = ALIGN_SCORE_UNDEF;
    
   PR_ASSERT(OT_LEFT == l || OT_RIGHT == l || OT_INTL == l);
    
@@ -2830,7 +2825,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
 	   return;
 	}
      } else  {
-	h->self_any_th = h->self_end_th  = ALIGN_SCORE_UNDEF_TH;
+	h->self_any_th = h->self_end_th  = ALIGN_SCORE_UNDEF;
      }
    if ((must_use
 	|| pa->file_flag
@@ -2849,7 +2844,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
 	 return;
       }
    } else   {
-      h->hairpin_th = ALIGN_SCORE_UNDEF_TH;
+      h->hairpin_th = ALIGN_SCORE_UNDEF;
    }
    /* end of thermod. approach */
   if (((must_use
@@ -3068,8 +3063,7 @@ p_obj_fn(const p3_global_settings *pa,
            sum += pa->p_args.weights.length_gt * (h->length - pa->p_args.opt_size);
      /* BEGIN: secondary structures */
       if (pa->p_args.weights.compl_any && pa->thermodynamic_alignment==0)
-           sum += pa->p_args.weights.compl_any * h->self_any
-             / PR_ALIGN_SCORE_PRECISION;
+           sum += pa->p_args.weights.compl_any * h->self_any;
      
      if (pa->p_args.weights.compl_any_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) <= h->self_any_th))
        sum += pa->p_args.weights.compl_any_th * (h->self_any_th - (h->temp - pa->p_args.weights.temp_cutoff - 1.0)); /* -0.5 is added for the case where == */
@@ -3077,8 +3071,7 @@ p_obj_fn(const p3_global_settings *pa,
        sum += pa->p_args.weights.compl_any_th * (1/(h->temp - pa->p_args.weights.temp_cutoff + 1.0 - h->self_any_th));
      
      if (pa->p_args.weights.compl_end && pa->thermodynamic_alignment==0)
-           sum += pa->p_args.weights.compl_end * h->self_end
-             / PR_ALIGN_SCORE_PRECISION;
+           sum += pa->p_args.weights.compl_end * h->self_end;
      
      if (pa->p_args.weights.compl_end_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) <= h->self_end_th))
        sum += pa->p_args.weights.compl_end_th * (h->self_end_th - (h->temp - pa->p_args.weights.temp_cutoff - 1.0));
@@ -3095,8 +3088,7 @@ p_obj_fn(const p3_global_settings *pa,
            sum += pa->p_args.weights.num_ns * h->num_ns;
       if(pa->p_args.weights.repeat_sim)
            sum += pa->p_args.weights.repeat_sim
-             * h->repeat_sim.score[h->repeat_sim.max]
-             / PR_ALIGN_SCORE_PRECISION;
+             * h->repeat_sim.score[h->repeat_sim.max];
       if (!bf_get_overlaps_target(h)) {
         /* We might be evaluating p_obj_fn with h->target if
            the client supplied 'pick_anyway' and specified
@@ -3114,12 +3106,11 @@ p_obj_fn(const p3_global_settings *pa,
       if (pa->p_args.weights.template_mispriming && pa->thermodynamic_alignment==0) {
         PR_ASSERT(oligo_max_template_mispriming(h) != ALIGN_SCORE_UNDEF);
         sum += pa->p_args.weights.template_mispriming *
-          oligo_max_template_mispriming(h)
-          / PR_ALIGN_SCORE_PRECISION;
+          oligo_max_template_mispriming(h);
       }
 					    
       if (pa->p_args.weights.template_mispriming_th && pa->thermodynamic_alignment==1) {
-	 PR_ASSERT(oligo_max_template_mispriming_thermod(h) != ALIGN_SCORE_UNDEF_TH);
+	 PR_ASSERT(oligo_max_template_mispriming_thermod(h) != ALIGN_SCORE_UNDEF);
 	 if((h->temp - pa->p_args.weights.temp_cutoff) <= oligo_max_template_mispriming_thermod(h))
 	 sum += pa->p_args.weights.template_mispriming_th * 
 	   (oligo_max_template_mispriming_thermod(h) - (h->temp - pa->p_args.weights.temp_cutoff - 1.0));
@@ -3146,9 +3137,9 @@ p_obj_fn(const p3_global_settings *pa,
       if(pa->o_args.weights.length_gt && h->length  > pa->o_args.opt_size)
          sum += pa->o_args.weights.length_gt * (h->length - pa->o_args.opt_size);
       if(pa->o_args.weights.compl_any && pa->thermodynamic_alignment==0)
-         sum += pa->o_args.weights.compl_any * h->self_any / PR_ALIGN_SCORE_PRECISION;
+         sum += pa->o_args.weights.compl_any * h->self_any;
       if(pa->o_args.weights.compl_end && pa->thermodynamic_alignment==0)
-         sum += pa->o_args.weights.compl_end * h->self_end / PR_ALIGN_SCORE_PRECISION;
+         sum += pa->o_args.weights.compl_end * h->self_end;
      /* begin thermodynamical approach */
      if (pa->o_args.weights.compl_any_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->o_args.weights.temp_cutoff) <= h->self_any_th))
        sum += pa->o_args.weights.compl_any_th * (h->self_any_th - (h->temp - pa->o_args.weights.temp_cutoff - 1.0)); /* -0.5 is added for the case where == */
@@ -3169,8 +3160,7 @@ p_obj_fn(const p3_global_settings *pa,
          sum += pa->o_args.weights.num_ns * h->num_ns;
       if(pa->o_args.weights.repeat_sim)
          sum += pa->o_args.weights.repeat_sim
-           * h->repeat_sim.score[h->repeat_sim.max]
-           / PR_ALIGN_SCORE_PRECISION;
+           * h->repeat_sim.score[h->repeat_sim.max];
       if(pa->o_args.weights.seq_quality)
          sum += pa->o_args.weights.seq_quality *
                      (pa->quality_range_max - h->seq_quality);
@@ -3182,7 +3172,7 @@ p_obj_fn(const p3_global_settings *pa,
 
 /* Return max of h->template_mispriming and h->template_mispriming_r (max
    template mispriming on either strand). */
-short 
+double 
 oligo_max_template_mispriming(const primer_rec *h) {
    return h->template_mispriming > h->template_mispriming_r ?
      h->template_mispriming : h->template_mispriming_r;
@@ -3424,7 +3414,7 @@ characterize_pair(p3retval *retval,
     }
   }
    /* Thermodynamic approach, fwd-primer */
-   if (retval->fwd.oligo[m].self_any_th == ALIGN_SCORE_UNDEF_TH && pa->thermodynamic_alignment==1) {
+   if (retval->fwd.oligo[m].self_any_th == ALIGN_SCORE_UNDEF && pa->thermodynamic_alignment==1) {
       oligo_compl_thermod(&retval->fwd.oligo[m], &pa->p_args,
 			  &retval->fwd.expl, thal_arg_to_use, s1, s1); /* ! s1, s1_rev */
       
@@ -3434,7 +3424,7 @@ characterize_pair(p3retval *retval,
 	 else pair_failed_flag = 1;
       }
    }   
-   if (retval->fwd.oligo[m].hairpin_th == ALIGN_SCORE_UNDEF_TH && pa->thermodynamic_alignment==1) {
+   if (retval->fwd.oligo[m].hairpin_th == ALIGN_SCORE_UNDEF && pa->thermodynamic_alignment==1) {
       oligo_hairpin(&retval->fwd.oligo[m], &pa->p_args,
 			  &retval->fwd.expl, thal_arg_to_use, s1);
       if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
@@ -3457,7 +3447,7 @@ characterize_pair(p3retval *retval,
     }
   }
    /* Thermodynamic approach */
-   if (retval->rev.oligo[n].self_any_th == ALIGN_SCORE_UNDEF_TH && pa->thermodynamic_alignment==1) {
+   if (retval->rev.oligo[n].self_any_th == ALIGN_SCORE_UNDEF && pa->thermodynamic_alignment==1) {
       oligo_compl_thermod(&retval->rev.oligo[n], &pa->p_args,
 			  &retval->rev.expl, thal_arg_to_use, s2_rev, s2_rev); /* s2_rev, s2 */
       
@@ -3467,7 +3457,7 @@ characterize_pair(p3retval *retval,
 	 else pair_failed_flag = 1;
       }  
    }
-   if (retval->rev.oligo[n].hairpin_th == ALIGN_SCORE_UNDEF_TH && pa->thermodynamic_alignment==1) {
+   if (retval->rev.oligo[n].hairpin_th == ALIGN_SCORE_UNDEF && pa->thermodynamic_alignment==1) {
       oligo_hairpin(&retval->rev.oligo[n], &pa->p_args,
 		    &retval->rev.expl, thal_arg_to_use, s2_rev);
       if (!OK_OR_MUST_USE(&retval->rev.oligo[n])) {
@@ -3649,12 +3639,12 @@ characterize_pair(p3retval *retval,
 
       /* Calculate _pair_ mispriming, if necessary. Thermodynamical approach */
    if (pa->thermodynamic_alignment==0 || (!_pr_need_pair_template_mispriming_thermod(pa) && pa->thermodynamic_alignment==1))
-     ppair->template_mispriming_th = ALIGN_SCORE_UNDEF_TH;
+     ppair->template_mispriming_th = ALIGN_SCORE_UNDEF;
    else {
-         PR_ASSERT(ppair->left->template_mispriming_th != ALIGN_SCORE_UNDEF_TH);
-	 PR_ASSERT(ppair->left->template_mispriming_r_th != ALIGN_SCORE_UNDEF_TH);
-	 PR_ASSERT(ppair->right->template_mispriming_th != ALIGN_SCORE_UNDEF_TH);
-	 PR_ASSERT(ppair->right->template_mispriming_r_th != ALIGN_SCORE_UNDEF_TH);
+         PR_ASSERT(ppair->left->template_mispriming_th != ALIGN_SCORE_UNDEF);
+	 PR_ASSERT(ppair->left->template_mispriming_r_th != ALIGN_SCORE_UNDEF);
+	 PR_ASSERT(ppair->right->template_mispriming_th != ALIGN_SCORE_UNDEF);
+	 PR_ASSERT(ppair->right->template_mispriming_r_th != ALIGN_SCORE_UNDEF);
 	 ppair->template_mispriming_th =
 	   ppair->left->template_mispriming_th + ppair->right->template_mispriming_r_th;
 	 if ((ppair->left->template_mispriming_r_th + ppair->right->template_mispriming_th)
@@ -3779,7 +3769,7 @@ obj_fn(const p3_global_settings *pa, primer_pair *h)
     sum += pa->pr_pair_weights.diff_tm * h->diff_tm;
 
   if(pa->pr_pair_weights.compl_any && pa->thermodynamic_alignment==0)
-    sum += pa->pr_pair_weights.compl_any * h->compl_any / PR_ALIGN_SCORE_PRECISION;
+    sum += pa->pr_pair_weights.compl_any * h->compl_any;
    
   if (pa->pr_pair_weights.compl_any_th && pa->thermodynamic_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) <= h->compl_any_th))
      sum += pa->pr_pair_weights.compl_any_th * (h->compl_any_th - (lower_tm - pa->pr_pair_weights.temp_cutoff - 1.0));
@@ -3787,7 +3777,7 @@ obj_fn(const p3_global_settings *pa, primer_pair *h)
      sum += pa->pr_pair_weights.compl_any_th * (1/(lower_tm - pa->pr_pair_weights.temp_cutoff + 1.0 - h->compl_any_th));
    
   if(pa->pr_pair_weights.compl_end && pa->thermodynamic_alignment==0)
-    sum += pa->pr_pair_weights.compl_end * h->compl_end / PR_ALIGN_SCORE_PRECISION;
+    sum += pa->pr_pair_weights.compl_end * h->compl_end;
    
    if (pa->pr_pair_weights.compl_end_th && pa->thermodynamic_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) <= h->compl_end_th))
      sum += pa->pr_pair_weights.compl_end_th * (h->compl_end_th - (lower_tm - pa->pr_pair_weights.temp_cutoff - 1.0));
@@ -3823,8 +3813,7 @@ obj_fn(const p3_global_settings *pa, primer_pair *h)
   if (pa->pr_pair_weights.template_mispriming && pa->thermodynamic_alignment==0) {
     PR_ASSERT(pa->pr_pair_weights.template_mispriming >= 0.0);
     PR_ASSERT(h->template_mispriming >= 0);
-    sum += pa->pr_pair_weights.template_mispriming * h->template_mispriming
-    / PR_ALIGN_SCORE_PRECISION;
+    sum += pa->pr_pair_weights.template_mispriming * h->template_mispriming;
   }
    if (pa->pr_pair_weights.template_mispriming_th && pa->thermodynamic_alignment==1) {
       PR_ASSERT(pa->pr_pair_weights.template_mispriming_th >= 0.0);
@@ -3840,7 +3829,7 @@ obj_fn(const p3_global_settings *pa, primer_pair *h)
    return sum;
 }
 
-static short
+static double
 align(const char *s1,
       const char *s2,
       const dpal_args *a) {
@@ -3851,7 +3840,7 @@ align(const char *s1,
          max out the score, because the dpal subroutines
          for these cannot handle this case.
          TO DO: this can probably be corrected in dpal. */
-      return (short) (100 * strlen(s2));
+      return strlen(s2);
     }
   }
   dpal((const unsigned char *) s1, (const unsigned char *) s2, a, &r);
@@ -3869,13 +3858,13 @@ align(const char *s1,
       PR_ASSERT(r.score != DPAL_ERROR_SCORE);
     }
   }
-  return ((r.score<0) ? 0 : (short)r.score);
+  return ((r.score < 0.0) ? 0.0 : r.score / PR_ALIGN_SCORE_PRECISION);
 }
 
 static double
 align_thermod(const char *s1,
-		const char *s2,
-		const thal_args *a) 
+	      const char *s2,
+	      const thal_args *a) 
 {  
    thal_results r;
    /*
@@ -3887,7 +3876,7 @@ align_thermod(const char *s1,
 	      *          max out the score, because the dpal subroutines
 	      *          for these cannot handle this case.
 	      *          TO DO: this can probably be corrected in dpal. * /
-	     return (short) (100 * strlen(s2));
+	     return strlen(s2);
 	  }
     }  */
    thal((const unsigned char *) s1, (const unsigned char *) s2, a, &r);
@@ -3907,7 +3896,7 @@ align_thermod(const char *s1,
 	     PR_ASSERT(r.temp != THAL_ERROR_SCORE);
 	  }
      }
-   return ((r.temp < 0.0) ? 0.0 : (double)r.temp);
+   return ((r.temp < 0.0) ? 0.0 : (double) (r.temp)); // / PR_ALIGN_SCORE_PRECISION)); ???
 }
 
 /* Return the sequence of oligo in
@@ -4046,7 +4035,7 @@ primer_mispriming_to_template(primer_rec *h,
      sa->trimmed_seq, that is, WITHIN THE INCLUDED REGION. */
 
   char   tmp_char;
-  short  tmp_score;
+  double tmp_score;
 
   seqlen = strlen(sa->upcased_seq);
   first_untrimmed = sa->incl_s + first;
@@ -4084,7 +4073,7 @@ primer_mispriming_to_template(primer_rec *h,
     fprintf(stderr, "first_untrimmed = %d, last_untrimmed = %d,first = %d, last = %d\n",
             first_untrimmed, last_untrimmed, first, last);
 
-    fprintf(stderr, "5' of oligo: Score %d aligning %s against %s\n\n", tmp_score,
+    fprintf(stderr, "5' of oligo: Score %f aligning %s against %s\n\n", tmp_score,
             oseq, target);
   }
 
@@ -4095,7 +4084,7 @@ primer_mispriming_to_template(primer_rec *h,
     = align(oseq, &target[0] + last_untrimmed + 1, align_args);
 
   if (debug)
-    fprintf(stderr, "3' of oligo Score %d aligning %s against %s\n\n",
+    fprintf(stderr, "3' of oligo Score %f aligning %s against %s\n\n",
             h->template_mispriming, oseq, &target[0] + last_untrimmed + 1);
 
   /* 3. Take the max of 1. and 2. */
@@ -4107,7 +4096,7 @@ primer_mispriming_to_template(primer_rec *h,
     = align(oseq, target_r, align_args);
 
   if (debug)
-    fprintf(stderr, "other strand Score %d aligning %s against %s\n\n",
+    fprintf(stderr, "other strand Score %f aligning %s against %s\n\n",
             h->template_mispriming_r, oseq, target_r);
 
   if (pa->p_args.max_template_mispriming >= 0
@@ -4271,7 +4260,7 @@ oligo_mispriming(primer_rec *h,
     /* Library exists and is non-empty. */
 
     h->repeat_sim.score =
-      (short *) pr_safe_malloc(lib->seq_num * sizeof(short));
+      (double *) pr_safe_malloc(lib->seq_num * sizeof(double));
     h->repeat_sim.max = h->repeat_sim.min = 0;
     max = min = 0;
     h->repeat_sim.name = lib->names[0];
@@ -4303,7 +4292,7 @@ oligo_mispriming(primer_rec *h,
         abort(); /* TO DO, propagate error */
         /* This check is necessary for the next 9 lines */
       }
-      h->repeat_sim.score[i] = (short int) w;
+      h->repeat_sim.score[i] = w;
       if(w > max){
         max = (int) w;
         h->repeat_sim.max = i;
@@ -5231,13 +5220,38 @@ _pr_data_control(const p3_global_settings *pa,
       && sa->n_quality == 0)
     pr_append_new_chunk(nonfatal_err, "Sequence quality data missing");
 
-   if (pa->o_args.max_template_mispriming >= 0 && pa->thermodynamic_alignment==0)
-     pr_append_new_chunk(glob_err,
-			 "PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB is not supported");
-   if (pa->o_args.max_template_mispriming_th >= 0 && pa->thermodynamic_alignment==1)
-     pr_append_new_chunk(glob_err,
-			 "PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_TH is not supported");
-   if (pa->p_args.min_size < 1)
+  if (pa->p_args.max_template_mispriming > SHRT_MAX && pa->thermodynamic_alignment == 0) {
+    pr_append_new_chunk(glob_err, "Value too large at tag PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING");
+    return 1;
+  }
+
+  if (pa->pair_max_template_mispriming > SHRT_MAX && pa->thermodynamic_alignment == 0) {
+    pr_append_new_chunk(glob_err, "Value too large at tag PRIMER_MAX_TEMPLATE_MISPRIMING");
+    return 1;
+  }
+
+  if (pa->p_args.max_repeat_compl > SHRT_MAX && pa->thermodynamic_alignment == 0) {
+    pr_append_new_chunk(glob_err, "Value too large at tag PRIMER_MAX_LIBRARY_MISPRIMING");
+    return 1;
+  }
+
+  if (pa->o_args.max_repeat_compl > SHRT_MAX && pa->thermodynamic_alignment == 0) {
+    pr_append_new_chunk(glob_err, "Value too large at tag PRIMER_INTERNAL_MAX_LIBRARY_MISHYB");
+    return 1;
+  }
+
+  if (pa->pair_repeat_compl > SHRT_MAX && pa->thermodynamic_alignment == 0) {
+    pr_append_new_chunk(glob_err, "Value too large at tag PRIMER_PAIR_MAX_LIBRARY_MISPRIMING");
+    return 1;
+  }
+
+  if (pa->o_args.max_template_mispriming >= 0 && pa->thermodynamic_alignment==0)
+    pr_append_new_chunk(glob_err,
+        		"PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB is not supported");
+  if (pa->o_args.max_template_mispriming_th >= 0 && pa->thermodynamic_alignment==1)
+    pr_append_new_chunk(glob_err,
+			"PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_TH is not supported");
+  if (pa->p_args.min_size < 1)
     pr_append_new_chunk(glob_err, "PRIMER_MIN_SIZE must be >= 1");
 
   if (pa->p_args.max_size > MAX_PRIMER_LENGTH) {
@@ -5478,40 +5492,43 @@ _pr_data_control(const p3_global_settings *pa,
                         "Illegal value for PRIMER_INTERNAL_MAX_NS_ACCEPTED");
     return 1;
   }
-  if (pa->p_args.max_self_any < 0
-      || pa->p_args.max_self_end < 0
-      || pa->pair_compl_any < 0 || pa->pair_compl_end < 0) {
+  if (pa->p_args.max_self_any < 0 || pa->p_args.max_self_any > SHRT_MAX
+      || pa->p_args.max_self_end < 0 || pa->p_args.max_self_end > SHRT_MAX
+      || pa->pair_compl_any < 0 || pa->pair_compl_any > SHRT_MAX 
+      || pa->pair_compl_end < 0 || pa->pair_compl_end > SHRT_MAX) {
     pr_append_new_chunk(glob_err,
                         "Illegal value for primer complementarity restrictions");
     return 1;
   }
   
-   if (pa->p_args.max_self_any_th < 0
-       || pa->p_args.max_self_end_th < 0 || pa->p_args.max_hairpin_th < 0
-       || pa->pair_compl_any_th < 0 || pa->pair_compl_end_th < 0 || pa->pair_hairpin_th < 0) {
-      pr_append_new_chunk(glob_err,
-			  "Illegal value for primer complementarity restrictions (thermod. approach)");
-      return 1;
-   }
+  if (pa->p_args.max_self_any_th < 0
+      || pa->p_args.max_self_end_th < 0 || pa->p_args.max_hairpin_th < 0
+      || pa->pair_compl_any_th < 0 || pa->pair_compl_end_th < 0 || pa->pair_hairpin_th < 0) {
+     pr_append_new_chunk(glob_err,
+			 "Illegal value for primer complementarity restrictions (thermod. approach)");
+     return 1;
+  }
    
-  if( pa->o_args.max_self_any < 0
-      || pa->o_args.max_self_end < 0) {
+  if( pa->o_args.max_self_any < 0 || pa->o_args.max_self_any > SHRT_MAX
+      || pa->o_args.max_self_end < 0 || pa->o_args.max_self_end > SHRT_MAX) {
     pr_append_new_chunk(glob_err,
                         "Illegal value for internal oligo complementarity restrictions");
     return 1;
   }
-   if( pa->o_args.max_self_any_th < 0
-       || pa->o_args.max_self_end_th < 0 || pa->o_args.max_hairpin_th < 0) {
-      pr_append_new_chunk(glob_err,
-			  "Illegal value for internal oligo complementarity restrictions");
-      return 1;
-   }
+  
+  if( pa->o_args.max_self_any_th < 0
+      || pa->o_args.max_self_end_th < 0 || pa->o_args.max_hairpin_th < 0) {
+     pr_append_new_chunk(glob_err,
+			 "Illegal value for internal oligo complementarity restrictions");
+     return 1;
+  }
    
   if (pa->p_args.salt_conc <= 0 || pa->p_args.dna_conc<=0){
     pr_append_new_chunk(glob_err,
                         "Illegal value for primer salt or dna concentration");
     return 1;
   }
+
   if((pa->p_args.dntp_conc < 0 && pa->p_args.divalent_conc !=0 )
      || pa->p_args.divalent_conc<0){ /* added by T.Koressaar */
     pr_append_new_chunk(glob_err, "Illegal value for primer divalent salt or dNTP concentration");
@@ -5523,6 +5540,7 @@ _pr_data_control(const p3_global_settings *pa,
                         "Illegal value for internal oligo salt or dna concentration");
     return 1;
   }
+
   if((pa->o_args.dntp_conc<0 && pa->o_args.divalent_conc!=0)
      || pa->o_args.divalent_conc < 0) { /* added by T.Koressaar */
     pr_append_new_chunk(glob_err,
@@ -6085,10 +6103,9 @@ print_oligo(FILE *fh,
 		      index, p, h->start+sa->incl_s + first_base_index,
 		      h->length,
 		      h->num_ns, h->gc_content, h->temp,
-		      h->self_any / PR_ALIGN_SCORE_PRECISION,
-		      h->self_end / PR_ALIGN_SCORE_PRECISION,
-		      h->repeat_sim.score[h->repeat_sim.max] 
-		      / PR_ALIGN_SCORE_PRECISION,
+		      h->self_any,
+		      h->self_end,
+		      h->repeat_sim.score[h->repeat_sim.max],
 		      h->quality);
      } else {
 	ret = fprintf(fh,
@@ -6099,8 +6116,7 @@ print_oligo(FILE *fh,
 		      h->self_any_th,
 		      h->self_end_th,
 		      h->hairpin_th,
-		      h->repeat_sim.score[h->repeat_sim.max]
-		      / PR_ALIGN_SCORE_PRECISION,
+		      h->repeat_sim.score[h->repeat_sim.max],
 		      h->quality);
      }
   } else {
@@ -6111,8 +6127,8 @@ print_oligo(FILE *fh,
 		      index, p, h->start+sa->incl_s + first_base_index,
 		      h->length,
 		      h->num_ns, h->gc_content, h->temp,
-		      h->self_any / PR_ALIGN_SCORE_PRECISION,
-		      h->self_end / PR_ALIGN_SCORE_PRECISION,
+		      h->self_any,
+		      h->self_end,
 		      h->quality);
      } else {
 	ret = fprintf(fh,
@@ -6475,12 +6491,13 @@ p3_set_gs_primer_product_opt_size(p3_global_settings * p , int val)
 void
 p3_set_gs_primer_self_any(p3_global_settings * p , double val)
 {
-  p->p_args.max_self_any = (short) (val * 100);
+  p->p_args.max_self_any = val;
 }
 
 void
-p3_set_gs_primer_self_any_th(p3_global_settings * p , double val){
-     p->p_args.max_self_any_th = val;
+p3_set_gs_primer_self_any_th(p3_global_settings * p , double val)
+{
+  p->p_args.max_self_any_th = val;
 }
 
 void
@@ -6710,12 +6727,12 @@ p3_set_gs_primer_internal_oligo_min_quality(p3_global_settings * p , int val) {
 
 void
 p3_set_gs_primer_internal_oligo_self_any(p3_global_settings * p , double val) {
-  p->o_args.max_self_any = (short) (val * 100);
+  p->o_args.max_self_any = val;
 }
 
 void
 p3_set_gs_primer_internal_oligo_self_any_th(p3_global_settings * p , double val) {   
-     p->o_args.max_self_any_th = val;
+  p->o_args.max_self_any_th = val;
 }
 
 void
@@ -6736,37 +6753,37 @@ p3_set_gs_primer_internal_oligo_hairpin_th(p3_global_settings * p , double val) 
 
 void
 p3_set_gs_primer_max_mispriming(p3_global_settings * p , double val) {
-  p->p_args.max_repeat_compl = (short) (val * 100);
+  p->p_args.max_repeat_compl = val;
 }
 
 void
 p3_set_gs_primer_internal_oligo_max_mishyb(p3_global_settings * p , double val) {
-  p->o_args.max_repeat_compl = (short) (val * 100);
+  p->o_args.max_repeat_compl = val;
 }
 
 void
 p3_set_gs_primer_pair_max_mispriming(p3_global_settings * p , double val) {
-  p->pair_repeat_compl = (short) (val * 100);
+  p->pair_repeat_compl = val;
 }
 
 void
 p3_set_gs_primer_max_template_mispriming(p3_global_settings * p , double val) {
-  p->p_args.max_template_mispriming = (short) (val * 100);
+  p->p_args.max_template_mispriming = val;
 }
 
 void
 p3_set_gs_primer_max_template_mispriming_th(p3_global_settings * p , double val) {  
-     p->p_args.max_template_mispriming_th = val;
+  p->p_args.max_template_mispriming_th = val;
 }
 
 void
 p3_set_gs_primer_internal_oligo_max_template_mishyb(p3_global_settings * p , double val) {
-  p->o_args.max_template_mispriming = (short) (val * 100) ;
+  p->o_args.max_template_mispriming = val;
 }
 
 void
 p3_set_gs_primer_internal_oligo_max_template_mishyb_th(p3_global_settings * p , double val) {   
-     p->o_args.max_template_mispriming_th = val;
+  p->o_args.max_template_mispriming_th = val;
 }
 
 void
@@ -7114,45 +7131,45 @@ void
 p3_set_gs_pair_max_template_mispriming(p3_global_settings * p,
                                        double  pair_max_template_mispriming)
 {
-  p->pair_max_template_mispriming = (short) (pair_max_template_mispriming * 100);
+  p->pair_max_template_mispriming = pair_max_template_mispriming;
 }
 
 void
 p3_set_gs_pair_max_template_mispriming_th(p3_global_settings * p,
 					  double  pair_max_template_mispriming_th)
 {
-   p->pair_max_template_mispriming_th = pair_max_template_mispriming_th;
+  p->pair_max_template_mispriming_th = pair_max_template_mispriming_th;
 }
 
 
 void
 p3_set_gs_pair_repeat_compl(p3_global_settings * p, double pair_repeat_compl){
-  p->pair_repeat_compl = (short) ( pair_repeat_compl * 100);
+  p->pair_repeat_compl = pair_repeat_compl;
 }
 
 void
 p3_set_gs_pair_compl_any(p3_global_settings * p , double pair_compl_any){
-  p->pair_compl_any = (short) (pair_compl_any * 100);
+  p->pair_compl_any = pair_compl_any;
 }
 
 void
 p3_set_gs_pair_compl_any_th(p3_global_settings * p , double pair_compl_any_th) {
-   p->pair_compl_any_th = pair_compl_any_th;
+  p->pair_compl_any_th = pair_compl_any_th;
 }
 
 void
 p3_set_gs_pair_compl_end(p3_global_settings * p , double  pair_compl_end){
-  p->pair_compl_end =(short) (pair_compl_end * 100);
+  p->pair_compl_end = pair_compl_end;
 }
 
 void
 p3_set_gs_pair_compl_end_th(p3_global_settings * p , double  pair_compl_end_th) {   
-     p->pair_compl_end = pair_compl_end_th;
+  p->pair_compl_end = pair_compl_end_th;
 }
 
 void
 p3_set_gs_pair_hairpin_th(p3_global_settings * p , double  pair_hairpin_th) {
-   p->pair_hairpin_th = pair_hairpin_th;
+  p->pair_hairpin_th = pair_hairpin_th;
 }
       
 void
@@ -7665,13 +7682,13 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("max_poly_x %i\n", p->p_args.max_poly_x) ;
     printf("min_end_quality %i\n", p->p_args.min_end_quality) ;
     printf("min_quality %i\n", p->p_args.min_quality) ;
-    printf("max_self_any %i\n", p->p_args.max_self_any) ;
-    printf("max_self_end %i\n", p->p_args.max_self_end) ;
+    printf("max_self_any %f\n", p->p_args.max_self_any) ;
+    printf("max_self_end %f\n", p->p_args.max_self_end) ;
     printf("max_self_any_th %f\n", p->p_args.max_self_any_th) ;
     printf("max_self_end_th %f\n", p->p_args.max_self_end_th) ;
     printf("max_hairpin %f\n", p->p_args.max_hairpin_th) ;
-    printf("max_repeat_compl %i\n", p->p_args.max_repeat_compl) ;
-    printf("max_template_mispriming %i\n", p->p_args.max_template_mispriming) ;
+    printf("max_repeat_compl %f\n", p->p_args.max_repeat_compl) ;
+    printf("max_template_mispriming %f\n", p->p_args.max_template_mispriming) ;
     printf("max_template_mispriming_th %f\n", p->p_args.max_template_mispriming_th) ;
     printf("end primer args\n") ;
 
@@ -7715,10 +7732,10 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("max_poly_x %i\n", p->o_args.max_poly_x) ;
     printf("min_end_quality %i\n", p->o_args.min_end_quality) ;
     printf("min_quality %i\n", p->o_args.min_quality) ;
-    printf("max_self_any %i\n", p->o_args.max_self_any) ;
-    printf("max_self_end %i\n", p->o_args.max_self_end) ;
-    printf("max_repeat_compl %i\n", p->o_args.max_repeat_compl) ;
-    printf("max_template_mispriming %i\n", p->o_args.max_template_mispriming) ;
+    printf("max_self_any %f\n", p->o_args.max_self_any) ;
+    printf("max_self_end %f\n", p->o_args.max_self_end) ;
+    printf("max_repeat_compl %f\n", p->o_args.max_repeat_compl) ;
+    printf("max_template_mispriming %f\n", p->o_args.max_template_mispriming) ;
     printf("max_template_mispriming_th %f\n", p->o_args.max_template_mispriming_th) ;
     printf("end internal oligo args\n") ;
 
@@ -7740,11 +7757,11 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("product_max_tm %f\n", p->product_max_tm) ;
     printf("product_min_tm %f\n", p->product_min_tm) ;
     printf("product_opt_tm %f\n", p->product_opt_tm) ;
-    printf("pair_max_template_mispriming %i\n", p->pair_max_template_mispriming) ;
+    printf("pair_max_template_mispriming %f\n", p->pair_max_template_mispriming) ;
     printf("pair_max_template_mispriming_th %f\n", p->pair_max_template_mispriming_th) ;
-    printf("pair_repeat_compl %i\n", p->pair_repeat_compl) ;
-    printf("pair_compl_any %i\n", p->pair_compl_any) ;
-    printf("pair_compl_end %i\n", p->pair_compl_end) ;
+    printf("pair_repeat_compl %f\n", p->pair_repeat_compl) ;
+    printf("pair_compl_any %f\n", p->pair_compl_any) ;
+    printf("pair_compl_end %f\n", p->pair_compl_end) ;
     printf("pair_compl_any_th %f\n", p->pair_compl_any_th) ;
     printf("pair_compl_end_th %f\n", p->pair_compl_end_th) ;
     printf("pair_hairpin %f\n", p->pair_hairpin_th) ;

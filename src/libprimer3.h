@@ -51,8 +51,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 /* ALIGN_SCORE_UNDEF is used only libprimer3 and clients, not in dpal */
-#define ALIGN_SCORE_UNDEF             SHRT_MIN
-#define ALIGN_SCORE_UNDEF_TH          -DBL_MAX
+//#define ALIGN_SCORE_UNDEF             SHRT_MIN
+#define ALIGN_SCORE_UNDEF            -DBL_MAX
      
 /* These next 5 are exposed for format_output.c -- probabaly should be reviewed. */
 #define PR_INFINITE_POSITION_PENALTY -1.0
@@ -210,17 +210,17 @@ typedef struct args_for_one_oligo_or_primer {
   int    min_end_quality;
   int    min_quality;       /* Minimum quality permitted for oligo sequence.*/
 
-  short  max_self_any;  
-  short  max_self_end;
+  double max_self_any;  
+  double max_self_end;
   double max_self_any_th;
   double max_self_end_th;
   double max_hairpin_th;
-  short  max_repeat_compl;   /* 
+  double max_repeat_compl;   /* 
                               * Acceptable complementarity with repeat
                               * sequences.
                               */
 
-  short  max_template_mispriming;
+  double max_template_mispriming;
   double max_template_mispriming_th;
 } args_for_one_oligo_or_primer;
 
@@ -404,12 +404,12 @@ typedef struct p3_global_settings {
   double product_max_tm;
   double product_min_tm;
   double product_opt_tm;
-  short  pair_max_template_mispriming;
+  double pair_max_template_mispriming;
   double pair_max_template_mispriming_th;
-  short  pair_repeat_compl;
-  short  pair_compl_any;
+  double pair_repeat_compl;
+  double pair_compl_any;
   double pair_compl_any_th;
-  short  pair_compl_end;
+  double pair_compl_end;
   double pair_compl_end_th;
   double pair_hairpin_th;
    
@@ -419,7 +419,7 @@ typedef struct p3_global_settings {
    1 - use alignment based on thermodynamics. Hairpins are calculated  */
   int thermodynamic_alignment;
   char *thermodynamic_params_path; /* path to thermodynamic parameter files */
-  int thermodynamic_path_changed;  /* if this is set to 1, we need to reread the thermodynamic parameters from new path */
+  int thermodynamic_path_changed;  /* if this is set to 1, we need to re-read the thermodynamic parameters from new path */
    
   /* Max difference between temperature of primer and temperature of
      product.  Cannot be calculated until product is known. */
@@ -461,16 +461,16 @@ typedef enum oligo_type { OT_LEFT = 0, OT_RIGHT = 1, OT_INTL = 2 }
   oligo_type;
 
 typedef struct rep_sim {
-  char *name;      /* Name of the sequence from given file in fasta
-                    * format with maximum similarity to the oligo.
-                    */
-  short min;       /* 
-                    * The minimum score in slot 'score' (below).
-                    * (Used when the objective function involves
-                    * minimization of mispriming possibilities.)
-                    */
-  short max;       /* The maximum score in slot 'score' (below). */
-  short *score;    /* 
+  char *name;       /* Name of the sequence from given file in fasta
+                     * format with maximum similarity to the oligo.
+                     */
+  short min;        /* 
+                     * The minimum score in slot 'score' (below).
+                     * (Used when the objective function involves
+                     * minimization of mispriming possibilities.)
+                     */
+  short max;        /* The maximum score in slot 'score' (below). */
+  double *score;    /* 
                     * Array of similarity (i.e. false-priming) scores,
                     * one for each entry in the 'repeat_lib' slot
                     * of the primargs struct. 
@@ -516,19 +516,19 @@ typedef struct oligo_problems {
 	int    seq_end_quality;  /* Minimum quality core of the 5 3' bases. */
 	
 	
-	short  self_any; /* Self complementarity as local alignment * 100. */
+	double self_any; /* Self complementarity as local alignment * 100. */
 	
-	short  self_end; /* Self complementarity at 3' end * 100. */
+	double self_end; /* Self complementarity at 3' end * 100. */
 	
 	double self_any_th; /* Self complementarity as thermodynamic local alignment * 100. */
 	double self_end_th; /* Self complementarity at 3' end * 100. Thermodynamical approach */
 	double hairpin_th; /* hairpin, thermodynamical approach and calculated as any */
 	
-	short  template_mispriming;
+	double template_mispriming;
 	/* Max 3' complementarity to any ectopic site in template
 	 on the given template strand. */
 	double template_mispriming_th; /* thermodynamical approach */
-	short  template_mispriming_r;
+	double template_mispriming_r;
 	/* Max 3' complementarity to any ectopic site in the
 	 template on the reverse complement of the given template
 	 strand. */
@@ -566,28 +566,28 @@ typedef struct primer_pair {
 
   double t_opt_a;
 
-  int    compl_any;     /* 
+  double compl_any;     /* 
                          * Local complementarity score between left and right
                          * primers (* 100).
                          */
   double compl_any_th;
 
-  int    compl_end;     /* 
+  double compl_end;     /* 
                          * 3'-anchored global complementatory score between *
                          * left and right primers (* 100).
                          */
   double compl_end_th;
   
-  int    template_mispriming;
+  double template_mispriming;
                         /* Maximum total mispriming score of both primers
                            to ectopic sites in the template, on "same"
                            strand (* 100). */
    
-  double    template_mispriming_th;
+  double template_mispriming_th;
   
   double hairpin_th;
 
-  short  repeat_sim;    /* Maximum total similarity of both primers to the
+  double repeat_sim;    /* Maximum total similarity of both primers to the
                          * sequence from given file in fasta format.
                          */
   primer_rec *left;     /* Left primer. */
@@ -1114,7 +1114,7 @@ const char  *libprimer3_release(void);
 const char *primer3_copyright(void);
 
 /* An accessor function for a primer_rec *. */
-short oligo_max_template_mispriming(const primer_rec *);
+double oligo_max_template_mispriming(const primer_rec *);
 double oligo_max_template_mispriming_thermod(const primer_rec *);
      
 int   strcmp_nocase(const char *, const char *);

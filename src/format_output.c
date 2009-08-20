@@ -288,12 +288,12 @@ print_oligo(FILE *f,
       format1  = "%-16s %5d %4d %7.2f %7.2f %5.2f %5.2f ";
       fprintf(f, format1,
 	      title, o->start + sa->incl_s + pa->first_base_index,
-	      o->length, o->temp, o->gc_content, 0.01 * o->self_any,
-	      0.01 * o->self_end);
+	      o->length, o->temp, o->gc_content, o->self_any,
+	      o->self_end);
    }
    if (print_lib_sim) {
         if (seqlib != NULL) 
-            fprintf(f, "%5.2f ",  0.01 * o->repeat_sim.score[o->repeat_sim.max]);
+            fprintf(f, "%5.2f ",  o->repeat_sim.score[o->repeat_sim.max]);
         else 
             fprintf(f, "%5s ", "");
     }
@@ -547,7 +547,7 @@ print_pair_info(f, p, pa)
   fprintf(f, "PRODUCT SIZE: %d, ", p->product_size);
    if(pa->thermodynamic_alignment==0)
      fprintf(f, "PAIR ANY COMPL: %.2f, PAIR 3' COMPL: %.2f\n",
-	     0.01 * p->compl_any, 0.01 * p->compl_end);
+	     p->compl_any, p->compl_end);
    else 
      fprintf(f, "PAIR ANY_TH COMPL: %.2f, PAIR 3'_TH COMPL: %.2f\n",
 	     p->compl_any_th, p->compl_end_th);

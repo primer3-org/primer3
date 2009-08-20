@@ -50,10 +50,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 static void *_rb_safe_malloc(size_t x);
 static void  out_of_memory_error();
 
+/*
 static void   parse_align_score(const char *, const char *, short *,
                                 pr_append_str *);
 static void   parse_align_score_double(const char *, const char *, double *,
 				pr_append_str *);
+*/
 static void   parse_double(const char *, const char *, double *,
                            pr_append_str *);
 
@@ -109,6 +111,7 @@ extern double strtod();
        continue;                                   \
    }
 
+/*
 #define COMPARE_ALIGN_SCORE(TAG,T)                     \
    if (COMPARE(TAG)) {                                 \
        parse_align_score(TAG, datum, &(T), parse_err); \
@@ -119,6 +122,7 @@ extern double strtod();
       parse_align_score_double(TAG, datum, &(T), parse_err); \
        continue;                                       \
 }
+*/
 
 #define COMPARE_FLOAT(TAG,T)                      \
    if (COMPARE(TAG)) {                            \
@@ -287,8 +291,8 @@ read_boulder_record(FILE *file_input,
       /* Old code was...
          COMPARE_ALIGN_SCORE("PRIMER_SELF_ANY", pa->p_args.max_self_any); */
       if (COMPARE("PRIMER_SELF_ANY")) {
-        parse_align_score("PRIMER_SELF_ANY", datum, 
-                          &(pa->p_args.max_self_any), parse_err);
+        parse_double("PRIMER_SELF_ANY", datum, 
+                     &(pa->p_args.max_self_any), parse_err);
         pa->pair_compl_any = pa->p_args.max_self_any;
         continue;
       }
@@ -296,8 +300,8 @@ read_boulder_record(FILE *file_input,
       /* Old code was... 
          COMPARE_ALIGN_SCORE("PRIMER_SELF_END", pa->p_args.max_self_end); */
       if (COMPARE("PRIMER_SELF_END")) {
-        parse_align_score("PRIMER_SELF_END", datum,
-                          &(pa->p_args.max_self_end), parse_err);
+        parse_double("PRIMER_SELF_END", datum,
+                     &(pa->p_args.max_self_end), parse_err);
         pa->pair_compl_end = pa->p_args.max_self_end;
         continue;
       }
@@ -305,8 +309,8 @@ read_boulder_record(FILE *file_input,
       /* End of special handling. */
       /* =============================================================== */
 
-      COMPARE_ALIGN_SCORE("PRIMER_PAIR_ANY", pa->pair_compl_any);
-      COMPARE_ALIGN_SCORE("PRIMER_PAIR_END", pa->pair_compl_end);
+      COMPARE_FLOAT("PRIMER_PAIR_ANY", pa->pair_compl_any);
+      COMPARE_FLOAT("PRIMER_PAIR_END", pa->pair_compl_end);
       
       COMPARE_INT("PRIMER_FILE_FLAG", res->file_flag);
       COMPARE_INT("PRIMER_PICK_ANYWAY", pa->pick_anyway);
@@ -349,23 +353,23 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_DNA_CONC", pa->o_args.dna_conc);
       COMPARE_INT("PRIMER_INTERNAL_OLIGO_NUM_NS", pa->o_args.num_ns_accepted);
       COMPARE_INT("PRIMER_INTERNAL_OLIGO_MIN_QUALITY", pa->o_args.min_quality);
-      COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_SELF_ANY",
-                          pa->o_args.max_self_any);
-      COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_SELF_END", 
-                          pa->o_args.max_self_end);
-      COMPARE_ALIGN_SCORE("PRIMER_MAX_MISPRIMING",
-                          pa->p_args.max_repeat_compl);
-      COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_MAX_MISHYB",
-                          pa->o_args.max_repeat_compl);
-      COMPARE_ALIGN_SCORE("PRIMER_PAIR_MAX_MISPRIMING",
-                          pa->pair_repeat_compl);
+      COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_SELF_ANY",
+                    pa->o_args.max_self_any);
+      COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_SELF_END", 
+                    pa->o_args.max_self_end);
+      COMPARE_FLOAT("PRIMER_MAX_MISPRIMING",
+                    pa->p_args.max_repeat_compl);
+      COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MAX_MISHYB",
+                    pa->o_args.max_repeat_compl);
+      COMPARE_FLOAT("PRIMER_PAIR_MAX_MISPRIMING",
+                    pa->pair_repeat_compl);
       /* Mispriming / mishybing in the template. */
-       COMPARE_ALIGN_SCORE("PRIMER_MAX_TEMPLATE_MISPRIMING",
-			   pa->p_args.max_template_mispriming);
-       COMPARE_ALIGN_SCORE("PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING",
-                          pa->pair_max_template_mispriming);
-      COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_OLIGO_MAX_TEMPLATE_MISHYB",
-                          pa->o_args.max_template_mispriming);
+      COMPARE_FLOAT("PRIMER_MAX_TEMPLATE_MISPRIMING",
+		    pa->p_args.max_template_mispriming);
+      COMPARE_FLOAT("PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING",
+                    pa->pair_max_template_mispriming);
+      COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MAX_TEMPLATE_MISHYB",
+                    pa->o_args.max_template_mispriming);
 
       /* Control interpretation of ambiguity codes in mispriming
          and mishyb libraries. */
@@ -551,16 +555,16 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_DNA_CONC", pa->p_args.dna_conc);
       COMPARE_INT("PRIMER_MAX_NS_ACCEPTED", pa->p_args.num_ns_accepted);
       COMPARE_INT("PRIMER_PRODUCT_OPT_SIZE", pa->product_opt_size);
-      COMPARE_ALIGN_SCORE("PRIMER_MAX_SELF_ANY", pa->p_args.max_self_any);
-      COMPARE_ALIGN_SCORE("PRIMER_MAX_SELF_END", pa->p_args.max_self_end);
-      COMPARE_ALIGN_SCORE_DBL("PRIMER_MAX_SELF_ANY_TH", pa->p_args.max_self_any_th);
-      COMPARE_ALIGN_SCORE_DBL("PRIMER_MAX_SELF_END_TH", pa->p_args.max_self_end_th);
-      COMPARE_ALIGN_SCORE_DBL("PRIMER_MAX_HAIRPIN_TH", pa->p_args.max_hairpin_th);   
-      COMPARE_ALIGN_SCORE("PRIMER_PAIR_MAX_COMPL_ANY", pa->pair_compl_any);
-      COMPARE_ALIGN_SCORE("PRIMER_PAIR_MAX_COMPL_END", pa->pair_compl_end);
-      COMPARE_ALIGN_SCORE_DBL("PRIMER_PAIR_MAX_COMPL_ANY_TH", pa->pair_compl_any_th);
-      COMPARE_ALIGN_SCORE_DBL("PRIMER_PAIR_MAX_COMPL_END_TH", pa->pair_compl_end_th);
-      COMPARE_ALIGN_SCORE_DBL("PRIMER_PAIR_MAX_HAIRPIN_TH", pa->pair_hairpin_th);
+      COMPARE_FLOAT("PRIMER_MAX_SELF_ANY", pa->p_args.max_self_any);
+      COMPARE_FLOAT("PRIMER_MAX_SELF_END", pa->p_args.max_self_end);
+      COMPARE_FLOAT("PRIMER_MAX_SELF_ANY_TH", pa->p_args.max_self_any_th);
+      COMPARE_FLOAT("PRIMER_MAX_SELF_END_TH", pa->p_args.max_self_end_th);
+      COMPARE_FLOAT("PRIMER_MAX_HAIRPIN_TH", pa->p_args.max_hairpin_th);   
+      COMPARE_FLOAT("PRIMER_PAIR_MAX_COMPL_ANY", pa->pair_compl_any);
+      COMPARE_FLOAT("PRIMER_PAIR_MAX_COMPL_END", pa->pair_compl_end);
+      COMPARE_FLOAT("PRIMER_PAIR_MAX_COMPL_ANY_TH", pa->pair_compl_any_th);
+      COMPARE_FLOAT("PRIMER_PAIR_MAX_COMPL_END_TH", pa->pair_compl_end_th);
+      COMPARE_FLOAT("PRIMER_PAIR_MAX_HAIRPIN_TH", pa->pair_hairpin_th);
       COMPARE_INT("P3_FILE_FLAG", res->file_flag);
       COMPARE_INT("PRIMER_PICK_ANYWAY", pa->pick_anyway);
       COMPARE_INT("PRIMER_GC_CLAMP", pa->gc_clamp);
@@ -610,34 +614,34 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_INTERNAL_DNA_CONC", pa->o_args.dna_conc);
       COMPARE_INT("PRIMER_INTERNAL_MAX_NS_ACCEPTED", pa->o_args.num_ns_accepted);
       COMPARE_INT("PRIMER_INTERNAL_MIN_QUALITY", pa->o_args.min_quality);
-      COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_MAX_SELF_ANY",
-			   pa->o_args.max_self_any);
-      COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_MAX_SELF_END", 
-			   pa->o_args.max_self_end);
-      COMPARE_ALIGN_SCORE_DBL("PRIMER_INTERNAL_MAX_SELF_ANY_TH",
+      COMPARE_FLOAT("PRIMER_INTERNAL_MAX_SELF_ANY",
+		    pa->o_args.max_self_any);
+      COMPARE_FLOAT("PRIMER_INTERNAL_MAX_SELF_END", 
+		    pa->o_args.max_self_end);
+      COMPARE_FLOAT("PRIMER_INTERNAL_MAX_SELF_ANY_TH",
 			   pa->o_args.max_self_any_th);
-      COMPARE_ALIGN_SCORE_DBL("PRIMER_INTERNAL_MAX_SELF_END_TH",
+      COMPARE_FLOAT("PRIMER_INTERNAL_MAX_SELF_END_TH",
 				 pa->o_args.max_self_end_th);
-      COMPARE_ALIGN_SCORE_DBL("PRIMER_INTERNAL_MAX_HAIRPIN_TH",
+      COMPARE_FLOAT("PRIMER_INTERNAL_MAX_HAIRPIN_TH",
 			       pa->o_args.max_hairpin_th);
-      COMPARE_ALIGN_SCORE("PRIMER_MAX_LIBRARY_MISPRIMING",
-                          pa->p_args.max_repeat_compl);
-      COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_MAX_LIBRARY_MISHYB",
-                          pa->o_args.max_repeat_compl);
-      COMPARE_ALIGN_SCORE("PRIMER_PAIR_MAX_LIBRARY_MISPRIMING",
-                          pa->pair_repeat_compl);
+      COMPARE_FLOAT("PRIMER_MAX_LIBRARY_MISPRIMING",
+                    pa->p_args.max_repeat_compl);
+      COMPARE_FLOAT("PRIMER_INTERNAL_MAX_LIBRARY_MISHYB",
+                    pa->o_args.max_repeat_compl);
+      COMPARE_FLOAT("PRIMER_PAIR_MAX_LIBRARY_MISPRIMING",
+                    pa->pair_repeat_compl);
       /* Mispriming / mishybing in the template. */
-      COMPARE_ALIGN_SCORE("PRIMER_MAX_TEMPLATE_MISPRIMING",
-                          pa->p_args.max_template_mispriming);
-      COMPARE_ALIGN_SCORE_DBL("PRIMER_MAX_TEMPLATE_MISPRIMING_TH",
+      COMPARE_FLOAT("PRIMER_MAX_TEMPLATE_MISPRIMING",
+                    pa->p_args.max_template_mispriming);
+      COMPARE_FLOAT("PRIMER_MAX_TEMPLATE_MISPRIMING_TH",
 			  pa->p_args.max_template_mispriming_th);
-      COMPARE_ALIGN_SCORE("PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING",
-                          pa->pair_max_template_mispriming);
-      COMPARE_ALIGN_SCORE_DBL("PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING_TH",
-			   pa->pair_max_template_mispriming_th);
-      COMPARE_ALIGN_SCORE("PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB",
-                          pa->o_args.max_template_mispriming);
-      COMPARE_ALIGN_SCORE_DBL("PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_TH",
+      COMPARE_FLOAT("PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING",
+                    pa->pair_max_template_mispriming);
+      COMPARE_FLOAT("PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING_TH",
+		    pa->pair_max_template_mispriming_th);
+      COMPARE_FLOAT("PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB",
+                    pa->o_args.max_template_mispriming);
+      COMPARE_FLOAT("PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_TH",
 			   pa->o_args.max_template_mispriming_th);
        /* Control interpretation of ambiguity codes in mispriming
          and mishyb libraries. */
@@ -1005,45 +1009,6 @@ tag_syntax_error(tag_name, datum, err)
     pr_append(err, " value: ");
     pr_append(err, datum);
 }
-
-static void
-parse_align_score(tag_name, datum, out, err)
-    const char *datum, *tag_name;
-    short *out;
-    pr_append_str *err;
-{
-    double d;
-
-    parse_double(tag_name, datum, &d, err);
-    d *= PR_ALIGN_SCORE_PRECISION;
-    if (d > SHRT_MAX) {
-      /* FIX ME --> libprimer3.c?  */
-        pr_append_new_chunk(err, "Value too large at tag ");
-        pr_append(err, tag_name);
-    } else {
-        /* Should we be rounding here? */
-        *out = (short)d;
-    }
-}    
-
-static void
-parse_align_score_double(tag_name, datum, out, err)
-    const char *datum, *tag_name;
-    double *out;
-    pr_append_str *err;
-{   
-   double d;  
-   parse_double(tag_name, datum, &d, err);
-   if (d > DBL_MAX) {
-      /* FIX ME --> libprimer3.c?  */
-      pr_append_new_chunk(err, "Value too large at tag ");
-      pr_append(err, tag_name);
-   } else {
-      /* Should we be rounding here? */
-      *out = (double)d;
-   }
-}
-
 
 static void
 parse_double(tag_name, datum, out, err)

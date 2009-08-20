@@ -313,13 +313,13 @@ print_boulder(int io_version,
     /* Print primer self_any */
     if (go_fwd == 1 && pa->thermodynamic_alignment==0)
       printf("PRIMER_LEFT%s_SELF_ANY=%.2f\n", suffix,
-             fwd->self_any / PR_ALIGN_SCORE_PRECISION);
+             fwd->self_any);
     if (go_rev == 1 && pa->thermodynamic_alignment==0)
       printf("PRIMER_RIGHT%s_SELF_ANY=%.2f\n", suffix,
-             rev->self_any / PR_ALIGN_SCORE_PRECISION);
+             rev->self_any);
     if (go_int == 1 && pa->thermodynamic_alignment==0)
       printf("PRIMER_%s%s_SELF_ANY=%.2f\n", int_oligo, suffix,
-             intl->self_any / PR_ALIGN_SCORE_PRECISION);
+             intl->self_any);
      if (go_int == 1 && pa->thermodynamic_alignment==1)
        printf("PRIMER_%s%s_SELF_ANY_TH=%.2f\n", int_oligo, suffix,
 	      intl->self_any_th);
@@ -333,13 +333,13 @@ print_boulder(int io_version,
     /* Print primer self_end*/
     if (go_fwd == 1 && pa->thermodynamic_alignment==0)
       printf("PRIMER_LEFT%s_SELF_END=%.2f\n", suffix,
-             fwd->self_end / PR_ALIGN_SCORE_PRECISION);
+             fwd->self_end);
     if (go_rev == 1 && pa->thermodynamic_alignment==0)
       printf("PRIMER_RIGHT%s_SELF_END=%.2f\n", suffix,
-             rev->self_end / PR_ALIGN_SCORE_PRECISION);
+             rev->self_end);
     if (go_int == 1 && pa->thermodynamic_alignment==0)
       printf("PRIMER_%s%s_SELF_END=%.2f\n", int_oligo, suffix,
-             intl->self_end / PR_ALIGN_SCORE_PRECISION);
+             intl->self_end);
      if (go_int == 1 && pa->thermodynamic_alignment==1)
        printf("PRIMER_%s%s_SELF_END_TH=%.2f\n", int_oligo, suffix,
 	      intl->self_end_th);
@@ -365,43 +365,43 @@ print_boulder(int io_version,
 		if (seq_lib_num_seq(pa->p_args.repeat_lib) > 0) {
 		  if (go_fwd == 1)
 		    printf("PRIMER_LEFT%s_MISPRIMING_SCORE=%.2f, %s\n", suffix,
-		           fwd->repeat_sim.score[fwd->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
+		           fwd->repeat_sim.score[fwd->repeat_sim.max],
 		           fwd->repeat_sim.name);
 		  if (go_rev == 1)
 		    printf("PRIMER_RIGHT%s_MISPRIMING_SCORE=%.2f, %s\n", suffix,
-		           rev->repeat_sim.score[rev->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
+		           rev->repeat_sim.score[rev->repeat_sim.max],
 		           rev->repeat_sim.name);
 		  if (retval->output_type == primer_pairs)
 		    printf("PRIMER_PAIR%s_MISPRIMING_SCORE=%.2f, %s\n", suffix,
-		           retval->best_pairs.pairs[i].repeat_sim / PR_ALIGN_SCORE_PRECISION,
+		           retval->best_pairs.pairs[i].repeat_sim,
 		           retval->best_pairs.pairs[i].rep_name);
 		}
     
 		/* Print out internal oligo mispriming scores */
 		if (go_int == 1 && seq_lib_num_seq(pa->o_args.repeat_lib) > 0)
 		  printf("PRIMER_%s%s_MISHYB_SCORE=%.2f, %s\n", int_oligo, suffix,
-		         intl->repeat_sim.score[intl->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
+		         intl->repeat_sim.score[intl->repeat_sim.max],
 		         intl->repeat_sim.name);
     } else {
 		if (seq_lib_num_seq(pa->p_args.repeat_lib) > 0) {
 		  if (go_fwd == 1)
 		    printf("PRIMER_LEFT%s_LIBRARY_MISPRIMING=%.2f, %s\n", suffix,
-		           fwd->repeat_sim.score[fwd->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
+		           fwd->repeat_sim.score[fwd->repeat_sim.max],
 		           fwd->repeat_sim.name);
 		  if (go_rev == 1)
 		    printf("PRIMER_RIGHT%s_LIBRARY_MISPRIMING=%.2f, %s\n", suffix,
-		           rev->repeat_sim.score[rev->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
+		           rev->repeat_sim.score[rev->repeat_sim.max],
 		           rev->repeat_sim.name);
 		  if (retval->output_type == primer_pairs)
 		    printf("PRIMER_PAIR%s_LIBRARY_MISPRIMING=%.2f, %s\n", suffix,
-		           retval->best_pairs.pairs[i].repeat_sim / PR_ALIGN_SCORE_PRECISION,
+		           retval->best_pairs.pairs[i].repeat_sim,
 		           retval->best_pairs.pairs[i].rep_name);
 		}
 		
 		/* Print out internal oligo mispriming scores */
 		if (go_int == 1 && seq_lib_num_seq(pa->o_args.repeat_lib) > 0)
 		  printf("PRIMER_%s%s_LIBRARY_MISHYB=%.2f, %s\n", int_oligo, suffix,
-		         intl->repeat_sim.score[intl->repeat_sim.max] / PR_ALIGN_SCORE_PRECISION,
+		         intl->repeat_sim.score[intl->repeat_sim.max],
 		         intl->repeat_sim.name);
     }
 
@@ -440,18 +440,18 @@ print_boulder(int io_version,
     if ( (go_fwd == 1) && 
          (oligo_max_template_mispriming(fwd) != ALIGN_SCORE_UNDEF))
       printf("PRIMER_LEFT%s_TEMPLATE_MISPRIMING=%.4f\n", suffix,
-             oligo_max_template_mispriming(fwd) / PR_ALIGN_SCORE_PRECISION);
+             oligo_max_template_mispriming(fwd));
     if ( (go_rev == 1) && 
          (oligo_max_template_mispriming(rev) != ALIGN_SCORE_UNDEF))
       printf("PRIMER_RIGHT%s_TEMPLATE_MISPRIMING=%.4f\n", suffix,
-             oligo_max_template_mispriming(rev) / PR_ALIGN_SCORE_PRECISION);
+             oligo_max_template_mispriming(rev));
      /* Print primer template mispriming thermodynamical approach*/
      if ( (go_fwd == 1) &&
-	  (oligo_max_template_mispriming_thermod(fwd) != ALIGN_SCORE_UNDEF_TH))
+	  (oligo_max_template_mispriming_thermod(fwd) != ALIGN_SCORE_UNDEF))
        printf("PRIMER_LEFT%s_TEMPLATE_MISPRIMING_TH=%.4f\n", suffix,
 	      oligo_max_template_mispriming_thermod(fwd));
      if ( (go_rev == 1) &&
-	  (oligo_max_template_mispriming_thermod(rev) != ALIGN_SCORE_UNDEF_TH))
+	  (oligo_max_template_mispriming_thermod(rev) != ALIGN_SCORE_UNDEF))
        printf("PRIMER_RIGHT%s_TEMPLATE_MISPRIMING_TH=%.4f\n", suffix,
 	      oligo_max_template_mispriming_thermod(rev));
      /************************************************************************************/
@@ -463,14 +463,14 @@ print_boulder(int io_version,
       /* Print pair comp_any */
        if(pa->thermodynamic_alignment==0)
 	 printf("PRIMER_PAIR%s_COMPL_ANY=%.2f\n", suffix,
-		retval->best_pairs.pairs[i].compl_any / PR_ALIGN_SCORE_PRECISION);
+		retval->best_pairs.pairs[i].compl_any);
        if(pa->thermodynamic_alignment==1)
 	 printf("PRIMER_PAIR%s_COMPL_ANY_TH=%.2f\n", suffix,
 		retval->best_pairs.pairs[i].compl_any_th);
        /* Print pair comp_end */
        if(pa->thermodynamic_alignment==0)
 	 printf("PRIMER_PAIR%s_COMPL_END=%.2f\n", suffix,
-		retval->best_pairs.pairs[i].compl_end  / PR_ALIGN_SCORE_PRECISION);
+		retval->best_pairs.pairs[i].compl_end);
        if(pa->thermodynamic_alignment==1)
 	 printf("PRIMER_PAIR%s_COMPL_END_TH=%.2f\n", suffix,
 		retval->best_pairs.pairs[i].compl_end_th);
@@ -514,10 +514,9 @@ print_boulder(int io_version,
       /* Print the primer pair temlate mispriming */
       if (retval->best_pairs.pairs[i].template_mispriming != ALIGN_SCORE_UNDEF)
         printf("PRIMER_PAIR%s_TEMPLATE_MISPRIMING=%.2f\n", suffix,
-               retval->best_pairs.pairs[i].template_mispriming 
-               / PR_ALIGN_SCORE_PRECISION);
+               retval->best_pairs.pairs[i].template_mispriming);
        /* Print the primer pair temlate mispriming. Thermodynamic approach.  */
-       if (retval->best_pairs.pairs[i].template_mispriming_th != ALIGN_SCORE_UNDEF_TH)
+       if (retval->best_pairs.pairs[i].template_mispriming_th != ALIGN_SCORE_UNDEF)
 	 printf("PRIMER_PAIR%s_TEMPLATE_MISPRIMING_TH=%.2f\n", suffix,
 		retval->best_pairs.pairs[i].template_mispriming_th);
 
