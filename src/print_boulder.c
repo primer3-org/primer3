@@ -322,14 +322,14 @@ print_boulder(int io_version,
              intl->self_any);
      if (go_int == 1 && pa->thermodynamic_alignment==1)
        printf("PRIMER_%s%s_SELF_ANY_TH=%.2f\n", int_oligo, suffix,
-	      intl->self_any_th);
+	      intl->self_any);
     /* Print primer self_any thermodynamical approach */
      if (go_fwd == 1 && pa->thermodynamic_alignment==1)
        printf("PRIMER_LEFT%s_SELF_ANY_TH=%.2f\n", suffix,
-	      fwd->self_any_th);
+	      fwd->self_any);
      if (go_rev == 1 && pa->thermodynamic_alignment==1)
        printf("PRIMER_RIGHT%s_SELF_ANY_TH=%.2f\n", suffix,
-	      rev->self_any_th);
+	      rev->self_any);
     /* Print primer self_end*/
     if (go_fwd == 1 && pa->thermodynamic_alignment==0)
       printf("PRIMER_LEFT%s_SELF_END=%.2f\n", suffix,
@@ -342,14 +342,14 @@ print_boulder(int io_version,
              intl->self_end);
      if (go_int == 1 && pa->thermodynamic_alignment==1)
        printf("PRIMER_%s%s_SELF_END_TH=%.2f\n", int_oligo, suffix,
-	      intl->self_end_th);
+	      intl->self_end);
      /* Print primer self_end thermodynamical approach */
      if (go_fwd == 1 && pa->thermodynamic_alignment==1)
        printf("PRIMER_LEFT%s_SELF_END_TH=%.2f\n", suffix,
-	      fwd->self_end_th);
+	      fwd->self_end);
      if (go_rev == 1 && pa->thermodynamic_alignment==1)
        printf("PRIMER_RIGHT%s_SELF_END_TH=%.2f\n", suffix,
-	      rev->self_end_th);
+	      rev->self_end);
      /* Print primer hairpin */
      if (go_fwd == 1 && pa->thermodynamic_alignment==1)
        printf("PRIMER_LEFT%s_HAIRPIN_TH=%.2f\n", suffix,
@@ -437,20 +437,20 @@ print_boulder(int io_version,
              suffix, rev->end_stability);
 
     /* Print primer template mispriming */
-    if ( (go_fwd == 1) && 
+    if ( (pa->thermodynamic_alignment == 0) && (go_fwd == 1) && 
          (oligo_max_template_mispriming(fwd) != ALIGN_SCORE_UNDEF))
       printf("PRIMER_LEFT%s_TEMPLATE_MISPRIMING=%.4f\n", suffix,
              oligo_max_template_mispriming(fwd));
-    if ( (go_rev == 1) && 
+    if ( (pa->thermodynamic_alignment == 0) && (go_rev == 1) && 
          (oligo_max_template_mispriming(rev) != ALIGN_SCORE_UNDEF))
       printf("PRIMER_RIGHT%s_TEMPLATE_MISPRIMING=%.4f\n", suffix,
              oligo_max_template_mispriming(rev));
      /* Print primer template mispriming thermodynamical approach*/
-     if ( (go_fwd == 1) &&
+     if ( (pa->thermodynamic_alignment == 1) && (go_fwd == 1) &&
 	  (oligo_max_template_mispriming_thermod(fwd) != ALIGN_SCORE_UNDEF))
        printf("PRIMER_LEFT%s_TEMPLATE_MISPRIMING_TH=%.4f\n", suffix,
 	      oligo_max_template_mispriming_thermod(fwd));
-     if ( (go_rev == 1) &&
+     if ( (pa->thermodynamic_alignment == 1) && (go_rev == 1) &&
 	  (oligo_max_template_mispriming_thermod(rev) != ALIGN_SCORE_UNDEF))
        printf("PRIMER_RIGHT%s_TEMPLATE_MISPRIMING_TH=%.4f\n", suffix,
 	      oligo_max_template_mispriming_thermod(rev));
@@ -466,14 +466,14 @@ print_boulder(int io_version,
 		retval->best_pairs.pairs[i].compl_any);
        if(pa->thermodynamic_alignment==1)
 	 printf("PRIMER_PAIR%s_COMPL_ANY_TH=%.2f\n", suffix,
-		retval->best_pairs.pairs[i].compl_any_th);
+		retval->best_pairs.pairs[i].compl_any);
        /* Print pair comp_end */
        if(pa->thermodynamic_alignment==0)
 	 printf("PRIMER_PAIR%s_COMPL_END=%.2f\n", suffix,
 		retval->best_pairs.pairs[i].compl_end);
        if(pa->thermodynamic_alignment==1)
 	 printf("PRIMER_PAIR%s_COMPL_END_TH=%.2f\n", suffix,
-		retval->best_pairs.pairs[i].compl_end_th);
+		retval->best_pairs.pairs[i].compl_end);
        if(pa->thermodynamic_alignment==1)
 	 printf("PRIMER_PAIR%s_HAIRPIN_TH=%.2f\n", suffix,
 			 retval->best_pairs.pairs[i].hairpin_th);
@@ -512,13 +512,13 @@ print_boulder(int io_version,
       }
       
       /* Print the primer pair temlate mispriming */
-      if (retval->best_pairs.pairs[i].template_mispriming != ALIGN_SCORE_UNDEF)
+      if ((pa->thermodynamic_alignment == 0) && (retval->best_pairs.pairs[i].template_mispriming != ALIGN_SCORE_UNDEF))
         printf("PRIMER_PAIR%s_TEMPLATE_MISPRIMING=%.2f\n", suffix,
                retval->best_pairs.pairs[i].template_mispriming);
        /* Print the primer pair temlate mispriming. Thermodynamic approach.  */
-       if (retval->best_pairs.pairs[i].template_mispriming_th != ALIGN_SCORE_UNDEF)
+       if ((pa->thermodynamic_alignment == 1) && (retval->best_pairs.pairs[i].template_mispriming != ALIGN_SCORE_UNDEF))
 	 printf("PRIMER_PAIR%s_TEMPLATE_MISPRIMING_TH=%.2f\n", suffix,
-		retval->best_pairs.pairs[i].template_mispriming_th);
+		retval->best_pairs.pairs[i].template_mispriming);
 
     } /* End of print parameters of primer pairs */
         

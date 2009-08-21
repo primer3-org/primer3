@@ -520,19 +520,15 @@ typedef struct oligo_problems {
 	
 	double self_end; /* Self complementarity at 3' end * 100. */
 	
-	double self_any_th; /* Self complementarity as thermodynamic local alignment * 100. */
-	double self_end_th; /* Self complementarity at 3' end * 100. Thermodynamical approach */
 	double hairpin_th; /* hairpin, thermodynamical approach and calculated as any */
 	
 	double template_mispriming;
 	/* Max 3' complementarity to any ectopic site in template
 	 on the given template strand. */
-	double template_mispriming_th; /* thermodynamical approach */
 	double template_mispriming_r;
 	/* Max 3' complementarity to any ectopic site in the
 	 template on the reverse complement of the given template
 	 strand. */
-	double template_mispriming_r_th; /* thermodynamical approach */
 	char   length;   /* Length of the oligo. */
 	char   num_ns;   /* Number of Ns in the oligo. */
 	
@@ -570,20 +566,16 @@ typedef struct primer_pair {
                          * Local complementarity score between left and right
                          * primers (* 100).
                          */
-  double compl_any_th;
 
   double compl_end;     /* 
                          * 3'-anchored global complementatory score between *
                          * left and right primers (* 100).
                          */
-  double compl_end_th;
   
   double template_mispriming;
                         /* Maximum total mispriming score of both primers
                            to ectopic sites in the template, on "same"
                            strand (* 100). */
-   
-  double template_mispriming_th;
   
   double hairpin_th;
 
@@ -629,8 +621,6 @@ typedef struct oligo_stats {
   int size_max;            /* Primer longer than minimal size.              */
   int compl_any;           /* Self-complementarity too high.                */
   int compl_end;           /* Self-complementarity at 3' end too high.      */
-  int compl_any_th;     /* Self-complementarity too high. Thermodynamical approach */
-  int compl_end_th;     /* Self-complementarity at 3' end too high. Thermodynamical approach */
   int hairpin_th;          /* Hairpin structure too stabile. Thermodynamical approach */
   int repeat_score;        /* Complementarity with repeat sequence too high.*/
   int poly_x;              /* Long mononucleotide sequence inside.          */
@@ -639,7 +629,6 @@ typedef struct oligo_stats {
   int no_orf;              /* Would not amplify any of the specified ORF
                              (valid for left primers only).                 */
   int template_mispriming; /* Template mispriming score too high.           */
-  int template_mispriming_th;
   int ok;                  /* Number of acceptable oligos.                  */
   int gmasked;             /* edited by T. Koressaar, number of gmasked oligo*/
 } oligo_stats;
@@ -651,15 +640,12 @@ typedef struct pair_stats {
   int temp_diff;           /* Melting temperature difference too high.      */
   int compl_any;           /* Pairwise complementarity larger than allowed. */
   int compl_end;           /* The same for 3' end complementarity.          */
-  int compl_any_th;
-  int compl_end_th;
   int hairpin_th;
   int internal;            /* Internal oligo was not found.                 */
   int repeat_sim;          /* Complementarity with repeat sequence too high.*/
   int high_tm;             /* Product Tm too high.                          */
   int low_tm;              /* Product Tm too low.                           */
   int template_mispriming; /* Sum of template mispriming scores too high.   */
-  int template_mispriming_th; /* Template mispriming scores too high. */
   /* Neither oligo in the pairs overlaps one of the "required sites".       */
   int does_not_overlap_a_required_point;
 

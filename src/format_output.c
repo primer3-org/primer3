@@ -281,8 +281,8 @@ print_oligo(FILE *f,
       format1 = "%-16s %5d %4d %7.2f %7.2f   %5.2f  %5.2f ";
       fprintf(f, format1,
 	      title, o->start + sa->incl_s + pa->first_base_index,
-	      o->length, o->temp, o->gc_content, o->self_any_th,
-	      o->self_end_th);
+	      o->length, o->temp, o->gc_content, o->self_any,
+	      o->self_end);
       fprintf(f, "  %5.2f ",  o->hairpin_th);
    } else {
       format1  = "%-16s %5d %4d %7.2f %7.2f %5.2f %5.2f ";
@@ -550,7 +550,7 @@ print_pair_info(f, p, pa)
 	     p->compl_any, p->compl_end);
    else 
      fprintf(f, "PAIR ANY_TH COMPL: %.2f, PAIR 3'_TH COMPL: %.2f\n",
-	     p->compl_any_th, p->compl_end_th);
+	     p->compl_any, p->compl_end);
   if (pa->product_max_tm != PR_DEFAULT_PRODUCT_MAX_TM
       || pa->product_min_tm != PR_DEFAULT_PRODUCT_MIN_TM) {
     printf("PRODUCT Tm: %.4f, ", p->product_tm);
@@ -729,7 +729,7 @@ print_stat_line(f, t, s, print_lib_sim, lowercase_masking, thermodynamic_alignme
    fprintf(f,format, t, s.considered, s.ns, s.target, s.excluded,
 	   s.gc, s.gc_clamp, s.temp_min, s.temp_max);
    if(thermodynamic_alignment) {
-      fprintf(f, " %6d%6d%6d", s.compl_any_th, s.compl_end_th, s.hairpin_th);
+      fprintf(f, " %6d%6d%6d", s.compl_any, s.compl_end, s.hairpin_th);
    } else {
       fprintf(f, "%6d%6d", s.compl_any, s.compl_end);
    }
