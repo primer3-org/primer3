@@ -46,7 +46,7 @@
 #include <unistd.h>
 
 #include "thal.h"
-#define DEBUG
+/*#define DEBUG*/
 #ifndef MIN_HRPN_LOOP
 #define MIN_HRPN_LOOP 3 /*  minimum size of hairpin loop */
 #endif
@@ -89,8 +89,6 @@
 #define THAL_OOM_ERROR { o->msg = "Out of memory", errno=ENOMEM; goto FAIL; }
 
 #define bpIndx(a, b) BPI[a][b] /* for traceing matrix BPI */
-#define min2(a, b) ((a) < (b) ? (a) : (b))
-#define max2(a, b) ((a) < (b) ? (2) : (1))
 #define atPenaltyS(a, b) atpS[a][b]
 #define atPenaltyH(a, b) atpH[a][b]
 
@@ -157,20 +155,14 @@ static int length_unsig_char(const unsigned char * str); /* returns length of un
 
 static unsigned char str2int(char c); /* converts DNA sequence to int; 0-A, 1-C, 2-G, 3-T, 4-whatever */
 
-//static int seqcmp(unsigned char* seq1, unsigned char* seq2, int length);
-
 static double saltCorrectS (double mv, double dv, double dntp); /* part of calculating salt correction
 							    for Tm by SantaLucia et al */
-//static int smallest(int a, int b, int c);
-
-//static int identic(unsigned char* a, unsigned char* b, int len); /* checks if two seq-s are identical */
-
 static FILE* openParamFile(char* name,thal_results* o,int a); /* file of thermodynamic params */
 
 /* get thermodynamic tables */
 static void getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5],thal_results* o,int a);
 
-//static void verifyStackTable(double stack[5][5][5][5], char* type); /* just for debugging; the method is turned off by default */
+/*static void verifyStackTable(double stack[5][5][5][5], char* type);*/ /* just for debugging; the method is turned off by default */
 
 static void getStackint2(double stackEntropiesint2[5][5][5][5], double stackint2Enthalpies[5][5][5][5],thal_results* o,int a);
 
@@ -382,13 +374,7 @@ thal(const unsigned char *oligo_f, const unsigned char *oligo_r, const thal_args
    int *bp;
    unsigned char *oligo2_rev;
    double mh, ms;
-   if(a->debug == 0) {
-#ifdef DEBUG
-#undef DEBUG
-#endif
-   } else {
-#define DEBUG
-   }
+   
    send5 = hend5 = NULL;
    enthalpyDPT = entropyDPT = NULL;
    numSeq1 = numSeq2 = NULL;
@@ -648,20 +634,6 @@ str2int(char c)
    return 4;
 }
 
-/*
-static int 
-seqcmp(unsigned char* seq1, unsigned char* seq2, int length)
-{
-   int i;
-   for (i = 0; i < length; ++i)
-     if (seq1[i] < seq2[i])
-       return -1;
-   else if (seq1[i] > seq2[i])
-     return 1;
-   return 0;
-}
-*/
-
 /* memory stuff */
 
 static double* 
@@ -723,28 +695,6 @@ FAIL:
    fail_action(a, o);
    exit(-2);
 }
-
-/*
-static int 
-smallest(int a, int b, int c)
-{
-   if (a <= b && a <= c)
-     return a;
-   if (b <= c)
-     return b;
-   return c;
-}
-
-static int 
-identic(unsigned char* a, unsigned char* b, int len)
-{
-   int i;
-   for (i = 1; i <= len; ++i)
-     if (a[i] != b[i])
-       return 0;
-   return 1;
-}
-*/
 
 static int 
 max5(double a, double b, double c, double d, double e)
@@ -1300,10 +1250,10 @@ maxTM(int i, int j)
       S0 = MinEntropy;
       H0 = 0.0;
    }
-   if(max2(T0, T1)==2 || (S0>0 && H0>0)){ /* T1 on suurem */
+   if((T1 > T0) || (S0>0 && H0>0)){ /* T1 on suurem */
       EntropyDPT(i, j) = S1;
       EnthalpyDPT(i, j) = H1;
-   } else if(max2(T0, T1)==1) {
+   } else if(T0 >= T1) {
       EntropyDPT(i, j) = S0;
       EnthalpyDPT(i, j) = H0;
    }
@@ -1336,10 +1286,10 @@ maxTM2(int i, int j)
       H0 = 0.0;
    }
 
-   if(max2(T0, T1)==2) {
+   if(T1 > T0) {
       EntropyDPT(i, j) = S1;
       EnthalpyDPT(i, j) = H1;
-   } else if(max2(T0, T1)==1) {
+   } else {
       EntropyDPT(i, j) = S0;
       EnthalpyDPT(i, j) = H0;
    }
@@ -2062,6 +2012,7 @@ calc_terminal_bp(double temp) { /* compute exterior loop */
 #ifdef DEBUG
 	 printf ("WARNING: max5 returned character code %d ??\n", max);
 #endif
+	 break;
       }
    }
 }
@@ -2069,7 +2020,7 @@ calc_terminal_bp(double temp) { /* compute exterior loop */
 static double 
 END5_1(int i,int hs)
 {
-   int k, max_tm_flag;
+   int k;
    double max_tm; /* energy min */
    double T1, T2;
    double H, S;
@@ -2081,8 +2032,7 @@ END5_1(int i,int hs)
    for(k = 0; k <= i - MIN_HRPN_LOOP - 2; ++k) {
       T1 = (HEND5(k) + dplx_init_H) /(SEND5(k) + dplx_init_S + RC);
       T2 = (0 + dplx_init_H) /(0 + dplx_init_S + RC);
-      max_tm_flag= max2(T1,T2);
-      if(max_tm_flag==1) {
+      if(T1 >= T2) {
 	 H = HEND5(k) + atPenaltyH(numSeq1[k + 1], numSeq1[i]) + EnthalpyDPT(k + 1, i);
 	 S = SEND5(k) + atPenaltyS(numSeq1[k + 1], numSeq1[i]) + EntropyDPT(k + 1, i);
 	 if(!isFinite(H) || H > 0 || S > 0) { /* H and S must be greater than 0 to avoid BS */
@@ -2099,8 +2049,7 @@ END5_1(int i,int hs)
 	 }
 	 T1 = (H + dplx_init_H) /(S + dplx_init_S + RC);
       }
-      max_tm_flag = max2(max_tm, T1);
-      if(max_tm_flag == 2) {
+      if(max_tm < T1) {
 	 if(S > MinEntropyCutoff) {
 	    H_max = H;
 	    S_max = S;
@@ -2115,7 +2064,7 @@ END5_1(int i,int hs)
 static double 
 END5_2(int i,int hs)
 {
-   int k,max_tm_flag;
+   int k;
    double max_tm;
    double T1, T2;
    double H, S;
@@ -2126,8 +2075,7 @@ END5_2(int i,int hs)
    for (k = 0; k <= i - MIN_HRPN_LOOP - 3; ++k) {
       T1 = (HEND5(k) + dplx_init_H) /(SEND5(k) + dplx_init_S + RC);
       T2 = (0 + dplx_init_H) /(0 + dplx_init_S + RC);
-      max_tm_flag = max2(T1,T2);
-      if(max_tm_flag == 1) {
+      if(T1 >= T2) {
 	 H = HEND5(k) + atPenaltyH(numSeq1[k + 2], numSeq1[i]) + Hd5(i, k + 2) + EnthalpyDPT(k + 2, i);
 	 S = SEND5(k) + atPenaltyS(numSeq1[k + 2], numSeq1[i]) + Sd5(i, k + 2) + EntropyDPT(k + 2, i);
 	 if(!isFinite(H) || H > 0 || S > 0) {
@@ -2144,8 +2092,7 @@ END5_2(int i,int hs)
 	 }
 	 T1 = (H + dplx_init_H) /(S + dplx_init_S + RC);
       }
-      max_tm_flag = max2(max_tm, T1);
-      if(max_tm_flag == 2) {
+      if(max_tm < T1) {
 	 if(S > MinEntropyCutoff) {
 	    H_max = H;
 	    S_max = S;
@@ -2160,7 +2107,7 @@ END5_2(int i,int hs)
 static double 
 END5_3(int i,int hs)
 {
-   int k, max_tm_flag;
+   int k;
    double max_tm;
    double T1, T2;
    double H, S;
@@ -2171,8 +2118,7 @@ END5_3(int i,int hs)
    for (k = 0; k <= i - MIN_HRPN_LOOP - 3; ++k) {
       T1 = (HEND5(k) + dplx_init_H) /(SEND5(k) + dplx_init_S + RC);
       T2 = (0 + dplx_init_H) /(0 + dplx_init_S + RC);
-      max_tm_flag = max2(T1,T2);
-      if(max_tm_flag==1) {
+      if(T1 >= T2) {
 	 H = HEND5(k) + atPenaltyH(numSeq1[k + 1], numSeq1[i - 1]) + Hd3(i - 1, k + 1) + EnthalpyDPT(k + 1, i - 1);
 	 S = SEND5(k) + atPenaltyS(numSeq1[k + 1], numSeq1[i - 1]) + Sd3(i - 1, k + 1) + EntropyDPT(k + 1, i - 1);
 	 if(!isFinite(H) || H > 0 || S > 0) {
@@ -2189,8 +2135,7 @@ END5_3(int i,int hs)
 	 }
 	 T1 = (H + dplx_init_H) /(S + dplx_init_S + RC);
       }
-      max_tm_flag = max2(max_tm, T1);
-      if(max_tm_flag == 2) {
+      if(max_tm < T1) {
 	 if(S > MinEntropyCutoff) {
 	    H_max = H;
 	    S_max = S;
@@ -2205,7 +2150,7 @@ END5_3(int i,int hs)
 static double 
 END5_4(int i,int hs)
 {
-   int k, max_tm_flag;
+   int k;
    double max_tm;
    double T1, T2;
    double H, S;
@@ -2216,8 +2161,7 @@ END5_4(int i,int hs)
    for(k = 0; k <= i - MIN_HRPN_LOOP - 4; ++k) {
       T1 = (HEND5(k) + dplx_init_H) /(SEND5(k) + dplx_init_S + RC);
       T2 = (0 + dplx_init_H) /(0 + dplx_init_S + RC);
-      max_tm_flag = max2(T1,T2);
-      if(max_tm_flag == 1) {
+      if(T1 >= T2) {
 	 H = HEND5(k) + atPenaltyH(numSeq1[k + 2], numSeq1[i - 1]) + Htstack(i - 1, k + 2) + EnthalpyDPT(k + 2, i - 1);
 	 S = SEND5(k) + atPenaltyS(numSeq1[k + 2], numSeq1[i - 1]) + Ststack(i - 1, k + 2) + EntropyDPT(k + 2, i - 1);
 	 if(!isFinite(H) || H > 0 || S > 0) {
@@ -2234,8 +2178,7 @@ END5_4(int i,int hs)
 	 }
 	 T1 = (H + dplx_init_H) /(S + dplx_init_S + RC);
       }
-      max_tm_flag = max2(max_tm, T1);
-      if(max_tm_flag == 2) {
+      if(max_tm < T1) {
 	 if(S > MinEntropyCutoff) {
 	    H_max = H;
 	    S_max = S;
