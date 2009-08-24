@@ -289,9 +289,9 @@ if(a.debug == 0) {
      /* check for the default paths */
      struct stat st;
      if ((stat("./primer3_config", &st) == 0) && S_ISDIR(st.st_mode)) {
-       get_thermodynamic_values("./primer3_config/", &o, a.fail_stop);
+       tmp_ret = get_thermodynamic_values("./primer3_config/", &o);
      } else if ((stat("/opt/primer3_config", &st) == 0)  && S_ISDIR(st.st_mode)) {
-       get_thermodynamic_values("/opt/primer3_config/", &o, a.fail_stop);
+       tmp_ret = get_thermodynamic_values("/opt/primer3_config/", &o);
      } else {
 #endif
        /* no default directory found, error */
@@ -300,7 +300,12 @@ if(a.debug == 0) {
 #ifndef OS_WIN
      }
 #endif
-   } else get_thermodynamic_values(path, &o, a.fail_stop);
+   } else tmp_ret = get_thermodynamic_values(path, &o);
+
+   if (tmp_ret) {
+     fprintf(stderr, "%s\n", o.msg);
+     exit(-1);
+   }
 
    /* execute thermodynamical alignemnt */
    if(a.dimer==0 && oligo1!=NULL){

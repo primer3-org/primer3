@@ -441,7 +441,10 @@ read_thermodynamic_parameters(p3_global_settings *pa)
 #endif
   }
   /* read in the thermodynamic parameters */
-  get_thermodynamic_values(pa->thermodynamic_params_path, &o, 1);
+  if (get_thermodynamic_values(pa->thermodynamic_params_path, &o)) {
+    fprintf(stderr, "%s\n", o.msg);
+    exit(-1);
+  }
   /* mark that the last given path was used for reading the parameters */
   pa->thermodynamic_path_changed = 0;
 }

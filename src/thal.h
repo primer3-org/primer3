@@ -85,12 +85,11 @@ typedef struct {
    double temp; /* temperature from which hairpin structures will be calculated */
    int temponly; /* if non zero, print only temperature to stderr */
    int dimer; /* if non zero, dimer structure is calculated */
-   int fail_stop; /* exit with -1 on error */
 } thal_args;
 
 /* Structure for receiving results from the thermodynamic alignment calculation */
 typedef struct {
-   const char *msg;
+   char msg[255];
    double temp;
    int align_end_1;
    int align_end_2;
@@ -100,7 +99,7 @@ typedef struct {
 
 void set_thal_default_args(thal_args *a);
 
-void get_thermodynamic_values(char* path, thal_results *o, int fail_stop);
+int  get_thermodynamic_values(char* path, thal_results *o);
 
 void destroy_thal_structures();
 
