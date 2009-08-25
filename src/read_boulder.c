@@ -751,8 +751,10 @@ read_boulder_record(FILE *file_input,
 		    pa->pr_pair_weights.compl_any_th);
       COMPARE_FLOAT("PRIMER_PAIR_WT_COMPL_END_TH",
 		    pa->pr_pair_weights.compl_end_th);
+#ifdef USE_PAIR_HAIRPIN      
       COMPARE_FLOAT("PRIMER_PAIR_WT_HAIRPIN_TH",
 		    pa->pr_pair_weights.hairpin_th);
+#endif
       COMPARE_FLOAT("PRIMER_PAIR_WT_PRODUCT_TM_LT",
                     pa->pr_pair_weights.product_tm_lt);
       COMPARE_FLOAT("PRIMER_PAIR_WT_PRODUCT_TM_GT",

@@ -628,7 +628,9 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->pr_pair_weights.compl_end       = 0;
   a->pr_pair_weights.compl_any_th    = 0;
   a->pr_pair_weights.compl_end_th    = 0;
+#ifdef USE_PAIR_HAIRPIN  
   a->pr_pair_weights.hairpin_th      = 0;
+#endif
   a->pr_pair_weights.temp_cutoff     = 5;
   a->pr_pair_weights.repeat_sim      = 0;
 
@@ -3555,6 +3557,7 @@ characterize_pair(p3retval *retval,
 	 if (!must_use) return PAIR_FAILED;
 	 else pair_failed_flag = 1;
       }
+#ifdef USE_PAIR_HAIRPIN
       ppair->hairpin_th = align_thermod(s1, s1, thal_arg_to_use->hairpin_th);
       if(ppair->hairpin_th < align_thermod(s2_rev, s2_rev, thal_arg_to_use->hairpin_th)) {
 	 ppair->hairpin_th = align_thermod(s2_rev, s2_rev, thal_arg_to_use->hairpin_th);
@@ -3566,6 +3569,7 @@ characterize_pair(p3retval *retval,
 	 if (!must_use) return PAIR_FAILED;
 	 else pair_failed_flag = 1;
       }
+#endif
    }
    
   /*
@@ -3772,16 +3776,18 @@ obj_fn(const p3_global_settings *pa, primer_pair *h)
   if(pa->pr_pair_weights.compl_end && pa->thermodynamic_alignment==0)
     sum += pa->pr_pair_weights.compl_end * h->compl_end;
    
-   if (pa->pr_pair_weights.compl_end_th && pa->thermodynamic_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) <= h->compl_end))
-     sum += pa->pr_pair_weights.compl_end_th * (h->compl_end - (lower_tm - pa->pr_pair_weights.temp_cutoff - 1.0));
-   if (pa->pr_pair_weights.compl_end_th && pa->thermodynamic_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) > h->compl_end))
-     sum += pa->pr_pair_weights.compl_end_th * (1/(lower_tm - pa->pr_pair_weights.temp_cutoff + 1.0 - h->compl_end));
-   
-   if (pa->pr_pair_weights.hairpin_th && pa->thermodynamic_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) <= h->hairpin_th))
-     sum += pa->pr_pair_weights.hairpin_th * (h->hairpin_th - (lower_tm - pa->pr_pair_weights.temp_cutoff - 1.0));
-   if (pa->pr_pair_weights.hairpin_th && pa->thermodynamic_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) > h->hairpin_th))
-     sum += pa->pr_pair_weights.hairpin_th * (1/(lower_tm - pa->pr_pair_weights.temp_cutoff + 1.0 - h->hairpin_th));
-   
+  if (pa->pr_pair_weights.compl_end_th && pa->thermodynamic_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) <= h->compl_end))
+    sum += pa->pr_pair_weights.compl_end_th * (h->compl_end - (lower_tm - pa->pr_pair_weights.temp_cutoff - 1.0));
+  if (pa->pr_pair_weights.compl_end_th && pa->thermodynamic_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) > h->compl_end))
+    sum += pa->pr_pair_weights.compl_end_th * (1/(lower_tm - pa->pr_pair_weights.temp_cutoff + 1.0 - h->compl_end));
+
+#ifdef USE_PAIR_HAIRPIN   
+  if (pa->pr_pair_weights.hairpin_th && pa->thermodynamic_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) <= h->hairpin_th))
+    sum += pa->pr_pair_weights.hairpin_th * (h->hairpin_th - (lower_tm - pa->pr_pair_weights.temp_cutoff - 1.0));
+  if (pa->pr_pair_weights.hairpin_th && pa->thermodynamic_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) > h->hairpin_th))
+    sum += pa->pr_pair_weights.hairpin_th * (1/(lower_tm - pa->pr_pair_weights.temp_cutoff + 1.0 - h->hairpin_th));
+#endif   
+
   if(pa->pr_pair_weights.product_tm_lt && h->product_tm < pa->product_opt_tm)
     sum += pa->pr_pair_weights.product_tm_lt *
       (pa->product_opt_tm - h->product_tm);
@@ -4733,7 +4739,9 @@ p3_pair_explain_string(const pair_stats *pair_expl)
   IF_SP_AND_CHECK(", tm diff too large %d",pair_expl->temp_diff)
   IF_SP_AND_CHECK(", high any compl %d", pair_expl->compl_any)
   IF_SP_AND_CHECK(", high end compl %d", pair_expl->compl_end)
+#ifdef USE_PAIR_HAIRPIN
   IF_SP_AND_CHECK(", high hairpin stability %d", pair_expl->hairpin_th)
+#endif
   IF_SP_AND_CHECK(", no internal oligo %d", pair_expl->internal)
   IF_SP_AND_CHECK(", high mispriming library similarity %d",
                     pair_expl->repeat_sim)
@@ -7030,10 +7038,12 @@ p3_set_gs_primer_pair_wt_compl_end_th(p3_global_settings * p , double val) {
    p->pr_pair_weights.compl_end_th = val ;
 }
 
+#ifdef USE_PAIR_HAIRPIN
 void
 p3_set_gs_primer_pair_wt_hairpin_th(p3_global_settings * p , double val) {
    p->pr_pair_weights.hairpin_th = val ;
 }
+#endif
 
 void
 p3_set_gs_primer_pair_wt_product_tm_lt(p3_global_settings * p , double val) {
@@ -7759,7 +7769,9 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("compl_end %f\n", p->pr_pair_weights.compl_end) ;
     printf("compl_any_th %f\n", p->pr_pair_weights.compl_any_th) ;
     printf("compl_end_th %f\n", p->pr_pair_weights.compl_end_th) ;
+#ifdef USE_PAIR_HAIRPIN
     printf("hairpin %f\n", p->pr_pair_weights.hairpin_th) ;
+#endif
     printf("product_tm_lt %f\n", p->pr_pair_weights.product_tm_lt) ;
     printf("product_tm_gt %f\n", p->pr_pair_weights.product_tm_gt) ;
     printf("product_size_lt %f\n", p->pr_pair_weights.product_size_lt) ;

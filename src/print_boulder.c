@@ -474,9 +474,6 @@ print_boulder(int io_version,
        if(pa->thermodynamic_alignment==1)
 	 printf("PRIMER_PAIR%s_COMPL_END_TH=%.2f\n", suffix,
 		retval->best_pairs.pairs[i].compl_end);
-       if(pa->thermodynamic_alignment==1)
-	 printf("PRIMER_PAIR%s_HAIRPIN_TH=%.2f\n", suffix,
-			 retval->best_pairs.pairs[i].hairpin_th);
        if (io_version == 3) {
 	  /* Print product size */
 	  printf("PRIMER_PRODUCT_SIZE%s=%d\n", suffix,
