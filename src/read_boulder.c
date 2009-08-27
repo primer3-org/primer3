@@ -680,7 +680,7 @@ read_boulder_record(FILE *file_input,
                   pa->lowercase_masking); 
       /* added by T. Koressaar */
       COMPARE_INT("PRIMER_THERMODYNAMIC_ALIGNMENT", pa->thermodynamic_alignment);
-      if (COMPARE("PRIMER_THERMODYNAMIC_PARAMETERS_PATH")) {                             \
+      if (COMPARE("PRIMER_THERMODYNAMIC_PARAMETERS_PATH")) {
         if (pa->thermodynamic_params_path == NULL) {
           pa->thermodynamic_params_path = _rb_safe_malloc(datum_len + 1);
           strcpy(pa->thermodynamic_params_path, datum);
