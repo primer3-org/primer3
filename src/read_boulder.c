@@ -695,7 +695,6 @@ read_boulder_record(FILE *file_input,
         } else pa->thermodynamic_path_changed = 0;
         continue;
       }
-      COMPARE_AND_MALLOC("PRIMER_THERMODYNAMIC_PARAMETERS_PATH", pa->thermodynamic_params_path);
       /* weights for objective functions  */
       /* CHANGE TEMP/temp -> TM/tm */
       COMPARE_FLOAT("PRIMER_WT_TM_GT", pa->p_args.weights.temp_gt);
