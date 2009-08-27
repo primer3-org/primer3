@@ -50,12 +50,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 static void *_rb_safe_malloc(size_t x);
 static void  out_of_memory_error();
 
-/*
-static void   parse_align_score(const char *, const char *, short *,
-                                pr_append_str *);
-static void   parse_align_score_double(const char *, const char *, double *,
-				pr_append_str *);
-*/
 static void   parse_double(const char *, const char *, double *,
                            pr_append_str *);
 
@@ -110,19 +104,6 @@ extern double strtod();
        }                                           \
        continue;                                   \
    }
-
-/*
-#define COMPARE_ALIGN_SCORE(TAG,T)                     \
-   if (COMPARE(TAG)) {                                 \
-       parse_align_score(TAG, datum, &(T), parse_err); \
-       continue;                                       \
-   }
-#define COMPARE_ALIGN_SCORE_DBL(TAG,T)                     \
-      if (COMPARE(TAG)) {                                   \
-      parse_align_score_double(TAG, datum, &(T), parse_err); \
-       continue;                                       \
-}
-*/
 
 #define COMPARE_FLOAT(TAG,T)                      \
    if (COMPARE(TAG)) {                            \
