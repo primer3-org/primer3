@@ -285,19 +285,25 @@ if(a.debug == 0) {
    
    /* read thermodynamic parameters */
    if (path == NULL) {
-#ifndef OS_WIN
      /* check for the default paths */
      struct stat st;
+#ifdef OS_WIN
+     if ((stat(".\\primer3_config", &st) == 0) && S_ISDIR(st.st_mode)) {
+       tmp_ret = get_thermodynamic_values(".\\primer3_config\\", &o);
+     } else {
+       /* no default directory found, error */
+       fprintf(stderr, "Error: thermodynamic approach chosen, but path to thermodynamic parameters not specified\n");
+       exit(-1);
+     }
+#else 
      if ((stat("./primer3_config", &st) == 0) && S_ISDIR(st.st_mode)) {
        tmp_ret = get_thermodynamic_values("./primer3_config/", &o);
      } else if ((stat("/opt/primer3_config", &st) == 0)  && S_ISDIR(st.st_mode)) {
        tmp_ret = get_thermodynamic_values("/opt/primer3_config/", &o);
      } else {
-#endif
        /* no default directory found, error */
        fprintf(stderr, "Error: thermodynamic approach chosen, but path to thermodynamic parameters not specified\n");
        exit(-1);
-#ifndef OS_WIN
      }
 #endif
    } else tmp_ret = get_thermodynamic_values(path, &o);

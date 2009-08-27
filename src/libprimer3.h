@@ -147,9 +147,6 @@ typedef struct pair_weights {
   double compl_any_th;
   double compl_end;
   double compl_end_th;
-#ifdef USE_PAIR_HAIRPIN
-  double hairpin_th;
-#endif
   double temp_cutoff;
   double product_tm_lt;
   double product_tm_gt;
@@ -578,9 +575,6 @@ typedef struct primer_pair {
                         /* Maximum total mispriming score of both primers
                            to ectopic sites in the template, on "same"
                            strand (* 100). */
-#ifdef USE_PAIR_HAIRPIN  
-  double hairpin_th;
-#endif
 
   double repeat_sim;    /* Maximum total similarity of both primers to the
                          * sequence from given file in fasta format.
@@ -643,9 +637,6 @@ typedef struct pair_stats {
   int temp_diff;           /* Melting temperature difference too high.      */
   int compl_any;           /* Pairwise complementarity larger than allowed. */
   int compl_end;           /* The same for 3' end complementarity.          */
-#ifdef USE_PAIR_HAIRPIN  
-  int hairpin_th;
-#endif
   int internal;            /* Internal oligo was not found.                 */
   int repeat_sim;          /* Complementarity with repeat sequence too high.*/
   int high_tm;             /* Product Tm too high.                          */

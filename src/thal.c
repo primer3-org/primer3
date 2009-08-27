@@ -46,6 +46,7 @@
 #include <unistd.h>
 
 #include "thal.h"
+
 /*#define DEBUG*/
 #ifndef MIN_HRPN_LOOP
 #define MIN_HRPN_LOOP 3 /*  minimum size of hairpin loop */
@@ -161,6 +162,12 @@ static double saltCorrectS (double mv, double dv, double dntp); /* part of calcu
 static FILE* openParamFile(char* name, thal_results* o); /* file of thermodynamic params */
 
 /* get thermodynamic tables */
+static double readDouble(FILE *file, thal_results* o);
+
+static void readLoop(FILE *file, double *v1, double *v2, double *v3, thal_results *o);
+
+static int readTLoop(FILE *file, char *s, double *v, int triloop, thal_results *o);
+
 static void getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5], thal_results* o);
 
 /*static void verifyStackTable(double stack[5][5][5][5], char* type);*/ /* just for debugging; the method is turned off by default */
@@ -743,6 +750,122 @@ saltCorrectS (double mv, double dv, double dntp)
 }
 
 
+#define INIT_BUF_SIZE 1024
+
+static char*
+p3_read_line(FILE *file, thal_results* o)
+{
+  static size_t ssz;
+  static char *s = NULL;
+
+  size_t remaining_size;
+  char *p, *n;
+
+  if (NULL == s) {
+    ssz = INIT_BUF_SIZE;
+    s = (char *) safe_malloc(ssz, o);
+  }
+  p = s;
+  remaining_size = ssz;
+  while (1) {
+    if (fgets(p, remaining_size, file) == NULL) /* End of file. */
+      return p == s ? NULL : s;
+
+    if ((n = strchr(p, '\n')) != NULL) {
+      *n = '\0';
+      return s;
+    }
+
+    /* We did not get the whole line. */
+
+    if (ssz >= INT_MAX / 2)
+      ssz = INT_MAX;
+    else {
+      ssz *= 2;
+    }
+    s = (char *) safe_realloc(s, ssz, o);
+    p = strchr(s, '\0');
+    remaining_size = ssz - (p - s);
+  }
+}
+
+
+/* These functions are needed as "inf" cannot be read on Windows directly */
+static double 
+readDouble(FILE *file, thal_results* o)
+{
+  double result;
+  char *line = p3_read_line(file, o);
+  /* skip any spaces at beginning of the line */
+  while (isspace(*line)) line++;
+  if (!strncmp(line, "inf", 3))
+    return _INFINITY;
+  sscanf(line, "%lf", &result);
+  return result;
+}
+
+/* Reads a line containing 4 doubles, which can be specified as "inf". */
+static void
+readLoop(FILE *file, double *v1, double *v2, double *v3, thal_results *o)
+{
+  char *line = p3_read_line(file, o);
+  char *p = line, *q;
+  /* skip first number on the line */
+  while (isspace(*p)) p++;
+  while (isdigit(*p)) p++;
+  while (isspace(*p)) p++;
+  /* read second number */
+  q = p;
+  while (!isspace(*q)) q++;
+  *q = '\0'; q++;
+  if (!strcmp(p, "inf")) *v1 = _INFINITY;
+  else sscanf(p, "%lf", v1);
+  while (isspace(*q)) q++;
+  /* read third number */
+  p = q;
+  while (!isspace(*p)) p++;
+  *p = '\0'; p++;
+  if (!strcmp(q, "inf")) *v2 = _INFINITY;
+  else sscanf(q, "%lf", v2);
+  while (isspace(*p)) p++;
+  /* read last number */
+  q = p;
+  while (!isspace(*q) && (*q != '\0')) q++;
+  *q = '\0';
+  if (!strcmp(p, "inf")) *v3 = _INFINITY;
+  else sscanf(p, "%lf", v3);
+}
+
+/* Reads a line containing a short string and a double, used for reading a triloop or tetraloop. */
+static int
+readTLoop(FILE *file, char *s, double *v, int triloop, thal_results *o)
+{
+  char *line = p3_read_line(file, o);
+  if (!line) return -1;
+  char *p = line, *q;
+  /* skip first spaces */
+  while (isspace(*p)) p++;
+  /* read the string */
+  q = p;
+  while (isalpha(*q)) q++;
+  *q = '\0'; q++;
+  if (triloop) {
+    strncpy(s, p, 5);   /*triloop string has 5 characters*/
+    s[5] = '\0';
+  } else {
+    strncpy(s, p, 6);   /*tetraloop string has 6 characters*/
+    s[6] = '\0';
+  }
+  /* skip all spaces */
+  while (isspace(*q)) q++;
+  p = q;
+  while (!isspace(*p) && (*p != '\0')) p++;
+  *p = '\0';
+  if (!strcmp(q, "inf")) *v = _INFINITY;
+  else sscanf(q, "%lg", v);
+  return 0;
+} 
+
 static void 
 getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5], thal_results* o)
 {
@@ -758,9 +881,9 @@ getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5], 
 		  stackEntropies[i][ii][j][jj] = -1.0;
 		  stackEnthalpies[i][ii][j][jj] = _INFINITY;
 	       } else {
-		  fscanf(sFile, "%lf", &stackEntropies[i][ii][j][jj]);
-		  fscanf(hFile, "%lf", &stackEnthalpies[i][ii][j][jj]);
-		  if (!isFinite(stackEntropies[i][ii][j][jj]) || !isFinite(stackEnthalpies[i][ii][j][jj])) {
+                  stackEntropies[i][ii][j][jj] = readDouble(sFile, o);
+                  stackEnthalpies[i][ii][j][jj] = readDouble(hFile, o);
+                  if (!isFinite(stackEntropies[i][ii][j][jj]) || !isFinite(stackEnthalpies[i][ii][j][jj])) {
 		     stackEntropies[i][ii][j][jj] = -1.0;
 		     stackEnthalpies[i][ii][j][jj] = _INFINITY;
 		  }
@@ -788,9 +911,9 @@ getStackint2(double stackint2Entropies[5][5][5][5], double stackint2Enthalpies[5
 		  stackint2Entropies[i][ii][j][jj] = -1.0;
 		  stackint2Enthalpies[i][ii][j][jj] = _INFINITY;
 	       } else {
-		  fscanf(sFile, "%lf", &stackint2Entropies[i][ii][j][jj]);
-		  fscanf(hFile, "%lf", &stackint2Enthalpies[i][ii][j][jj]);
-		  if (!isFinite(stackint2Entropies[i][ii][j][jj]) || !isFinite(stackint2Enthalpies[i][ii][j][jj])) {
+                  stackint2Entropies[i][ii][j][jj] = readDouble(sFile, o);
+                  stackint2Enthalpies[i][ii][j][jj] = readDouble(hFile, o);
+                  if (!isFinite(stackint2Entropies[i][ii][j][jj]) || !isFinite(stackint2Enthalpies[i][ii][j][jj])) {
 		     stackint2Entropies[i][ii][j][jj] = -1.0;
 		     stackint2Enthalpies[i][ii][j][jj] = _INFINITY;
 		  }
@@ -840,12 +963,12 @@ getDangle(double dangleEntropies3[5][5][5], double dangleEnthalpies3[5][5][5], d
 	     dangleEntropies3[i][k][j] = -1.0;
 	     dangleEnthalpies3[i][k][j] = _INFINITY;
 	  } else {
-	     fscanf(sFile, "%lf", &dangleEntropies3[i][k][j]);
-	     fscanf(hFile, "%lf", &dangleEnthalpies3[i][k][j]);
-	     if(!isFinite(dangleEntropies3[i][k][j]) || !isFinite(dangleEnthalpies3[i][k][j])) {
+	     dangleEntropies3[i][k][j] = readDouble(sFile, o);
+             dangleEnthalpies3[i][k][j] = readDouble(hFile, o);
+             if(!isFinite(dangleEntropies3[i][k][j]) || !isFinite(dangleEnthalpies3[i][k][j])) {
 		dangleEntropies3[i][k][j] = -1.0;
-		dangleEnthalpies3[i][k][j] = _INFINITY;	     }
-
+		dangleEnthalpies3[i][k][j] = _INFINITY;	     
+             }
 	  }
        }
 
@@ -855,13 +978,13 @@ getDangle(double dangleEntropies3[5][5][5], double dangleEnthalpies3[5][5][5], d
 	  if (i == 4 || j == 4) {
 	     dangleEntropies5[i][j][k] = -1.0;
 	     dangleEnthalpies5[i][j][k] = _INFINITY;
-	       } else if (k == 4) {
-		  dangleEntropies5[i][j][k] = -1.0;
-		  dangleEnthalpies5[i][j][k] = _INFINITY;
-	       } else {
-		  fscanf(sFile, "%lf", &dangleEntropies5[i][j][k]);
-		  fscanf(hFile, "%lf", &dangleEnthalpies5[i][j][k]);
-	     if(!isFinite(dangleEntropies5[i][j][k]) || !isFinite(dangleEnthalpies5[i][j][k])) {
+	  } else if (k == 4) {
+	     dangleEntropies5[i][j][k] = -1.0;
+             dangleEnthalpies5[i][j][k] = _INFINITY;
+	  } else {
+	     dangleEntropies5[i][j][k] = readDouble(sFile, o);
+             dangleEnthalpies5[i][j][k] = readDouble(hFile, o);
+             if(!isFinite(dangleEntropies5[i][j][k]) || !isFinite(dangleEnthalpies5[i][j][k])) {
 		dangleEntropies5[i][j][k] = -1.0;
 		dangleEnthalpies5[i][j][k] = _INFINITY;
 	     }
@@ -880,8 +1003,8 @@ getLoop(double hairpinLoopEntropies[30], double interiorLoopEntropies[30], doubl
    sFile = openParamFile("loops.ds", o);
    hFile = openParamFile("loops.dh", o);
    for (k = 0; k < 30; ++k) {
-      fscanf(sFile, "%*f%lf%lf%lf", &interiorLoopEntropies[k], &bulgeLoopEntropies[k], &hairpinLoopEntropies[k]);
-      fscanf(hFile, "%*f%lf%lf%lf", &interiorLoopEnthalpies[k], &bulgeLoopEnthalpies[k], &hairpinLoopEnthalpies[k]);
+      readLoop(sFile, &interiorLoopEntropies[k], &bulgeLoopEntropies[k], &hairpinLoopEntropies[k], o);
+      readLoop(hFile, &interiorLoopEnthalpies[k], &bulgeLoopEnthalpies[k], &hairpinLoopEnthalpies[k], o);
    }
    fclose(sFile);
    fclose(hFile);
@@ -905,9 +1028,9 @@ getTstack(double tstackEntropies[5][5][5][5], double tstackEnthalpies[5][5][5][5
 	      tstackEntropies[i1][i2][j1][j2] = 0.00000000001;
 	      tstackEnthalpies[i1][i2][j1][j2] = 0.0;
 	   } else {
-	      fscanf(sFile, "%lf", &tstackEntropies[i1][i2][j1][j2]);
-	      fscanf(hFile, "%lf", &tstackEnthalpies[i1][i2][j1][j2]);
-	      if (!isFinite(tstackEntropies[i1][i2][j1][j2]) || !isFinite(tstackEnthalpies[i1][i2][j1][j2])) {
+              tstackEntropies[i1][i2][j1][j2] = readDouble(sFile, o);
+              tstackEnthalpies[i1][i2][j1][j2] = readDouble(hFile, o);
+              if (!isFinite(tstackEntropies[i1][i2][j1][j2]) || !isFinite(tstackEnthalpies[i1][i2][j1][j2])) {
 		 tstackEntropies[i1][i2][j1][j2] = -1.0;
 		 tstackEnthalpies[i1][i2][j1][j2] = _INFINITY;
 	      }
@@ -935,10 +1058,9 @@ getTstack2(double tstack2Entropies[5][5][5][5], double tstack2Enthalpies[5][5][5
 	      tstack2Entropies[i1][i2][j1][j2] = 0.00000000001;
 	      tstack2Enthalpies[i1][i2][j1][j2] = 0.0;
 	   } else {
-
-	      fscanf(sFile, "%lf", &tstack2Entropies[i1][i2][j1][j2]);
-	      fscanf(hFile, "%lf", &tstack2Enthalpies[i1][i2][j1][j2]);
-	      if (!isFinite(tstack2Entropies[i1][i2][j1][j2]) || !isFinite(tstack2Enthalpies[i1][i2][j1][j2])) {
+              tstack2Entropies[i1][i2][j1][j2] = readDouble(sFile, o);
+              tstack2Enthalpies[i1][i2][j1][j2] = readDouble(hFile, o);
+              if (!isFinite(tstack2Entropies[i1][i2][j1][j2]) || !isFinite(tstack2Enthalpies[i1][i2][j1][j2])) {
 		 tstack2Entropies[i1][i2][j1][j2] = -1.0;
 		 tstack2Enthalpies[i1][i2][j1][j2] = _INFINITY;
 	      }
@@ -957,7 +1079,7 @@ getTriloop(struct triloop** triloopEntropies, struct triloop** triloopEnthalpies
    *num = 0;
    size = 16;
    *triloopEntropies = safe_calloc(16, sizeof(struct triloop), o);
-   while (fscanf(sFile, "%5s %lg", (*triloopEntropies)[*num].loop, &value) == 2) {
+   while (readTLoop(sFile, (*triloopEntropies)[*num].loop, &value, 1, o) != -1) {
       for (i = 0; i < 5; ++i)
 	(*triloopEntropies)[*num].loop[i] = str2int((*triloopEntropies)[*num].loop[i]);
       (*triloopEntropies)[*num].value = value;
@@ -975,9 +1097,7 @@ getTriloop(struct triloop** triloopEntropies, struct triloop** triloopEnthalpies
    *num = 0;
    size = 16;
    *triloopEnthalpies = safe_calloc(16, sizeof(struct triloop), o);
-
-   while (fscanf(hFile, "%5s %lg", (*triloopEnthalpies)[*num].loop, &value) == 2) {
-
+   while (readTLoop(hFile, (*triloopEnthalpies)[*num].loop, &value, 1, o) != -1) {
       for (i = 0; i < 5; ++i)
 	(*triloopEnthalpies)[*num].loop[i] = str2int((*triloopEnthalpies)[*num].loop[i]);
       (*triloopEnthalpies)[*num].value = value;
@@ -1003,7 +1123,7 @@ getTetraloop(struct tetraloop** tetraloopEntropies, struct tetraloop** tetraloop
    *num = 0;
    size = 16;
    *tetraloopEntropies = safe_calloc(16, sizeof(struct tetraloop), o);
-   while (fscanf(sFile, "%6s %lg", (*tetraloopEntropies)[*num].loop, &value) == 2) {
+   while (readTLoop(sFile, (*tetraloopEntropies)[*num].loop, &value, 0, o) != -1) {
       for (i = 0; i < 6; ++i)
 	(*tetraloopEntropies)[*num].loop[i] = str2int((*tetraloopEntropies)[*num].loop[i]);
       (*tetraloopEntropies)[*num].value = value;
@@ -1020,7 +1140,7 @@ getTetraloop(struct tetraloop** tetraloopEntropies, struct tetraloop** tetraloop
    *num = 0;
    size = 16;
    *tetraloopEnthalpies = safe_calloc(16, sizeof(struct tetraloop), o);
-   while (fscanf(hFile, "%6s %lg", (*tetraloopEnthalpies)[*num].loop, &value) == 2) {
+   while (readTLoop(hFile, (*tetraloopEnthalpies)[*num].loop, &value, 0, o) != -1) {
       for (i = 0; i < 6; ++i)
 	(*tetraloopEnthalpies)[*num].loop[i] = str2int((*tetraloopEnthalpies)[*num].loop[i]);
       (*tetraloopEnthalpies)[*num].value = value;

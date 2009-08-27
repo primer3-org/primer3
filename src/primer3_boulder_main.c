@@ -422,7 +422,18 @@ read_thermodynamic_parameters(p3_global_settings *pa)
   if (pa->thermodynamic_path_changed == 0) return;
   /* check that the path to the parameters folder was given */
   if (pa->thermodynamic_params_path == NULL) {
-#ifndef OS_WIN
+#ifdef OS_WIN
+    /* in windows check for .\\primer3_config */
+    struct stat st;
+    if ((stat(".\\primer3_config", &st) == 0) && S_ISDIR(st.st_mode)) {
+      pa->thermodynamic_params_path = (char*) malloc(strlen(".\\primer3_config\\") * sizeof(char));
+      strcpy(pa->thermodynamic_params_path, ".\\primer3_config\\");
+    } else {
+      /* no default directory found, error */
+      printf("PRIMER_ERROR=thermodynamic approach chosen, but path to thermodynamic parameters not specified\n=\n");
+      exit(-1);
+    }
+#else
     /* in linux, check for ./primer3_config and /opt/primer3_config */
     struct stat st;
     if ((stat("./primer3_config", &st) == 0) && S_ISDIR(st.st_mode)) {
@@ -432,11 +443,9 @@ read_thermodynamic_parameters(p3_global_settings *pa)
       pa->thermodynamic_params_path = (char*) malloc(strlen("/opt/primer3_config/") * sizeof(char));
       strcpy(pa->thermodynamic_params_path, "/opt/primer3_config/");
     } else {
-#endif
       /* no default directory found, error */
       printf("PRIMER_ERROR=thermodynamic approach chosen, but path to thermodynamic parameters not specified\n=\n");	
       exit(-1);
-#ifndef OS_WIN
     }
 #endif
   }
