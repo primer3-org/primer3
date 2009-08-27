@@ -51,7 +51,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 /* ALIGN_SCORE_UNDEF is used only libprimer3 and clients, not in dpal */
-//#define ALIGN_SCORE_UNDEF             SHRT_MIN
 #define ALIGN_SCORE_UNDEF            -DBL_MAX
      
 /* These next 5 are exposed for format_output.c -- probabaly should be reviewed. */
@@ -106,7 +105,6 @@ typedef enum p3_output_type {
 } p3_output_type;
 
 /* pr_append_str is an append-only string ADT. */
-typedef struct pr_append_str {
   int storage_size;
   char *data;
 } pr_append_str;
@@ -430,22 +428,8 @@ typedef struct p3_global_settings {
      or any two right primers when returning num_return primer pairs.
      The objective is get 'truly different' primer pairs.
 
-     Primers that end at e.g. 30 and 31 have a three-prime distance
-     of 1.
-
-     0 indicates a primer pair is ok if it has not already appeared in
-     the output list (default behavior and behavior in previous
-     releases). This is the most liberal behavior.
-
-     n > 0 indicates that a primer pair is ok if:
-
-     NOT (3' end of left primer closer than n to the 3' end of a left
-     primer in an existing pair)
-
-     AND
-
-     NOT (3' end of right primer closer than n
-     to the 3' end of right primer in an existing pair)
+     Please see the user documentation (primer3_manual.htm) for
+     PRIMER_MIN_THREE_PRIME_DISTANCE, which is exactly this value.
   */
   int    min_three_prime_distance; 
   
