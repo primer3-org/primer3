@@ -403,22 +403,8 @@ typedef struct p3_global_settings {
      or any two right primers when returning num_return primer pairs.
      The objective is get 'truly different' primer pairs.
 
-     Primers that end at e.g. 30 and 31 have a three-prime distance
-     of 1.
-
-     0 indicates a primer pair is ok if it has not already appeared in
-     the output list (default behavior and behavior in previous
-     releases). This is the most liberal behavior.
-
-     n > 0 indicates that a primer pair is ok if:
-
-     NOT (3' end of left primer closer than n to the 3' end of a left
-     primer in an existing pair)
-
-     AND
-
-     NOT (3' end of right primer closer than n
-     to the 3' end of right primer in an existing pair)
+     Please see the user documentation (primer3_manual.htm) for
+     PRIMER_MIN_THREE_PRIME_DISTANCE, which is exactly this value.
   */
   int    min_three_prime_distance; 
   
