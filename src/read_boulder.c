@@ -673,7 +673,7 @@ read_boulder_record(FILE *file_input,
 	  pa->thermodynamic_params_path = _rb_safe_malloc(datum_len + 1); 
 	  strcpy(pa->thermodynamic_params_path, datum);
 	  pa->thermodynamic_path_changed = 1;
-        } else pa->thermodynamic_path_changed = 0;
+        }
         continue;
       }
       /* weights for objective functions  */

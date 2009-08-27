@@ -418,7 +418,7 @@ static void
 read_thermodynamic_parameters(p3_global_settings *pa)
 {
   thal_results o;
-  /* if the path to the parameter files did not change, we do not to read again */
+  /* if the path to the parameter files did not change, we do not want to read again */
   if (pa->thermodynamic_path_changed == 0) return;
   /* check that the path to the parameters folder was given */
   if (pa->thermodynamic_params_path == NULL) {
