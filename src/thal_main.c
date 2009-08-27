@@ -43,13 +43,23 @@
 #include <setjmp.h>
 #include <ctype.h>
 #include <math.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "thal.h"
+
+/* Check on which OS we compile */
+#if defined(_WIN32) || defined(WIN32) || defined (__WIN32__) || defined(__CYGWIN__) || defined(__MINGW32__)
+#define OS_WIN
+#endif
+
 #define DEBUG
 
 char *endptr; /* reading input */
 int i; /* index */
 const unsigned char *oligo1, *oligo2; /* inserted oligo sequences */
+char *path = NULL; /* path to the parameter files */
 
 /* Beginning of main */
 int main(int argc, char** argv) 
@@ -85,6 +95,8 @@ if(a.debug == 0) {
      "-maxloop size        - the maximum size of secondary structures loops.\n" 
      "                       Default is 30 (this is maximum allowed length, currently).\n"
      "\n"
+     "-path <path>         - the path to the thermodynamic parameter files\n"
+     "\n"
      "-s1 DNA_oligomer\n"
      "\n"
      "-s2 DNA_oligomer\n"
@@ -93,7 +105,7 @@ if(a.debug == 0) {
 #ifdef DEBUG
       fprintf(stderr, usage, argv[0]);
 #endif
-      return EXIT_FAILURE;
+      return -1;
    }
    /* BEGIN: READ the INPUT */
    for(i = 1; i < argc; ++i) {
@@ -127,6 +139,15 @@ if(a.debug == 0) {
 	    exit(-1);
 	 }
 	 i++;
+      } else if (!strcmp("-path", argv[i])) {
+	if(argv[i+1]==NULL) {
+#ifdef DEBUG
+            fprintf(stderr, usage, argv[0]);
+#endif
+            exit(-1);
+         }
+         path = (char*)argv[i+1];
+         i++;
       } else if (!strncmp("-s1", argv[i], 3)) { /* first sequence in 5'->3' direction */
 	 if(argv[i+1]==NULL) {
 #ifdef DEBUG
@@ -261,6 +282,37 @@ if(a.debug == 0) {
       fprintf(stderr, usage, argv[0]);
       exit(-1);
    }
+   
+   /* read thermodynamic parameters */
+   if (path == NULL) {
+     /* check for the default paths */
+     struct stat st;
+#ifdef OS_WIN
+     if ((stat(".\\primer3_config", &st) == 0) && S_ISDIR(st.st_mode)) {
+       tmp_ret = get_thermodynamic_values(".\\primer3_config\\", &o);
+     } else {
+       /* no default directory found, error */
+       fprintf(stderr, "Error: thermodynamic approach chosen, but path to thermodynamic parameters not specified\n");
+       exit(-1);
+     }
+#else 
+     if ((stat("./primer3_config", &st) == 0) && S_ISDIR(st.st_mode)) {
+       tmp_ret = get_thermodynamic_values("./primer3_config/", &o);
+     } else if ((stat("/opt/primer3_config", &st) == 0)  && S_ISDIR(st.st_mode)) {
+       tmp_ret = get_thermodynamic_values("/opt/primer3_config/", &o);
+     } else {
+       /* no default directory found, error */
+       fprintf(stderr, "Error: thermodynamic approach chosen, but path to thermodynamic parameters not specified\n");
+       exit(-1);
+     }
+#endif
+   } else tmp_ret = get_thermodynamic_values(path, &o);
+
+   if (tmp_ret) {
+     fprintf(stderr, "%s\n", o.msg);
+     exit(-1);
+   }
+
    /* execute thermodynamical alignemnt */
    if(a.dimer==0 && oligo1!=NULL){
       thal(oligo1,oligo1,&a,&o);   
@@ -276,5 +328,7 @@ if(a.debug == 0) {
    }
    if(a.temponly==1)
      printf("%f\n",o.temp);
+   /* cleanup */
+   destroy_thal_structures();
    return EXIT_SUCCESS;
 }

@@ -53,10 +53,9 @@ LDLIBS     = -lm
 CC         = gcc
 O_OPTS     = -O0
 CC_OPTS    = -g -Wall -D__USE_FIXED_PROTOTYPES__
-CC_TH_OPTS = -DPARAMFILES=\"/home/ioana/primer3/primer3/tags/release-2.1.0-beta/src/tables/\"
 P_DEFINES  =
 
-CFLAGS  = $(CC_OPTS) $(CC_TH_OPTS) $(O_OPTS)
+CFLAGS  = $(CC_OPTS) $(O_OPTS)
 LDFLAGS = -g
 
 # ======================================================================
@@ -80,7 +79,7 @@ RANLIB          = ranlib
 PRIMER_OBJECTS1=primer3_boulder_main.o\
                 format_output.o\
                 read_boulder.o\
-                print_boulder.o
+                print_boulder.o 
 
 PRIMER_OBJECTS=$(PRIMER_OBJECTS1) $(LIBRARIES)
 PRIMER_DYN_OBJECTS=$(PRIMER_OBJECTS1) $(DYNLIBS)
@@ -117,7 +116,7 @@ $(LIBTHAL): thal_primer.o
 
 $(LIBTHAL_DYN): thal_primer.o
 	gcc -shared -W1,-soname,libthal.so.1 -o $(LIBTHAL_DYN_LIB) thal_primer.o
-		
+
 $(LIBPRIMER3): libprimer3.o p3_seq_lib.o
 	ar rv $@ libprimer3.o p3_seq_lib.o
 	$(RANLIB) $@

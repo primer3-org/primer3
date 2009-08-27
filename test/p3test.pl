@@ -113,7 +113,7 @@ sub main() {
     }
 
     my $valgrind_exe = "/usr/local/bin/valgrind";
-    my $log_file_arg_for_valgrind = "--log-file";
+    my $log_file_arg_for_valgrind = "--log-file-exactly";
     if ($do_valgrind) {
 	if (!-x $valgrind_exe) { 
 	    warn "Cannot find $valgrind_exe; will try `which valgrind`\n";

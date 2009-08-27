@@ -657,7 +657,7 @@ Left    3155     0     0     0     0     0    52  2924     32     0     0    22 
 Right   3213     0     0     0     0     0    59  2968     23     0     0    19     0   144
 Intl    2916     0     0     0     0     0   432  1999    116     0     4    22     0   343
 Pair Stats:
-considered 18, unacceptable product size 11, ok 7
+considered 15, unacceptable product size 10, ok 5
 primer3 release 2.0.0
 
 

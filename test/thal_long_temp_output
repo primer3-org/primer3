@@ -17,6 +17,8 @@ USAGE: ../src/ntthal OPTIONS oligo
 -maxloop size        - the maximum size of secondary structures loops.
                        Default is 30 (this is maximum allowed length, currently).
 
+-path <path>         - the path to the thermodynamic parameter files
+
 -s1 DNA_oligomer
 
 -s2 DNA_oligomer
@@ -46,6 +48,8 @@ USAGE: ../src/ntthal OPTIONS oligo
 -maxloop size        - the maximum size of secondary structures loops.
                        Default is 30 (this is maximum allowed length, currently).
 
+-path <path>         - the path to the thermodynamic parameter files
+
 -s1 DNA_oligomer
 
 -s2 DNA_oligomer
@@ -67,6 +71,8 @@ USAGE: ../src/ntthal OPTIONS oligo
 
 -maxloop size        - the maximum size of secondary structures loops.
                        Default is 30 (this is maximum allowed length, currently).
+
+-path <path>         - the path to the thermodynamic parameter files
 
 -s1 DNA_oligomer
 

@@ -103,7 +103,7 @@ sub main() {
 
     $valgrind_format
         = "$valgrind_exe --leak-check=yes "
-        . " --show-reachable=yes --log-file=ntthal.%0.4d.valg ";
+        . " --show-reachable=yes --log-file-exactly=ntthal.%0.4d.valg ";
 
 
     # Look for the ntthal executable

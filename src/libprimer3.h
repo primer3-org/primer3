@@ -51,8 +51,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 /* ALIGN_SCORE_UNDEF is used only libprimer3 and clients, not in dpal */
-#define ALIGN_SCORE_UNDEF             SHRT_MIN
-#define ALIGN_SCORE_UNDEF_TH          -DBL_MAX
+//#define ALIGN_SCORE_UNDEF             SHRT_MIN
+#define ALIGN_SCORE_UNDEF            -DBL_MAX
      
 /* These next 5 are exposed for format_output.c -- probabaly should be reviewed. */
 #define PR_INFINITE_POSITION_PENALTY -1.0
@@ -125,7 +125,7 @@ typedef struct oligo_weights {
   double compl_any_th;
   double compl_end;
   double compl_end_th;
-  double hairpin;
+  double hairpin_th;
   double temp_cutoff;
   double repeat_sim;
   double length_lt;
@@ -147,7 +147,6 @@ typedef struct pair_weights {
   double compl_any_th;
   double compl_end;
   double compl_end_th;
-  double hairpin;
   double temp_cutoff;
   double product_tm_lt;
   double product_tm_gt;
@@ -210,17 +209,17 @@ typedef struct args_for_one_oligo_or_primer {
   int    min_end_quality;
   int    min_quality;       /* Minimum quality permitted for oligo sequence.*/
 
-  short  max_self_any;  
-  short  max_self_end;
+  double max_self_any;  
+  double max_self_end;
   double max_self_any_th;
   double max_self_end_th;
-  double max_hairpin;
-  short  max_repeat_compl;   /* 
+  double max_hairpin_th;
+  double max_repeat_compl;   /* 
                               * Acceptable complementarity with repeat
                               * sequences.
                               */
 
-  short  max_template_mispriming;
+  double max_template_mispriming;
   double max_template_mispriming_th;
 } args_for_one_oligo_or_primer;
 
@@ -404,20 +403,22 @@ typedef struct p3_global_settings {
   double product_max_tm;
   double product_min_tm;
   double product_opt_tm;
-  short  pair_max_template_mispriming;
+  double pair_max_template_mispriming;
   double pair_max_template_mispriming_th;
-  short  pair_repeat_compl;
-  short  pair_compl_any;
+  double pair_repeat_compl;
+  double pair_compl_any;
   double pair_compl_any_th;
-  short  pair_compl_end;
+  double pair_compl_end;
   double pair_compl_end_th;
-  double pair_hairpin;
+  double pair_hairpin_th;
    
   /* Enables to use approach of thermodynamical alignment for dimer and hairpin calculations
    0 - use alignment not based on thermodynamics - the only dimer calculation approach until primer3 2.0.0. 
        No hairpins are calculated 
    1 - use alignment based on thermodynamics. Hairpins are calculated  */
-  int thermodynamical_alignment;
+  int thermodynamic_alignment;
+  char *thermodynamic_params_path; /* path to thermodynamic parameter files */
+  int thermodynamic_path_changed;  /* if this is set to 1, we need to re-read the thermodynamic parameters from new path */
    
   /* Max difference between temperature of primer and temperature of
      product.  Cannot be calculated until product is known. */
@@ -459,16 +460,16 @@ typedef enum oligo_type { OT_LEFT = 0, OT_RIGHT = 1, OT_INTL = 2 }
   oligo_type;
 
 typedef struct rep_sim {
-  char *name;      /* Name of the sequence from given file in fasta
-                    * format with maximum similarity to the oligo.
-                    */
-  short min;       /* 
-                    * The minimum score in slot 'score' (below).
-                    * (Used when the objective function involves
-                    * minimization of mispriming possibilities.)
-                    */
-  short max;       /* The maximum score in slot 'score' (below). */
-  short *score;    /* 
+  char *name;       /* Name of the sequence from given file in fasta
+                     * format with maximum similarity to the oligo.
+                     */
+  short min;        /* 
+                     * The minimum score in slot 'score' (below).
+                     * (Used when the objective function involves
+                     * minimization of mispriming possibilities.)
+                     */
+  short max;        /* The maximum score in slot 'score' (below). */
+  double *score;    /* 
                     * Array of similarity (i.e. false-priming) scores,
                     * one for each entry in the 'repeat_lib' slot
                     * of the primargs struct. 
@@ -514,23 +515,19 @@ typedef struct oligo_problems {
 	int    seq_end_quality;  /* Minimum quality core of the 5 3' bases. */
 	
 	
-	short  self_any; /* Self complementarity as local alignment * 100. */
+	double self_any; /* Self complementarity as local alignment * 100. */
 	
-	short  self_end; /* Self complementarity at 3' end * 100. */
+	double self_end; /* Self complementarity at 3' end * 100. */
 	
-	double self_any_th; /* Self complementarity as thermodynamic local alignment * 100. */
-	double self_end_th; /* Self complementarity at 3' end * 100. Thermodynamical approach */
-	double hairpin; /* hairpin, thermodynamical approach and calculated as any */
+	double hairpin_th; /* hairpin, thermodynamical approach and calculated as any */
 	
-	short  template_mispriming;
+	double template_mispriming;
 	/* Max 3' complementarity to any ectopic site in template
 	 on the given template strand. */
-	double template_mispriming_th; /* thermodynamical approach */
-	short  template_mispriming_r;
+	double template_mispriming_r;
 	/* Max 3' complementarity to any ectopic site in the
 	 template on the reverse complement of the given template
 	 strand. */
-	double template_mispriming_r_th; /* thermodynamical approach */
 	char   length;   /* Length of the oligo. */
 	char   num_ns;   /* Number of Ns in the oligo. */
 	
@@ -564,28 +561,22 @@ typedef struct primer_pair {
 
   double t_opt_a;
 
-  int    compl_any;     /* 
+  double compl_any;     /* 
                          * Local complementarity score between left and right
                          * primers (* 100).
                          */
-  double compl_any_th;
 
-  int    compl_end;     /* 
+  double compl_end;     /* 
                          * 3'-anchored global complementatory score between *
                          * left and right primers (* 100).
                          */
-  double compl_end_th;
   
-  int    template_mispriming;
+  double template_mispriming;
                         /* Maximum total mispriming score of both primers
                            to ectopic sites in the template, on "same"
                            strand (* 100). */
-   
-  double    template_mispriming_th;
-  
-  double hairpin;
 
-  short  repeat_sim;    /* Maximum total similarity of both primers to the
+  double repeat_sim;    /* Maximum total similarity of both primers to the
                          * sequence from given file in fasta format.
                          */
   primer_rec *left;     /* Left primer. */
@@ -627,9 +618,7 @@ typedef struct oligo_stats {
   int size_max;            /* Primer longer than minimal size.              */
   int compl_any;           /* Self-complementarity too high.                */
   int compl_end;           /* Self-complementarity at 3' end too high.      */
-  int compl_any_th;     /* Self-complementarity too high. Thermodynamical approach */
-  int compl_end_th;     /* Self-complementarity at 3' end too high. Thermodynamical approach */
-  int hairpin;          /* Hairpin structure too stabile. Thermodynamical approach */
+  int hairpin_th;          /* Hairpin structure too stabile. Thermodynamical approach */
   int repeat_score;        /* Complementarity with repeat sequence too high.*/
   int poly_x;              /* Long mononucleotide sequence inside.          */
   int seq_quality;         /* Low quality of bases included.                */
@@ -637,7 +626,6 @@ typedef struct oligo_stats {
   int no_orf;              /* Would not amplify any of the specified ORF
                              (valid for left primers only).                 */
   int template_mispriming; /* Template mispriming score too high.           */
-  int template_mispriming_th;
   int ok;                  /* Number of acceptable oligos.                  */
   int gmasked;             /* edited by T. Koressaar, number of gmasked oligo*/
 } oligo_stats;
@@ -649,15 +637,11 @@ typedef struct pair_stats {
   int temp_diff;           /* Melting temperature difference too high.      */
   int compl_any;           /* Pairwise complementarity larger than allowed. */
   int compl_end;           /* The same for 3' end complementarity.          */
-  int compl_any_th;
-  int compl_end_th;
-  int hairpin;
   int internal;            /* Internal oligo was not found.                 */
   int repeat_sim;          /* Complementarity with repeat sequence too high.*/
   int high_tm;             /* Product Tm too high.                          */
   int low_tm;              /* Product Tm too low.                           */
   int template_mispriming; /* Sum of template mispriming scores too high.   */
-  int template_mispriming_th; /* Template mispriming scores too high. */
   /* Neither oligo in the pairs overlaps one of the "required sites".       */
   int does_not_overlap_a_required_point;
 
@@ -913,8 +897,8 @@ void p3_set_gs_primer_self_any(p3_global_settings * p , double val);
 void p3_set_gs_primer_self_any_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_self_end(p3_global_settings * p , double val);
 void p3_set_gs_primer_self_end_th(p3_global_settings * p , double val);
-void p3_set_gs_primer_hairpin(p3_global_settings * p , double val);
-void p3_set_gs_primer_thermodynamical_alignment(p3_global_settings * p , int val);
+void p3_set_gs_primer_hairpin_th(p3_global_settings * p , double val);
+void p3_set_gs_primer_thermodynamic_alignment(p3_global_settings * p , int val);
 void p3_set_gs_primer_file_flag(p3_global_settings * p , int val);
 void p3_set_gs_primer_pick_anyway(p3_global_settings * p , int val);
 void p3_set_gs_primer_gc_clamp(p3_global_settings * p , int val);
@@ -977,7 +961,7 @@ void p3_set_gs_primer_wt_compl_any(p3_global_settings * p , double val);
 void p3_set_gs_primer_wt_compl_any_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_wt_compl_end(p3_global_settings * p , double val);
 void p3_set_gs_primer_wt_compl_end_th(p3_global_settings * p , double val);
-void p3_set_gs_primer_wt_hairpin(p3_global_settings * p , double val);
+void p3_set_gs_primer_wt_hairpin_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_wt_num_ns(p3_global_settings * p , double val);
 void p3_set_gs_primer_wt_rep_sim(p3_global_settings * p , double val);
 void p3_set_gs_primer_wt_seq_qual(p3_global_settings * p , double val);
@@ -996,7 +980,7 @@ void p3_set_gs_primer_io_wt_wt_coml_any(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_compl_end(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_wt_coml_any_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_compl_end_th(p3_global_settings * p , double val);
-void p3_set_gs_primer_io_wt_hairpin(p3_global_settings * p , double val);
+void p3_set_gs_primer_io_wt_hairpin_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_num_ns(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_rep_sim(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_seq_qual(p3_global_settings * p , double val);
@@ -1009,7 +993,7 @@ void p3_set_gs_primer_pair_wt_compl_any(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_compl_any_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_compl_end(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_compl_end_th(p3_global_settings * p , double val);
-void p3_set_gs_primer_pair_wt_hairpin(p3_global_settings * p , double val);
+void p3_set_gs_primer_pair_wt_hairpin_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_product_tm_lt(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_product_tm_gt(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_product_size_gt(p3_global_settings * p , double val);
@@ -1038,7 +1022,7 @@ int p3_set_afogop_opt_tm(args_for_one_oligo_or_primer *, double);
 void p3_set_gs_max_end_stability(p3_global_settings * p , int max_end_stability);
 void p3_set_gs_gc_clamp(p3_global_settings * p , int gc_clamp);
 void p3_set_gs_lowercase_masking(p3_global_settings * p , int lowercase_masking);
-void p3_set_gs_thermodynamical_alignment(p3_global_settings * p , int thermodynamical_alignment);
+void p3_set_gs_thermodynamic_alignment(p3_global_settings * p , int thermodynamic_alignment);
 void p3_set_gs_outside_penalty(p3_global_settings * p , double outside_penalty);
 void p3_set_gs_inside_penalty(p3_global_settings * p , double inside_penalty);
 
@@ -1057,7 +1041,7 @@ void p3_set_gs_pair_compl_any(p3_global_settings * p , double  pair_compl_any);
 void p3_set_gs_pair_compl_end(p3_global_settings * p , double  pair_compl_end);
 void p3_set_gs_pair_compl_any_th(p3_global_settings * p , double  pair_compl_any_th);
 void p3_set_gs_pair_compl_end_th(p3_global_settings * p , double  pair_compl_end_th);
-void p3_set_gs_pair_hairpin(p3_global_settings * p , double  pair_hairpin);
+void p3_set_gs_pair_hairpin_th(p3_global_settings * p , double  pair_hairpin_th);
 
 void p3_set_gs_min_three_prime_distance(p3_global_settings *p, int min_distance);
 
@@ -1083,8 +1067,6 @@ int    p3_print_one_oligo_list(const seq_args *,
 char  *pr_oligo_sequence(const seq_args *, const primer_rec *);
 
 char  *pr_oligo_rev_c_sequence(const seq_args *, const primer_rec *);
-
-void  pr_set_default_global_args(p3_global_settings *);
 
 /* Return NULL on ENOMEM */
 pr_append_str *create_pr_append_str();
@@ -1114,7 +1096,7 @@ const char  *libprimer3_release(void);
 const char *primer3_copyright(void);
 
 /* An accessor function for a primer_rec *. */
-short oligo_max_template_mispriming(const primer_rec *);
+double oligo_max_template_mispriming(const primer_rec *);
 double oligo_max_template_mispriming_thermod(const primer_rec *);
      
 int   strcmp_nocase(const char *, const char *);
