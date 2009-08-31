@@ -105,6 +105,7 @@ typedef enum p3_output_type {
 } p3_output_type;
 
 /* pr_append_str is an append-only string ADT. */
+typedef struct pr_append_str {
   int storage_size;
   char *data;
 } pr_append_str;
