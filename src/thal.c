@@ -327,7 +327,7 @@ get_thermodynamic_values(char* path, thal_results *o)
      return -1;
   }
 
-  parampath = (char*) safe_malloc(strlen(path) * sizeof(char), o);
+  parampath = (char*) safe_malloc((strlen(path) + 1) * sizeof(char), o);
   strcpy(parampath, path);
 
   getStack(stackEntropies, stackEnthalpies, o);
