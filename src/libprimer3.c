@@ -2239,7 +2239,10 @@ add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oli
 
   /* Just to be sure */
   if (start < 0) {
-          return 1;
+      return 1;
+  }
+  if (start >= n) {
+      return 1;
   }
   if (oligo->type != OT_RIGHT) {
 	  if ((start + length) > n) {
@@ -2331,8 +2334,9 @@ pick_primers_by_position(const int start, const int end, int *extreme,
     return found_primer;
   } else if (start > -1) {
     /* Loop over possible primer lengths, from min to max */
+	ret = 0;
     for (j = pa->p_args.min_size; j <= pa->p_args.max_size; j++) {
-      ret = add_one_primer_by_position(start, j, extreme, oligo,
+      ret =+ add_one_primer_by_position(start, j, extreme, oligo,
                                        pa, sa, dpal_arg_to_use, retval);
       if (ret == 0) {
         found_primer = 0;
@@ -2341,13 +2345,14 @@ pick_primers_by_position(const int start, const int end, int *extreme,
     return found_primer;
   } else if (end > -1) {
     /* Loop over possible primer lengths, from min to max */
+	ret = 0;
     for (j = pa->p_args.min_size; j <= pa->p_args.max_size; j++) {
       if (oligo->type != OT_RIGHT) {
         new_start = end - j + 1;
       } else {
         new_start = end + j - 1;
       }
-      ret = add_one_primer_by_position(new_start, j, extreme, oligo,
+      ret =+ add_one_primer_by_position(new_start, j, extreme, oligo,
                                        pa, sa, dpal_arg_to_use, retval);
       if (ret == 0) {
         found_primer = 0;
