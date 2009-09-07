@@ -50,7 +50,7 @@
 # with valgrind, a leak and memory access checker.
 
 LDLIBS     = -lm
-CC         = gcc
+CC         = gcc-4.1
 O_OPTS     = -O0
 CC_OPTS    = -g -Wall -D__USE_FIXED_PROTOTYPES__
 P_DEFINES  =

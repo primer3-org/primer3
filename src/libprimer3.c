@@ -2119,7 +2119,11 @@ pick_only_best_primer(const int start,
     /* Update statistics with how many primers are good */
     oligo->expl.ok = oligo->expl.ok + 1;
   } else {
-    pr_append_new_chunk(&retval->warnings, "No primer found in range ");
+    if (oligo->type == OT_RIGHT) {
+      pr_append_new_chunk(&retval->warnings, "No right primer found in range ");
+    } else {
+      pr_append_new_chunk(&retval->warnings, "No left primer found in range ");
+    }
     temp_value = start + pa->first_base_index;
     sprintf(p_number, "%d", temp_value);
     pr_append(&retval->warnings, p_number);
@@ -2249,7 +2253,7 @@ pick_primer_range(const int start, const int length, int *extreme,
 
 /* add_one_primer finds one primer in the trimmed sequence and stores
  * it in *oligo The main difference to the general fuction is that it
- * calculates its length and it will add aprimer of any length to the
+ * calculates its length and it will add a primer of any length to the
  * list */
 static int
 add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
@@ -2352,17 +2356,17 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
 
 /* add_one_primer finds one primer in the trimmed sequence and stores
  * it in *oligo The main difference to the general fuction is that it
- * calculates its length and it will add aprimer of any length to the
+ * calculates its length and it will add a primer of any length to the
  * list */
 static int
 add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oligo,
-			     const p3_global_settings *pa,
-			     const seq_args *sa,
-			     const dpal_arg_holder *dpal_arg_to_use,
-			     const thal_arg_holder *thal_arg_to_use,
-			     p3retval *retval) {
-     /* Variables for the loop */
-  int i, j;
+			   const p3_global_settings *pa,
+			   const seq_args *sa,
+			   const dpal_arg_holder *dpal_arg_to_use,
+			   const thal_arg_holder *thal_arg_to_use,
+			   p3retval *retval) {
+  /* Variables for the loop */
+  int i;
   int n, found_primer;
 
   /* Array to store one primer sequences in */
@@ -2378,37 +2382,42 @@ add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oli
 
   /* Just to be sure */
   if (start < 0) {
-          return 1;
+    return 1;
   }
-  if ((start + length) >n) {
-          return 1;
+  if (start >= n) {
+    return 1;
   }
-
-  /* This time we already know the size of the primer */
-  j = length;
+  if (oligo->type != OT_RIGHT) {
+    if ((start + length) > n) {
+      return 1;
+    }
+  } else {
+    if ((start - length + 1) < 0) {
+      return 1;
+    }
+  }
 
   oligo_seq[0] = '\0';
 
   /* Set the length of the primer */
-  h.length = j;
+  h.length = length;
 
   /* Figure out positions for forward primers */
   if (oligo->type != OT_RIGHT) {
-          i = start + length - 1;
-      /* Set the start of the primer */
-      h.start = i - j +1;
+    /* Set the start of the primer */
+    h.start = start;
 
-      /* Put the real primer sequence in s */
-      _pr_substr(sa->trimmed_seq, h.start, j, oligo_seq);
+    /* Put the real primer sequence in s */
+    _pr_substr(sa->trimmed_seq, h.start, length, oligo_seq);
   }
   /* Figure out positions for reverse primers */
   else {
-          i = start - length + 1;
-      /* Set the start of the primer */
-      h.start=i+j-1;
+    i = start - length + 1;
+    /* Set the start of the primer */
+    h.start = start;
 
-      /* Put the real primer sequence in s */
-      _pr_substr(sa->trimmed_seq,  i, j, oligo_seq);
+    /* Put the real primer sequence in s */
+    _pr_substr(sa->trimmed_seq,  i, length, oligo_seq);
   }
 
   /* Force primer3 to use this oligo */
@@ -2460,9 +2469,9 @@ pick_primers_by_position(const int start, const int end, int *extreme,
 
   if(start > -1 && end > -1) {
     if (oligo->type != OT_RIGHT) {
-      length = end - start;
+      length = end - start + 1;
     } else {
-      length = start - end;
+      length = start - end + 1;
     }
 
     found_primer = add_one_primer_by_position(start, length, extreme, oligo,
@@ -2470,9 +2479,10 @@ pick_primers_by_position(const int start, const int end, int *extreme,
     return found_primer;
   } else if (start > -1) {
     /* Loop over possible primer lengths, from min to max */
+    ret = 0;
     for (j = pa->p_args.min_size; j <= pa->p_args.max_size; j++) {
-      ret = add_one_primer_by_position(start, j, extreme, oligo,
-                                       pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
+      ret += add_one_primer_by_position(start, j, extreme, oligo,
+                                        pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
       if (ret == 0) {
         found_primer = 0;
       }
@@ -2480,10 +2490,15 @@ pick_primers_by_position(const int start, const int end, int *extreme,
     return found_primer;
   } else if (end > -1) {
     /* Loop over possible primer lengths, from min to max */
+    ret = 0;
     for (j = pa->p_args.min_size; j <= pa->p_args.max_size; j++) {
-      new_start = end - j;
-      ret = add_one_primer_by_position(new_start, j, extreme, oligo,
-                                       pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
+      if (oligo->type != OT_RIGHT) {
+        new_start = end - j + 1;
+      } else {
+        new_start = end + j - 1;
+      }
+      ret += add_one_primer_by_position(new_start, j, extreme, oligo,
+                                        pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
       if (ret == 0) {
         found_primer = 0;
       }
@@ -4971,11 +4986,6 @@ _adjust_seq_args(const p3_global_settings *pa,
            "Task pick_sequencing_primers can not be combined with included region");
       return;
   }
-  if(pa->primer_task == pick_cloning_primers && sa->incl_l == -1) {
-          pr_append_new_chunk(nonfatal_err,
-           "Task pick_cloning_primers requires a included region");
-      return;
-  }
   if(pa->primer_task == pick_discriminative_primers && sa->incl_l == -1) {
           pr_append_new_chunk(nonfatal_err,
            "Task pick_discriminative_primers requires a included region");
@@ -5000,8 +5010,13 @@ _adjust_seq_args(const p3_global_settings *pa,
 
   /* For pick_cloning_primers set the forced positions */
   if (pa->primer_task == pick_cloning_primers) {
-    sa->force_left_start = sa->incl_s;
-    sa->force_right_start = sa->incl_s + sa->incl_l - 1;
+    if(sa->incl_l == -1) {
+      sa->force_left_start = pa->first_base_index;
+      sa->force_right_start = seq_len + pa->first_base_index - 1;
+    } else {
+      sa->force_left_start = sa->incl_s;
+      sa->force_right_start = sa->incl_s + sa->incl_l - 1;
+    }
     sa->incl_l = seq_len;
     sa->incl_s = pa->first_base_index;
   }
