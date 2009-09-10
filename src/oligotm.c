@@ -587,12 +587,12 @@ long_seq_tm(const char *s,
   int GC_count = 0;
   const char *p, *end;
 
-   if(divalent_to_monovalent(divalent_conc, dntp_conc) == OLIGOTM_ERROR)
-     return OLIGOTM_ERROR;
-   
-   salt_conc = salt_conc + divalent_to_monovalent(divalent_conc, dntp_conc);
-
-  if(start + len > strlen(s) || start < 0 || len <= 0)
+  if(divalent_to_monovalent(divalent_conc, dntp_conc) == OLIGOTM_ERROR)
+    return OLIGOTM_ERROR;
+  
+  salt_conc = salt_conc + divalent_to_monovalent(divalent_conc, dntp_conc);
+  
+  if ((unsigned) (start + len) > strlen(s) || start < 0 || len <= 0)
     return OLIGOTM_ERROR;
   end = &s[start + len];
   /* Length <= 0 is nonsensical. */
@@ -600,13 +600,12 @@ long_seq_tm(const char *s,
     if ('G' == *p || 'C' == *p)
       GC_count++;
   }
-
+  
   return
     81.5
     + (16.6 * log10(salt_conc / 1000.0))
     + (41.0 * (((double) GC_count) / len))
     - (600.0 / len);
-
 }
 
  /* Return 1 if string is symmetrical, 0 otherwise. */ 

@@ -1012,9 +1012,9 @@ print_align(const unsigned char *X,
   }
   sx[m] = X[I];
   sy[m] = Y[J];
-  for (i=m+1; i < m + strlen((char *) X) - I; i++) 
+  for (i=m+1; i < (signed) (m + strlen((char *) X) - I); i++) 
     sx[i]=X[i-m+I];
-  for (i=m+1; i < m + strlen((char *) Y) - J; i++) 
+  for (i=m+1; i < (signed) (m + strlen((char *) Y) - J); i++) 
     sy[i]=Y[i-m+J];
 
   if (dargs->ssm[(unsigned char)sx[m]][(unsigned char)sy[m]] > 0)

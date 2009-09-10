@@ -40,16 +40,26 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h> /* strcmp() */
 #include <stdlib.h> /* free() */
 #include <getopt.h> /* getopt() */
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include "thal.h"
 #include "format_output.h"
 #include "libprimer3.h"
 #include "read_boulder.h"
 #include "print_boulder.h"
+
+/* Check on which OS we compile */
+#if defined(_WIN32) || defined(WIN32) || defined (__WIN32__) || defined(__CYGWIN__) || defined(__MINGW32__)
+#define OS_WIN
+#endif
 
 #define FILE_NAME_SIZE 80
 
 /* Some function prototypes */
 static void   print_usage();
 static void   sig_handler(int);
+static void   read_thermodynamic_parameters(p3_global_settings *);
 
 /* Other global variables. */
 static const char * pr_release = "primer3 release 2.0.0";
@@ -88,8 +98,8 @@ main(int argc, char *argv[]) {
     {0, 0, 0, 0}
   };
   int about = 0, output = 0, error = 0, compat = 0, invalid_flag = 0;
-  char output_file[FILE_NAME_SIZE], error_file[FILE_NAME_SIZE];
-  
+  char output_file[FILE_NAME_SIZE], error_file[FILE_NAME_SIZE]; 
+ 
   /* Retval will point to the return value from choose_primers(). */
   p3retval *retval = NULL;
   int input_found=0;
@@ -132,9 +142,9 @@ main(int argc, char *argv[]) {
       if (!strcmp(optarg, "3"))
         io_version = 3;
       else if (!strcmp(optarg, "4"))
-	io_version = 4;
+        io_version = 4;
       else
-	io_version = -1;
+        io_version = -1;
       break;
     case '2':
       compat = 1;
@@ -191,7 +201,7 @@ main(int argc, char *argv[]) {
       exit(-1);
     }
   }
-  
+
 
   /* Settings files have to be read in just below, and
      the functions need a temporary sarg */
@@ -205,6 +215,9 @@ main(int argc, char *argv[]) {
     read_p3_file(p3_settings_file, settings, global_pa, 
                  sarg, &fatal_parse_err, &nonfatal_parse_err,
                  &read_boulder_record_res);
+    /* Check if the thermodynamical alignment flag was given */ 
+    if (global_pa->thermodynamic_alignment == 1)
+      read_thermodynamic_parameters(global_pa);
   }
 
   /* We also need to print out errors here because the loop erases all
@@ -265,6 +278,10 @@ main(int argc, char *argv[]) {
                             &read_boulder_record_res)) {
       break; /* There were no more boulder records */
     }
+
+    /* Check if the thermodynamical alignment flag was given and the path to the parameter files changed - we need to reread them */
+    if ((global_pa->thermodynamic_alignment == 1) && (global_pa->thermodynamic_path_changed == 1))
+      read_thermodynamic_parameters(global_pa);
     
     input_found = 1;
     if ((global_pa->primer_task == pick_detection_primers) 
@@ -371,7 +388,6 @@ main(int argc, char *argv[]) {
         exit(-4);
       }
     }
-
     destroy_p3retval(retval); /* This works even if retval is NULL */
     retval = NULL;
     destroy_seq_args(sarg);
@@ -381,18 +397,65 @@ main(int argc, char *argv[]) {
          End of the primary working loop */
 
   /* To avoid being distracted when looking for leaks: */
+  if (global_pa->thermodynamic_alignment == 1)
+    destroy_thal_structures();
   p3_destroy_global_settings(global_pa);
   global_pa = NULL;
   destroy_seq_args(sarg);
   destroy_pr_append_str_data(&nonfatal_parse_err);
   destroy_pr_append_str_data(&fatal_parse_err);
-  
+  destroy_dpal_thal_arg_holder();
   /* If it could not read input complain and die */
   if (0 == input_found) {
     print_usage();
     exit(-3);
   }
   return 0;
+}
+
+/* Reads the thermodynamic parameters if the thermodynamic alignment tag was set to 1 */
+static void 
+read_thermodynamic_parameters(p3_global_settings *pa)
+{
+  thal_results o;
+  /* if the path to the parameter files did not change, we do not want to read again */
+  if (pa->thermodynamic_path_changed == 0) return;
+  /* check that the path to the parameters folder was given */
+  if (pa->thermodynamic_params_path == NULL) {
+#ifdef OS_WIN
+    /* in windows check for .\\primer3_config */
+    struct stat st;
+    if ((stat(".\\primer3_config", &st) == 0) && S_ISDIR(st.st_mode)) {
+      pa->thermodynamic_params_path = (char*) malloc(strlen(".\\primer3_config\\") * sizeof(char) + 1);
+      strcpy(pa->thermodynamic_params_path, ".\\primer3_config\\");
+    } else {
+      /* no default directory found, error */
+      printf("PRIMER_ERROR=thermodynamic approach chosen, but path to thermodynamic parameters not specified\n=\n");
+      exit(-1);
+    }
+#else
+    /* in linux, check for ./primer3_config and /opt/primer3_config */
+    struct stat st;
+    if ((stat("./primer3_config", &st) == 0) && S_ISDIR(st.st_mode)) {
+      pa->thermodynamic_params_path = (char*) malloc(strlen("./primer3_config/") * sizeof(char) + 1);
+      strcpy(pa->thermodynamic_params_path, "./primer3_config/");
+    } else if ((stat("/opt/primer3_config", &st) == 0)  && S_ISDIR(st.st_mode)) {
+      pa->thermodynamic_params_path = (char*) malloc(strlen("/opt/primer3_config/") * sizeof(char) + 1);
+      strcpy(pa->thermodynamic_params_path, "/opt/primer3_config/");
+    } else {
+      /* no default directory found, error */
+      printf("PRIMER_ERROR=thermodynamic approach chosen, but path to thermodynamic parameters not specified\n=\n");	
+      exit(-1);
+    }
+#endif
+  }
+  /* read in the thermodynamic parameters */
+  if (get_thermodynamic_values(pa->thermodynamic_params_path, &o)) {
+    fprintf(stderr, "%s\n", o.msg);
+    exit(-1);
+  }
+  /* mark that the last given path was used for reading the parameters */
+  pa->thermodynamic_path_changed = 0;
 }
 
 /* Print out copyright and a short usage message*/
@@ -403,7 +466,7 @@ print_usage()
 
   fprintf(stderr, "\n\nUSAGE: %s %s %s %s %s %s %s %s\n", pr_program_name,
           "[-format_output]", "[-io_version=3|-io_version=4]", "[-p3_settings_file=<file_path>]", "[-strict_tags]",
-	  "[-output=<file_path>]", "[-error=<file_path>]", "[input_file]");
+          "[-output=<file_path>]", "[-error=<file_path>]", "[input_file]");
   fprintf(stderr, "This is primer3 (%s)\n", pr_release);
   fprintf(stderr, "Input can also be provided on standard input.\n");
   fprintf(stderr, "For example:\n");

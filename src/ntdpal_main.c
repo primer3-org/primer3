@@ -41,9 +41,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdlib.h>
 
 int
-main(argc, argv)
-    int argc;
-    const char**argv;
+main(int argc, const char**argv)
 {
     dpal_args a;
     dpal_results r;
@@ -96,40 +94,40 @@ main(argc, argv)
 	if (!strncmp("-p", argv[i], 2)) {
 	    a.debug = 1;
 	} else if (!strncmp("-l", argv[i], 2)) {
-	    a.gapl = strtod(argv[i+1],(char **)NULL) * -100;
-	    i++;
+	  a.gapl = (int) (strtod(argv[i+1],(char **)NULL) * -100);
+	  i++;
         } else if (!strncmp("-e", argv[i], 2)) {
-	    print_align_end = 1;
+	  print_align_end = 1;
 	} else if (!strncmp("-a", argv[i], 2)) {
-	    use_ambiguity_codes = 1;
+	  use_ambiguity_codes = 1;
 	} else if (!strncmp("-h", argv[i], 2)) {
-	    use_h_matrix = 1;
+	  use_h_matrix = 1;
 	} else if (!strncmp("-g", argv[i], 2)) {
-	    a.gap = strtod(argv[i+1],(char **)NULL) * -100;
-	    i++;
+	  a.gap = (int) (strtod(argv[i+1],(char **)NULL) * -100);
+	  i++;
 	} else if (!strncmp("-m", argv[i], 2)) {
-	    a.max_gap = strtol(argv[i+1], &endptr, 10);
-	    if ('\0' != *endptr) {
-		fprintf(stderr, msg, argv[0]);
-		exit(-1);
-	    }
-	    i++;
-	} else if (!strncmp("-s", argv[i], 2)) {
-	    a.score_only = 1;
-	} else if (!strncmp("-e", argv[i], 2)) {
-	    print_align_end = 1;
-	} else if (!strncmp("-f1", argv[i], 3)) {
-	    a.force_generic = 1;
-	} else if (!strncmp("-f2", argv[i], 3)) {
-	    a.force_long_generic = 1;
-	} else if (!strncmp("-f3", argv[i], 3)) {
-	    a.force_long_maxgap1 = 1;
-	} else if (!strncmp("-", argv[i], 1)) {
-	    /* Unknown option. */
+	  a.max_gap = strtol(argv[i+1], &endptr, 10);
+	  if ('\0' != *endptr) {
 	    fprintf(stderr, msg, argv[0]);
 	    exit(-1);
+	  }
+	  i++;
+	} else if (!strncmp("-s", argv[i], 2)) {
+	  a.score_only = 1;
+	} else if (!strncmp("-e", argv[i], 2)) {
+	  print_align_end = 1;
+	} else if (!strncmp("-f1", argv[i], 3)) {
+	  a.force_generic = 1;
+	} else if (!strncmp("-f2", argv[i], 3)) {
+	  a.force_long_generic = 1;
+	} else if (!strncmp("-f3", argv[i], 3)) {
+	  a.force_long_maxgap1 = 1;
+	} else if (!strncmp("-", argv[i], 1)) {
+	  /* Unknown option. */
+	  fprintf(stderr, msg, argv[0]);
+	  exit(-1);
 	} else
-	    break;		/* all args processed. go on to sequences. */
+	  break;		/* all args processed. go on to sequences. */
     }
     if (use_h_matrix) dpal_set_h_nt_matrix(&a);
     if (use_ambiguity_codes) dpal_set_ambiguity_code_matrix(&a);

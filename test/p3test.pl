@@ -126,7 +126,7 @@ sub main() {
 	# Need to deal with different arguments in 
 	# different version of valgrind
 	my $valgrind_version = `$valgrind_exe --version`;
-	if ($valgrind_version =~ /3\.3\./) {
+	if (($valgrind_version =~ /3\.3\./) || ($valgrind_version =~ /3\.4\./)) {
 	    $log_file_arg_for_valgrind = "--log-file";
 	}
     }
@@ -155,7 +155,8 @@ sub main() {
     # The range of this for loop is a set of test names
     # that get translated into file names inside the loop.
     for my $test (
-                  'primer_boundary', # Put the quickest tests first.
+	
+	 'primer_boundary', # Put the quickest tests first.
                   'primer_boundary1',
                   'primer_boundary_formatted',
                   'primer_boundary1_formatted',
@@ -209,7 +210,10 @@ sub main() {
                   # Put slow tests last
 
                   'p3_3_prime_n',
-
+	
+	          'primer_thermod_align',             
+	          'primer_thermod_align_formatted',
+	
                   'primer_obj_fn',
 
                   'primer_lib_amb_codes',
@@ -219,7 +223,9 @@ sub main() {
         print "$test...";
 
         if ($fastFlag && (($test eq 'p3_3_prime_n')
-                || ($test eq 'primer_obj_fn'))) {
+                || ($test eq 'primer_obj_fn')
+	        || ($test eq 'primer_thermod_align')
+	        || ($test eq 'primer_thermod_align_formatted'))) {
             print "[skiped in fast mode]\n";
             next;
         }
@@ -229,6 +235,7 @@ sub main() {
                 print "[skiped in fast mode]\n";       
                 next;
             }
+	    next;
             print 
                 "\nNOTE: this test takes _much_ longer than the others ",
                 "(10 to 20 minutes or more).\n",

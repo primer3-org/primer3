@@ -1,3 +1,39 @@
+release 2.1.0 beta 2009-08-01 ==========================================
+
+This release comprises enhancements associated with primer/oligo secondary 
+structure prediction. We have implemented parallel tags for secondary
+structure prediction to existing (release 2.0.0 and older) primer3 tags.
+These new tags are principally the same as the tags they are parallel to,
+but the method followed for calculating them is based on nearest-neighbour 
+thermodynamical approach not just analyzing the Watson-Crick basepairs. 
+Additionally, the prediction of monomer structure, is added.
+
+  INPUT/OUTPUT TAGS:
+
+Added tags PRIMER_THERMODYNAMICAL_ALIGNMENT,
+PRIMER_INTERNAL_MAX_{HAIRPIN,SELF_ANY_TH,SELF_END_TH,TEMPLATE_MISHYB_TH},
+PRIMER_INTERNAL_WT_{HAIRPIN,SELF_ANY_TH,SELF_END_TH,TEMPLATE_MISHYB_TH},
+PRIMER_MAX_{HAIRPIN,SELF_ANY_TH,SELF_END_TH,TEMPLATE_MISPRIMING_TH},
+PRIMER_PAIR_MAX_{COMPL_ANY_TH,COMPL_END_TH,HAIRPIN,TEMPLATE_MISPRIMING_TH},
+PRIMER_PAIR_WT_{COMPL_ANY_TH,COMPL_END_TH,HAIRPIN,TEMPLATE_MISPRIMING_TH},
+PRIMER_WT_{HAIRPIN,SELF_ANY_TH,SELF_END_TH,TEMPLATE_MISPRIMING_TH}
+
+See the README for details of what these tags do. The tag
+PRIMER_THERMODYNAMICAL_ALIGNMENT is used to apply new tags.
+
+  NEW OR IMPROVED FUNCTIONALITY:
+
+New executable is implemented; it is analogical to ntdpal and is called ntthal. 
+Between two sequences, ntthal finds alignment/sec structure, that has the highest melting
+temperature. Ntthal is based on nearest-neigbhour thermodynamical approach.
+For input parametes to ntthal, execute: ./ntthal (without parameters).
+
+NOTE! New script added before compiling the code - configure.sh. This script
+tells to Makefile the path of thermodynamic tables used by thermodynamical
+alignment. If you do not intend to use thermodynamical approch
+(PRIMER_THERMODYNAMICAL_ALIGNMENT=0), then it is not required you to execute
+configure.sh.
+
 release 2.0.0 alpha 2008-12-15 ==========================================
 
  This is major release, involving enhancements to functionality,

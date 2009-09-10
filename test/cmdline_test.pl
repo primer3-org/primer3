@@ -124,7 +124,7 @@ sub main() {
 	# Need to deal with different arguments in 
 	# different version of valgrind
 	my $valgrind_version = `$valgrind_exe --version`;
-	if ($valgrind_version =~ /3\.3\./) {
+	if (($valgrind_version =~ /3\.3\./) || ($valgrind_version =~ /3\.4\./)) {
 	    $log_file_arg_for_valgrind = "--log-file";
 	}
     }
@@ -185,16 +185,16 @@ sub main() {
     if ($do_valgrind) {
         # Assume this is Unix/Linux environment, so
         # we have grep.
-        my $r = system "grep ERROR *.vg */*.vg | grep -v 'ERROR SUMMARY: 0 errors'";
+        my $r = system "grep ERROR *.vg | grep -v 'ERROR SUMMARY: 0 errors'";
         if (!$r) { # !$r because grep returns 0 if something is found,
             # and if something is found, we have a problem.
             $exit_stat = -1;
         }
-        $r = system "grep 'definitely lost' *.vg */*.vg | grep -v ' 0 bytes'";
+        $r = system "grep 'definitely lost' *.vg | grep -v ' 0 bytes'";
         if (!$r) {
             $exit_stat = -1;
         }
-        $r = system "grep 'possibly lost' *.vg */*.vg   | grep -v ' 0 bytes'";
+        $r = system "grep 'possibly lost' *.vg   | grep -v ' 0 bytes'";
         if (!$r) {
             $exit_stat = -1;
         }

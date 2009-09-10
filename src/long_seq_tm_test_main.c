@@ -62,9 +62,7 @@ in ../test/long_seq_tm_test.pl.
   /* double long_seq_tm(const char* s, int start, int len, double salt_conc, double divalent_conc, double dntp_conc); */
 
 int
-main(argc, argv)
-  int argc;
-  const char**argv;
+main(int argc, const char**argv)
 {
   const char *s;
   double salt_conc = 50;
