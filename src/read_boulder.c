@@ -137,7 +137,8 @@ read_boulder_record(FILE *file_input,
                     seq_args *sa, 
                     pr_append_str *glob_err,  /* Really should be called fatal_parse_err */
                     pr_append_str *nonfatal_parse_err,
-                    read_boulder_record_results *res) { 
+                    read_boulder_record_results *res) 
+{
   int line_len;
   int tag_len, datum_len;
   int data_found = 0;
@@ -917,16 +918,18 @@ read_boulder_record(FILE *file_input,
 #undef COMPARE_FLOAT
 #undef COMPARE_INTERVAL_LIST
 
-int read_p3_file(const char *file_name,
-                 const p3_file_type expected_file_type,
-                 p3_global_settings *pa, 
-                 seq_args *sa,
-                 pr_append_str *fatal_err,
-                 pr_append_str *nonfatal_err,
-                 read_boulder_record_results *read_boulder_record_res) {
+int 
+read_p3_file(const char *file_name,
+	     const p3_file_type expected_file_type,
+	     int echo_output,
+	     p3_global_settings *pa, 
+	     seq_args *sa,
+	     pr_append_str *fatal_err,
+	     pr_append_str *nonfatal_err,
+	     read_boulder_record_results *read_boulder_record_res) 
+{
   /* Parameter for read_boulder_record */
   FILE *file;
-  int echo_output = 0;
   int ret_par = 0;
   int strict_tags = 0;
   int io_version = 4;
@@ -959,6 +962,12 @@ int read_p3_file(const char *file_name,
     else {
       error = 1;
     }
+
+    if (echo_output) {
+      printf("P3_SETTINGS_FILE_USED=%s\n", file_name);
+      printf("%s\n", second_line);
+    }
+
     /* Check if the file type matches the expected type */
     if (file_type != expected_file_type){
       pr_append_new_chunk(nonfatal_err, 
@@ -967,16 +976,17 @@ int read_p3_file(const char *file_name,
     /* read FILE_TYPE */
     if (error == 0){
       ret_par = read_boulder_record(file, &strict_tags, &io_version, 
-                           echo_output, expected_file_type, pa, sa, fatal_err, 
-                           nonfatal_err, read_boulder_record_res);
+				    echo_output, expected_file_type, pa, sa, fatal_err, 
+				    nonfatal_err, read_boulder_record_res);
     } else {
-                    pr_append_new_chunk(fatal_err, "Incorrect file format in ");
-                    pr_append(fatal_err, file_name);
-        }
+      pr_append_new_chunk(fatal_err, "Incorrect file format in ");
+      pr_append(fatal_err, file_name);
+    }
   } else {
     pr_append_new_chunk(fatal_err, "Cannot open ");
     pr_append(fatal_err, file_name);
   }
+  if (echo_output) printf("P3_SETTINGS_FILE_END=\n");
   if (file) fclose(file);
          
   return ret_par;
@@ -1202,7 +1212,8 @@ parse_product_size(const char *tag_name, char *in,
    and sargs->quality_storage_size */
 static int
 parse_seq_quality(char *s,
-                  seq_args *sargs) {
+                  seq_args *sargs) 
+{
   long t;
   char *p, *q;
 

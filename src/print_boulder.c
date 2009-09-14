@@ -104,11 +104,14 @@ print_boulder(int io_version,
     free(warning);
   }
 
-  /* Check if a settings file was read an print its id */
+  /* Check if a settings file was read an print its id 
+   * Not needed anymore, we do this when we read the setting file. */
+  /*
   if (pa->settings_file_id != NULL) { 
     printf("P3_FILE_ID=%s\n", pa->settings_file_id);
     free(warning);
   }
+  */
 
   combined_retval_err = create_pr_append_str();
   if (NULL == combined_retval_err) exit(-2); /* Out of memory */

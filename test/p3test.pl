@@ -290,7 +290,7 @@ sub main() {
             my $cmd = "$valgrind_prefix$exe -strict_tags -format_output <$input >$tmp";
             $r = _nowarn_system($cmd);
         } elsif ($test =~ /_load_set/) {
-            my $cmd = "$valgrind_prefix$exe -strict_tags -p3_settings_file=$set_files$test.set <$input >$tmp";
+            my $cmd = "$valgrind_prefix$exe -strict_tags -p3_settings_file=$set_files$test.set -echo <$input >$tmp";
             $r = _nowarn_system($cmd);
         } else {
             my $cmd = "$valgrind_prefix$exe -strict_tags <$input >$tmp";
