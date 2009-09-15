@@ -235,7 +235,6 @@ sub main() {
                 print "[skiped in fast mode]\n";       
                 next;
             }
-	    next;
             print 
                 "\nNOTE: this test takes _much_ longer than the others ",
                 "(10 to 20 minutes or more).\n",
