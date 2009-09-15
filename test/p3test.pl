@@ -435,6 +435,13 @@ sub perldiff($$) {
             }
         }
 
+	# If this is the tag with the settings file path, replace \ by / to make it
+	# the same on both Linux and Windows
+	if ($l1 =~ /^P3_SETTINGS_FILE_USED/ && $l2 =~ /^P3_SETTINGS_FILE_USED/) {
+	    $l1 =~ s/\\/\//g;
+	    $l2 =~ s/\\/\//g;
+	}
+	
         $linenumber++;
         # Check for difference between two edited lines (line by line)
         if ($l1 ne $l2) {
