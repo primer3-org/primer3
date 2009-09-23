@@ -586,11 +586,12 @@ static void
 {
    
    
-   char *format;
+  char *format;  /* Format string for the table headers */
    if(pa->thermodynamic_alignment==0)
-     format = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s";
+     format    = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s";
    else format = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%7s%6s";
-   /*   char *format_tmp;
+   /* FIX, delete junk below, add new column in format above.. */
+   /*   char *format_tmp;  
    if (print_lib_sim) {
       if (pa->lowercase_masking) {
 	 format_tmp = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s";
@@ -716,7 +717,7 @@ print_stat_line(FILE *f, const char *t, oligo_stats s,
    if (print_lib_sim) fprintf(f, "%6d",s.repeat_score);
    fprintf(f, "%6d%6d",s.poly_x, s.stability);
    if (lowercase_masking) fprintf(f, "%6d",s.gmasked);
-   if(thermodynamic_alignment==0)
+   if(thermodynamic_alignment==0)  /* FIX */
      fprintf(f, "%6d\n", s.ok);
    else
      fprintf(f, "%6d\n", s.ok);

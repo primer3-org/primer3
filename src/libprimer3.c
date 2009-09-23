@@ -3002,7 +3002,8 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
       || po_args->weights.repeat_sim
       || ((OT_RIGHT == l || OT_LEFT == l)
           && pa->p_args.weights.template_mispriming))
-      && pa->thermodynamic_alignment==0) || (pa->thermodynamic_alignment==1 && po_args->weights.repeat_sim)) {
+      && pa->thermodynamic_alignment==0) 
+      || (pa->thermodynamic_alignment==1 && po_args->weights.repeat_sim)) {
 
     oligo_mispriming(h, pa, sa, l, stats,
                      dpal_arg_to_use->local_end,
@@ -3013,7 +3014,8 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
        || pa->file_flag
        || retval->output_type == primer_list
        || ((OT_RIGHT == l || OT_LEFT == l)
-	   && pa->p_args.weights.template_mispriming_th))  && pa->thermodynamic_alignment==1
+	   && pa->p_args.weights.template_mispriming_th))
+       && pa->thermodynamic_alignment==1
        ) {
       
       oligo_mispriming_thermod(h, pa, sa, l, stats,
@@ -3034,7 +3036,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   }
   
   if (sa->primer_overlap_pos[0] != -1) {
-    for (for_i=0; for_i < sa->primer_overlap_pos_count; for_i++) {
+    for (for_i=0; for_i < sa->primer_overlap_pos_count; for_i++) {  /* FIX Count should be 0 if there is nothing in sa->primer_overlap_pos.. */
       if (OT_LEFT == l 
           && ((h->start + pa->pos_overlap_primer_end - 1) 
                   < sa->primer_overlap_pos[for_i])
@@ -3479,6 +3481,13 @@ characterize_pair(p3retval *retval,
     if (!must_use) return PAIR_FAILED;
     else pair_failed_flag = 1;
   }
+
+  /* FIX add check for _junction_ overlaps, similar to above */
+
+  /* FIX add check for the pair being in any ok pair */
+
+  /* For each pair of ok regions, are both the left and the right primer
+     in the appropriate element of the pair.  ... Empty means can be anywhere */
 
   /* ============================================================= */
   /* Compute product Tm and related parameters; check constraints. */
@@ -4883,6 +4892,8 @@ p3_pair_explain_string(const pair_stats *pair_expl)
                     pair_expl->overlaps_oligo_in_better_pair)
   IF_SP_AND_CHECK(", high template mispriming score %d",
                     pair_expl->template_mispriming);
+  /* FIX not in any ok pair */
+
   SP_AND_CHECK(", ok %d", pair_expl->ok)
   return buf;
 }
@@ -4920,6 +4931,7 @@ p3_oligo_explain_string(const oligo_stats *stat)
   IF_SP_AND_CHECK(", high template mispriming score %d",
                   stat->template_mispriming)
   IF_SP_AND_CHECK(", lowercase masking of 3' end %d",stat->gmasked)
+    /* FIX, need for no in any ok region. */
   SP_AND_CHECK(", ok %d", stat->ok)
                return buf;
 }

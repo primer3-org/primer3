@@ -606,7 +606,7 @@ typedef struct oligo_stats {
   int size_max;            /* Primer longer than minimal size.              */
   int compl_any;           /* Self-complementarity too high.                */
   int compl_end;           /* Self-complementarity at 3' end too high.      */
-  int hairpin_th;          /* Hairpin structure too stabile. Thermodynamical approach */
+  int hairpin_th;          /* Hairpin structure too stable in thermodynamical approach */
   int repeat_score;        /* Complementarity with repeat sequence too high.*/
   int poly_x;              /* Long mononucleotide sequence inside.          */
   int seq_quality;         /* Low quality of bases included.                */
@@ -616,6 +616,8 @@ typedef struct oligo_stats {
   int template_mispriming; /* Template mispriming score too high.           */
   int ok;                  /* Number of acceptable oligos.                  */
   int gmasked;             /* edited by T. Koressaar, number of gmasked oligo*/
+  /* int not_in_any_left_ok_region FIX */
+  /* int not_in_any_right_ok_region FIX */
 } oligo_stats;
 
 typedef struct pair_stats {
