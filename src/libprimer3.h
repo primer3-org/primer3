@@ -519,6 +519,7 @@ typedef struct oligo_problems {
         char   overlaps; /* Non-0 if the oligo overlaps some oligo used in one of the best pairs. */
 	
 	oligo_problems problems;
+        char   overlaps_overlap_position;
 	
      } primer_rec;
 

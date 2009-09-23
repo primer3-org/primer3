@@ -386,8 +386,6 @@ static void bf_set_overlaps_excl_region(primer_rec *, int);
 static int bf_get_overlaps_excl_region(const primer_rec *);
 static void bf_set_infinite_pos_penalty(primer_rec *, int);
 static int bf_get_infinite_pos_penalty(const primer_rec *);
-static void bf_set_overlaps_overlap_region(primer_rec *);
-static int bf_get_overlaps_overlap_region(const primer_rec *);
 
 /* Functions to record problems with oligos (or primers) */
 static void initialize_op(primer_rec *);
@@ -2689,6 +2687,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   initialize_op(h);
   h->repeat_sim.score = NULL;
   h->gc_content = h->num_ns = 0;
+  h->overlaps_overlap_position = 0;
   h->template_mispriming = h->template_mispriming_r = ALIGN_SCORE_UNDEF;
    
   PR_ASSERT(OT_LEFT == l || OT_RIGHT == l || OT_INTL == l);
@@ -3037,14 +3036,14 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
 	    < sa->primer_overlap_pos[for_i])
 	&& ((h->start + h->length - pa->pos_overlap_primer_end))
 	> sa->primer_overlap_pos[for_i]) {
-      bf_set_overlaps_overlap_region(h);
+      h->overlaps_overlap_position = 1;
     }
     if (OT_RIGHT == l
 	&& ((h->start - h->length + pa->pos_overlap_primer_end) 
 	    < sa->primer_overlap_pos[for_i])
 	&& ((h->start - pa->pos_overlap_primer_end + 1))
 	> sa->primer_overlap_pos[for_i]) {
-      bf_set_overlaps_overlap_region(h);
+      h->overlaps_overlap_position = 1;
     }
   }
 
@@ -3468,9 +3467,8 @@ characterize_pair(p3retval *retval,
      that point. */
 
   if ((sa->primer_overlap_pos_count > 0)
-      && 
-      !(bf_get_overlaps_overlap_region(ppair->right)
-        || bf_get_overlaps_overlap_region(ppair->left))
+      && !(ppair->right->overlaps_overlap_position
+	   || ppair->left->overlaps_overlap_position)
       ) {
     if (update_stats) { pair_expl->does_not_overlap_a_required_point++; }
     if (!must_use) return PAIR_FAILED;
@@ -7362,7 +7360,6 @@ initialize_op(primer_rec *oligo) {
 #define BF_OVERLAPS_TARGET                     (1UL <<  2)
 #define BF_OVERLAPS_EXCL_REGION                (1UL <<  3)
 #define BF_INFINITE_POSITION_PENALTY           (1UL <<  4)
-#define BF_OVERLAPS_OVERLAP_REGION             (1UL <<  5)
 /* Space for more bitfields */
 
 #define OP_TOO_MANY_NS                         (1UL <<  8) /* 3prime problem*/
@@ -7535,16 +7532,6 @@ bf_set_infinite_pos_penalty(primer_rec *oligo, int val){
 static int
 bf_get_infinite_pos_penalty(const primer_rec *oligo) {
   return (oligo->problems.prob & BF_INFINITE_POSITION_PENALTY) != 0;
-}
-
-static void 
-bf_set_overlaps_overlap_region(primer_rec *oligo){
-  oligo->problems.prob |= BF_OVERLAPS_OVERLAP_REGION;
-}
-
-static int
-bf_get_overlaps_overlap_region(const primer_rec *oligo) {
-  return (oligo->problems.prob & BF_OVERLAPS_OVERLAP_REGION) != 0;
 }
 
 static void
