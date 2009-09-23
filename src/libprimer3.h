@@ -437,7 +437,6 @@ typedef struct p3_global_settings {
   /* The number of basepairs the primer has to overlap an overlap position. */
   int    pos_overlap_primer_end; 
  
-  char *settings_file_id;
   int dump;  /* dump fields for global settings and seq args if dump == 1 */
 } p3_global_settings;
 

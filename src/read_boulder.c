@@ -560,7 +560,7 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_MIN_THREE_PRIME_DISTANCE", 
                   pa->min_three_prime_distance);
       if (file_type == settings) {
-        COMPARE_AND_MALLOC("P3_FILE_ID", pa->settings_file_id);
+        if (COMPARE("P3_FILE_ID")) continue;
       }
       COMPARE_INT("PRIMER_QUALITY_RANGE_MIN", pa->quality_range_min);
       COMPARE_INT("PRIMER_QUALITY_RANGE_MAX", pa->quality_range_max);

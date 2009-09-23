@@ -488,8 +488,6 @@ p3_destroy_global_settings(p3_global_settings *a) {
   if (NULL != a) {
     destroy_seq_lib(a->p_args.repeat_lib);
     destroy_seq_lib(a->o_args.repeat_lib);
-    if (a->settings_file_id != NULL)
-        free(a->settings_file_id);
     if (a->thermodynamic_params_path)
 	free(a->thermodynamic_params_path);
     free(a);
@@ -655,8 +653,6 @@ pr_set_default_global_args(p3_global_settings *a) {
   */
 
   a->min_three_prime_distance        = -1;
-
-  a->settings_file_id                = NULL;
 
   a->sequencing.lead                 = 50;
   a->sequencing.spacing              = 500;
@@ -923,7 +919,7 @@ create_seq_arg() {
   r->force_left_end = -1; /* Indicates logical NULL. */
   r->force_right_start = -1; /* Indicates logical NULL. */
   r->force_right_end = -1; /* Indicates logical NULL. */
-  r->primer_overlap_pos[0] = -1; /* Indicates logical NULL. */
+  r->primer_overlap_pos_count = 0;
 
   r->n_quality = 0;
   r->quality = NULL;
@@ -3035,25 +3031,24 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
     if (!must_use) return;
   }
   
-  if (sa->primer_overlap_pos[0] != -1) {
-    for (for_i=0; for_i < sa->primer_overlap_pos_count; for_i++) {  /* FIX Count should be 0 if there is nothing in sa->primer_overlap_pos.. */
-      if (OT_LEFT == l 
-          && ((h->start + pa->pos_overlap_primer_end - 1) 
-                  < sa->primer_overlap_pos[for_i])
-          && ((h->start + h->length - pa->pos_overlap_primer_end))
-                  > sa->primer_overlap_pos[for_i]) {
-        bf_set_overlaps_overlap_region(h);
-      }
-      if (OT_RIGHT == l
-          && ((h->start - h->length + pa->pos_overlap_primer_end) 
-                  < sa->primer_overlap_pos[for_i])
-          && ((h->start - pa->pos_overlap_primer_end + 1))
-                  > sa->primer_overlap_pos[for_i]) {
-        bf_set_overlaps_overlap_region(h);
-      }
+  for (for_i=0; for_i < sa->primer_overlap_pos_count; for_i++) {
+    if (OT_LEFT == l 
+	&& ((h->start + pa->pos_overlap_primer_end - 1) 
+	    < sa->primer_overlap_pos[for_i])
+	&& ((h->start + h->length - pa->pos_overlap_primer_end))
+	> sa->primer_overlap_pos[for_i]) {
+      bf_set_overlaps_overlap_region(h);
+    }
+    if (OT_RIGHT == l
+	&& ((h->start - h->length + pa->pos_overlap_primer_end) 
+	    < sa->primer_overlap_pos[for_i])
+	&& ((h->start - pa->pos_overlap_primer_end + 1))
+	> sa->primer_overlap_pos[for_i]) {
+      bf_set_overlaps_overlap_region(h);
     }
   }
-   op_set_completely_written(h);
+
+  op_set_completely_written(h);
 
 } /* calc_and_check_oligo_features */
 #undef OUTSIDE_START_WT
@@ -3472,7 +3467,7 @@ characterize_pair(p3retval *retval,
      if so, whether one of the primers in the pairs overlaps
      that point. */
 
-  if ((sa->primer_overlap_pos[0] != -1)
+  if ((sa->primer_overlap_pos_count > 0)
       && 
       !(bf_get_overlaps_overlap_region(ppair->right)
         || bf_get_overlaps_overlap_region(ppair->left))
@@ -5917,7 +5912,7 @@ _check_and_adjust_overlap_pos(seq_args *sa,
   int i;
   int outside_warning_issued = 0;
 
-  if (sa->primer_overlap_pos[0] == -1) {
+  if (sa->primer_overlap_pos_count == 0) {
     return 0;
   }
 
@@ -7917,7 +7912,6 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
 
     printf("min_three_prime_distance %i\n", p->min_three_prime_distance) ;
     printf("pos_overlap_primer_end %i\n" , p->pos_overlap_primer_end);
-    printf("settings_file_id %s\n", p->settings_file_id) ;
     printf("dump %i\n", p->dump);
     printf("end global args\n") ;
   }
