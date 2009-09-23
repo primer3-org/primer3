@@ -638,6 +638,8 @@ typedef struct pair_stats {
   /* One of the oligos in the pair overlaps an oligo in a better_pair:       */
   int overlaps_oligo_in_better_pair;
 
+  /* int not_in_any_pair_of_ok_regions FIX */
+
   int ok;                  /* Number that were ok.                          */
 } pair_stats;
 
