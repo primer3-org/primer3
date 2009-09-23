@@ -207,12 +207,9 @@ format_pairs(FILE *f,
 
 /* Prints out the results of a primer pair */
 static void
-print_summary(f, pa, sa, best_pairs, num)
-    FILE *f;
-    const p3_global_settings *pa;
-    const seq_args *sa;
-    const pair_array_t *best_pairs;
-    int num;
+print_summary(FILE *f, const p3_global_settings *pa,
+              const seq_args *sa, const pair_array_t *best_pairs,
+              int num)
 {
     int seq_len = strlen(sa->sequence);
     int print_lib_sim = lib_sim_specified(pa);
@@ -247,11 +244,8 @@ print_summary(f, pa, sa, best_pairs, num)
 
 /* Print column headers for lines printed by print_oligo(). */
 static void
-print_oligo_header(f, s, print_lib_sim, thermodynamic_alignment)
-    FILE *f;
-    const char *s;
-    const int print_lib_sim;
-    const int thermodynamic_alignment;
+print_oligo_header(FILE *f, const char *s, const int print_lib_sim,
+                   const int thermodynamic_alignment)
 {
    if(thermodynamic_alignment==0)
      fprintf(f,
@@ -305,13 +299,10 @@ print_oligo(FILE *f,
 }
 
 static void
-print_pair_array(f, title, num, array, pa, sa)
-    FILE *f;
-    const char* title;
-    int num;
-    const interval_array_t array;
-    const p3_global_settings *pa;
-    const seq_args *sa;
+print_pair_array(FILE *f, const char* title, int num,
+                 const interval_array_t array,
+                 const p3_global_settings *pa,
+                 const seq_args *sa)
 {
     int j;
     if (num > 0) {
@@ -355,9 +346,9 @@ print_seq(FILE *f,
       p = best_pairs->pairs + num;
     }
     len = strlen(sa->sequence);
-    if (!(notes = malloc(sizeof(*notes) * len))) return 1;
+    if (!(notes = (int*) malloc(sizeof(*notes) * len))) return 1;
     memset(notes, 0, sizeof(*notes) * len);
-    if (!(notestr = malloc(len + 1))) return 1;
+    if (!(notestr = (char*) malloc(len + 1))) return 1;
     memset(notestr, ' ', len);
     notestr[len] = '\0';
 
@@ -511,11 +502,9 @@ print_seq(FILE *f,
 }
 
 static void
-print_seq_lines(f, s, n, seq_size, line_size, something_found, pa)
-    FILE *f;
-    const char *s, *n;
-    int seq_size, line_size, something_found;
-    const p3_global_settings *pa;
+print_seq_lines(FILE *f, const char *s, const char *n, int seq_size, 
+                int line_size, int something_found,
+                const p3_global_settings *pa)
 {
     int i = 0;
     while (seq_size > line_size) {
@@ -539,10 +528,7 @@ print_seq_lines(f, s, n, seq_size, line_size, something_found, pa)
 }
 
 static void
-print_pair_info(f, p, pa)
-    FILE *f;
-    const primer_pair *p;
-    const p3_global_settings *pa;
+print_pair_info(FILE *f, const primer_pair *p, const p3_global_settings *pa)
 {
   fprintf(f, "PRODUCT SIZE: %d, ", p->product_size);
    if(pa->thermodynamic_alignment==0)
@@ -560,11 +546,9 @@ print_pair_info(f, p, pa)
 }
 
 static void
-print_rest(f, pa, sa, best_pairs)
-    FILE *f;
-    const p3_global_settings *pa;
-    const seq_args *sa;
-    const pair_array_t *best_pairs;
+print_rest(FILE *f, const p3_global_settings *pa,
+           const seq_args *sa,
+           const pair_array_t *best_pairs)
 {
     int i;
     int print_lib_sim = lib_sim_specified(pa);
@@ -602,11 +586,12 @@ static void
 {
    
    
-   char *format;
+  char *format;  /* Format string for the table headers */
    if(pa->thermodynamic_alignment==0)
-     format = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s";
+     format    = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s";
    else format = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%7s%6s";
-   /*   char *format_tmp;
+   /* FIX, delete junk below, add new column in format above.. */
+   /*   char *format_tmp;  
    if (print_lib_sim) {
       if (pa->lowercase_masking) {
 	 format_tmp = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s";
@@ -717,13 +702,9 @@ static void
 }
 
 static void
-print_stat_line(f, t, s, print_lib_sim, lowercase_masking, thermodynamic_alignment)
-    FILE *f;
-    const char *t;
-    oligo_stats s;
-    int print_lib_sim;
-    int lowercase_masking;
-    int thermodynamic_alignment;
+print_stat_line(FILE *f, const char *t, oligo_stats s,
+                int print_lib_sim, int lowercase_masking,
+                int thermodynamic_alignment)
 {
    char *format = "%-6s%6d%6d%6d%6d%6d%6d%6d%6d";
    fprintf(f,format, t, s.considered, s.ns, s.target, s.excluded,
@@ -736,7 +717,7 @@ print_stat_line(f, t, s, print_lib_sim, lowercase_masking, thermodynamic_alignme
    if (print_lib_sim) fprintf(f, "%6d",s.repeat_score);
    fprintf(f, "%6d%6d",s.poly_x, s.stability);
    if (lowercase_masking) fprintf(f, "%6d",s.gmasked);
-   if(thermodynamic_alignment==0)
+   if(thermodynamic_alignment==0)  /* FIX */
      fprintf(f, "%6d\n", s.ok);
    else
      fprintf(f, "%6d\n", s.ok);

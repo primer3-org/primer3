@@ -126,7 +126,7 @@ sub main() {
 	# Need to deal with different arguments in 
 	# different version of valgrind
 	my $valgrind_version = `$valgrind_exe --version`;
-	if ($valgrind_version =~ /3\.3\./) {
+	if (($valgrind_version =~ /3\.3\./) || ($valgrind_version =~ /3\.4\./)) {
 	    $log_file_arg_for_valgrind = "--log-file";
 	}
     }
@@ -235,7 +235,6 @@ sub main() {
                 print "[skiped in fast mode]\n";       
                 next;
             }
-	    next;
             print 
                 "\nNOTE: this test takes _much_ longer than the others ",
                 "(10 to 20 minutes or more).\n",
@@ -290,7 +289,7 @@ sub main() {
             my $cmd = "$valgrind_prefix$exe -strict_tags -format_output <$input >$tmp";
             $r = _nowarn_system($cmd);
         } elsif ($test =~ /_load_set/) {
-            my $cmd = "$valgrind_prefix$exe -strict_tags -p3_settings_file=$set_files$test.set <$input >$tmp";
+            my $cmd = "$valgrind_prefix$exe -strict_tags -p3_settings_file=$set_files$test.set -echo <$input >$tmp";
             $r = _nowarn_system($cmd);
         } else {
             my $cmd = "$valgrind_prefix$exe -strict_tags <$input >$tmp";
@@ -435,6 +434,13 @@ sub perldiff($$) {
             }
         }
 
+	# If this is the tag with the settings file path, replace \ by / to make it
+	# the same on both Linux and Windows
+	if ($l1 =~ /^P3_SETTINGS_FILE_USED/ && $l2 =~ /^P3_SETTINGS_FILE_USED/) {
+	    $l1 =~ s/\\/\//g;
+	    $l2 =~ s/\\/\//g;
+	}
+	
         $linenumber++;
         # Check for difference between two edited lines (line by line)
         if ($l1 ne $l2) {

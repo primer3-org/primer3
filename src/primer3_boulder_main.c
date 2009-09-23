@@ -62,14 +62,16 @@ static void   sig_handler(int);
 static void   read_thermodynamic_parameters(p3_global_settings *);
 
 /* Other global variables. */
-static const char * pr_release = "primer3 release 2.0.0";
+static const char *pr_release = "primer3 release 2.0.0";
 static const char *pr_program_name;
 
 int
-main(int argc, char *argv[]) { 
+main(int argc, char *argv[]) 
+{ 
   /* Setup the input data structures handlers */
   int format_output = 0;
   int strict_tags = 0;
+  int echo_settings = 0;
   int dump_args = 0 ; /* set to 1 if dumping arguments to choose_primers */
   int io_version = 4;
 
@@ -91,6 +93,7 @@ main(int argc, char *argv[]) {
     {"format_output", no_argument, &format_output, 1},
     {"strict_tags", no_argument, &strict_tags, 1},
     {"p3_settings_file", required_argument, 0, 'p'},
+    {"echo_settings_file", no_argument, &echo_settings, 1},
     {"io_version", required_argument, 0, 'i'},
     {"2x_compat", no_argument, 0, '2'},
     {"output", required_argument, 0, 'o'},
@@ -109,7 +112,6 @@ main(int argc, char *argv[]) {
 
   init_pr_append_str(&fatal_parse_err);
   init_pr_append_str(&nonfatal_parse_err);
-
 
   /* Get the program name for correct error messages */
   pr_program_name = argv[0];
@@ -202,7 +204,6 @@ main(int argc, char *argv[]) {
     }
   }
 
-
   /* Settings files have to be read in just below, and
      the functions need a temporary sarg */
   if (!(sarg = create_seq_arg())) {
@@ -212,9 +213,9 @@ main(int argc, char *argv[]) {
   /* Read data from the settings file until a "=" line occurs.  Assign parameter
    * values for primer picking to pa and sa. */
   if (p3_settings_file[0] != '\0') {
-    read_p3_file(p3_settings_file, settings, global_pa, 
-                 sarg, &fatal_parse_err, &nonfatal_parse_err,
-                 &read_boulder_record_res);
+    read_p3_file(p3_settings_file, settings, echo_settings && !format_output,
+		 global_pa, sarg, &fatal_parse_err, 
+		 &nonfatal_parse_err, &read_boulder_record_res);
     /* Check if the thermodynamical alignment flag was given */ 
     if (global_pa->thermodynamic_alignment == 1)
       read_thermodynamic_parameters(global_pa);
@@ -464,9 +465,9 @@ print_usage()
 {
   fprintf(stderr, primer3_copyright());
 
-  fprintf(stderr, "\n\nUSAGE: %s %s %s %s %s %s %s %s\n", pr_program_name,
-          "[-format_output]", "[-io_version=3|-io_version=4]", "[-p3_settings_file=<file_path>]", "[-strict_tags]",
-          "[-output=<file_path>]", "[-error=<file_path>]", "[input_file]");
+  fprintf(stderr, "\n\nUSAGE: %s %s %s %s %s %s %s %s %s\n", pr_program_name,
+          "[-format_output]", "[-io_version=3|-io_version=4]", "[-p3_settings_file=<file_path>]", "[-echo_settings_file]",
+	  "[-strict_tags]", "[-output=<file_path>]", "[-error=<file_path>]", "[input_file]");
   fprintf(stderr, "This is primer3 (%s)\n", pr_release);
   fprintf(stderr, "Input can also be provided on standard input.\n");
   fprintf(stderr, "For example:\n");

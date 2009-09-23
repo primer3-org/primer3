@@ -426,13 +426,13 @@ thal(const unsigned char *oligo_f, const unsigned char *oligo_r, const thal_args
       return;
    }
    if(a->type!=3) {
-      oligo1 = safe_malloc((len_f + 1) * sizeof(unsigned char), o);
-      oligo2 = safe_malloc((len_r + 1) * sizeof(unsigned char), o);
+      oligo1 = (unsigned char*) safe_malloc((len_f + 1) * sizeof(unsigned char), o);
+      oligo2 = (unsigned char*) safe_malloc((len_r + 1) * sizeof(unsigned char), o);
       strcpy((char*)oligo1,(const char*)oligo_f);
       strcpy((char*)oligo2,(const char*)oligo_r);
    } else  {
-      oligo1 = safe_malloc((len_r + 1) * sizeof(unsigned char), o);
-      oligo2 = safe_malloc((len_f + 1) * sizeof(unsigned char), o);
+      oligo1 = (unsigned char*) safe_malloc((len_r + 1) * sizeof(unsigned char), o);
+      oligo2 = (unsigned char*) safe_malloc((len_f + 1) * sizeof(unsigned char), o);
       strcpy((char*)oligo1,(const char*)oligo_r);
       strcpy((char*)oligo2,(const char*)oligo_f);
    }
@@ -453,10 +453,10 @@ thal(const unsigned char *oligo_f, const unsigned char *oligo_r, const thal_args
 	 RC = R  * log(a->dna_conc/4000000000.0);
       }
       if(a->type!=3) {
-	 oligo2_rev=safe_malloc((length_unsig_char(oligo_r) + 1) * sizeof(unsigned char), o);
+	 oligo2_rev = (unsigned char*) safe_malloc((length_unsig_char(oligo_r) + 1) * sizeof(unsigned char), o);
 	 strcpy((char*)oligo2_rev,(const char*)oligo_r);
       } else {
-	 oligo2_rev=safe_malloc((length_unsig_char(oligo_f) + 1) * sizeof(unsigned char), o);
+	 oligo2_rev = (unsigned char*) safe_malloc((length_unsig_char(oligo_f) + 1) * sizeof(unsigned char), o);
 	 strcpy((char*)oligo2_rev,(const char*)oligo_f);
       }
       reverse(oligo2_rev); /* REVERSE oligo2, so it goes to dpt 3'->5' direction */
@@ -474,8 +474,8 @@ thal(const unsigned char *oligo_f, const unsigned char *oligo_r, const thal_args
    len1 = length_unsig_char(oligo1);
    len2 = length_unsig_char(oligo2);
    /* convert nucleotides to numbers */
-   numSeq1 = safe_realloc(numSeq1, len1 + 2, o);
-   numSeq2 = safe_realloc(numSeq2, len2 + 2, o);
+   numSeq1 = (unsigned char*) safe_realloc(numSeq1, len1 + 2, o);
+   numSeq2 = (unsigned char*) safe_realloc(numSeq2, len2 + 2, o);
 
    /*** Calc part of the salt correction ***/
    saltCorrection=saltCorrectS(a->mv,a->dv,a->dntp); /* salt correction for entropy, must be multiplied with N, which is
@@ -483,8 +483,8 @@ thal(const unsigned char *oligo_f, const unsigned char *oligo_r, const thal_args
 
    if(a->type == 4){ /* monomer */
       /* terminal basepairs */
-      send5 = safe_realloc(send5, (len1 + 1) * sizeof(double), o);
-      hend5 = safe_realloc(hend5, (len1 + 1) * sizeof(double), o);
+      send5 = (double*) safe_realloc(send5, (len1 + 1) * sizeof(double), o);
+      hend5 = (double*) safe_realloc(hend5, (len1 + 1) * sizeof(double), o);
    }
    for(i = 0; i < len1; i++) oligo1[i] = toupper(oligo1[i]);
    for(i = 0; i < len2; i++) oligo2[i] = toupper(oligo2[i]);
@@ -499,9 +499,9 @@ thal(const unsigned char *oligo_f, const unsigned char *oligo_r, const thal_args
       calc_terminal_bp(a->temp);
       mh = HEND5(len1);
       ms = SEND5(len1);
-      o->align_end_1=mh;
-      o->align_end_2=ms;
-      bp = safe_calloc(len1, sizeof(int), o);
+      o->align_end_1 = (int) mh;
+      o->align_end_2 = (int) ms;
+      bp = (int*) safe_calloc(len1, sizeof(int), o);
       for (k = 0; k < len1; ++k) bp[k] = 0;
       if(isFinite(mh)) {
 	 tracebacku(bp, a->maxLoop, o);
@@ -529,7 +529,7 @@ thal(const unsigned char *oligo_f, const unsigned char *oligo_r, const thal_args
       initMatrix();
       fillMatrix(a->maxLoop, o);
       SHleft = -_INFINITY;
-      SH = safe_malloc(2 * sizeof(double), o);
+      SH = (double*) safe_malloc(2 * sizeof(double), o);
       /* calculate terminal basepairs */
       bestI = bestJ = 0;
       if(a->type==1)
@@ -548,8 +548,8 @@ thal(const unsigned char *oligo_f, const unsigned char *oligo_r, const thal_args
 	   }
 	}
       int *ps1, *ps2;
-      ps1 = safe_calloc(len1, sizeof(int), o);
-      ps2 = safe_calloc(len2, sizeof(int), o);
+      ps1 = (int*) safe_calloc(len1, sizeof(int), o);
+      ps2 = (int*) safe_calloc(len2, sizeof(int), o);
       for (i = 0; i < len1; ++i)
 	ps1[i] = 0;
       for (j = 0; j < len2; ++j)
@@ -612,7 +612,7 @@ set_thal_default_args(thal_args *a)
 {
    memset(a, 0, sizeof(*a));
    a->debug = 0;
-   a->type = 1; /* thal_alignment_type THAL_ANY */
+   a->type = thal_any; /* thal_alignment_type THAL_ANY */
    a->maxLoop = MAX_LOOP;
    a->mv = 50; /* mM */
    a->dv = 0.0; /* mM */
@@ -644,7 +644,7 @@ str2int(char c)
 static double* 
 safe_recalloc(double* ptr, int m, int n, thal_results* o)
 {
-   return safe_realloc(ptr, m * n * sizeof(double), o);
+   return (double*) safe_realloc(ptr, m * n * sizeof(double), o);
 }
 
 static void* 
@@ -700,7 +700,7 @@ static void
 push(struct tracer** stack, int i, int j, int mtrx, thal_results* o)
 {
    struct tracer* new_top;
-   new_top = safe_malloc(sizeof(struct tracer), o);
+   new_top = (struct tracer*) safe_malloc(sizeof(struct tracer), o);
    new_top->i = i;
    new_top->j = j;
    new_top->mtrx = mtrx;
@@ -727,7 +727,7 @@ openParamFile(char* fname, thal_results* o)
    char* paramdir;
    file = fopen(fname, "rt");
    if (!file) {
-      paramdir = safe_malloc(strlen(parampath) + strlen(fname) + 1, o);
+      paramdir = (char*) safe_malloc(strlen(parampath) + strlen(fname) + 1, o);
       strcpy(paramdir, parampath);
       strcat(paramdir, fname);
       if (!(file = fopen(paramdir, "rt"))) {
@@ -1078,7 +1078,7 @@ getTriloop(struct triloop** triloopEntropies, struct triloop** triloopEnthalpies
    sFile = openParamFile("triloop.ds", o);
    *num = 0;
    size = 16;
-   *triloopEntropies = safe_calloc(16, sizeof(struct triloop), o);
+   *triloopEntropies = (struct triloop*) safe_calloc(16, sizeof(struct triloop), o);
    while (readTLoop(sFile, (*triloopEntropies)[*num].loop, &value, 1, o) != -1) {
       for (i = 0; i < 5; ++i)
 	(*triloopEntropies)[*num].loop[i] = str2int((*triloopEntropies)[*num].loop[i]);
@@ -1086,17 +1086,17 @@ getTriloop(struct triloop** triloopEntropies, struct triloop** triloopEnthalpies
       ++*num;
       if (*num == size)	{
 	 size *= 2;
-	 *triloopEntropies = safe_realloc(*triloopEntropies, size * sizeof(struct triloop), o);
+	 *triloopEntropies = (struct triloop*) safe_realloc(*triloopEntropies, size * sizeof(struct triloop), o);
       }
    }
-   *triloopEntropies = safe_realloc(*triloopEntropies, *num * sizeof(struct triloop), o);
+   *triloopEntropies = (struct triloop*) safe_realloc(*triloopEntropies, *num * sizeof(struct triloop), o);
 
    fclose(sFile);
 
    hFile = openParamFile("triloop.dh", o);
    *num = 0;
    size = 16;
-   *triloopEnthalpies = safe_calloc(16, sizeof(struct triloop), o);
+   *triloopEnthalpies = (struct triloop*) safe_calloc(16, sizeof(struct triloop), o);
    while (readTLoop(hFile, (*triloopEnthalpies)[*num].loop, &value, 1, o) != -1) {
       for (i = 0; i < 5; ++i)
 	(*triloopEnthalpies)[*num].loop[i] = str2int((*triloopEnthalpies)[*num].loop[i]);
@@ -1104,10 +1104,10 @@ getTriloop(struct triloop** triloopEntropies, struct triloop** triloopEnthalpies
       ++*num;
       if (*num == size) {
 	 size *= 2;
-	 *triloopEnthalpies = safe_realloc(*triloopEnthalpies, size * sizeof(struct triloop), o);
+	 *triloopEnthalpies = (struct triloop*) safe_realloc(*triloopEnthalpies, size * sizeof(struct triloop), o);
       }
    }
-   *triloopEnthalpies = safe_realloc(*triloopEnthalpies, *num * sizeof(struct triloop), o);
+   *triloopEnthalpies = (struct triloop*) safe_realloc(*triloopEnthalpies, *num * sizeof(struct triloop), o);
 
    fclose(hFile);
 }
@@ -1122,7 +1122,7 @@ getTetraloop(struct tetraloop** tetraloopEntropies, struct tetraloop** tetraloop
    sFile = openParamFile("tetraloop.ds", o);
    *num = 0;
    size = 16;
-   *tetraloopEntropies = safe_calloc(16, sizeof(struct tetraloop), o);
+   *tetraloopEntropies = (struct tetraloop*) safe_calloc(16, sizeof(struct tetraloop), o);
    while (readTLoop(sFile, (*tetraloopEntropies)[*num].loop, &value, 0, o) != -1) {
       for (i = 0; i < 6; ++i)
 	(*tetraloopEntropies)[*num].loop[i] = str2int((*tetraloopEntropies)[*num].loop[i]);
@@ -1130,16 +1130,16 @@ getTetraloop(struct tetraloop** tetraloopEntropies, struct tetraloop** tetraloop
       ++*num;
       if (*num == size) {
 	 size *= 2;
-	 *tetraloopEntropies = safe_realloc(*tetraloopEntropies, size * sizeof(struct tetraloop), o);
+	 *tetraloopEntropies = (struct tetraloop*) safe_realloc(*tetraloopEntropies, size * sizeof(struct tetraloop), o);
       }
    }
-   *tetraloopEntropies = safe_realloc(*tetraloopEntropies, *num * sizeof(struct tetraloop), o);
+   *tetraloopEntropies = (struct tetraloop*) safe_realloc(*tetraloopEntropies, *num * sizeof(struct tetraloop), o);
    fclose(sFile);
 
    hFile = openParamFile("tetraloop.dh", o);
    *num = 0;
    size = 16;
-   *tetraloopEnthalpies = safe_calloc(16, sizeof(struct tetraloop), o);
+   *tetraloopEnthalpies = (struct tetraloop*) safe_calloc(16, sizeof(struct tetraloop), o);
    while (readTLoop(hFile, (*tetraloopEnthalpies)[*num].loop, &value, 0, o) != -1) {
       for (i = 0; i < 6; ++i)
 	(*tetraloopEnthalpies)[*num].loop[i] = str2int((*tetraloopEnthalpies)[*num].loop[i]);
@@ -1147,10 +1147,10 @@ getTetraloop(struct tetraloop** tetraloopEntropies, struct tetraloop** tetraloop
       ++*num;
       if (*num == size) {
 	 size *= 2;
-	 *tetraloopEnthalpies = safe_realloc(*tetraloopEnthalpies, size * sizeof(struct tetraloop), o);
+	 *tetraloopEnthalpies = (struct tetraloop*) safe_realloc(*tetraloopEnthalpies, size * sizeof(struct tetraloop), o);
       }
    }
-   *tetraloopEnthalpies = safe_realloc(*tetraloopEnthalpies, *num * sizeof(struct tetraloop), o);
+   *tetraloopEnthalpies = (struct tetraloop*) safe_realloc(*tetraloopEnthalpies, *num * sizeof(struct tetraloop), o);
 
    fclose(hFile);
 }
@@ -1184,8 +1184,8 @@ comp3loop(const void* loop1, const void* loop2)
 {
 
      int i;
-     const unsigned char* h1 = loop1;
-     const struct triloop *h2 = loop2;
+     const unsigned char* h1 = (const unsigned char*) loop1;
+     const struct triloop *h2 = (const struct triloop*) loop2;
 
      for (i = 0; i < 5; ++i)
          if (h1[i] < h2->loop[i])
@@ -1200,8 +1200,8 @@ static int
 comp4loop(const void* loop1, const void* loop2)
 {
    int i;
-   const unsigned char* h1 = loop1;
-   const struct tetraloop *h2 = loop2;
+   const unsigned char* h1 = (const unsigned char*) loop1;
+   const struct tetraloop *h2 = (const struct tetraloop*) loop2;
 
    for (i = 0; i < 6; ++i)
      if (h1[i] < h2->loop[i])
@@ -1251,7 +1251,7 @@ fillMatrix(int maxLoop, thal_results *o)
 {
    int d, i, j, ii, jj;
    double* SH;
-   SH = safe_malloc(2 * sizeof(double), o);
+   SH = (double*) safe_malloc(2 * sizeof(double), o);
    for (i = 1; i <= len1; ++i) {
       for (j = 1; j <= len2; ++j) {
 	 if(isFinite(EnthalpyDPT(i, j))) { /* if finite */
@@ -1300,7 +1300,7 @@ fillMatrix2(int maxLoop, thal_results* o)
 {
    int i, j;
    double* SH;
-   SH = safe_malloc(2 * sizeof(double), o);
+   SH = (double*) safe_malloc(2 * sizeof(double), o);
    for (j = 2; j <= len2; ++j)
      for (i = j - MIN_HRPN_LOOP - 1; i >= 1; --i) {
 	if (isFinite(EnthalpyDPT(i, j))) {
@@ -1714,18 +1714,18 @@ calc_hairpin(int i, int j, double* EntropyEnthalpy, int traceback)
    if (loopSize == 3) {	 /* closing AT-penalty (+), triloop bonus, hairpin of 3 (+) */
       struct triloop* loop;
       if (numTriloops) {
-	 if ((loop = bsearch(numSeq1 + i, triloopEnthalpies, numTriloops, sizeof(struct triloop), comp3loop)))
+	 if ((loop = (struct triloop*) bsearch(numSeq1 + i, triloopEnthalpies, numTriloops, sizeof(struct triloop), comp3loop)))
 	   EntropyEnthalpy[1] += loop->value;
-	 if ((loop = bsearch(numSeq1 + i, triloopEntropies, numTriloops, sizeof(struct triloop), comp3loop)))
+	 if ((loop = (struct triloop*) bsearch(numSeq1 + i, triloopEntropies, numTriloops, sizeof(struct triloop), comp3loop)))
 	   EntropyEnthalpy[0] += loop->value;
       }
    } else if (loopSize == 4) { /* terminal mismatch, tetraloop bonus, hairpin of 4 */
       struct tetraloop* loop;
       if (numTetraloops) {
-	 if ((loop = bsearch(numSeq1 + i, tetraloopEnthalpies, numTetraloops, sizeof(struct tetraloop), comp4loop))) {
+	 if ((loop = (struct tetraloop*) bsearch(numSeq1 + i, tetraloopEnthalpies, numTetraloops, sizeof(struct tetraloop), comp4loop))) {
 	    EntropyEnthalpy[1] += loop->value;
 	 }
-	 if ((loop = bsearch(numSeq1 + i, tetraloopEntropies, numTetraloops, sizeof(struct tetraloop), comp4loop))) {
+	 if ((loop = (struct tetraloop*) bsearch(numSeq1 + i, tetraloopEntropies, numTetraloops, sizeof(struct tetraloop), comp4loop))) {
 	    EntropyEnthalpy[0] += loop->value;
 	 }
       }
@@ -2389,9 +2389,9 @@ tracebacku(int* bp, int maxLoop,thal_results* o) /* traceback for unimolecular s
    double* SH1;
    double* SH2;
    double* EntropyEnthalpy;
-   SH1 = safe_malloc(2 * sizeof(double), o);
-   SH2 = safe_malloc(2 * sizeof(double), o);
-   EntropyEnthalpy = safe_malloc(2 * sizeof(double), o);
+   SH1 = (double*) safe_malloc(2 * sizeof(double), o);
+   SH2 = (double*) safe_malloc(2 * sizeof(double), o);
+   EntropyEnthalpy = (double*) safe_malloc(2 * sizeof(double), o);
    push(&stack,len1, 0, 1, o);
    while(stack) {
       top = stack;
@@ -2505,7 +2505,7 @@ traceback(int i, int j, double RT, int* ps1, int* ps2, int maxLoop, thal_results
 {
    int d, ii, jj, done;
    double* SH;
-   SH = safe_malloc(2 * sizeof(double), o);
+   SH = (double*) safe_malloc(2 * sizeof(double), o);
    ps1[i - 1] = j;
    ps2[j - 1] = i;
    while(1) {
@@ -2587,10 +2587,10 @@ drawDimer(int* ps1, int* ps2, double temp, double H, double S, int temponly, dou
       }
    }
 
-   duplex[0] = safe_malloc(len1 + len2 + 1, o);
-   duplex[1] = safe_malloc(len1 + len2 + 1, o);
-   duplex[2] = safe_malloc(len1 + len2 + 1, o);
-   duplex[3] = safe_malloc(len1 + len2 + 1, o);
+   duplex[0] = (char*) safe_malloc(len1 + len2 + 1, o);
+   duplex[1] = (char*) safe_malloc(len1 + len2 + 1, o);
+   duplex[2] = (char*) safe_malloc(len1 + len2 + 1, o);
+   duplex[3] = (char*) safe_malloc(len1 + len2 + 1, o);
    duplex[0][0] = duplex[1][0] = duplex[2][0] = duplex[3][0] = 0;
 
    i = 0;
@@ -2714,7 +2714,7 @@ drawHairpin(int* bp, double mh, double ms, int temponly, double temp, thal_resul
    }
    /* plain-text output */
    char* asciiRow;
-   asciiRow = safe_malloc(len1, o);
+   asciiRow = (char*) safe_malloc(len1, o);
    for(i = 0; i < len1; ++i) asciiRow[i] = '0';
    for(i = 1; i < len1+1; ++i) {
       if(bp[i-1] == 0) {

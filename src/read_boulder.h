@@ -72,6 +72,7 @@ int read_boulder_record(FILE *file_input,
 /* pr_append_str is an append-only string ADT. */
 int read_p3_file(const char *file_name,
                  const p3_file_type file_type,
+		 int echo_output,
                  p3_global_settings *pa, 
                  seq_args *sarg,
                  pr_append_str *fatal_err,

@@ -126,7 +126,7 @@ sub main() {
 	# Need to deal with different arguments in 
 	# different version of valgrind
 	my $valgrind_version = `$valgrind_exe --version`;
-	if ($valgrind_version =~ /3\.3\./) {
+	if (($valgrind_version =~ /3\.3\./) || ($valgrind_version =~ /3\.4\./)) {
 	    $log_file_arg_for_valgrind = "--log-file";
 	}
     }
@@ -407,6 +407,13 @@ sub perldiff($$) {
                 $l2 =~ s/primer3 release \d+\.\d+\.\d+//;
             }
         }
+
+	# If this is the tag with the settings file path, replace \ by / to make it
+	# the same on both Linux and Windows
+	if ($l1 =~ /^P3_SETTINGS_FILE_USED/ && $l2 =~ /^P3_SETTINGS_FILE_USED/) {
+	    $l1 =~ s/\\/\//g;
+	    $l2 =~ s/\\/\//g;
+	}
 
         $linenumber++;
         # Check for difference between two edited lines (line by line)

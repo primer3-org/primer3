@@ -50,13 +50,13 @@
 # with valgrind, a leak and memory access checker.
 
 LDLIBS     = -lm
-CC         = g++
+CC         = gcc
 O_OPTS     = -O0
-CC_OPTS    = -g -Wall -D__USE_FIXED_PROTOTYPES__
+CC_OPTS    = -g -Wall -D__USE_FIXED_PROTOTYPES__ -isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5 -arch i386 -arch x86_64 -arch ppc
 P_DEFINES  =
 
 CFLAGS  = $(CC_OPTS) $(O_OPTS)
-LDFLAGS = -g
+LDFLAGS = -g -arch i386 -arch x86_64 -arch ppc
 
 # ======================================================================
 # If you have trouble with library skew when moving primer3 executables

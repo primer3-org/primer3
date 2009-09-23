@@ -99,7 +99,7 @@ sub main() {
 
     $valgrind_format
         = "$valgrind_exe --leak-check=yes "
-        . " --show-reachable=yes --log-file-exactly=ntdpal.%0.4d.valg ";
+        . " --show-reachable=yes --log-file=ntdpal.%0.4d.valg ";
 
 
     # Look for the ntdpal executable

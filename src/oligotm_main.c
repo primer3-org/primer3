@@ -191,7 +191,7 @@ main(int argc, char **argv)
   len=strlen(seq);
   for(j=0;j<len;j++) seq[j]=toupper(seq[j]);
    
-  tm = oligotm(seq, d, mv, dv, n, tm_santalucia, salt_corrections);
+  tm = oligotm(seq, d, mv, dv, n, (tm_method_type) tm_santalucia, (salt_correction_type) salt_corrections);
   if (OLIGOTM_ERROR == tm) {
     fprintf(stderr,
 	    "%s ERROR: length of sequence %s is less than 2 or\n"

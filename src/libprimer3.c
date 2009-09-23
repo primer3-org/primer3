@@ -45,6 +45,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <ctype.h> /* toupper */
 
+#ifdef __GNUC__
+#include <ext/hash_map>
+#else
+#include <hash_map>
+#endif
+
+namespace std
+{
+ using namespace __gnu_cxx;
+}
+
 #include "dpal.h"
 #include "thal.h"
 #include "oligotm.h"
@@ -78,6 +89,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define PAIR_OK 1
 #define PAIR_FAILED 0
+#define POTENTIAL_PAIR 2
 
 #define OK_OR_MUST_USE(H) (!p3_ol_has_any_problem(H) || (H)->must_use)
 
@@ -280,16 +292,16 @@ static int   pick_primers_by_position(const int, const int,
 
 static double obj_fn(const p3_global_settings *, primer_pair *);
 
-static int    oligo_in_pair_overlaps_used_oligo(const primer_rec *left,
-                                                const primer_rec *right,
-                                                const pair_array_t *retpair,
-                                                int min_dist);
+static int    left_oligo_in_pair_overlaps_used_oligo(const primer_rec *left,
+                                                     const pair_array_t *retpair,
+                                                     int min_dist);
+
+static int    right_oligo_in_pair_overlaps_used_oligo(const primer_rec *right,
+                                                      const pair_array_t *retpair,
+                                                      int min_dist);
 
 static int    oligo_overlaps_interval(int, int,
                                       const interval_array_t, int);
-
-static int    oligo_pair_seen(const primer_pair *, const pair_array_t *);
-
 
 static void   calc_and_check_oligo_features(const p3_global_settings *pa,
                                        primer_rec *,
@@ -804,19 +816,19 @@ create_thal_arg_holder ()
    
    h->any = (thal_args *) pr_safe_malloc(sizeof(*h->any));
    set_thal_default_args(h->any);
-   h->any->type = 1;
+   h->any->type = thal_any;
    
    h->end1 = (thal_args *) pr_safe_malloc(sizeof(*h->end1));
    set_thal_default_args(h->end1);
-   h->end1->type = 2;
+   h->end1->type = thal_end1;
    
    h->end2 = (thal_args *) pr_safe_malloc(sizeof(*h->end2));
    set_thal_default_args(h->end2);
-   h->end2->type = 3;
+   h->end2->type = thal_end2;
    
    h->hairpin_th  = (thal_args *) pr_safe_malloc(sizeof(*h->hairpin_th));
    set_thal_default_args(h->hairpin_th); 
-   h->hairpin_th->type = 4;
+   h->hairpin_th->type = thal_hairpin;
    return h;
 }
 
@@ -1083,7 +1095,7 @@ choose_primers(const p3_global_settings *pa,
    This function posibly uses retval->intl and updates its
    elements via choose_internal_oligo().
 
-   This function examimes primer pairs or triples to find
+   This function examines primer pairs or triples to find
    pa->num_return pairs or triples to return.
 
    Results are returned in best_pairs and in
@@ -1091,14 +1103,14 @@ choose_primers(const p3_global_settings *pa,
 /* ============================================================ */
 static void
 choose_pair_or_triple(p3retval *retval,
-                          const p3_global_settings *pa,
-                          const seq_args *sa,
-                          const dpal_arg_holder *dpal_arg_to_use,
-       		          const thal_arg_holder *thal_arg_to_use,
-                          pair_array_t *best_pairs) {
-  int i,j; /* Loop index. */
+                      const p3_global_settings *pa,
+                      const seq_args *sa,
+                      const dpal_arg_holder *dpal_arg_to_use,
+  		      const thal_arg_holder *thal_arg_to_use,
+                      pair_array_t *best_pairs) {
+  int i,j;   /* Loop index. */
   int n_int; /* Index of the internal oligo */
-  int *max_j_seen;   /* The maxium value of j (loop index for forward primers)
+  int *max_j_seen;   /* The maximum value of j (loop index for forward primers)
                         that has been examined for every reverse primer
                         index (i) */
   int update_stats;  /* Flag to indicate whether pair_stats
@@ -1110,6 +1122,17 @@ choose_pair_or_triple(p3retval *retval,
   int product_size_range_index = 0;
   int trace_me = 0;
   int the_best_i, the_best_j;
+
+  /* Hash maps used to store pairs that were computed */
+  std::hash_map<int, primer_pair*> **pairs;
+  std::hash_map<int, primer_pair*> *hmap, *best_hmap;
+  std::hash_map<int, primer_pair*>::iterator it;
+  primer_pair *pp, *best_pp;
+  int pair_found = 0, pair_ok = 0;
+
+  pairs = (std::hash_map<int, primer_pair*>**) calloc (retval->rev.num_elem, 
+						       sizeof(std::hash_map<int, primer_pair*>*));
+  if (!pairs) longjmp(_jmp_buf, 1);
   
   memset(&the_best_pair, 0, sizeof(the_best_pair));
   max_j_seen = (int *) malloc(sizeof(int) * retval->rev.num_elem);
@@ -1127,19 +1150,59 @@ choose_pair_or_triple(p3retval *retval,
     /* Iterate over the reverse primers. */
     for (i = 0; i < retval->rev.num_elem; i++) {
 
+      hmap = pairs[i];
+
       /* Only use a primer that *might be* legal or that the caller
          has provided and specified as "must use".  Primers are *NOT*
          FULLY ASSESED until the call to characterize_pair(), in
-         order to avoid expensieve computations (mostly alignments)
+         order to avoid expensive computations (mostly alignments)
          unless necessary. */
-      if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) continue;
+      if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) {
+	/* Can free the memory used by the hmap associated to this reverse primer */
+	if (hmap) {
+	  for (it=hmap->begin(); it!=hmap->end(); it++) {
+	    pp = it->second;
+	    if (pp) delete pp;
+	  }
+	  delete hmap;
+	  pairs[i] = NULL;
+	}
+	continue;
+      }
 
       /* If the pair can not be better than the one already 
-       * selected, choose a new pair*/
+       * selected, then we can skip remaining reverse primers */
       if (pa->pr_pair_weights.primer_quality *
            (retval->rev.oligo[i].quality + retval->fwd.oligo[0].quality)
               > the_best_pair.pair_quality) {
         break;
+      }
+
+      if (retval->rev.oligo[i].overlaps || right_oligo_in_pair_overlaps_used_oligo(&retval->rev.oligo[i],
+                                                                                   best_pairs,
+                                                                                   pa->min_three_prime_distance)) {
+        retval->rev.oligo[i].overlaps = 1;
+        /* The stats will not keep track of the pair correctly
+           after the first pass, because an oligo might
+           have been legal on one pass but become illegal on
+           a subsequent pass. */
+        if (update_stats) {
+          if (trace_me)
+            fprintf(stderr,
+                    "i=%d, j=%d, overlaps_oligo_in_better_pair++\n",
+                    i, j);
+          pair_expl->overlaps_oligo_in_better_pair++;
+        }
+	/* Can free the memory used by the hmap associated to this reverse primer */
+	if (hmap) {
+	  for (it=hmap->begin(); it!=hmap->end(); it++) {
+	    pp = it->second;
+	    if (pp) delete pp;
+	  }
+	  delete hmap;
+	  pairs[i] = NULL;
+	}
+        continue;
       }
 
       /* Loop over forward primers */
@@ -1148,14 +1211,26 @@ choose_pair_or_triple(p3retval *retval,
         /* We check the reverse oligo again, because we may
            determined that it is "not ok", even though
            (as a far as we knew), it was ok above. */
-        if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) break;
+        if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) {
+	  /* Can free the memory used by the hmap associated to this reverse primer */
+	  if (hmap) {
+	    for (it=hmap->begin(); it!=hmap->end(); it++) {
+	      pp = it->second;
+	      if (pp) delete pp;
+	    }
+	    delete hmap;
+	    pairs[i] = NULL;
+	  }
+	  break;
+	}
 
         /* Only use a primer that is legal, or that the caller
            has provided and specified as "must use". */
         if (!OK_OR_MUST_USE(&retval->fwd.oligo[j])) continue;
 
         /* If the pair can not be better than the one already 
-         * selected, choose a new pair*/
+         * selected, then we can skip remaining forward primers 
+         * for this reverse primer */
         if (pa->pr_pair_weights.primer_quality *
             (retval->fwd.oligo[j].quality + retval->rev.oligo[i].quality) 
             > the_best_pair.pair_quality) {
@@ -1175,11 +1250,11 @@ choose_pair_or_triple(p3retval *retval,
           if (trace_me) fprintf(stderr, "updates on\n");
           update_stats = 1;
         }
-        
-        if (oligo_in_pair_overlaps_used_oligo(&retval->fwd.oligo[j],
-                                              &retval->rev.oligo[i],
-                                              best_pairs,
-                                              pa->min_three_prime_distance)) {
+
+        if (retval->fwd.oligo[j].overlaps || left_oligo_in_pair_overlaps_used_oligo(&retval->fwd.oligo[j],
+                                                                                    best_pairs,
+                                                                                    pa->min_three_prime_distance)) {
+          retval->fwd.oligo[j].overlaps = 1;
           /* The stats will not keep track of the pair correctly
              after the first pass, because an oligo might
              have been legal on one pass but become illegal on
@@ -1194,79 +1269,124 @@ choose_pair_or_triple(p3retval *retval,
           continue;
         }
 
-        /* Characterize the pair. h is intitialized by this
-           call. */
-        if (PAIR_OK ==
-            characterize_pair(retval, pa, sa,
-                              j, i, product_size_range_index, 
-                              &h, dpal_arg_to_use, thal_arg_to_use, update_stats)) {
-
-          /* Choose internal oligo if needed */
-          if (pa->pick_right_primer && pa->pick_left_primer
-              && pa->pick_internal_oligo) {
-            if (choose_internal_oligo(retval, h.left, h.right,
-                                      &n_int, sa, pa,
-                                      dpal_arg_to_use, thal_arg_to_use)!=0) {
-
-              /* We were UNable to choose an internal oligo. */
-              if (update_stats) { 
-                pair_expl->internal++;
+        /* Check if pair was already computed */
+        pair_found = 0;
+        if (hmap) {
+	  it = hmap->find(j);
+          if (it != hmap->end()) {
+            pair_found = 1;
+            pp = it->second;
+            if (pp) { /* pair was computed, it isn't illegal and it wasn't selected yet */
+              if (update_stats) { pair_expl->considered++; }
+              pair_ok = 1;
+              /* Check if ok for this product size range */
+              if (pp->product_size < pa->pr_min[product_size_range_index] ||
+                  pp->product_size > pa->pr_max[product_size_range_index]) {
+                if (update_stats) {pair_expl->product++; }
+                if (!pp->must_use) pair_ok = 0;
               }
+              if (pair_ok) {
+                if (update_stats) {
+                  if (trace_me)
+                    fprintf(stderr, "ok++\n");
+                  pair_expl->ok++;
+                }
+                /* Check if this is a better pair */
+                if (compare_primer_pair(pp, &the_best_pair) < 0) {
+                  the_best_pair = *pp;
+                  the_best_i = i;
+                  the_best_j = j;
+		  best_hmap = hmap;
+		  best_pp = pp;
+                }
 
-              continue;
-            } else {
-              /* We DID choose an internal oligo, and we
-                 set h.intl to point to it. */
-              h.intl = &retval->intl.oligo[n_int];
+                /* There cannot be a better pair */
+                if (the_best_pair.pair_quality == 0) {
+                  break;
+                } 
+              }
+            } /* else - pp is NULL - it's illegal or already selected */
+          }
+        } else {
+          /* Create this hashmap */
+          hmap = new std::hash_map<int, primer_pair*>;
+          if (!hmap)
+            longjmp(_jmp_buf, 1);
+          pairs[i] = hmap;
+        }
+
+        if (!pair_found) {
+          /* Characterize the pair. h is initialized by this
+             call. */
+          int tmp = characterize_pair(retval, pa, sa,
+                                      j, i, product_size_range_index,
+                                      &h, dpal_arg_to_use, thal_arg_to_use, update_stats);
+          if (tmp == PAIR_OK) {
+
+            /* Choose internal oligo if needed */
+            if (pa->pick_right_primer && pa->pick_left_primer
+                && pa->pick_internal_oligo) {
+              if (choose_internal_oligo(retval, h.left, h.right,
+                                        &n_int, sa, pa,
+                                        dpal_arg_to_use, thal_arg_to_use)!=0) {
+
+                /* We were UNable to choose an internal oligo. */
+                if (update_stats) { 
+                  pair_expl->internal++;
+                }
+
+                /* Mark the pair as not good - the entry in the hash map will be a NULL */
+                (*hmap)[j] = NULL;
+
+                continue;
+              } else {
+                /* We DID choose an internal oligo, and we
+                   set h.intl to point to it. */
+                h.intl = &retval->intl.oligo[n_int];
+              }
             }
-          }
 
-          if (update_stats) { 
-            if (trace_me)
-              fprintf(stderr, "ok++\n");
-            pair_expl->ok++;
-          }
+            if (update_stats) { 
+              if (trace_me)
+                fprintf(stderr, "ok++\n");
+              pair_expl->ok++;
+            }
+
+            /* Calculate the pair penalty */
+            h.pair_quality = obj_fn(pa, &h);
+            PR_ASSERT(h.pair_quality >= 0.0);
+ 
+            /* Save the pair */
+            pp = new primer_pair;
+            if (!pp)
+	      longjmp(_jmp_buf, 1);
+            *pp = h;
+            (*hmap)[j] = pp;
               
-          /* Calculate the pair penalty */
-          h.pair_quality = obj_fn(pa, &h);
-          PR_ASSERT(h.pair_quality >= 0.0);
-
-          /* The current pair (h) is the new best pair if it is:
-             1. Better than the best pair so far,
-             2. Not already in pest_pairs, and
-             3. Legal with respect to overlap with better pairs.
-          */
-          if ((compare_primer_pair(&h, &the_best_pair) < 0)
-              && !oligo_pair_seen(&h, best_pairs)) {
-
-            if (!oligo_in_pair_overlaps_used_oligo(h.left,
-                                                   h.right,
-                                                   best_pairs,
-                                                   pa->min_three_prime_distance)) {
+            /* The current pair (h) is the new best pair if it is better than the best pair so far. */
+            if (compare_primer_pair(&h, &the_best_pair) < 0) {
               the_best_pair = h;
               the_best_i = i;
               the_best_j = j;
-
-            } else {
-              if (update_stats) {
-                if (trace_me)
-                  fprintf(stderr,
-                          "ok--, i=%d, j=%d because an oligo in the pair"
-                          " overlaps an oligo already in best_pairs\n",
-                          i, j);
-                pair_expl->ok--;
-                pair_expl->overlaps_oligo_in_better_pair++;
-              }
+	      best_hmap = hmap;
+	      best_pp = pp;
             }
-          }
 
-          /* There cannot be a better pair */
-          if (the_best_pair.pair_quality == 0) {
-            break;
-          }
-        } 
-
+            /* There cannot be a better pair */
+            if (the_best_pair.pair_quality == 0) {
+              break;
+            }
+          } else if (tmp == PAIR_FAILED) {
+            /* Illegal pair */
+            (*hmap)[j] = NULL;
+          } 
+        }
       }  /* for (j=0; j<retval->fwd.num_elem; j++) -- inner loop */
+
+      /* Check if there cannot be a better pair than best found */
+      if (the_best_pair.pair_quality == 0) {
+	break;
+      }
 
     } /* for (i = 0; i < retval->rev.num_elem; i++) --- outer loop */
 
@@ -1297,6 +1417,11 @@ choose_pair_or_triple(p3retval *retval,
         fprintf(stderr, "ADD pair i=%d, j=%d\n", the_best_i, the_best_j);
 
       add_pair(&the_best_pair, best_pairs);
+
+      /* Mark the pair as already selected */
+      delete best_pp;
+      (*best_hmap)[the_best_j] = NULL;
+
       /* If we have enough stop the while loop */
       if (pa->num_return == best_pairs->num_pairs) {
 	break;
@@ -1304,6 +1429,18 @@ choose_pair_or_triple(p3retval *retval,
     }
   } /* end of while(continue_trying == 1) */
   free(max_j_seen);
+
+  for (i=0; i<retval->rev.num_elem; i++) {
+    hmap = pairs[i];
+    if (hmap) {
+      for (it=hmap->begin(); it!=hmap->end(); it++) {
+	pp = it->second;
+	if (pp) delete pp;
+      }
+      delete hmap;
+    }
+  }
+  free(pairs);
 }
 /* ============================================================ */
 /* END choose_pair_or_triple                                    */
@@ -1436,34 +1573,6 @@ add_must_use_warnings(pr_append_str *warning,
   }
 }
 
-/* Return 1 iff pair is already in the first num_pairs elements of
-   retpair. */
-/* Checks if the current pair is already in the list of
- * selected pairs. */
-static int
-oligo_pair_seen(const primer_pair *pair,
-                const pair_array_t *retpair)
-{
-  const primer_pair *q, *stop;
-
-  /* retpair might not have any pairs in it yet. (add_pair
-     allocates memory for retpair->pairs.) */
-  if (retpair->num_pairs == 0)
-    return 0;
-
-  q = &retpair->pairs[0];
-  stop = &retpair->pairs[retpair->num_pairs];
-
-  for (; q < stop; q++) {
-    if (q->left->start == pair->left->start
-        && q->left->length == pair->left->length
-        && q->right->start == pair->right->start
-        && q->right->length == pair->right->length) return 1;
-  }
-  return 0;
-}
-
-
 /*
    Also see the documentation in librimer3.h,
    p3_global_settings.min_three_prime_distance.
@@ -1488,11 +1597,49 @@ oligo_pair_seen(const primer_pair *pair,
          in retpair
 
 */
+
 static int
-oligo_in_pair_overlaps_used_oligo(const primer_rec *left,
-                                  const primer_rec *right,
-                                  const pair_array_t *retpair,
-                                  int min_dist)
+right_oligo_in_pair_overlaps_used_oligo(const primer_rec *right,
+                                        const pair_array_t *retpair,
+                                        int min_dist)
+{
+  const primer_pair *q, *stop;
+  int q_pos, pair_pos;
+
+  /* retpair might not have any pairs in it yet. (add_pair
+     allocates memory for retpair->pairs.) */
+  if (retpair->num_pairs == 0)
+    return 0;
+
+  if (min_dist == -1)
+    return 0;
+
+  q = &retpair->pairs[0];
+
+  stop = &retpair->pairs[retpair->num_pairs];
+
+  for (; q < stop; q++) {
+    q_pos = q->right->start - q->right->length + 1;
+
+    pair_pos = right->start - right->length + 1;
+
+    if ((abs(q_pos - pair_pos) < min_dist)
+             && (min_dist != 0)) { return 1; }
+
+    if ((q->right->length == right->length)
+        && (q->right->start == right->start)
+        && (min_dist == 0)) {
+      return 1;
+    }
+
+  }
+  return 0;
+}
+
+static int
+left_oligo_in_pair_overlaps_used_oligo(const primer_rec *left,
+                                       const pair_array_t *retpair,
+                                       int min_dist)
 {
   const primer_pair *q, *stop;
   int q_pos, pair_pos;
@@ -1522,20 +1669,6 @@ oligo_in_pair_overlaps_used_oligo(const primer_rec *left,
         && (min_dist == 0)) {
       return 1;
     }
-
-    q_pos = q->right->start - q->right->length + 1;
-
-    pair_pos = right->start - right->length + 1;
-
-    if ((abs(q_pos - pair_pos) < min_dist)
-             && (min_dist != 0)) { return 1; }
-
-    if ((q->right->length == right->length)
-        && (q->right->start == right->start)
-        && (min_dist == 0)) { 
-      return 1;
-    }
-
   }
   return 0;
 }
@@ -2089,6 +2222,8 @@ pick_only_best_primer(const int start,
       /* Do not force primer3 to use this oligo */
       h.must_use = 0;
 
+      h.overlaps = 0;
+
       /* Add it to the considered statistics */
       oligo->expl.considered++;
       /* Calculate all the primer parameters */
@@ -2119,7 +2254,11 @@ pick_only_best_primer(const int start,
     /* Update statistics with how many primers are good */
     oligo->expl.ok = oligo->expl.ok + 1;
   } else {
-    pr_append_new_chunk(&retval->warnings, "No primer found in range ");
+    if (oligo->type == OT_RIGHT) {
+      pr_append_new_chunk(&retval->warnings, "No right primer found in range ");
+    } else {
+      pr_append_new_chunk(&retval->warnings, "No left primer found in range ");
+    }
     temp_value = start + pa->first_base_index;
     sprintf(p_number, "%d", temp_value);
     pr_append(&retval->warnings, p_number);
@@ -2214,6 +2353,8 @@ pick_primer_range(const int start, const int length, int *extreme,
 
       /* Do not force primer3 to use this oligo */
       h.must_use = 0;
+ 
+      h.overlaps = 0;
 
       /* Add it to the considered statistics */
        oligo->expl.considered++;
@@ -2249,7 +2390,7 @@ pick_primer_range(const int start, const int length, int *extreme,
 
 /* add_one_primer finds one primer in the trimmed sequence and stores
  * it in *oligo The main difference to the general fuction is that it
- * calculates its length and it will add aprimer of any length to the
+ * calculates its length and it will add a primer of any length to the
  * list */
 static int
 add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
@@ -2321,6 +2462,8 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
     /* Force primer3 to use this oligo */
     h.must_use = (1 && pa->pick_anyway);
 
+    h.overlaps = 0;
+
     /* Add it to the considered statistics */
     oligo->expl.considered++;
 
@@ -2352,17 +2495,17 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
 
 /* add_one_primer finds one primer in the trimmed sequence and stores
  * it in *oligo The main difference to the general fuction is that it
- * calculates its length and it will add aprimer of any length to the
+ * calculates its length and it will add a primer of any length to the
  * list */
 static int
 add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oligo,
-			     const p3_global_settings *pa,
-			     const seq_args *sa,
-			     const dpal_arg_holder *dpal_arg_to_use,
-			     const thal_arg_holder *thal_arg_to_use,
-			     p3retval *retval) {
-     /* Variables for the loop */
-  int i, j;
+			   const p3_global_settings *pa,
+			   const seq_args *sa,
+			   const dpal_arg_holder *dpal_arg_to_use,
+			   const thal_arg_holder *thal_arg_to_use,
+			   p3retval *retval) {
+  /* Variables for the loop */
+  int i;
   int n, found_primer;
 
   /* Array to store one primer sequences in */
@@ -2378,41 +2521,48 @@ add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oli
 
   /* Just to be sure */
   if (start < 0) {
-          return 1;
+    return 1;
   }
-  if ((start + length) >n) {
-          return 1;
+  if (start >= n) {
+    return 1;
   }
-
-  /* This time we already know the size of the primer */
-  j = length;
+  if (oligo->type != OT_RIGHT) {
+    if ((start + length) > n) {
+      return 1;
+    }
+  } else {
+    if ((start - length + 1) < 0) {
+      return 1;
+    }
+  }
 
   oligo_seq[0] = '\0';
 
   /* Set the length of the primer */
-  h.length = j;
+  h.length = length;
 
   /* Figure out positions for forward primers */
   if (oligo->type != OT_RIGHT) {
-          i = start + length - 1;
-      /* Set the start of the primer */
-      h.start = i - j +1;
+    /* Set the start of the primer */
+    h.start = start;
 
-      /* Put the real primer sequence in s */
-      _pr_substr(sa->trimmed_seq, h.start, j, oligo_seq);
+    /* Put the real primer sequence in s */
+    _pr_substr(sa->trimmed_seq, h.start, length, oligo_seq);
   }
   /* Figure out positions for reverse primers */
   else {
-          i = start - length + 1;
-      /* Set the start of the primer */
-      h.start=i+j-1;
+    i = start - length + 1;
+    /* Set the start of the primer */
+    h.start = start;
 
-      /* Put the real primer sequence in s */
-      _pr_substr(sa->trimmed_seq,  i, j, oligo_seq);
+    /* Put the real primer sequence in s */
+    _pr_substr(sa->trimmed_seq, i, length, oligo_seq);
   }
 
   /* Force primer3 to use this oligo */
   h.must_use = (1 && pa->pick_anyway);
+
+  h.overlaps = 0;
 
   /* Add it to the considered statistics */
   oligo->expl.considered++;
@@ -2460,9 +2610,9 @@ pick_primers_by_position(const int start, const int end, int *extreme,
 
   if(start > -1 && end > -1) {
     if (oligo->type != OT_RIGHT) {
-      length = end - start;
+      length = end - start + 1;
     } else {
-      length = start - end;
+      length = start - end + 1;
     }
 
     found_primer = add_one_primer_by_position(start, length, extreme, oligo,
@@ -2470,9 +2620,10 @@ pick_primers_by_position(const int start, const int end, int *extreme,
     return found_primer;
   } else if (start > -1) {
     /* Loop over possible primer lengths, from min to max */
+    ret = 0;
     for (j = pa->p_args.min_size; j <= pa->p_args.max_size; j++) {
-      ret = add_one_primer_by_position(start, j, extreme, oligo,
-                                       pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
+      ret += add_one_primer_by_position(start, j, extreme, oligo,
+                                        pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
       if (ret == 0) {
         found_primer = 0;
       }
@@ -2480,10 +2631,15 @@ pick_primers_by_position(const int start, const int end, int *extreme,
     return found_primer;
   } else if (end > -1) {
     /* Loop over possible primer lengths, from min to max */
+    ret = 0;
     for (j = pa->p_args.min_size; j <= pa->p_args.max_size; j++) {
-      new_start = end - j;
-      ret = add_one_primer_by_position(new_start, j, extreme, oligo,
-                                       pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
+      if (oligo->type != OT_RIGHT) {
+        new_start = end - j + 1;
+      } else {
+        new_start = end + j - 1;
+      }
+      ret += add_one_primer_by_position(new_start, j, extreme, oligo,
+                                        pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
       if (ret == 0) {
         found_primer = 0;
       }
@@ -2846,7 +3002,8 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
       || po_args->weights.repeat_sim
       || ((OT_RIGHT == l || OT_LEFT == l)
           && pa->p_args.weights.template_mispriming))
-      && pa->thermodynamic_alignment==0) || (pa->thermodynamic_alignment==1 && po_args->weights.repeat_sim)) {
+      && pa->thermodynamic_alignment==0) 
+      || (pa->thermodynamic_alignment==1 && po_args->weights.repeat_sim)) {
 
     oligo_mispriming(h, pa, sa, l, stats,
                      dpal_arg_to_use->local_end,
@@ -2857,7 +3014,8 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
        || pa->file_flag
        || retval->output_type == primer_list
        || ((OT_RIGHT == l || OT_LEFT == l)
-	   && pa->p_args.weights.template_mispriming_th))  && pa->thermodynamic_alignment==1
+	   && pa->p_args.weights.template_mispriming_th))
+       && pa->thermodynamic_alignment==1
        ) {
       
       oligo_mispriming_thermod(h, pa, sa, l, stats,
@@ -2878,7 +3036,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   }
   
   if (sa->primer_overlap_pos[0] != -1) {
-    for (for_i=0; for_i < sa->primer_overlap_pos_count; for_i++) {
+    for (for_i=0; for_i < sa->primer_overlap_pos_count; for_i++) {  /* FIX Count should be 0 if there is nothing in sa->primer_overlap_pos.. */
       if (OT_LEFT == l 
           && ((h->start + pa->pos_overlap_primer_end - 1) 
                   < sa->primer_overlap_pos[for_i])
@@ -3289,17 +3447,19 @@ characterize_pair(p3retval *retval,
     must_use = 1;
   }
 
+  ppair->must_use = must_use;
+
   if(ppair->product_size < pa->pr_min[int_num] ||
      ppair->product_size > pa->pr_max[int_num]) {
     if (update_stats) {pair_expl->product++; }
-    if (!must_use) return PAIR_FAILED;
+    if (!must_use) return POTENTIAL_PAIR;
     else pair_failed_flag = 1;
   }
 
   if (sa->tar2.count > 0) {
-    if (pair_spans_target(ppair, sa))
+    if (pair_spans_target(ppair, sa)) {
       ppair->target = 1;
-    else {
+    } else {
       ppair->target = -1;
       if (update_stats) { pair_expl->target++; }
       if (!must_use) return PAIR_FAILED;
@@ -3321,6 +3481,13 @@ characterize_pair(p3retval *retval,
     if (!must_use) return PAIR_FAILED;
     else pair_failed_flag = 1;
   }
+
+  /* FIX add check for _junction_ overlaps, similar to above */
+
+  /* FIX add check for the pair being in any ok pair */
+
+  /* For each pair of ok regions, are both the left and the right primer
+     in the appropriate element of the pair.  ... Empty means can be anywhere */
 
   /* ============================================================= */
   /* Compute product Tm and related parameters; check constraints. */
@@ -4211,10 +4378,10 @@ oligo_mispriming(primer_rec *h,
 
   if (OT_INTL == l) {
     lib = pa->o_args.repeat_lib;
-    max_lib_compl = pa->o_args.max_repeat_compl;
+    max_lib_compl = (short) pa->o_args.max_repeat_compl;
   } else {
     lib = pa->p_args.repeat_lib;
-    max_lib_compl = pa->p_args.max_repeat_compl;
+    max_lib_compl = (short) pa->p_args.max_repeat_compl;
   }
 
   first =  (OT_LEFT == l || OT_INTL == l)
@@ -4346,9 +4513,9 @@ pair_repeat_sim(primer_pair *h,
   n = seq_lib_num_seq(pa->p_args.repeat_lib);
   if(n == 0) return 0;
   h->rep_name =  pa->p_args.repeat_lib->names[0] ;
-  for(i = 0; i < n; i++) {
-    if((w=(fw->repeat_sim.score[i] +
-           rev->repeat_sim.score[i])) > max) {
+  for (i = 0; i < n; i++) {
+    if ((w = (int) (fw->repeat_sim.score[i] +
+		    rev->repeat_sim.score[i])) > max) {
       max = w;
       h->rep_name =  pa->p_args.repeat_lib->names[i] ;
     }
@@ -4725,6 +4892,8 @@ p3_pair_explain_string(const pair_stats *pair_expl)
                     pair_expl->overlaps_oligo_in_better_pair)
   IF_SP_AND_CHECK(", high template mispriming score %d",
                     pair_expl->template_mispriming);
+  /* FIX not in any ok pair */
+
   SP_AND_CHECK(", ok %d", pair_expl->ok)
   return buf;
 }
@@ -4762,6 +4931,7 @@ p3_oligo_explain_string(const oligo_stats *stat)
   IF_SP_AND_CHECK(", high template mispriming score %d",
                   stat->template_mispriming)
   IF_SP_AND_CHECK(", lowercase masking of 3' end %d",stat->gmasked)
+    /* FIX, need for no in any ok region. */
   SP_AND_CHECK(", ok %d", stat->ok)
                return buf;
 }
@@ -4971,11 +5141,6 @@ _adjust_seq_args(const p3_global_settings *pa,
            "Task pick_sequencing_primers can not be combined with included region");
       return;
   }
-  if(pa->primer_task == pick_cloning_primers && sa->incl_l == -1) {
-          pr_append_new_chunk(nonfatal_err,
-           "Task pick_cloning_primers requires a included region");
-      return;
-  }
   if(pa->primer_task == pick_discriminative_primers && sa->incl_l == -1) {
           pr_append_new_chunk(nonfatal_err,
            "Task pick_discriminative_primers requires a included region");
@@ -5000,8 +5165,13 @@ _adjust_seq_args(const p3_global_settings *pa,
 
   /* For pick_cloning_primers set the forced positions */
   if (pa->primer_task == pick_cloning_primers) {
-    sa->force_left_start = sa->incl_s;
-    sa->force_right_start = sa->incl_s + sa->incl_l - 1;
+    if(sa->incl_l == -1) {
+      sa->force_left_start = pa->first_base_index;
+      sa->force_right_start = seq_len + pa->first_base_index - 1;
+    } else {
+      sa->force_left_start = sa->incl_s;
+      sa->force_right_start = sa->incl_s + sa->incl_l - 1;
+    }
     sa->incl_l = seq_len;
     sa->incl_s = pa->first_base_index;
   }
@@ -5540,11 +5710,11 @@ _pr_data_control(const p3_global_settings *pa,
       pr_append(glob_err, MACRO_VALUE_AS_STRING(MAX_PRIMER_LENGTH));
       return 1;
     }
-    if (strlen(sa->internal_input) > pa->o_args.max_size)
+    if (strlen(sa->internal_input) > (unsigned) pa->o_args.max_size)
       pr_append_new_chunk(warning,
                           "Specified internal oligo > PRIMER_INTERNAL_MAX_SIZE");
 
-    if (strlen(sa->internal_input) < pa->o_args.min_size)
+    if (strlen(sa->internal_input) < (unsigned) pa->o_args.min_size)
       pr_append_new_chunk(warning,
                           "Specified internal oligo < PRIMER_INTERNAL_MIN_SIZE");
 
@@ -5562,10 +5732,10 @@ _pr_data_control(const p3_global_settings *pa,
       pr_append(glob_err, MACRO_VALUE_AS_STRING(MAX_PRIMER_LENGTH));
       return 1;
     }
-    if (strlen(sa->left_input) > pa->p_args.max_size)
+    if (strlen(sa->left_input) > (unsigned) pa->p_args.max_size)
       pr_append_new_chunk(warning,
                           "Specified left primer > PRIMER_MAX_SIZE");
-    if (strlen(sa->left_input) < pa->p_args.min_size)
+    if (strlen(sa->left_input) < (unsigned) pa->p_args.min_size)
       pr_append_new_chunk(warning,
                           "Specified left primer < PRIMER_MIN_SIZE");
     if (!strstr_nocase(sa->sequence, sa->left_input))
@@ -5582,10 +5752,10 @@ _pr_data_control(const p3_global_settings *pa,
       pr_append(glob_err, MACRO_VALUE_AS_STRING(MAX_PRIMER_LENGTH));
       return 1;
     }
-    if (strlen(sa->right_input) < pa->p_args.min_size)
+    if (strlen(sa->right_input) < (unsigned) pa->p_args.min_size)
       pr_append_new_chunk(warning,
                           "Specified right primer < PRIMER_MIN_SIZE");
-    if (strlen(sa->right_input) > pa->p_args.max_size) {
+    if (strlen(sa->right_input) > (unsigned) pa->p_args.max_size) {
       pr_append_new_chunk(warning,
                           "Specified right primer > PRIMER_MAX_SIZE");
     } else { /* We do not want to overflow s1. */
