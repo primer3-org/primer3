@@ -1,0 +1,1 @@
+../src/primer3_core: Cannot use both SEQUENCE_PRIMER_OVERLAP_POS and SEQUENCE_OVERLAP_JUNCTION_LIST constraints at the same time
