@@ -64,7 +64,7 @@ static void   parse_interval_list(const char *tag_name,
                                   interval_array_t2 *interval_arr,
                                   pr_append_str *err);
 
-static int    parse_intron_list(char *, seq_args *);
+static int    parse_intron_list(char *, int *, int *);
 
 static void   parse_product_size(const char *, char *, p3_global_settings *,
                                  pr_append_str *);
@@ -149,6 +149,7 @@ read_boulder_record(FILE *file_input,
   pr_append_str *non_fatal_err;
   char *repeat_file_path = NULL, *int_repeat_file_path = NULL;
   int tmp_int;
+  int pos_overlap = 0, min_3_prime = 0, min_5_prime = 0;
 
   non_fatal_err = nonfatal_parse_err;
 
@@ -479,10 +480,26 @@ read_boulder_record(FILE *file_input,
       COMPARE_INTERVAL_LIST("SEQUENCE_INTERNAL_EXCLUDED_REGION",
                               &sa->excl_internal2);
       if (COMPARE("SEQUENCE_PRIMER_OVERLAP_POS")) {
-        if (parse_intron_list(datum, sa) == 0) {
+        if (parse_intron_list(datum, sa->primer_overlap_pos, 
+			      &sa->primer_overlap_pos_count) == 0) {
           pr_append_new_chunk(parse_err,
-                     "Error in SEQUENCE_PRIMER_OVERLAP_POS list");
+			      "Error in SEQUENCE_PRIMER_OVERLAP_POS list");
         }
+	if (min_5_prime || min_3_prime)
+	  pr_append_new_chunk(glob_err, "Tags PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION and \
+                              PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION cannot be used at the \
+                              same time as SEQUENCE_PRIMER_OVERLAP_POS");
+        continue;
+      }
+      if (COMPARE("SEQUENCE_OVERLAP_JUNCTION_LIST")) {
+	if (parse_intron_list(datum, sa->primer_overlap_junctions, 
+			      &sa->primer_overlap_junctions_count) == 0) {
+          pr_append_new_chunk(parse_err,
+			      "Error in SEQUENCE_PRIMER_OVERLAP_JUNCTION_LIST");
+        }
+	if (pos_overlap)
+	  pr_append_new_chunk(glob_err, "Tag PRIMER_POS_OVERLAP_TO_END_DIST \
+                              cannot be used at the same time as SEQUENCE_OVERLAP_JUNCTION_LIST");
         continue;
       }
       if (COMPARE("SEQUENCE_INCLUDED_REGION")) {
@@ -571,7 +588,39 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_SEQUENCING_SPACING", pa->sequencing.spacing);
       COMPARE_INT("PRIMER_SEQUENCING_INTERVAL", pa->sequencing.interval);
       COMPARE_INT("PRIMER_SEQUENCING_ACCURACY", pa->sequencing.accuracy);
-      COMPARE_INT("PRIMER_POS_OVERLAP_TO_END_DIST", pa->pos_overlap_primer_end);
+      if (COMPARE("PRIMER_POS_OVERLAP_TO_END_DIST")) {
+	parse_int("PRIMER_POS_OVERLAP_TO_END_DIST", datum, &pa->pos_overlap_primer_end, parse_err);
+	pos_overlap = 1;
+	if (min_5_prime || min_3_prime)
+	  pr_append_new_chunk(glob_err, "Tag PRIMER_POS_OVERLAP_TO_END_DIST cannot be used at the \
+                   same time as PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION or PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION");
+	if (sa->primer_overlap_junctions_count > 0)
+	  pr_append_new_chunk(glob_err, "Tag PRIMER_POS_OVERLAP_TO_END_DIST cannot be used at the \
+                   same time as SEQUENCE_OVERLAP_JUNCTION_LIST");
+	continue;
+      }
+      if (COMPARE("PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION")) {
+	parse_int("PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION", datum, &pa->min_5_prime_overlap_of_junction, parse_err);
+	min_5_prime = 1;
+	if (pos_overlap)
+	  pr_append_new_chunk(glob_err, "Tag PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION cannot be used at the \
+                   same time as PRIMER_POS_OVERLAP_TO_END_DIST");
+	if (sa->primer_overlap_pos_count > 0)
+	  pr_append_new_chunk(glob_err, "Tag PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION cannot be used at the \
+                   same time as SEQUENCE_PRIMER_OVERLAP_POS");
+	continue;
+      }
+      if (COMPARE("PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION")) {
+	parse_int("PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION", datum, &pa->min_3_prime_overlap_of_junction, parse_err);
+	min_3_prime = 1;
+	if (pos_overlap)
+	  pr_append_new_chunk(glob_err, "Tag PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION cannot be used at the \
+                   same time as PRIMER_POS_OVERLAP_TO_END_DIST");
+	if (sa->primer_overlap_pos_count > 0)
+	  pr_append_new_chunk(glob_err, "Tag PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION cannot be used at the \
+                   same time as SEQUENCE_PRIMER_OVERLAP_POS");
+	continue;
+      }
       COMPARE_AND_MALLOC("PRIMER_TASK", task_tmp);
       COMPARE_INT("PRIMER_PICK_RIGHT_PRIMER", pa->pick_right_primer);
       COMPARE_INT("PRIMER_PICK_INTERNAL_OLIGO", pa->pick_internal_oligo);
@@ -1131,11 +1180,13 @@ parse_interval_list(const char *tag_name,
 
 static int
 parse_intron_list(char *s,
-        seq_args *sargs) {
+		  int *list,
+		  int *count) 
+{
   long t;
   char *p, *q;
 
-  sargs->primer_overlap_pos_count = 0;
+  *count = 0;
 
   p = q = s;
 
@@ -1144,22 +1195,22 @@ parse_intron_list(char *s,
     if (q == p) {
       while (*q != '\0') {
         if (!isspace(*q)) {
-                sargs->primer_overlap_pos_count = 0;
+	  *count = 0;
           return 0; 
         }
         q++;
       }
-      return sargs->primer_overlap_pos_count;
+      return *count;
     }
     if (t > INT_MAX || t < INT_MIN) {
-        return 0;
+      return 0;
     }
-    sargs->primer_overlap_pos[sargs->primer_overlap_pos_count] = t;
-    sargs->primer_overlap_pos_count++;
+    list[*count] = t;
+    (*count)++;
 
     p = q;
   }
-  return sargs->primer_overlap_pos_count;
+  return *count;
 }
 
 static void
