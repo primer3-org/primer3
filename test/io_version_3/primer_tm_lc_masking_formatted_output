@@ -16,10 +16,10 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 primer3 release 2.0.0
 
 
@@ -41,10 +41,10 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 primer3 release 2.0.0
 
 
@@ -66,10 +66,10 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 primer3 release 2.0.0
 
 
@@ -84,10 +84,10 @@ NO LEFT PRIMER FOUND
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high lower      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1     0
+         con   too    in    in   not          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1     0
 primer3 release 2.0.0
 
 
@@ -109,10 +109,10 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high lower      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
-Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     0     1
 primer3 release 2.0.0
 
 
@@ -134,10 +134,10 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 primer3 release 2.0.0
 
 
@@ -159,10 +159,10 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 primer3 release 2.0.0
 
 
@@ -184,10 +184,10 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 primer3 release 2.0.0
 
 
@@ -209,10 +209,10 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 primer3 release 2.0.0
 
 
@@ -227,10 +227,10 @@ NO LEFT PRIMER FOUND
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high lower      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1     0
+         con   too    in    in   not          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1     0
 primer3 release 2.0.0
 
 
@@ -252,10 +252,10 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high lower      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
-Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     0     1
 primer3 release 2.0.0
 
 
@@ -277,10 +277,10 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 primer3 release 2.0.0
 
 

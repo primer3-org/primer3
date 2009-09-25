@@ -166,6 +166,9 @@ sub main() {
                   'primer_internal_formatted',
                   'primer_internal1_formatted',
 
+	          'primer_ok_regions',
+	          'primer_ok_regions_formatted',
+
                   'primer_tm_lc_masking',
                   'primer_tm_lc_masking_formatted',
 

@@ -57,11 +57,11 @@ ADDITIONAL OLIGOS
    PRODUCT SIZE: 238, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left     877     1     0    91     7     0     2   399     0     0     0     0     0   377
-Right   1012    19     0    58    25     0     0   702     0     0     0     0     0   208
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left     877     1     0    91     0     7     0     2   399     0     0     0     0     0   377
+Right   1012    19     0    58     0    25     0     0   702     0     0     0     0     0   208
 Pair Stats:
 considered 23, unacceptable product size 17, ok 6
 primer3 release 2.0.0
@@ -123,11 +123,11 @@ ADDITIONAL OLIGOS
    PRODUCT SIZE: 249, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 3.00
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left     728     0     0    69     2     0   126     0     0     0     1    23     0   507
-Right    827     0     0    72   314     0   236     0     0     0     0     0     0   205
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left     728     0     0    69     0     2     0   126     0     0     0     1    23     0   507
+Right    827     0     0    72     0   314     0   236     0     0     0     0     0     0   205
 Pair Stats:
 considered 9, unacceptable product size 4, ok 5
 primer3 release 2.0.0
@@ -196,12 +196,12 @@ ADDITIONAL OLIGOS
    PRODUCT SIZE: 249, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 3.00
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left     728     0     0    69     2     0   126     0     0     0     1    23     0   507
-Right    827     0     0    72   314     0   236     0     0     0     0     0     0   205
-Intl    3079     0     0     0   316     0   517   178     0     0     0    23     0  2045
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left     728     0     0    69     0     2     0   126     0     0     0     1    23     0   507
+Right    827     0     0    72     0   314     0   236     0     0     0     0     0     0   205
+Intl    3079     0     0     0     0   316     0   517   178     0     0     0    23     0  2045
 Pair Stats:
 considered 9, unacceptable product size 4, ok 5
 primer3 release 2.0.0
@@ -273,12 +273,12 @@ ADDITIONAL OLIGOS
    PRODUCT SIZE: 242, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 4.00
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left     877     1     0    91     7     0     2   399     0     0     0     0     0   377
-Right   1012    19     0    58    25     0     0   702     0     0     0     0     0   208
-Intl    3237    27     0     0    32     0    23  1880     0     0     0     0     0  1275
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left     877     1     0    91     0     7     0     2   399     0     0     0     0     0   377
+Right   1012    19     0    58     0    25     0     0   702     0     0     0     0     0   208
+Intl    3237    27     0     0     0    32     0    23  1880     0     0     0     0     0  1275
 Pair Stats:
 considered 26, unacceptable product size 17, high mispriming library similarity 2, ok 7
 primer3 release 2.0.0
@@ -357,12 +357,12 @@ ADDITIONAL OLIGOS
    PRODUCT SIZE: 247, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 3.00
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left     728     0     0    69     2     0   126     0     0     0    14    23     0   494
-Right    827     0     0    72   314     0   236     0     0     0    19     0     0   186
-Intl    3079     0     0     0   316     0   517   178     0     0     0    23     0  2045
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left     728     0     0    69     0     2     0   126     0     0     0    14    23     0   494
+Right    827     0     0    72     0   314     0   236     0     0     0    19     0     0   186
+Intl    3079     0     0     0     0   316     0   517   178     0     0     0    23     0  2045
 Pair Stats:
 considered 167, unacceptable product size 101, tm diff too large 12, high mispriming library similarity 46, ok 8
 primer3 release 2.0.0
@@ -403,12 +403,12 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left     728     0     0    69     2     0   126     0     0     0   124    23     0   384
-Right    827     0     0    72   314     0   236     0     0     0   176     0     0    29
-Intl    3079     0     0     0   316     0   517   178     0     0     0    23     0  2045
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left     728     0     0    69     0     2     0   126     0     0     0   124    23     0   384
+Right    827     0     0    72     0   314     0   236     0     0     0   176     0     0    29
+Intl    3079     0     0     0     0   316     0   517   178     0     0     0    23     0  2045
 Pair Stats:
 considered 12459, unacceptable product size 6872, tm diff too large 4075, high mispriming library similarity 1512, ok 0
 primer3 release 2.0.0
