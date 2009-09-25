@@ -171,7 +171,7 @@ static int    _check_and_adjust_1_interval(const char *,
                                            pr_append_str *err,
                                            seq_args *,
                                            pr_append_str
-                                           *warning);
+                                           *warning, int);
 
 static void   sort_primer_array(oligo_array *);
 
@@ -400,6 +400,7 @@ static void op_set_low_gc_content(primer_rec *);
 static void op_set_high_tm(primer_rec *);
 static void op_set_low_tm(primer_rec *);
 static void op_set_overlaps_excluded_region(primer_rec *);
+static void op_set_not_in_any_ok_region(primer_rec *);
 static void op_set_high_self_any(primer_rec *oligo);
 static void op_set_high_self_end(primer_rec *oligo);
 static void op_set_high_hairpin_th(primer_rec *oligo);
@@ -674,6 +675,26 @@ p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2)
   if (c >= PR_MAX_INTERVAL_ARRAY) return 1;
   interval_arr->pairs[c][0] = i1;
   interval_arr->pairs[c][1] = i2;
+  interval_arr->count++;
+  return  0;
+}
+
+/* Add 2 pairs of integers to an array of 2 intervals */
+int
+p3_add_to_2_interval_array(interval_array_t4 *interval_arr, int i1, int i2, int i3, int i4)
+{
+  int c = interval_arr->count;
+  if (c >= PR_MAX_INTERVAL_ARRAY) return 1;
+  interval_arr->left_pairs[c][0] = i1;
+  interval_arr->left_pairs[c][1] = i2;
+  interval_arr->right_pairs[c][0] = i3;
+  interval_arr->right_pairs[c][1] = i4;
+  if ((i1 == -1) && (i2 == -1))
+    interval_arr->any_left = 1;
+  if ((i3 == -1) && (i4 == -1))
+    interval_arr->any_right = 1;
+  if ((i1 == -1) && (i2 == -1) && (i3 == -1) && (i4 == -1))
+    interval_arr->any_pair = 1;
   interval_arr->count++;
   return  0;
 }
@@ -1560,6 +1581,8 @@ add_must_use_warnings(pr_append_str *warning,
   if (stats->seq_quality) pr_append_w_sep(&s, sep, "Low sequence quality");
   if (stats->stability) pr_append_w_sep(&s, sep, "High 3' stability");
   if (stats->no_orf) pr_append_w_sep(&s, sep, "Would not amplify any ORF");
+  if (stats->not_in_any_left_ok_region) pr_append_w_sep(&s, sep, "Not in any ok left region");
+  if (stats->not_in_any_right_ok_region) pr_append_w_sep(&s, sep, "Not in any ok right region");
 
   /* edited by T. Koressaar for lowercase masking: */
   if (stats->gmasked)
@@ -2821,6 +2844,38 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
     if (!must_use) return;
   }
 
+  /* Check if the oligo is included in any ok region */
+  if ((l == OT_LEFT) && (sa->ok_regions.count > 0) && (!sa->ok_regions.any_left)) {
+    int included = 0;
+    for (i=0; i<sa->ok_regions.count; i++) {
+      if ((j >= sa->ok_regions.left_pairs[i][0]) && 
+	  (k <= sa->ok_regions.left_pairs[i][0] + sa->ok_regions.left_pairs[i][1] - 1)) {
+	included = 1;
+	break;
+      }
+    }
+    if (!included) {
+      op_set_not_in_any_ok_region(h);
+      stats->not_in_any_left_ok_region++;
+      if (!must_use) return;
+    }
+  }
+  if ((l == OT_RIGHT) && (sa->ok_regions.count > 0) && (!sa->ok_regions.any_right)) {
+    int included = 0;
+    for (i=0; i<sa->ok_regions.count; i++) {
+      if ((j >= sa->ok_regions.right_pairs[i][0]) && 
+	  (k <= sa->ok_regions.right_pairs[i][0] + sa->ok_regions.right_pairs[i][1] - 1)) {
+	included = 1;
+	break;
+      }
+    }
+    if (!included) {
+      op_set_not_in_any_ok_region(h);
+      stats->not_in_any_right_ok_region++;
+      if (!must_use) return;
+    }
+  }
+
   if (h->gc_content < po_args->min_gc) {
     op_set_low_gc_content(h);
     stats->gc++;
@@ -3443,6 +3498,7 @@ characterize_pair(p3retval *retval,
   int must_use = 0;
   int pair_failed_flag = 0;
   double min_oligo_tm;
+  int i;
 
   memset(ppair, 0, sizeof(*ppair));
 
@@ -3498,10 +3554,43 @@ characterize_pair(p3retval *retval,
     else pair_failed_flag = 1;
   }
 
-  /* FIX add check for the pair being in any ok pair */
-
-  /* For each pair of ok regions, are both the left and the right primer
-     in the appropriate element of the pair.  ... Empty means can be anywhere */
+  /* Check that the pair is included in one of the specified ok regions */
+  if ((sa->ok_regions.count > 0) && (!sa->ok_regions.any_pair)) {
+    int included = 0;
+    int l_start = ppair->left->start, l_end = ppair->left->start + ppair->left->length - 1;
+    int r_start = ppair->right->start - ppair->right->length + 1, r_end = ppair->right->start;
+    for (i=0; i<sa->ok_regions.count; i++) {
+      if (sa->ok_regions.left_pairs[i][0] == -1) {
+	/* any left primer, check right primer */
+	if ((r_start >= sa->ok_regions.right_pairs[i][0]) &&
+	    (r_end <= sa->ok_regions.right_pairs[i][0] + sa->ok_regions.right_pairs[i][1] - 1)) {
+	  included = 1;
+	  break;
+	}
+      } else if (sa->ok_regions.right_pairs[i][0] == -1) {
+	/* any right primer, check the left primer */
+	if ((l_start >= sa->ok_regions.left_pairs[i][0]) && 
+	    (l_end <= sa->ok_regions.left_pairs[i][0] + sa->ok_regions.left_pairs[i][1] - 1)) {
+	  included = 1;
+	  break;
+	}
+      } else {
+	/* check both primers */
+	if ((l_start >= sa->ok_regions.left_pairs[i][0]) && 
+	    (l_end <= sa->ok_regions.left_pairs[i][0] + sa->ok_regions.left_pairs[i][1] - 1) &&
+	    (r_start >= sa->ok_regions.right_pairs[i][0]) &&
+	    (r_end <= sa->ok_regions.right_pairs[i][0] + sa->ok_regions.right_pairs[i][1] - 1)) {
+	  included = 1;
+	  break;
+	}  
+      }
+    }
+    if (!included) {
+      if (update_stats) { pair_expl->not_in_any_ok_region++; }
+      if (!must_use) return PAIR_FAILED;
+      else pair_failed_flag = 1;
+    }
+  }
 
   /* ============================================================= */
   /* Compute product Tm and related parameters; check constraints. */
@@ -4899,14 +4988,15 @@ p3_pair_explain_string(const pair_stats *pair_expl)
   IF_SP_AND_CHECK(", high end compl %d", pair_expl->compl_end)
   IF_SP_AND_CHECK(", no internal oligo %d", pair_expl->internal)
   IF_SP_AND_CHECK(", high mispriming library similarity %d",
-                    pair_expl->repeat_sim)
+		  pair_expl->repeat_sim)
   IF_SP_AND_CHECK(", no overlap of required point %d",
-                    pair_expl->does_not_overlap_a_required_point)
+		  pair_expl->does_not_overlap_a_required_point)
   IF_SP_AND_CHECK(", primer in pair overlaps a primer in a better pair %d",
-                    pair_expl->overlaps_oligo_in_better_pair)
+		  pair_expl->overlaps_oligo_in_better_pair)
   IF_SP_AND_CHECK(", high template mispriming score %d",
-                    pair_expl->template_mispriming);
-  /* FIX not in any ok pair */
+		  pair_expl->template_mispriming)
+  IF_SP_AND_CHECK(", not in any ok region %d", 
+		  pair_expl->not_in_any_ok_region);
 
   SP_AND_CHECK(", ok %d", pair_expl->ok)
   return buf;
@@ -4945,9 +5035,12 @@ p3_oligo_explain_string(const oligo_stats *stat)
   IF_SP_AND_CHECK(", high template mispriming score %d",
                   stat->template_mispriming)
   IF_SP_AND_CHECK(", lowercase masking of 3' end %d",stat->gmasked)
-    /* FIX, need for no in any ok region. */
+  IF_SP_AND_CHECK(", not in any ok left region %d", 
+		  stat->not_in_any_left_ok_region)
+  IF_SP_AND_CHECK(", not in any ok right region %d", 
+		  stat->not_in_any_right_ok_region)
   SP_AND_CHECK(", ok %d", stat->ok)
-               return buf;
+  return buf;
 }
 #undef CHECK
 #undef SP_AND_CHECK
@@ -6030,14 +6123,14 @@ _check_and_adjust_intervals(seq_args *sa,
                                    sa->tar2.pairs,
                                    seq_len,
                                    first_index,
-                                   nonfatal_err, sa, warning)
+                                   nonfatal_err, sa, warning, 0)
       == 1) return 1;
   sa->start_codon_pos -= sa->incl_s;
 
   if (_check_and_adjust_1_interval("EXCLUDED_REGION",
                                    sa->excl2.count, sa->excl2.pairs,
                                    seq_len, first_index, 
-                                   nonfatal_err, sa, warning)
+                                   nonfatal_err, sa, warning, 0)
       == 1) return 1;
 
   if (_check_and_adjust_1_interval("PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION",
@@ -6045,7 +6138,21 @@ _check_and_adjust_intervals(seq_args *sa,
                                    sa->excl_internal2.pairs,
                                    seq_len,
                                    first_index,
-                                   nonfatal_err, sa, warning)
+                                   nonfatal_err, sa, warning, 0)
+      == 1) return 1;
+  if (_check_and_adjust_1_interval("PRIMER_PAIR_OK_REGION_LIST",
+                                   sa->ok_regions.count, 
+                                   sa->ok_regions.left_pairs,
+                                   seq_len,
+                                   first_index,
+                                   nonfatal_err, sa, warning, 1)
+      == 1) return 1;
+  if (_check_and_adjust_1_interval("PRIMER_PAIR_OK_REGION_LIST",
+                                   sa->ok_regions.count, 
+                                   sa->ok_regions.right_pairs,
+                                   seq_len,
+                                   first_index,
+                                   nonfatal_err, sa, warning, 1)
       == 1) return 1;
   return 0;
 }
@@ -6063,16 +6170,29 @@ _check_and_adjust_1_interval(const char *tag_name,
                              int first_index,
                              pr_append_str *err,
                              seq_args *sa,
-                             pr_append_str *warning)
+                             pr_append_str *warning,
+			     int empty_allowed)
 {
   int i;
   int outside_warning_issued = 0;
 
   /* Subtract the first_index from the start positions in the interval
      array */
-  for (i = 0; i < num_intervals; i++) intervals[i][0] -= first_index;
+  for (i = 0; i < num_intervals; i++) {
+    if (empty_allowed && (intervals[i][0] == -1) && (intervals[i][1] == -1))
+      continue;
+    if (empty_allowed && (((intervals[i][0] == -1) && (intervals[i][1] != -1)) 
+			  || ((intervals[i][0] != -1) && (intervals[i][1] == -1)))) {
+      pr_append_new_chunk(err, tag_name);
+      pr_append(err, " illegal interval");
+      return 1;
+    }
+    intervals[i][0] -= first_index;
+  }
 
   for (i=0; i < num_intervals; i++) {
+    if (empty_allowed && (intervals[i][0] == -1) && (intervals[i][1] == -1))
+      continue;
     if (intervals[i][0] + intervals[i][1] > seq_len) {
       pr_append_new_chunk(err, tag_name);
       pr_append(err, " beyond end of sequence");
@@ -7433,6 +7553,7 @@ initialize_op(primer_rec *oligo) {
 #define BF_INFINITE_POSITION_PENALTY           (1UL <<  4)
 /* Space for more bitfields */
 
+#define OP_NOT_IN_ANY_OK_REGION                (1UL <<  7)
 #define OP_TOO_MANY_NS                         (1UL <<  8) /* 3prime problem*/
 #define OP_OVERLAPS_TARGET                     (1UL <<  9) /* 3prime problem*/
 #define OP_HIGH_GC_CONTENT                     (1UL << 10)
@@ -7461,9 +7582,9 @@ initialize_op(primer_rec *oligo) {
 /* Tip: the calculator of windows (in scientific mode) can easily convert 
    between decimal and binary numbers */
 
-/* all bits 1 except bits 0 to 7 */
-/* (~0UL) ^ 255UL = 1111 1111  1111 1111  1111 1111  0000 0000 */
-static unsigned long int any_problem = (~0UL) ^ 255UL;
+/* all bits 1 except bits 0 to 6 */
+/* (~0UL) ^ 127UL = 1111 1111  1111 1111  1111 1111  1000 0000 */
+static unsigned long int any_problem = (~0UL) ^ 127UL;
 /* 310297344UL = 0001 0010  0111 1110  1100 0011  0000 0000 */
 static unsigned long int five_prime_problem = 310297344UL;
 
@@ -7525,6 +7646,8 @@ p3_get_ol_problem_string(const primer_rec *oligo) {
                " Temperature too low;")
     ADD_OP_STR(OP_OVERLAPS_EXCL_REGION,
                " Overlaps an excluded region;")
+    ADD_OP_STR(OP_NOT_IN_ANY_OK_REGION,
+               " Not in any ok region;")
     ADD_OP_STR(OP_HIGH_SELF_ANY,
                " Similarity to self too high;")
     ADD_OP_STR(OP_HIGH_SELF_END,
@@ -7655,6 +7778,12 @@ op_set_low_tm(primer_rec *oligo) {
 static void
 op_set_overlaps_excluded_region(primer_rec *oligo) {
   oligo->problems.prob |= OP_OVERLAPS_EXCL_REGION;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
+}
+
+static void
+op_set_not_in_any_ok_region(primer_rec *oligo) {
+  oligo->problems.prob |= OP_NOT_IN_ANY_OK_REGION;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
@@ -7988,6 +8117,7 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
        printf("interval_array_t2 excl_internal2 %i\n",
        int pairs[PR_MAX_INTERVAL_ARRAY][2]) ;
        int count) ;
+       printf("ok_regions \n");
     */
 
     if (s->primer_overlap_pos_count > 0) {

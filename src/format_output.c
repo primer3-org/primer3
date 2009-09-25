@@ -74,6 +74,10 @@ static void print_oligo_header(FILE *, const char *, const int, const int);
 static void print_pair_array(FILE *, const char*, int,
                              const interval_array_t, 
                              const p3_global_settings*, const seq_args*);
+static void print_2_pair_array(FILE *, const char*, int,
+			       const interval_array_t, 
+			       const interval_array_t, 
+			       const p3_global_settings*, const seq_args*);
 static void print_rest(FILE *, const p3_global_settings *, 
                        const seq_args *,  const pair_array_t *);
 static int  print_seq(FILE *, const p3_global_settings *, const seq_args *, 
@@ -240,6 +244,8 @@ print_summary(FILE *f, const p3_global_settings *pa,
     print_pair_array(f, "EXCLUDED REGIONS", sa->excl2.count, sa->excl2.pairs, pa, sa);
     print_pair_array(f, "INTERNAL OLIGO EXCLUDED REGIONS",
                      sa->excl_internal2.count, sa->excl_internal2.pairs, pa, sa);
+    print_2_pair_array(f, "PAIR_OK_REGIONS", sa->ok_regions.count, sa->ok_regions.left_pairs, 
+		     sa->ok_regions.right_pairs, pa, sa);
 }
 
 /* Print column headers for lines printed by print_oligo(). */
@@ -315,6 +321,32 @@ print_pair_array(FILE *f, const char* title, int num,
     }
 }
 
+static void
+print_2_pair_array(FILE *f, const char* title, int num,
+		   const interval_array_t left_array,
+		   const interval_array_t right_array,
+		   const p3_global_settings *pa,
+		   const seq_args *sa)
+{
+    int j;
+    if (num > 0) {
+        fprintf(f, "%s (left_start, left_len, right_start, right_len)*:", title);
+        for (j = 0; j < num; j++) {
+	  if ((left_array[j][0] == -1) && (left_array[j][1] == -1))
+	    fprintf(f, " ,,");
+          else fprintf(f, " %d,%d,", 
+		       left_array[j][0] + pa->first_base_index + sa->incl_s,
+		       left_array[j][1]);
+	  if ((right_array[j][0] == -1) && (right_array[j][1] == -1))
+	    fprintf(f, ",");
+          else fprintf(f, "%d,%d", 
+		       right_array[j][0] + pa->first_base_index + sa->incl_s,
+		       right_array[j][1]);
+	}
+        fprintf(f, "\n");
+    }
+}
+
 #define VECTOR           (1<<0)
 #define LEFT_OLIGO       (1<<1)
 #define RIGHT_OLIGO      (1<<2)
@@ -334,8 +366,8 @@ print_seq(FILE *f,
     const pair_array_t *best_pairs,
     int num)  /* The number of primer pair to print. */
 {
-	primer_rec *h2 = NULL;
-	primer_rec *h3 = NULL;
+    primer_rec *h2 = NULL;
+    primer_rec *h3 = NULL;
     int len, i, j, start;
     int something_found = 0, vector_found = 0;
     int *notes;
@@ -577,62 +609,44 @@ print_rest(FILE *f, const p3_global_settings *pa,
 /* Print out the statistics of primer picking */
 /* This function does _not_ print out the no_orf statistic. */
 static void
-  print_explain(FILE *f,
-		const p3_global_settings *pa,
-		const seq_args *sa,
-		const p3retval *retval,
-		int print_lib_sim,
-		const char *pr_release)
+print_explain(FILE *f,
+	      const p3_global_settings *pa,
+	      const seq_args *sa,
+	      const p3retval *retval,
+	      int print_lib_sim,
+	      const char *pr_release)
 {
    
    
   char *format;  /* Format string for the table headers */
-   if(pa->thermodynamic_alignment==0)
-     format    = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s";
-   else format = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%7s%6s";
-   /* FIX, delete junk below, add new column in format above.. */
-   /*   char *format_tmp;  
-   if (print_lib_sim) {
-      if (pa->lowercase_masking) {
-	 format_tmp = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s";
-      } else {
-	 format_tmp = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s";
-      }
-   } else {
-      if (pa->lowercase_masking) {
-	 format_tmp = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s";
-      } else {
-	 format_tmp = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s";
-      }
-   }
-   format = malloc(strlen(format_tmp) + 5*sizeof(char) + 1);
-   strcat(format,format_tmp);
-   if(pa->thermodynamic_alignment==1) strcat(format,"%6s");
-   strcat(format,"\n"); */
-   fprintf(f, "\nStatistics\n");
+  if(pa->thermodynamic_alignment==0)
+    format    = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s";
+  else format = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%7s%6s";
+  
+  fprintf(f, "\nStatistics\n");
    
-   if (!pa->pick_anyway || !(
-			     (pa->pick_left_primer == 1 && pa->pick_internal_oligo == 0
-			      && pa->pick_right_primer == 1
-			      && sa->left_input && sa->right_input)
-			     || (pa->pick_left_primer == 1 && pa->pick_internal_oligo == 1
-				 && pa->pick_right_primer == 1
-				 && sa->left_input && sa->right_input && sa->internal_input)
-			     || (pa->pick_left_primer == 1 && pa->pick_internal_oligo == 0
-				 && pa->pick_right_primer == 0
-				 && sa->left_input)
-			     || (pa->pick_left_primer == 0 && pa->pick_internal_oligo == 0
-				 && pa->pick_right_primer == 1
-				 && sa->right_input)
-			     || (pa->pick_left_primer == 0 && pa->pick_internal_oligo == 1
-				 && pa->pick_right_primer == 0
-				 && sa->internal_input))) {
+  if (!pa->pick_anyway || !(
+			    (pa->pick_left_primer == 1 && pa->pick_internal_oligo == 0
+			     && pa->pick_right_primer == 1
+			     && sa->left_input && sa->right_input)
+			    || (pa->pick_left_primer == 1 && pa->pick_internal_oligo == 1
+				&& pa->pick_right_primer == 1
+				&& sa->left_input && sa->right_input && sa->internal_input)
+			    || (pa->pick_left_primer == 1 && pa->pick_internal_oligo == 0
+				&& pa->pick_right_primer == 0
+				&& sa->left_input)
+			    || (pa->pick_left_primer == 0 && pa->pick_internal_oligo == 0
+				&& pa->pick_right_primer == 1
+				&& sa->right_input)
+			    || (pa->pick_left_primer == 0 && pa->pick_internal_oligo == 1
+				&& pa->pick_right_primer == 0
+				&& sa->internal_input))) {
       /* print first row of header */
       if(pa->thermodynamic_alignment==0)
-	fprintf(f, format, "", "con", "too",  "in",  "in",  "",    "no",
+	fprintf(f, format, "", "con", "too",  "in",  "in",  "not", "",    "no",
 		"tm",  "tm",  "  high", "high");
       else 
-	fprintf(f, format, "", "con", "too",  "in",  "in",  "",    "no",
+	fprintf(f, format, "", "con", "too",  "in",  "in",  "not", "",    "no",
 		"tm",  "tm",  "   high", "high");
       if(pa->thermodynamic_alignment==1) 
 	fprintf(f, "%6s", "high");
@@ -645,12 +659,12 @@ static void
       
       /* print second row of header */
       if(pa->thermodynamic_alignment==0) {
-	 fprintf(f, format, "", "sid", "many", "tar", "excl", "bad","GC",
-		 "too", "too", "any",  "3'");
+	fprintf(f, format, "", "sid", "many", "tar", "excl", "ok", "bad","GC",
+		"too", "too", "any",  "3'");
       } else {
-	 fprintf(f, format, "", "sid", "many", "tar", "excl", "bad","GC",
-		 "too", "too", " any_th",  "3'_th");
-	 fprintf(f, "%6s", "hair-");
+	fprintf(f, format, "", "sid", "many", "tar", "excl", "ok", "bad","GC",
+		"too", "too", " any_th",  "3'_th");
+	fprintf(f, "%6s", "hair-");
       }
 	   
       if(print_lib_sim) 
@@ -662,10 +676,10 @@ static void
       
       /* print third row of header */
       if(pa->thermodynamic_alignment==0) 
-	fprintf(f, format, "", "ered","Ns",   "get", "reg",  "GC%", "clamp",
+	fprintf(f, format, "", "ered","Ns",   "get", "reg",  "reg", "GC%", "clamp",
 		"low", "high"," compl", "compl");
       else
-	fprintf(f, format, "", "ered","Ns",   "get", "reg",  "GC%", "clamp",
+	fprintf(f, format, "", "ered","Ns",   "get", "reg",  "reg", "GC%", "clamp",
 		"low", "high","  compl", "compl");
       if(pa->thermodynamic_alignment==1) 
 	fprintf(f, "%6s", " pin");
@@ -678,27 +692,27 @@ static void
 	fprintf(f, "%6s\n", "ok  ");
       else
 	fprintf(f, "%6s\n", "ok");
-   }
-   if (pa->pick_left_primer == 1
-       && !(pa->pick_anyway && sa->left_input))
-     print_stat_line(f, "Left", retval->fwd.expl, 
-		     print_lib_sim, pa->lowercase_masking, pa->thermodynamic_alignment);
-   
-   if (pa->pick_right_primer == 1
-       && !(pa->pick_anyway && sa->right_input))
-     print_stat_line(f, "Right", retval->rev.expl,
-		     print_lib_sim, pa->lowercase_masking, pa->thermodynamic_alignment);
-   
-   if (pa->pick_internal_oligo == 1
-       && !(pa->pick_anyway && sa->internal_input))
-     print_stat_line(f, "Intl", retval->intl.expl, 
-		     print_lib_sim, pa->lowercase_masking, pa->thermodynamic_alignment);
-   
-   if (pa->pick_left_primer == 1 && pa->pick_right_primer == 1) {
-      fprintf(f, "Pair Stats:\n%s\n",
-	      p3_get_pair_array_explain_string(p3_get_rv_best_pairs(retval)));
-   }
-   fprintf(f, "%s\n", pr_release);
+  }
+  if (pa->pick_left_primer == 1
+      && !(pa->pick_anyway && sa->left_input))
+    print_stat_line(f, "Left", retval->fwd.expl, 
+		    print_lib_sim, pa->lowercase_masking, pa->thermodynamic_alignment);
+  
+  if (pa->pick_right_primer == 1
+      && !(pa->pick_anyway && sa->right_input))
+    print_stat_line(f, "Right", retval->rev.expl,
+		    print_lib_sim, pa->lowercase_masking, pa->thermodynamic_alignment);
+  
+  if (pa->pick_internal_oligo == 1
+      && !(pa->pick_anyway && sa->internal_input))
+    print_stat_line(f, "Intl", retval->intl.expl, 
+		    print_lib_sim, pa->lowercase_masking, pa->thermodynamic_alignment);
+  
+  if (pa->pick_left_primer == 1 && pa->pick_right_primer == 1) {
+    fprintf(f, "Pair Stats:\n%s\n",
+	    p3_get_pair_array_explain_string(p3_get_rv_best_pairs(retval)));
+  }
+  fprintf(f, "%s\n", pr_release);
 }
 
 static void
@@ -706,9 +720,15 @@ print_stat_line(FILE *f, const char *t, oligo_stats s,
                 int print_lib_sim, int lowercase_masking,
                 int thermodynamic_alignment)
 {
-   char *format = "%-6s%6d%6d%6d%6d%6d%6d%6d%6d";
-   fprintf(f,format, t, s.considered, s.ns, s.target, s.excluded,
-	   s.gc, s.gc_clamp, s.temp_min, s.temp_max);
+   char *format = "%-6s%6d%6d%6d%6d%6d%6d%6d%6d%6d";
+   if (!strcmp(t, "Left"))
+     fprintf(f,format, t, s.considered, s.ns, s.target, s.excluded,
+	     s.not_in_any_left_ok_region, s.gc, s.gc_clamp, s.temp_min, s.temp_max);
+   else if (!strcmp(t, "Right"))
+	  fprintf(f,format, t, s.considered, s.ns, s.target, s.excluded,
+		  s.not_in_any_right_ok_region, s.gc, s.gc_clamp, s.temp_min, s.temp_max);
+   else fprintf(f,format, t, s.considered, s.ns, s.target, s.excluded,
+		0, s.gc, s.gc_clamp, s.temp_min, s.temp_max);
    if(thermodynamic_alignment) {
       fprintf(f, " %6d%6d%6d", s.compl_any, s.compl_end, s.hairpin_th);
    } else {
@@ -717,10 +737,7 @@ print_stat_line(FILE *f, const char *t, oligo_stats s,
    if (print_lib_sim) fprintf(f, "%6d",s.repeat_score);
    fprintf(f, "%6d%6d",s.poly_x, s.stability);
    if (lowercase_masking) fprintf(f, "%6d",s.gmasked);
-   if(thermodynamic_alignment==0)  /* FIX */
-     fprintf(f, "%6d\n", s.ok);
-   else
-     fprintf(f, "%6d\n", s.ok);
+   fprintf(f, "%6d\n", s.ok);
 }
 
 
@@ -851,6 +868,8 @@ format_oligos(FILE *f,
     print_pair_array(f, "EXCLUDED REGIONS", sa->excl2.count, sa->excl2.pairs, pa, sa);
     print_pair_array(f, "INTERNAL OLIGO EXCLUDED REGIONS",
             sa->excl_internal2.count, sa->excl_internal2.pairs, pa, sa);
+    print_2_pair_array(f, "PAIR_OK_REGIONS", sa->ok_regions.count, sa->ok_regions.left_pairs, 
+		       sa->ok_regions.right_pairs, pa, sa);
   }
   if (pa->primer_task != pick_primer_list ) {
     if (print_seq(f, pa, sa, retval, h, best_pairs, 0)) exit(-2); /* ENOMEM */

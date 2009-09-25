@@ -588,6 +588,15 @@ typedef struct interval_array_t2 {
   int count;
 } interval_array_t2;
 
+typedef struct interval_array_t4 {
+  int left_pairs[PR_MAX_INTERVAL_ARRAY][2];
+  int right_pairs[PR_MAX_INTERVAL_ARRAY][2];
+  int any_left;  /* set to 1 if the empty pair ",," is given for any left interval */
+  int any_right; /* set to 1 if the empty pair ",," is given for any right interval */
+  int any_pair;  /* set to 1 if both intervals are given as empty */
+  int count;     /* total number of pairs */
+} interval_array_t4;
+
 int 
 interval_array_t2_count(const interval_array_t2 *array);
 
@@ -618,8 +627,10 @@ typedef struct oligo_stats {
   int template_mispriming; /* Template mispriming score too high.           */
   int ok;                  /* Number of acceptable oligos.                  */
   int gmasked;             /* edited by T. Koressaar, number of gmasked oligo*/
-  /* int not_in_any_left_ok_region FIX */
-  /* int not_in_any_right_ok_region FIX */
+  int not_in_any_left_ok_region; /* Oligo not included in any of the left regions
+				    given in PRIMER_PAIR_OK_REGION_LIST. */
+  int not_in_any_right_ok_region;/* Oligo not included in any of the right regions
+				    given in PRIMER_PAIR_OK_REGION_LIST. */
 } oligo_stats;
 
 typedef struct pair_stats {
@@ -639,6 +650,10 @@ typedef struct pair_stats {
 
   /* One of the oligos in the pair overlaps an oligo in a better_pair:       */
   int overlaps_oligo_in_better_pair;
+
+  /* The left and right oligos are not in any of the pair of regions given in
+     PRIMER_PAIR_OK_REGION_LIST. */
+  int not_in_any_ok_region;
 
   int ok;                  /* Number that were ok.                          */
 } pair_stats;
@@ -671,6 +686,8 @@ typedef struct seq_args {
   interval_array_t2 excl_internal2; 
                           /* Number of excluded regions for internal
                              oligo; similar to excl2.*/
+
+  interval_array_t4 ok_regions;
   
   int primer_overlap_pos[PR_MAX_INTERVAL_ARRAY]; /* List of overlap positions. */
   int primer_overlap_pos_count; /* The number of intron sites. */
@@ -839,9 +856,15 @@ const interval_array_t2 *p3_get_sa_excl_internal2(const seq_args *sargs);
 
 /*
   use p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2);
-  to do the sets for tar2, excl2, nd excl_internal2
+  to do the sets for tar2, excl2, and excl_internal2
 */
 int p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2);
+
+/*
+  use p3_add_to_2_interval_array
+  to do the sets for ok_regions
+*/
+int p3_add_to_2_interval_array(interval_array_t4 *interval_arr, int i1, int i2, int i3, int i4);
 
 /*
   included region
