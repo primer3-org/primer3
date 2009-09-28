@@ -164,7 +164,6 @@ read_boulder_record(FILE *file_input,
   pr_append_str *non_fatal_err;
   char *repeat_file_path = NULL, *int_repeat_file_path = NULL;
   int tmp_int;
-  int pos_overlap = 0, min_3_prime = 0, min_5_prime = 0;
 
   non_fatal_err = nonfatal_parse_err;
 
@@ -495,27 +494,12 @@ read_boulder_record(FILE *file_input,
       COMPARE_INTERVAL_LIST("SEQUENCE_EXCLUDED_REGION", &sa->excl2);
       COMPARE_INTERVAL_LIST("SEQUENCE_INTERNAL_EXCLUDED_REGION",
                               &sa->excl_internal2);
-      if (COMPARE("SEQUENCE_PRIMER_OVERLAP_POS")) {
-        if (parse_intron_list(datum, sa->primer_overlap_pos, 
-			      &sa->primer_overlap_pos_count) == 0) {
-          pr_append_new_chunk(parse_err,
-			      "Error in SEQUENCE_PRIMER_OVERLAP_POS list");
-        }
-	if (min_5_prime || min_3_prime)
-	  pr_append_new_chunk(glob_err, "Tags PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION and "
-                              "PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION cannot be used at the "
-                              "same time as SEQUENCE_PRIMER_OVERLAP_POS");
-        continue;
-      }
       if (COMPARE("SEQUENCE_OVERLAP_JUNCTION_LIST")) {
 	if (parse_intron_list(datum, sa->primer_overlap_junctions, 
 			      &sa->primer_overlap_junctions_count) == 0) {
           pr_append_new_chunk(parse_err,
 			      "Error in SEQUENCE_PRIMER_OVERLAP_JUNCTION_LIST");
         }
-	if (pos_overlap)
-	  pr_append_new_chunk(glob_err, "Tag PRIMER_POS_OVERLAP_TO_END_DIST "
-                              "cannot be used at the same time as SEQUENCE_OVERLAP_JUNCTION_LIST");
         continue;
       }
       if (COMPARE("SEQUENCE_INCLUDED_REGION")) {
@@ -604,39 +588,8 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_SEQUENCING_SPACING", pa->sequencing.spacing);
       COMPARE_INT("PRIMER_SEQUENCING_INTERVAL", pa->sequencing.interval);
       COMPARE_INT("PRIMER_SEQUENCING_ACCURACY", pa->sequencing.accuracy);
-      if (COMPARE("PRIMER_POS_OVERLAP_TO_END_DIST")) {
-	parse_int("PRIMER_POS_OVERLAP_TO_END_DIST", datum, &pa->pos_overlap_primer_end, parse_err);
-	pos_overlap = 1;
-	if (min_5_prime || min_3_prime)
-	  pr_append_new_chunk(glob_err, "Tag PRIMER_POS_OVERLAP_TO_END_DIST cannot be used at the "
-			      "same time as PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION or PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION");
-	if (sa->primer_overlap_junctions_count > 0)
-	  pr_append_new_chunk(glob_err, "Tag PRIMER_POS_OVERLAP_TO_END_DIST cannot be used at the "
-			      "same time as SEQUENCE_OVERLAP_JUNCTION_LIST");
-	continue;
-      }
-      if (COMPARE("PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION")) {
-	parse_int("PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION", datum, &pa->min_5_prime_overlap_of_junction, parse_err);
-	min_5_prime = 1;
-	if (pos_overlap)
-	  pr_append_new_chunk(glob_err, "Tag PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION cannot be used at the "
-			      "same time as PRIMER_POS_OVERLAP_TO_END_DIST");
-	if (sa->primer_overlap_pos_count > 0)
-	  pr_append_new_chunk(glob_err, "Tag PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION cannot be used at the "
-			      "same time as SEQUENCE_PRIMER_OVERLAP_POS");
-	continue;
-      }
-      if (COMPARE("PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION")) {
-	parse_int("PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION", datum, &pa->min_3_prime_overlap_of_junction, parse_err);
-	min_3_prime = 1;
-	if (pos_overlap)
-	  pr_append_new_chunk(glob_err, "Tag PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION cannot be used at the "
-			      "same time as PRIMER_POS_OVERLAP_TO_END_DIST");
-	if (sa->primer_overlap_pos_count > 0)
-	  pr_append_new_chunk(glob_err, "Tag PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION cannot be used at the "
-			      "same time as SEQUENCE_PRIMER_OVERLAP_POS");
-	continue;
-      }
+      COMPARE_INT("PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION", pa->min_5_prime_overlap_of_junction);
+      COMPARE_INT("PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION", pa->min_3_prime_overlap_of_junction);
       COMPARE_AND_MALLOC("PRIMER_TASK", task_tmp);
       COMPARE_INT("PRIMER_PICK_RIGHT_PRIMER", pa->pick_right_primer);
       COMPARE_INT("PRIMER_PICK_INTERNAL_OLIGO", pa->pick_internal_oligo);

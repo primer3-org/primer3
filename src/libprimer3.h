@@ -435,7 +435,6 @@ typedef struct p3_global_settings {
   int    min_three_prime_distance; 
   
   /* The number of basepairs the primer has to overlap an overlap position. */
-  int    pos_overlap_primer_end; 
   int    min_5_prime_overlap_of_junction;
   int    min_3_prime_overlap_of_junction;
  
@@ -689,9 +688,6 @@ typedef struct seq_args {
 
   interval_array_t4 ok_regions;
   
-  int primer_overlap_pos[PR_MAX_INTERVAL_ARRAY]; /* List of overlap positions. */
-  int primer_overlap_pos_count; /* The number of intron sites. */
-
   int primer_overlap_junctions[PR_MAX_INTERVAL_ARRAY]; /* List of overlap junction positions. */
   int primer_overlap_junctions_count;
 

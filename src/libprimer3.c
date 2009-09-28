@@ -661,7 +661,6 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->sequencing.interval             = 250;
   a->sequencing.accuracy             = 20;
   
-  a->pos_overlap_primer_end          = 5;
   a->min_5_prime_overlap_of_junction = 7;
   a->min_3_prime_overlap_of_junction = 4;
     
@@ -943,7 +942,6 @@ create_seq_arg() {
   r->force_left_end = -1; /* Indicates logical NULL. */
   r->force_right_start = -1; /* Indicates logical NULL. */
   r->force_right_end = -1; /* Indicates logical NULL. */
-  r->primer_overlap_pos_count = 0;
   r->primer_overlap_junctions_count = 0;
 
   r->n_quality = 0;
@@ -3091,23 +3089,6 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
     if (!must_use) return;
   }
   
-  for (for_i=0; for_i < sa->primer_overlap_pos_count; for_i++) {
-    if (OT_LEFT == l 
-	&& ((h->start + pa->pos_overlap_primer_end - 1) 
-	    < sa->primer_overlap_pos[for_i])
-	&& ((h->start + h->length - pa->pos_overlap_primer_end))
-	> sa->primer_overlap_pos[for_i]) {
-      h->overlaps_overlap_position = 1;
-    }
-    if (OT_RIGHT == l
-	&& ((h->start - h->length + pa->pos_overlap_primer_end) 
-	    < sa->primer_overlap_pos[for_i])
-	&& ((h->start - pa->pos_overlap_primer_end + 1))
-	> sa->primer_overlap_pos[for_i]) {
-      h->overlaps_overlap_position = 1;
-    }
-  }
-
   for (for_i=0; for_i < sa->primer_overlap_junctions_count; for_i++) {
     if (OT_LEFT == l 
 	&& ((h->start + pa->min_5_prime_overlap_of_junction - 1) 
@@ -3545,7 +3526,7 @@ characterize_pair(p3retval *retval,
      if so, whether one of the primers in the pairs overlaps
      that point. */
 
-  if (((sa->primer_overlap_pos_count > 0) || (sa->primer_overlap_junctions_count > 0))
+  if ((sa->primer_overlap_junctions_count > 0)
       && !(ppair->right->overlaps_overlap_position
 	   || ppair->left->overlaps_overlap_position)
       ) {
@@ -5354,19 +5335,9 @@ _adjust_seq_args(const p3_global_settings *pa,
   }
 
   if (_check_and_adjust_overlap_pos(sa,
-				    sa->primer_overlap_pos,
-				    &sa->primer_overlap_pos_count,
-				    "SEQUENCE_PRIMER_OVERLAP_POS",
-                                    seq_len,
-                                    pa->first_base_index,
-                                    nonfatal_err, warning)) {
-    return;
-  }
-
-  if (_check_and_adjust_overlap_pos(sa,
 				    sa->primer_overlap_junctions,
 				    &sa->primer_overlap_junctions_count,
-				    "SEQUENCE_PRIMER_JUNCTION_LIST",
+				    "SEQUENCE_OVERLAP_JUNCTION_LIST",
                                     seq_len,
                                     pa->first_base_index,
                                     nonfatal_err, warning)) {
@@ -6013,18 +5984,6 @@ _pr_data_control(const p3_global_settings *pa,
     return 1;
   }
 
-  if ((sa->primer_overlap_junctions_count > 0) && (sa->primer_overlap_pos_count > 0)) {
-    pr_append_new_chunk(glob_err,
-                        "Cannot use both SEQUENCE_PRIMER_OVERLAP_POS and SEQUENCE_OVERLAP_JUNCTION_LIST constraints at the same time");
-    return 1;
-  }
-
-  if (pa->pos_overlap_primer_end < 1) {
-    pr_append_new_chunk(glob_err,
-                        "Illegal value for PRIMER_POS_OVERLAP_TO_END_DIST");
-    return 1;
-  }
-
   if (pa->min_5_prime_overlap_of_junction < 1) {
     pr_append_new_chunk(glob_err,
                         "Illegal value for PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION");
@@ -6034,13 +5993,6 @@ _pr_data_control(const p3_global_settings *pa,
   if (pa->min_3_prime_overlap_of_junction < 1) {
     pr_append_new_chunk(glob_err,
                         "Illegal value for PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION");
-    return 1;
-  }
-
-  if ((sa->primer_overlap_pos_count > 0) &&
-      (pa->pos_overlap_primer_end > (pa->p_args.max_size / 2))) {
-    pr_append_new_chunk(glob_err,
-                        "PRIMER_POS_OVERLAP_TO_END_DIST > PRIMER_MAX_SIZE / 2");
     return 1;
   }
 
@@ -8098,7 +8050,6 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("end pair_weights\n") ;
 
     printf("min_three_prime_distance %i\n", p->min_three_prime_distance) ;
-    printf("pos_overlap_primer_end %i\n" , p->pos_overlap_primer_end);
     printf("min_5_prime_overlap_of_junction %i\n", p->min_5_prime_overlap_of_junction);
     printf("min_3_prime_overlap_of_junction %i\n", p->min_3_prime_overlap_of_junction);
     printf("dump %i\n", p->dump);
@@ -8120,17 +8071,7 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
        printf("ok_regions \n");
     */
 
-    if (s->primer_overlap_pos_count > 0) {
-      printf("primer_overlap_pos_count %i\n",
-	     s->primer_overlap_pos_count);
-      printf("primer_overlap_pos [\n");
-      for (i = 0; i < s->primer_overlap_pos_count; i++) {
-        printf("   %i\n", s->primer_overlap_pos[i]);
-      }
-      printf("]\n");
-    }
-
-    if (s->primer_overlap_pos_count > 0) {
+    if (s->primer_overlap_junctions_count > 0) {
       printf("primer_overlap_junctions_count %i\n",
 	     s->primer_overlap_junctions_count);
       printf("primer_overlap_junctions_list [\n");
