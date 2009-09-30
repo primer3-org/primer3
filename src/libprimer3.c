@@ -155,6 +155,9 @@ static int    _check_and_adjust_intervals(seq_args *sa,
                                           pr_append_str *warning);
 
 static int    _check_and_adjust_overlap_pos(seq_args *sa,
+					    int *list,
+					    int *count,
+					    const char *tag,
                                             int seq_len,
                                             int first_index,
                                             pr_append_str * nonfatal_err,
@@ -168,7 +171,7 @@ static int    _check_and_adjust_1_interval(const char *,
                                            pr_append_str *err,
                                            seq_args *,
                                            pr_append_str
-                                           *warning);
+                                           *warning, int);
 
 static void   sort_primer_array(oligo_array *);
 
@@ -386,8 +389,6 @@ static void bf_set_overlaps_excl_region(primer_rec *, int);
 static int bf_get_overlaps_excl_region(const primer_rec *);
 static void bf_set_infinite_pos_penalty(primer_rec *, int);
 static int bf_get_infinite_pos_penalty(const primer_rec *);
-static void bf_set_overlaps_overlap_region(primer_rec *);
-static int bf_get_overlaps_overlap_region(const primer_rec *);
 
 /* Functions to record problems with oligos (or primers) */
 static void initialize_op(primer_rec *);
@@ -399,6 +400,7 @@ static void op_set_low_gc_content(primer_rec *);
 static void op_set_high_tm(primer_rec *);
 static void op_set_low_tm(primer_rec *);
 static void op_set_overlaps_excluded_region(primer_rec *);
+static void op_set_not_in_any_ok_region(primer_rec *);
 static void op_set_high_self_any(primer_rec *oligo);
 static void op_set_high_self_end(primer_rec *oligo);
 static void op_set_high_hairpin_th(primer_rec *oligo);
@@ -488,8 +490,6 @@ p3_destroy_global_settings(p3_global_settings *a) {
   if (NULL != a) {
     destroy_seq_lib(a->p_args.repeat_lib);
     destroy_seq_lib(a->o_args.repeat_lib);
-    if (a->settings_file_id != NULL)
-        free(a->settings_file_id);
     if (a->thermodynamic_params_path)
 	free(a->thermodynamic_params_path);
     free(a);
@@ -656,14 +656,13 @@ pr_set_default_global_args(p3_global_settings *a) {
 
   a->min_three_prime_distance        = -1;
 
-  a->settings_file_id                = NULL;
-
   a->sequencing.lead                 = 50;
   a->sequencing.spacing              = 500;
   a->sequencing.interval             = 250;
   a->sequencing.accuracy             = 20;
   
-  a->pos_overlap_primer_end          = 5;
+  a->min_5_prime_overlap_of_junction = 7;
+  a->min_3_prime_overlap_of_junction = 4;
     
 }
 
@@ -675,6 +674,26 @@ p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2)
   if (c >= PR_MAX_INTERVAL_ARRAY) return 1;
   interval_arr->pairs[c][0] = i1;
   interval_arr->pairs[c][1] = i2;
+  interval_arr->count++;
+  return  0;
+}
+
+/* Add 2 pairs of integers to an array of 2 intervals */
+int
+p3_add_to_2_interval_array(interval_array_t4 *interval_arr, int i1, int i2, int i3, int i4)
+{
+  int c = interval_arr->count;
+  if (c >= PR_MAX_INTERVAL_ARRAY) return 1;
+  interval_arr->left_pairs[c][0] = i1;
+  interval_arr->left_pairs[c][1] = i2;
+  interval_arr->right_pairs[c][0] = i3;
+  interval_arr->right_pairs[c][1] = i4;
+  if ((i1 == -1) && (i2 == -1))
+    interval_arr->any_left = 1;
+  if ((i3 == -1) && (i4 == -1))
+    interval_arr->any_right = 1;
+  if ((i1 == -1) && (i2 == -1) && (i3 == -1) && (i4 == -1))
+    interval_arr->any_pair = 1;
   interval_arr->count++;
   return  0;
 }
@@ -923,7 +942,7 @@ create_seq_arg() {
   r->force_left_end = -1; /* Indicates logical NULL. */
   r->force_right_start = -1; /* Indicates logical NULL. */
   r->force_right_end = -1; /* Indicates logical NULL. */
-  r->primer_overlap_pos[0] = -1; /* Indicates logical NULL. */
+  r->primer_overlap_junctions_count = 0;
 
   r->n_quality = 0;
   r->quality = NULL;
@@ -1560,6 +1579,8 @@ add_must_use_warnings(pr_append_str *warning,
   if (stats->seq_quality) pr_append_w_sep(&s, sep, "Low sequence quality");
   if (stats->stability) pr_append_w_sep(&s, sep, "High 3' stability");
   if (stats->no_orf) pr_append_w_sep(&s, sep, "Would not amplify any ORF");
+  if (stats->not_in_any_left_ok_region) pr_append_w_sep(&s, sep, "Not in any ok left region");
+  if (stats->not_in_any_right_ok_region) pr_append_w_sep(&s, sep, "Not in any ok right region");
 
   /* edited by T. Koressaar for lowercase masking: */
   if (stats->gmasked)
@@ -2693,6 +2714,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   initialize_op(h);
   h->repeat_sim.score = NULL;
   h->gc_content = h->num_ns = 0;
+  h->overlaps_overlap_position = 0;
   h->template_mispriming = h->template_mispriming_r = ALIGN_SCORE_UNDEF;
    
   PR_ASSERT(OT_LEFT == l || OT_RIGHT == l || OT_INTL == l);
@@ -2818,6 +2840,38 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
     op_set_overlaps_excluded_region(h);
     stats->excluded++;
     if (!must_use) return;
+  }
+
+  /* Check if the oligo is included in any ok region */
+  if ((l == OT_LEFT) && (sa->ok_regions.count > 0) && (!sa->ok_regions.any_left)) {
+    int included = 0;
+    for (i=0; i<sa->ok_regions.count; i++) {
+      if ((j >= sa->ok_regions.left_pairs[i][0]) && 
+	  (k <= sa->ok_regions.left_pairs[i][0] + sa->ok_regions.left_pairs[i][1] - 1)) {
+	included = 1;
+	break;
+      }
+    }
+    if (!included) {
+      op_set_not_in_any_ok_region(h);
+      stats->not_in_any_left_ok_region++;
+      if (!must_use) return;
+    }
+  }
+  if ((l == OT_RIGHT) && (sa->ok_regions.count > 0) && (!sa->ok_regions.any_right)) {
+    int included = 0;
+    for (i=0; i<sa->ok_regions.count; i++) {
+      if ((j >= sa->ok_regions.right_pairs[i][0]) && 
+	  (k <= sa->ok_regions.right_pairs[i][0] + sa->ok_regions.right_pairs[i][1] - 1)) {
+	included = 1;
+	break;
+      }
+    }
+    if (!included) {
+      op_set_not_in_any_ok_region(h);
+      stats->not_in_any_right_ok_region++;
+      if (!must_use) return;
+    }
   }
 
   if (h->gc_content < po_args->min_gc) {
@@ -3035,25 +3089,24 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
     if (!must_use) return;
   }
   
-  if (sa->primer_overlap_pos[0] != -1) {
-    for (for_i=0; for_i < sa->primer_overlap_pos_count; for_i++) {  /* FIX Count should be 0 if there is nothing in sa->primer_overlap_pos.. */
-      if (OT_LEFT == l 
-          && ((h->start + pa->pos_overlap_primer_end - 1) 
-                  < sa->primer_overlap_pos[for_i])
-          && ((h->start + h->length - pa->pos_overlap_primer_end))
-                  > sa->primer_overlap_pos[for_i]) {
-        bf_set_overlaps_overlap_region(h);
-      }
-      if (OT_RIGHT == l
-          && ((h->start - h->length + pa->pos_overlap_primer_end) 
-                  < sa->primer_overlap_pos[for_i])
-          && ((h->start - pa->pos_overlap_primer_end + 1))
-                  > sa->primer_overlap_pos[for_i]) {
-        bf_set_overlaps_overlap_region(h);
-      }
+  for (for_i=0; for_i < sa->primer_overlap_junctions_count; for_i++) {
+    if (OT_LEFT == l 
+	&& ((h->start + pa->min_5_prime_overlap_of_junction - 1) 
+	    <= sa->primer_overlap_junctions[for_i])
+	&& ((h->start + h->length - pa->min_3_prime_overlap_of_junction))
+	> sa->primer_overlap_junctions[for_i]) {
+      h->overlaps_overlap_position = 1;
+    }
+    if (OT_RIGHT == l
+	&& ((h->start - h->length + pa->min_3_prime_overlap_of_junction) 
+	    <= sa->primer_overlap_junctions[for_i])
+	&& ((h->start - pa->min_5_prime_overlap_of_junction + 1))
+	> sa->primer_overlap_junctions[for_i]) {
+      h->overlaps_overlap_position = 1;
     }
   }
-   op_set_completely_written(h);
+
+  op_set_completely_written(h);
 
 } /* calc_and_check_oligo_features */
 #undef OUTSIDE_START_WT
@@ -3426,6 +3479,7 @@ characterize_pair(p3retval *retval,
   int must_use = 0;
   int pair_failed_flag = 0;
   double min_oligo_tm;
+  int i;
 
   memset(ppair, 0, sizeof(*ppair));
 
@@ -3472,22 +3526,52 @@ characterize_pair(p3retval *retval,
      if so, whether one of the primers in the pairs overlaps
      that point. */
 
-  if ((sa->primer_overlap_pos[0] != -1)
-      && 
-      !(bf_get_overlaps_overlap_region(ppair->right)
-        || bf_get_overlaps_overlap_region(ppair->left))
+  if ((sa->primer_overlap_junctions_count > 0)
+      && !(ppair->right->overlaps_overlap_position
+	   || ppair->left->overlaps_overlap_position)
       ) {
     if (update_stats) { pair_expl->does_not_overlap_a_required_point++; }
     if (!must_use) return PAIR_FAILED;
     else pair_failed_flag = 1;
   }
 
-  /* FIX add check for _junction_ overlaps, similar to above */
-
-  /* FIX add check for the pair being in any ok pair */
-
-  /* For each pair of ok regions, are both the left and the right primer
-     in the appropriate element of the pair.  ... Empty means can be anywhere */
+  /* Check that the pair is included in one of the specified ok regions */
+  if ((sa->ok_regions.count > 0) && (!sa->ok_regions.any_pair)) {
+    int included = 0;
+    int l_start = ppair->left->start, l_end = ppair->left->start + ppair->left->length - 1;
+    int r_start = ppair->right->start - ppair->right->length + 1, r_end = ppair->right->start;
+    for (i=0; i<sa->ok_regions.count; i++) {
+      if (sa->ok_regions.left_pairs[i][0] == -1) {
+	/* any left primer, check right primer */
+	if ((r_start >= sa->ok_regions.right_pairs[i][0]) &&
+	    (r_end <= sa->ok_regions.right_pairs[i][0] + sa->ok_regions.right_pairs[i][1] - 1)) {
+	  included = 1;
+	  break;
+	}
+      } else if (sa->ok_regions.right_pairs[i][0] == -1) {
+	/* any right primer, check the left primer */
+	if ((l_start >= sa->ok_regions.left_pairs[i][0]) && 
+	    (l_end <= sa->ok_regions.left_pairs[i][0] + sa->ok_regions.left_pairs[i][1] - 1)) {
+	  included = 1;
+	  break;
+	}
+      } else {
+	/* check both primers */
+	if ((l_start >= sa->ok_regions.left_pairs[i][0]) && 
+	    (l_end <= sa->ok_regions.left_pairs[i][0] + sa->ok_regions.left_pairs[i][1] - 1) &&
+	    (r_start >= sa->ok_regions.right_pairs[i][0]) &&
+	    (r_end <= sa->ok_regions.right_pairs[i][0] + sa->ok_regions.right_pairs[i][1] - 1)) {
+	  included = 1;
+	  break;
+	}  
+      }
+    }
+    if (!included) {
+      if (update_stats) { pair_expl->not_in_any_ok_region++; }
+      if (!must_use) return PAIR_FAILED;
+      else pair_failed_flag = 1;
+    }
+  }
 
   /* ============================================================= */
   /* Compute product Tm and related parameters; check constraints. */
@@ -4885,14 +4969,15 @@ p3_pair_explain_string(const pair_stats *pair_expl)
   IF_SP_AND_CHECK(", high end compl %d", pair_expl->compl_end)
   IF_SP_AND_CHECK(", no internal oligo %d", pair_expl->internal)
   IF_SP_AND_CHECK(", high mispriming library similarity %d",
-                    pair_expl->repeat_sim)
+		  pair_expl->repeat_sim)
   IF_SP_AND_CHECK(", no overlap of required point %d",
-                    pair_expl->does_not_overlap_a_required_point)
+		  pair_expl->does_not_overlap_a_required_point)
   IF_SP_AND_CHECK(", primer in pair overlaps a primer in a better pair %d",
-                    pair_expl->overlaps_oligo_in_better_pair)
+		  pair_expl->overlaps_oligo_in_better_pair)
   IF_SP_AND_CHECK(", high template mispriming score %d",
-                    pair_expl->template_mispriming);
-  /* FIX not in any ok pair */
+		  pair_expl->template_mispriming)
+  IF_SP_AND_CHECK(", not in any ok region %d", 
+		  pair_expl->not_in_any_ok_region);
 
   SP_AND_CHECK(", ok %d", pair_expl->ok)
   return buf;
@@ -4931,9 +5016,12 @@ p3_oligo_explain_string(const oligo_stats *stat)
   IF_SP_AND_CHECK(", high template mispriming score %d",
                   stat->template_mispriming)
   IF_SP_AND_CHECK(", lowercase masking of 3' end %d",stat->gmasked)
-    /* FIX, need for no in any ok region. */
+  IF_SP_AND_CHECK(", not in any ok left region %d", 
+		  stat->not_in_any_left_ok_region)
+  IF_SP_AND_CHECK(", not in any ok right region %d", 
+		  stat->not_in_any_right_ok_region)
   SP_AND_CHECK(", ok %d", stat->ok)
-               return buf;
+  return buf;
 }
 #undef CHECK
 #undef SP_AND_CHECK
@@ -5247,6 +5335,9 @@ _adjust_seq_args(const p3_global_settings *pa,
   }
 
   if (_check_and_adjust_overlap_pos(sa,
+				    sa->primer_overlap_junctions,
+				    &sa->primer_overlap_junctions_count,
+				    "SEQUENCE_OVERLAP_JUNCTION_LIST",
                                     seq_len,
                                     pa->first_base_index,
                                     nonfatal_err, warning)) {
@@ -5893,15 +5984,29 @@ _pr_data_control(const p3_global_settings *pa,
     return 1;
   }
 
-  if (pa->pos_overlap_primer_end < 1) {
+  if (pa->min_5_prime_overlap_of_junction < 1) {
     pr_append_new_chunk(glob_err,
-                        "Illegal value for PRIMER_POS_OVERLAP_TO_END_DIST");
+                        "Illegal value for PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION");
     return 1;
   }
 
-  if (pa->pos_overlap_primer_end > (pa->p_args.max_size / 2)) {
+  if (pa->min_3_prime_overlap_of_junction < 1) {
     pr_append_new_chunk(glob_err,
-                        "PRIMER_POS_OVERLAP_TO_END_DIST > PRIMER_MAX_SIZE / 2");
+                        "Illegal value for PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION");
+    return 1;
+  }
+
+  if ((sa->primer_overlap_junctions_count > 0) &&
+      (pa->min_5_prime_overlap_of_junction > (pa->p_args.max_size / 2))) {
+    pr_append_new_chunk(glob_err,
+                        "PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION > PRIMER_MAX_SIZE / 2");
+    return 1;
+  }
+
+  if ((sa->primer_overlap_junctions_count > 0) && 
+      (pa->min_3_prime_overlap_of_junction > (pa->p_args.max_size / 2))) {
+    pr_append_new_chunk(glob_err,
+                        "PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION > PRIMER_MAX_SIZE / 2");
     return 1;
   }
 
@@ -5910,42 +6015,46 @@ _pr_data_control(const p3_global_settings *pa,
 
 static int
 _check_and_adjust_overlap_pos(seq_args *sa,
+			      int *list,
+			      int *count, 
+			      const char *tag,
                               int seq_len,
                               int first_index,
-                              pr_append_str * nonfatal_err,
+                              pr_append_str *nonfatal_err,
                               pr_append_str *warning) {
   int i;
   int outside_warning_issued = 0;
+  char buffer[255];
 
-  if (sa->primer_overlap_pos[0] == -1) {
+  if (*count == 0) {
     return 0;
   }
 
-  for (i = 0; i < sa->primer_overlap_pos_count; i++) {
+  for (i = 0; i < *count; i++) {
     /* Subtract first_index from the "must overlap" positions */
-    sa->primer_overlap_pos[i] -= first_index;
+    list[i] -= first_index;
 
-    if (sa->primer_overlap_pos[i] >= seq_len) {
-      pr_append_new_chunk(nonfatal_err,
-             "SEQUENCE_PRIMER_OVERLAP_POS beyond end of sequence");
+    if (list[i] >= seq_len) {
+      sprintf(buffer, "%s beyond end of sequence", tag);
+      pr_append_new_chunk(nonfatal_err, buffer);
       return 1;
     }
 
-    if (sa->primer_overlap_pos[i] < 0) {
-      pr_append_new_chunk(nonfatal_err, 
-             "Negative SEQUENCE_PRIMER_OVERLAP_POS length");
+    if (list[i] < 0) {
+      sprintf(buffer, "Negative %s length", tag);
+      pr_append_new_chunk(nonfatal_err, buffer);
       return 1;
     }
 
     /* Cause the intron positions to be relative to the included region. */
-    sa->primer_overlap_pos[i] -= sa->incl_s;
+    list[i] -= sa->incl_s;
 
     /* Check that intron positions are within the included region. */
-    if (sa->primer_overlap_pos[i] < 0 
-        || sa->primer_overlap_pos[i] > sa->incl_l) {
+    if (list[i] < 0 
+        || list[i] > sa->incl_l) {
       if (!outside_warning_issued) {
-        pr_append_new_chunk(warning, 
-             "SEQUENCE_PRIMER_OVERLAP_POS outside of INCLUDED_REGION");
+	sprintf(buffer, "%s outside of INCLUDED_REGION", tag);
+        pr_append_new_chunk(warning, buffer);
         outside_warning_issued = 1;
       }
     }
@@ -5966,14 +6075,14 @@ _check_and_adjust_intervals(seq_args *sa,
                                    sa->tar2.pairs,
                                    seq_len,
                                    first_index,
-                                   nonfatal_err, sa, warning)
+                                   nonfatal_err, sa, warning, 0)
       == 1) return 1;
   sa->start_codon_pos -= sa->incl_s;
 
   if (_check_and_adjust_1_interval("EXCLUDED_REGION",
                                    sa->excl2.count, sa->excl2.pairs,
                                    seq_len, first_index, 
-                                   nonfatal_err, sa, warning)
+                                   nonfatal_err, sa, warning, 0)
       == 1) return 1;
 
   if (_check_and_adjust_1_interval("PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION",
@@ -5981,7 +6090,21 @@ _check_and_adjust_intervals(seq_args *sa,
                                    sa->excl_internal2.pairs,
                                    seq_len,
                                    first_index,
-                                   nonfatal_err, sa, warning)
+                                   nonfatal_err, sa, warning, 0)
+      == 1) return 1;
+  if (_check_and_adjust_1_interval("PRIMER_PAIR_OK_REGION_LIST",
+                                   sa->ok_regions.count, 
+                                   sa->ok_regions.left_pairs,
+                                   seq_len,
+                                   first_index,
+                                   nonfatal_err, sa, warning, 1)
+      == 1) return 1;
+  if (_check_and_adjust_1_interval("PRIMER_PAIR_OK_REGION_LIST",
+                                   sa->ok_regions.count, 
+                                   sa->ok_regions.right_pairs,
+                                   seq_len,
+                                   first_index,
+                                   nonfatal_err, sa, warning, 1)
       == 1) return 1;
   return 0;
 }
@@ -5999,16 +6122,29 @@ _check_and_adjust_1_interval(const char *tag_name,
                              int first_index,
                              pr_append_str *err,
                              seq_args *sa,
-                             pr_append_str *warning)
+                             pr_append_str *warning,
+			     int empty_allowed)
 {
   int i;
   int outside_warning_issued = 0;
 
   /* Subtract the first_index from the start positions in the interval
      array */
-  for (i = 0; i < num_intervals; i++) intervals[i][0] -= first_index;
+  for (i = 0; i < num_intervals; i++) {
+    if (empty_allowed && (intervals[i][0] == -1) && (intervals[i][1] == -1))
+      continue;
+    if (empty_allowed && (((intervals[i][0] == -1) && (intervals[i][1] != -1)) 
+			  || ((intervals[i][0] != -1) && (intervals[i][1] == -1)))) {
+      pr_append_new_chunk(err, tag_name);
+      pr_append(err, " illegal interval");
+      return 1;
+    }
+    intervals[i][0] -= first_index;
+  }
 
   for (i=0; i < num_intervals; i++) {
+    if (empty_allowed && (intervals[i][0] == -1) && (intervals[i][1] == -1))
+      continue;
     if (intervals[i][0] + intervals[i][1] > seq_len) {
       pr_append_new_chunk(err, tag_name);
       pr_append(err, " beyond end of sequence");
@@ -7367,9 +7503,9 @@ initialize_op(primer_rec *oligo) {
 #define BF_OVERLAPS_TARGET                     (1UL <<  2)
 #define BF_OVERLAPS_EXCL_REGION                (1UL <<  3)
 #define BF_INFINITE_POSITION_PENALTY           (1UL <<  4)
-#define BF_OVERLAPS_OVERLAP_REGION             (1UL <<  5)
 /* Space for more bitfields */
 
+#define OP_NOT_IN_ANY_OK_REGION                (1UL <<  7)
 #define OP_TOO_MANY_NS                         (1UL <<  8) /* 3prime problem*/
 #define OP_OVERLAPS_TARGET                     (1UL <<  9) /* 3prime problem*/
 #define OP_HIGH_GC_CONTENT                     (1UL << 10)
@@ -7398,9 +7534,9 @@ initialize_op(primer_rec *oligo) {
 /* Tip: the calculator of windows (in scientific mode) can easily convert 
    between decimal and binary numbers */
 
-/* all bits 1 except bits 0 to 7 */
-/* (~0UL) ^ 255UL = 1111 1111  1111 1111  1111 1111  0000 0000 */
-static unsigned long int any_problem = (~0UL) ^ 255UL;
+/* all bits 1 except bits 0 to 6 */
+/* (~0UL) ^ 127UL = 1111 1111  1111 1111  1111 1111  1000 0000 */
+static unsigned long int any_problem = (~0UL) ^ 127UL;
 /* 310297344UL = 0001 0010  0111 1110  1100 0011  0000 0000 */
 static unsigned long int five_prime_problem = 310297344UL;
 
@@ -7462,6 +7598,8 @@ p3_get_ol_problem_string(const primer_rec *oligo) {
                " Temperature too low;")
     ADD_OP_STR(OP_OVERLAPS_EXCL_REGION,
                " Overlaps an excluded region;")
+    ADD_OP_STR(OP_NOT_IN_ANY_OK_REGION,
+               " Not in any ok region;")
     ADD_OP_STR(OP_HIGH_SELF_ANY,
                " Similarity to self too high;")
     ADD_OP_STR(OP_HIGH_SELF_END,
@@ -7542,16 +7680,6 @@ bf_get_infinite_pos_penalty(const primer_rec *oligo) {
   return (oligo->problems.prob & BF_INFINITE_POSITION_PENALTY) != 0;
 }
 
-static void 
-bf_set_overlaps_overlap_region(primer_rec *oligo){
-  oligo->problems.prob |= BF_OVERLAPS_OVERLAP_REGION;
-}
-
-static int
-bf_get_overlaps_overlap_region(const primer_rec *oligo) {
-  return (oligo->problems.prob & BF_OVERLAPS_OVERLAP_REGION) != 0;
-}
-
 static void
 op_set_does_not_amplify_orf(primer_rec *oligo) {
   oligo->problems.prob |= OP_DOES_NOT_AMPLIFY_ORF;
@@ -7602,6 +7730,12 @@ op_set_low_tm(primer_rec *oligo) {
 static void
 op_set_overlaps_excluded_region(primer_rec *oligo) {
   oligo->problems.prob |= OP_OVERLAPS_EXCL_REGION;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
+}
+
+static void
+op_set_not_in_any_ok_region(primer_rec *oligo) {
+  oligo->problems.prob |= OP_NOT_IN_ANY_OK_REGION;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
@@ -7916,8 +8050,8 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("end pair_weights\n") ;
 
     printf("min_three_prime_distance %i\n", p->min_three_prime_distance) ;
-    printf("pos_overlap_primer_end %i\n" , p->pos_overlap_primer_end);
-    printf("settings_file_id %s\n", p->settings_file_id) ;
+    printf("min_5_prime_overlap_of_junction %i\n", p->min_5_prime_overlap_of_junction);
+    printf("min_3_prime_overlap_of_junction %i\n", p->min_3_prime_overlap_of_junction);
     printf("dump %i\n", p->dump);
     printf("end global args\n") ;
   }
@@ -7934,14 +8068,15 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
        printf("interval_array_t2 excl_internal2 %i\n",
        int pairs[PR_MAX_INTERVAL_ARRAY][2]) ;
        int count) ;
+       printf("ok_regions \n");
     */
 
-    printf("primer_overlap_pos_count %i\n",
-           s->primer_overlap_pos_count);
-    if (s->primer_overlap_pos_count > 0) {
-      printf("primer_overlap_pos [\n");
-      for (i = 0; i < s->primer_overlap_pos_count; i++) {
-        printf("   %i\n", s->primer_overlap_pos[i]);
+    if (s->primer_overlap_junctions_count > 0) {
+      printf("primer_overlap_junctions_count %i\n",
+	     s->primer_overlap_junctions_count);
+      printf("primer_overlap_junctions_list [\n");
+      for (i = 0; i < s->primer_overlap_junctions_count; i++) {
+        printf("   %i\n", s->primer_overlap_junctions[i]);
       }
       printf("]\n");
     }

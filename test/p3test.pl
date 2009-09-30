@@ -156,7 +156,7 @@ sub main() {
     # that get translated into file names inside the loop.
     for my $test (
 	
-	 'primer_boundary', # Put the quickest tests first.
+	          'primer_boundary', # Put the quickest tests first.
                   'primer_boundary1',
                   'primer_boundary_formatted',
                   'primer_boundary1_formatted',
@@ -165,6 +165,9 @@ sub main() {
                   'primer_internal1',
                   'primer_internal_formatted',
                   'primer_internal1_formatted',
+
+	          'primer_ok_regions',
+	          'primer_ok_regions_formatted',
 
                   'primer_tm_lc_masking',
                   'primer_tm_lc_masking_formatted',
@@ -178,11 +181,11 @@ sub main() {
                   'primer_new_tasks_formatted',
 
                   'primer_must_overlap_point',
+	          'primer_overlap_junction',
 
                   'primer_all_settingsfiles',
                   'primer_high_tm_load_set',
                   'primer_high_gc_load_set',
-
 
                   'primer_gc_end',
                   'primer_check',

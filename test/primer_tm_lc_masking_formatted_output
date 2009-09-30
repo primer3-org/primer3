@@ -16,11 +16,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.2
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR 001
@@ -41,11 +41,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.2
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR 002
@@ -66,11 +66,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.2
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR 100
@@ -84,11 +84,11 @@ NO LEFT PRIMER FOUND
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high lower      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1     0
-primer3 release 1.1.2
+         con   too    in    in   not          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1     0
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR 101
@@ -109,11 +109,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high lower      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
-Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.2
+         con   too    in    in   not          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     0     1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR 102
@@ -134,11 +134,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.2
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR 010
@@ -159,11 +159,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.2
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR 011
@@ -184,11 +184,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.2
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR 012
@@ -209,11 +209,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.2
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR 110
@@ -227,11 +227,11 @@ NO LEFT PRIMER FOUND
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high lower      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1     0
-primer3 release 1.1.2
+         con   too    in    in   not          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1     0
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR 111
@@ -252,11 +252,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high lower      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
-Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.2
+         con   too    in    in   not          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     0     1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR 112
@@ -277,11 +277,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-primer3 release 1.1.2
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR masking_001
@@ -308,14 +308,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high lower      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
-Left      31    30     0     0     0     0     0     0     0     0     0     0     0     1
-Right     31    30     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left      31    30     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right     31    30     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.2
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR masking_002
@@ -333,14 +333,14 @@ INCLUDED REGION SIZE: 70
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high lower      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
-Left      31    30     0     0     0     0     0     0     0     0     0     0     0     1
-Right     31    30     0     0     0     0     0     0     0     0     0     0     1     0
+         con   too    in    in   not          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left      31    30     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right     31    30     0     0     0     0     0     0     0     0     0     0     0     1     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.2
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR masking_003
@@ -367,14 +367,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high lower      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
-Left      31    30     0     0     0     0     0     0     0     0     0     0     0     1
-Right     31    30     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left      31    30     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right     31    30     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.2
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR masking_004
@@ -401,14 +401,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high lower      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
-Left      31    30     0     0     0     0     0     0     0     0     0     0     0     1
-Right     31    30     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left      31    30     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right     31    30     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.2
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR masking_005
@@ -426,13 +426,13 @@ INCLUDED REGION SIZE: 70
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high lower      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end  case      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
-Left      31    30     0     0     0     0     0     0     0     0     0     0     1     0
-Right     31    30     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high lower      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end  case      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
+Left      31    30     0     0     0     0     0     0     0     0     0     0     0     1     0
+Right     31    30     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
-primer3 release 1.1.2
+primer3 release 2.0.0
 
 
