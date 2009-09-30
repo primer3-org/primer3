@@ -1,7 +1,13 @@
-release 2.1.0 beta 2009-08-01 ==========================================
+release 2.2.0 alpha 2009-10-XX ==========================================
 
-This release comprises enhancements associated with primer/oligo secondary 
-structure prediction. We have implemented parallel tags for secondary
+This release adds multiple new feature to primer3_core and related
+C code, which is our reason for releasing it as a new alpha.
+
+The enhancments fall under several categories:
+
+PRIMER/OLIGO SECONDARY STRUCTURE AND MISPRIMING PREDICTION
+
+We have added capabilities for predictingimplemented parallel tags for secondary
 structure prediction to existing (release 2.0.0 and older) primer3 tags.
 These new tags are principally the same as the tags they are parallel to,
 but the method followed for calculating them is based on nearest-neighbour 
