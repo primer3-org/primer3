@@ -103,7 +103,7 @@ considered 1, ok 1
 primer3 release 2.0.0
 
 
-PRIMER PICKING RESULTS FOR SEQUENCE_PRIMER_PAIR_OK_REGION_LIST test 4 contrained left and right primers - OK
+PRIMER PICKING RESULTS FOR SEQUENCE_PRIMER_PAIR_OK_REGION_LIST test 4 constrained left and right primers - OK
 
 No mispriming library specified
 Using 1-based sequence positions
