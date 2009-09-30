@@ -19,11 +19,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left      10     9     0     0     0     0     0     0     0     0     0     0     1
-Right     10     9     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left      10     9     0     0     0     0     0     0     0     0     0     0     0     1
+Right     10     9     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -50,11 +50,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -81,11 +81,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -105,11 +105,11 @@ INCLUDED REGION SIZE: 59
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       4     3     0     0     0     0     0     0     0     0     0     0     1
-Right      4     3     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       4     3     0     0     0     0     0     0     0     0     0     0     0     1
+Right      4     3     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, unacceptable product size 1, ok 0
 primer3 release 2.0.0
@@ -129,11 +129,11 @@ INCLUDED REGION SIZE: 59
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left      10     9     0     0     0     0     0     0     0     0     0     0     1
-Right     10     9     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left      10     9     0     0     0     0     0     0     0     0     0     0     0     1
+Right     10     9     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, unacceptable product size 1, ok 0
 primer3 release 2.0.0
@@ -160,11 +160,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     3     0     0     0     0     0     0     0     0     0     0     2
-Right      5     3     0     0     0     0     0     0     0     0     0     0     2
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     3     0     0     0     0     0     0     0     0     0     0     0     2
+Right      5     3     0     0     0     0     0     0     0     0     0     0     0     2
 Pair Stats:
 considered 4, unacceptable product size 3, ok 1
 primer3 release 2.0.0
@@ -184,11 +184,11 @@ INCLUDED REGION SIZE: 59
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     5     0     0     0     0     0     0     0     0     0     0     0
-Right      5     5     0     0     0     0     0     0     0     0     0     0     0
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     5     0     0     0     0     0     0     0     0     0     0     0     0
+Right      5     5     0     0     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -216,11 +216,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -244,11 +244,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       6     6     0     0     0     0     0     0     0     0     0     0     0
-Right      6     5     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       6     6     0     0     0     0     0     0     0     0     0     0     0     0
+Right      6     5     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -272,11 +272,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     5     0     0     0     0     0     0     0     0     0     0     0
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     5     0     0     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -296,11 +296,11 @@ INCLUDED REGION SIZE: 59
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     5     0     0     0     0     0     0     0     0     0     0     0
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     5     0     0     0     0     0     0     0     0     0     0     0     0
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -327,11 +327,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     2     0     0     0     0     0     0     0     0     0     0     3
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     2     0     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
 considered 3, unacceptable product size 2, ok 1
 primer3 release 2.0.0
@@ -351,11 +351,11 @@ INCLUDED REGION SIZE: 59
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     5     0     0     0     0     0     0     0     0     0     0     0
-Right      5     2     0     0     0     0     0     0     0     0     0     0     3
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     5     0     0     0     0     0     0     0     0     0     0     0     0
+Right      5     2     0     0     0     0     0     0     0     0     0     0     0     3
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -382,11 +382,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     0     0     0     0     0     0     0     0     0     0     0     5
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     0     0     0     0     0     0     0     0     0     0     0     0     5
 Pair Stats:
 considered 5, unacceptable product size 4, ok 1
 primer3 release 2.0.0
@@ -413,11 +413,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -437,11 +437,11 @@ INCLUDED REGION SIZE: 59
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     1     0     0     0     0     0     0     0     0
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     1     0     0     0     0     0     0     0     0
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -468,11 +468,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -492,11 +492,11 @@ INCLUDED REGION SIZE: 59
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     1     0     0     0     0     0     0     0     0
-Right      5     4     0     0     1     0     0     0     0     0     0     0     0
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     1     0     0     0     0     0     0     0     0
+Right      5     4     0     0     0     1     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -524,11 +524,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -552,11 +552,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     1     0     0     0     0     0     0     0     0     0     0     0
-Right      1     1     0     0     0     0     0     0     0     0     0     0     0
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     1     0     0     0     0     0     0     0     0     0     0     0     0
+Right      1     1     0     0     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -584,11 +584,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-Right      1     1     0     0     0     0     0     0     0     0     0     0     0
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     1     0     0     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -617,11 +617,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       3     2     0     0     0     0     0     0     0     0     0     0     1
-Right      3     2     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       3     2     0     0     0     0     0     0     0     0     0     0     0     1
+Right      3     2     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -646,11 +646,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       2     2     0     0     0     0     0     0     0     0     0     0     0
-Right      3     2     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       2     2     0     0     0     0     0     0     0     0     0     0     0     0
+Right      3     2     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -675,11 +675,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       3     2     0     0     0     0     0     0     0     0     0     0     1
-Right      2     2     0     0     0     0     0     0     0     0     0     0     0
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       3     2     0     0     0     0     0     0     0     0     0     0     0     1
+Right      2     2     0     0     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -704,11 +704,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       4     3     0     0     0     0     0     0     0     0     0     0     1
-Right      2     2     0     0     0     0     0     0     0     0     0     0     0
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       4     3     0     0     0     0     0     0     0     0     0     0     0     1
+Right      2     2     0     0     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -737,11 +737,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       4     3     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       4     3     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -766,11 +766,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       3     2     1     0     0     0     0     0     0     0     0     0     0
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       3     2     1     0     0     0     0     0     0     0     0     0     0     0
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -795,11 +795,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       4     3     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     1     0     0     0     0     0     0     0     0     0     0
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       4     3     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     1     0     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -824,11 +824,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     1     0     0     0     0     0     0     0     0     0     0
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     1     0     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -857,11 +857,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       4     3     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       4     3     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -890,11 +890,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       4     3     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       4     3     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -919,11 +919,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, no target 1, ok 0
 primer3 release 2.0.0
@@ -952,11 +952,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -981,11 +981,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     1     0     0     0     0     0     0     0     0     0
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     1     0     0     0     0     0     0     0     0     0     0
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -1010,11 +1010,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     1     0     0     0     0     0     0     0     0     0
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     1     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -1039,11 +1039,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     1     0     0     0     0     0     0     0     0     0
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     1     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -1072,11 +1072,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1101,11 +1101,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     1     0     0     0     0     0     0     0     0     0
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     1     0     0     0     0     0     0     0     0     0     0
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -1130,11 +1130,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     1     0     0     0     0     0     0     0     0     0
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     1     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -1159,11 +1159,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     1     0     0     0     0     0     0     0     0     0
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     1     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -1192,11 +1192,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1225,11 +1225,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1251,11 +1251,11 @@ EXCLUDED REGIONS (start, len)*: 11,0
 XXXXXX excluded region
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     1     0     0     0     0     0     0     0     0     0
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     1     0     0     0     0     0     0     0     0     0     0
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -1284,11 +1284,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1313,11 +1313,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     1     0     0     0
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     1     0     0     0
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -1346,11 +1346,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1379,11 +1379,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1408,11 +1408,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     1     0     0     0     0
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     1     0     0     0     0
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -1441,11 +1441,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1470,11 +1470,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     1     0     0     0     0     0     0     0
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     1     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -1503,11 +1503,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1532,11 +1532,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     1     0     0     0     0     0     0     0
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     1     0     0     0     0     0     0     0
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -1565,11 +1565,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1598,11 +1598,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1627,11 +1627,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, tm diff too large 1, ok 0
 primer3 release 2.0.0
@@ -1662,11 +1662,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1694,12 +1694,12 @@ INCLUDED REGION SIZE: 187
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left     138     0     0     0     0     0     0     0     0     0   138     0     0
-Right    138     0     0     0     0     0     0     0     0     0   138     0     0
-Intl       0     0     0     0     0     0     0     0     0     0     0     0     0
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left     138     0     0     0     0     0     0     0     0     0     0   138     0     0
+Right    138     0     0     0     0     0     0     0     0     0     0   138     0     0
+Intl       0     0     0     0     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -1757,12 +1757,12 @@ ADDITIONAL OLIGOS
    PRODUCT SIZE: 103, PAIR ANY COMPL: 23.00, PAIR 3' COMPL: 19.00
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left     131     0     0     0     0     0     0     0     0     0     0     0   131
-Right    131     0     0     0     0     0     0     0     0     0     0     0   131
-Intl    1585     0     0     0     0     0     0     0     0     0     0     0  1585
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left     131     0     0     0     0     0     0     0     0     0     0     0     0   131
+Right    131     0     0     0     0     0     0     0     0     0     0     0     0   131
+Intl    1585     0     0     0     0     0     0     0     0     0     0     0     0  1585
 Pair Stats:
 considered 64, unacceptable product size 48, ok 16
 primer3 release 2.0.0
@@ -1786,12 +1786,12 @@ INCLUDED REGION SIZE: 204
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left     155     0     0     0     0     0     0     0     0     0    57     0    98
-Right    155     0     0     0     0     0     0     0     0     0    72     0    83
-Intl     187     0     0     0     0     0     0     0     0     0   187     0     0
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left     155     0     0     0     0     0     0     0     0     0     0    57     0    98
+Right    155     0     0     0     0     0     0     0     0     0     0    72     0    83
+Intl     187     0     0     0     0     0     0     0     0     0     0   187     0     0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -1820,11 +1820,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1846,11 +1846,11 @@ EXCLUDED REGIONS (start, len)*: 27,0
 XXXXXX excluded region
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     1     0     0     0     0     0     0     0     0     0
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     1     0     0     0     0     0     0     0     0     0     0
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -1886,11 +1886,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1916,11 +1916,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     1     0     0     0     0     0     0     0     0     0
-Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     1     0     0     0     0     0     0     0     0     0     0
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -1956,11 +1956,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1986,11 +1986,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-Right      1     0     0     1     0     0     0     0     0     0     0     0     0
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     1     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -2018,11 +2018,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       6     5     0     0     0     0     0     0     0     0     0     0     1
-Right      6     5     0     1     0     0     0     0     0     0     0     0     0
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       6     5     0     0     0     0     0     0     0     0     0     0     0     1
+Right      6     5     0     1     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -2051,11 +2051,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       3     2     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       3     2     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2077,11 +2077,11 @@ TARGETS (start, len)*: 27,0
 ****** target
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       2     2     0     0     0     0     0     0     0     0     0     0     0
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       2     2     0     0     0     0     0     0     0     0     0     0     0     0
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -2113,11 +2113,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, no target 1, ok 0
 primer3 release 2.0.0
@@ -2143,11 +2143,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     1     0     0     0     0     0     0     0     0     0     0
-Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     1     0     0     0     0     0     0     0     0     0     0     0
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -2179,11 +2179,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, no target 1, ok 0
 primer3 release 2.0.0
@@ -2209,11 +2209,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-Right      0     0     0     0     0     0     0     0     0     0     0     0     0
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      0     0     0     0     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -2241,11 +2241,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       6     5     0     0     0     0     0     0     0     0     0     0     1
-Right      6     5     1     0     0     0     0     0     0     0     0     0     0
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       6     5     0     0     0     0     0     0     0     0     0     0     0     1
+Right      6     5     1     0     0     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.0.0
@@ -2275,11 +2275,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2309,11 +2309,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2343,11 +2343,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-Right      6     5     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      6     5     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2377,11 +2377,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2411,11 +2411,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       6     5     0     0     0     0     0     0     0     0     0     0     1
-Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       6     5     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2444,11 +2444,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left      10     9     0     0     0     0     0     0     0     0     0     0     1
-Right     10     9     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left      10     9     0     0     0     0     0     0     0     0     0     0     0     1
+Right     10     9     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2473,11 +2473,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left      10     9     0     0     0     0     0     0     0     0     0     0     1
-Right     10     9     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left      10     9     0     0     0     0     0     0     0     0     0     0     0     1
+Right     10     9     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, no target 1, ok 0
 primer3 release 2.0.0
@@ -2506,11 +2506,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       8     7     0     0     0     0     0     0     0     0     0     0     1
-Right     10     9     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       8     7     0     0     0     0     0     0     0     0     0     0     0     1
+Right     10     9     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2539,11 +2539,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left      10     9     0     0     0     0     0     0     0     0     0     0     1
-Right      3     2     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left      10     9     0     0     0     0     0     0     0     0     0     0     0     1
+Right      3     2     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2573,11 +2573,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       5     4     0     0     0     0     0     0     0     0     0     0     1
-Right      5     4     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
+Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2609,11 +2609,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2641,11 +2641,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       3     2     0     0     0     0     0     0     0     0     0     0     1
-Right      3     2     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       3     2     0     0     0     0     0     0     0     0     0     0     0     1
+Right      3     2     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 2, unacceptable product size 1, ok 1
 primer3 release 2.0.0
@@ -2669,11 +2669,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       3     2     0     0     0     0     0     0     0     0     0     0     1
-Right      3     2     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       3     2     0     0     0     0     0     0     0     0     0     0     0     1
+Right      3     2     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 2, unacceptable product size 2, ok 0
 primer3 release 2.0.0
@@ -2701,11 +2701,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       3     2     0     0     0     0     0     0     0     0     0     0     1
-Right      3     2     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       3     2     0     0     0     0     0     0     0     0     0     0     0     1
+Right      3     2     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2733,11 +2733,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       2     1     0     0     0     0     0     0     0     0     0     0     1
-Right      2     1     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       2     1     0     0     0     0     0     0     0     0     0     0     0     1
+Right      2     1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 2, unacceptable product size 1, ok 1
 primer3 release 2.0.0
@@ -2765,11 +2765,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       2     1     0     0     0     0     0     0     0     0     0     0     1
-Right      2     1     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       2     1     0     0     0     0     0     0     0     0     0     0     0     1
+Right      2     1     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2806,11 +2806,11 @@ ADDITIONAL OLIGOS
    PRODUCT SIZE: 82, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 1.00
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left      28    27     0     0     0     0     0     0     0     0     0     0     1
-Right     28    26     0     0     0     0     0     0     0     0     0     0     2
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left      28    27     0     0     0     0     0     0     0     0     0     0     0     1
+Right     28    26     0     0     0     0     0     0     0     0     0     0     0     2
 Pair Stats:
 considered 3, unacceptable product size 1, ok 2
 primer3 release 2.0.0
@@ -2847,11 +2847,11 @@ ADDITIONAL OLIGOS
    PRODUCT SIZE: 55, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 1.00
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left      28    27     0     0     0     0     0     0     0     0     0     0     1
-Right     28    26     0     0     0     0     0     0     0     0     0     0     2
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left      28    27     0     0     0     0     0     0     0     0     0     0     0     1
+Right     28    26     0     0     0     0     0     0     0     0     0     0     0     2
 Pair Stats:
 considered 3, unacceptable product size 1, ok 2
 primer3 release 2.0.0
@@ -2888,11 +2888,11 @@ ADDITIONAL OLIGOS
    PRODUCT SIZE: 82, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 1.00
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left      28    27     0     0     0     0     0     0     0     0     0     0     1
-Right     28    26     0     0     0     0     0     0     0     0     0     0     2
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left      28    27     0     0     0     0     0     0     0     0     0     0     0     1
+Right     28    26     0     0     0     0     0     0     0     0     0     0     0     2
 Pair Stats:
 considered 3, unacceptable product size 1, ok 2
 primer3 release 2.0.0
@@ -2929,11 +2929,11 @@ ADDITIONAL OLIGOS
    PRODUCT SIZE: 55, PAIR ANY COMPL: 7.00, PAIR 3' COMPL: 1.00
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left      28    27     0     0     0     0     0     0     0     0     0     0     1
-Right     28    26     0     0     0     0     0     0     0     0     0     0     2
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left      28    27     0     0     0     0     0     0     0     0     0     0     0     1
+Right     28    26     0     0     0     0     0     0     0     0     0     0     0     2
 Pair Stats:
 considered 3, unacceptable product size 1, ok 2
 primer3 release 2.0.0
@@ -2961,11 +2961,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2989,11 +2989,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, high any compl 1, ok 0
 primer3 release 2.0.0
@@ -3021,11 +3021,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -3049,11 +3049,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, high end compl 1, ok 0
 primer3 release 2.0.0
@@ -3081,11 +3081,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -3115,11 +3115,11 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -3153,11 +3153,11 @@ XXXXXX excluded region
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl     X  stab    ok
-Left       1     0     0     0     0     0     0     0     0     0     0     0     1
-Right      1     0     0     0     0     0     0     0     0     0     0     0     1
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0

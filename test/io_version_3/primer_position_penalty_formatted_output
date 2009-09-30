@@ -53,14 +53,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    3504     0   289     0    16     0   818  1648     0     0     0     0     0   733
-Right   3504     0   289     0     0     0   655  1723     0     0     0     0     0   837
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    3504     0   289     0     0    16     0   818  1648     0     0     0     0     0   733
+Right   3504     0   289     0     0     0     0   655  1723     0     0     0     0     0   837
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR AT3_X2
@@ -136,14 +136,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    6612     0   289     0     1     0  1035  3921     0     0     0    22     0  1344
-Right   6657     0   289     0   114     0  1327  3439     0     2     0    19     0  1467
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    6612     0   289     0     0     1     0  1035  3921     0     0     0    22     0  1344
+Right   6657     0   289     0     0   114     0  1327  3439     0     2     0    19     0  1467
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR AT3_X3
@@ -210,14 +210,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    5081     0   289     0    13     0  1874  1352     0     0     0    25     0  1528
-Right   5254     0   289     0   103     0  1706  1557     0     0     0     0     0  1599
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    5081     0   289     0     0    13     0  1874  1352     0     0     0    25     0  1528
+Right   5254     0   289     0     0   103     0  1706  1557     0     0     0     0     0  1599
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR AT3_X3'
@@ -281,14 +281,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4474     0   289     0   273     0  1464  1424     0     0    13     0     0  1011
-Right   4294     0   289     0   209     0   512  2472     0     0     0    25     0   787
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4474     0   289     0     0   273     0  1464  1424     0     0    13     0     0  1011
+Right   4294     0   289     0     0   209     0   512  2472     0     0     0    25     0   787
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR AT3_X4
@@ -364,14 +364,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    6872     0   289     0   226     0  1924  2932     0     0     0    17     0  1484
-Right   7004     0   289     0     0     0  1493  3474     0     0     0     0     0  1748
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    6872     0   289     0     0   226     0  1924  2932     0     0     0    17     0  1484
+Right   7004     0   289     0     0     0     0  1493  3474     0     0     0     0     0  1748
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR AT3_X5
@@ -432,14 +432,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    3744     0   289     0   148     0  1249  1208     0     0     0     0     0   850
-Right   3744     0   289     0     0     0   874  1504     0     8     0     0     0  1069
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    3744     0   289     0     0   148     0  1249  1208     0     0     0     0     0   850
+Right   3744     0   289     0     0     0     0   874  1504     0     8     0     0     0  1069
 Pair Stats:
 considered 21, high end compl 20, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR AT3_X6
@@ -503,14 +503,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4819     0   244     0     0     0  1696  1512     0     0     0     0     0  1367
-Right   4414     0   289     0   103     0  1578  1288     0     0    14     0     0  1142
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4819     0   244     0     0     0     0  1696  1512     0     0     0     0     0  1367
+Right   4414     0   289     0     0   103     0  1578  1288     0     0    14     0     0  1142
 Pair Stats:
 considered 3, high end compl 2, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR CETP_X1
@@ -571,14 +571,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4274     0   289     0    68     0   569  2779     0     0     0     0     0   569
-Right   4274     0   289     0     0     0   375  2978     0     0     0     0     0   632
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4274     0   289     0     0    68     0   569  2779     0     0     0     0     0   569
+Right   4274     0   289     0     0     0     0   375  2978     0     0     0     0     0   632
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR CETP_X2
@@ -633,14 +633,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4078     0   123     0     7     0   374  2820     0     0     0     0     0   754
-Right   2584     0   289     0     1     0    95  1901     0     0     0     0     0   298
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4078     0   123     0     0     7     0   374  2820     0     0     0     0     0   754
+Right   2584     0   289     0     0     1     0    95  1901     0     0     0     0     0   298
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR CETP_X3
@@ -704,14 +704,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4444     0   289     0     0     0   844  2220     0     0     0     0     0  1091
-Right   4444     0   289     0     0     0   400  2950     0     0     0     0     0   805
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4444     0   289     0     0     0     0   844  2220     0     0     0     0     0  1091
+Right   4444     0   289     0     0     0     0   400  2950     0     0     0     0     0   805
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR CETP_X4
@@ -772,14 +772,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    3804     0   289     0     0     0   382  2360     0     0     0     0     0   773
-Right   3804     0   289     0     0     0   348  2565     0     0     0     0     0   602
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    3804     0   289     0     0     0     0   382  2360     0     0     0     0     0   773
+Right   3804     0   289     0     0     0     0   348  2565     0     0     0     0     0   602
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR CETP_X5
@@ -840,14 +840,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    3974     0   289     0     0     0   348  2707     0     0     0     0     0   630
-Right   3974     0   289     0    34     0   889  1971     0     0     0     0     0   791
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    3974     0   289     0     0     0     0   348  2707     0     0     0     0     0   630
+Right   3974     0   289     0     0    34     0   889  1971     0     0     0     0     0   791
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR CETP_X6
@@ -908,14 +908,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    3794     0   289     0     0     0   681  1966     0     0     0     0     0   858
-Right   3794     0   289     0     0     0   274  2616     2     3     0     0     0   610
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    3794     0   289     0     0     0     0   681  1966     0     0     0     0     0   858
+Right   3794     0   289     0     0     0     0   274  2616     2     3     0     0     0   610
 Pair Stats:
 considered 40, high end compl 38, ok 2
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR CETP_X7
@@ -976,14 +976,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    3704     0   289     0     0     0   262  2572     0     3     0     0     0   578
-Right   3593     0   289     0    15     0   752  1654     0     0     0    22     0   861
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    3704     0   289     0     0     0     0   262  2572     0     3     0     0     0   578
+Right   3593     0   289     0     0    15     0   752  1654     0     0     0    22     0   861
 Pair Stats:
 considered 102, high any compl 81, high end compl 20, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR CETP_X8
@@ -1044,14 +1044,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4014     0   289     0     0     0   645  2223     0     0     0     0     0   857
-Right   3861     0   289     0     8     0   269  2629     0     0     0    22     0   644
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4014     0   289     0     0     0     0   645  2223     0     0     0     0     0   857
+Right   3861     0   289     0     0     8     0   269  2629     0     0     0    22     0   644
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR CETP_X9
@@ -1109,14 +1109,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    3527     0   272     0     0     0   323  2355     0     0     0     0     0   577
-Right   4589     0   154     0     0     0   711  2838     0     0     0     0     0   886
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    3527     0   272     0     0     0     0   323  2355     0     0     0     0     0   577
+Right   4589     0   154     0     0     0     0   711  2838     0     0     0     0     0   886
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR CETP_X10
@@ -1162,14 +1162,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    2785     0   100     0     0     0   259  1906     0     0     0     0     0   520
-Right   1498     0   226     0     0     0   153   792     0     0     0    22     0   305
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    2785     0   100     0     0     0     0   259  1906     0     0     0     0     0   520
+Right   1498     0   226     0     0     0     0   153   792     0     0     0    22     0   305
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR CETP_X11
@@ -1215,14 +1215,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    2831     0   106     0    50     0   286  1982     0     0     0     0     0   407
-Right   2741     0   116     0    42     0   336  1775     0     0     0     0     0   472
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    2831     0   106     0     0    50     0   286  1982     0     0     0     0     0   407
+Right   2741     0   116     0     0    42     0   336  1775     0     0     0     0     0   472
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR CETP_X12
@@ -1283,14 +1283,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    3686     0   289     0   114     0   669  1809     0     0     0    14     0   791
-Right   3774     0   289     0     0     0   619  2094     0     0     0     0     0   772
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    3686     0   289     0     0   114     0   669  1809     0     0     0    14     0   791
+Right   3774     0   289     0     0     0     0   619  2094     0     0     0     0     0   772
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR CETP_X13
@@ -1348,14 +1348,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    3282     0   289     0     1     0   523  1815     0     0     0    22     0   632
-Right   3434     0   289     0     0     0   586  1682     0     0     0     0     0   877
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    3282     0   289     0     0     1     0   523  1815     0     0     0    22     0   632
+Right   3434     0   289     0     0     0     0   586  1682     0     0     0     0     0   877
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR CETP_X14
@@ -1404,14 +1404,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    3425     0    52     0     3     0   235  2489     0     2     0    23     0   621
-Right   1454     0   289     0     0     0    83   882     0     0     0     0     0   200
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    3425     0    52     0     0     3     0   235  2489     0     2     0    23     0   621
+Right   1454     0   289     0     0     0     0    83   882     0     0     0     0     0   200
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR CETP_X15
@@ -1469,14 +1469,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    3343     0   289     0    24     0   488  1840     0     0     0    24     0   678
-Right   3758     0   245     0     1     0   356  2464     0     0     3    22     0   667
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    3343     0   289     0     0    24     0   488  1840     0     0     0    24     0   678
+Right   3758     0   245     0     0     1     0   356  2464     0     0     3    22     0   667
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR CETP_X16
@@ -1537,14 +1537,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    3689     0   286     0     3     0   288  2492     0     0     0    22     0   598
-Right   3637     0   289     0     3     0   299  2316     0     0     0    25     0   705
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    3689     0   286     0     0     3     0   288  2492     0     0     0    22     0   598
+Right   3637     0   289     0     0     3     0   299  2316     0     0     0    25     0   705
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F2_X1
@@ -1605,14 +1605,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4041     0   289     0    21     0   498  2476     0     0     0    22     0   735
-Right   4194     0   289     0     8     0   235  3082     0     0     2     0     0   578
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4041     0   289     0     0    21     0   498  2476     0     0     0    22     0   735
+Right   4194     0   289     0     0     8     0   235  3082     0     0     2     0     0   578
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F2_X2
@@ -1676,14 +1676,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4542     0   289     0    14     0   245  3332     0     0     0    23     0   639
-Right   4704     0   289     0    96     0   191  3583     0     4     0     0     0   541
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4542     0   289     0     0    14     0   245  3332     0     0     0    23     0   639
+Right   4704     0   289     0     0    96     0   191  3583     0     4     0     0     0   541
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F2_X3
@@ -1741,14 +1741,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    3344     0   289     0     7     0   659  1679     0     0     0     0     0   710
-Right   3344     0   289     0     1     0   379  2040     0     0     0     0     0   635
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    3344     0   289     0     0     7     0   659  1679     0     0     0     0     0   710
+Right   3344     0   289     0     0     1     0   379  2040     0     0     0     0     0   635
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F2_X4
@@ -1806,14 +1806,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    3604     0   289     0     1     0   409  2209     3    14     0     0     0   679
-Right   3497     0   289     0   107     0   371  2132     0     0     0    18     0   580
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    3604     0   289     0     0     1     0   409  2209     3    14     0     0     0   679
+Right   3497     0   289     0     0   107     0   371  2132     0     0     0    18     0   580
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F2_X5
@@ -1874,14 +1874,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4154     0   289     0     2     0   468  2494     0     0     0     0     0   901
-Right   4154     0   289     0    14     0   310  2916     0     0     0     0     0   625
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4154     0   289     0     0     2     0   468  2494     0     0     0     0     0   901
+Right   4154     0   289     0     0    14     0   310  2916     0     0     0     0     0   625
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F2_X6
@@ -1945,14 +1945,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4464     0   289     0     2     0   392  2999     0     0     0     0     0   782
-Right   4464     0   289     0    40     0   325  3245     0     0     0     0     0   565
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4464     0   289     0     0     2     0   392  2999     0     0     0     0     0   782
+Right   4464     0   289     0     0    40     0   325  3245     0     0     0     0     0   565
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F2_X7
@@ -2025,14 +2025,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    6244     0   289     0    60     0   973  3795     0     0     0     0     0  1127
-Right   5938     0   289     0    51     0   580  3983     0     0     0    44     0   991
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    6244     0   289     0     0    60     0   973  3795     0     0     0     0     0  1127
+Right   5938     0   289     0     0    51     0   580  3983     0     0     0    44     0   991
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F2_X8
@@ -2096,14 +2096,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4078     0   289     0    87     0   484  2399     0     1     0    44     0   774
-Right   4384     0   289     0    97     0   244  3201     0     0     0     0     0   553
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4078     0   289     0     0    87     0   484  2399     0     1     0    44     0   774
+Right   4384     0   289     0     0    97     0   244  3201     0     0     0     0     0   553
 Pair Stats:
 considered 14, high end compl 12, ok 2
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F2_X9
@@ -2167,14 +2167,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4212     0   289     0   182     0   233  2939     0     0     0    22     0   547
-Right   4248     0   289     0    80     0   415  2693     0     0     0    23     0   748
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4212     0   289     0     0   182     0   233  2939     0     0     0    22     0   547
+Right   4248     0   289     0     0    80     0   415  2693     0     0     0    23     0   748
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F2_X10
@@ -2238,14 +2238,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4774     0   289     0   210     0   485  3153     0     0     0     0     0   637
-Right   4621     0   289     0     8     0   474  3110     0     0     0    22     0   718
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4774     0   289     0     0   210     0   485  3153     0     0     0     0     0   637
+Right   4621     0   289     0     0     8     0   474  3110     0     0     0    22     0   718
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F2_X11
@@ -2309,14 +2309,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4834     0   289     0     0     0   620  3010     0     0     0     0     0   915
-Right   4762     0   289     0   176     0   739  2528     0     0     0    13     0  1017
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4834     0   289     0     0     0     0   620  3010     0     0     0     0     0   915
+Right   4762     0   289     0     0   176     0   739  2528     0     0     0    13     0  1017
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F2_X12
@@ -2383,14 +2383,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4914     0   289     0    56     0   524  3341     0     0     0     0     0   704
-Right   4914     0   289     0    83     0   976  2660     0     0     0     0     0   906
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4914     0   289     0     0    56     0   524  3341     0     0     0     0     0   704
+Right   4914     0   289     0     0    83     0   976  2660     0     0     0     0     0   906
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F2_X13
@@ -2451,14 +2451,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    3804     0   289     0    12     0   652  1841     0     0     0     0     0  1010
-Right   3804     0   289     0     0     0   873  1715     0     5     0     0     0   922
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    3804     0   289     0     0    12     0   652  1841     0     0     0     0     0  1010
+Right   3804     0   289     0     0     0     0   873  1715     0     5     0     0     0   922
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F2_X14
@@ -2519,14 +2519,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4475     0   230     0     0     0   988  2162     0     0     0     0     0  1095
-Right   3944     0   289     0    74     0   898  1848     0     2     0     0     0   833
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4475     0   230     0     0     0     0   988  2162     0     0     0     0     0  1095
+Right   3944     0   289     0     0    74     0   898  1848     0     2     0     0     0   833
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F2R_X1
@@ -2569,14 +2569,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    2940     0     0     0   829     0    31  1984     0     0     0     0     0    96
-Right    951     0   226     0   209     0     0   510     0     0     0     0     0     6
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    2940     0     0     0     0   829     0    31  1984     0     0     0     0     0    96
+Right    951     0   226     0     0   209     0     0   510     0     0     0     0     0     6
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F2R_X2-seg1
@@ -2637,14 +2637,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    6710     0     0     0     4     0  1539  3376     0     0     1     0     0  1790
-Right   6710     0     0     0     4     0  1540  3376     0     0     2     0     0  1788
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    6710     0     0     0     0     4     0  1539  3376     0     0     1     0     0  1790
+Right   6710     0     0     0     0     4     0  1540  3376     0     0     2     0     0  1788
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F2R_X2-seg2
@@ -2708,14 +2708,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4999     0   227     0     0     0  1458  1982     0     0     0    22     0  1310
-Right   6997     0     0     0   109     0  2483  2360     0     0     0    22     0  2023
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4999     0   227     0     0     0     0  1458  1982     0     0     0    22     0  1310
+Right   6997     0     0     0     0   109     0  2483  2360     0     0     0    22     0  2023
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F3_X1
@@ -2776,14 +2776,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4094     0   289     0  1473     0    23  2263     0     0     0     0     0    46
-Right   4094     0   289     0   716     0   101  2783     0     0     0     0     0   205
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4094     0   289     0     0  1473     0    23  2263     0     0     0     0     0    46
+Right   4094     0   289     0     0   716     0   101  2783     0     0     0     0     0   205
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F3_X2
@@ -2844,14 +2844,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4082     0   289     0    83     0  1878   779     0     0     1    20     0  1032
-Right   4214     0   289     0   232     0  1968   682     0     0     0     0     0  1043
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4082     0   289     0     0    83     0  1878   779     0     0     1    20     0  1032
+Right   4214     0   289     0     0   232     0  1968   682     0     0     0     0     0  1043
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F3_X3
@@ -2918,14 +2918,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4965     0   289     0    54     0  1212  2106     0     0    28    22     0  1254
-Right   5005     0   289     0   185     0  1231  1945     0     0     0    11     0  1344
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4965     0   289     0     0    54     0  1212  2106     0     0    28    22     0  1254
+Right   5005     0   289     0     0   185     0  1231  1945     0     0     0    11     0  1344
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F3_X4
@@ -2989,14 +2989,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4884     0   289     0   320     0  1911  1322     0     6     0     0     0  1036
-Right   4770     0   289     0   176     0  1330  1913     0     0     0    21     0  1041
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4884     0   289     0     0   320     0  1911  1322     0     6     0     0     0  1036
+Right   4770     0   289     0     0   176     0  1330  1913     0     0     0    21     0  1041
 Pair Stats:
 considered 36, high end compl 33, ok 3
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F3_X5
@@ -3060,14 +3060,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4694     0   289     0     4     0  2035   844     0     0     0     0     0  1522
-Right   4397     0   289     0    28     0  1323  1565     0     4     0    44     0  1144
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4694     0   289     0     0     4     0  2035   844     0     0     0     0     0  1522
+Right   4397     0   289     0     0    28     0  1323  1565     0     4     0    44     0  1144
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F3_X6
@@ -3131,14 +3131,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4464     0   289     0    57     0  1831   878     0     0     0     0     0  1409
-Right   4311     0   289     0    51     0  1766   895     0     0     0    22     0  1288
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4464     0   289     0     0    57     0  1831   878     0     0     0     0     0  1409
+Right   4311     0   289     0     0    51     0  1766   895     0     0     0    22     0  1288
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F5_X10
@@ -3181,14 +3181,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    2597     0    32     0   195     0  1010   658     0    23     8     0     0   671
-Right   2435     0    50     0     0     0  1068   632     0     0     0     0     0   685
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    2597     0    32     0     0   195     0  1010   658     0    23     8     0     0   671
+Right   2435     0    50     0     0     0     0  1068   632     0     0     0     0     0   685
 Pair Stats:
 considered 18, high end compl 16, ok 2
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F7_X1
@@ -3249,14 +3249,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    3572     0   289     0     0     0   118  2723     0     0     0    23     0   419
-Right   3734     0   289     0    17     0   289  2735     0     1     0     0     0   403
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    3572     0   289     0     0     0     0   118  2723     0     0     0    23     0   419
+Right   3734     0   289     0     0    17     0   289  2735     0     1     0     0     0   403
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F7_X2
@@ -3317,14 +3317,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    3301     0   289     0    28     0    14  2710     0     1     0    65     0   194
-Right   3601     0   289     0    16     0   390  2278     0     0     0    22     0   606
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    3301     0   289     0     0    28     0    14  2710     0     1     0    65     0   194
+Right   3601     0   289     0     0    16     0   390  2278     0     0     0    22     0   606
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F7_X2'
@@ -3388,14 +3388,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4704     0   289     0  1097     0    35  3097     0     6     0     0     0   180
-Right   4704     0   289     0  1078     0   138  2874     0     0     0     0     0   325
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4704     0   289     0     0  1097     0    35  3097     0     6     0     0     0   180
+Right   4704     0   289     0     0  1078     0   138  2874     0     0     0     0     0   325
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F7_X3
@@ -3453,14 +3453,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    3344     0   289     0     2     0   424  1910     0     0     0     0     0   719
-Right   3344     0   289     0     0     0   284  2312     8    13     7     0     0   431
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    3344     0   289     0     0     2     0   424  1910     0     0     0     0     0   719
+Right   3344     0   289     0     0     0     0   284  2312     8    13     7     0     0   431
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F7_X4
@@ -3521,14 +3521,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4234     0   289     0     2     0   537  2588     0     0     0     0     0   818
-Right   4234     0   289     0    81     0   378  2891     0     0     0     0     0   595
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4234     0   289     0     0     2     0   537  2588     0     0     0     0     0   818
+Right   4234     0   289     0     0    81     0   378  2891     0     0     0     0     0   595
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F7_X5
@@ -3592,14 +3592,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4351     0   289     0   139     0   152  3259     0     0     0    22     0   490
-Right   4504     0   289     0     1     0   499  3030     0     0     2     0     0   683
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4351     0   289     0     0   139     0   152  3259     0     0     0    22     0   490
+Right   4504     0   289     0     0     1     0   499  3030     0     0     2     0     0   683
 Pair Stats:
 considered 20, high any compl 8, high end compl 10, ok 2
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F7_X6
@@ -3660,14 +3660,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    3891     0   289     0    43     0   599  2265     0     0     0    44     0   651
-Right   3894     0   289     0    11     0   463  2371     0     1     0    44     0   715
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    3891     0   289     0     0    43     0   599  2265     0     0     0    44     0   651
+Right   3894     0   289     0     0    11     0   463  2371     0     1     0    44     0   715
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F7_X7
@@ -3731,14 +3731,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4032     0   289     0     6     0   577  2278     0     0     0    44     0   838
-Right   4181     0   289     0    10     0   236  3155     0     5     0    22     0   464
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4032     0   289     0     0     6     0   577  2278     0     0     0    44     0   838
+Right   4181     0   289     0     0    10     0   236  3155     0     5     0    22     0   464
 Pair Stats:
 considered 126, high any compl 28, high end compl 97, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR F7_X8
@@ -3823,14 +3823,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    8901     0   289     0    87     0   201  7523     0     0     0    22     0   779
-Right   9054     0   289     0    79     0  1105  6374     0     1     0     0     0  1206
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    8901     0   289     0     0    87     0   201  7523     0     0     0    22     0   779
+Right   9054     0   289     0     0    79     0  1105  6374     0     1     0     0     0  1206
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HCF2_X2
@@ -3933,14 +3933,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left   12144     0   289     0    12     0  3242  5342     0     0     0     0     0  3259
-Right  12144     0   289     0    15     0  3651  4687     0     7     0     0     0  3495
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left   12144     0   289     0     0    12     0  3242  5342     0     0     0     0     0  3259
+Right  12144     0   289     0     0    15     0  3651  4687     0     7     0     0     0  3495
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HCF2_X3
@@ -4010,14 +4010,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    5543     0   289     0     0     0  1266  2461     0     0     0    38     0  1489
-Right   5393     0   289     0    28     0  1331  2335    19     7     0    67     0  1317
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    5543     0   289     0     0     0     0  1266  2461     0     0     0    38     0  1489
+Right   5393     0   289     0     0    28     0  1331  2335    19     7     0    67     0  1317
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HCF2_X4
@@ -4081,14 +4081,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    4391     0   289     0   128     0  1570  1096     0     0     0    22     0  1286
-Right   4238     0   289     0    20     0   420  2770     0     0     0    44     0   695
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    4391     0   289     0     0   128     0  1570  1096     0     0     0    22     0  1286
+Right   4238     0   289     0     0    20     0   420  2770     0     0     0    44     0   695
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HCF2_X5
@@ -4188,14 +4188,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left   11554     0   289     0     7     0  2490  6121     0     0     0     0     0  2647
-Right  11432     0   289     0    57     0  2518  5947     0    12     0    20     0  2589
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left   11554     0   289     0     0     7     0  2490  6121     0     0     0     0     0  2647
+Right  11432     0   289     0     0    57     0  2518  5947     0    12     0    20     0  2589
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HMGCR_X1
@@ -4232,14 +4232,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    2030     0     0     0    67     0   611   842     3    38     0     0     0   469
-Right   1490     0    65     0     0     0   478   584     0     0     0     0     0   363
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    2030     0     0     0     0    67     0   611   842     3    38     0     0     0   469
+Right   1490     0    65     0     0     0     0   478   584     0     0     0     0     0   363
 Pair Stats:
 considered 11, high end compl 10, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HMGCR_X2
@@ -4270,14 +4270,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left     770     0     0     0     5     0   460    81     0     0     0     0     0   224
-Right    770     0     0     0    11     0   448    81     7     1     0     0     0   222
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left     770     0     0     0     0     5     0   460    81     0     0     0     0     0   224
+Right    770     0     0     0     0    11     0   448    81     7     1     0     0     0   222
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HMGCR_X3
@@ -4308,14 +4308,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left     530     0     0     0     1     0   361    44     0     0     0     0     0   124
-Right    530     0     0     0     1     0   416     4     0     0     0     0     0   109
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left     530     0     0     0     0     1     0   361    44     0     0     0     0     0   124
+Right    530     0     0     0     0     1     0   416     4     0     0     0     0     0   109
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HMGCR_X4
@@ -4346,14 +4346,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left     500     0     0     0     0     0   151   175     0     0     0     0     0   174
-Right    500     0     0     0     0     0   123   202     0     0     0     0     0   175
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left     500     0     0     0     0     0     0   151   175     0     0     0     0     0   174
+Right    500     0     0     0     0     0     0   123   202     0     0     0     0     0   175
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HMGCR_X5
@@ -4384,14 +4384,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left     710     0     0     0     0     0   212   246     0     1     0     0     0   251
-Right    710     0     0     0     0     0   202   248     0     1     1     0     0   258
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left     710     0     0     0     0     0     0   212   246     0     1     0     0     0   251
+Right    710     0     0     0     0     0     0   202   248     0     1     1     0     0   258
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HMGCR_X6
@@ -4422,14 +4422,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left     720     0     0     0     0     0   206   309     0     0     0     0     0   205
-Right    720     0     0     0     0     0   181   338     0     0     0     0     0   201
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left     720     0     0     0     0     0     0   206   309     0     0     0     0     0   205
+Right    720     0     0     0     0     0     0   181   338     0     0     0     0     0   201
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HMGCR_X7
@@ -4460,14 +4460,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left     820     0     0     0     3     0   162   464     0     0     0     0     0   191
-Right    820     0     0     0     3     0   237   349     0     0     0     0     0   231
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left     820     0     0     0     0     3     0   162   464     0     0     0     0     0   191
+Right    820     0     0     0     0     3     0   237   349     0     0     0     0     0   231
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HMGCR_X8
@@ -4501,14 +4501,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    1260     0     0     0     0     0   540   321     0     0     0     0     0   399
-Right   1260     0     0     0     0     0   530   315     0     0    20     0     0   395
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    1260     0     0     0     0     0     0   540   321     0     0     0     0     0   399
+Right   1260     0     0     0     0     0     0   530   315     0     0    20     0     0   395
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HMGCR_X9
@@ -4548,14 +4548,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    1977     0     0     0     1     0  1154   176     0     1     0    22     0   623
-Right   1977     0     0     0     0     0  1125   203     0     0     0    22     0   627
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    1977     0     0     0     0     1     0  1154   176     0     1     0    22     0   623
+Right   1977     0     0     0     0     0     0  1125   203     0     0     0    22     0   627
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HMGCR_X10
@@ -4586,14 +4586,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left     550     0     0     0     0     0   222   109     0     0     0     0     0   219
-Right    550     0     0     0     0     0   227   116     0     0     0     0     0   207
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left     550     0     0     0     0     0     0   222   109     0     0     0     0     0   219
+Right    550     0     0     0     0     0     0   227   116     0     0     0     0     0   207
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HMGCR_X11
@@ -4624,14 +4624,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left     540     0     0     0     0     0   135   249     0     1     0     0     0   155
-Right    540     0     0     0     0     0   181   215     0     0     0     0     0   144
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left     540     0     0     0     0     0     0   135   249     0     1     0     0     0   155
+Right    540     0     0     0     0     0     0   181   215     0     0     0     0     0   144
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HMGCR_X12
@@ -4668,14 +4668,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    1600     0     0     0     0     0   646   347     0     0     0     0     0   607
-Right   1600     0     0     0     0     0   707   324     0     0     0     0     0   569
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    1600     0     0     0     0     0     0   646   347     0     0     0     0     0   607
+Right   1600     0     0     0     0     0     0   707   324     0     0     0     0     0   569
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HMGCR_X13
@@ -4709,14 +4709,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    1240     0     0     0     1     0   314   591     0     0     0     0     0   334
-Right   1240     0     0     0     1     0   280   628     0     0     0     0     0   331
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    1240     0     0     0     0     1     0   314   591     0     0     0     0     0   334
+Right   1240     0     0     0     0     1     0   280   628     0     0     0     0     0   331
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HMGCR_X14
@@ -4750,14 +4750,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    1230     0     0     0     0     0    83   898     0     0     0     0     0   249
-Right   1230     0     0     0     0     0   122   805     0     0     0     0     0   303
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    1230     0     0     0     0     0     0    83   898     0     0     0     0     0   249
+Right   1230     0     0     0     0     0     0   122   805     0     0     0     0     0   303
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HMGCR_X15
@@ -4788,14 +4788,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left     710     0     0     0     0     0   257   250     0     0     0     0     0   203
-Right    710     0     0     0     0     0   172   343     0     0     0     0     0   195
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left     710     0     0     0     0     0     0   257   250     0     0     0     0     0   203
+Right    710     0     0     0     0     0     0   172   343     0     0     0     0     0   195
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HMGCR_X16
@@ -4829,14 +4829,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    1360     0     0     0     0     0   684   181     0     8     2     0     0   485
-Right   1360     0     0     0     0     0   616   248     0     1     0     0     0   495
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    1360     0     0     0     0     0     0   684   181     0     8     2     0     0   485
+Right   1360     0     0     0     0     0     0   616   248     0     1     0     0     0   495
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HMGCR_X17
@@ -4870,14 +4870,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    1060     0     0     0     1     0   295   528     0     3     0     0     0   233
-Right   1060     0     0     0     1     0   217   601     0     0     0     0     0   241
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    1060     0     0     0     0     1     0   295   528     0     3     0     0     0   233
+Right   1060     0     0     0     0     1     0   217   601     0     0     0     0     0   241
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HMGCR_X18
@@ -4911,14 +4911,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    1240     0     0     0    18     0   522   395     0     0     2     0     0   303
-Right   1240     0     0     0    18     0   504   411     0     0     0     0     0   307
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    1240     0     0     0     0    18     0   522   395     0     0     2     0     0   303
+Right   1240     0     0     0     0    18     0   504   411     0     0     0     0     0   307
 Pair Stats:
 considered 62, high end compl 59, ok 3
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HMGCR_X19
@@ -4952,14 +4952,14 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left    1200     0     0     0     0     0   119   823     0     0     0     0     0   258
-Right   1200     0     0     0     0     0   167   784     0     0     0     0     0   249
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left    1200     0     0     0     0     0     0   119   823     0     0     0     0     0   258
+Right   1200     0     0     0     0     0     0   167   784     0     0     0     0     0   249
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
 PRIMER PICKING RESULTS FOR HMGCR_X20
@@ -4993,13 +4993,13 @@ KEYS (in order of precedence):
 
 
 Statistics
-         con   too    in    in          no    tm    tm  high  high  high        high      
-         sid  many   tar  excl   bad    GC   too   too   any    3'   lib  poly   end      
-        ered    Ns   get   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left     444     0    99     0     0     0    91   152     0     0     0     0     0   102
-Right   1150     0     0     0    42     0   311   512    26     3     0    20     0   236
+         con   too    in    in   not          no    tm    tm  high  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
+Left     444     0    99     0     0     0     0    91   152     0     0     0     0     0   102
+Right   1150     0     0     0     0    42     0   311   512    26     3     0    20     0   236
 Pair Stats:
 considered 1, ok 1
-primer3 release 1.1.1
+primer3 release 2.0.0
 
 
