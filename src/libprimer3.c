@@ -1527,7 +1527,7 @@ choose_internal_oligo(p3retval *retval,
         if (!OK_OR_MUST_USE(h)) continue;
       }
        
-      if (h->repeat_sim.score == NULL) { /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
+      if (h->repeat_sim.score == NULL) {
         oligo_repeat_library_mispriming(h, pa, sa, OT_INTL, &retval->intl.expl,
 					dpal_arg_to_use);
         if (!OK_OR_MUST_USE(h)) continue;
