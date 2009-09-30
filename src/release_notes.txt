@@ -1,20 +1,17 @@
 release 2.2.0 alpha 2009-10-XX ==========================================
 
-This release adds multiple new feature to primer3_core and related
-C code, which is our reason for releasing it as a new alpha.
+This release adds multiple new features to primer3_core and related
+C code.
 
-The enhancments fall under several categories:
+The enhancements fall under several categories:
 
-PRIMER/OLIGO SECONDARY STRUCTURE AND MISPRIMING PREDICTION
+1. PRIMER/OLIGO SECONDARY STRUCTURE AND PRIMER-DIMER AND TEMPLATE
+MISPRIMING PREDICTION
 
-We have added capabilities for predictingimplemented parallel tags for secondary
-structure prediction to existing (release 2.0.0 and older) primer3 tags.
-These new tags are principally the same as the tags they are parallel to,
-but the method followed for calculating them is based on nearest-neighbour 
-thermodynamical approach not just analyzing the Watson-Crick basepairs. 
-Additionally, the prediction of monomer structure, is added.
+We added capabilities for predicting secondary structure,
+primer-dimer, and template mispriming based on a thermodynamic model.
 
-  INPUT/OUTPUT TAGS:
+INPUT/OUTPUT TAGS:
 
 Added tags PRIMER_THERMODYNAMICAL_ALIGNMENT,
 PRIMER_INTERNAL_MAX_{HAIRPIN,SELF_ANY_TH,SELF_END_TH,TEMPLATE_MISHYB_TH},
@@ -24,21 +21,40 @@ PRIMER_PAIR_MAX_{COMPL_ANY_TH,COMPL_END_TH,HAIRPIN,TEMPLATE_MISPRIMING_TH},
 PRIMER_PAIR_WT_{COMPL_ANY_TH,COMPL_END_TH,HAIRPIN,TEMPLATE_MISPRIMING_TH},
 PRIMER_WT_{HAIRPIN,SELF_ANY_TH,SELF_END_TH,TEMPLATE_MISPRIMING_TH}
 
-See the README for details of what these tags do. The tag
-PRIMER_THERMODYNAMICAL_ALIGNMENT is used to apply new tags.
+See the documentation for details. The tag
+PRIMER_THERMODYNAMICAL_ALIGNMENT=1 directs primer3_core to use the
+thermodynamic alignments.
 
-  NEW OR IMPROVED FUNCTIONALITY:
+NEW EXECUTABLE: ntthal
 
-New executable is implemented; it is analogical to ntdpal and is called ntthal. 
-Between two sequences, ntthal finds alignment/sec structure, that has the highest melting
-temperature. Ntthal is based on nearest-neigbhour thermodynamical approach.
-For input parametes to ntthal, execute: ./ntthal (without parameters).
+ntthal is analogous to ntdpal.  Between two sequences, ntthal finds
+alignment/sec structure, that has the highest melting
+temperature. Ntthal is based on nearest-neighbor thermodynamical
+approach.  For input parameters to ntthal, execute: ./ntthal (without
+arguments).
 
-NOTE! New script added before compiling the code - configure.sh. This script
-tells to Makefile the path of thermodynamic tables used by thermodynamical
-alignment. If you do not intend to use thermodynamical approch
-(PRIMER_THERMODYNAMICAL_ALIGNMENT=0), then it is not required you to execute
-configure.sh.
+2. NEW COMMAND LINE FLAGS AND ARGUMENTS
+
+primer3_core now has a more conventional command line.  For example,
+you can type
+
+primer3_core -output my_output -error my_error my_input
+
+and primer3_core will take its input from my_input and put
+its outputs in the files my_output and my_error.  There
+is also a command line flag -echo_settings_file to cause
+the settings file contents to be echoed to output.
+
+3. NEW INPUT TAGS TO CONTROL PRIMER LOCATION
+
+See the documentation for SEQUENCE_PRIMER_PAIR_OK_REGION_LIST.  Tags
+SEQUENCE_OVERLAP_JUNCTION_LIST,
+PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION,
+PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION have _replaced_
+SEQUENCE_PRIMER_OVERLAP_POS and PRIMER_POS_OVERLAP_TO_END_DIST.  See
+the documentation.
+
+4. PERFORMANCE IMPROVEMENTS
 
 release 2.0.0 alpha 2008-12-15 ==========================================
 
