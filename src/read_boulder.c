@@ -152,6 +152,7 @@ read_boulder_record(FILE *file_input,
                     seq_args *sa, 
                     pr_append_str *glob_err,  /* Really should be called fatal_parse_err */
                     pr_append_str *nonfatal_parse_err,
+		    pr_append_str *warnings,
                     read_boulder_record_results *res) 
 {
   int line_len;
@@ -164,6 +165,7 @@ read_boulder_record(FILE *file_input,
   pr_append_str *non_fatal_err;
   char *repeat_file_path = NULL, *int_repeat_file_path = NULL;
   int tmp_int;
+  int min_3_prime = 0, min_5_prime = 0;
 
   non_fatal_err = nonfatal_parse_err;
 
@@ -588,8 +590,16 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_SEQUENCING_SPACING", pa->sequencing.spacing);
       COMPARE_INT("PRIMER_SEQUENCING_INTERVAL", pa->sequencing.interval);
       COMPARE_INT("PRIMER_SEQUENCING_ACCURACY", pa->sequencing.accuracy);
-      COMPARE_INT("PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION", pa->min_5_prime_overlap_of_junction);
-      COMPARE_INT("PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION", pa->min_3_prime_overlap_of_junction);
+      if (COMPARE("PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION")) {
+	parse_int("PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION", datum, &pa->min_5_prime_overlap_of_junction, parse_err);
+	min_5_prime = 1;
+	continue;
+      }
+      if (COMPARE("PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION")) {
+	parse_int("PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION", datum, &pa->min_3_prime_overlap_of_junction, parse_err);
+	min_3_prime = 1;
+	continue;
+      }
       COMPARE_AND_MALLOC("PRIMER_TASK", task_tmp);
       COMPARE_INT("PRIMER_PICK_RIGHT_PRIMER", pa->pick_right_primer);
       COMPARE_INT("PRIMER_PICK_INTERNAL_OLIGO", pa->pick_internal_oligo);
@@ -928,6 +938,14 @@ read_boulder_record(FILE *file_input,
   if (pa->primer_task == pick_pcr_primers_and_hyb_probe) {
     PR_ASSERT(pa->pick_internal_oligo);
   }
+
+  if ((min_3_prime || min_5_prime) && (sa->primer_overlap_junctions_count == 0)) {
+    pr_append_new_chunk(warnings,
+			"SEQUENCE_OVERLAP_JUNCTION_LIST not given, but "
+			"PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION or "
+			"PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION specified");
+  }
+
   return 1;
 }
 #undef COMPARE
@@ -944,6 +962,7 @@ read_p3_file(const char *file_name,
 	     seq_args *sa,
 	     pr_append_str *fatal_err,
 	     pr_append_str *nonfatal_err,
+	     pr_append_str *warnings,
 	     read_boulder_record_results *read_boulder_record_res) 
 {
   /* Parameter for read_boulder_record */
@@ -995,7 +1014,7 @@ read_p3_file(const char *file_name,
     if (error == 0){
       ret_par = read_boulder_record(file, &strict_tags, &io_version, 
 				    echo_output, expected_file_type, pa, sa, fatal_err, 
-				    nonfatal_err, read_boulder_record_res);
+				    nonfatal_err, warnings, read_boulder_record_res);
     } else {
       pr_append_new_chunk(fatal_err, "Incorrect file format in ");
       pr_append(fatal_err, file_name);

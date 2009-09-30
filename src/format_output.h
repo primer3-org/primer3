@@ -56,5 +56,6 @@ void print_format_output(FILE *f,
 
 
 void format_error(FILE *f, const char* seq_name, const char *err);
+void format_warning(FILE *f, const char* seq_name, const char *err);
 
 #endif

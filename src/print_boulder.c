@@ -533,8 +533,19 @@ print_boulder(int io_version,
 }
 
 void
-print_boulder_error(const char *err) {
+print_boulder_error(const char *err) 
+{
   printf("PRIMER_ERROR=%s\n=\n", err);
+  if (fflush(stdout) == EOF) {
+    perror("fflush(stdout) failed");
+    exit(-1);
+  }
+}
+
+void
+print_boulder_warning(const char *err) 
+{
+  printf("PRIMER_WARNING=%s\n", err);
   if (fflush(stdout) == EOF) {
     perror("fflush(stdout) failed");
     exit(-1);

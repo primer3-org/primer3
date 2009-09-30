@@ -85,6 +85,7 @@ main(int argc, char *argv[])
 
   pr_append_str fatal_parse_err;
   pr_append_str nonfatal_parse_err;
+  pr_append_str warnings;
 
   /* Some variables needed by getopt */
   int opt, option_index = 0;
@@ -112,6 +113,7 @@ main(int argc, char *argv[])
 
   init_pr_append_str(&fatal_parse_err);
   init_pr_append_str(&nonfatal_parse_err);
+  init_pr_append_str(&warnings);
 
   /* Get the program name for correct error messages */
   pr_program_name = argv[0];
@@ -215,7 +217,7 @@ main(int argc, char *argv[])
   if (p3_settings_file[0] != '\0') {
     read_p3_file(p3_settings_file, settings, echo_settings && !format_output,
 		 global_pa, sarg, &fatal_parse_err, 
-		 &nonfatal_parse_err, &read_boulder_record_res);
+		 &nonfatal_parse_err, &warnings, &read_boulder_record_res);
     /* Check if the thermodynamical alignment flag was given */ 
     if (global_pa->thermodynamic_alignment == 1)
       read_thermodynamic_parameters(global_pa);
@@ -264,19 +266,21 @@ main(int argc, char *argv[])
     /* Reset all errors handlers and the return structure */
     pr_set_empty(&fatal_parse_err);
     pr_set_empty(&nonfatal_parse_err);
+    pr_set_empty(&warnings);
     retval = NULL;
 
     /* See read_boulder.h for documentation on read_boulder_record().*/
     if (!read_boulder_record(stdin, 
-                            &strict_tags, 
-                            &io_version,
-                            !format_output, 
-                            all_parameters,
-                            global_pa, 
-                            sarg, 
-                            &fatal_parse_err, 
-                            &nonfatal_parse_err,
-                            &read_boulder_record_res)) {
+			     &strict_tags, 
+			     &io_version,
+			     !format_output, 
+			     all_parameters,
+			     global_pa, 
+			     sarg, 
+			     &fatal_parse_err, 
+			     &nonfatal_parse_err,
+			     &warnings,
+			     &read_boulder_record_res)) {
       break; /* There were no more boulder records */
     }
 
@@ -314,6 +318,16 @@ main(int argc, char *argv[])
         print_boulder_error(nonfatal_parse_err.data);
       }
       goto loop_wrap_up;
+    }
+
+    /* Print any warnings and continue processing */
+    if (!pr_is_empty(&warnings)) {
+      if (format_output) {
+        format_warning(stdout, sarg->sequence_name, 
+		       warnings.data);
+      } else {
+        print_boulder_warning(warnings.data);
+      }
     }
     
     if (read_boulder_record_res.file_flag && sarg->sequence_name == NULL) {
@@ -405,6 +419,7 @@ main(int argc, char *argv[])
   destroy_seq_args(sarg);
   destroy_pr_append_str_data(&nonfatal_parse_err);
   destroy_pr_append_str_data(&fatal_parse_err);
+  destroy_pr_append_str_data(&warnings);
   destroy_dpal_thal_arg_holder();
   /* If it could not read input complain and die */
   if (0 == input_found) {

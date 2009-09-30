@@ -46,5 +46,6 @@ void   print_boulder(int,
                      int   exaplain_flag);
 
 void   print_boulder_error(const char *err);
+void   print_boulder_warning(const char *err);
 
 #endif

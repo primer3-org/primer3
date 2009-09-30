@@ -759,6 +759,15 @@ format_error(FILE *f, const char* seq_name, const char *err)
     fprintf(f, "INPUT PROBLEM: %s\n\n", err);
 }
 
+void
+format_warning(FILE *f, const char* seq_name, const char *err)
+{
+  if (NULL != seq_name)
+    fprintf(f, "WARNINGS FOR %s\n\n", seq_name);
+  if (err != NULL) 
+    fprintf(f, "INPUT PROBLEM: %s\n\n", err);
+}
+
 /* Format and print out one oligo */
 static void 
 format_oligos(FILE *f,
