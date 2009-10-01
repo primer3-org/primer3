@@ -178,6 +178,7 @@ typedef struct args_for_one_oligo_or_primer {
   /* Warning: also used for product Tm (TO DO: factor this out) */
   double salt_conc;
 
+  double divalent_conc;
   /*
     DIVALENT_CONC and DNTP_CONC are both needed for enabling use of
     divalent cations for calculation of melting temperature of short
@@ -192,7 +193,7 @@ typedef struct args_for_one_oligo_or_primer {
     is 0.0.  (New in v. 1.1.0, added by Maido Remm and Triinu
     Koressaar.)
   */
-  double divalent_conc;
+
   double dntp_conc;
 
   double dna_conc;
@@ -231,10 +232,12 @@ typedef struct args_for_one_oligo_or_primer {
  */
 
 typedef struct p3_global_settings {
+
   /* ================================================== */
   /* Arguments that control behavior of choose_primers() */
-  task   primer_task;          /* 2 if left primer only, 3 if right primer only,
-                                * 4 if internal oligo only.    */
+
+  task   primer_task; /* 2 if left primer only, 3 if right primer
+		       * only, 4 if internal oligo only.  */
 
   int    pick_left_primer;
   int    pick_right_primer;
@@ -278,10 +281,12 @@ typedef struct p3_global_settings {
   args_for_one_oligo_or_primer p_args;
   args_for_one_oligo_or_primer o_args;
 
+  tm_method_type tm_santalucia;  
   /* 
-     Added by T.Koressaar for updated table thermodynamics.  Specifies
-     details of melting temperature calculation.  (New in v. 1.1.0,
-     added by Maido Remm and Triinu Koressaar.)
+     tm_santalucia added by T.Koressaar for updated table
+     thermodynamics.  Specifies details of melting temperature
+     calculation.  (New in v. 1.1.0, added by Maido Remm and Triinu
+     Koressaar.)
       
      A value of 1 (recommended) directs primer3 to use the table of
      thermodynamic values and the method for melting temperature
@@ -306,14 +311,14 @@ typedef struct p3_global_settings {
        
      The default value is 0 only for backward compatibility.
   */
-  tm_method_type tm_santalucia;  
 
+  salt_correction_type salt_corrections; 
   /* 
-     Added by T.Koressaar for salt correction for Tm calculation.  A
-     value of 1 (recommended) directs primer3 to use the salt correction
-     formula in the paper [SantaLucia JR (1998) "A unified view of polymer,
-     dumbbell and oligonucleotide DNA nearest-neighbor thermodynamics",
-     Proc Natl Acad Sci 95:1460-65
+     salt_corrections added by T.Koressaar for salt correction for Tm
+     calculation.  A value of 1 (recommended) directs primer3 to use
+     the salt correction formula in the paper [SantaLucia JR (1998) "A
+     unified view of polymer, dumbbell and oligonucleotide DNA
+     nearest-neighbor thermodynamics", Proc Natl Acad Sci 95:1460-65
      http://dx.doi.org/10.1073/pnas.95.4.1460]
 
      A value of 0 directs primer3 to use the the salt correction
@@ -330,9 +335,10 @@ typedef struct p3_global_settings {
 
      The default is 0 only for backward compatibility.
   */
-  salt_correction_type salt_corrections; 
 
-  /* Arguments applicable to primers but not oligos */
+  /* ================================================== */
+  /* Start of arguments applicable to primers but not
+     oligos */
 
   double max_end_stability;
   /* The maximum value allowed for the delta
@@ -345,17 +351,18 @@ typedef struct p3_global_settings {
    * for the 5 3' bases of a primer.
    */
 
-  int    gc_clamp;              /* Required number of GCs at 3' end. */
+  int    gc_clamp;  /* Required number of GCs at 3' end. */
 
   /* ================================================== */
-  /* Arguments related to primer and/or oligo
+  /* Start of arguments related to primer and/or oligo
      location in the template. */
 
   int lowercase_masking; 
   /* 
-     Added by T.Koressaar. Enables design of primers from lowercase
-     masked template.  A value of 1 directs primer3 to reject primers
-     overlapping lowercase a base exactly at the 3' end.
+     lowercase_masking added by T.Koressaar. Enables design of primers
+     from lowercase masked template.  A value of 1 directs primer3 to
+     reject primers overlapping lowercase a base exactly at the 3'
+     end.
 
      This property relies on the assumption that masked features
      (e.g. repeats) can partly overlap primer, but they cannot overlap the
@@ -365,8 +372,8 @@ typedef struct p3_global_settings {
      overlap the 3'-end of primer.
   */
 
-  /* Parameters used to calculate the position of sequencing primers */
-  sequencing_parameters sequencing;
+  sequencing_parameters sequencing;  /* Used to calculate the position
+					of sequencing primers */
 
   double outside_penalty; /* Multiply this value times the number of NTs
                            * from the 3' end to the the (unique) target to
@@ -387,9 +394,9 @@ typedef struct p3_global_settings {
   /* ================================================== */
   /* Arguments for primer pairs and products. */
 
-  /* Warning,use p3_empty_gs_product_size_range and
-     p3_add_to_gs_product_size_range to set this next
-     three slot. */
+  /* Warning: Use p3_empty_gs_product_size_range and
+     p3_add_to_gs_product_size_range to set these next
+     three slots. */
   int    pr_min[PR_MAX_INTERVAL_ARRAY]; /* Minimum product sizes. */
   int    pr_max[PR_MAX_INTERVAL_ARRAY]; /* Maximum product sizes. */
   int    num_intervals;         /* 
@@ -411,18 +418,33 @@ typedef struct p3_global_settings {
   double pair_compl_end_th;
   double pair_hairpin_th;
    
-  /* Enables to use approach of thermodynamical alignment for dimer and hairpin calculations
-   0 - use alignment not based on thermodynamics - the only dimer calculation approach until primer3 2.0.0. 
-       No hairpins are calculated 
-   1 - use alignment based on thermodynamics. Hairpins are calculated  */
   int thermodynamic_alignment;
+  /* 
+     Enables to use approach of thermodynamical alignment for dimer
+     and hairpin calculations
    
-  /* Max difference between temperature of primer and temperature of
-     product.  Cannot be calculated until product is known. */
+     0 = Use alignment *not* based on thermodynamics - the only dimer
+     calculation approach until primer3 2.2.0.  No hairpins are
+     calculated.
+
+     1 = Use alignment based on thermodynamics. Hairpins are calculated
+  */
+
+  char *thermodynamic_params_path; /* Path to thermodynamic parameter
+				      files */
+
+  int thermodynamic_path_changed;
+  /* If this is set to 1, we need to re-read the thermodynamic
+     parameters from new path */
+
   double max_diff_tm; 
+  /* Maximum allowed difference between temperature of primer and
+     temperature of product.  Cannot be calculated until product is
+     known. */
 
   pair_weights  pr_pair_weights;
 
+  int    min_three_prime_distance; 
   /* Minimum number of base pairs between the 3' ends of any two left
      or any two right primers when returning num_return primer pairs.
      The objective is get 'truly different' primer pairs.
@@ -430,10 +452,11 @@ typedef struct p3_global_settings {
      Please see the user documentation (primer3_manual.htm) for
      PRIMER_MIN_THREE_PRIME_DISTANCE, which is exactly this value.
   */
-  int    min_three_prime_distance; 
   
-  /* The number of basepairs the primer has to overlap an overlap position. */
-  int    min_5_prime_overlap_of_junction;
+  int    min_5_prime_overlap_of_junction;   /* The number of basepairs
+					       the primer has to
+					       overlap an overlap
+					       junction. */
   int    min_3_prime_overlap_of_junction;
  
   int dump;  /* dump fields for global settings and seq args if dump == 1 */
@@ -462,65 +485,66 @@ typedef struct rep_sim {
 #if (ULONG_MAX < 4294967295UL)
 CANNOT COMPILE FOR THIS SYSTEM (< 32 bits in an unsigned long it)
 #endif
+
 typedef struct oligo_problems {
   unsigned long int prob;
 } oligo_problems;
      
-     typedef struct primer_rec {
+typedef struct primer_rec {
         
-        rep_sim repeat_sim;
-        /* Name of the sequence from given file in fasta
-         * format with maximum similarity to the oligo
-         * and corresponding alignment score.
-         */
+  rep_sim repeat_sim;
+  /* Name of the sequence from given file in fasta
+   * format with maximum similarity to the oligo
+   * and corresponding alignment score.
+   */
         
-        double temp; /* The oligo melting temperature calculated for the
-                      * primer. */
+  double temp; /* The oligo melting temperature calculated for the
+		* primer. */
         
-        double gc_content;
+  double gc_content;
         
-        double position_penalty; 
-        /*
-         * Penalty for distance from "ideal" position as specified
-         * by inside_penalty and outside_penalty.
-         */
+  double position_penalty; 
+  /*
+   * Penalty for distance from "ideal" position as specified
+   * by inside_penalty and outside_penalty.
+   */
 
-        double quality;  /* Part of objective function due to this primer. */
+  double quality;  /* Part of objective function due to this primer. */
         
-        double end_stability;
-        /* Delta G of disription of 5 3' bases. */
+  double end_stability;
+  /* Delta G of disription of 5 3' bases. */
         
-        int    start;    /* Position of the 5'-most base within the primer
-                          WITH RESPECT TO THE seq_args FIELD
-                          trimmed_seq. */
+  int    start;    /* Position of the 5'-most base within the primer
+		      WITH RESPECT TO THE seq_args FIELD
+		      trimmed_seq. */
         
-        int    seq_quality; /* Minimum quality score of bases included. */   
-        int    seq_end_quality;  /* Minimum quality core of the 5 3' bases. */
+  int    seq_quality; /* Minimum quality score of bases included. */   
+  int    seq_end_quality;  /* Minimum quality core of the 5 3' bases. */
         
         
-        double self_any; /* Self complementarity as local alignment * 100. */
+  double self_any; /* Self complementarity as local alignment * 100. */
         
-        double self_end; /* Self complementarity at 3' end * 100. */
+  double self_end; /* Self complementarity at 3' end * 100. */
         
-        double hairpin_th; /* hairpin, thermodynamical approach and calculated as any */
+  double hairpin_th; /* hairpin, thermodynamical approach and calculated as any */
         
-        double template_mispriming;
-        /* Max 3' complementarity to any ectopic site in template
-         on the given template strand. */
-        double template_mispriming_r;
-        /* Max 3' complementarity to any ectopic site in the
-         template on the reverse complement of the given template
-         strand. */
-        char   length;   /* Length of the oligo. */
-        char   num_ns;   /* Number of Ns in the oligo. */
+  double template_mispriming;
+  /* Max 3' complementarity to any ectopic site in template
+     on the given template strand. */
+  double template_mispriming_r;
+  /* Max 3' complementarity to any ectopic site in the
+     template on the reverse complement of the given template
+     strand. */
+  char   length;   /* Length of the oligo. */
+  char   num_ns;   /* Number of Ns in the oligo. */
         
-        char   must_use; /* Non-0 if the oligo must be used even if it is illegal. */
-        char   overlaps; /* Non-0 if the oligo overlaps some oligo used in one of the best pairs. */
+  char   must_use; /* Non-0 if the oligo must be used even if it is illegal. */
+  char   overlaps; /* Non-0 if the oligo overlaps some oligo used in one of the best pairs. */
         
-        oligo_problems problems;
-        char   overlaps_overlap_position;
+  oligo_problems problems;
+  char   overlaps_overlap_position;
         
-     } primer_rec;
+} primer_rec;
 
 const char *
        p3_primer_rec_problems_to_string(const primer_rec *);
@@ -588,8 +612,10 @@ typedef struct interval_array_t2 {
 typedef struct interval_array_t4 {
   int left_pairs[PR_MAX_INTERVAL_ARRAY][2];
   int right_pairs[PR_MAX_INTERVAL_ARRAY][2];
-  int any_left;  /* set to 1 if the empty pair ",," is given for any left interval */
-  int any_right; /* set to 1 if the empty pair ",," is given for any right interval */
+  int any_left;  /* set to 1 if the empty pair ",," is given for any
+		    left interval */
+  int any_right; /* set to 1 if the empty pair ",," is given for any
+		    right interval */
   int any_pair;  /* set to 1 if both intervals are given as empty */
   int count;     /* total number of pairs */
 } interval_array_t4;
@@ -614,7 +640,8 @@ typedef struct oligo_stats {
   int size_max;            /* Primer longer than minimal size.              */
   int compl_any;           /* Self-complementarity too high.                */
   int compl_end;           /* Self-complementarity at 3' end too high.      */
-  int hairpin_th;          /* Hairpin structure too stable in thermodynamical approach */
+  int hairpin_th;          /* Hairpin structure too stable in
+			      thermodynamical approach                      */
   int repeat_score;        /* Complementarity with repeat sequence too high.*/
   int poly_x;              /* Long mononucleotide sequence inside.          */
   int seq_quality;         /* Low quality of bases included.                */
@@ -623,11 +650,14 @@ typedef struct oligo_stats {
                              (valid for left primers only).                 */
   int template_mispriming; /* Template mispriming score too high.           */
   int ok;                  /* Number of acceptable oligos.                  */
-  int gmasked;             /* edited by T. Koressaar, number of gmasked oligo*/
-  int not_in_any_left_ok_region; /* Oligo not included in any of the left regions
-                                    given in PRIMER_PAIR_OK_REGION_LIST. */
-  int not_in_any_right_ok_region;/* Oligo not included in any of the right regions
-                                    given in PRIMER_PAIR_OK_REGION_LIST. */
+  int gmasked;             /* Added by T. Koressaar, number of gmasked
+			      oligos */
+  int not_in_any_left_ok_region; /* Oligo not included in any of the
+                                    left regions given in
+                                    PRIMER_PAIR_OK_REGION_LIST. */
+  int not_in_any_right_ok_region;/* Oligo not included in any of the
+                                    right regions given in
+                                    PRIMER_PAIR_OK_REGION_LIST. */
 } oligo_stats;
 
 typedef struct pair_stats {
@@ -686,7 +716,9 @@ typedef struct seq_args {
 
   interval_array_t4 ok_regions;
   
-  int primer_overlap_junctions[PR_MAX_INTERVAL_ARRAY]; /* List of overlap junction positions. */
+  int primer_overlap_junctions[PR_MAX_INTERVAL_ARRAY]; 
+  /* List of overlap junction positions. */
+
   int primer_overlap_junctions_count;
 
   int incl_s;             /* The 0-based start of included region. */
@@ -835,7 +867,6 @@ int p3_set_sa_right_input(seq_args *sargs, const char *right_input);
 int p3_set_sa_internal_input(seq_args *sargs, const char *internal_input);
 void p3_set_sa_empty_quality(seq_args *sargs);
 void p3_sa_add_to_quality_array(seq_args *sargs, int quality);
-
 
 
 /* The following three functions return 0 on success,
