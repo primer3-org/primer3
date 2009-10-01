@@ -91,7 +91,7 @@ EXES=$(PRIMER_EXE) ntdpal ntthal oligotm long_seq_tm_test
 all: $(EXES) $(LIBRARIES)
 
 clean_src:
-	-rm -f *.o $(EXES) *~ $(LIBRARIES) $(DYNLIBS) $(example_files) core
+	-rm -f *.o $(EXES) *~ $(LIBRARIES) $(DYNLIBS) $(example_files) core ../*~
 
 clean: clean_src
 	cd ../test/; make clean

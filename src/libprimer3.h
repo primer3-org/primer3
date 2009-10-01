@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky
 All rights reserved.
@@ -469,59 +469,59 @@ typedef struct oligo_problems {
 } oligo_problems;
      
      typedef struct primer_rec {
-	
-	rep_sim repeat_sim;
-	/* Name of the sequence from given file in fasta
-	 * format with maximum similarity to the oligo
-	 * and corresponding alignment score.
-	 */
-	
-	double temp; /* The oligo melting temperature calculated for the
-		      * primer. */
-	
-	double gc_content;
-	
-	double position_penalty; 
-	/*
-	 * Penalty for distance from "ideal" position as specified
-	 * by inside_penalty and outside_penalty.
-	 */
+        
+        rep_sim repeat_sim;
+        /* Name of the sequence from given file in fasta
+         * format with maximum similarity to the oligo
+         * and corresponding alignment score.
+         */
+        
+        double temp; /* The oligo melting temperature calculated for the
+                      * primer. */
+        
+        double gc_content;
+        
+        double position_penalty; 
+        /*
+         * Penalty for distance from "ideal" position as specified
+         * by inside_penalty and outside_penalty.
+         */
 
-	double quality;  /* Part of objective function due to this primer. */
-	
-	double end_stability;
-	/* Delta G of disription of 5 3' bases. */
-	
-	int    start;    /* Position of the 5'-most base within the primer
-			  WITH RESPECT TO THE seq_args FIELD
-			  trimmed_seq. */
-	
-	int    seq_quality; /* Minimum quality score of bases included. */   
-	int    seq_end_quality;  /* Minimum quality core of the 5 3' bases. */
-	
-	
-	double self_any; /* Self complementarity as local alignment * 100. */
-	
-	double self_end; /* Self complementarity at 3' end * 100. */
-	
-	double hairpin_th; /* hairpin, thermodynamical approach and calculated as any */
-	
-	double template_mispriming;
-	/* Max 3' complementarity to any ectopic site in template
-	 on the given template strand. */
-	double template_mispriming_r;
-	/* Max 3' complementarity to any ectopic site in the
-	 template on the reverse complement of the given template
-	 strand. */
-	char   length;   /* Length of the oligo. */
-	char   num_ns;   /* Number of Ns in the oligo. */
-	
-	char   must_use; /* Non-0 if the oligo must be used even if it is illegal. */
+        double quality;  /* Part of objective function due to this primer. */
+        
+        double end_stability;
+        /* Delta G of disription of 5 3' bases. */
+        
+        int    start;    /* Position of the 5'-most base within the primer
+                          WITH RESPECT TO THE seq_args FIELD
+                          trimmed_seq. */
+        
+        int    seq_quality; /* Minimum quality score of bases included. */   
+        int    seq_end_quality;  /* Minimum quality core of the 5 3' bases. */
+        
+        
+        double self_any; /* Self complementarity as local alignment * 100. */
+        
+        double self_end; /* Self complementarity at 3' end * 100. */
+        
+        double hairpin_th; /* hairpin, thermodynamical approach and calculated as any */
+        
+        double template_mispriming;
+        /* Max 3' complementarity to any ectopic site in template
+         on the given template strand. */
+        double template_mispriming_r;
+        /* Max 3' complementarity to any ectopic site in the
+         template on the reverse complement of the given template
+         strand. */
+        char   length;   /* Length of the oligo. */
+        char   num_ns;   /* Number of Ns in the oligo. */
+        
+        char   must_use; /* Non-0 if the oligo must be used even if it is illegal. */
         char   overlaps; /* Non-0 if the oligo overlaps some oligo used in one of the best pairs. */
-	
-	oligo_problems problems;
+        
+        oligo_problems problems;
         char   overlaps_overlap_position;
-	
+        
      } primer_rec;
 
 const char *
@@ -627,9 +627,9 @@ typedef struct oligo_stats {
   int ok;                  /* Number of acceptable oligos.                  */
   int gmasked;             /* edited by T. Koressaar, number of gmasked oligo*/
   int not_in_any_left_ok_region; /* Oligo not included in any of the left regions
-				    given in PRIMER_PAIR_OK_REGION_LIST. */
+                                    given in PRIMER_PAIR_OK_REGION_LIST. */
   int not_in_any_right_ok_region;/* Oligo not included in any of the right regions
-				    given in PRIMER_PAIR_OK_REGION_LIST. */
+                                    given in PRIMER_PAIR_OK_REGION_LIST. */
 } oligo_stats;
 
 typedef struct pair_stats {
@@ -674,7 +674,7 @@ typedef struct seq_args {
                            * indexes within the sequence slot, but
                            * they are recalculated to be indexes
                            * within trimmed_seq (i.e. within the
-			   * "included region").
+                           * "included region").
                            */
 
   interval_array_t2 tar2; /* The targets.  tar2->pairs[i][0] s the start
@@ -1047,7 +1047,7 @@ void p3_set_gs_pair_max_template_mispriming(p3_global_settings * p ,
                                             double pair_max_template_mispriming);
 
 void p3_set_gs_pair_max_template_mispriming_th(p3_global_settings * p ,
-					    double pair_max_template_mispriming_th);
+                                            double pair_max_template_mispriming_th);
      
 void p3_set_gs_pair_repeat_compl(p3_global_settings * p, double pair_repeat_compl); 
 
