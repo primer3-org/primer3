@@ -420,8 +420,8 @@ typedef struct p3_global_settings {
    
   int thermodynamic_alignment;
   /* 
-     Enables to use approach of thermodynamical alignment for dimer
-     and hairpin calculations
+     Enables to use approach of thermodynamical alignment for dimer,
+     hairpin, and template mispriming calculations.
    
      0 = Use alignment *not* based on thermodynamics - the only dimer
      calculation approach until primer3 2.2.0.  No hairpins are
@@ -430,7 +430,7 @@ typedef struct p3_global_settings {
      1 = Use alignment based on thermodynamics. Hairpins are calculated
   */
 
-  char *thermodynamic_params_path; /* Path to thermodynamic parameter
+  char *thermodynamic_params_path;/* Path to thermodynamic parameter
 				      files */
 
   int thermodynamic_path_changed;
