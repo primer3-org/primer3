@@ -46,6 +46,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define INIT_LIB_SIZE  500
 #define PR_MAX_LIBRARY_WT 100.0
 
+char *thermodynamic_params_path = NULL;
+int   thermodynamic_path_changed = 1;
+
 /* Static functions. */
 static void *_rb_safe_malloc(size_t x);
 static void  out_of_memory_error();
@@ -691,17 +694,17 @@ read_boulder_record(FILE *file_input,
       /* added by T. Koressaar */
       COMPARE_INT("PRIMER_THERMODYNAMIC_ALIGNMENT", pa->thermodynamic_alignment);
       if (COMPARE("PRIMER_THERMODYNAMIC_PARAMETERS_PATH")) {
-        if (pa->thermodynamic_params_path == NULL) {
-          pa->thermodynamic_params_path = (char*) _rb_safe_malloc(datum_len + 1);
-          strcpy(pa->thermodynamic_params_path, datum);
-          pa->thermodynamic_path_changed = 1;
+        if (thermodynamic_params_path == NULL) {
+          thermodynamic_params_path = (char*) _rb_safe_malloc(datum_len + 1);
+          strcpy(thermodynamic_params_path, datum);
+          thermodynamic_path_changed = 1;
         }
         /* check if path changes */
-	else if (strcmp(pa->thermodynamic_params_path, datum)) {
-	  free(pa->thermodynamic_params_path);
-	  pa->thermodynamic_params_path = (char*) _rb_safe_malloc(datum_len + 1); 
-	  strcpy(pa->thermodynamic_params_path, datum);
-	  pa->thermodynamic_path_changed = 1;
+	else if (strcmp(thermodynamic_params_path, datum)) {
+	  free(thermodynamic_params_path);
+	  thermodynamic_params_path = (char*) _rb_safe_malloc(datum_len + 1); 
+	  strcpy(thermodynamic_params_path, datum);
+	  thermodynamic_path_changed = 1;
         }
         continue;
       }
@@ -1446,7 +1449,8 @@ pr_append_new_chunk(pr_append_str *x,
 }
 
 static void
-out_of_memory_error() {
+out_of_memory_error() 
+{
   fprintf(stderr, "out of memory in read_boulder\n");
   exit(-2);
 }

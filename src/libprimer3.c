@@ -468,7 +468,8 @@ static const char *pr_program_name = "probably primer3_core";
 
 /* Set the program name */
 void
-p3_set_program_name(const char *pname) {
+p3_set_program_name(const char *pname) 
+{
   pr_program_name = pname;
 }
 
@@ -478,7 +479,8 @@ p3_set_program_name(const char *pname) {
 
 /* Allocate space for global settings and fill in defaults */
 p3_global_settings *
-p3_create_global_settings() {
+p3_create_global_settings() 
+{
   p3_global_settings *r;
 
   if (!(r = (p3_global_settings *) malloc(sizeof(*r)))) {
@@ -492,19 +494,19 @@ p3_create_global_settings() {
 
 /* Free the space of global settings */
 void
-p3_destroy_global_settings(p3_global_settings *a) {
+p3_destroy_global_settings(p3_global_settings *a) 
+{
   if (NULL != a) {
     destroy_seq_lib(a->p_args.repeat_lib);
     destroy_seq_lib(a->o_args.repeat_lib);
-    if (a->thermodynamic_params_path)
-        free(a->thermodynamic_params_path);
     free(a);
   }
 }
 
 /* Write the default values in global settings */
 static void
-pr_set_default_global_args(p3_global_settings *a) {
+pr_set_default_global_args(p3_global_settings *a) 
+{
   memset(a, 0, sizeof(*a));
 
   /* Arguments for primers ================================= */
@@ -572,8 +574,6 @@ pr_set_default_global_args(p3_global_settings *a) {
   a->pair_compl_end_th   = 47.0;
   a->pair_hairpin_th     = 47.0;
   a->thermodynamic_alignment = 0;
-  a->thermodynamic_path_changed = 1;   /* mark as changed first time so we read the parameter files if the thermodynamic model is selected */
-  a->thermodynamic_params_path = NULL;
   a->liberal_base        = 0;
   a->primer_task         = pick_detection_primers;
   a->pick_left_primer    = 1;
@@ -709,12 +709,14 @@ p3_add_to_2_interval_array(interval_array_t4 *interval_arr, int i1, int i2, int 
 /* ============================================================ */
 
 int
-interval_array_t2_count(const interval_array_t2 *array) {
+interval_array_t2_count(const interval_array_t2 *array) 
+{
   return array->count;
 }
 
 const int *
-interval_array_t2_get_pair(const interval_array_t2 *array, int i) {
+interval_array_t2_get_pair(const interval_array_t2 *array, int i) 
+{
   if (i > array->count) abort();
   if (i < 0) abort();
   return array->pairs[i];
@@ -728,7 +730,8 @@ interval_array_t2_get_pair(const interval_array_t2 *array, int i) {
    malloc sets errno to ENOMEM according to Unix98, set errno to ENOMEM
    on out-of-memory error. */
 static p3retval *
-create_p3retval(void) {
+create_p3retval(void) 
+{
   p3retval *state = (p3retval *)malloc(sizeof(*state));
   if (!state)
     return NULL;
@@ -779,7 +782,8 @@ create_p3retval(void) {
 
 /* Create the dpal arg holder */
 dpal_arg_holder *
-create_dpal_arg_holder () {
+create_dpal_arg_holder () 
+{
 
   dpal_arg_holder *h
     = (dpal_arg_holder *) pr_safe_malloc(sizeof(dpal_arg_holder));
@@ -809,7 +813,8 @@ create_dpal_arg_holder () {
 
 /* Free the dpal arg holder */
 void
-destroy_dpal_arg_holder(dpal_arg_holder *h) {
+destroy_dpal_arg_holder(dpal_arg_holder *h) 
+{
   free(h->local);
   free(h->end);
   free(h->local_end);
