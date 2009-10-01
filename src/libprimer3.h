@@ -430,13 +430,6 @@ typedef struct p3_global_settings {
      1 = Use alignment based on thermodynamics. Hairpins are calculated
   */
 
-  char *thermodynamic_params_path;/* Path to thermodynamic parameter
-				      files */
-
-  int thermodynamic_path_changed;
-  /* If this is set to 1, we need to re-read the thermodynamic
-     parameters from new path */
-
   double max_diff_tm; 
   /* Maximum allowed difference between temperature of primer and
      temperature of product.  Cannot be calculated until product is
