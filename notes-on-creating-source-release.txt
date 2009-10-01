@@ -1,9 +1,9 @@
 # 1 DO A CLEAN CHECKOUT AND TEST IT
 svn co https://primer3.svn.sourceforge.net/svnroot/primer3
 
-# go to primer3/primer3/trunc/src and do
+# go to primer3/primer3/trunc/src/ and do
 make test
-# go to io_version_3 and do
+# go to ../test/io_version_3/ and do
 make test
 
 # 2 TAG THE RELEASE -- create the directory under primer3/primer3/tags/
