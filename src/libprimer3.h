@@ -868,9 +868,12 @@ int p3_add_to_sa_tar2(seq_args *, int, int);
 int p3_add_to_sa_excl2(seq_args *, int, int);
 int p3_add_to_sa_excl_internal2(seq_args *, int, int);
 
+int p3_add_to_sa_ok_regions(seq_args *, int, int, int, int);
+
 const interval_array_t2 *p3_get_sa_tar2(const seq_args *sargs);
 const interval_array_t2 *p3_get_sa_excl2(const seq_args *sargs);
 const interval_array_t2 *p3_get_sa_excl_internal2(const seq_args *sargs);
+const interval_array_t4 *p3_get_sa_ok_regions(const seq_args *sargs);
 
 /*
   use p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2);
@@ -1080,6 +1083,8 @@ void p3_set_gs_pair_compl_end_th(p3_global_settings * p , double  pair_compl_end
 void p3_set_gs_pair_hairpin_th(p3_global_settings * p , double  pair_hairpin_th);
 
 void p3_set_gs_min_three_prime_distance(p3_global_settings *p, int min_distance);
+void p3_set_gs_min_5_prime_overlap_of_junction(p3_global_settings *p, int min_5_prime);
+void p3_set_gs_min_3_prime_overlap_of_junction(p3_global_settings *p, int min_3_prime);
 
 /* 
  * Choose individual primers or oligos, or primer pairs, or primer

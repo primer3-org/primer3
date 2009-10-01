@@ -62,7 +62,7 @@ static void   sig_handler(int);
 static void   read_thermodynamic_parameters();
 
 /* Other global variables. */
-static const char *pr_release = "primer3 release 2.0.0";
+static const char *pr_release = "primer3 release 2.2.0";
 static const char *pr_program_name;
 
 int

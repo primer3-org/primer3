@@ -5034,12 +5034,14 @@ p3_get_pair_array_explain_string(const pair_array_t *pair_array)
 }
 
 const char *
-libprimer3_release(void) {
-  return "libprimer3 release 2.0.0";
+libprimer3_release(void) 
+{
+  return "libprimer3 release 2.2.0";
 }
 
 const char *
-primer3_copyright(void) {
+primer3_copyright(void) 
+{
   return primer3_copyright_char_star;
 }
 
@@ -5048,18 +5050,21 @@ primer3_copyright(void) {
 /* ============================================================ */
 
 void
-init_pr_append_str(pr_append_str *s) {
+init_pr_append_str(pr_append_str *s) 
+{
   s->data = NULL;
   s->storage_size = 0;
 }
 
 const char *
-pr_append_str_chars(const pr_append_str *x) {
+pr_append_str_chars(const pr_append_str *x) 
+{
   return x->data;
 }
 
 pr_append_str *
-create_pr_append_str() {
+create_pr_append_str() 
+{
   /* We cannot use pr_safe_malloc here
      because this function will be called outside
      of the setjmp(....) */
@@ -5072,21 +5077,24 @@ create_pr_append_str() {
 }
 
 void
-destroy_pr_append_str_data(pr_append_str *str) {
+destroy_pr_append_str_data(pr_append_str *str) 
+{
   if (NULL == str) return;
   if (str->data != NULL) free(str->data);
   str->data = NULL;
 }
 
 void
-destroy_pr_append_str(pr_append_str *str) {
+destroy_pr_append_str(pr_append_str *str) 
+{
   if (str == NULL) return;
   destroy_pr_append_str_data(str);
   free(str);
 }
 
 int
-pr_append_external(pr_append_str *x,  const char *s) {
+pr_append_external(pr_append_str *x,  const char *s) 
+{
   int xlen, slen;
 
   PR_ASSERT(NULL != s);
@@ -6504,6 +6512,12 @@ p3_get_sa_excl_internal2(const seq_args *sargs) {
   return &sargs->excl_internal2 ;
 }
 
+const interval_array_t4 *
+p3_get_sa_ok_regions(const seq_args *sargs)
+{
+  return &sargs->ok_regions;
+}
+
 /* ============================================================ */
 /* END 'get' functions for seq_args                             */
 /* ============================================================ */
@@ -6614,6 +6628,12 @@ p3_add_to_sa_excl2(seq_args *sargs, int n1, int n2) {
 int
 p3_add_to_sa_excl_internal2(seq_args *sargs, int n1, int n2) {
   return p3_add_to_interval_array(&sargs->excl_internal2, n1, n2);
+}
+
+int
+p3_add_to_sa_ok_regions(seq_args *sargs, int l1, int l2, int r1, int r2)
+{
+  return p3_add_to_2_interval_array(&sargs->ok_regions, l1, l2, r1, r2);
 }
 
 /* ============================================================ */
@@ -7437,6 +7457,18 @@ p3_set_gs_pair_hairpin_th(p3_global_settings * p , double  pair_hairpin_th) {
 void
 p3_set_gs_min_three_prime_distance(p3_global_settings *p, int min_distance) {
   p->min_three_prime_distance = min_distance;
+}
+
+void 
+p3_set_gs_min_5_prime_overlap_of_junction(p3_global_settings *p, int min_5_prime)
+{
+  p->min_5_prime_overlap_of_junction = min_5_prime;
+}
+
+void 
+p3_set_gs_min_3_prime_overlap_of_junction(p3_global_settings *p, int min_3_prime)
+{
+  p->min_3_prime_overlap_of_junction = min_3_prime;
 }
 
 void
