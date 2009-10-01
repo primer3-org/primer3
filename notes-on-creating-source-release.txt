@@ -11,7 +11,7 @@ cd primer3/primer3
 svn cp trunk tags/release-<release number>
 svn ci  -m 'tagged release <release number>'
 
-# 2.1 WE ALSO HAVE TO TAG THE DOCUMENTATION RELEASE\
+# 2.1 WE ALSO HAVE TO TAG THE DOCUMENTATION RELEASE
 cd primer3/documentation
 svn cp trunk tags/release-<release number>
 svn ci  -m 'tagged DOCUMENTATION release <release number>'
@@ -24,9 +24,8 @@ make test
 cd io_version_3
 make test
 make clean
-cd .. 
-rm *.~  # make clean does not take care of emacs backup files in the top level
-cd ../../.. 
+
+# cd to the .../primer3/tags/ directory
 
 cp -rfp release-<release number> primer3-<release number>
 
@@ -71,9 +70,9 @@ put primer3-<repease number>.tar.gz
 quit
 
 # Then log in to the sourceforge web site, go to upload site
-# https://frs.sourceforge.net/webupload/ log in and up load
+# https://frs.sourceforge.net/webupload/ log in and upload
 # the file.  THen log into the main SourceForge site,
 # go to primer3, then the "Admin" tab,  "File Releases"
 # menu selection, etc.  You can set the release as "Hidden"
-# until all pieces in place.
+# until all pieces are in place.
 
