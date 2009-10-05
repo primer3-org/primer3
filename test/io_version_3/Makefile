@@ -36,22 +36,22 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # ======================================================================
 
-# See ../src/Makefile for detailed instructions on how to use VAL
-# The only valid non-empty values for VAL are --valgrind and --windows
-VAL =
+# See ../src/Makefile for detailed instructions on how to use TESTOPTS
+# The only valid non-empty values for TESTOPTS are --valgrind and --windows
+TESTOPTS =
 
 
 test: testcore
 
 testcore:
-ifeq ($(VAL),--windows)
-	echo 'TESTING primer3_core, IO VERSION 3' & perl p3test_io3.pl $(VAL)
+ifeq ($(TESTOPTS),--windows)
+	echo 'TESTING primer3_core, IO VERSION 3' & perl p3test_io3.pl $(TESTOPTS)
 else
-	echo; echo; echo 'TESTING primer3_core, IO VERSION 3'; echo; perl p3test_io3.pl $(VAL)
+	echo; echo; echo 'TESTING primer3_core, IO VERSION 3'; echo; perl p3test_io3.pl $(TESTOPTS)
 endif
 
 clean:
-ifeq ($(VAL),--windows)
+ifeq ($(TESTOPTS),--windows)
 	echo 'CLEAN UP IO VERSION 3 TEST DIRECTORY'
 	del /Q /F primer_list_tmp\*
 	del /Q /F primer1_list_tmp\*

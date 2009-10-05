@@ -38,64 +38,64 @@
 
 WINMAKE=mingw32-make
 
-# See ../src/Makefile for detailed instructions on how to use VAL
-# The only valid non-empty values for VAL are --valgrind and --windows
-VAL =
+# See ../src/Makefile for detailed instructions on how to use TESTOPTS
+# The only valid non-empty values for TESTOPTS are --valgrind and --windows
+TESTOPTS =
 
 
 test: makeexes testcmdline testtm testdpal testthal testcore test_io_v3
 
 testcmdline:
-ifeq ($(VAL),--windows)
-	echo 'TESTING command line arguments' & perl cmdline_test.pl $(VAL)
+ifeq ($(TESTOPTS),--windows)
+	echo 'TESTING command line arguments' & perl cmdline_test.pl $(TESTOPTS)
 else 
-	echo; echo; echo 'TESTING command line arguments'; echo; perl cmdline_test.pl $(VAL)
+	echo; echo; echo 'TESTING command line arguments'; echo; perl cmdline_test.pl $(TESTOPTS)
 endif
 
 test_io_v3:
-ifeq ($(VAL),--windows)
-	cd io_version_3 & $(WINMAKE) test VAL=$(VAL)
+ifeq ($(TESTOPTS),--windows)
+	cd io_version_3 & $(WINMAKE) test TESTOPTS=$(TESTOPTS)
 else
 	cd io_version_3; make test
 endif
 
 testcore:
-ifeq ($(VAL),--windows)
-	echo 'TESTING primer3_core' & perl p3test.pl $(VAL)
+ifeq ($(TESTOPTS),--windows)
+	echo 'TESTING primer3_core' & perl p3test.pl $(TESTOPTS)
 else
-	echo; echo; echo 'TESTING primer3_core'; echo; perl p3test.pl $(VAL)
+	echo; echo; echo 'TESTING primer3_core'; echo; perl p3test.pl $(TESTOPTS)
 endif
 
 testdpal:
-ifeq ($(VAL),--windows)
-	echo 'TESTING ALIGNMENT CALCS' & perl dpal_test.pl $(VAL)
+ifeq ($(TESTOPTS),--windows)
+	echo 'TESTING ALIGNMENT CALCS' & perl dpal_test.pl $(TESTOPTS)
 else
-	echo; echo; echo 'TESTING ALIGNMENT CALCS'; echo; perl dpal_test.pl $(VAL); 
+	echo; echo; echo 'TESTING ALIGNMENT CALCS'; echo; perl dpal_test.pl $(TESTOPTS); 
 endif
 
 testthal:
-ifeq ($(VAL),--windows)
-	echo 'TESTING THERMODYNAMICAL ALIGNMENT CALCS' & perl thal_test.pl $(VAL)
+ifeq ($(TESTOPTS),--windows)
+	echo 'TESTING THERMODYNAMICAL ALIGNMENT CALCS' & perl thal_test.pl $(TESTOPTS)
 else
-	echo; echo; echo 'TESTING THERMODYNAMICAL ALIGNMENT CALCS'; echo; perl thal_test.pl $(VAL);
+	echo; echo; echo 'TESTING THERMODYNAMICAL ALIGNMENT CALCS'; echo; perl thal_test.pl $(TESTOPTS);
 endif
 
 testtm:
-ifeq ($(VAL),--windows)
-	echo 'TESTING Tm CALCS' & perl oligotm_test.pl $(VAL)
+ifeq ($(TESTOPTS),--windows)
+	echo 'TESTING Tm CALCS' & perl oligotm_test.pl $(TESTOPTS)
 else
-	echo; echo; echo 'TESTING Tm CALCS'; echo; perl oligotm_test.pl $(VAL);
+	echo; echo; echo 'TESTING Tm CALCS'; echo; perl oligotm_test.pl $(TESTOPTS);
 endif
 
 makeexes:
-ifeq ($(VAL),--windows)
+ifeq ($(TESTOPTS),--windows)
 	cd ..\src & $(WINMAKE)
 else
 	cd ../src; make
 endif
 
 clean:
-ifeq ($(VAL),--windows)
+ifeq ($(TESTOPTS),--windows)
 	echo 'CLEAN UP TEST DIRECTORIES'
 	del /Q /F primer_list_tmp\*
 	del /Q /F primer1_list_tmp\*
@@ -106,7 +106,7 @@ ifeq ($(VAL),--windows)
 	del /Q /F pcr_primers_and_io.int pcr_primers_and_io.rev pcr_primers_and_io.for
 	del /Q /F pcr_primers.rev pcr_primers.for
 	del /Q /F syntax*.for syntax*.int syntax*.rev
-	cd io_version_3 & $(WINMAKE) clean VAL=$(VAL)
+	cd io_version_3 & $(WINMAKE) clean TESTOPTS=$(TESTOPTS)
 else
 	echo; echo; echo 'CLEAN UP TEST DIRECTORIES'; echo; echo;
 	-rm -rf primer_list_tmp/*

@@ -48,7 +48,7 @@
 
 # For VALGRIND -- see end of this makefile for testing primer3_core
 # with valgrind, a leak and memory access checker.
-VAL= 
+TESTOPTS= 
 WINMAKE=mingw32-make
 
 LDLIBS     = -lm
@@ -65,7 +65,7 @@ LDFLAGS = -g
 # between systems, you might want to set LIBOPTS to -static
 LIBOPTS =
 
-ifeq ($(VAL),--windows)
+ifeq ($(TESTOPTS),--windows)
 	PRIMER_EXE      = primer3_core.exe
 	NTDPAL_EXE	= ntdpal.exe
 	NTTHAL_EXE	= ntthal.exe
@@ -105,15 +105,15 @@ EXES=$(PRIMER_EXE) $(NTDPAL_EXE) $(NTTHAL_EXE) $(OLIGOTM_EXE) $(LONG_SEQ_EXE)
 all: $(EXES) $(LIBRARIES)
 
 clean_src:
-ifeq ($(VAL),--windows)
+ifeq ($(TESTOPTS),--windows)
 	del /Q /F *.o $(EXES) *~ $(LIBRARIES) $(example_files) core ..\*~
 else
 	-rm -f *.o $(EXES) *~ $(LIBRARIES) $(DYNLIBS) $(example_files) core ../*~
 endif
 
 clean: clean_src
-ifeq ($(VAL),--windows)
-	cd ..\test & $(WINMAKE) clean VAL=$(VAL)
+ifeq ($(TESTOPTS),--windows)
+	cd ..\test & $(WINMAKE) clean TESTOPTS=$(TESTOPTS)
 else
 	cd ../test/; make clean
 endif
@@ -204,8 +204,8 @@ primer3_boulder_main.o: primer3_boulder_main.c libprimer3.h dpal.h thal.h oligot
 primer_test: test
 
 test: $(PRIMER_EXE) $(NTDPAL_EXE) $(NTTHAL_EXE)
-ifeq ($(VAL),--windows)
-	cd ..\test & $(WINMAKE) VAL=$(VAL)
+ifeq ($(TESTOPTS),--windows)
+	cd ..\test & $(WINMAKE) TESTOPTS=$(TESTOPTS)
 else
 	cd ../test; make test
 endif
@@ -245,7 +245,7 @@ endif
 # Check valgrind path in p3test.pl, ntdpal_test.pl, and oligotm_test.pl
 # and correct if necessary.  This code works under valgrind 3.2.3.
 # 
-# $ make VAL=--valgrind  # Remember, you have to be in test/
+# $ make TESTOPTS=--valgrind  # Remember, you have to be in test/
 # 
 # When the --valgrind flag is set, the perl test scripts grep for and
 # display errors and leaks, but you need to ***look at the output** to
