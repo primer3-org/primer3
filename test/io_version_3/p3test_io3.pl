@@ -244,11 +244,16 @@ sub main() {
             # need to be checked separately.
 
             my $list_tmp = $test.'_list_tmp';
+	    my @tempList;
             # We need to chdir below because primer3 puts the 'list' files
             # in the current working directory. 
 
             # get a list of the files to remove (if any) in this directory 
-            my @tempList = glob('./' . $test.'_list_tmp/*');
+	    if ($winFlag) {
+		@tempList = glob('.\\' . $test.'_list_tmp\\*');
+	    } else {
+		@tempList = glob('./' . $test.'_list_tmp/*');
+	    }
             # delete them
             for my $t (@tempList) {
                 unlink $t;
@@ -258,10 +263,18 @@ sub main() {
 
             my $tmpCmd;
 
-	    $tmpCmd = "$valgrind_prefix ../$exe -strict_tags -io_version=3 <../$input >../$tmp";
+	    if ($winFlag) {
+		$tmpCmd = "$valgrind_prefix ..\\$exe -strict_tags -io_version=3 <..\\$input >..\\$tmp";
+	    } else {
+		$tmpCmd = "$valgrind_prefix ../$exe -strict_tags -io_version=3 <../$input >../$tmp";
+	    }
             $r = _nowarn_system($tmpCmd);
             # back to main directory
-            chdir "../";
+	    if ($winFlag) {
+		chdir "..\\";
+	    } else {
+		chdir "../";
+	    }
         } elsif ($test =~ /formatted$/) {
             my $cmd = "$valgrind_prefix$exe -strict_tags -io_version=3 -format_output <$input >$tmp";
             $r = _nowarn_system($cmd);
