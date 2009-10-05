@@ -39,11 +39,24 @@ use Getopt::Long;
 use Carp;
 use constant EPSILON => 1e-5;
 
+our $winFlag;
+our $exe = '../src/oligotm';
 
 my $do_valgrind;
+my %args;
 
-if (!GetOptions('valgrind', \$do_valgrind)) {
-    print STDERR "Usage: $0 [ --valgrind ]\n";
+if (!GetOptions(\%args,
+		'valgrind',
+		'windows',
+    )) {
+    print "Usage: $0 [ --valgrind ] [ --windows ]\n";
+    exit -1;
+}
+
+$winFlag = defined $args{'windows'};
+$do_valgrind = $args{'valgrind'};
+if ($winFlag && $do_valgrind) {
+    print "$0: Cannot specify both --valgrind and --windows\n";
     exit -1;
 }
 
@@ -57,7 +70,6 @@ if ((!-x $valgrind_exe) && ($do_valgrind)) {
     }
 }
 
-
 my $valgrind_format
     = "$valgrind_exe --leak-check=yes "
     . " --show-reachable=yes --log-file=oligotm.%0.3d.valg ";
@@ -65,11 +77,15 @@ my $valgrind_format
 my $nr=1;
 my $failure=0;
 
-die "Cannot execute ../src/oligotm" unless -x '../src/oligotm';
+if ($winFlag) {
+    $exe = '..\\src\\oligotm.exe';
+}
+
+die "Cannot execute $exe" unless -x $exe;
 
 print STDERR "Tests nr $nr-";
 
-open F, "./oligotm.txt" or die "Cannot open oligotm.txt\n";
+open F, "oligotm.txt" or die "Cannot open oligotm.txt\n";
 while(<F>){
     chomp;
     next if $. == 1;
@@ -77,7 +93,7 @@ while(<F>){
     my $valgrind_prefix = $do_valgrind ? sprintf($valgrind_format, $nr) : '';
     my $cmd = 
         "$valgrind_prefix "
-        . " ../src/oligotm -tp $tmp[1] -sc $tmp[2] -mv $tmp[3] "
+        . " $exe -tp $tmp[1] -sc $tmp[2] -mv $tmp[3] "
         . " -dv $tmp[4] -n $tmp[5] $tmp[0] |";
     open(CMD, $cmd); # execute the command and take the output
     my $tm=<CMD>;

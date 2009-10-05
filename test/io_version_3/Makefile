@@ -37,16 +37,36 @@
 # ======================================================================
 
 # See ../src/Makefile for detailed instructions on how to use VAL
-# The only valid non-empty value for VAL is --valgrind
+# The only valid non-empty values for VAL are --valgrind and --windows
 VAL =
 
 
 test: testcore
 
 testcore:
+ifeq ($(VAL),"--windows")
+	echo 'TESTING primer3_core, IO VERSION 3' & perl p3test_io3.pl $(VAL)
+else
 	echo; echo; echo 'TESTING primer3_core, IO VERSION 3'; echo; perl p3test_io3.pl $(VAL)
+endif
 
 clean:
+ifeq ($(VAL),"--windows")
+	echo 'CLEAN UP IO VERSION 3 TEST DIRECTORY'
+	del /Q /F primer_list_tmp\*
+	del /Q /F primer1_list_tmp\*
+	del /Q /F primer_global_err\*.tmp primer_global_err\*.tmp2 primer_global_err\*.bak
+	del /Q /F *.tmp *.bak *~
+	del /Q /F hyb_probe_only.for hyb_probe_only.int 
+	del /Q /F right_only.for right_only.rev left_only.for
+	del /Q /F pcr_primers_and_io.int pcr_primers_and_io.rev pcr_primers_and_io.for
+	del /Q /F pcr_primers.rev pcr_primers.for
+	del /Q /F syntax[0-1][0-9].for syntax[0-1][0-9].int syntax[0-1][0-9].rev
+	del /Q /F .\core # in case we crashed and left a core file
+	del /Q /F *.for
+	del /Q /F *.rev
+	del /Q /F *.int
+else
 	echo; echo; echo 'CLEAN UP IO VERSION 3 TEST DIRECTORY'; echo;
 	-rm -rf primer_list_tmp/*
 	-rm -rf primer1_list_tmp/*
@@ -65,3 +85,4 @@ clean:
 	-rm -f *.for
 	-rm -f *.rev
 	-rm -f *.int
+endif

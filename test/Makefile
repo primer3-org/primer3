@@ -36,35 +36,79 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # ======================================================================
 
+WINMAKE=mingw32-make
+
 # See ../src/Makefile for detailed instructions on how to use VAL
-# The only valid non-empty value for VAL is --valgrind
+# The only valid non-empty values for VAL are --valgrind and --windows
 VAL =
 
 
 test: makeexes testcmdline testtm testdpal testthal testcore test_io_v3
 
 testcmdline:
+ifeq ($(VAL),"--windows")
+	echo 'TESTING command line arguments' & perl cmdline_test.pl $(VAL)
+else 
 	echo; echo; echo 'TESTING command line arguments'; echo; perl cmdline_test.pl $(VAL)
+endif
 
 test_io_v3:
+ifeq ($(VAL),"--windows")
+	cd io_version_3 & $(WINMAKE) $(VAL)
+else
 	cd io_version_3; make test
+endif
 
 testcore:
+ifeq ($(VAL),"--windows")
+	echo 'TESTING primer3_core' & perl p3test.pl $(VAL)
+else
 	echo; echo; echo 'TESTING primer3_core'; echo; perl p3test.pl $(VAL)
+endif
 
 testdpal:
+ifeq ($(VAL),"--windows")
+	echo 'TESTING ALIGNMENT CALCS' & perl dpal_test.pl $(VAL)
+else
 	echo; echo; echo 'TESTING ALIGNMENT CALCS'; echo; perl dpal_test.pl $(VAL); 
-	
+endif
+
 testthal:
-	 echo; echo; echo 'TESTING THERMODYNAMICAL ALIGNMENT CALCS'; echo; perl thal_test.pl $(VAL);
+ifeq ($(VAL),"--windows")
+	echo 'TESTING THERMODYNAMICAL ALIGNMENT CALCS' & perl thal_test.pl $(VAL)
+else
+	echo; echo; echo 'TESTING THERMODYNAMICAL ALIGNMENT CALCS'; echo; perl thal_test.pl $(VAL);
+endif
 
 testtm:
+ifeq ($(VAL),"--windows")
+	echo 'TESTING Tm CALCS' & perl oligotm_test.pl $(VAL)
+else
 	echo; echo; echo 'TESTING Tm CALCS'; echo; perl oligotm_test.pl $(VAL);
+endif
 
 makeexes:
+ifeq ($(VAL),"--windows")
+	cd ..\src & $(WINMAKE)
+else
 	cd ../src; make
+endif
 
 clean:
+ifeq ($(VAL),"--windows")
+	echo 'CLEAN UP TEST DIRECTORIES'
+	del /Q /F primer_list_tmp\*
+	del /Q /F primer1_list_tmp\*
+	del /Q /F primer_global_err\*.tmp primer_global_err\*.tmp2 primer_global_err\*.bak
+	del /Q /F *.tmp *.bak *~
+	del /Q /F hyb_probe_only.for hyb_probe_only.int 
+	del /Q /F right_only.for right_only.rev left_only.for
+	del /Q /F pcr_primers_and_io.int pcr_primers_and_io.rev pcr_primers_and_io.for
+	del /Q /F pcr_primers.rev pcr_primers.for
+	del /Q /F syntax[0-1][0-9].for syntax[0-1][0-9].int syntax[0-1][0-9].rev
+	del /Q /F .\core # in case we crashed and left a core file
+	cd io_version_3 & $(WINMAKE) clean $(VAL)
+else
 	echo; echo; echo 'CLEAN UP TEST DIRECTORIES'; echo; echo;
 	-rm -rf primer_list_tmp/*
 	-rm -rf primer1_list_tmp/*
@@ -82,3 +126,4 @@ clean:
 	-rm -f *.vg.core.*     # core files from crashed valgrind test
 	-rm -f ./core # in case we crashed and left a core file
 	cd io_version_3; make clean
+endif
