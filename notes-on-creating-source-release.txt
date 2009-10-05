@@ -6,15 +6,24 @@ make test
 # go to ../test/io_version_3/ and do
 make test
 
+..OR...
+
+# go to primer3/primer3/trunc/src/
+sh paranoid_tests.sh
+
 # 2 TAG THE RELEASE -- create the directory under primer3/primer3/tags/
 cd primer3/primer3
 svn cp trunk tags/release-<release number>
 svn ci  -m 'tagged release <release number>'
 
-# 2.1 WE ALSO HAVE TO TAG THE DOCUMENTATION RELEASE
+# 2.1 TAG THE *DOCUMENTATION* RELEASE AND TEST
 cd primer3/documentation
 svn cp trunk tags/release-<release number>
 svn ci  -m 'tagged DOCUMENTATION release <release number>'
+cd tags/release-<release number>
+perl create_tag_files_and_doc.pl
+# make sure the file script_ouput/primer3_manual.htm is intact, e.g.
+firefox script_output/primer3_manual.htm
 
 # 3 TEST TAGGED RELEASE
 svn co https://primer3.svn.sourceforge.net/svnroot/primer3
@@ -25,11 +34,14 @@ cd io_version_3
 make test
 make clean
 
-# cd to the .../primer3/tags/ directory
+# 4 MAKE A FILE SYSTEM COPY OF THE RELEASE AND REMOVE SVN STUFF FROM IT
 
-cp -rfp release-<release number> primer3-<release number>
+# cd to the .../primer3/tags/ directory and make a *file system* only
+# copy
 
-cd primer3-<release number>
+cp -rfp release-<release number> <SOMEWHERE>/primer3-<release number>
+
+cd <SOMEWHERE>/primer3-<release number>
 
 # Get rid of the svn stuff
 cd primer3-<release number>
@@ -48,20 +60,21 @@ ls -ld */*/*/*/.??*
 # Delete any if necessary
 
 go to primer3/documentation/trunk/
-perl create_tag_files_and_doc.pl
-# make sure the file script_ouput/primer3_manual.htm is intact, e.g.
-firefox script_output/primer3_manual.htm
 
-go to primer3/primer3/tags/primer3-<release number>
-cp ../../../documentation/trunk/script_output/primer3_manual.htm .
+cd <SOMEWHERE>/primer3-<release number>/
+# copy primer3_manual.htm for SVN directory to the release directory
+cp <SVN PRIMER3>/documentation/tags/primer3-<release number>/script_output/primer3_manual.htm .
 
+# 5 TAR AND GZIP THE FILE SYSTEM COPY AND TEST IT
 
-tar cvf primer3-<release number>.tar primer3-<release number>
+tar cvf primer3-<release number>.tar <SOMEWHERE>primer3-<release number>
 gzip primer3-<release number>.tar
 
+# Test the tar'ed source release
+# take primer3-<release number>.tar.gz to another location, unzip, and test it.
 
-# TEST THE tar'ed source release
-# take primer3-<release number>.tar.gz to another location, unzip, and test
+# 6 UPLOAD TO SOURCEFORGE AND MAKE THE primer3-<release number>.tar.gz visible to the world
+
 # do the upload
 ftp upload.sourceforge.net (anonymous)
 binary
