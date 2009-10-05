@@ -156,7 +156,8 @@ sub main() {
 	$exit_status = -1;
     }
     @foo=();
-    $r = system "$valgrind_prefix $exe -s1 ACGTGTTCGTCGTAGACGTGTTCGTCGTAGACGTGTTCGTCGTAGACGTGTTCGTCGTAGTG -s2 ACGTGTTCGTCGTATGACGTGTTCGTCGTAGACGTGTTCGTCGTAGACGTGTTCGTCGTAG -a ANY > thal.tmp 2>&1";
+    $cmd = "$valgrind_prefix $exe -s1 ACGTGTTCGTCGTAGACGTGTTCGTCGTAGACGTGTTCGTCGTAGACGTGTTCGTCGTAGTG -s2 ACGTGTTCGTCGTATGACGTGTTCGTCGTAGACGTGTTCGTCGTAGACGTGTTCGTCGTAG -a ANY > thal.tmp 2>&1";
+    $r = _nowarn_system($cmd);
     open X, 'thal.tmp';         # Get the test output
     @foo = <X>;                 # Snarf it
     close X;
