@@ -69,17 +69,18 @@ sub runtest($$$$$) {
     my ($desc, $ntthal_args, $infile, $benchfile, $outfile) = @_;
     print $desc, '...';
     open Q, $infile or confess "open $infile: $!";
+    my $errfile = "$outfile.err";
 
     # Reopen STDOUT to get all ntthal output in one file
     open OLDOUT, ">&STDOUT" or confess "Cannot dup STDOUT: $!";
     open OLDERR, ">&" , \*STDERR or confess "Cannot dup STDERR: $!";
     open STDOUT, '>', $outfile or confess "open STDOUT '>' $outfile: $!";
-    open STDERR, ">&STDOUT" or confess "open STDERR '>' $outfile $!";
+    open STDERR, '>', $errfile or confess "open STDERR '>' $errfile $!";
     while (my $in = <Q>) {
         $test_count++;
         my $valgrind_prefix 
             = $do_valgrind ? sprintf($valgrind_format, $test_count) : '';
-        my $cmd = "$valgrind_prefix ../src/ntthal $ntthal_args $in";
+        my $cmd = "$valgrind_prefix $exe $ntthal_args $in";
 	my $r = _nowarn_system($cmd);
     }
     close Q;

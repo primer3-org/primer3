@@ -100,7 +100,7 @@ ifeq ($(VAL),--windows)
 	del /Q /F primer_list_tmp\*
 	del /Q /F primer1_list_tmp\*
 	del /Q /F primer_global_err\*.tmp primer_global_err\*.tmp2 primer_global_err\*.bak
-	del /Q /F *.tmp *.bak *~
+	del /Q /F *.tmp *.bak *.tmp.err *~
 	del /Q /F hyb_probe_only.for hyb_probe_only.int 
 	del /Q /F right_only.for right_only.rev left_only.for
 	del /Q /F pcr_primers_and_io.int pcr_primers_and_io.rev pcr_primers_and_io.for
@@ -112,7 +112,7 @@ else
 	-rm -rf primer_list_tmp/*
 	-rm -rf primer1_list_tmp/*
 	-rm -f primer_global_err/*.tmp primer_global_err/*.tmp2 primer_global_err/*.bak
-	-rm -f *.tmp *.bak *~
+	-rm -f *.tmp *.bak *.tmp.err *~
 	-rm -f hyb_probe_only.for hyb_probe_only.int 
 	-rm -f right_only.for right_only.rev left_only.for
 	-rm -f pcr_primers_and_io.int pcr_primers_and_io.rev pcr_primers_and_io.for
