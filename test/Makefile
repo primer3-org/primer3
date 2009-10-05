@@ -54,7 +54,7 @@ endif
 
 test_io_v3:
 ifeq ($(VAL),--windows)
-	cd io_version_3 & $(WINMAKE) $(VAL)
+	cd io_version_3 & $(WINMAKE) test VAL=$(VAL)
 else
 	cd io_version_3; make test
 endif
@@ -105,9 +105,8 @@ ifeq ($(VAL),--windows)
 	del /Q /F right_only.for right_only.rev left_only.for
 	del /Q /F pcr_primers_and_io.int pcr_primers_and_io.rev pcr_primers_and_io.for
 	del /Q /F pcr_primers.rev pcr_primers.for
-	del /Q /F syntax[0-1][0-9].for syntax[0-1][0-9].int syntax[0-1][0-9].rev
-	del /Q /F .\core # in case we crashed and left a core file
-	cd io_version_3 & $(WINMAKE) clean $(VAL)
+	del /Q /F syntax*.for syntax*.int syntax*.rev
+	cd io_version_3 & $(WINMAKE) clean VAL=$(VAL)
 else
 	echo; echo; echo 'CLEAN UP TEST DIRECTORIES'; echo; echo;
 	-rm -rf primer_list_tmp/*

@@ -98,14 +98,14 @@ all: $(EXES) $(LIBRARIES)
 
 clean_src:
 ifeq ($(VAL),--windows)
-	del /Q /F *.o $(EXES) *~ $(LIBRARIES) $(example_files) core ..\*~
+	del /Q /F *.o $(EXES) *~ $(LIBRARIES) $(example_files) ..\*~
 else
 	-rm -f *.o $(EXES) *~ $(LIBRARIES) $(DYNLIBS) $(example_files) core ../*~
 endif
 
 clean: clean_src
 ifeq ($(VAL),--windows)
-	cd ..\test & $(WINMAKE) clean $(VAL)
+	cd ..\test & $(WINMAKE) clean VAL=$(VAL)
 else
 	cd ../test/; make clean
 endif
@@ -197,7 +197,7 @@ primer_test: test
 
 test: $(PRIMER_EXE) ntdpal ntthal
 ifeq ($(VAL),--windows)
-	cd ..\test & $(WINMAKE) $(VAL)
+	cd ..\test & $(WINMAKE) VAL=$(VAL)
 else
 	cd ../test; make test
 endif
