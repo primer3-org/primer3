@@ -44,14 +44,14 @@ VAL =
 test: testcore
 
 testcore:
-ifeq ($(VAL),"--windows")
+ifeq ($(VAL),--windows)
 	echo 'TESTING primer3_core, IO VERSION 3' & perl p3test_io3.pl $(VAL)
 else
 	echo; echo; echo 'TESTING primer3_core, IO VERSION 3'; echo; perl p3test_io3.pl $(VAL)
 endif
 
 clean:
-ifeq ($(VAL),"--windows")
+ifeq ($(VAL),--windows)
 	echo 'CLEAN UP IO VERSION 3 TEST DIRECTORY'
 	del /Q /F primer_list_tmp\*
 	del /Q /F primer1_list_tmp\*

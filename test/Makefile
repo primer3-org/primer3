@@ -46,56 +46,56 @@ VAL =
 test: makeexes testcmdline testtm testdpal testthal testcore test_io_v3
 
 testcmdline:
-ifeq ($(VAL),"--windows")
+ifeq ($(VAL),--windows)
 	echo 'TESTING command line arguments' & perl cmdline_test.pl $(VAL)
 else 
 	echo; echo; echo 'TESTING command line arguments'; echo; perl cmdline_test.pl $(VAL)
 endif
 
 test_io_v3:
-ifeq ($(VAL),"--windows")
+ifeq ($(VAL),--windows)
 	cd io_version_3 & $(WINMAKE) $(VAL)
 else
 	cd io_version_3; make test
 endif
 
 testcore:
-ifeq ($(VAL),"--windows")
+ifeq ($(VAL),--windows)
 	echo 'TESTING primer3_core' & perl p3test.pl $(VAL)
 else
 	echo; echo; echo 'TESTING primer3_core'; echo; perl p3test.pl $(VAL)
 endif
 
 testdpal:
-ifeq ($(VAL),"--windows")
+ifeq ($(VAL),--windows)
 	echo 'TESTING ALIGNMENT CALCS' & perl dpal_test.pl $(VAL)
 else
 	echo; echo; echo 'TESTING ALIGNMENT CALCS'; echo; perl dpal_test.pl $(VAL); 
 endif
 
 testthal:
-ifeq ($(VAL),"--windows")
+ifeq ($(VAL),--windows)
 	echo 'TESTING THERMODYNAMICAL ALIGNMENT CALCS' & perl thal_test.pl $(VAL)
 else
 	echo; echo; echo 'TESTING THERMODYNAMICAL ALIGNMENT CALCS'; echo; perl thal_test.pl $(VAL);
 endif
 
 testtm:
-ifeq ($(VAL),"--windows")
+ifeq ($(VAL),--windows)
 	echo 'TESTING Tm CALCS' & perl oligotm_test.pl $(VAL)
 else
 	echo; echo; echo 'TESTING Tm CALCS'; echo; perl oligotm_test.pl $(VAL);
 endif
 
 makeexes:
-ifeq ($(VAL),"--windows")
+ifeq ($(VAL),--windows)
 	cd ..\src & $(WINMAKE)
 else
 	cd ../src; make
 endif
 
 clean:
-ifeq ($(VAL),"--windows")
+ifeq ($(VAL),--windows)
 	echo 'CLEAN UP TEST DIRECTORIES'
 	del /Q /F primer_list_tmp\*
 	del /Q /F primer1_list_tmp\*
