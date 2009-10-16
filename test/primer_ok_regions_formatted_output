@@ -30,7 +30,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 2.0.0
+primer3 release 2.2.0
 
 
 PRIMER PICKING RESULTS FOR SEQUENCE_PRIMER_PAIR_OK_REGION_LIST test 2 any left primer - OK
@@ -65,7 +65,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 2.0.0
+primer3 release 2.2.0
 
 
 PRIMER PICKING RESULTS FOR SEQUENCE_PRIMER_PAIR_OK_REGION_LIST test 3 any pair - OK
@@ -100,7 +100,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 2.0.0
+primer3 release 2.2.0
 
 
 PRIMER PICKING RESULTS FOR SEQUENCE_PRIMER_PAIR_OK_REGION_LIST test 4 constrained left and right primers - OK
@@ -135,7 +135,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 2.0.0
+primer3 release 2.2.0
 
 
 PRIMER PICKING RESULTS FOR SEQUENCE_PRIMER_PAIR_OK_REGION_LIST test 5 constrained left and right primers - NOT OK
@@ -161,7 +161,7 @@ Left       1     0     0     0     1     0     0     0     0     0     0     0  
 Right      1     0     0     0     1     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 2.0.0
+primer3 release 2.2.0
 
 
 PRIMER PICKING RESULTS FOR SEQUENCE_PRIMER_PAIR_OK_REGION_LIST test 6 constrained left and right primers - OK
@@ -196,7 +196,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, ok 1
-primer3 release 2.0.0
+primer3 release 2.2.0
 
 
 PRIMER PICKING RESULTS FOR SEQUENCE_PRIMER_PAIR_OK_REGION_LIST test 7 contrained left and right primers - NOT OK
@@ -222,7 +222,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 1, not in any ok region 1, ok 0
-primer3 release 2.0.0
+primer3 release 2.2.0
 
 
 PRIMER PICKING RESULTS FOR SEQUENCE_PRIMER_PAIR_OK_REGION_LIST test 8 any left primer - NOT OK
@@ -248,7 +248,7 @@ Left       1     0     0     0     0     0     0     0     0     0     0     0  
 Right      1     0     0     0     1     0     0     0     0     0     0     0     0     0
 Pair Stats:
 considered 0, ok 0
-primer3 release 2.0.0
+primer3 release 2.2.0
 
 
 PRIMER PICKING RESULTS FOR SEQUENCE_PRIMER_PAIR_OK_REGION_LIST test 9 any right primer - NOT OK
@@ -274,6 +274,41 @@ Left       1     0     0     0     1     0     0     0     0     0     0     0  
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Pair Stats:
 considered 0, ok 0
-primer3 release 2.0.0
+primer3 release 2.2.0
+
+
+PRIMER PICKING RESULTS FOR SEQUENCE_PRIMER_PAIR_OK_REGION_LIST test 10 any right primer, any left primer - OK
+
+No mispriming library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          1   20   51.06   30.00 11.00  5.00 cttgattcaatgaatctcaa
+RIGHT PRIMER        65   17   45.95   29.41  2.00  1.00 aaaaaaacacaatccAg
+SEQUENCE SIZE: 100
+INCLUDED REGION SIZE: 100
+
+PRODUCT SIZE: 65, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 1.00
+PAIR_OK_REGIONS (left_start, left_len, right_start, right_len)*: 2,20,, ,,49,17
+
+    1 cttgattcaatgaatctcaaaaatggattactattgttcattctgtttcTggattgtgtt
+      >>>>>>>>>>>>>>>>>>>>                            <<<<<<<<<<<<
+
+   61 tttttcaaagttgaatccaaatgtgtaaaagggtgtgatg
+      <<<<<                                   
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+
+
+Statistics
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Pair Stats:
+considered 1, ok 1
+primer3 release 2.2.0
 
 

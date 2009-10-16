@@ -62,9 +62,9 @@ static const char *parse_int_pair(const char *, const char *,
                                   char, int *, int *,
                                   pr_append_str *);
 
-static char  *parse_2_int_pair(const char*, char*,
-				    char, int*, int*, int*, int*,
-				    pr_append_str*); 
+static char  *parse_2_int_pair(const char*, char*, char,
+			       char, int*, int*, int*, int*,
+			       pr_append_str*); 
 
 static void   parse_interval_list(const char *tag_name,
                                   const char *datum,
@@ -1171,14 +1171,15 @@ parse_interval_list(const char *tag_name,
 
 /*
  * For correct input, return a pointer to the first non-tab, non-space
- * character after the forth integer, and place the integers in out1,
+ * character after the forth integer and after the separator sep2, and place the integers in out1,
  * out2, out3 and out4  On incorrect input, return NULL;
  * If any of the 4 integers is not specified, the corresponding output
  * value will be -1.
  */
 static char *
 parse_2_int_pair(const char    *tag_name, char *datum,
-		 char          sep,              /* The separator, e.g. ',' or '-'. */
+		 char          sep,              /* The separator between 2 numbers, e.g. ',' or '-'. */
+		 char          sep2,             /* Separator between 2 intervals */
 		 int           *out1, int *out2, 
 		 int           *out3, int *out4, /* The 4 integers. */
 		 pr_append_str *err)             /* Error messages. */
@@ -1257,7 +1258,7 @@ parse_2_int_pair(const char    *tag_name, char *datum,
     nptr++; /* Advance past separator. */
     while (' ' == *nptr || '\t' == *nptr) nptr++;
     tmp = nptr;
-    if ((*nptr == '\n') || (*nptr == '\0')) {
+    if ((*nptr == '\n') || (*nptr == '\0') || (*nptr == sep2)) {
       *out4 = -1;
     } else {
       tlong = strtol(tmp, &nptr, 10);
@@ -1271,6 +1272,16 @@ parse_2_int_pair(const char    *tag_name, char *datum,
 	tag_syntax_error(tag_name, datum, err);
         return NULL;
       }
+    }
+    while (' ' == *nptr || '\t' == *nptr) nptr++;
+    /* Should have reached an interval separator or end of line/string */
+    if ((*nptr != sep2) && (*nptr != '\0') && (*nptr != '\n')) {
+      tag_syntax_error(tag_name, datum, err);
+      return NULL;
+    }
+    if (*nptr == sep2) {
+      /* Advance past the interval separator */
+      nptr++;
     }
     while (' ' == *nptr || '\t' == *nptr) nptr++;
 
@@ -1293,7 +1304,7 @@ parse_2_interval_list(const char *tag_name,
 
   while (' ' == *p || '\t' == *p) p++;
   while (*p != '\0' && *p != '\n') {
-    p = parse_2_int_pair(tag_name, p, ',', &i1, &i2, &i3, &i4, err);
+    p = parse_2_int_pair(tag_name, p, ',', ';', &i1, &i2, &i3, &i4, err);
     if (NULL == p) return;
     ret = p3_add_to_2_interval_array(interval_arr, i1, i2, i3, i4);
     if (ret) {
