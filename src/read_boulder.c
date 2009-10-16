@@ -172,7 +172,7 @@ read_boulder_record(FILE *file_input,
 
   non_fatal_err = nonfatal_parse_err;
 
-  while((s = p3_read_line(file_input)) != NULL && strcmp(s,"=")) {
+  while (((s = p3_read_line(file_input)) != NULL) && (strcmp(s,"="))) {
     /* Read only the PRIMER tags if settings is selected */
     /* Hint: strncomp returns 0 if both strings are equal */
      if (file_type == settings && strncmp(s, "PRIMER_", 7)

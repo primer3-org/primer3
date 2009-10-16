@@ -2723,6 +2723,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
    
   /* Initial slots in h */
   initialize_op(h);
+  h->overlaps = 0;
   h->repeat_sim.score = NULL;
   h->gc_content = h->num_ns = 0;
   h->overlaps_overlap_position = 0;
