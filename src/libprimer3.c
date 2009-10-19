@@ -6519,6 +6519,12 @@ p3_get_sa_ok_regions(const seq_args *sargs)
   return &sargs->ok_regions;
 }
 
+const int* 
+p3_get_sa_overlap_junctions(const seq_args *sargs)
+{
+  return sargs->primer_overlap_junctions;
+}
+
 /* ============================================================ */
 /* END 'get' functions for seq_args                             */
 /* ============================================================ */
@@ -6609,6 +6615,15 @@ p3_sa_add_to_quality_array(seq_args *sargs, int quality) {
   }
   sargs->quality[n] = quality;
   sargs->n_quality++;
+}
+
+int
+p3_sa_add_to_overlap_junctions_array(seq_args *sargs, int overlap)
+{
+  int c = sargs->primer_overlap_junctions_count;
+  if (c >= PR_MAX_INTERVAL_ARRAY) return 1;
+  sargs->primer_overlap_junctions[sargs->primer_overlap_junctions_count++] = overlap;
+  return 0;
 }
 
 void

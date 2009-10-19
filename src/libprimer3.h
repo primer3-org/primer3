@@ -860,7 +860,7 @@ int p3_set_sa_right_input(seq_args *sargs, const char *right_input);
 int p3_set_sa_internal_input(seq_args *sargs, const char *internal_input);
 void p3_set_sa_empty_quality(seq_args *sargs);
 void p3_sa_add_to_quality_array(seq_args *sargs, int quality);
-
+int p3_sa_add_to_overlap_junctions_array(seq_args *, int);
 
 /* The following three functions return 0 on success,
    1 on error (no space for additional intervals). */
@@ -874,6 +874,8 @@ const interval_array_t2 *p3_get_sa_tar2(const seq_args *sargs);
 const interval_array_t2 *p3_get_sa_excl2(const seq_args *sargs);
 const interval_array_t2 *p3_get_sa_excl_internal2(const seq_args *sargs);
 const interval_array_t4 *p3_get_sa_ok_regions(const seq_args *sargs);
+
+const int* p3_get_sa_overlap_junctions(const seq_args *sargs);
 
 /*
   use p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2);
