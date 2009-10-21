@@ -373,7 +373,7 @@ thal(const unsigned char *oligo_f, const unsigned char *oligo_r, const thal_args
    double T1;
    int k;
    int *bp;
-   unsigned char *oligo2_rev;
+   unsigned char *oligo2_rev = NULL;
    double mh, ms;
    
    send5 = hend5 = NULL;

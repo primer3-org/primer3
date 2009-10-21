@@ -53,7 +53,7 @@ WINMAKE=mingw32-make
 
 LDLIBS     = -lm
 CC         = g++
-O_OPTS     = -O0
+O_OPTS     = -O2 
 CC_OPTS    = -g -Wall -D__USE_FIXED_PROTOTYPES__
 P_DEFINES  =
 

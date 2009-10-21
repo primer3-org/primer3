@@ -1143,8 +1143,8 @@ choose_pair_or_triple(p3retval *retval,
   int *max_j_seen;   /* The maximum value of j (loop index for forward primers)
                         that has been examined for every reverse primer
                         index (i) */
-  int update_stats;  /* Flag to indicate whether pair_stats
-                       should be updated. */
+  int update_stats = 1;  /* Flag to indicate whether pair_stats
+                            should be updated. */
   primer_pair h;             /* The current pair which is being evaluated. */
   primer_pair the_best_pair; /* The best pair is being "remembered". */
   pair_stats *pair_expl = &retval->best_pairs.expl; /* For statistics */
@@ -1155,9 +1155,9 @@ choose_pair_or_triple(p3retval *retval,
 
   /* Hash maps used to store pairs that were computed */
   std::hash_map<int, primer_pair*> **pairs;
-  std::hash_map<int, primer_pair*> *hmap, *best_hmap;
+  std::hash_map<int, primer_pair*> *hmap, *best_hmap = NULL;
   std::hash_map<int, primer_pair*>::iterator it;
-  primer_pair *pp, *best_pp;
+  primer_pair *pp, *best_pp = NULL;
   int pair_found = 0, pair_ok = 0;
 
   pairs = (std::hash_map<int, primer_pair*>**) calloc (retval->rev.num_elem, 
