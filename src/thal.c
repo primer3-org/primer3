@@ -52,10 +52,6 @@
 #define MIN_HRPN_LOOP 3 /*  minimum size of hairpin loop */
 #endif
 
-#ifndef PRECISION
-# define PRECISION 1
-#endif
-
 #ifndef THAL_EXIT_ON_ERROR
 #define THAL_EXIT_ON_ERROR 0
 #endif
@@ -2575,14 +2571,14 @@ drawDimer(int* ps1, int* ps2, double temp, double H, double S, int temponly, dou
       if(temponly==0) {
 	 G = (H) - (t37 * (S + (N * saltCorrection)));
 	 S = S + (N * saltCorrection);
-	 o->temp = (double) t / PRECISION;
+	 o->temp = (double) t;
 	 /* maybe user does not need as precise as that */
 	 /* printf("Thermodynamical values:\t%d\tdS = %g\tdH = %g\tdG = %g\tt = %g\tN = %d, SaltC=%f, RC=%f\n",
-		len1, (double) S / PRECISION, (double) H / PRECISION, (double) G / PRECISION, (double) t / PRECISION, (int) N, saltCorrection, RC); */
+		len1, (double) S, (double) H, (double) G, (double) t, (int) N, saltCorrection, RC); */
 	 printf("Calculated thermodynamical parameters for dimer:\tdS = %g\tdH = %g\tdG = %g\tt = %g\n",
-		(double) S / PRECISION, (double) H / PRECISION, (double) G / PRECISION, (double) t / PRECISION);
+		(double) S, (double) H, (double) G, (double) t);
       } else {
-	 o->temp = (double) t / PRECISION;
+	 o->temp = (double) t;
 	 return;
       }
    }
@@ -2682,7 +2678,7 @@ drawHairpin(int* bp, double mh, double ms, int temponly, double temp, thal_resul
    double mg, t;
    if (!isFinite(ms) || !isFinite(mh)) {
       if(temponly == 0) {
-	 printf("0\tdS = %g\tdH = %g\tinf\tinf\n", (double) ms / PRECISION,(double) mh / PRECISION);
+	 printf("0\tdS = %g\tdH = %g\tinf\tinf\n", (double) ms,(double) mh);
 #ifdef DEBUG
 	 fputs("No temperature could be calculated\n",stderr);
 #endif
@@ -2704,11 +2700,11 @@ drawHairpin(int* bp, double mh, double ms, int temponly, double temp, thal_resul
       if(temponly == 0) {
 	 mg = mh - (temp * (ms + (((N/2)-1) * saltCorrection)));
 	 ms = ms + (((N/2)-1) * saltCorrection);
-	 o->temp = (double) t / PRECISION;
+	 o->temp = (double) t;
 	 printf("Calculated thermodynamical parameters for dimer:\t%d\tdS = %g\tdH = %g\tdG = %g\tt = %g\n",
-		len1, (double) ms / PRECISION, (double) mh / PRECISION, (double) mg / PRECISION, (double) t / PRECISION);
+		len1, (double) ms, (double) mh, (double) mg, (double) t);
       } else {
-	 o->temp = (double) t / PRECISION;
+	 o->temp = (double) t;
 	 return;
       }
    }
