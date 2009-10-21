@@ -173,8 +173,15 @@ print_boulder.o: print_boulder.c print_boulder.h libprimer3.h p3_seq_lib.h
 dpal.o: dpal.c dpal.h
 	$(CC) -c $(CFLAGS) -o $@ dpal.c
 
+# We use different level of optimization on windows as it seems there
+# are some differences in floating point operation implementation that
+# might lead to differences in our tests when using O2.
 thal.o: thal.c thal.h
+ifeq ($(TESTOPTS),--windows)
+	$(CC) -c $(CC_OPTS) -O0 -o $@ thal.c
+else
 	$(CC) -c $(CFLAGS) -o $@ thal.c
+endif
 
 p3_seq_lib.o: p3_seq_lib.c p3_seq_lib.h libprimer3.h
 	$(CC) -c $(CFLAGS) -o $@ p3_seq_lib.c
