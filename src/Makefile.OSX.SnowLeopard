@@ -51,7 +51,7 @@
 
 LDLIBS     = -lm
 CC         = gcc
-O_OPTS     = -O0
+O_OPTS     = -O2
 CC_OPTS    = -g -Wall -D__USE_FIXED_PROTOTYPES__ -isysroot /Developer/SDKs/MacOSX10.5.sdk -mmacosx-version-min=10.5 -arch i386 -arch x86_64 -arch ppc
 P_DEFINES  =
 
