@@ -10,7 +10,4 @@ echo; echo; echo 'STARTING 3RD SET OF TESTS (-O0 and valgrind)'; echo; echo;
 make O_OPTS=-O0
 cd ../test
 make TESTOPTS=--valgrind
-echo; echo; echo 'STARTING 4TH SET OF TESTS (-O0, -io_version=3, and valgrind)'; echo; echo;
-cd io_version_3
-cd ../test 
-make TESTOPTS=--valgrind
+
