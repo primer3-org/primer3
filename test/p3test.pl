@@ -274,7 +274,7 @@ sub main() {
                 unlink $t;
             }
             # go down into primer|primer1 list_tmp directory
-            chdir $list_tmp;
+            if (!chdir $list_tmp) { die "chdir $list_tmp: $!\n" }
 
             my $tmpCmd;
             # generate the necc. files; If $winFlag is 
@@ -287,7 +287,7 @@ sub main() {
             }
             $r = _nowarn_system($tmpCmd);
             # back to main directory
-            chdir "../";
+            if (!chdir "../") { die "chdir \"..\": $!\n" }
         } elsif ($test =~ /formatted$/) {
             my $cmd = "$valgrind_prefix$exe -strict_tags -format_output <$input >$tmp";
             $r = _nowarn_system($cmd);
