@@ -80,6 +80,4 @@ scp primer3-<release number>.tar.gz <username>,primer3@frs.sourceforge.net:/home
 # check if the file is available for download (may need to wait several minutes until the site gets updated):
 firefox https://sourceforge.net/projects/primer3/files/
 
-
-
-
+# 7 DOWNLOAD THE NEWLY UPLOADED primer3-<release number>.tar.gz FROM SOURCEFORGE AND TEST IT
