@@ -1208,10 +1208,7 @@ choose_pair_or_triple(p3retval *retval,
         break;
       }
 
-      if (retval->rev.oligo[i].overlaps || right_oligo_in_pair_overlaps_used_oligo(&retval->rev.oligo[i],
-                                                                                   best_pairs,
-                                                                                   pa->min_three_prime_distance)) {
-        retval->rev.oligo[i].overlaps = 1;
+      if (retval->rev.oligo[i].overlaps) {
         /* The stats will not keep track of the pair correctly
            after the first pass, because an oligo might
            have been legal on one pass but become illegal on
@@ -1281,10 +1278,7 @@ choose_pair_or_triple(p3retval *retval,
           update_stats = 1;
         }
 
-        if (retval->fwd.oligo[j].overlaps || left_oligo_in_pair_overlaps_used_oligo(&retval->fwd.oligo[j],
-                                                                                    best_pairs,
-                                                                                    pa->min_three_prime_distance)) {
-          retval->fwd.oligo[j].overlaps = 1;
+        if (retval->fwd.oligo[j].overlaps) {
           /* The stats will not keep track of the pair correctly
              after the first pass, because an oligo might
              have been legal on one pass but become illegal on
@@ -1451,6 +1445,22 @@ choose_pair_or_triple(p3retval *retval,
       /* Mark the pair as already selected */
       delete best_pp;
       (*best_hmap)[the_best_j] = NULL;
+
+      /* Update the overlaps flags */
+      for (i = 0; i < retval->rev.num_elem; i++) {
+	if (right_oligo_in_pair_overlaps_used_oligo(&retval->rev.oligo[i],
+						    best_pairs,
+						    pa->min_three_prime_distance)) {
+	  retval->rev.oligo[i].overlaps = 1;
+	}
+      }
+      for (j = 0; j < retval->fwd.num_elem; j++) {
+	if (left_oligo_in_pair_overlaps_used_oligo(&retval->fwd.oligo[j],
+						   best_pairs,
+						   pa->min_three_prime_distance)) {
+	  retval->fwd.oligo[j].overlaps = 1;
+	}
+      }
 
       /* If we have enough stop the while loop */
       if (pa->num_return == best_pairs->num_pairs) {
