@@ -81,3 +81,13 @@ scp primer3-<release number>.tar.gz <username>,primer3@frs.sourceforge.net:/home
 firefox https://sourceforge.net/projects/primer3/files/
 
 # 7 DOWNLOAD THE NEWLY UPLOADED primer3-<release number>.tar.gz FROM SOURCEFORGE AND TEST IT
+
+# 8 UPDATE THE SOURCEFORGE WEBPAGE
+
+# get the files:
+rsync -avz <username>,primer3@web.sourceforge.net:htdocs/ .
+
+# edit & modify
+
+# upload them back:
+rsync -avz *.php <username>,primer3@web.sourceforge.net:htdocs/
