@@ -1,0 +1,10 @@
+
+Performance tests
+=================
+
+timetest0 - 1000 primer pairs, no restrictions
+timetest1 - 1000 primer pairs, min_three_prime_distance = 1
+timetest2 - 200 primer pairs, constrained using ok_region_list
+timetest3 - 200 primer pairs, constrained using overlap_junction_list
+
+All should take less than 25sec
