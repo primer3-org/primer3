@@ -296,11 +296,11 @@ static int   pick_primers_by_position(const int, const int,
 static double obj_fn(const p3_global_settings *, primer_pair *);
 
 static int    left_oligo_in_pair_overlaps_used_oligo(const primer_rec *left,
-                                                     const pair_array_t *retpair,
+                                                     const primer_pair *best_pair,
                                                      int min_dist);
 
 static int    right_oligo_in_pair_overlaps_used_oligo(const primer_rec *right,
-                                                      const pair_array_t *retpair,
+                                                      const primer_pair *best_pair,
                                                       int min_dist);
 
 static int    oligo_overlaps_interval(int, int,
@@ -1293,6 +1293,27 @@ choose_pair_or_triple(p3retval *retval,
           continue;
         }
 
+	/* Some simple checks first, before searching the hashmap */
+	int must_use = 0;
+	if ((pa->primer_task == check_primers) || 
+	    ((retval->fwd.oligo[j].must_use != 0) &&
+	     (retval->rev.oligo[i].must_use != 0))) {
+	  must_use = 1;
+	}
+	/* Determine if overlap with an overlap point is required, and
+	   if so, whether one of the primers in the pairs overlaps
+	   that point. */
+	if ((sa->primer_overlap_junctions_count > 0)
+	    && !(retval->rev.oligo[i].overlaps_overlap_position
+		 || retval->fwd.oligo[j].overlaps_overlap_position)
+	    ) {
+	  if (update_stats) { 
+	    pair_expl->considered++;
+	    pair_expl->does_not_overlap_a_required_point++; 
+	  }
+	  if (!must_use) continue;
+	}
+
         /* Check if pair was already computed */
         pair_found = 0;
         if (hmap) {
@@ -1449,14 +1470,14 @@ choose_pair_or_triple(p3retval *retval,
       /* Update the overlaps flags */
       for (i = 0; i < retval->rev.num_elem; i++) {
 	if (right_oligo_in_pair_overlaps_used_oligo(&retval->rev.oligo[i],
-						    best_pairs,
+						    &the_best_pair,
 						    pa->min_three_prime_distance)) {
 	  retval->rev.oligo[i].overlaps = 1;
 	}
       }
       for (j = 0; j < retval->fwd.num_elem; j++) {
 	if (left_oligo_in_pair_overlaps_used_oligo(&retval->fwd.oligo[j],
-						   best_pairs,
+						   &the_best_pair,
 						   pa->min_three_prime_distance)) {
 	  retval->fwd.oligo[j].overlaps = 1;
 	}
@@ -1623,95 +1644,72 @@ add_must_use_warnings(pr_append_str *warning,
 
    If min_dist ==  0:
      Return 1 if the left or the right
-     primer is identical to another left or right
-     primer (respectively) in retpair.
+     primer is identical to the left or right
+     primer (respectively) in best_pair.
 
      Otherwise return 0.
 
    If min_dist > 0:
      Return 1 if EITHER:
      (1) The 3' end of the left primer in pair is
-         < min_dist from the 3' end of any left primer
-         in retpair
+         < min_dist from the 3' end of the left primer
+         in best_pair
      OR
      (2) The 3' end of the right primer in pair is
-         < min_dist from the 3' end of any right primer
-         in retpair
+         < min_dist from the 3' end of the right primer
+         in best_pair
 
 */
 
 static int
 right_oligo_in_pair_overlaps_used_oligo(const primer_rec *right,
-                                        const pair_array_t *retpair,
+                                        const primer_pair *best_pair,
                                         int min_dist)
 {
-  const primer_pair *q, *stop;
-  int q_pos, pair_pos;
-
-  /* retpair might not have any pairs in it yet. (add_pair
-     allocates memory for retpair->pairs.) */
-  if (retpair->num_pairs == 0)
-    return 0;
+  int best_pos, pair_pos;
 
   if (min_dist == -1)
     return 0;
 
-  q = &retpair->pairs[0];
+  best_pos = best_pair->right->start - best_pair->right->length + 1;
 
-  stop = &retpair->pairs[retpair->num_pairs];
+  pair_pos = right->start - right->length + 1;
 
-  for (; q < stop; q++) {
-    q_pos = q->right->start - q->right->length + 1;
-
-    pair_pos = right->start - right->length + 1;
-
-    if ((abs(q_pos - pair_pos) < min_dist)
-             && (min_dist != 0)) { return 1; }
-
-    if ((q->right->length == right->length)
-        && (q->right->start == right->start)
-        && (min_dist == 0)) {
-      return 1;
-    }
-
+  if ((abs(best_pos - pair_pos) < min_dist)
+      && (min_dist != 0)) { return 1; }
+  
+  if ((best_pair->right->length == right->length)
+      && (best_pair->right->start == right->start)
+      && (min_dist == 0)) {
+    return 1;
   }
+
   return 0;
 }
 
 static int
 left_oligo_in_pair_overlaps_used_oligo(const primer_rec *left,
-                                       const pair_array_t *retpair,
+                                       const primer_pair *best_pair,
                                        int min_dist)
 {
-  const primer_pair *q, *stop;
-  int q_pos, pair_pos;
-
-  /* retpair might not have any pairs in it yet. (add_pair
-     allocates memory for retpair->pairs.) */
-  if (retpair->num_pairs == 0)
-    return 0;
+  int best_pos, pair_pos;
 
   if (min_dist == -1)
     return 0;
 
-  q = &retpair->pairs[0];
+  best_pos =  best_pair->left->start + best_pair->left->length - 1;
 
-  stop = &retpair->pairs[retpair->num_pairs];
+  pair_pos = left->start + left->length -  1;
 
-  for (; q < stop; q++) {
-    q_pos =  q->left->start + q->left->length - 1;
-
-    pair_pos = left->start + left->length -  1;
-
-    if ((abs(q_pos - pair_pos) < min_dist)
-        && (min_dist != 0)) { return 1; }
-
-    if ((q->left->length == left->length)
-        && (q->left->start == left->start)
-        && (min_dist == 0)) {
-      return 1;
-    }
+  if ((abs(best_pos - pair_pos) < min_dist)
+      && (min_dist != 0)) { return 1; }
+  
+  if ((best_pair->left->length == left->length)
+      && (best_pair->left->start == left->start)
+      && (min_dist == 0)) {
+    return 1;
   }
+
   return 0;
 }
 
@@ -3543,18 +3541,6 @@ characterize_pair(p3retval *retval,
   }
 
   /* ============================================================= */
-  /* Determine if overlap with an overlap point is required, and
-     if so, whether one of the primers in the pairs overlaps
-     that point. */
-
-  if ((sa->primer_overlap_junctions_count > 0)
-      && !(ppair->right->overlaps_overlap_position
-           || ppair->left->overlaps_overlap_position)
-      ) {
-    if (update_stats) { pair_expl->does_not_overlap_a_required_point++; }
-    if (!must_use) return PAIR_FAILED;
-    else pair_failed_flag = 1;
-  }
 
   /* Check that the pair is included in one of the specified ok regions */
   if ((sa->ok_regions.count > 0) && (!sa->ok_regions.any_pair)) {
