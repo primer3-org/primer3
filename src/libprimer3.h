@@ -593,6 +593,9 @@ typedef struct primer_pair {
                          * primers.
                          */
   char   *rep_name;
+
+  bool operator< (const primer_pair& pair) const;
+
 } primer_pair;
 
 typedef int interval_array_t[PR_MAX_INTERVAL_ARRAY][2];
