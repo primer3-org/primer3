@@ -1141,7 +1141,7 @@ choose_pair_or_triple(p3retval *retval,
 
   int trace_me = 0;
 
-  /* Priority queues will computed pairs, one queue for each product size range */
+  /* Priority queues with computed pairs, one queue for each product size range */
   std::priority_queue<primer_pair> *pairs;
   pairs = (std::priority_queue<primer_pair>*) calloc (pa->num_intervals, 
 						      sizeof(std::priority_queue<primer_pair>));
