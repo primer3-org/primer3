@@ -1,4 +1,8 @@
-release 2.2.0 alpha 2009-10-XX ==========================================
+release 2.2.1 alpha 2009-10-28 ==========================================
+
+This release adds several performance enhancements.
+
+release 2.2.0 alpha 2009-10-23 ==========================================
 
 This release adds multiple new features to primer3_core and related
 C code.

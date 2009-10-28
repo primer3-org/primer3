@@ -293,10 +293,10 @@ sub perldiff($$) {
 
         # Edit release number
         if ($l1 ne $l2) {
-            if ($l1 =~ /primer3 release \d+\.\d+\.\d+/
-                && $l2 =~ /primer3 release \d+\.\d+\.\d+/) {
-                $l1 =~ s/primer3 release \d+\.\d+\.\d+//;
-                $l2 =~ s/primer3 release \d+\.\d+\.\d+//;
+            if ($l1 =~ /(libprimer3|primer3) release \d+\.\d+\.\d+/
+                && $l2 =~ /(libprimer3|primer3) release \d+\.\d+\.\d+/) {
+                $l1 =~ s/(libprimer3|primer3) release \d+\.\d+\.\d+//;
+                $l2 =~ s/(libprimer3|primer3) release \d+\.\d+\.\d+//;
             }
         }
 
