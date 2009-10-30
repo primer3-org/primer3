@@ -173,15 +173,10 @@ print_boulder.o: print_boulder.c print_boulder.h libprimer3.h p3_seq_lib.h
 dpal.o: dpal.c dpal.h
 	$(CC) -c $(CFLAGS) -o $@ dpal.c
 
-# We use different level of optimization on windows as it seems there
-# are some differences in floating point operation implementation that
-# might lead to differences in our tests when using O2.
+# We use '-ffloat-store' on windows to prevent undesirable
+# precision which may lead to differences in floating point results.
 thal.o: thal.c thal.h
-ifeq ($(TESTOPTS),--windows)
-	$(CC) -c $(CC_OPTS) -O0 -o $@ thal.c
-else
-	$(CC) -c $(CFLAGS) -o $@ thal.c
-endif
+	$(CC) -c $(CFLAGS) -ffloat-store -o $@ thal.c
 
 p3_seq_lib.o: p3_seq_lib.c p3_seq_lib.h libprimer3.h
 	$(CC) -c $(CFLAGS) -o $@ p3_seq_lib.c
@@ -190,7 +185,7 @@ dpal_primer.o: dpal.c dpal.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ dpal.c
 
 thal_primer.o: thal.c thal.h
-	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ thal.c
+	$(CC) -c $(CFLAGS) -ffloat-store $(P_DEFINES) -o $@ thal.c
 
 format_output.o: format_output.c format_output.h libprimer3.h dpal.h thal.h p3_seq_lib.h 
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ format_output.c
