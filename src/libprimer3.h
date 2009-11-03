@@ -916,7 +916,7 @@ void p3_set_gs_prmax (p3_global_settings * p , int val, int i);
 void p3_set_gs_primer_opt_size(p3_global_settings * p , int val);
 void p3_set_gs_primer_min_size(p3_global_settings * p , int val);
 void p3_set_gs_primer_max_size(p3_global_settings * p , int val);
-void p3_set_gs_primer_max_polyx(p3_global_settings * p , int val);
+void p3_set_gs_primer_max_poly_x(p3_global_settings * p , int val);
 void p3_set_gs_primer_opt_tm(p3_global_settings * p , double product_opt_tm);
 void p3_set_gs_primer_opt_gc_percent(p3_global_settings * p , double val);
 void p3_set_gs_primer_min_tm(p3_global_settings * p , double product_min_tm);

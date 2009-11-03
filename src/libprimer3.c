@@ -1171,7 +1171,7 @@ choose_pair_or_triple(p3retval *retval,
   /* Pick pairs till we have enough. */     
   while(1) {
     /* FIX ME, is this memset really needed?  Apparently slow */
-    memset(&the_best_pair, 0, sizeof(the_best_pair));
+    /* memset(&the_best_pair, 0, sizeof(the_best_pair)); */
     the_best_i = -1;
     the_best_j = -1;
     /* To start put penalty to the maximum */
