@@ -193,16 +193,16 @@ sub main() {
     if ($do_valgrind) {
         # Assume this is Unix/Linux envrionment, so
         # we have grep.
-        my $r = system "grep ERROR ntthal.*.*valg | grep -v 'ERROR SUMMARY: 0 errors'";
+        my $r = system "grep ERROR ntthal.*.*valg* | grep -v 'ERROR SUMMARY: 0 errors'";
         if (!$r) { # !$r because grep returns 0 if something is found,
             # and if something is found, we have a problem.
             $exit_status = -1;
         }
-        $r = system "grep 'definitely lost' ntthal.*.*valg | grep -v '0 bytes'";
+        $r = system "grep 'definitely lost' ntthal.*.*valg* | grep -v '0 bytes'";
         if (!$r) {
             $exit_status = -1;
         }
-        $r = system "grep 'possibly lost' ntthal.*.*valg  | grep -v '0 bytes'";
+        $r = system "grep 'possibly lost' ntthal.*.*valg*  | grep -v '0 bytes'";
         if (!$r) {
             $exit_status = -1;
         }
