@@ -3081,16 +3081,18 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
 
     oligo_repeat_library_mispriming(h, pa, sa, l, stats,
                                     dpal_arg_to_use);
+    if (pa->thermodynamic_alignment==0 && OK_OR_MUST_USE(h)) {
+      oligo_template_mispriming(h, pa, sa, l, stats,
+				dpal_arg_to_use->local_end,
+				thal_arg_to_use->any);
+    }
   }
   
-  if (must_use
-      || pa->file_flag
-      || retval->output_type == primer_list
-      || (po_args->weights.repeat_sim && pa->thermodynamic_alignment==0)
-      || ((OT_RIGHT == l || OT_LEFT == l)
-          && pa->p_args.weights.template_mispriming && pa->thermodynamic_alignment==0)
-      || ((OT_RIGHT == l || OT_LEFT == l)
-          && pa->p_args.weights.template_mispriming_th && pa->thermodynamic_alignment==1)) {
+  if ((must_use
+       || pa->file_flag
+       || retval->output_type == primer_list
+       || ((OT_RIGHT == l || OT_LEFT == l)
+	   && pa->p_args.weights.template_mispriming_th)) && pa->thermodynamic_alignment==1) {
     oligo_template_mispriming(h, pa, sa, l, stats,
                               dpal_arg_to_use->local_end,
                               thal_arg_to_use->any);
@@ -3730,9 +3732,11 @@ characterize_pair(p3retval *retval,
     /* We have not yet checked the oligo against the repeat library. */
     oligo_repeat_library_mispriming(&retval->fwd.oligo[m], pa, sa, OT_LEFT,
                                     &retval->fwd.expl,dpal_arg_to_use);
-    oligo_template_mispriming(&retval->fwd.oligo[m], pa, sa, OT_LEFT,
-                              &retval->fwd.expl,dpal_arg_to_use->local_end,
-                              thal_arg_to_use->end1);
+    if (OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
+	oligo_template_mispriming(&retval->fwd.oligo[m], pa, sa, OT_LEFT,
+				  &retval->fwd.expl,dpal_arg_to_use->local_end,
+				  thal_arg_to_use->end1);
+    }
     if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
       pair_expl->considered--;
       if (!must_use) return PAIR_FAILED;
@@ -3743,9 +3747,11 @@ characterize_pair(p3retval *retval,
   if (retval->rev.oligo[n].repeat_sim.score == NULL) {
     oligo_repeat_library_mispriming(&retval->rev.oligo[n], pa, sa, OT_RIGHT,
                                     &retval->rev.expl, dpal_arg_to_use);
-    oligo_template_mispriming(&retval->rev.oligo[n], pa, sa, OT_RIGHT,
-                              &retval->rev.expl, dpal_arg_to_use->local_end,
-                              thal_arg_to_use->end1);
+    if (OK_OR_MUST_USE(&retval->rev.oligo[n])) {
+      oligo_template_mispriming(&retval->rev.oligo[n], pa, sa, OT_RIGHT,
+				&retval->rev.expl, dpal_arg_to_use->local_end,
+				thal_arg_to_use->end1);
+    }
     if (!OK_OR_MUST_USE(&retval->rev.oligo[n])) {
       pair_expl->considered--;
       if (!must_use) return PAIR_FAILED;
