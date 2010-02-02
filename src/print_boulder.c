@@ -39,7 +39,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h> /* strcpy */
 #include "print_boulder.h"
 
-static char *pr_program_name = "Program name is probably primer3_core";
+static const char *pr_program_name = "Program name is probably primer3_core";
 
 static void   print_all_explain(const p3_global_settings *,
                                 const seq_args *, 
@@ -86,16 +86,16 @@ print_boulder(int io_version,
   int i, incl_s = sa->incl_s;
     
   /* This deals with the renaming of the internal oligo */
-  char *new_oligo_name = "INTERNAL";
-  char *old_oligo_name = "INTERNAL_OLIGO";
-  char *int_oligo = new_oligo_name;
+  const char *new_oligo_name = "INTERNAL";
+  const char *old_oligo_name = "INTERNAL_OLIGO";
+  char *int_oligo = (char*) new_oligo_name;
 
   /* Check: are all pointers linked to something*/
   PR_ASSERT(NULL != pa);
   PR_ASSERT(NULL != sa);
     
   if (io_version == 3) {
-    int_oligo = old_oligo_name;
+    int_oligo = (char*) old_oligo_name;
   }
         
   /* Check if there are warnings and print them */

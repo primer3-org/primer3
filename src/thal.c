@@ -155,7 +155,7 @@ static unsigned char str2int(char c); /* converts DNA sequence to int; 0-A, 1-C,
 
 static double saltCorrectS (double mv, double dv, double dntp); /* part of calculating salt correction
 							    for Tm by SantaLucia et al */
-static FILE* openParamFile(char* name, thal_results* o); /* file of thermodynamic params */
+static FILE* openParamFile(const char* name, thal_results* o); /* file of thermodynamic params */
 
 /* get thermodynamic tables */
 static double readDouble(FILE *file, thal_results* o);
@@ -316,7 +316,7 @@ static jmp_buf _jmp_buf;
 
 /* Function to read the thermodynamic values from the parameter files, returns 0 in case of success */
 int 
-get_thermodynamic_values(char* path, thal_results *o)
+get_thermodynamic_values(const char* path, thal_results *o)
 {
 
   if (setjmp(_jmp_buf) != 0) {
@@ -717,7 +717,7 @@ reverse(unsigned char *s)
 }
 
 static FILE* 
-openParamFile(char* fname, thal_results* o)
+openParamFile(const char* fname, thal_results* o)
 {
    FILE* file;
    char* paramdir;

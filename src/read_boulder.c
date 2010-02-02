@@ -87,7 +87,7 @@ static void   pr_append_new_chunk(pr_append_str *x, const char *s);
 static void   tag_syntax_error(const char *, const char *,  pr_append_str *);
 static int    parse_seq_quality(char *, seq_args *);
 
-static char *pr_program_name = "TMP";
+static const char *pr_program_name = "TMP";
 
 /* 
  * Hack to support old SunOS headers.  (We do not try to declare _all_

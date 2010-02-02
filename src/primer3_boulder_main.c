@@ -481,7 +481,7 @@ read_thermodynamic_parameters()
 static void
 print_usage()
 {
-  fprintf(stderr, primer3_copyright());
+  fprintf(stderr, "%s", primer3_copyright());
 
   fprintf(stderr, "\n\nUSAGE: %s %s %s %s %s %s %s %s %s\n", pr_program_name,
           "[-format_output]", "[-io_version=3|-io_version=4]", "[-p3_settings_file=<file_path>]", "[-echo_settings_file]",

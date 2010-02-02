@@ -99,7 +99,7 @@ typedef struct {
 
 void set_thal_default_args(thal_args *a);
 
-int  get_thermodynamic_values(char* path, thal_results *o);
+int  get_thermodynamic_values(const char* path, thal_results *o);
 
 void destroy_thal_structures();
 

@@ -89,7 +89,6 @@ namespace std
 
 #define PAIR_OK 1
 #define PAIR_FAILED 0
-#define POTENTIAL_PAIR 2
 
 #define OK_OR_MUST_USE(H) (!p3_ol_has_any_problem(H) || (H)->must_use)
 
@@ -1158,7 +1157,7 @@ choose_pair_or_triple(p3retval *retval,
   std::hash_map<int, primer_pair*> *hmap, *best_hmap = NULL;
   std::hash_map<int, primer_pair*>::iterator it;
   primer_pair *pp, *best_pp = NULL;
-  int pair_found = 0, pair_ok = 0;
+  int pair_found = 0;
 
   pairs = (std::hash_map<int, primer_pair*>**) calloc (retval->rev.num_elem, 
                                                        sizeof(std::hash_map<int, primer_pair*>*));
@@ -1300,6 +1299,8 @@ choose_pair_or_triple(p3retval *retval,
 	     (retval->rev.oligo[i].must_use != 0))) {
 	  must_use = 1;
 	}
+	
+
 	/* Determine if overlap with an overlap point is required, and
 	   if so, whether one of the primers in the pairs overlaps
 	   that point. */
@@ -1314,6 +1315,18 @@ choose_pair_or_triple(p3retval *retval,
 	  if (!must_use) continue;
 	}
 
+	/* Check product size now */
+	double product_size = retval->rev.oligo[i].start - retval->fwd.oligo[j].start+1;
+
+	if (product_size < pa->pr_min[product_size_range_index] ||
+	    product_size > pa->pr_max[product_size_range_index]) {
+	  if (update_stats) {
+	    pair_expl->considered++;
+	    pair_expl->product++; 
+	  }
+	  if (!must_use) continue;
+	}
+
         /* Check if pair was already computed */
         pair_found = 0;
         if (hmap) {
@@ -1322,34 +1335,25 @@ choose_pair_or_triple(p3retval *retval,
             pair_found = 1;
             pp = it->second;
             if (pp) { /* pair was computed, it isn't illegal and it wasn't selected yet */
-              if (update_stats) { pair_expl->considered++; }
-              pair_ok = 1;
-              /* Check if ok for this product size range */
-              if (pp->product_size < pa->pr_min[product_size_range_index] ||
-                  pp->product_size > pa->pr_max[product_size_range_index]) {
-                if (update_stats) {pair_expl->product++; }
-                if (!pp->must_use) pair_ok = 0;
-              }
-              if (pair_ok) {
-                if (update_stats) {
-                  if (trace_me)
-                    fprintf(stderr, "ok++\n");
-                  pair_expl->ok++;
-                }
-                /* Check if this is a better pair */
-                if (compare_primer_pair(pp, &the_best_pair) < 0) {
-                  the_best_pair = *pp;
-                  the_best_i = i;
-                  the_best_j = j;
-                  best_hmap = hmap;
-                  best_pp = pp;
-                }
-
-                /* There cannot be a better pair */
-                if (the_best_pair.pair_quality == 0) {
-                  break;
-                } 
-              }
+	      if (update_stats) {
+		pair_expl->considered++;
+		if (trace_me)
+		  fprintf(stderr, "ok++\n");
+		pair_expl->ok++;
+	      }
+	      /* Check if this is a better pair */
+	      if (compare_primer_pair(pp, &the_best_pair) < 0) {
+		the_best_pair = *pp;
+		the_best_i = i;
+		the_best_j = j;
+		best_hmap = hmap;
+		best_pp = pp;
+	      }
+	      
+	      /* There cannot be a better pair */
+	      if (the_best_pair.pair_quality == 0) {
+		break;
+	      } 
             } /* else - pp is NULL - it's illegal or already selected */
           }
         } else {
@@ -3524,13 +3528,6 @@ characterize_pair(p3retval *retval,
 
   ppair->must_use = must_use;
 
-  if(ppair->product_size < pa->pr_min[int_num] ||
-     ppair->product_size > pa->pr_max[int_num]) {
-    if (update_stats) {pair_expl->product++; }
-    if (!must_use) return POTENTIAL_PAIR;
-    else pair_failed_flag = 1;
-  }
-
   if (sa->tar2.count > 0) {
     if (pair_spans_target(ppair, sa)) {
       ppair->target = 1;
@@ -4079,7 +4076,7 @@ align(const char *s1,
       /* This branch is taken only if there is a programming error, in
          that s1 or s2 were NULL or contained an illegal character. We
          try to print some debugging information before aborting. */
-      fprintf(stderr, r.msg);
+      fprintf(stderr, "%s", r.msg);
       /* Always false, causes an abort: */
       PR_ASSERT(r.score != DPAL_ERROR_SCORE);
     }
@@ -4117,7 +4114,7 @@ align_thermod(const char *s1,
              /* This branch is taken only if there is a programming error, in
               *          that s1 or s2 were NULL or contained an illegal character. We
               *          try to print some debugging information before aborting. */
-             fprintf(stderr, r.msg);
+	  fprintf(stderr, "%s", r.msg);
              /* Always false, causes an abort: */
              PR_ASSERT(r.temp != THAL_ERROR_SCORE);
           }

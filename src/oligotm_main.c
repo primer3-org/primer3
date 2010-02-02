@@ -50,7 +50,7 @@ main(int argc, char **argv)
 {
   double tm;
 
-  char *msg = "USAGE: %s OPTIONS oligo\n"
+  const char *msg = "USAGE: %s OPTIONS oligo\n"
     "\n"
     "where oligo is a DNA sequence of between 2 and 36 bases\n"
     "\n"
@@ -87,13 +87,13 @@ main(int argc, char **argv)
     "\n\n"
     "Prints oligo's melting temperature on stdout.\n";
    
-  char *info = "1. Breslauer KJ, Frank R, Blöcker H and Marky LA. (1986) Predicting DNA duplex stability from the base sequence. Proc. Natl. Acad. Sci., 83, 4746-50.\n\n"
+  const char *info = "1. Breslauer KJ, Frank R, Blöcker H and Marky LA. (1986) Predicting DNA duplex stability from the base sequence. Proc. Natl. Acad. Sci., 83, 4746-50.\n\n"
     "2. Rychlik W, Spencer WJ and Rhoads RE. (1990) Optimization of the annealing temperature for DNA amplification in vitro. Nucleic Acids Res., 118, 6409-12.\n\n"
     "3. SantaLucia JR. (1998). A unified view of polymer, dumbbell and oligonucleotide DNA nearest-neighbor thermodynamics. Proc. Natl. Acad. Sci., 95, 1460-65.\n\n"
     "4. Schildkraut, C, and Lifson, S. (1965) Dependence of the melting temperature of DNA on salt concentration. Biopolymers, 3, 195-208.\n\n"
     "5. Owczarzy R, You Y, Moreira BG, Manthey JA, Huang L, Behlke MA and Walder JA. (2004) Effects of Sodium Ions on DNA Duplex Oligomers: Improved Predictions of Melting Temperatures. Biochemistry, 43, 3537-54.\n";
    
-   char *copyright = 
+   const char *copyright = 
 "Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006\n"
 "Whitehead Institute for Biomedical Research, Steve Rozen\n"
 "(http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky\n"
@@ -124,7 +124,7 @@ main(int argc, char **argv)
    int i, j, len;
    if (argc < 2 || argc > 14) {
      fprintf(stderr, msg, argv[0]);       
-     fprintf(stderr, copyright);
+     fprintf(stderr, "%s", copyright);
      return -1;
    }
 

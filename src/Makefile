@@ -53,7 +53,7 @@ WINMAKE=mingw32-make
 
 LDLIBS     = -lm
 CC         = g++
-O_OPTS     = -O2 
+O_OPTS     = -O2
 CC_OPTS    = -g -Wall -D__USE_FIXED_PROTOTYPES__
 P_DEFINES  =
 
@@ -150,7 +150,7 @@ $(PRIMER_EXE): $(PRIMER_OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
 
 libprimer3.o: libprimer3.c libprimer3.h p3_seq_lib.h dpal.h thal.h oligotm.h
-	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ libprimer3.c
+	$(CC) -c $(CFLAGS) -Wno-deprecated $(P_DEFINES) -o $@ libprimer3.c
 
 $(NTDPAL_EXE): ntdpal_main.o dpal.o
 	$(CC) $(LDFLAGS) -o $@ ntdpal_main.o dpal.o

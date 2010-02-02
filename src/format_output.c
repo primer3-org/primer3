@@ -43,7 +43,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define FORWARD 1
 #define REVERSE -1
 
-static char *pr_program_name = "Program name is probably primer3_core";
+static const char *pr_program_name = "Program name is probably primer3_core";
 
 static void format_pairs(FILE *f, 
                          const p3_global_settings *pa,
@@ -618,7 +618,7 @@ print_explain(FILE *f,
 {
    
    
-  char *format;  /* Format string for the table headers */
+  const char *format;  /* Format string for the table headers */
   if(pa->thermodynamic_alignment==0)
     format    = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s";
   else format = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%7s%6s";
@@ -720,7 +720,7 @@ print_stat_line(FILE *f, const char *t, oligo_stats s,
                 int print_lib_sim, int lowercase_masking,
                 int thermodynamic_alignment)
 {
-   char *format = "%-6s%6d%6d%6d%6d%6d%6d%6d%6d%6d";
+   const char *format = "%-6s%6d%6d%6d%6d%6d%6d%6d%6d%6d";
    if (!strcmp(t, "Left"))
      fprintf(f,format, t, s.considered, s.ns, s.target, s.excluded,
 	     s.not_in_any_left_ok_region, s.gc, s.gc_clamp, s.temp_min, s.temp_max);
