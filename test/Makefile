@@ -118,11 +118,14 @@ else
 	-rm -f pcr_primers_and_io.int pcr_primers_and_io.rev pcr_primers_and_io.for
 	-rm -f pcr_primers.rev pcr_primers.for
 	-rm -f syntax[0-1][0-9].for syntax[0-1][0-9].int syntax[0-1][0-9].rev
-	-rm -f oligotm.*.valg  # valgrind output from oligotm_test.pl --valgrind
-	-rm -f ntdpal.*.valg   # valgrind output from dpal_test.pl --valgrind
-	-rm -f ntthal.*.valg   # valgrind output from thal_test.pl --valgrind
-	-rm -f *.vg */*.vg     # valgrind output from p3test{,z}.pl --valgrind
-	-rm -f *.vg.core.*     # core files from crashed valgrind test
+	-rm -f oligotm.*.valg    # valgrind output from oligotm_test.pl --valgrind
+	-rm -f ntdpal.*.valg     # valgrind output from dpal_test.pl --valgrind
+	-rm -f ntthal.*.valg     # valgrind output from thal_test.pl --valgrind
+	-rm -f oligotm.*.valg.*  # valgrind output from oligotm_test.pl --valgrind
+	-rm -f ntdpal.*.valg.*   # valgrind output from dpal_test.pl --valgrind
+	-rm -f ntthal.*.valg.*   # valgrind output from thal_test.pl --valgrind
+	-rm -f *.vg */*.vg       # valgrind output from p3test{,z}.pl --valgrind
+	-rm -f *.vg.core.*       # core files from crashed valgrind test
 	-rm -f ./core # in case we crashed and left a core file
 	cd io_version_3; make clean
 endif
