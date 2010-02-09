@@ -63,6 +63,8 @@ namespace std
 
 /* #define's */
 
+#define UPDATE_OK_REGIONS  1
+
 #ifndef MAX_PRIMER_LENGTH
 #define MAX_PRIMER_LENGTH 36
 #endif
@@ -108,7 +110,6 @@ typedef struct dpal_arg_holder {
   dpal_args *local_ambig;
   dpal_args *local_end_ambig;
 } dpal_arg_holder;
-
 typedef struct thal_arg_holder {
   thal_args *any;
   thal_args *end1;
@@ -125,6 +126,9 @@ static void _adjust_seq_args(const p3_global_settings *pa,
                              seq_args *sa,
                              pr_append_str *nonfatal_err,
                              pr_append_str *warning);
+
+static void _update_ok_regions_list(const p3_global_settings *pa,
+				    seq_args *sa);
 
 static int any_5_prime_ol_extension_has_problem(const primer_rec *);
 
@@ -689,6 +693,11 @@ p3_add_to_2_interval_array(interval_array_t4 *interval_arr, int i1, int i2, int 
 {
   int c = interval_arr->count;
   if (c >= PR_MAX_INTERVAL_ARRAY) return 1;
+  /* for a region either both values are given, or none is given */
+  if (((i1 == -1) && (i2 != -1)) || ((i1 != -1) && (i2 == -1)))
+    return 2;
+  if (((i3 == -1) && (i4 != -1)) || ((i3 != -1) && (i4 == -1)))
+    return 2;
   interval_arr->left_pairs[c][0] = i1;
   interval_arr->left_pairs[c][1] = i2;
   interval_arr->right_pairs[c][0] = i3;
@@ -941,7 +950,8 @@ p3_get_rv_best_pairs(const p3retval *r) {
 
 /* Create and initialize a seq_args data structure */
 seq_args *
-create_seq_arg() {
+create_seq_arg() 
+{
   seq_args *r = (seq_args *) malloc(sizeof(*r));
   if (NULL == r) return NULL; /* Out of memory */
   memset(r, 0, sizeof(*r));
@@ -962,7 +972,8 @@ create_seq_arg() {
 
 /* Free a seq_arg data structure */
 void
-destroy_seq_args(seq_args *sa) {
+destroy_seq_args(seq_args *sa) 
+{
   if (NULL == sa) return;
   if (NULL != sa->internal_input) free(sa->internal_input);
   if (NULL != sa->left_input) free(sa->left_input);
@@ -1005,7 +1016,7 @@ choose_primers(const p3_global_settings *pa,
   if (pa->dump)
     p3_print_args(pa, sa) ;
 
-    /* Set the general output type */
+  /* Set the general output type */
   if (pa->pick_left_primer && pa->pick_right_primer) {
     retval->output_type = primer_pairs;
   } else {
@@ -2348,7 +2359,7 @@ pick_primer_range(const int start, const int length, int *extreme,
 
   if (oligo->type == OT_INTL) {
     primer_size_small=pa->o_args.min_size; 
-     primer_size_large=pa->o_args.max_size;
+    primer_size_large=pa->o_args.max_size;
   }
   else {
     primer_size_small=pa->p_args.min_size;
@@ -2372,7 +2383,7 @@ pick_primer_range(const int start, const int length, int *extreme,
             && oligo->type == OT_LEFT) continue;
 
         /* Break if the primer is bigger than the sequence left */
-        if(i-j < -1) break;
+        if (i-j < -1) break;
 
         /* Set the start of the primer */
         h.start = i - j + 1;
@@ -2385,7 +2396,7 @@ pick_primer_range(const int start, const int length, int *extreme,
         if (i+j < pr_min && retval->output_type == primer_pairs) continue;
 
         /* Break if the primer is bigger than the sequence left*/
-        if(i+j > n) break;
+        if (i+j > n) break;
 
         /* Set the start of the primer */
         h.start = i+j-1;
@@ -2401,9 +2412,9 @@ pick_primer_range(const int start, const int length, int *extreme,
       h.overlaps = 0;
 
       /* Add it to the considered statistics */
-       oligo->expl.considered++;
-       /* Calculate all the primer parameters */
-       calc_and_check_oligo_features(pa, &h, oligo->type, dpal_arg_to_use, thal_arg_to_use,
+      oligo->expl.considered++;
+      /* Calculate all the primer parameters */
+      calc_and_check_oligo_features(pa, &h, oligo->type, dpal_arg_to_use, thal_arg_to_use,
                                     sa, &oligo->expl, retval, oligo_seq);
        /* If primer has to be used or is OK */
       if (OK_OR_MUST_USE(&h)) {
@@ -5222,19 +5233,19 @@ _adjust_seq_args(const p3_global_settings *pa,
 
   /* Create a seq for check primers if needed */
   if (pa->primer_task == check_primers) {
-          if (NULL == sa->sequence) {
-                  fake_a_sequence(sa, pa);
-          }
+    if (NULL == sa->sequence) {
+      fake_a_sequence(sa, pa);
+    }
   }
-  if(pa->primer_task == pick_sequencing_primers && sa->incl_l != -1) {
-          pr_append_new_chunk(nonfatal_err,
-           "Task pick_sequencing_primers can not be combined with included region");
-      return;
+  if (pa->primer_task == pick_sequencing_primers && sa->incl_l != -1) {
+    pr_append_new_chunk(nonfatal_err,
+			"Task pick_sequencing_primers can not be combined with included region");
+    return;
   }
-  if(pa->primer_task == pick_discriminative_primers && sa->incl_l == -1) {
-          pr_append_new_chunk(nonfatal_err,
-           "Task pick_discriminative_primers requires a included region");
-      return;
+  if (pa->primer_task == pick_discriminative_primers && sa->incl_l == -1) {
+    pr_append_new_chunk(nonfatal_err,
+			"Task pick_discriminative_primers requires a included region");
+    return;
   }
 
   /*
@@ -5243,11 +5254,11 @@ _adjust_seq_args(const p3_global_settings *pa,
      sa->sequence == NULL
   */
   if (NULL == sa->sequence) {
-        if (pa->primer_task == check_primers) {
-            pr_append_new_chunk(nonfatal_err, "No primers provided");
-        } else {
-            pr_append_new_chunk(nonfatal_err, "Missing SEQUENCE tag");
-        }
+    if (pa->primer_task == check_primers) {
+      pr_append_new_chunk(nonfatal_err, "No primers provided");
+    } else {
+      pr_append_new_chunk(nonfatal_err, "Missing SEQUENCE tag");
+    }
     return;
   }
 
@@ -5281,10 +5292,10 @@ _adjust_seq_args(const p3_global_settings *pa,
   }
 
   /* Generate at least one target */
-  if(pa->primer_task == pick_sequencing_primers && sa->tar2.count == 0) {
-          sa->tar2.pairs[0][0] = pa->first_base_index;
-          sa->tar2.pairs[0][1] = seq_len;
-          sa->tar2.count = 1;
+  if (pa->primer_task == pick_sequencing_primers && sa->tar2.count == 0) {
+    sa->tar2.pairs[0][0] = pa->first_base_index;
+    sa->tar2.pairs[0][1] = seq_len;
+    sa->tar2.count = 1;
   }
 
   /* Fix the start of the included region and start codon */
@@ -5345,6 +5356,91 @@ _adjust_seq_args(const p3_global_settings *pa,
                                     nonfatal_err, warning)) {
     return;
   }
+
+  /* Update ok regions, if non empty */
+  if (sa->ok_regions.count > 0) {
+    _update_ok_regions_list(pa, sa);
+  }
+
+}
+
+
+/*
+ * This function uses the max/min product size info and
+ * the max/min oligo length in order to reduce the ranges
+ * of the ok regions. Optimization that improves the speed.
+ */
+static void
+_update_ok_regions_list(const p3_global_settings *pa,
+			seq_args *sa)
+{
+  /* We do this only if we enabled the optimization and
+   * the primers were NOT specified. */
+  if (!UPDATE_OK_REGIONS || (sa->left_input) || (sa->right_input)) {
+    return;
+  }
+
+  /* If any pair is allowed, no point in doing this */
+  if (sa->ok_regions.any_pair) {
+    return;
+  }
+
+  int pmin = INT_MAX;
+  int pmax = 0;
+  int omin = pa->p_args.min_size;
+  int omax = pa->p_args.max_size;
+
+  /* Determine min/max product size */
+  for (int i=0; i<pa->num_intervals; i++) {
+    if (pa->pr_min[i] < pmin) { pmin = pa->pr_min[i]; }
+    if (pa->pr_max[i] > pmax) { pmax = pa->pr_max[i]; }
+  }
+
+  /* Update each region */
+  for (int i=0; i<sa->ok_regions.count; i++) {
+    int ls = -1, le = -1, rs = -1, re = -1;
+    int new_ls = -1, new_le = -1, new_rs = -1, new_re = -1;
+    if (sa->ok_regions.left_pairs[i][0] != -1) {
+      ls = sa->ok_regions.left_pairs[i][0];
+      le = sa->ok_regions.left_pairs[i][0] + sa->ok_regions.left_pairs[i][1] - 1;
+    }
+    if (sa->ok_regions.right_pairs[i][0] != -1) {
+      rs = sa->ok_regions.right_pairs[i][0];
+      re = sa->ok_regions.right_pairs[i][0] + sa->ok_regions.right_pairs[i][1] - 1;
+    }
+    /* Compute new right region based on left range and min/max values of product size and oligo length */
+    if (ls != -1) {
+      new_rs = ls + pmin - omax - 1; /* -1 just to be safe */
+      new_re = le - omin + pmax + 1; /* +1 just to be safe */
+      /* Adjust the ranges */
+      if ((rs == -1) || (new_rs > rs)) { rs = new_rs; }
+      if ((re == -1) || (new_re < re)) { re = new_re; }
+      if (rs < 0) { rs = 0; }
+      if (re > (signed) strlen(sa->sequence)) { re = strlen(sa->sequence); }
+    }
+    /* Compute new left region based on right range and min/max values of product size and oligo length */
+    if (rs != -1) {
+      new_ls = rs + omin - pmax - 1; /* -1 just to be safe */
+      new_le = re - pmin + omax + 1; /* +1 just to be safe */
+      /* Adjust the ranges */
+      if ((ls == -1) || (new_ls > ls)) { ls = new_ls; }
+      if ((le == -1) || (new_le < le)) { le = new_le; }
+      if (ls < 0) { ls = 0; }
+      if (le > (signed) strlen(sa->sequence)) { le = strlen(sa->sequence); }
+    }
+    /*fprintf(stderr, "Adjusted range [%d,%d,%d,%d] to [%d,%d,%d,%d], pmin is %d, pmax is %d, omin is %d, omax is %d\n",
+	    sa->ok_regions.left_pairs[i][0], sa->ok_regions.left_pairs[i][0] + sa->ok_regions.left_pairs[i][1] - 1,
+	    sa->ok_regions.right_pairs[i][0], sa->ok_regions.right_pairs[i][0] + sa->ok_regions.right_pairs[i][1] - 1,
+	    ls, le, rs, re, pmin, pmax, omin, omax);
+    */
+    sa->ok_regions.left_pairs[i][0] = ls;
+    sa->ok_regions.left_pairs[i][1] = le - ls + 1;
+    sa->ok_regions.right_pairs[i][0] = rs;
+    sa->ok_regions.right_pairs[i][1] = re - rs + 1;
+  }
+  /* any_left and any_right not true anymore */
+  sa->ok_regions.any_left = 0;
+  sa->ok_regions.any_right = 0;
 }
 
 /*
@@ -5361,9 +5457,9 @@ fake_a_sequence(seq_args *sa, const p3_global_settings *pa)
 
   /* Determine the product size */
   if ( pa->product_opt_size == PR_UNDEFINED_INT_OPT){
-          product_size = pa->pr_max[0] - pa->pr_min[0];
+    product_size = pa->pr_max[0] - pa->pr_min[0];
   } else {
-          product_size = pa->product_opt_size;
+    product_size = pa->product_opt_size;
   } 
 
   space = product_size + 1;
@@ -5372,10 +5468,10 @@ fake_a_sequence(seq_args *sa, const p3_global_settings *pa)
 
   /* Calculate how many Ns have to be added */
   if (sa->left_input){
-          ns_to_fill = ns_to_fill - strlen(sa->left_input);
+    ns_to_fill = ns_to_fill - strlen(sa->left_input);
   }
   if (sa->right_input){
-          ns_to_fill = ns_to_fill - strlen(sa->right_input);
+    ns_to_fill = ns_to_fill - strlen(sa->right_input);
     rev = (char *) pr_safe_malloc(strlen(sa->right_input) + 1);
     p3_reverse_complement(sa->right_input, rev);
   }

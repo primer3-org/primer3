@@ -708,7 +708,7 @@ typedef struct seq_args {
                              oligo; similar to excl2.*/
 
   interval_array_t4 ok_regions;
-  
+
   int primer_overlap_junctions[PR_MAX_INTERVAL_ARRAY]; 
   /* List of overlap junction positions. */
 

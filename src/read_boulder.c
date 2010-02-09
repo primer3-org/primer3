@@ -1307,8 +1307,11 @@ parse_2_interval_list(const char *tag_name,
     p = parse_2_int_pair(tag_name, p, ',', ';', &i1, &i2, &i3, &i4, err);
     if (NULL == p) return;
     ret = p3_add_to_2_interval_array(interval_arr, i1, i2, i3, i4);
-    if (ret) {
+    if (ret == 1) {
       pr_append_new_chunk(err, "Too many elements for tag ");
+      pr_append(err, tag_name); return;
+    } else if (ret == 2) {
+      pr_append_new_chunk(err, "Invalid range at tag  ");
       pr_append(err, tag_name); return;
     }
   }
