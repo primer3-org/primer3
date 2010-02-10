@@ -168,6 +168,7 @@ sub main() {
 
 	          'primer_ok_regions',
 	          'primer_ok_regions_formatted',
+                  'primer_ok_regions2',
 
                   'primer_tm_lc_masking',
                   'primer_tm_lc_masking_formatted',
