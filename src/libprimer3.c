@@ -63,7 +63,15 @@ namespace std
 
 /* #define's */
 
-#define UPDATE_OK_REGIONS  1
+/*
+ * OPTIMIZE_OK_REGIONS 1 allows _optimize_ok_regions_list() to use the
+ * max/min product size info and the max/min oligo length to reduce
+ * the sizes of the ok regions (while still generating the same primer
+ * pairs in the same order).  Set OPTIMIZE_OK_REGIONS to 0 confirm
+ * that the results do not change.  (The output tags
+ * PRIMER_{LEFT,RIGHT,PAIR}_EXPLAIN _will_ likely change.)
+ */
+#define OPTIMIZE_OK_REGIONS 1
 
 #ifndef MAX_PRIMER_LENGTH
 #define MAX_PRIMER_LENGTH 36
@@ -127,8 +135,8 @@ static void _adjust_seq_args(const p3_global_settings *pa,
                              pr_append_str *nonfatal_err,
                              pr_append_str *warning);
 
-static void _update_ok_regions_list(const p3_global_settings *pa,
-				    seq_args *sa);
+static void _optimize_ok_regions_list(const p3_global_settings *pa,
+				      seq_args *sa);
 
 static int any_5_prime_ol_extension_has_problem(const primer_rec *);
 
@@ -5359,24 +5367,23 @@ _adjust_seq_args(const p3_global_settings *pa,
 
   /* Update ok regions, if non empty */
   if (sa->ok_regions.count > 0) {
-    _update_ok_regions_list(pa, sa);
+    _optimize_ok_regions_list(pa, sa);
   }
 
 }
 
-
 /*
- * This function uses the max/min product size info and
- * the max/min oligo length in order to reduce the ranges
- * of the ok regions. Optimization that improves the speed.
+ * This function uses the max/min product size info and the max/min
+ * oligo length in order to reduce the ranges of the ok regions. On
+ * some imputs this improves speed dramatically.
  */
 static void
-_update_ok_regions_list(const p3_global_settings *pa,
-			seq_args *sa)
+_optimize_ok_regions_list(const p3_global_settings *pa,
+			  seq_args *sa)
 {
   /* We do this only if we enabled the optimization and
    * the primers were NOT specified. */
-  if (!UPDATE_OK_REGIONS || (sa->left_input) || (sa->right_input)) {
+  if (!OPTIMIZE_OK_REGIONS || (sa->left_input) || (sa->right_input)) {
     return;
   }
 
@@ -5402,13 +5409,16 @@ _update_ok_regions_list(const p3_global_settings *pa,
     int new_ls = -1, new_le = -1, new_rs = -1, new_re = -1;
     if (sa->ok_regions.left_pairs[i][0] != -1) {
       ls = sa->ok_regions.left_pairs[i][0];
-      le = sa->ok_regions.left_pairs[i][0] + sa->ok_regions.left_pairs[i][1] - 1;
+      le = sa->ok_regions.left_pairs[i][0]
+	+ sa->ok_regions.left_pairs[i][1] - 1;
     }
     if (sa->ok_regions.right_pairs[i][0] != -1) {
       rs = sa->ok_regions.right_pairs[i][0];
-      re = sa->ok_regions.right_pairs[i][0] + sa->ok_regions.right_pairs[i][1] - 1;
+      re = sa->ok_regions.right_pairs[i][0]
+	+ sa->ok_regions.right_pairs[i][1] - 1;
     }
-    /* Compute new right region based on left range and min/max values of product size and oligo length */
+    /* Compute new right region based on left range and min/max values
+       of product size and oligo length */
     if (ls != -1) {
       new_rs = ls + pmin - omax - 1; /* -1 just to be safe */
       new_re = le - omin + pmax + 1; /* +1 just to be safe */
@@ -5418,7 +5428,8 @@ _update_ok_regions_list(const p3_global_settings *pa,
       if (rs < 0) { rs = 0; }
       if (re > (signed) strlen(sa->sequence)) { re = strlen(sa->sequence); }
     }
-    /* Compute new left region based on right range and min/max values of product size and oligo length */
+    /* Compute new left region based on right range and min/max values
+       of product size and oligo length */
     if (rs != -1) {
       new_ls = rs + omin - pmax - 1; /* -1 just to be safe */
       new_le = re - pmin + omax + 1; /* +1 just to be safe */
@@ -5428,10 +5439,16 @@ _update_ok_regions_list(const p3_global_settings *pa,
       if (ls < 0) { ls = 0; }
       if (le > (signed) strlen(sa->sequence)) { le = strlen(sa->sequence); }
     }
-    /*fprintf(stderr, "Adjusted range [%d,%d,%d,%d] to [%d,%d,%d,%d], pmin is %d, pmax is %d, omin is %d, omax is %d\n",
-	    sa->ok_regions.left_pairs[i][0], sa->ok_regions.left_pairs[i][0] + sa->ok_regions.left_pairs[i][1] - 1,
-	    sa->ok_regions.right_pairs[i][0], sa->ok_regions.right_pairs[i][0] + sa->ok_regions.right_pairs[i][1] - 1,
-	    ls, le, rs, re, pmin, pmax, omin, omax);
+    /* Temporary testing fprintf: */
+    /* fprintf(stderr, "Adjusted range [%d,%d,%d,%d] to [%d,%d,%d,%d],
+	    pmin is %d, pmax is %d, omin is %d, omax is %d\n",
+	    sa->ok_regions.left_pairs[i][0],
+	    sa->ok_regions.left_pairs[i][0] +
+	    sa->ok_regions.left_pairs[i][1] - 1,
+	    sa->ok_regions.right_pairs[i][0],
+	    sa->ok_regions.right_pairs[i][0] +
+	    sa->ok_regions.right_pairs[i][1] - 1, ls, le, rs, re,
+	    pmin, pmax, omin, omax);
     */
     sa->ok_regions.left_pairs[i][0] = ls;
     sa->ok_regions.left_pairs[i][1] = le - ls + 1;
