@@ -438,12 +438,14 @@ typedef struct p3_global_settings {
   pair_weights  pr_pair_weights;
 
   int    min_three_prime_distance; 
+  int    min_left_three_prime_distance;
+  int    min_right_three_prime_distance;
   /* Minimum number of base pairs between the 3' ends of any two left
      or any two right primers when returning num_return primer pairs.
      The objective is get 'truly different' primer pairs.
 
      Please see the user documentation (primer3_manual.htm) for
-     PRIMER_MIN_THREE_PRIME_DISTANCE, which is exactly this value.
+     PRIMER_{LEFT/RIGHT_}MIN_THREE_PRIME_DISTANCE, which is exactly this value.
   */
   
   int    min_5_prime_overlap_of_junction;   /* The number of basepairs
@@ -1085,6 +1087,8 @@ void p3_set_gs_pair_compl_end_th(p3_global_settings * p , double  pair_compl_end
 void p3_set_gs_pair_hairpin_th(p3_global_settings * p , double  pair_hairpin_th);
 
 void p3_set_gs_min_three_prime_distance(p3_global_settings *p, int min_distance);
+void p3_set_gs_min_left_three_prime_distance(p3_global_settings *p, int min_distance);
+void p3_set_gs_min_right_three_prime_distance(p3_global_settings *p, int min_distance);
 void p3_set_gs_min_5_prime_overlap_of_junction(p3_global_settings *p, int min_5_prime);
 void p3_set_gs_min_3_prime_overlap_of_junction(p3_global_settings *p, int min_3_prime);
 

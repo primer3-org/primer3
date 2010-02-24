@@ -169,6 +169,8 @@ read_boulder_record(FILE *file_input,
   char *repeat_file_path = NULL, *int_repeat_file_path = NULL;
   int tmp_int;
   int min_3_prime = 0, min_5_prime = 0;
+  int min_3_prime_distance_global = 0;    /* needed to check if both global and specific*/
+  int min_3_prime_distance_specific = 0;  /* are given in same boulder record */
 
   non_fatal_err = nonfatal_parse_err;
 
@@ -323,8 +325,42 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_NUM_RETURN", pa->num_return);
       COMPARE_INT("PRIMER_MIN_QUALITY", pa->p_args.min_quality);
       COMPARE_INT("PRIMER_MIN_END_QUALITY", pa->p_args.min_end_quality);
-      COMPARE_INT("PRIMER_MIN_THREE_PRIME_DISTANCE", 
-                  pa->min_three_prime_distance);
+      if (COMPARE("PRIMER_MIN_THREE_PRIME_DISTANCE")) {
+	parse_int("PRIMER_MIN_THREE_PRIME_DISTANCE", datum, &(pa->min_three_prime_distance), parse_err);
+	/* check if specific tag also specified - error in this case */
+	if (min_3_prime_distance_specific == 1) {
+	  pr_append_new_chunk(glob_err,
+                              "Both PRIMER_MIN_THREE_PRIME_DISTANCE and PRIMER_{LEFT/RIGHT}_MIN_THREE_PRIME_DISTANCE specified");
+	} else {
+	  min_3_prime_distance_global = 1;
+	  /* set up individual flags */
+	  pa->min_left_three_prime_distance = pa->min_three_prime_distance;
+	  pa->min_right_three_prime_distance = pa->min_three_prime_distance;
+	}
+	continue;
+      }
+      if (COMPARE("PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE")) {
+	parse_int("PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE", datum, &(pa->min_left_three_prime_distance), parse_err);
+	/* check if global tag also specified - error in this case */
+	if (min_3_prime_distance_global == 1) {
+	  pr_append_new_chunk(glob_err,
+                              "Both PRIMER_MIN_THREE_PRIME_DISTANCE and PRIMER_{LEFT/RIGHT}_MIN_THREE_PRIME_DISTANCE specified");
+	} else {
+	  min_3_prime_distance_specific = 1;
+	}
+	continue;
+      }
+      if (COMPARE("PRIMER_MIN_RIGHT_THREE_PRIME_DISTANCE")) {
+	parse_int("PRIMER_MIN_RIGHT_THREE_PRIME_DISTANCE", datum, &(pa->min_right_three_prime_distance), parse_err);
+	/* check if global tag also specified - error in this case */
+	if (min_3_prime_distance_global == 1) {
+	  pr_append_new_chunk(glob_err,
+                              "Both PRIMER_MIN_THREE_PRIME_DISTANCE and PRIMER_{LEFT/RIGHT}_MIN_THREE_PRIME_DISTANCE specified");
+	} else {
+	  min_3_prime_distance_specific = 1;
+	}
+	continue;
+      }
       COMPARE_INT("PRIMER_QUALITY_RANGE_MIN", pa->quality_range_min);
       COMPARE_INT("PRIMER_QUALITY_RANGE_MAX", pa->quality_range_max);
       COMPARE_FLOAT("PRIMER_PRODUCT_MAX_TM", pa->product_max_tm);
@@ -579,8 +615,42 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_NUM_RETURN", pa->num_return);
       COMPARE_INT("PRIMER_MIN_QUALITY", pa->p_args.min_quality);
       COMPARE_INT("PRIMER_MIN_END_QUALITY", pa->p_args.min_end_quality);
-      COMPARE_INT("PRIMER_MIN_THREE_PRIME_DISTANCE", 
-                  pa->min_three_prime_distance);
+      if (COMPARE("PRIMER_MIN_THREE_PRIME_DISTANCE")) {
+	parse_int("PRIMER_MIN_THREE_PRIME_DISTANCE", datum, &(pa->min_three_prime_distance), parse_err);
+	/* check if specific tag also specified - error in this case */
+	if (min_3_prime_distance_specific == 1) {
+	  pr_append_new_chunk(glob_err,
+                              "Both PRIMER_MIN_THREE_PRIME_DISTANCE and PRIMER_{LEFT/RIGHT}_MIN_THREE_PRIME_DISTANCE specified");
+	} else {
+	  min_3_prime_distance_global = 1;
+	  /* set up individual flags */
+	  pa->min_left_three_prime_distance = pa->min_three_prime_distance;
+	  pa->min_right_three_prime_distance = pa->min_three_prime_distance;
+	}
+	continue;
+      }
+      if (COMPARE("PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE")) {
+	parse_int("PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE", datum, &(pa->min_left_three_prime_distance), parse_err);
+	/* check if global tag also specified - error in this case */
+	if (min_3_prime_distance_global == 1) {
+	  pr_append_new_chunk(glob_err,
+                              "Both PRIMER_MIN_THREE_PRIME_DISTANCE and PRIMER_{LEFT/RIGHT}_MIN_THREE_PRIME_DISTANCE specified");
+	} else {
+	  min_3_prime_distance_specific = 1;
+	}
+	continue;
+      }
+      if (COMPARE("PRIMER_MIN_RIGHT_THREE_PRIME_DISTANCE")) {
+	parse_int("PRIMER_MIN_RIGHT_THREE_PRIME_DISTANCE", datum, &(pa->min_right_three_prime_distance), parse_err);
+	/* check if global tag also specified - error in this case */
+	if (min_3_prime_distance_global == 1) {
+	  pr_append_new_chunk(glob_err,
+                              "Both PRIMER_MIN_THREE_PRIME_DISTANCE and PRIMER_{LEFT/RIGHT}_MIN_THREE_PRIME_DISTANCE specified");
+	} else {
+	  min_3_prime_distance_specific = 1;
+	}
+	continue;
+      }
       if (file_type == settings) {
         if (COMPARE("P3_FILE_ID")) continue;
       }

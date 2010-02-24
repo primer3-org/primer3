@@ -672,6 +672,8 @@ pr_set_default_global_args(p3_global_settings *a)
   */
 
   a->min_three_prime_distance        = -1;
+  a->min_left_three_prime_distance   = -1;
+  a->min_right_three_prime_distance  = -1;
 
   a->sequencing.lead                 = 50;
   a->sequencing.spacing              = 500;
@@ -1474,7 +1476,9 @@ choose_pair_or_triple(p3retval *retval,
         /* Our bookkeeping was incorrect unless the assertion below is true */
         /* num_intervals > 1 and min_three_prime_distance > -1 both artifically
            affect the statistics. */
-        PR_ASSERT(!((pa->num_intervals == 1) && (pa->min_three_prime_distance == -1))
+        PR_ASSERT(!((pa->num_intervals == 1) && ((pa->min_three_prime_distance == -1) ||
+						 (pa->min_left_three_prime_distance == -1) ||
+						 (pa->min_right_three_prime_distance == -1)))
                   || (best_pairs->num_pairs == pair_expl->ok));
       }
 
@@ -1494,14 +1498,14 @@ choose_pair_or_triple(p3retval *retval,
       for (i = 0; i < retval->rev.num_elem; i++) {
 	if (right_oligo_in_pair_overlaps_used_oligo(&retval->rev.oligo[i],
 						    &the_best_pair,
-						    pa->min_three_prime_distance)) {
+						    pa->min_right_three_prime_distance)) {
 	  retval->rev.oligo[i].overlaps = 1;
 	}
       }
       for (j = 0; j < retval->fwd.num_elem; j++) {
 	if (left_oligo_in_pair_overlaps_used_oligo(&retval->fwd.oligo[j],
 						   &the_best_pair,
-						   pa->min_three_prime_distance)) {
+						   pa->min_left_three_prime_distance)) {
 	  retval->fwd.oligo[j].overlaps = 1;
 	}
       }
@@ -1661,7 +1665,7 @@ add_must_use_warnings(pr_append_str *warning,
 
 /*
    Also see the documentation in librimer3.h,
-   p3_global_settings.min_three_prime_distance.
+   p3_global_settings.min_{left/right_}three_prime_distance.
 
    If min_dist == -1, return 0
 
@@ -5554,7 +5558,9 @@ _pr_data_control(const p3_global_settings *pa,
     pr_append_new_chunk(nonfatal_err,
                         "Error in sequence quality data");
 
-  if (pa->min_three_prime_distance < -1)
+  if ((pa->min_three_prime_distance < -1) || 
+      (pa->min_left_three_prime_distance < -1) ||
+      (pa->min_right_three_prime_distance < -1))
     pr_append_new_chunk(nonfatal_err,
                         "Minimum 3' distance must be >= -1 "
                         "(min_three_prime_distance)");
@@ -7553,38 +7559,60 @@ p3_set_gs_pair_max_template_mispriming_th(p3_global_settings * p,
 
 
 void
-p3_set_gs_pair_repeat_compl(p3_global_settings * p, double pair_repeat_compl){
+p3_set_gs_pair_repeat_compl(p3_global_settings * p, double pair_repeat_compl)
+{
   p->pair_repeat_compl = pair_repeat_compl;
 }
 
 void
-p3_set_gs_pair_compl_any(p3_global_settings * p , double pair_compl_any){
+p3_set_gs_pair_compl_any(p3_global_settings * p , double pair_compl_any)
+{
   p->pair_compl_any = pair_compl_any;
 }
 
 void
-p3_set_gs_pair_compl_any_th(p3_global_settings * p , double pair_compl_any_th) {
+p3_set_gs_pair_compl_any_th(p3_global_settings * p , double pair_compl_any_th) 
+{
   p->pair_compl_any_th = pair_compl_any_th;
 }
 
 void
-p3_set_gs_pair_compl_end(p3_global_settings * p , double  pair_compl_end){
+p3_set_gs_pair_compl_end(p3_global_settings * p , double  pair_compl_end)
+{
   p->pair_compl_end = pair_compl_end;
 }
 
 void
-p3_set_gs_pair_compl_end_th(p3_global_settings * p , double  pair_compl_end_th) {   
+p3_set_gs_pair_compl_end_th(p3_global_settings * p , double  pair_compl_end_th) 
+{   
   p->pair_compl_end = pair_compl_end_th;
 }
 
 void
-p3_set_gs_pair_hairpin_th(p3_global_settings * p , double  pair_hairpin_th) {
+p3_set_gs_pair_hairpin_th(p3_global_settings * p , double  pair_hairpin_th) 
+{
   p->pair_hairpin_th = pair_hairpin_th;
 }
       
 void
-p3_set_gs_min_three_prime_distance(p3_global_settings *p, int min_distance) {
+p3_set_gs_min_three_prime_distance(p3_global_settings *p, int min_distance) 
+{
   p->min_three_prime_distance = min_distance;
+  /* sets both specific flags */
+  p->min_left_three_prime_distance = min_distance;
+  p->min_right_three_prime_distance = min_distance;
+}
+
+void
+p3_set_gs_min_left_three_prime_distance(p3_global_settings *p, int min_distance) 
+{
+  p->min_left_three_prime_distance = min_distance;
+}
+
+void
+p3_set_gs_min_right_three_prime_distance(p3_global_settings *p, int min_distance) 
+{
+  p->min_right_three_prime_distance = min_distance;
 }
 
 void 
@@ -8204,6 +8232,8 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("end pair_weights\n") ;
 
     printf("min_three_prime_distance %i\n", p->min_three_prime_distance) ;
+    printf("min_left_three_prime_distance %i\n", p->min_left_three_prime_distance) ;
+    printf("min_right_three_prime_distance %i\n", p->min_right_three_prime_distance) ;
     printf("min_5_prime_overlap_of_junction %i\n", p->min_5_prime_overlap_of_junction);
     printf("min_3_prime_overlap_of_junction %i\n", p->min_3_prime_overlap_of_junction);
     printf("dump %i\n", p->dump);
