@@ -214,6 +214,7 @@ sub main() {
                   # Put slow tests last
 
                   'p3_3_prime_n',
+	          'primer_three_prime_distance',
 	
 	          'primer_thermod_align',             
 	          'primer_thermod_align_formatted',
