@@ -1,3 +1,11 @@
+release 2.2.2 beta 2010-03-04 ==========================================
+
+This release adds a performance enhancement for inputs involving
+SEQUENCE_PRIMER_PAIR_OK_REGION_LIST.
+
+This release adds two new tags, PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE
+and PRIMER_MIN_RIGHT_THREE_PRIME_DISTANCE
+
 release 2.2.1 alpha 2009-10-28 ==========================================
 
 This release adds several performance enhancements.
