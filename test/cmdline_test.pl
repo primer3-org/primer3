@@ -124,8 +124,10 @@ sub main() {
 	# Need to deal with different arguments in 
 	# different version of valgrind
 	my $valgrind_version = `$valgrind_exe --version`;
-	if (($valgrind_version =~ /3\.3\./) || ($valgrind_version =~ /3\.4\./)) {
-	    $log_file_arg_for_valgrind = "--log-file";
+	if ($valgrind_version =~ /([0-9]+)\.([0-9]+)\./) {
+	    if (($1 > 3) || (($1 == 3) && ($2 > 2))) {
+		$log_file_arg_for_valgrind = "--log-file";
+	    }
 	}
     }
 
