@@ -5057,7 +5057,7 @@ p3_get_pair_array_explain_string(const pair_array_t *pair_array)
 const char *
 libprimer3_release(void) 
 {
-  return "libprimer3 release 2.2.1";
+  return "libprimer3 release 2.2.2";
 }
 
 const char *
