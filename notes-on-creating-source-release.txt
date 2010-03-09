@@ -1,4 +1,4 @@
-# 0 Update release number :
+# 0 UPDATE RELEASE NUMBER
 # change in libprimer3_release() (liprimer3.c)
 # also change in create_tag_files_and_docs.pl (primer3/documentation/trunk/)
 
