@@ -45,6 +45,10 @@
 #include <math.h>
 #include <unistd.h>
 
+#if defined(__sun)
+#include <ieeefp.h>
+#endif
+
 #include "thal.h"
 
 /*#define DEBUG*/
