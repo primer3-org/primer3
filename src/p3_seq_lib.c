@@ -139,7 +139,7 @@ add_seq_and_rev_comp_to_seq_lib(seq_lib *sl,
     
   /* Handle the sequence */
   rev_seq = (char*) malloc(strlen(seq) + 1);
-  if (rev_seq == NULL) return 1;
+  if (rev_seq == NULL) { free(rev_seq_id); return 1; }
   p3_reverse_complement(seq, rev_seq);
 
   save_r = add_seq_to_seq_lib(sl, rev_seq, rev_seq_id, errfrag);
@@ -282,13 +282,13 @@ read_and_create_seq_lib(const char * filename, const char *errfrag) {
     reverse_complement_seq_lib(lib);
 
     if (file) fclose(file);
-    if (seq != NULL) free(seq);
-    if (seq_id_plus != NULL) free(seq_id_plus);
+    free(seq);
+    free(seq_id_plus);
     return lib;
 
  ERROR:
-    if (seq != NULL) free(seq);
-    if (seq_id_plus != NULL) free(seq_id_plus);
+    free(seq);
+    free(seq_id_plus);
     p3sl_append(&lib->error, errfrag);
     p3sl_append(&lib->error, " ");
     p3sl_append(&lib->error, lib->repeat_file);
@@ -307,7 +307,7 @@ destroy_seq_lib(seq_lib *p)
   int i;
   if (NULL == p) return;
 
-  if ( NULL != p->repeat_file) free(p->repeat_file);
+  free(p->repeat_file);
   if (NULL != p->seqs) { 
     for(i = 0; i < p->seq_num; i++)
       if (NULL != p->seqs[i]) free(p->seqs[i]);
@@ -318,10 +318,10 @@ destroy_seq_lib(seq_lib *p)
       if (NULL != p->names[i]) free(p->names[i]);
     free(p->names);
   }
-  if (NULL != p->weight) free(p->weight);
-  if (NULL != p->error.data) free(p->error.data);
-  if (NULL != p->warning.data) free(p->warning.data);
-  if (NULL != p->rev_compl_seqs) free(p->rev_compl_seqs);
+  free(p->weight);
+  free(p->error.data);
+  free(p->warning.data);
+  free(p->rev_compl_seqs);
   free(p);
 }
 

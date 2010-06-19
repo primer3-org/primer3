@@ -1,5 +1,5 @@
 /*
- Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2009
+ Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2009,2010
  Whitehead Institute for Biomedical Research, Steve Rozen
  (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
  All rights reserved.
@@ -351,21 +351,20 @@ get_thermodynamic_values(const char* path, thal_results *o)
 void 
 destroy_thal_structures()
 {
-  if (parampath)
-    free(parampath);
-  if (triloopEntropies)
-    free(triloopEntropies);
-  if (triloopEnthalpies)
-    free(triloopEnthalpies);
-  if (tetraloopEntropies)
-    free(tetraloopEntropies);
-  if (tetraloopEnthalpies)
-    free(tetraloopEnthalpies);
+  free(parampath);
+  free(triloopEntropies);
+  free(triloopEnthalpies);
+  free(tetraloopEntropies);
+  free(tetraloopEnthalpies);
 }
 
-/* central method: execute all sub-methods for calculating secondary structure for dimer or for monomer */
+/* central method: execute all sub-methods for calculating secondary
+   structure for dimer or for monomer */
 void 
-thal(const unsigned char *oligo_f, const unsigned char *oligo_r, const thal_args *a, thal_results *o)
+thal(const unsigned char *oligo_f, 
+     const unsigned char *oligo_r, 
+     const thal_args *a, 
+     thal_results *o)
 {
    double* SH;
    int i, j;
@@ -1884,7 +1883,7 @@ calc_bulge_internal2(int i, int j, int ii, int jj, double* EntropyEnthalpy, int 
    int loopSize1, loopSize2, loopSize;
    double T1, T2;
    double S,H;
-   int N, N_loop;
+   /* int N, N_loop; Triinu, please review */
    T1 = T2 = -_INFINITY;
    S = MinEntropy;
    H = 0.0;
@@ -1895,12 +1894,13 @@ calc_bulge_internal2(int i, int j, int ii, int jj, double* EntropyEnthalpy, int 
       EntropyEnthalpy[1] = _INFINITY;
       return;
    }
+   /* Triinu, please review the statements below. */
    if(i < (len1 -j)) {
-      N  = i;
-      N_loop = (i - 1);
+     /* N  = i; */
+      /* N_loop = (i - 1); */
    } else {
-      N = len1-j;
-      N_loop = len1 - j - 1;
+     /* N = len1-j;  */
+      /* N_loop = len1 - j - 1; */
    }
 #ifdef DEBUG
    if (ii <= i)

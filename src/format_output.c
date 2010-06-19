@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009,2010
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://purl.com/STEVEROZEN), Andreas Untergasser and Helen Skaletsky
 All rights reserved.
@@ -380,7 +380,7 @@ print_seq(FILE *f,
     len = strlen(sa->sequence);
     if (!(notes = (int*) malloc(sizeof(*notes) * len))) return 1;
     memset(notes, 0, sizeof(*notes) * len);
-    if (!(notestr = (char*) malloc(len + 1))) return 1;
+    if (!(notestr = (char*) malloc(len + 1))) { free(notes); return 1; }
     memset(notestr, ' ', len);
     notestr[len] = '\0';
 

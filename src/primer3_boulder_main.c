@@ -76,7 +76,6 @@ main(int argc, char *argv[])
   int io_version = 4;
 
   /* Some space for file names */
-  char p3_all_file[FILE_NAME_SIZE];
   char p3_settings_file[FILE_NAME_SIZE];
 
   p3_global_settings *global_pa;
@@ -108,7 +107,6 @@ main(int argc, char *argv[])
   p3retval *retval = NULL;
   int input_found=0;
 
-  p3_all_file[0] = '\0';
   p3_settings_file[0] = '\0';
 
   init_pr_append_str(&fatal_parse_err);
@@ -422,9 +420,8 @@ main(int argc, char *argv[])
   destroy_pr_append_str_data(&fatal_parse_err);
   destroy_pr_append_str_data(&warnings);
   destroy_dpal_thal_arg_holder();
-  if (thermodynamic_params_path)
-    free(thermodynamic_params_path);
-  /* If it could not read input complain and die */
+  free(thermodynamic_params_path);
+  /* If it could not read input, then complain and die */
   if (0 == input_found) {
     print_usage();
     exit(-3);

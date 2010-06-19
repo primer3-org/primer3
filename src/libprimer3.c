@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009,2010
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky.
 All rights reserved.
@@ -755,15 +755,19 @@ create_p3retval(void)
 
   state->fwd.oligo
     = (primer_rec *) malloc(sizeof(*state->fwd.oligo)  * INITIAL_LIST_LEN);
+
   state->rev.oligo
     = (primer_rec *) malloc(sizeof(*state->rev.oligo)  * INITIAL_LIST_LEN);
+
   state->intl.oligo
     = (primer_rec *) malloc(sizeof(*state->intl.oligo) * INITIAL_LIST_LEN);
 
   if (state->fwd.oligo == NULL
       || state->rev.oligo == NULL
-      || state->intl.oligo == NULL)
+      || state->intl.oligo == NULL) {
+    free(state);
     return NULL;
+  }
 
   state->fwd.storage_size  = INITIAL_LIST_LEN;
   state->rev.storage_size  = INITIAL_LIST_LEN;
@@ -832,12 +836,14 @@ create_dpal_arg_holder ()
 void
 destroy_dpal_arg_holder(dpal_arg_holder *h) 
 {
-  free(h->local);
-  free(h->end);
-  free(h->local_end);
-  free(h->local_ambig);
-  free(h->local_end_ambig);
-  free(h);
+  if (NULL != h) {
+    free(h->local);
+    free(h->end);
+    free(h->local_end);
+    free(h->local_ambig);
+    free(h->local_end_ambig);
+    free(h);
+  }
 }
 
 /* This is a static variable that is initialized once
@@ -883,11 +889,13 @@ create_thal_arg_holder ()
 void
 destroy_thal_arg_holder(thal_arg_holder *h) 
 {  
-   free(h->any);
-   free(h->end1);
-   free(h->end2);
-   free(h->hairpin_th);
-   free(h);
+  if (NULL != h) {
+    free(h->any);
+    free(h->end1);
+    free(h->end2);
+    free(h->hairpin_th);
+    free(h);
+  }
 }
 
 static thal_arg_holder *thal_arg_to_use = NULL;
@@ -904,13 +912,9 @@ destroy_p3retval(p3retval *state)
     return;
 
   free_repeat_sim_score(state);
-
-  if (state->fwd.oligo)
-    free(state->fwd.oligo);
-  if (state->rev.oligo)
-    free(state->rev.oligo);
-  if (state->intl.oligo)
-    free(state->intl.oligo);
+  free(state->fwd.oligo);
+  free(state->rev.oligo);
+  free(state->intl.oligo);
   if (state->best_pairs.storage_size != 0 && state->best_pairs.pairs)
     free(state->best_pairs.pairs);
 
@@ -984,19 +988,19 @@ void
 destroy_seq_args(seq_args *sa) 
 {
   if (NULL == sa) return;
-  if (NULL != sa->internal_input) free(sa->internal_input);
-  if (NULL != sa->left_input) free(sa->left_input);
-  if (NULL != sa->right_input) free(sa->right_input);
-  if (NULL != sa->sequence) free(sa->sequence);
-  if (NULL != sa->quality)  free(sa->quality);
-  if (NULL != sa->trimmed_seq) free(sa->trimmed_seq);
+  free(sa->internal_input);
+  free(sa->left_input);
+  free(sa->right_input);
+  free(sa->sequence);
+  free(sa->quality);
+  free(sa->trimmed_seq);
 
   /* edited by T. Koressaar for lowercase masking */
-  if (NULL != sa->trimmed_orig_seq) free(sa->trimmed_orig_seq);
+  free(sa->trimmed_orig_seq);
 
-  if (NULL != sa->upcased_seq) free(sa->upcased_seq);
-  if (NULL != sa->upcased_seq_r) free(sa->upcased_seq_r);
-  if (NULL != sa->sequence_name) free(sa->sequence_name);
+  free(sa->upcased_seq);
+  free(sa->upcased_seq_r);
+  free(sa->sequence_name);
   free(sa);
 }
 
@@ -1210,8 +1214,8 @@ choose_pair_or_triple(p3retval *retval,
         /* Can free the memory used by the hmap associated to this reverse primer */
         if (hmap) {
           for (it=hmap->begin(); it!=hmap->end(); it++) {
-            pp = it->second;
-            if (pp) delete pp;
+            pp = it->second; /* shorten here? */
+            delete pp;
           }
           delete hmap;
           pairs[i] = NULL;
@@ -1242,8 +1246,8 @@ choose_pair_or_triple(p3retval *retval,
         /* Can free the memory used by the hmap associated to this reverse primer */
         if (hmap) {
           for (it=hmap->begin(); it!=hmap->end(); it++) {
-            pp = it->second;
-            if (pp) delete pp;
+            pp = it->second;  /* shorten here? */
+            delete pp;
           }
           delete hmap;
           pairs[i] = NULL;
@@ -1262,7 +1266,7 @@ choose_pair_or_triple(p3retval *retval,
           if (hmap) {
             for (it=hmap->begin(); it!=hmap->end(); it++) {
               pp = it->second;
-              if (pp) delete pp;
+              delete pp; /* shorten here? */
             }
             delete hmap;
             pairs[i] = NULL;
@@ -1521,7 +1525,7 @@ choose_pair_or_triple(p3retval *retval,
     if (hmap) {
       for (it=hmap->begin(); it!=hmap->end(); it++) {
         pp = it->second;
-        if (pp) delete pp;
+        delete pp; /* shorten here? */
       }
       delete hmap;
     }
@@ -1782,7 +1786,7 @@ make_detection_primer_lists(p3retval *retval,
 {
   int left, right;
   int length, start;
-  int i,n,k,pr_min;
+  int i,n,/*k,*/ pr_min;
   int tar_l, tar_r, f_b, r_b;
   pair_stats *pair_expl = &retval->best_pairs.expl; /* To store the statistics for pairs */
 
@@ -1833,8 +1837,6 @@ make_detection_primer_lists(p3retval *retval,
   else
     f_b = n - pr_min + pa->p_args.max_size-1;
 
-  k = 0;
-
   if (pa->pick_left_primer) {
     /* We will need a left primer. */
     left=n; right=0;
@@ -1868,8 +1870,6 @@ make_detection_primer_lists(p3retval *retval,
     r_b = tar_l+1;
   else
     r_b = pr_min - pa->p_args.max_size;
-
-  k = 0;
 
   if ( pa->pick_right_primer ) {
 
@@ -2741,7 +2741,6 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
                               )
 {
   int i, j, k, for_i, gc_count;
-  int five_prime_pos; /* position of 5' base of oligo */
   int three_prime_pos; /* position of 3' base of oligo */
   oligo_type l = otype;
   int poly_x, max_poly_x;
@@ -2781,11 +2780,11 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
 
   /* Set j and k, and sanity check */
   if (OT_LEFT == otype || OT_INTL == otype) {
-    five_prime_pos = j = h->start;
+    j = h->start;
     three_prime_pos = k = j+h->length-1;
   }  else {
     three_prime_pos = j = h->start-h->length+1;
-    five_prime_pos = k = h->start;
+    k = h->start;
   }
   PR_ASSERT(k >= 0);
   PR_ASSERT(k < TRIMMED_SEQ_LEN(sa));
@@ -3523,7 +3522,6 @@ characterize_pair(p3retval *retval,
   double compl_end;
   pair_stats *pair_expl = &retval->best_pairs.expl;
   int must_use = 0;
-  int pair_failed_flag = 0;
   double min_oligo_tm;
   int i;
 
@@ -3556,7 +3554,6 @@ characterize_pair(p3retval *retval,
       ppair->target = -1;
       if (update_stats) { pair_expl->target++; }
       if (!must_use) return PAIR_FAILED;
-      else pair_failed_flag = 1;
     }
   }
 
@@ -3596,7 +3593,6 @@ characterize_pair(p3retval *retval,
     if (!included) {
       if (update_stats) { pair_expl->not_in_any_ok_region++; }
       if (!must_use) return PAIR_FAILED;
-      else pair_failed_flag = 1;
     }
   }
 
@@ -3622,21 +3618,18 @@ characterize_pair(p3retval *retval,
       && ppair->product_tm < pa->product_min_tm) {
     if (update_stats) { pair_expl->low_tm++; }
     if (!must_use) return PAIR_FAILED;
-    else pair_failed_flag = 1;
   }
 
   if (pa->product_max_tm != PR_DEFAULT_PRODUCT_MAX_TM
       && ppair->product_tm > pa->product_max_tm) {
     if (update_stats) { pair_expl->high_tm++; }
     if (!must_use) return PAIR_FAILED;
-    else pair_failed_flag = 1;
   }
 
   ppair->diff_tm = fabs(retval->fwd.oligo[m].temp - retval->rev.oligo[n].temp);
   if (ppair->diff_tm > pa->max_diff_tm) {
     if (update_stats) { pair_expl->temp_diff++; }
     if (!must_use) return PAIR_FAILED;
-    else pair_failed_flag = 1;
   }
 
   /* End of product-temperature related computations. */
@@ -3679,7 +3672,6 @@ characterize_pair(p3retval *retval,
     if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
       pair_expl->considered--;
       if (!must_use) return PAIR_FAILED;
-      else pair_failed_flag = 1;
     }
   }
    /* Thermodynamic approach, fwd-primer */
@@ -3690,7 +3682,6 @@ characterize_pair(p3retval *retval,
       if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
          pair_expl->considered--;
          if (!must_use) return PAIR_FAILED;
-         else pair_failed_flag = 1;
       }
    }   
    if (retval->fwd.oligo[m].hairpin_th == ALIGN_SCORE_UNDEF && pa->thermodynamic_alignment==1) {
@@ -3699,7 +3690,6 @@ characterize_pair(p3retval *retval,
       if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
          pair_expl->considered--;
          if (!must_use) return PAIR_FAILED;
-         else pair_failed_flag = 1;
       }
    }
    
@@ -3712,7 +3702,6 @@ characterize_pair(p3retval *retval,
     if (!OK_OR_MUST_USE(&retval->rev.oligo[n])) {
       pair_expl->considered--;
       if (!must_use) return PAIR_FAILED;
-      else pair_failed_flag = 1;
     }
   }
    /* Thermodynamic approach */
@@ -3723,7 +3712,6 @@ characterize_pair(p3retval *retval,
       if (!OK_OR_MUST_USE(&retval->rev.oligo[n])) {
          pair_expl->considered--;
          if (!must_use) return PAIR_FAILED;
-         else pair_failed_flag = 1;
       }  
    }
    if (retval->rev.oligo[n].hairpin_th == ALIGN_SCORE_UNDEF && pa->thermodynamic_alignment==1) {
@@ -3732,7 +3720,6 @@ characterize_pair(p3retval *retval,
       if (!OK_OR_MUST_USE(&retval->rev.oligo[n])) {
          pair_expl->considered--;
          if (!must_use) return PAIR_FAILED;
-         else pair_failed_flag = 1;
       }
    }
    
@@ -3758,7 +3745,6 @@ characterize_pair(p3retval *retval,
     if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
       pair_expl->considered--;
       if (!must_use) return PAIR_FAILED;
-      else pair_failed_flag = 1;
     }
   }
    
@@ -3773,7 +3759,6 @@ characterize_pair(p3retval *retval,
     if (!OK_OR_MUST_USE(&retval->rev.oligo[n])) {
       pair_expl->considered--;
       if (!must_use) return PAIR_FAILED;
-      else pair_failed_flag = 1;
     }
   }
    
@@ -3792,14 +3777,12 @@ characterize_pair(p3retval *retval,
       if (ppair->compl_any > pa->pair_compl_any) {
          if (update_stats) { pair_expl->compl_any++; }
          if (!must_use) return PAIR_FAILED;
-         else pair_failed_flag = 1;
       }
       
       ppair->compl_end = align(s1, s2, dpal_arg_to_use->end);
       if (ppair->compl_end > pa->pair_compl_end) {
          if (update_stats) { pair_expl->compl_end++; }
          if (!must_use) return PAIR_FAILED;
-         else pair_failed_flag = 1;
       }
    } else {
       /* thermodynamical approach */
@@ -3809,7 +3792,6 @@ characterize_pair(p3retval *retval,
             pair_expl->compl_any++; 
          }
          if (!must_use) return PAIR_FAILED;
-         else pair_failed_flag = 1;
       }
       ppair->compl_end = align_thermod(s1, s2_rev, thal_arg_to_use->end1);
       if(ppair->compl_end < align_thermod(s1, s2_rev, thal_arg_to_use->end2)) {
@@ -3820,7 +3802,6 @@ characterize_pair(p3retval *retval,
             pair_expl->compl_end++; 
          }
          if (!must_use) return PAIR_FAILED;
-         else pair_failed_flag = 1;
       }
    }
    
@@ -3833,7 +3814,6 @@ characterize_pair(p3retval *retval,
     if (compl_end > pa->p_args.max_self_end) {
       if (update_stats) { pair_expl->compl_end++; }
       if (!must_use) return PAIR_FAILED;
-      else pair_failed_flag = 1;
     }
     ppair->compl_end = compl_end;
   }
@@ -3842,7 +3822,6 @@ characterize_pair(p3retval *retval,
       > pa->pair_repeat_compl) {
     if (update_stats) { pair_expl->repeat_sim++; }
     if (!must_use) return PAIR_FAILED;
-    else pair_failed_flag = 1;
   }
    /* thermodynamic approach */
    if (pa->thermodynamic_alignment==1 && ((compl_end = align_thermod(s2, s1_rev, thal_arg_to_use->end1))
@@ -3852,7 +3831,6 @@ characterize_pair(p3retval *retval,
             pair_expl->compl_end++; 
          }
          if (!must_use) return PAIR_FAILED;
-         else pair_failed_flag = 1;
       }
       ppair->compl_end = compl_end;
    }
@@ -3882,7 +3860,6 @@ characterize_pair(p3retval *retval,
              && ppair->template_mispriming > pa->pair_max_template_mispriming) {
             if (update_stats) { pair_expl->template_mispriming++; }
             if (!must_use) return PAIR_FAILED;
-            else pair_failed_flag = 1;
         }
      }
    } else { /* thermodynamic approach */
@@ -3906,7 +3883,6 @@ characterize_pair(p3retval *retval,
                pair_expl->template_mispriming++;
             }
             if (!must_use) return PAIR_FAILED;
-            else pair_failed_flag = 1;
        }
      }
    }
@@ -5101,7 +5077,7 @@ void
 destroy_pr_append_str_data(pr_append_str *str) 
 {
   if (NULL == str) return;
-  if (str->data != NULL) free(str->data);
+  free(str->data);
   str->data = NULL;
 }
 
@@ -5524,10 +5500,7 @@ fake_a_sequence(seq_args *sa, const p3_global_settings *pa)
   if (sa->right_input){
     strcat(sa->sequence, rev);
   }
-  if(rev != NULL) {
-    free(rev);
-  }
-
+  free(rev);
   return 0;
 }
 
