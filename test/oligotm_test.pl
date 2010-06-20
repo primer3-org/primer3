@@ -1,4 +1,4 @@
-# Copyright (c) 2007
+# Copyright (c) 2007,2010
 # Triinu Koressaar and Maido Remm
 # All rights reserved.
 # 
@@ -115,7 +115,7 @@ close F;
 $nr--;
 
 if ($do_valgrind) {
-    my $r = system "grep ERROR *.valg | grep -v 'ERROR SUMMARY: 0 errors'";
+    my $r = system "grep ERROR *.valg.* | grep -v 'ERROR SUMMARY: 0 errors'";
     if (!$r) { 
         # !$r because grep returns 0 if something is found,
         # and if something is found, we have a problem.
