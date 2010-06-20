@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009,2010
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky
 All rights reserved.
@@ -283,8 +283,10 @@ main(int argc, char *argv[])
       break; /* There were no more boulder records */
     }
 
-    /* Check if the thermodynamical alignment flag was given and the path to the parameter files changed - we need to reread them */
-    if ((global_pa->thermodynamic_alignment == 1) && (thermodynamic_path_changed == 1))
+    /* Check if the thermodynamical alignment flag was given and the
+       path to the parameter files changed - we need to reread them */
+    if ((global_pa->thermodynamic_alignment == 1)
+	&& (thermodynamic_path_changed == 1))
       read_thermodynamic_parameters();
     
     input_found = 1;
@@ -367,7 +369,7 @@ main(int argc, char *argv[])
                               "Hybridization probe", &retval->intl.expl);
       }
     }
-    /* End of the old code for compartibility. */
+    /* End of the old code for compatibility. */
 
     if (pr_is_empty(&retval->glob_err)
         && pr_is_empty(&retval->per_sequence_err)) {
@@ -429,7 +431,8 @@ main(int argc, char *argv[])
   return 0;
 }
 
-/* Reads the thermodynamic parameters if the thermodynamic alignment tag was set to 1 */
+/* Reads the thermodynamic parameters if the thermodynamic alignment
+   tag was set to 1 */
 static void 
 read_thermodynamic_parameters()
 {
@@ -442,7 +445,9 @@ read_thermodynamic_parameters()
     /* in windows check for .\\primer3_config */
     struct stat st;
     if ((stat(".\\primer3_config", &st) == 0) && S_ISDIR(st.st_mode)) {
-      thermodynamic_params_path = (char*) malloc(strlen(".\\primer3_config\\") * sizeof(char) + 1);
+      thermodynamic_params_path = 
+	(char*) malloc(strlen(".\\primer3_config\\") * sizeof(char) + 1);
+      if (NULL == thermodynamic_params_path) exit (-2); /* Out of memory */
       strcpy(thermodynamic_params_path, ".\\primer3_config\\");
     } else {
       /* no default directory found, error */
@@ -453,10 +458,14 @@ read_thermodynamic_parameters()
     /* in linux, check for ./primer3_config and /opt/primer3_config */
     struct stat st;
     if ((stat("./primer3_config", &st) == 0) && S_ISDIR(st.st_mode)) {
-      thermodynamic_params_path = (char*) malloc(strlen("./primer3_config/") * sizeof(char) + 1);
+      thermodynamic_params_path = 
+	(char*) malloc(strlen("./primer3_config/") * sizeof(char) + 1);
+      if (NULL == thermodynamic_params_path) exit (-2); /* Out of memory */
       strcpy(thermodynamic_params_path, "./primer3_config/");
     } else if ((stat("/opt/primer3_config", &st) == 0)  && S_ISDIR(st.st_mode)) {
-      thermodynamic_params_path = (char*) malloc(strlen("/opt/primer3_config/") * sizeof(char) + 1);
+      thermodynamic_params_path = 
+	(char*) malloc(strlen("/opt/primer3_config/") * sizeof(char) + 1);
+      if (NULL == thermodynamic_params_path) exit (-2); /* Out of memory */
       strcpy(thermodynamic_params_path, "/opt/primer3_config/");
     } else {
       /* no default directory found, error */
