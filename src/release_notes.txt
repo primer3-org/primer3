@@ -1,3 +1,8 @@
+release 2.2.3 2010-07-08 ===============================================
+
+Minor error corrections, minor cleanup.
+This is a stable release.
+
 release 2.2.2 beta 2010-03-04 ==========================================
 
 This release adds a performance enhancement for inputs involving
