@@ -1,3 +1,4 @@
+export PATH=/usr/bin:$PATH
 echo; echo; echo 'STARTING 1ST SET OF TESTS (-O2)'; echo; echo;
 make clean
 make test
