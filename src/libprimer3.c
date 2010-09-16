@@ -1207,7 +1207,7 @@ choose_pair_or_triple(p3retval *retval,
 
       /* Only use a primer that *might be* legal or that the caller
          has provided and specified as "must use".  Primers are *NOT*
-         FULLY ASSESED until the call to characterize_pair(), in
+         FULLY ASSESSED until the call to characterize_pair(), in
          order to avoid expensive computations (mostly alignments)
          unless necessary. */
       if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) {
@@ -1350,6 +1350,9 @@ choose_pair_or_triple(p3retval *retval,
 	  }
 	  if (!must_use) continue;
 	}
+
+        /* here */
+
 
         /* Check if pair was already computed */
         pair_found = 0;

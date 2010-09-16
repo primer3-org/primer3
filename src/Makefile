@@ -61,6 +61,8 @@ P_DEFINES  =
 
 CFLAGS  = $(CC_OPTS) $(O_OPTS)
 LDFLAGS = -g
+# Note, for profiling, use
+# make O_OPTS='-pg -O0' LDFLAGS='-g -pg'
 
 # ======================================================================
 # If you have trouble with library skew when moving primer3 executables
