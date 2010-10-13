@@ -72,7 +72,6 @@ main(int argc, char *argv[])
   int format_output = 0;
   int strict_tags = 0;
   int echo_settings = 0;
-  int dump_args = 0 ; /* set to 1 if dumping arguments to choose_primers */
   int io_version = 4;
 
   /* Some space for file names */
@@ -95,6 +94,7 @@ main(int argc, char *argv[])
     {"p3_settings_file", required_argument, 0, 'p'},
     {"echo_settings_file", no_argument, &echo_settings, 1},
     {"io_version", required_argument, 0, 'i'},
+    {"dump_args", no_argument, 0, 'd'},
     {"2x_compat", no_argument, 0, '2'},
     {"output", required_argument, 0, 'o'},
     {"error", required_argument, 0, 'e'},
@@ -129,7 +129,6 @@ main(int argc, char *argv[])
   if (!global_pa) {
     exit(-2); /* Out of memory. */
   }
-  if (dump_args) global_pa->dump = 1 ;
   
   /* Read in the flags provided with the program call */
   opterr = 0;
@@ -148,6 +147,9 @@ main(int argc, char *argv[])
         io_version = 4;
       else
         io_version = -1;
+      break;
+    case 'd':
+      global_pa->dump = 1 ;
       break;
     case '2':
       compat = 1;
@@ -214,7 +216,9 @@ main(int argc, char *argv[])
   /* Read data from the settings file until a "=" line occurs.  Assign parameter
    * values for primer picking to pa and sa. */
   if (p3_settings_file[0] != '\0') {
-    read_p3_file(p3_settings_file, settings, echo_settings && !format_output,
+    read_p3_file(p3_settings_file, settings, 
+		 echo_settings && !format_output,
+		 strict_tags,
 		 global_pa, sarg, &fatal_parse_err, 
 		 &nonfatal_parse_err, &warnings, &read_boulder_record_res);
     /* Check if the thermodynamical alignment flag was given */ 
