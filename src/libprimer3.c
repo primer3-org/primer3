@@ -8163,7 +8163,7 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("number of product size ranges: %d\n", p->num_intervals);
     printf("product size ranges:\n");
     for (i = 0; i < p->num_intervals; i++) {
-      printf("%d - %d \n", p->pr_min[0], p->pr_max[0]);
+      printf("%d - %d \n", p->pr_min[i], p->pr_max[i]);
     }
     printf("product_opt_size %i\n", p->product_opt_size) ;
     printf("product_max_tm %f\n", p->product_max_tm) ;
