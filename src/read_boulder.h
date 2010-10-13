@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009,2010
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky
 All rights reserved.
@@ -73,10 +73,12 @@ int read_boulder_record(FILE *file_input,
 			pr_append_str *warnings,
                         read_boulder_record_results *);
 
+/* Return null on error. */
 /* pr_append_str is an append-only string ADT. */
 int read_p3_file(const char *file_name,
                  const p3_file_type file_type,
 		 int echo_output,
+		 int strict_tags,
                  p3_global_settings *pa, 
                  seq_args *sarg,
                  pr_append_str *fatal_err,

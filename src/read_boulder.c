@@ -1,5 +1,5 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009,2010
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky.
 All rights reserved.
@@ -992,10 +992,19 @@ read_boulder_record(FILE *file_input,
 #undef COMPARE_FLOAT
 #undef COMPARE_INTERVAL_LIST
 
+static void
+pr_append2(pr_append_str *err,
+	   const char* s1, 
+	   const char* s2) {
+    pr_append_new_chunk(err, s1);
+    pr_append(err, s2);
+}  
+
 int 
 read_p3_file(const char *file_name,
 	     const p3_file_type expected_file_type,
 	     int echo_output,
+	     int strict_tags,
 	     p3_global_settings *pa, 
 	     seq_args *sa,
 	     pr_append_str *fatal_err,
@@ -1003,64 +1012,92 @@ read_p3_file(const char *file_name,
 	     pr_append_str *warnings,
 	     read_boulder_record_results *read_boulder_record_res) 
 {
-  /* Parameter for read_boulder_record */
   FILE *file;
   int ret_par = 0;
-  int strict_tags = 0;
   int io_version = 4;
-  char first_line[80];
-  char second_line[80];
-  int error = 0;
+  char *line1;
+  char *line2;
+  char *line3;
   p3_file_type file_type = all_parameters;
     
   /* Check if a file name was provided */
   PR_ASSERT(NULL != file_name);
+
   /* Open the file */
-  if((file = fopen(file_name,"r")) != NULL) {
-        /* Deal with the file headers */
-    strncpy (first_line, p3_read_line(file), 79);
-    strncpy (second_line, p3_read_line(file), 79);
-    p3_read_line(file);
-
-    if (strncmp(first_line,"Primer3 File - http://primer3.sourceforge.net", 45)) {
-        error = 1;
-    }
-    if (!strncmp(second_line,"P3_FILE_TYPE=all_parameters", 27)) {
-      file_type = all_parameters;
-    }
-    else if (!strncmp(second_line,"P3_FILE_TYPE=sequence", 21)) {
-      file_type = sequence;
-    }
-    else if (!strncmp(second_line,"P3_FILE_TYPE=settings", 21)) {
-      file_type = settings;
-    }
-    else {
-      error = 1;
-    }
-
-    if (echo_output) {
-      printf("P3_SETTINGS_FILE_USED=%s\n", file_name);
-      printf("%s\n", second_line);
-    }
-
-    /* Check if the file type matches the expected type */
-    if (file_type != expected_file_type){
-      pr_append_new_chunk(nonfatal_err, 
-                          "Unexpected P3 file type parsed");
-    }
-    /* read FILE_TYPE */
-    if (error == 0){
-      ret_par = read_boulder_record(file, &strict_tags, &io_version, 
-				    echo_output, expected_file_type, pa, sa, fatal_err, 
-				    nonfatal_err, warnings, read_boulder_record_res);
-    } else {
-      pr_append_new_chunk(fatal_err, "Incorrect file format in ");
-      pr_append(fatal_err, file_name);
-    }
-  } else {
-    pr_append_new_chunk(fatal_err, "Cannot open ");
-    pr_append(fatal_err, file_name);
+  if (!(file = fopen(file_name,"r"))) {
+    pr_append2(fatal_err, "Cannot open ", file_name);
+    return ret_par;
   }
+
+  /* Parse and interpret the first 3 lines */
+
+  /* Line 1 */
+  line1 = p3_read_line(file);
+  if (!line1) {
+    pr_append2(fatal_err, 
+	       "Settings file is empty: ", 
+	       file_name);
+    return ret_par;
+  }
+  if (strcmp(line1,
+	     "Primer3 File - http://primer3.sourceforge.net")) {
+      pr_append2(fatal_err,
+		 "First line must be \"Primer3 File - http://primer3.sourceforge.net\" in ",
+		 file_name);
+      return ret_par;
+  }
+
+  /* Line 2 */
+  line2 = p3_read_line(file);
+  if (!line2) {
+    pr_append2(fatal_err, 
+	       "Incorrect file format (too few lines) in ", 
+	       file_name);
+    return ret_par;
+  }
+  if (!strcmp(line2,"P3_FILE_TYPE=all_parameters")) {
+    file_type = all_parameters;
+  } else if (!strcmp(line2,"P3_FILE_TYPE=sequence")) {
+    file_type = sequence;
+  } else if (!strcmp(line2,"P3_FILE_TYPE=settings")) {
+    file_type = settings;
+  } else {
+    pr_append2(fatal_err, 
+	       "Unknown file type in at line 2 (line2='", line2);
+    pr_append(fatal_err, "') in ");
+    pr_append(fatal_err, file_name);
+    return ret_par;
+  }
+  if (echo_output) {
+    printf("P3_SETTINGS_FILE_USED=%s\n", file_name);
+    printf("%s\n", line2);
+  }
+
+  /* Line 3 */
+  line3 = p3_read_line(file);
+  if (!line3) {
+    pr_append2(fatal_err, 
+	       "Incorrect file format (too few lines) in ", 
+	       file_name);
+      return ret_par;
+  }
+  if (strcmp(line3, "")) {
+    pr_append2(fatal_err, "Line 3 must be empty in ",
+	       file_name);
+    return ret_par;
+  }
+
+  /* Check if the file type matches the expected type */
+  if (file_type != expected_file_type){
+    pr_append_new_chunk(nonfatal_err, 
+			"Unexpected P3 file type parsed");
+  }
+
+  /* read the file */
+  ret_par = read_boulder_record(file, &strict_tags, &io_version, 
+				echo_output, expected_file_type, pa, sa, fatal_err, 
+				nonfatal_err, warnings, read_boulder_record_res);
+
   if (echo_output) printf("P3_SETTINGS_FILE_END=\n");
   if (file) fclose(file);
          
