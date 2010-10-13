@@ -474,7 +474,15 @@ sub test_fatal_errors() {
         my $valgrind_prefix
             = $do_valgrind ? sprintf $valgrind_format, $root : '';
 
-        my $cmd = "$valgrind_prefix$exe <$_ > $root.tmp 2> $root.tmp2";
+        my $cmd;
+	if ($_ =~ /bad_settings\d\.in/) {
+	    # For testing the settings files we need the
+	    # names of tests and the settings to be parallel
+	    $cmd = "$valgrind_prefix$exe -strict_tags -p3_settings_file $_ primer_global_err/input_for_settings_tests.txt  > $root.tmp 2> $root.tmp2";
+	    # print STDERR $cmd, "\n";
+	} else {
+	    $cmd = "$valgrind_prefix$exe <$_ > $root.tmp 2> $root.tmp2";
+	}
 
 	$r = _nowarn_system($cmd);
 
