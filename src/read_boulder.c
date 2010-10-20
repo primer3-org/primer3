@@ -168,7 +168,7 @@ read_boulder_record(FILE *file_input,
   pr_append_str *non_fatal_err;
   char *repeat_file_path = NULL, *int_repeat_file_path = NULL;
   int tmp_int;
-  int min_3_prime = 0, min_5_prime = 0;
+  /* int min_3_prime = 0, min_5_prime = 0; Removed 10/20/2010 */
   int min_3_prime_distance_global = 0;    /* needed to check if both global and specific*/
   int min_3_prime_distance_specific = 0;  /* are given in same boulder record */
   int min_three_prime_distance;           /* holder for the value of this tag */
@@ -637,12 +637,12 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_SEQUENCING_ACCURACY", pa->sequencing.accuracy);
       if (COMPARE("PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION")) {
 	parse_int("PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION", datum, &pa->min_5_prime_overlap_of_junction, parse_err);
-	min_5_prime = 1;
+	/* min_5_prime = 1; Removed 10/20/2010 */
 	continue;
       }
       if (COMPARE("PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION")) {
 	parse_int("PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION", datum, &pa->min_3_prime_overlap_of_junction, parse_err);
-	min_3_prime = 1;
+	/* min_3_prime = 1; Removed 10/20/2010 */
 	continue;
       }
       COMPARE_AND_MALLOC("PRIMER_TASK", task_tmp);
@@ -984,12 +984,14 @@ read_boulder_record(FILE *file_input,
     PR_ASSERT(pa->pick_internal_oligo);
   }
 
-  if ((min_3_prime || min_5_prime) && (sa->primer_overlap_junctions_count == 0)) {
-    pr_append_new_chunk(warnings,
-			"SEQUENCE_OVERLAP_JUNCTION_LIST not given, but "
-			"PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION or "
-			"PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION specified");
-  }
+  /* Removed 10/20/2010 as excessively compulsive, especially in the context
+     of taking input from web pages.
+     if ((min_3_prime || min_5_prime) && (sa->primer_overlap_junctions_count == 0)) {
+     pr_append_new_chunk(warnings,
+                         "SEQUENCE_OVERLAP_JUNCTION_LIST not given, but "
+			 "PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION or "
+			 "PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION specified");
+			 } */
 
   return 1;
 }

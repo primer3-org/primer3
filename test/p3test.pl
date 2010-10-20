@@ -481,7 +481,7 @@ sub test_fatal_errors() {
 	    $cmd = "$valgrind_prefix$exe -strict_tags -p3_settings_file $_ primer_global_err/input_for_settings_tests.txt  > $root.tmp 2> $root.tmp2";
 	    # print STDERR $cmd, "\n";
 	} else {
-	    $cmd = "$valgrind_prefix$exe <$_ > $root.tmp 2> $root.tmp2";
+	    $cmd = "$valgrind_prefix$exe -strict_tags <$_ > $root.tmp 2> $root.tmp2";
 	}
 
 	$r = _nowarn_system($cmd);
