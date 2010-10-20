@@ -378,8 +378,6 @@ read_boulder_record(FILE *file_input,
 		    pa->p_args.max_template_mispriming);
       COMPARE_FLOAT("PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING",
                     pa->pair_max_template_mispriming);
-      COMPARE_FLOAT("PRIMER_INTERNAL_OLIGO_MAX_TEMPLATE_MISHYB",
-                    pa->o_args.max_template_mispriming);
 
       /* Control interpretation of ambiguity codes in mispriming
          and mishyb libraries. */
@@ -446,8 +444,6 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_IO_WT_REP_SIM", pa->o_args.weights.repeat_sim);
       COMPARE_FLOAT("PRIMER_IO_WT_SEQ_QUAL", pa->o_args.weights.seq_quality);
       COMPARE_FLOAT("PRIMER_IO_WT_END_QUAL", pa->o_args.weights.end_quality);
-      COMPARE_FLOAT("PRIMER_IO_WT_TEMPLATE_MISHYB",
-                    pa->o_args.weights.template_mispriming);
       COMPARE_FLOAT("PRIMER_PAIR_WT_PR_PENALTY", 
                     pa->pr_pair_weights.primer_quality);
       COMPARE_FLOAT("PRIMER_PAIR_WT_IO_PENALTY",
@@ -694,10 +690,6 @@ read_boulder_record(FILE *file_input,
                     pa->pair_max_template_mispriming);
       COMPARE_FLOAT("PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING_TH",
 		    pa->pair_max_template_mispriming_th);
-      COMPARE_FLOAT("PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB",
-                    pa->o_args.max_template_mispriming);
-      COMPARE_FLOAT("PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_TH",
-			   pa->o_args.max_template_mispriming_th);
        /* Control interpretation of ambiguity codes in mispriming
           and mishyb libraries. */
       COMPARE_INT("PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS",
@@ -789,8 +781,8 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_LIBRARY_MISHYB", pa->o_args.weights.repeat_sim);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_SEQ_QUAL", pa->o_args.weights.seq_quality);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_END_QUAL", pa->o_args.weights.end_quality);
-      COMPARE_FLOAT("PRIMER_INTERNAL_WT_TEMPLATE_MISHYB",  /* fix me ADD PRIMER_INTERNAL_WT_TEMPLATE_MISHYB_TH */
-                    pa->o_args.weights.template_mispriming);
+      COMPARE_FLOAT("PRIMER_WT_TEMPLATE_MISPRIMING_TH",
+		    pa->o_args.weights.template_mispriming_th);
       COMPARE_FLOAT("PRIMER_PAIR_WT_PR_PENALTY", 
                     pa->pr_pair_weights.primer_quality);
       COMPARE_FLOAT("PRIMER_PAIR_WT_IO_PENALTY",
@@ -1104,8 +1096,10 @@ read_p3_file(const char *file_name,
 
   /* read the file */
   ret_par = read_boulder_record(file, &strict_tags, &io_version, 
-				echo_output, expected_file_type, pa, sa, fatal_err, 
-				nonfatal_err, warnings, read_boulder_record_res);
+				echo_output, expected_file_type,
+				pa, sa, fatal_err, 
+				nonfatal_err, warnings, 
+				read_boulder_record_res);
 
   if (echo_output) printf("P3_SETTINGS_FILE_END=\n");
   if (file) fclose(file);
@@ -1252,10 +1246,10 @@ parse_interval_list(const char *tag_name,
 
 /*
  * For correct input, return a pointer to the first non-tab, non-space
- * character after the forth integer and after the separator sep2, and place the integers in out1,
- * out2, out3 and out4  On incorrect input, return NULL;
- * If any of the 4 integers is not specified, the corresponding output
- * value will be -1.
+ * character after the forth integer and after the separator sep2, and
+ * place the integers in out1, out2, out3 and out4. On incorrect input,
+ * return NULL; If any of the 4 integers is not specified, the
+ * corresponding output value will be -1.
  */
 static char *
 parse_2_int_pair(const char    *tag_name, char *datum,

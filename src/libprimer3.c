@@ -3313,10 +3313,12 @@ p_obj_fn(const p3_global_settings *pa,
            sum += pa->p_args.weights.length_lt * (pa->p_args.opt_size - h->length);
       if (pa->p_args.weights.length_gt && h->length > pa->p_args.opt_size)
            sum += pa->p_args.weights.length_gt * (h->length - pa->p_args.opt_size);
-     /* BEGIN: secondary structures */
+
+      /* BEGIN: secondary structures */
       if (pa->p_args.weights.compl_any && pa->thermodynamic_alignment==0)
            sum += pa->p_args.weights.compl_any * h->self_any;
      
+      /* HERE CHECK */
      if (pa->p_args.weights.compl_any_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) <= h->self_any))
        sum += pa->p_args.weights.compl_any_th * (h->self_any - (h->temp - pa->p_args.weights.temp_cutoff - 1.0)); /* -0.5 is added for the case where == */
      if (pa->p_args.weights.compl_any_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) > h->self_any))
@@ -3361,7 +3363,7 @@ p_obj_fn(const p3_global_settings *pa,
           oligo_max_template_mispriming(h);
       }
                                             
-      if (pa->p_args.weights.template_mispriming_th && pa->thermodynamic_alignment==1) {
+      if (pa->p_args.weights.template_mispriming_th && pa->thermodynamic_alignment==1) {  /* HERE CHECK */
          PR_ASSERT(oligo_max_template_mispriming_thermod(h) != ALIGN_SCORE_UNDEF);
          if((h->temp - pa->p_args.weights.temp_cutoff) <= oligo_max_template_mispriming_thermod(h))
          sum += pa->p_args.weights.template_mispriming_th * 
@@ -3665,7 +3667,8 @@ characterize_pair(p3retval *retval,
   p3_reverse_complement(s2, s2_rev);
 
 
-  if (retval->fwd.oligo[m].self_any == ALIGN_SCORE_UNDEF && pa->thermodynamic_alignment==0) {
+  if (retval->fwd.oligo[m].self_any == ALIGN_SCORE_UNDEF 
+      && pa->thermodynamic_alignment==0) {
     /* We have not yet computed the 'self_any' paramter,
        which is an estimate of self primer-dimer and secondary
        structure propensity. */
@@ -3678,7 +3681,8 @@ characterize_pair(p3retval *retval,
     }
   }
    /* Thermodynamic approach, fwd-primer */
-   if (retval->fwd.oligo[m].self_any == ALIGN_SCORE_UNDEF && pa->thermodynamic_alignment==1) {
+   if (retval->fwd.oligo[m].self_any == ALIGN_SCORE_UNDEF 
+       && pa->thermodynamic_alignment==1) {
       oligo_compl_thermod(&retval->fwd.oligo[m], &pa->p_args,
                           &retval->fwd.expl, thal_arg_to_use, s1, s1); /* ! s1, s1_rev */
       
@@ -3687,7 +3691,8 @@ characterize_pair(p3retval *retval,
          if (!must_use) return PAIR_FAILED;
       }
    }   
-   if (retval->fwd.oligo[m].hairpin_th == ALIGN_SCORE_UNDEF && pa->thermodynamic_alignment==1) {
+   if (retval->fwd.oligo[m].hairpin_th == ALIGN_SCORE_UNDEF 
+       && pa->thermodynamic_alignment==1) {
       oligo_hairpin(&retval->fwd.oligo[m], &pa->p_args,
                           &retval->fwd.expl, thal_arg_to_use, s1);
       if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
@@ -7171,16 +7176,6 @@ p3_set_gs_primer_max_template_mispriming_th(p3_global_settings * p , double val)
 }
 
 void
-p3_set_gs_primer_internal_oligo_max_template_mishyb(p3_global_settings * p , double val) {
-  p->o_args.max_template_mispriming = val;
-}
-
-void
-p3_set_gs_primer_internal_oligo_max_template_mishyb_th(p3_global_settings * p , double val) {   
-  p->o_args.max_template_mispriming_th = val;
-}
-
-void
 p3_set_gs_primer_lib_ambiguity_codes_consensus(p3_global_settings * p , int val) {
   p->lib_ambiguity_codes_consensus = val ;
 }
@@ -7392,16 +7387,6 @@ p3_set_gs_primer_io_wt_seq_qual(p3_global_settings * p , double val) {
 void
 p3_set_gs_primer_io_wt_end_qual(p3_global_settings * p , double val) {
   p->o_args.weights.end_quality = val ;
-}
-
-void
-p3_set_gs_primer_io_wt_template_mishyb(p3_global_settings * p, double val) {
-  p->o_args.weights.template_mispriming = val ;
-}
-
-void
-p3_set_gs_primer_io_wt_template_mishyb_th(p3_global_settings * p, double val) {   
-     p->o_args.weights.template_mispriming_th = val ;
 }
 
 void
@@ -8038,23 +8023,76 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
   int i;
 
   if (p != NULL) {
-    printf("begin global args\n") ;
-    printf("primer_task %i\n", p->primer_task);
-    printf("pick_left_primer %i\n", p->pick_left_primer);
-    printf("pick_right_primer %i\n", p->pick_right_primer);
-    printf("pick_internal_oligo %i\n", p->pick_internal_oligo);
-    printf("file_flag %i\n", p->file_flag) ;
-    printf("first_base_index %i\n", p->first_base_index);
-    printf("liberal_base %i\n", p->liberal_base );
-    printf("num_return %i\n", p->num_return) ;
-    printf("pick_anyway %i\n", p->pick_anyway);
-    printf("lib_ambiguity_codes_consensus %i\n",
+    printf("=============\n");
+    printf("BEGIN GLOBAL ARGS\n") ;
+    printf("  primer_task %i\n", p->primer_task);
+    printf("  pick_left_primer %i\n", p->pick_left_primer);
+    printf("  pick_right_primer %i\n", p->pick_right_primer);
+    printf("  pick_internal_oligo %i\n", p->pick_internal_oligo);
+    printf("  file_flag %i\n", p->file_flag) ;
+    printf("  first_base_index %i\n", p->first_base_index);
+    printf("  liberal_base %i\n", p->liberal_base );
+    printf("  num_return %i\n", p->num_return) ;
+    printf("  pick_anyway %i\n", p->pick_anyway);
+    printf("  lib_ambiguity_codes_consensus %i\n",
            p->lib_ambiguity_codes_consensus) ;
-    printf("quality_range_min %i\n", p->quality_range_min) ;
-    printf("quality_range_max %i\n", p->quality_range_max) ;
+    printf("  quality_range_min %i\n", p->quality_range_min) ;
+    printf("  quality_range_max %i\n", p->quality_range_max) ;
 
-    printf("begin primer_args\n");
+    printf("  tm_santalucia %i\n", p->tm_santalucia) ;
+    printf("  salt_corrections %i\n", p->salt_corrections) ;
+    printf("  max_end_stability %f\n", p->max_end_stability) ;
+    printf("  gc_clamp %i\n", p->gc_clamp) ;
+    printf("  max_end_gc %i\n", p->max_end_gc);
+    printf("  lowercase_masking %i\n", p->lowercase_masking) ;
+    printf("  thermodynamic_alignment %i\n", p->thermodynamic_alignment);
+    printf("  outside_penalty %f\n", p->outside_penalty) ;
+    printf("  inside_penalty %f\n", p->inside_penalty) ;
+    printf("  number of product size ranges: %d\n", p->num_intervals);
+    printf("  product size ranges:\n");
+    for (i = 0; i < p->num_intervals; i++) {
+      printf("  %d - %d \n", p->pr_min[i], p->pr_max[i]);
+    }
+    printf("  product_opt_size %i\n", p->product_opt_size) ;
+    printf("  product_max_tm %f\n", p->product_max_tm) ;
+    printf("  product_min_tm %f\n", p->product_min_tm) ;
+    printf("  product_opt_tm %f\n", p->product_opt_tm) ;
+    printf("  pair_max_template_mispriming %f\n", p->pair_max_template_mispriming) ;
+    printf("  pair_max_template_mispriming_th %f\n", p->pair_max_template_mispriming_th) ;
+    printf("  pair_repeat_compl %f\n", p->pair_repeat_compl) ;
+    printf("  pair_compl_any %f\n", p->pair_compl_any) ;
+    printf("  pair_compl_end %f\n", p->pair_compl_end) ;
+    printf("  pair_compl_any_th %f\n", p->pair_compl_any_th) ;
+    printf("  pair_compl_end_th %f\n", p->pair_compl_end_th) ;
+    printf("  pair_hairpin %f\n", p->pair_hairpin_th) ;
+     
+    printf("  min_left_three_prime_distance %i\n", p->min_left_three_prime_distance) ;
+    printf("  min_right_three_prime_distance %i\n", p->min_right_three_prime_distance) ;
+    printf("  min_5_prime_overlap_of_junction %i\n", p->min_5_prime_overlap_of_junction);
+    printf("  min_3_prime_overlap_of_junction %i\n", p->min_3_prime_overlap_of_junction);
+    printf("  dump %i\n", p->dump);
 
+    printf("  begin pr_pair_weights\n") ;
+    printf("    primer_quality %f\n", p->pr_pair_weights.primer_quality) ;
+    printf("    io_quality %f\n", p->pr_pair_weights.io_quality) ;
+    printf("    diff_tm %f\n", p->pr_pair_weights.diff_tm) ;
+    printf("    compl_any %f\n", p->pr_pair_weights.compl_any) ;
+    printf("    compl_end %f\n", p->pr_pair_weights.compl_end) ;
+    printf("    compl_any_th %f\n", p->pr_pair_weights.compl_any_th) ;
+    printf("    compl_end_th %f\n", p->pr_pair_weights.compl_end_th) ;
+    printf("    product_tm_lt %f\n", p->pr_pair_weights.product_tm_lt) ;
+    printf("    product_tm_gt %f\n", p->pr_pair_weights.product_tm_gt) ;
+    printf("    product_size_lt %f\n", p->pr_pair_weights.product_size_lt) ;
+    printf("    product_size_gt %f\n", p->pr_pair_weights.product_size_gt) ;
+    printf("    repeat_sim %f\n", p->pr_pair_weights.repeat_sim) ;
+    printf("    template_mispriming %f\n", p->pr_pair_weights.template_mispriming) ;
+    printf("    template_mispriming_th %f\n", p->pr_pair_weights.template_mispriming_th) ;
+    printf("  end pair_weights\n") ;
+
+
+    printf("\n\n");
+    printf("=============\n");
+    printf("BEGIN primer_args\n");
     printf("begin oligo_weights\n");
     printf("temp_gt %f\n", p->p_args.weights.temp_gt ) ;
     printf("temp_gt %f\n", p->p_args.weights.temp_gt) ;
@@ -8104,106 +8142,57 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("max_template_mispriming_th %f\n", p->p_args.max_template_mispriming_th) ;
     printf("end primer args\n") ;
 
-    printf("begin internal oligo args\n") ;
+    printf("begin internal oligo args (p->o_args.)\n") ;
 
-    printf("begin oligo_weights\n") ;
-    printf("temp_gt %f\n", p->o_args.weights.temp_gt) ;
-    printf("temp_lt %f\n", p->o_args.weights.temp_lt) ;
-    printf("gc_content_gt %f\n", p->o_args.weights.gc_content_gt) ;
-    printf("gc_content_lt %f\n", p->o_args.weights.gc_content_lt) ;
-    printf("compl_any %f\n", p->o_args.weights.compl_any) ;
-    printf("compl_end %f\n", p->o_args.weights.compl_end) ;
-    printf("compl_any_th %f\n", p->o_args.weights.compl_any_th) ;
-    printf("compl_end_th %f\n", p->o_args.weights.compl_end_th) ;
-    printf("hairpin %f\n", p->o_args.weights.hairpin_th) ;
-    printf("repeat_sim %f\n", p->o_args.weights.repeat_sim) ;
-    printf("length_lt %f\n", p->o_args.weights.length_lt) ;
-    printf("length_gt %f\n", p->o_args.weights.length_gt) ;
-    printf("seq_quality %f\n", p->o_args.weights.seq_quality) ;
-    printf("end_quality %f\n", p->o_args.weights.end_quality) ;
-    printf("pos_penalty %f\n", p->o_args.weights.pos_penalty) ;
-    printf("end_stability %f\n", p->o_args.weights.end_stability) ;
-    printf("num_ns %f\n", p->o_args.weights.num_ns) ;
-    printf("template_mispriming %f\n", p->o_args.weights.template_mispriming) ;
-    printf("template_mispriming_th %f\n", p->o_args.weights.template_mispriming_th) ;
-    printf("end oligo_weights\n") ;
+    printf("  begin internal oligo_weights (p->o_args.weights.)\n") ;
+    printf("    temp_gt %f\n", p->o_args.weights.temp_gt) ;
+    printf("    temp_lt %f\n", p->o_args.weights.temp_lt) ;
+    printf("    gc_content_gt %f\n", p->o_args.weights.gc_content_gt) ;
+    printf("    gc_content_lt %f\n", p->o_args.weights.gc_content_lt) ;
+    printf("    compl_any %f\n", p->o_args.weights.compl_any) ;
+    printf("    compl_end %f\n", p->o_args.weights.compl_end) ;
+    printf("    compl_any_th %f\n", p->o_args.weights.compl_any_th) ;
+    printf("    compl_end_th %f\n", p->o_args.weights.compl_end_th) ;
+    printf("    hairpin %f\n", p->o_args.weights.hairpin_th) ;
+    printf("    repeat_sim %f\n", p->o_args.weights.repeat_sim) ;
+    printf("    length_lt %f\n", p->o_args.weights.length_lt) ;
+    printf("    length_gt %f\n", p->o_args.weights.length_gt) ;
+    printf("    seq_quality %f\n", p->o_args.weights.seq_quality) ;
+    printf("    end_quality %f\n", p->o_args.weights.end_quality) ;
+    printf("    pos_penalty %f\n", p->o_args.weights.pos_penalty) ;
+    printf("    end_stability %f\n", p->o_args.weights.end_stability) ;
+    printf("    num_ns %f\n", p->o_args.weights.num_ns) ;
+    printf("  end internal oligo_weights\n") ;
 
-    printf("opt_tm %f\n", p->o_args.opt_tm) ;
-    printf("min_tm %f\n", p->o_args.min_tm) ;
-    printf("max_tm %f\n", p->o_args.max_tm) ;
-    printf("opt_gc_content %f\n", p->o_args.opt_gc_content) ;
-    printf("max_gc %f\n", p->o_args.max_gc) ;
-    printf("min_gc %f\n", p->o_args.min_gc) ;
-    printf("divalent_conc %f\n", p->o_args.divalent_conc) ;
-    printf("dntp_conc %f\n", p->o_args.dntp_conc) ;
-    printf("dna_conc %f\n", p->o_args.dna_conc) ;
-    printf("num_ns_accepted %i\n", p->o_args.num_ns_accepted) ;
-    printf("opt_size %i\n", p->o_args.opt_size) ;
-    printf("min_size %i\n", p->o_args.min_size) ;
-    printf("max_size %i\n", p->o_args.max_size) ;
-    printf("max_poly_x %i\n", p->o_args.max_poly_x) ;
-    printf("min_end_quality %i\n", p->o_args.min_end_quality) ;
-    printf("min_quality %i\n", p->o_args.min_quality) ;
-    printf("max_self_any %f\n", p->o_args.max_self_any) ;
-    printf("max_self_end %f\n", p->o_args.max_self_end) ;
-    printf("max_repeat_compl %f\n", p->o_args.max_repeat_compl) ;
-    printf("max_template_mispriming %f\n", p->o_args.max_template_mispriming) ;
-    printf("max_template_mispriming_th %f\n", p->o_args.max_template_mispriming_th) ;
-    printf("end internal oligo args\n") ;
-
-    printf("tm_santalucia %i\n", p->tm_santalucia) ;
-    printf("salt_corrections %i\n", p->salt_corrections) ;
-    printf("max_end_stability %f\n", p->max_end_stability) ;
-    printf("gc_clamp %i\n", p->gc_clamp) ;
-    printf("max_end_gc %i\n", p->max_end_gc);
-    printf("lowercase_masking %i\n", p->lowercase_masking) ;
-    printf("thermodynamic_alignment %i\n", p->thermodynamic_alignment);
-    printf("outside_penalty %f\n", p->outside_penalty) ;
-    printf("inside_penalty %f\n", p->inside_penalty) ;
-    printf("number of product size ranges: %d\n", p->num_intervals);
-    printf("product size ranges:\n");
-    for (i = 0; i < p->num_intervals; i++) {
-      printf("%d - %d \n", p->pr_min[i], p->pr_max[i]);
-    }
-    printf("product_opt_size %i\n", p->product_opt_size) ;
-    printf("product_max_tm %f\n", p->product_max_tm) ;
-    printf("product_min_tm %f\n", p->product_min_tm) ;
-    printf("product_opt_tm %f\n", p->product_opt_tm) ;
-    printf("pair_max_template_mispriming %f\n", p->pair_max_template_mispriming) ;
-    printf("pair_max_template_mispriming_th %f\n", p->pair_max_template_mispriming_th) ;
-    printf("pair_repeat_compl %f\n", p->pair_repeat_compl) ;
-    printf("pair_compl_any %f\n", p->pair_compl_any) ;
-    printf("pair_compl_end %f\n", p->pair_compl_end) ;
-    printf("pair_compl_any_th %f\n", p->pair_compl_any_th) ;
-    printf("pair_compl_end_th %f\n", p->pair_compl_end_th) ;
-    printf("pair_hairpin %f\n", p->pair_hairpin_th) ;
-     
-    printf("begin pr_pair_weights\n") ;
-    printf("primer_quality %f\n", p->pr_pair_weights.primer_quality) ;
-    printf("io_quality %f\n", p->pr_pair_weights.io_quality) ;
-    printf("diff_tm %f\n", p->pr_pair_weights.diff_tm) ;
-    printf("compl_any %f\n", p->pr_pair_weights.compl_any) ;
-    printf("compl_end %f\n", p->pr_pair_weights.compl_end) ;
-    printf("compl_any_th %f\n", p->pr_pair_weights.compl_any_th) ;
-    printf("compl_end_th %f\n", p->pr_pair_weights.compl_end_th) ;
-    printf("product_tm_lt %f\n", p->pr_pair_weights.product_tm_lt) ;
-    printf("product_tm_gt %f\n", p->pr_pair_weights.product_tm_gt) ;
-    printf("product_size_lt %f\n", p->pr_pair_weights.product_size_lt) ;
-    printf("product_size_gt %f\n", p->pr_pair_weights.product_size_gt) ;
-    printf("repeat_sim %f\n", p->pr_pair_weights.repeat_sim) ;
-    printf("template_mispriming %f\n", p->pr_pair_weights.template_mispriming) ;
-    printf("template_mispriming_th %f\n", p->pr_pair_weights.template_mispriming_th) ;
-    printf("end pair_weights\n") ;
-    printf("min_left_three_prime_distance %i\n", p->min_left_three_prime_distance) ;
-    printf("min_right_three_prime_distance %i\n", p->min_right_three_prime_distance) ;
-    printf("min_5_prime_overlap_of_junction %i\n", p->min_5_prime_overlap_of_junction);
-    printf("min_3_prime_overlap_of_junction %i\n", p->min_3_prime_overlap_of_junction);
-    printf("dump %i\n", p->dump);
-    printf("end global args\n") ;
+    printf("  opt_tm %f\n", p->o_args.opt_tm) ;
+    printf("  min_tm %f\n", p->o_args.min_tm) ;
+    printf("  max_tm %f\n", p->o_args.max_tm) ;
+    printf("  opt_gc_content %f\n", p->o_args.opt_gc_content) ;
+    printf("  max_gc %f\n", p->o_args.max_gc) ;
+    printf("  min_gc %f\n", p->o_args.min_gc) ;
+    printf("  divalent_conc %f\n", p->o_args.divalent_conc) ;
+    printf("  dntp_conc %f\n", p->o_args.dntp_conc) ;
+    printf("  dna_conc %f\n", p->o_args.dna_conc) ;
+    printf("  num_ns_accepted %i\n", p->o_args.num_ns_accepted) ;
+    printf("  opt_size %i\n", p->o_args.opt_size) ;
+    printf("  min_size %i\n", p->o_args.min_size) ;
+    printf("  max_size %i\n", p->o_args.max_size) ;
+    printf("  max_poly_x %i\n", p->o_args.max_poly_x) ;
+    printf("  min_end_quality %i\n", p->o_args.min_end_quality) ;
+    printf("  min_quality %i\n", p->o_args.min_quality) ;
+    printf("  max_self_any %f\n", p->o_args.max_self_any) ;
+    printf("  max_self_end %f\n", p->o_args.max_self_end) ;
+    printf("  max_repeat_compl %f\n", p->o_args.max_repeat_compl) ;
+    printf("  end internal oligo args\n");
+    printf("\n");
+    printf("END GLOBAL ARGS\n");
+    printf("=============\n");
+    printf("\n");
   }
 
   if (s != NULL) {
-    printf("\nbegin sequence args\n") ;
+    printf("=============\n");
+    printf("BEGIN SEQUENCE ARGS\n") ;
     /* TO DO: complete the statments for dumping this data
        printf("interval_array_t2 tar2 %i\n",
        int pairs[PR_MAX_INTERVAL_ARRAY][2]) ;
@@ -8247,6 +8236,8 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("force_left_end %i\n", s->force_left_end) ;
     printf("force_right_start %i\n", s->force_right_start) ;
     printf("force_right_end %i\n", s->force_right_end) ;
-    printf("end sequence args\n\n") ;
+    printf("END SEQUENCE ARGS\n") ;
+    printf("=============\n");
+    printf("\n");
   }
 }
