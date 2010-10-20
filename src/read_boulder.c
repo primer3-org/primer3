@@ -176,16 +176,22 @@ read_boulder_record(FILE *file_input,
   non_fatal_err = nonfatal_parse_err;
 
   while (((s = p3_read_line(file_input)) != NULL) && (strcmp(s,"="))) {
-    /* Read only the PRIMER tags if settings is selected */
-    /* Hint: strncomp returns 0 if both strings are equal */
-     if (file_type == settings && strncmp(s, "PRIMER_", 7)
-        && strncmp(s, "P3_FILE_ID", 10)) {
+    /* If we are reading from a settings file, then skip every 
+       line except those begining "PRIMER_" or "P3_FILE_ID".
+       Hint: strncomp returns 0 if both strings are equal */
+     if (file_type == settings 
+	 && strncmp(s, "PRIMER_", 7) /* "s does not begin with 'PRIMER_'" */
+	 && strncmp(s, "P3_FILE_ID", 10) /* "s does not begin with
+					    'P3_FILE_ID'" */
+	 ) {
       continue;
     }
     /* Silently ignore all primer3plus tags */
-    if (!(strncmp(s, "P3P_", 4))) {
+    /* Removed 10/20/10 because P3P_ tags
+       are already ignored in settings files. */
+    /* if (!(strncmp(s, "P3P_", 4))) {
       continue;
-    }
+      } */
 
     data_found = 1;
     /* Print out the input */
@@ -198,6 +204,7 @@ read_boulder_record(FILE *file_input,
        * of the record. */
       pr_append_new_chunk(glob_err, "Input line with no '=': ");
       pr_append(glob_err, s);
+      continue;
     } 
     /* Read in the old tags used until primer3 version 2.0 */
     else if (*io_version == 3) {
@@ -692,7 +699,7 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_TH",
 			   pa->o_args.max_template_mispriming_th);
        /* Control interpretation of ambiguity codes in mispriming
-         and mishyb libraries. */
+          and mishyb libraries. */
       COMPARE_INT("PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS",
                   pa->lib_ambiguity_codes_consensus);
       COMPARE_FLOAT("PRIMER_INSIDE_PENALTY", pa->inside_penalty);
@@ -782,7 +789,7 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_LIBRARY_MISHYB", pa->o_args.weights.repeat_sim);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_SEQ_QUAL", pa->o_args.weights.seq_quality);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_END_QUAL", pa->o_args.weights.end_quality);
-      COMPARE_FLOAT("PRIMER_INTERNAL_WT_TEMPLATE_MISHYB",
+      COMPARE_FLOAT("PRIMER_INTERNAL_WT_TEMPLATE_MISHYB",  /* fix me ADD PRIMER_INTERNAL_WT_TEMPLATE_MISHYB_TH */
                     pa->o_args.weights.template_mispriming);
       COMPARE_FLOAT("PRIMER_PAIR_WT_PR_PENALTY", 
                     pa->pr_pair_weights.primer_quality);
