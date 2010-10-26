@@ -891,11 +891,17 @@ read_boulder_record(FILE *file_input,
     free(task_tmp);
   }
 
-  /* WARNING: read_and_create_seq_lib uses p3_read_line, so repeat files cannot be read
-   * inside the while ((s = p3_read_line(stdin))...) loop above.
-   * FIX ME, in fact the reading of the library contents probably
-   * belongs inside primer3_boulder_main.c or libprimer3.c. */
-  /* Reading in the repeat libraries */
+  /* 
+   * WARNING: read_and_create_seq_lib uses p3_read_line, so repeat
+   * library files cannot be read inside the 
+   * while ((s = p3_read_line(stdin))...) loop above.
+   *
+   * FIX ME, in fact the reading
+   * of the library contents probably belongs inside
+   * primer3_boulder_main.c or libprimer3.c.
+   */
+
+  /* Read in the repeat libraries */
   if (NULL != repeat_file_path) {
     destroy_seq_lib(pa->p_args.repeat_lib);
     if ('\0' == *repeat_file_path) {
@@ -914,7 +920,7 @@ read_boulder_record(FILE *file_input,
     repeat_file_path = NULL;
   }
 
-  /* Reading in the repeat libraries for internal oligo */
+  /* Read in the repeat libraries for internal oligo */
   if (NULL != int_repeat_file_path) {
     destroy_seq_lib(pa->o_args.repeat_lib);
     if ('\0' == *int_repeat_file_path) {
@@ -935,9 +941,10 @@ read_boulder_record(FILE *file_input,
 
   /* Fix very old tags for backward compatibility */
   if (*io_version == 3) {
+
     /* This next belongs here rather than libprimer3, because it deals
-       with potential incompatibility with old tags (kept for backward
-       compatibility, and new tags.  */
+       with potential incompatibility between new tags and old tags
+       (which we have kept for backward compatibility).  */
     if (pa->primer_task == pick_pcr_primers_and_hyb_probe) {
       PR_ASSERT(pa->pick_internal_oligo);
     }
