@@ -58,7 +58,7 @@ Right   1290     0     0     0     0    32     0    38  1096      0     0     0 
 Intl    1565     0     0     0     0    32     0    60  1290      0     0     0     0     0   183
 Pair Stats:
 considered 25, unacceptable product size 20, ok 5
-primer3 release 2.0.0
+libprimer3 release 2.2.3
 
 
 PRIMER PICKING RESULTS FOR any_1
@@ -133,7 +133,7 @@ Right   3397     0     0     0     0     0     0   839  1673      0     0     1 
 Intl    3672     0     0     0     0     0     0   953  1734      0     0    14    22     0   949
 Pair Stats:
 considered 58, unacceptable product size 51, ok 7
-primer3 release 2.0.0
+libprimer3 release 2.2.3
 
 
 PRIMER PICKING RESULTS FOR any_salt
@@ -208,7 +208,7 @@ Right   3397     0     0     0     0     0     0    59  3137      0     0     0 
 Intl    3672     0     0     0     0     0     0   432  2545      0     0    10    22     0   663
 Pair Stats:
 considered 16, unacceptable product size 11, ok 5
-primer3 release 2.0.0
+libprimer3 release 2.2.3
 
 
 PRIMER PICKING RESULTS FOR any_weight
@@ -283,7 +283,7 @@ Right   3397     0     0     0     0     0     0    59  3137      0     0     0 
 Intl    3672     0     0     0     0     0     0   432  2545      0     0    37    22     0   636
 Pair Stats:
 considered 18, unacceptable product size 11, ok 7
-primer3 release 2.0.0
+libprimer3 release 2.2.3
 
 
 PRIMER PICKING RESULTS FOR any_2
@@ -358,7 +358,7 @@ Right   3293     0     0     0     0     0     0    59  3043     14     0     0 
 Intl    3185     0     0     0     0     0     0   432  2188     82     0    34    22     0   427
 Pair Stats:
 considered 20, unacceptable product size 12, ok 8
-primer3 release 2.0.0
+libprimer3 release 2.2.3
 
 
 PRIMER PICKING RESULTS FOR any_no_effect
@@ -433,7 +433,7 @@ Right   3397     0     0     0     0     0     0    59  3137      0     0     0 
 Intl    3672     0     0     0     0     0     0   432  2545     11     0     4    22     0   658
 Pair Stats:
 considered 16, unacceptable product size 11, ok 5
-primer3 release 2.0.0
+libprimer3 release 2.2.3
 
 
 PRIMER PICKING RESULTS FOR end_th1
@@ -508,7 +508,7 @@ Right   3397     0     0     0     0     0     0    59  3137      0     0     0 
 Intl    3672     0     0     0     0     0     0   432  2545     11     0     4    22     0   658
 Pair Stats:
 considered 16, unacceptable product size 11, ok 5
-primer3 release 2.0.0
+libprimer3 release 2.2.3
 
 
 PRIMER PICKING RESULTS FOR end_th2
@@ -583,7 +583,7 @@ Right   3213     0     0     0     0     0     0    59  2968     23     0     0 
 Intl    2916     0     0     0     0     0     0   432  1999    116     0    22    22     0   325
 Pair Stats:
 considered 20, unacceptable product size 12, ok 8
-primer3 release 2.0.0
+libprimer3 release 2.2.3
 
 
 PRIMER PICKING RESULTS FOR hairpin1
@@ -658,7 +658,7 @@ Right   3213     0     0     0     0     0     0    59  2968     23     0     0 
 Intl    2916     0     0     0     0     0     0   432  1999    116     0     4    22     0   343
 Pair Stats:
 considered 15, unacceptable product size 10, ok 5
-primer3 release 2.0.0
+libprimer3 release 2.2.3
 
 
 PRIMER PICKING RESULTS FOR hairpin2
@@ -733,7 +733,7 @@ Right   3213     0     0     0     0     0     0    59  2968     23     0    12 
 Intl    2916     0     0     0     0     0     0   432  1999    116     0    26    22     0   321
 Pair Stats:
 considered 11, unacceptable product size 6, ok 5
-primer3 release 2.0.0
+libprimer3 release 2.2.3
 
 
 PRIMER PICKING RESULTS FOR hairpin3
@@ -808,7 +808,7 @@ Right   3213     0     0     0     0     0     0    59  2968     23     0    32 
 Intl    2916     0     0     0     0     0     0   432  1999    116     0    22    22     0   325
 Pair Stats:
 considered 9, unacceptable product size 4, ok 5
-primer3 release 2.0.0
+libprimer3 release 2.2.3
 
 
 PRIMER PICKING RESULTS FOR template1
@@ -883,7 +883,7 @@ Right   3213     0     0     0     0     0     0    59  2968     23     0    32 
 Intl    2916     0     0     0     0     0     0   432  1999    116     0    22    22     0   325
 Pair Stats:
 considered 9, unacceptable product size 4, ok 5
-primer3 release 2.0.0
+libprimer3 release 2.2.3
 
 
 PRIMER PICKING RESULTS FOR template2
@@ -934,15 +934,15 @@ ADDITIONAL OLIGOS
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
- 2 LEFT PRIMER        224   20   60.39   45.00    0.00   0.00    0.00 GCTTTAGTGTAGTAGTGAGC
-   RIGHT PRIMER       401   20   61.03   40.00    0.00   0.00    0.00 ATACTGATGTCTATAGTGCG
-   INTERNAL OLIGO     340   20   59.83   45.00    0.00   0.00    0.00 GCAGAAAAAGGCTCCTATAG
-   PRODUCT SIZE: 178, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
-
- 3 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
+ 2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+
+ 3 LEFT PRIMER        224   20   60.39   45.00    0.00   0.00    0.00 GCTTTAGTGTAGTAGTGAGC
+   RIGHT PRIMER       401   20   61.03   40.00    0.00   0.00    0.00 ATACTGATGTCTATAGTGCG
+   INTERNAL OLIGO     340   20   59.83   45.00    0.00   0.00    0.00 GCAGAAAAAGGCTCCTATAG
+   PRODUCT SIZE: 178, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
@@ -957,7 +957,7 @@ Left    3155     0     0     0     0     0     0    52  2924     32     0    36 
 Right   3213     0     0     0     0     0     0    59  2968     23     0    32    19     0   112
 Intl    2916     0     0     0     0     0     0   432  1999    116     0    22    22     0   325
 Pair Stats:
-considered 12, unacceptable product size 5, ok 7
-primer3 release 2.0.0
+considered 11, unacceptable product size 5, ok 6
+libprimer3 release 2.2.3
 
 
