@@ -475,6 +475,8 @@ static const char *primer3_copyright_char_star = "\n"
 
 static const char *pr_program_name = "probably primer3_core";
 
+static const int use_end_for_th_template_mispriming = 1;
+
 #define DEFAULT_OPT_GC_PERCENT PR_UNDEFINED_INT_OPT
 
 /* Set the program name */
@@ -2749,6 +2751,10 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   int poly_x, max_poly_x;
   int must_use = h->must_use;
   const char *seq = sa->trimmed_seq;
+  const thal_args *thal_args_for_template_mispriming 
+    = use_end_for_th_template_mispriming 
+    ? thal_arg_to_use->end1
+    : thal_arg_to_use->any;
 
   char s1_rev[MAX_PRIMER_LENGTH+1];
   const char *oligo_seq;
@@ -3111,7 +3117,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
     if (pa->thermodynamic_alignment==0 && OK_OR_MUST_USE(h)) {
       oligo_template_mispriming(h, pa, sa, l, stats,
 				dpal_arg_to_use->local_end,
-				thal_arg_to_use->any);
+				thal_args_for_template_mispriming);
     }
   }
   
@@ -3122,7 +3128,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
 	   && pa->p_args.weights.template_mispriming_th)) && pa->thermodynamic_alignment==1) {
     oligo_template_mispriming(h, pa, sa, l, stats,
                               dpal_arg_to_use->local_end,
-                              thal_arg_to_use->any);
+                              thal_args_for_template_mispriming);
   }
    
   if (h->length > po_args->max_size ) {
@@ -3529,6 +3535,10 @@ characterize_pair(p3retval *retval,
   int must_use = 0;
   double min_oligo_tm;
   int i;
+  const thal_args *thal_args_for_template_mispriming 
+    = use_end_for_th_template_mispriming 
+    ? thal_arg_to_use->end1
+    : thal_arg_to_use->any;
 
   memset(ppair, 0, sizeof(*ppair));
 
@@ -3747,8 +3757,9 @@ characterize_pair(p3retval *retval,
                                     &retval->fwd.expl,dpal_arg_to_use);
     if (OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
 	oligo_template_mispriming(&retval->fwd.oligo[m], pa, sa, OT_LEFT,
-				  &retval->fwd.expl,dpal_arg_to_use->local_end,
-				  thal_arg_to_use->end1);
+				  &retval->fwd.expl,
+				  dpal_arg_to_use->local_end,
+				  thal_args_for_template_mispriming);
     }
     if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
       pair_expl->considered--;
@@ -3761,8 +3772,9 @@ characterize_pair(p3retval *retval,
                                     &retval->rev.expl, dpal_arg_to_use);
     if (OK_OR_MUST_USE(&retval->rev.oligo[n])) {
       oligo_template_mispriming(&retval->rev.oligo[n], pa, sa, OT_RIGHT,
-				&retval->rev.expl, dpal_arg_to_use->local_end,
-				thal_arg_to_use->end1);
+				&retval->rev.expl, 
+				dpal_arg_to_use->local_end,
+				thal_args_for_template_mispriming);
     }
     if (!OK_OR_MUST_USE(&retval->rev.oligo[n])) {
       pair_expl->considered--;
@@ -4094,20 +4106,19 @@ align_thermod(const char *s1,
               const char *s2,
               const thal_args *a) 
 {  
+  int thal_trace=0;
    thal_results r;
-   /*
-   if(a->type == DPAL_LOCAL || a->type == DPAL_LOCAL_END) 
-     {
-        if (strlen(s2) < 3) 
-          {
-             / *  For extremely short alignments we simply
-              *          max out the score, because the dpal subroutines
-              *          for these cannot handle this case.
-              *          TO DO: this can probably be corrected in dpal. * /
-             return strlen(s2);
-          }
-    }  */
    thal((const unsigned char *) s1, (const unsigned char *) s2, a, &r);
+   if (thal_trace) {
+     fprintf(stdout, 
+	     "thal, thal_args, type=%d maxLoop=%d mv=%f dv=%f "
+	     "dntp=%f dna_conc=%f, temp=%f, temponly=%d dimer=%d\n",
+	     a->type, a->maxLoop, a->mv, a->dv, a->dntp, a->dna_conc, 
+	     a->temp, a->temponly, a->dimer);
+     fprintf(stdout, 
+	     "thal: s1=%s s2=%s temp=%f msg=%s end1=%d end2=%d\n", 
+	     s1, s2, r.temp, r.msg, r.align_end_1, r.align_end_2);
+   }
    PR_ASSERT(r.temp <= DBL_MAX);
    if (r.temp == THAL_ERROR_SCORE) 
      {
