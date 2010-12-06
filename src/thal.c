@@ -733,8 +733,8 @@ openParamFile(const char* fname, thal_results* o)
 #ifdef DEBUG
 	 perror(paramdir);
 #endif
+	 THAL_IO_ERROR(paramdir);
 	 free(paramdir);
-	 THAL_IO_ERROR(fname);
       }
       free(paramdir);
    }
