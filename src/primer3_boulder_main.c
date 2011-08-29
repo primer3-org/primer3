@@ -1,5 +1,6 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009,2010
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009,
+2010,2011
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky
 All rights reserved.
@@ -54,8 +55,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define OS_WIN
 #endif
 
-#define FILE_NAME_SIZE 80
-
 /* Some function prototypes */
 static void   print_usage();
 static void   sig_handler(int);
@@ -66,21 +65,21 @@ static const char *pr_release;
 static const char *pr_program_name;
 
 int
-main(int argc, char *argv[]) 
-{ 
+main(int argc, char *argv[])
+{
   /* Setup the input data structures handlers */
   int format_output = 0;
   int strict_tags = 0;
   int echo_settings = 0;
   int io_version = 4;
 
-  /* Some space for file names */
-  char p3_settings_file[FILE_NAME_SIZE];
-
   p3_global_settings *global_pa;
   seq_args *sarg;
   read_boulder_record_results read_boulder_record_res = {0,0};
 
+  pr_append_str p3_settings_path;
+  pr_append_str output_path;
+  pr_append_str error_path;
   pr_append_str fatal_parse_err;
   pr_append_str nonfatal_parse_err;
   pr_append_str warnings;
@@ -100,18 +99,18 @@ main(int argc, char *argv[])
     {"error", required_argument, 0, 'e'},
     {0, 0, 0, 0}
   };
-  int about = 0, output = 0, error = 0, compat = 0, invalid_flag = 0;
-  char output_file[FILE_NAME_SIZE], error_file[FILE_NAME_SIZE]; 
- 
+  int about = 0, compat = 0, invalid_flag = 0;
+
   /* Retval will point to the return value from choose_primers(). */
   p3retval *retval = NULL;
   int input_found=0;
 
-  p3_settings_file[0] = '\0';
-
   init_pr_append_str(&fatal_parse_err);
   init_pr_append_str(&nonfatal_parse_err);
   init_pr_append_str(&warnings);
+  init_pr_append_str(&p3_settings_path);
+  init_pr_append_str(&output_path);
+  init_pr_append_str(&error_path);
 
   /* Get the program name for correct error messages */
   pr_release = libprimer3_release();
@@ -129,7 +128,7 @@ main(int argc, char *argv[])
   if (!global_pa) {
     exit(-2); /* Out of memory. */
   }
-  
+
   /* Read in the flags provided with the program call */
   opterr = 0;
   while ((opt = getopt_long_only(argc, argv, "", long_options, &option_index)) != -1) {
@@ -138,7 +137,9 @@ main(int argc, char *argv[])
       about = 1;
       break;
     case 'p':
-      strncpy(p3_settings_file, optarg, FILE_NAME_SIZE - 1);
+      if (pr_append_external(&p3_settings_path, optarg)) {
+	exit(-2); /* Out of memory. */
+      }
       break;
     case 'i':
       if (!strcmp(optarg, "3"))
@@ -155,12 +156,16 @@ main(int argc, char *argv[])
       compat = 1;
       break;
     case 'o':
-      output = 1;
-      strncpy(output_file, optarg, FILE_NAME_SIZE - 1);
+      if (pr_append_external(&output_path, optarg)) {
+	exit(-2); /* Out of memory. */
+      }
+
       break;
     case 'e':
-      error = 1;
-      strncpy(error_file, optarg, FILE_NAME_SIZE - 1);
+      if (pr_append_external(&error_path, optarg)) {
+	exit(-2); /* Out of memory. */
+      }
+
       break;
     case '?':
       invalid_flag = 1;
@@ -168,19 +173,27 @@ main(int argc, char *argv[])
     }
   }
   /* Open the output and error files specified */
-  if (error == 1) {
+
+  if (!pr_is_empty(&error_path)) {
     /* reassign stderr */
-    if (freopen(error_file, "w", stderr) == NULL) {
-      fprintf(stderr, "Error creating file %s\n", error_file);
+    if (freopen(pr_append_str_chars(&error_path), "w", stderr)
+	== NULL) {
+      fprintf(stderr, "Error creating file %s\n",
+	      pr_append_str_chars(&error_path));
       exit(-1);
     }
+    destroy_pr_append_str_data(&error_path);
   }
-  if (output == 1) {
+
+  if (!pr_is_empty(&output_path)) {
     /* reassign stdout */
-    if (freopen(output_file, "w", stdout) == NULL) {
-      fprintf(stderr, "Error creating file %s\n", output_file);
+    if (freopen(pr_append_str_chars(&output_path), "w", stdout)
+	== NULL) {
+      fprintf(stderr, "Error creating file %s\n",
+	      pr_append_str_chars(&output_path));
       exit(-1);
     }
+    destroy_pr_append_str_data(&output_path);
   }
   /* We do any printing after redirecting stdout and stderr */
   if (about == 1) {
@@ -195,7 +208,8 @@ main(int argc, char *argv[])
     printf("PRIMER_ERROR=flag -2x_compat is no longer supported\n=\n");
     exit(-1);
   }
-  /* Check if an input file has been specified */
+
+  /* Check if an input file has been specified on the command line. */
   if (optind < argc) {
     if (optind + 1 != argc) {
       print_usage();
@@ -213,29 +227,31 @@ main(int argc, char *argv[])
     exit(-2);
   }
 
-  /* Read data from the settings file until a "=" line occurs.  Assign parameter
-   * values for primer picking to pa and sa. */
-  if (p3_settings_file[0] != '\0') {
-    read_p3_file(p3_settings_file, settings, 
+  /* Read data from the settings file until a "=" line occurs.  Assign
+     parameter values for primer picking to pa and sa. */
+  if (!pr_is_empty(&p3_settings_path)) {
+    read_p3_file(pr_append_str_chars(&p3_settings_path),
+		 settings,
 		 echo_settings && !format_output,
 		 strict_tags,
-		 global_pa, sarg, &fatal_parse_err, 
+		 global_pa, sarg, &fatal_parse_err,
 		 &nonfatal_parse_err, &warnings, &read_boulder_record_res);
-    /* Check if the thermodynamical alignment flag was given */ 
+    destroy_pr_append_str_data(&p3_settings_path);
+    /* Check if the thermodynamical alignment flag was given */
     if (global_pa->thermodynamic_alignment == 1)
       read_thermodynamic_parameters();
   }
 
   /* We also need to print out errors here because the loop erases all
-   *  errors at start */
-  /* If there are fatal errors, write the proper message and exit */
+     errors at start. If there are fatal errors, write the proper
+     message and exit */
   if (fatal_parse_err.data != NULL) {
     if (format_output) {
         format_error(stdout, sarg->sequence_name, fatal_parse_err.data);
     } else {
         print_boulder_error(fatal_parse_err.data);
     }
-    fprintf(stderr, "%s: %s\n", 
+    fprintf(stderr, "%s: %s\n",
               pr_program_name, fatal_parse_err.data);
     destroy_seq_args(sarg);
     exit(-4);
@@ -245,7 +261,7 @@ main(int argc, char *argv[])
    * and skip to the end of the loop */
   if (!pr_is_empty(&nonfatal_parse_err)) {
     if (format_output) {
-        format_error(stdout, sarg->sequence_name, 
+        format_error(stdout, sarg->sequence_name,
                      nonfatal_parse_err.data);
     } else {
         print_boulder_error(nonfatal_parse_err.data);
@@ -255,11 +271,11 @@ main(int argc, char *argv[])
   /* The temporary sarg is not needed any more */
   destroy_seq_args(sarg);
   sarg = NULL;
-  
+
   /* Read the data from input stream record by record and process it if
    * there are no errors. This is where the work is done. */
   while (1) {
-    /* Create and initialize a seq_args data structure. sa (seq_args *) is 
+    /* Create and initialize a seq_args data structure. sa (seq_args *) is
      * initialized here because Values are _not_ retained across different
      * input records. */
     if (!(sarg = create_seq_arg())) {
@@ -273,14 +289,14 @@ main(int argc, char *argv[])
     retval = NULL;
 
     /* See read_boulder.h for documentation on read_boulder_record().*/
-    if (!read_boulder_record(stdin, 
-			     &strict_tags, 
+    if (!read_boulder_record(stdin,
+			     &strict_tags,
 			     &io_version,
-			     !format_output, 
+			     !format_output,
 			     all_parameters,
-			     global_pa, 
-			     sarg, 
-			     &fatal_parse_err, 
+			     global_pa,
+			     sarg,
+			     &fatal_parse_err,
 			     &nonfatal_parse_err,
 			     &warnings,
 			     &read_boulder_record_res)) {
@@ -292,9 +308,9 @@ main(int argc, char *argv[])
     if ((global_pa->thermodynamic_alignment == 1)
 	&& (thermodynamic_path_changed == 1))
       read_thermodynamic_parameters();
-    
+
     input_found = 1;
-    if ((global_pa->primer_task == pick_detection_primers) 
+    if ((global_pa->primer_task == pick_detection_primers)
                 && (global_pa->pick_internal_oligo == 1)){
       PR_ASSERT(global_pa->pick_internal_oligo);
     }
@@ -306,7 +322,7 @@ main(int argc, char *argv[])
       } else {
         print_boulder_error(fatal_parse_err.data);
       }
-      fprintf(stderr, "%s: %s\n", 
+      fprintf(stderr, "%s: %s\n",
               pr_program_name, fatal_parse_err.data);
       destroy_p3retval(retval);
       destroy_seq_args(sarg);
@@ -317,7 +333,7 @@ main(int argc, char *argv[])
      * and skip to the end of the loop */
     if (!pr_is_empty(&nonfatal_parse_err)) {
       if (format_output) {
-        format_error(stdout, sarg->sequence_name, 
+        format_error(stdout, sarg->sequence_name,
                      nonfatal_parse_err.data);
       } else {
         print_boulder_error(nonfatal_parse_err.data);
@@ -328,17 +344,17 @@ main(int argc, char *argv[])
     /* Print any warnings and continue processing */
     if (!pr_is_empty(&warnings)) {
       if (format_output) {
-        format_warning(stdout, sarg->sequence_name, 
+        format_warning(stdout, sarg->sequence_name,
 		       warnings.data);
       } else {
         print_boulder_warning(warnings.data);
       }
     }
-    
+
     if (read_boulder_record_res.file_flag && sarg->sequence_name == NULL) {
       /* We will not have a base name for the files */
       if (format_output) {
-        format_error(stdout, NULL, 
+        format_error(stdout, NULL,
                      "Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG is not 0");
       } else {
         print_boulder_error("Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG is not 0");
@@ -347,11 +363,11 @@ main(int argc, char *argv[])
     }
 
     /* Pick the primers - the central function */
-    p3_set_gs_primer_file_flag(global_pa, 
+    p3_set_gs_primer_file_flag(global_pa,
                                read_boulder_record_res.file_flag);
-    retval = choose_primers(global_pa, sarg);  
+    retval = choose_primers(global_pa, sarg);
     if (NULL == retval) exit(-2); /* Out of memory. */
-    
+
     /* This is old code to make it compatible with version 3 input.
        In future versions it can be deleted!
        If it was necessary to use a left_input, right_input,
@@ -389,12 +405,12 @@ main(int argc, char *argv[])
     }
 
     if (format_output) {
-      print_format_output(stdout, &io_version, global_pa, 
+      print_format_output(stdout, &io_version, global_pa,
                           sarg, retval, pr_release,
                           read_boulder_record_res.explain_flag);
     } else {
       /* Use boulder output */
-      print_boulder(/* & */io_version, global_pa, sarg, retval, 
+      print_boulder(io_version, global_pa, sarg, retval,
                     read_boulder_record_res.explain_flag);
     }
 
@@ -437,19 +453,21 @@ main(int argc, char *argv[])
 
 /* Reads the thermodynamic parameters if the thermodynamic alignment
    tag was set to 1 */
-static void 
+static void
 read_thermodynamic_parameters()
 {
   thal_results o;
-  /* if the path to the parameter files did not change, we do not want to read again */
+  /* if the path to the parameter files did not change,
+     we do not want to read again */
   if (thermodynamic_path_changed == 0) return;
   /* check that the path to the parameters folder was given */
   if (thermodynamic_params_path == NULL) {
+
 #ifdef OS_WIN
     /* in windows check for .\\primer3_config */
     struct stat st;
     if ((stat(".\\primer3_config", &st) == 0) && S_ISDIR(st.st_mode)) {
-      thermodynamic_params_path = 
+      thermodynamic_params_path =
 	(char*) malloc(strlen(".\\primer3_config\\") * sizeof(char) + 1);
       if (NULL == thermodynamic_params_path) exit (-2); /* Out of memory */
       strcpy(thermodynamic_params_path, ".\\primer3_config\\");
@@ -462,21 +480,22 @@ read_thermodynamic_parameters()
     /* in linux, check for ./primer3_config and /opt/primer3_config */
     struct stat st;
     if ((stat("./primer3_config", &st) == 0) && S_ISDIR(st.st_mode)) {
-      thermodynamic_params_path = 
+      thermodynamic_params_path =
 	(char*) malloc(strlen("./primer3_config/") * sizeof(char) + 1);
       if (NULL == thermodynamic_params_path) exit (-2); /* Out of memory */
       strcpy(thermodynamic_params_path, "./primer3_config/");
     } else if ((stat("/opt/primer3_config", &st) == 0)  && S_ISDIR(st.st_mode)) {
-      thermodynamic_params_path = 
+      thermodynamic_params_path =
 	(char*) malloc(strlen("/opt/primer3_config/") * sizeof(char) + 1);
       if (NULL == thermodynamic_params_path) exit (-2); /* Out of memory */
       strcpy(thermodynamic_params_path, "/opt/primer3_config/");
     } else {
       /* no default directory found, error */
-      printf("PRIMER_ERROR=thermodynamic approach chosen, but path to thermodynamic parameters not specified\n=\n");	
+      printf("PRIMER_ERROR=thermodynamic approach chosen, but path to thermodynamic parameters not specified\n=\n");
       exit(-1);
     }
 #endif
+
   }
   /* read in the thermodynamic parameters */
   if (get_thermodynamic_values(thermodynamic_params_path, &o)) {
@@ -504,7 +523,7 @@ print_usage()
 
 /* Print out copyright, a short usage message and the signal */
 static void
-sig_handler(int signal) 
+sig_handler(int signal)
 {
     print_usage();
     fprintf(stderr, "%s: received signal %d\n", pr_program_name, signal);
