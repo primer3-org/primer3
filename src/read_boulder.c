@@ -1,5 +1,6 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009,2010
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009,
+  2010,2011
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky.
 All rights reserved.
@@ -111,7 +112,7 @@ extern double strtod();
                                "Duplicate tag: "); \
            pr_append(parse_err, TAG);              \
        } else {                                    \
-           T = (char*) _rb_safe_malloc(datum_len + 1);      \
+           T = (char*) _rb_safe_malloc(datum_len + 1); \
            strcpy(T, datum);                       \
        }                                           \
        continue;                                   \
@@ -121,6 +122,20 @@ extern double strtod();
    if (COMPARE(TAG)) {                            \
        parse_double(TAG, datum, &(T), parse_err); \
        continue;                                  \
+   }
+
+/* This macro added 2011 08 28 to allow use of 
+   of the 'setting' functions, such as 
+   p3_set_gs_primer_self_end, in setting
+   arguments. At this point, this macro is
+   only used twice, and there are no analogous
+   macros for integers,etc.
+*/
+#define COMPARE_FLOAT_USE_FN(TAG, set_function)        \
+   if (COMPARE(TAG)) {                                 \
+     parse_double(TAG, datum, &tmp_double, parse_err); \
+     set_function(pa, tmp_double);                     \
+     continue;                                         \
    }
 
 #define COMPARE_INT(TAG,T)                     \
@@ -172,6 +187,7 @@ read_boulder_record(FILE *file_input,
   int min_3_prime_distance_global = 0;    /* needed to check if both global and specific*/
   int min_3_prime_distance_specific = 0;  /* are given in same boulder record */
   int min_three_prime_distance;           /* holder for the value of this tag */
+  double tmp_double;
 
   non_fatal_err = nonfatal_parse_err;
 
@@ -298,7 +314,7 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_PRODUCT_OPT_SIZE", pa->product_opt_size);
 
       /* =============================================================== */
-      /* Special handlng to presever backward compatible behavior
+      /* Special handlng to preserve backward compatible behavior
          for io version 3. */
       /* Old code was...
          COMPARE_ALIGN_SCORE("PRIMER_SELF_ANY", pa->p_args.max_self_any); */
@@ -564,7 +580,15 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_MAX_NS_ACCEPTED", pa->p_args.num_ns_accepted);
       COMPARE_INT("PRIMER_PRODUCT_OPT_SIZE", pa->product_opt_size);
       COMPARE_FLOAT("PRIMER_MAX_SELF_ANY", pa->p_args.max_self_any);
-      COMPARE_FLOAT("PRIMER_MAX_SELF_END", pa->p_args.max_self_end);
+
+      /* COMPARE_FLOAT("PRIMER_MAX_SELF_END", pa->p_args.max_self_end); */
+      /* NEW */ COMPARE_FLOAT_USE_FN("PRIMER_MAX_SELF_END", p3_set_gs_primer_self_end)
+	/* if (COMPARE("PRIMER_MAX_SELF_END")) {
+	  parse_double("PRIMER_MAX_SELF_END", datum, &tmp_double, parse_err);
+	  p3_set_gs_primer_self_end(pa, tmp_double);
+	  continue;
+	  } */
+
       COMPARE_FLOAT("PRIMER_MAX_SELF_ANY_TH", pa->p_args.max_self_any_th);
       COMPARE_FLOAT("PRIMER_MAX_SELF_END_TH", pa->p_args.max_self_end_th);
       COMPARE_FLOAT("PRIMER_MAX_HAIRPIN_TH", pa->p_args.max_hairpin_th);   
@@ -667,8 +691,17 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_INTERNAL_MIN_QUALITY", pa->o_args.min_quality);
       COMPARE_FLOAT("PRIMER_INTERNAL_MAX_SELF_ANY",
 		    pa->o_args.max_self_any);
-      COMPARE_FLOAT("PRIMER_INTERNAL_MAX_SELF_END", 
-		    pa->o_args.max_self_end);
+
+      /* COMPARE_FLOAT("PRIMER_INTERNAL_MAX_SELF_END", 
+	 pa->o_args.max_self_end); */
+      /* NEW  */ COMPARE_FLOAT_USE_FN("PRIMER_INTERNAL_MAX_SELF_END", 
+				      p3_set_gs_primer_internal_oligo_self_end);
+      /* if (COMPARE("PRIMER_INTERNAL_MAX_SELF_END")) { 
+	 parse_double("PRIMER_INTERNAL_MAX_SELF_END", datum, &tmp_double, parse_err);
+	 p3_set_gs_primer_internal_oligo_self_end(pa, tmp_double);
+	 continue;
+	 } */
+
       COMPARE_FLOAT("PRIMER_INTERNAL_MAX_SELF_ANY_TH",
 			   pa->o_args.max_self_any_th);
       COMPARE_FLOAT("PRIMER_INTERNAL_MAX_SELF_END_TH",
