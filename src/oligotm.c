@@ -587,7 +587,7 @@ long_seq_tm(const char *s,
   int GC_count = 0;
   const char *p, *end;
 
-  if(divalent_to_monovalent(divalent_conc, dntp_conc) == OLIGOTM_ERROR)
+  if (divalent_to_monovalent(divalent_conc, dntp_conc) == OLIGOTM_ERROR)
     return OLIGOTM_ERROR;
   
   salt_conc = salt_conc + divalent_to_monovalent(divalent_conc, dntp_conc);
