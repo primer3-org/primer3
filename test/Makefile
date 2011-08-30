@@ -50,7 +50,7 @@ testcmdline:
 ifeq ($(TESTOPTS),--windows)
 	echo 'TESTING command line arguments' & perl cmdline_test.pl $(TESTOPTS)
 else 
-	echo; echo; echo 'TESTING command line arguments'; echo; perl cmdline_test.pl $(TESTOPTS)
+	- echo; echo; echo 'TESTING command line arguments'; echo; perl cmdline_test.pl $(TESTOPTS)
 endif
 
 test_io_v3:
