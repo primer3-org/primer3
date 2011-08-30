@@ -4,18 +4,18 @@
 # For usage, see the usage statement in the code, below.
 #
 # ======================================================================
-# (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
+# (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2010,
+#  2011
 # Whitehead Institute for Biomedical Research, Steve Rozen, 
 # Andreas Untergasser and Helen Skaletsky
 # All rights reserved.
 # 
 #   This file is part of the primer3 suite.
 #
-#   The primer3 suite is free software; you can
-#   redistribute them and/or modify them under the terms of the GNU
-#   General Public License as published by the Free Software Foundation;
-#   either version 2 of the License, or (at your option) any later
-#   version.
+#   The primer3 suite is free software; you can redistribute it and/or
+#   modify it under the terms of the GNU General Public License as
+#   published by the Free Software Foundation; either version 2 of the
+#   License, or (at your option) any later version.
 #
 #   This software is distributed in the hope that it will be useful,
 #   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -158,6 +158,8 @@ sub main() {
     # that get translated into file names inside the loop.
     for my $test (
 	
+		  'test_compl_error',
+		  'test_left_to_right_of_right',
 	          'primer_boundary', # Put the quickest tests first.
                   'primer_boundary1',
                   'primer_boundary_formatted',
@@ -466,6 +468,7 @@ sub test_fatal_errors() {
     my $r;
     my $problem = 0;
     print "\ntesting fatal errors...\n";
+    my $output_and_err_tested = 0;
     for (@inputs) {
         my ($root) = /(.*)\.in$/;  # Hint, the parens around $root give
                                    # the result of the match in
@@ -481,7 +484,15 @@ sub test_fatal_errors() {
 	    $cmd = "$valgrind_prefix$exe -strict_tags -p3_settings_file $_ primer_global_err/input_for_settings_tests.txt  > $root.tmp 2> $root.tmp2";
 	    # print STDERR $cmd, "\n";
 	} else {
-	    $cmd = "$valgrind_prefix$exe -strict_tags <$_ > $root.tmp 2> $root.tmp2";
+	    if ($output_and_err_tested) {
+		$cmd = "$valgrind_prefix$exe -strict_tags <$_ > $root.tmp 2> $root.tmp2";
+	    } else {
+		# We need to test the -output and -error command line arguments plus
+                # simply taking the file name as an argument (no "<")
+		$cmd = "$valgrind_prefix$exe -strict_tags $_ -output $root.tmp -error $root.tmp2";
+		$output_and_err_tested = 1;
+		print "Testing -output and -error flags on\n$cmd\n";
+	    }
 	}
 
 	$r = _nowarn_system($cmd);
