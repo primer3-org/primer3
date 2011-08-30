@@ -1,5 +1,6 @@
 /*
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009,2010
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009,
+ 2010,2011
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky.
 All rights reserved.
@@ -438,6 +439,7 @@ static void op_set_does_not_amplify_orf(primer_rec *);
 /* Global static variables. */
 static const char *primer3_copyright_char_star = "\n"
 "Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008\n"
+"  2009,2010,2011\n"
 "Whitehead Institute for Biomedical Research, Steve Rozen\n"
 "(http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky\n"
 "All rights reserved.\n"
@@ -1326,7 +1328,6 @@ choose_pair_or_triple(p3retval *retval,
 	  must_use = 1;
 	}
 	
-
 	/* Determine if overlap with an overlap point is required, and
 	   if so, whether one of the primers in the pairs overlaps
 	   that point. */
@@ -1347,14 +1348,12 @@ choose_pair_or_triple(p3retval *retval,
 	if (product_size < pa->pr_min[product_size_range_index] ||
 	    product_size > pa->pr_max[product_size_range_index]) {
 	  if (update_stats) {
-	    pair_expl->considered++;
+	    /* This line NEW */ if (!must_use)
+	                           pair_expl->considered++;
 	    pair_expl->product++; 
 	  }
 	  if (!must_use) continue;
 	}
-
-        /* here */
-
 
         /* Check if pair was already computed */
         pair_found = 0;
@@ -1517,7 +1516,7 @@ choose_pair_or_triple(p3retval *retval,
 	}
       }
 
-      /* If we have enough stop the while loop */
+      /* If we have enough then stop the while loop */
       if (pa->num_return == best_pairs->num_pairs) {
         break;
       }
@@ -2017,12 +2016,7 @@ make_complete_primer_lists(p3retval *retval,
 } /* make_complete_primer_lists */
 
 /*
- * Make lists of acceptable left and right primers.  After return, the
- * lists are stored in retval->fwd.oligo and retval->rev.oligo and the
- * coresponding list sizes are stored in retval->fwd.num_elem and
- * retval->rev.num_elem.  Return 1 if one of lists is empty or if
- * leftmost left primer and rightmost right primer do not provide
- * sufficient product size.
+ * Similar to make_complete_primer_lists -- but how different?
  */
 static int
 add_primers_to_check(p3retval *retval,
@@ -2050,7 +2044,7 @@ add_primers_to_check(p3retval *retval,
   }
 
   return 0;
-} /* make_complete_primer_lists */
+} /* add_primers_to_check */
 
 /*
  * Make lists of acceptable left and right primers.  After return, the
@@ -2560,7 +2554,14 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
   oligo->expl.ok = oligo->num_elem;
 
   if (oligo->num_elem == 0) return 1;
-  else return 0; /* Success */
+  else {
+    if (oligo->num_elem > 1) {
+      pr_append_new_chunk(&retval->warnings, 
+			  "More than one position in template for input oligo ");
+      pr_append(&retval->warnings, primer);
+    }
+    return 0; /* Success */
+  }
 }
 
 /* add_one_primer finds one primer in the trimmed sequence and stores
@@ -3321,27 +3322,47 @@ p_obj_fn(const p3_global_settings *pa,
            sum += pa->p_args.weights.length_gt * (h->length - pa->p_args.opt_size);
 
       /* BEGIN: secondary structures */
-      if (pa->p_args.weights.compl_any && pa->thermodynamic_alignment==0)
+      if (pa->thermodynamic_alignment==0) {
+
+	if (pa->p_args.weights.compl_any)
            sum += pa->p_args.weights.compl_any * h->self_any;
-     
-      /* HERE CHECK */
-     if (pa->p_args.weights.compl_any_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) <= h->self_any))
-       sum += pa->p_args.weights.compl_any_th * (h->self_any - (h->temp - pa->p_args.weights.temp_cutoff - 1.0)); /* -0.5 is added for the case where == */
-     if (pa->p_args.weights.compl_any_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) > h->self_any))
-       sum += pa->p_args.weights.compl_any_th * (1/(h->temp - pa->p_args.weights.temp_cutoff + 1.0 - h->self_any));
-     
-     if (pa->p_args.weights.compl_end && pa->thermodynamic_alignment==0)
+	if (pa->p_args.weights.compl_end)
            sum += pa->p_args.weights.compl_end * h->self_end;
+
+      } else if (pa->thermodynamic_alignment==1) {
+
+	if (pa->p_args.weights.compl_any_th) {
+	  if ((h->temp - pa->p_args.weights.temp_cutoff) <= h->self_any)
+	    sum += pa->p_args.weights.compl_any_th 
+	      * (h->self_any - (h->temp - pa->p_args.weights.temp_cutoff - 1.0)); /* -1.0 is added for the case where == */
+	  else
+	    sum += pa->p_args.weights.compl_any_th 
+	      * (1/(h->temp - pa->p_args.weights.temp_cutoff + 1.0 - h->self_any));
+	}
      
-     if (pa->p_args.weights.compl_end_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) <= h->self_end))
-       sum += pa->p_args.weights.compl_end_th * (h->self_end - (h->temp - pa->p_args.weights.temp_cutoff - 1.0));
-     if (pa->p_args.weights.compl_end_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) > h->self_end))
-       sum += pa->p_args.weights.compl_end_th * (1/(h->temp - pa->p_args.weights.temp_cutoff + 1.0 - h->self_end));
+	if (pa->p_args.weights.compl_end_th) {
+	  if ((h->temp - pa->p_args.weights.temp_cutoff) <= h->self_end)
+	    sum += pa->p_args.weights.compl_end_th 
+	      * (h->self_end - (h->temp - pa->p_args.weights.temp_cutoff - 1.0));
+	  else
+	    sum += pa->p_args.weights.compl_end_th 
+	      * (1/(h->temp - pa->p_args.weights.temp_cutoff + 1.0 - h->self_end));
+	}
      
-     if (pa->p_args.weights.hairpin_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) <= h->hairpin_th))
-       sum += pa->p_args.weights.hairpin_th * (h->hairpin_th - (h->temp - pa->p_args.weights.temp_cutoff - 1.0));
-     if (pa->p_args.weights.hairpin_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->p_args.weights.temp_cutoff) > h->hairpin_th))
-       sum += pa->p_args.weights.hairpin_th * (1/(h->temp - pa->p_args.weights.temp_cutoff + 1.0 - h->hairpin_th));
+	if (pa->p_args.weights.hairpin_th) {
+	  if ((h->temp - pa->p_args.weights.temp_cutoff) <= h->hairpin_th)
+	    sum += pa->p_args.weights.hairpin_th 
+	      * (h->hairpin_th - (h->temp - pa->p_args.weights.temp_cutoff - 1.0));
+	  else
+	    sum += pa->p_args.weights.hairpin_th 
+	      * (1/(h->temp - pa->p_args.weights.temp_cutoff + 1.0 - h->hairpin_th));
+	}
+
+      } else {
+	PR_ASSERT(0) 
+	  /* Programming error, 
+	     illegal value for pa->thermodynamic_alignment */
+      }
        /* END: secondary structures */
      
       if (pa->p_args.weights.num_ns)
@@ -3359,9 +3380,11 @@ p_obj_fn(const p3_global_settings *pa,
       }
       if(pa->p_args.weights.end_stability)
            sum += pa->p_args.weights.end_stability * h->end_stability;
+
+      /* FIX ME QUALITY WT Change here */
       if(pa->p_args.weights.seq_quality)
            sum += pa->p_args.weights.seq_quality *
-                             (pa->quality_range_max - h->seq_quality);
+	     (pa->quality_range_max - h->seq_quality);  /* Look for end seq quality */
 
       if (pa->p_args.weights.template_mispriming && pa->thermodynamic_alignment==0) {
         PR_ASSERT(oligo_max_template_mispriming(h) != ALIGN_SCORE_UNDEF);
@@ -3369,14 +3392,16 @@ p_obj_fn(const p3_global_settings *pa,
           oligo_max_template_mispriming(h);
       }
                                             
-      if (pa->p_args.weights.template_mispriming_th && pa->thermodynamic_alignment==1) {  /* HERE CHECK */
-         PR_ASSERT(oligo_max_template_mispriming_thermod(h) != ALIGN_SCORE_UNDEF);
-         if((h->temp - pa->p_args.weights.temp_cutoff) <= oligo_max_template_mispriming_thermod(h))
-         sum += pa->p_args.weights.template_mispriming_th * 
-           (oligo_max_template_mispriming_thermod(h) - (h->temp - pa->p_args.weights.temp_cutoff - 1.0));
-         if((h->temp - pa->p_args.weights.temp_cutoff) > oligo_max_template_mispriming_thermod(h))
-           sum += pa->p_args.weights.template_mispriming_th *
-           (1/(h->temp - pa->p_args.weights.temp_cutoff + 1.0 - oligo_max_template_mispriming_thermod(h)));
+      if (pa->p_args.weights.template_mispriming_th && pa->thermodynamic_alignment==1) {
+
+	PR_ASSERT(oligo_max_template_mispriming_thermod(h) != ALIGN_SCORE_UNDEF);
+
+	if((h->temp - pa->p_args.weights.temp_cutoff) <= oligo_max_template_mispriming_thermod(h))
+	  sum += pa->p_args.weights.template_mispriming_th * 
+	    (oligo_max_template_mispriming_thermod(h) - (h->temp - pa->p_args.weights.temp_cutoff - 1.0));
+	if((h->temp - pa->p_args.weights.temp_cutoff) > oligo_max_template_mispriming_thermod(h))
+	  sum += pa->p_args.weights.template_mispriming_th *
+	    (1/(h->temp - pa->p_args.weights.temp_cutoff + 1.0 - oligo_max_template_mispriming_thermod(h)));
       }
       return sum;
   } else if (j == OT_INTL) {
@@ -3400,30 +3425,52 @@ p_obj_fn(const p3_global_settings *pa,
          sum += pa->o_args.weights.compl_any * h->self_any;
       if(pa->o_args.weights.compl_end && pa->thermodynamic_alignment==0)
          sum += pa->o_args.weights.compl_end * h->self_end;
-     /* begin thermodynamical approach */
-     if (pa->o_args.weights.compl_any_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->o_args.weights.temp_cutoff) <= h->self_any))
-       sum += pa->o_args.weights.compl_any_th * (h->self_any - (h->temp - pa->o_args.weights.temp_cutoff - 1.0)); /* -0.5 is added for the case where == */
-     if (pa->o_args.weights.compl_any_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->o_args.weights.temp_cutoff) > h->self_any))
-       sum += pa->o_args.weights.compl_any_th * (1/(h->temp - pa->o_args.weights.temp_cutoff + 1.0 - h->self_any));
+
+      /* begin thermodynamical approach */
+      if (pa->thermodynamic_alignment==1) {
+
+	if (pa->o_args.weights.compl_any_th) {
+	  if ((h->temp - pa->o_args.weights.temp_cutoff) <= h->self_any)
+	    sum += 
+	      pa->o_args.weights.compl_any_th 
+	      * (h->self_any - (h->temp - pa->o_args.weights.temp_cutoff - 1.0)); /* -1.0 is added for the case where == */
+	  else 
+	    sum += 
+	      pa->o_args.weights.compl_any_th 
+	      * (1/(h->temp - pa->o_args.weights.temp_cutoff + 1.0 - h->self_any));
+	}
+
+	if (pa->o_args.weights.compl_end_th) {
+	  if ((h->temp - pa->o_args.weights.temp_cutoff) <= h->self_end) 
+	    sum += 
+	      pa->o_args.weights.compl_end_th 
+	      * (h->self_end - (h->temp - pa->o_args.weights.temp_cutoff - 1.0));
+	  else
+	    sum += 
+	      pa->o_args.weights.compl_end_th 
+	      * (1/(h->temp - pa->o_args.weights.temp_cutoff + 1.0 - h->self_end));
+	}
      
-     if (pa->o_args.weights.compl_end_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->o_args.weights.temp_cutoff) <= h->self_end))
-       sum += pa->o_args.weights.compl_end_th * (h->self_end - (h->temp - pa->o_args.weights.temp_cutoff - 1.0));
-     if (pa->o_args.weights.compl_end_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->o_args.weights.temp_cutoff) > h->self_end))
-       sum += pa->o_args.weights.compl_end_th * (1/(h->temp - pa->o_args.weights.temp_cutoff + 1.0 - h->self_end));
-     
-     if (pa->o_args.weights.hairpin_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->o_args.weights.temp_cutoff) <= h->hairpin_th))
-       sum += pa->o_args.weights.hairpin_th * (h->hairpin_th - (h->temp - pa->o_args.weights.temp_cutoff - 1.0));
-     if (pa->o_args.weights.hairpin_th && pa->thermodynamic_alignment==1 && ((h->temp - pa->o_args.weights.temp_cutoff) > h->hairpin_th))
-       sum += pa->o_args.weights.hairpin_th * (1/(h->temp - pa->o_args.weights.temp_cutoff + 1.0 - h->hairpin_th));
-     /* end thermodynamical approach */
+	if (pa->o_args.weights.hairpin_th) {
+	  if ((h->temp - pa->o_args.weights.temp_cutoff) <= h->hairpin_th) 
+	    sum += pa->o_args.weights.hairpin_th * (h->hairpin_th - (h->temp - pa->o_args.weights.temp_cutoff - 1.0));
+	  else
+	    sum += pa->o_args.weights.hairpin_th * (1/(h->temp - pa->o_args.weights.temp_cutoff + 1.0 - h->hairpin_th));
+	}
+      }
+      /* end thermodynamical approach */
+
       if(pa->o_args.weights.num_ns)
          sum += pa->o_args.weights.num_ns * h->num_ns;
       if(pa->o_args.weights.repeat_sim)
          sum += pa->o_args.weights.repeat_sim
            * h->repeat_sim.score[h->repeat_sim.max];
+
+      /* FIX ME QUALITY WT */
       if(pa->o_args.weights.seq_quality)
          sum += pa->o_args.weights.seq_quality *
                      (pa->quality_range_max - h->seq_quality);
+
       return sum;
   } else {
     PR_ASSERT(0); /* Programmig error. */
@@ -3493,7 +3540,7 @@ compare_primer_pair(const void *x1, const void *x2)
 
   y1 = a1->left->start;
   y2 = a2->left->start;
-  if (y1 > y2) return -1;  /* prefer left primers to the right. */
+  if (y1 > y2) return -1; /* prefer left primers to the right. */
   if (y1 < y2) return 1;
 
   y1 = a1->right->start;
@@ -3503,7 +3550,7 @@ compare_primer_pair(const void *x1, const void *x2)
 
   y1 = a1->left->length;
   y2 = a2->left->length;
-  if (y1 < y2) return -1;  /* prefer shorter primers. */
+  if (y1 < y2) return -1; /* prefer shorter primers. */
   if (y1 > y2) return 1;
 
   y1 = a1->right->length;
@@ -3545,9 +3592,12 @@ characterize_pair(p3retval *retval,
   ppair->left = &retval->fwd.oligo[m];
   ppair->right = &retval->rev.oligo[n];
   ppair->product_size = retval->rev.oligo[n].start - retval->fwd.oligo[m].start+1;
+
   ppair->target = 0;
   ppair->compl_any = ppair->compl_end = 0;
-  if (update_stats) { pair_expl->considered++; }
+  if (update_stats) { 
+    pair_expl->considered++;
+  }
 
   if (pa->primer_task == check_primers) {
     must_use = 1;
@@ -3557,6 +3607,15 @@ characterize_pair(p3retval *retval,
      both the left and the right primer. */
   if (ppair->left->must_use != 0 &&
       ppair->right->must_use != 0) {
+
+    /* But if caller specified primers are in
+       reversed order we cannot analyze them
+       as a pair. */
+    if (ppair->product_size < 1) {
+      pair_expl->reversed++;
+      return PAIR_FAILED;
+    }
+
     must_use = 1;
   }
 
@@ -3614,6 +3673,10 @@ characterize_pair(p3retval *retval,
   /* ============================================================= */
   /* Compute product Tm and related parameters; check constraints. */
 
+  if (ppair->right->start - ppair->left->start + 1 <= 0) {
+    fprintf(stderr, "temporary");
+  }
+  PR_ASSERT(ppair->right->start - ppair->left->start + 1 > 0)
   ppair->product_tm
     = long_seq_tm(sa->trimmed_seq, ppair->left->start,
                   ppair->right->start - ppair->left->start + 1,
@@ -4013,21 +4076,26 @@ obj_fn(const p3_global_settings *pa, primer_pair *h)
   if(pa->pr_pair_weights.diff_tm)
     sum += pa->pr_pair_weights.diff_tm * h->diff_tm;
 
-  if(pa->pr_pair_weights.compl_any && pa->thermodynamic_alignment==0)
-    sum += pa->pr_pair_weights.compl_any * h->compl_any;
+  if (pa->thermodynamic_alignment==0) {
+    if (pa->pr_pair_weights.compl_any)
+      sum += pa->pr_pair_weights.compl_any * h->compl_any;
+    if (pa->pr_pair_weights.compl_end)
+      sum += pa->pr_pair_weights.compl_end * h->compl_end;
+  } else if (pa->thermodynamic_alignment==1) {
+
+    if (pa->pr_pair_weights.compl_any_th && ((lower_tm - pa->pr_pair_weights.temp_cutoff) <= h->compl_any))
+      sum += pa->pr_pair_weights.compl_any_th * (h->compl_any - (lower_tm - pa->pr_pair_weights.temp_cutoff - 1.0));
+    if (pa->pr_pair_weights.compl_any_th && ((lower_tm - pa->pr_pair_weights.temp_cutoff) > h->compl_any))
+      sum += pa->pr_pair_weights.compl_any_th * (1/(lower_tm - pa->pr_pair_weights.temp_cutoff + 1.0 - h->compl_any));
    
-  if (pa->pr_pair_weights.compl_any_th && pa->thermodynamic_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) <= h->compl_any))
-     sum += pa->pr_pair_weights.compl_any_th * (h->compl_any - (lower_tm - pa->pr_pair_weights.temp_cutoff - 1.0));
-  if (pa->pr_pair_weights.compl_any_th && pa->thermodynamic_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) > h->compl_any))
-     sum += pa->pr_pair_weights.compl_any_th * (1/(lower_tm - pa->pr_pair_weights.temp_cutoff + 1.0 - h->compl_any));
-   
-  if(pa->pr_pair_weights.compl_end && pa->thermodynamic_alignment==0)
-    sum += pa->pr_pair_weights.compl_end * h->compl_end;
-   
-  if (pa->pr_pair_weights.compl_end_th && pa->thermodynamic_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) <= h->compl_end))
-    sum += pa->pr_pair_weights.compl_end_th * (h->compl_end - (lower_tm - pa->pr_pair_weights.temp_cutoff - 1.0));
-  if (pa->pr_pair_weights.compl_end_th && pa->thermodynamic_alignment==1 && ((lower_tm - pa->pr_pair_weights.temp_cutoff) > h->compl_end))
-    sum += pa->pr_pair_weights.compl_end_th * (1/(lower_tm - pa->pr_pair_weights.temp_cutoff + 1.0 - h->compl_end));
+    if (pa->pr_pair_weights.compl_end_th && ((lower_tm - pa->pr_pair_weights.temp_cutoff) <= h->compl_end))
+      sum += pa->pr_pair_weights.compl_end_th * (h->compl_end - (lower_tm - pa->pr_pair_weights.temp_cutoff - 1.0));
+    if (pa->pr_pair_weights.compl_end_th && ((lower_tm - pa->pr_pair_weights.temp_cutoff) > h->compl_end))
+      sum += pa->pr_pair_weights.compl_end_th * (1/(lower_tm - pa->pr_pair_weights.temp_cutoff + 1.0 - h->compl_end));
+  } else {
+    PR_ASSERT(0);
+    /* Programming error */
+  }
 
   if(pa->pr_pair_weights.product_tm_lt && h->product_tm < pa->product_opt_tm)
     sum += pa->pr_pair_weights.product_tm_lt *
@@ -4988,8 +5056,11 @@ p3_pair_explain_string(const pair_stats *pair_expl)
                   pair_expl->template_mispriming)
   IF_SP_AND_CHECK(", not in any ok region %d", 
                   pair_expl->not_in_any_ok_region);
+  IF_SP_AND_CHECK(", left primer to right of right primer %d",
+		  pair_expl->reversed);
 
   SP_AND_CHECK(", ok %d", pair_expl->ok)
+
   return buf;
 }
 
@@ -5459,7 +5530,7 @@ _optimize_ok_regions_list(const p3_global_settings *pa,
 
 /*
  * Return 1 on error, 0 on success.  fake_a_sequence creates a sequence
- * out of the provided primers and puts them in SA
+ * out of the provided primers and puts them in sa.
  */
 
 static int
@@ -6913,7 +6984,7 @@ p3_set_gs_primer_self_any_th(p3_global_settings * p , double val)
 void
 p3_set_gs_primer_self_end(p3_global_settings * p , double val)
 {
-  p->p_args.max_self_end = (short) (val * 100);
+  p->p_args.max_self_end = val; /* (short) (val * 100); */
 }
 
 void
@@ -7147,7 +7218,7 @@ p3_set_gs_primer_internal_oligo_self_any_th(p3_global_settings * p , double val)
 
 void
 p3_set_gs_primer_internal_oligo_self_end(p3_global_settings * p , double val) {
-  p->o_args.max_self_end = (short) (val * 100);
+  p->o_args.max_self_end = val; /* (short) (val * 100); */
 }
 
 void

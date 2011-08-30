@@ -1,3 +1,26 @@
+release 2.2.4 2011-08-31 ===============================================
+
+Several error corrections and minor cleanup.
+
+Corrected errors:
+
+Short, fixed-size buffer for the file/path names specified by the
+command line arguments -output, -error and for the settings file.
+
+Two other errors were in p3_set_gs_primer_self_end and
+p3_set_gs_primer_internal_oligo_self_end, which erroneously multiplied
+their 'val' arguments by 100.
+
+Detect and handle situation in which user-supplied primers
+(SEQUENCE_PRIMER and SEQUENCE_PRIMER_REVCOMP) have the left primer to
+the right of the right primer.  Also issue a warning if user-supplied
+primers occur in more than one location in the template.
+
+In addition, the code now uses 'end' alignments when assessing
+template mispriming using thermodynamic alignments. This is consistent
+with approach taken with the previous alignment algorithm and
+with checking for mispriming against repeat libraries.
+
 release 2.2.3 2010-07-08 ===============================================
 
 Minor error corrections, minor cleanup.
