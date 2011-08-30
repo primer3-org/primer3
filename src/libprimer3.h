@@ -666,6 +666,7 @@ typedef struct pair_stats {
   int high_tm;             /* Product Tm too high.                          */
   int low_tm;              /* Product Tm too low.                           */
   int template_mispriming; /* Sum of template mispriming scores too high.   */
+
   /* Neither oligo in the pairs overlaps one of the "required sites".       */
   int does_not_overlap_a_required_point;
 
@@ -676,7 +677,12 @@ typedef struct pair_stats {
      PRIMER_PAIR_OK_REGION_LIST. */
   int not_in_any_ok_region;
 
+  /* Left primer to the right of right right primer. This can occur when
+     the primers are provided by the caller. */
+  int reversed;
+
   int ok;                  /* Number that were ok.                          */
+
 } pair_stats;
 
 typedef struct pair_array_t {
