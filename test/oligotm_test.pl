@@ -100,7 +100,7 @@ while(<F>){
     chomp $tm;
     close(CMD);
     if($tm){
-        if(($tm-$tmp[6])>EPSILON) {
+        if(abs($tm-$tmp[6])>EPSILON) {
             $failure++;
             print STDERR "$cmd FAILED (expected $tm, got $tmp[6])\n";
         }
