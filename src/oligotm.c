@@ -40,6 +40,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include "oligotm.h"
 
+#define T_KELVIN 273.15;
 #define A_CHAR 'A'
 #define G_CHAR 'G'
 #define T_CHAR 'T'
@@ -307,7 +308,7 @@ oligotm(const  char *s,
      tm_method_type  tm_method,
      salt_correction_type salt_corrections)
 {
-  register int dh = 0, ds = 0;
+   register int dh = 0, ds = 0;
   register char c;
   double delta_H, delta_S;
   double Tm; /* Melting temperature */
@@ -317,7 +318,7 @@ oligotm(const  char *s,
    if(divalent_to_monovalent(divalent_conc, dntp_conc) == OLIGOTM_ERROR)
      return OLIGOTM_ERROR;
    
-   K_mM = K_mM + divalent_to_monovalent(divalent_conc, dntp_conc);
+  /** K_mM = K_mM + divalent_to_monovalent(divalent_conc, dntp_conc); **/
   if (tm_method != breslauer_auto
       && tm_method != santalucia_auto)
     return OLIGOTM_ERROR;
@@ -400,53 +401,103 @@ oligotm(const  char *s,
 			    */
   Tm=0;  /* Melting temperature */
   len=len+1;
+
+   /**********************************************/
   if (salt_corrections == schildkraut) {
-    double correction=- 273.15 + 16.6 * log10(K_mM/1000.0);
-    Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/4000000000.0)) + correction;
+     K_mM = K_mM + divalent_to_monovalent(divalent_conc, dntp_conc);
+     correction = 16.6 * log10(K_mM/1000.0) - T_KELVIN;
+     Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/4000000000.0)) + correction;
   } else if (salt_corrections== santalucia) {
+    K_mM = K_mM + divalent_to_monovalent(divalent_conc, dntp_conc);
     delta_S = delta_S + 0.368 * (len - 1) * log(K_mM / 1000.0 );
     if(sym == 1) { /* primer is symmetrical */
       /* Equation A */
-      Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/1000000000.0)) - 273.15;
+      Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/1000000000.0)) - T_KELVIN;
     } else {
       /* Equation B */
-      Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/4000000000.0)) - 273.15;
+      Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/4000000000.0)) - T_KELVIN;
     }      
   } else if (salt_corrections == owczarzy) {
-    double gcPercent=0;
-    int i;
-    for(i=0; i<=len && d != NULL && d != '\0';) {
-      if(*d == 'C' || *d == 'G') {
-	gcPercent++;
+     double gcPercent=0;
+     double free_divalent; /* conc of divalent cations minus dNTP conc */
+     int i;
+     for(i = 0; i <= len && d != NULL && d != '\0';) {
+	if(*d == 'C' || *d == 'G') {
+	   gcPercent++;
+	}  
+	d++;
+	i++;
+     }
+     gcPercent = (double)gcPercent/((double)len);
+     /**** BEGIN: UPDATED SALT BY OWCZARZY *****/
+      /* different salt corrections for monovalent (Owczarzy et al.,2004) 
+      and divalent cations (Owczarzy et al.,2008)
+      */
+     /* competition bw magnesium and monovalent cations, see Owczarzy et al., 2008 Figure 9 and Equation 16 */
+     
+     static const double crossover_point = 0.22; /* depending on the value of div_monov_ratio respect
+					     to value of crossover_point Eq 16 (divalent corr, Owczarzy et al., 2008)
+					     or Eq 22 (monovalent corr, Owczarzy et al., 2004) should be used */
+     double div_monov_ratio;
+     if(dntp_conc >= divalent_conc) {
+	free_divalent = 0.00000000001; /* to not to get log(0) */
+     } else {
+	free_divalent = (divalent_conc - dntp_conc)/1000.0;
+     }
+     static double a = 0,b = 0,c = 0,d = 0,e = 0,f = 0,g = 0;
+      if(K_mM==0) {
+	 div_monov_ratio = 6.0;
+      } else {
+	 div_monov_ratio = (sqrt(free_divalent))/(K_mM/1000); /* if conc of monov cations is provided
+								    a ratio is calculated to further calculate
+								    the _correct_ correction */
       }
-      d++; 
-      i++;
-    }      
-    gcPercent = (double)gcPercent/((double)len);
-
-    /* double */ correction 
-      = (((4.29 * gcPercent) - 3.95) * pow(10,-5) * log(K_mM / 1000.0))
-      + (9.40 * pow(10,-6) * (pow(log(K_mM / 1000.0),2)));
-
-    if (sym == 1) { /* primer is symmetrical */
-      /* Equation A */
-      Tm 
-	= (1/((1/(delta_H 
-		  / 
-		  (delta_S + 1.9872 * log(DNA_nM/1000000000.0)))) + correction))
-	- 273.15;
-    } else {
-      /* Equation B */
-      Tm 
-	= (1/((1/(delta_H 
-		  / 
-		  (delta_S + 1.9872 * log(DNA_nM/4000000000.0)))) + correction))
-	- 273.15;
-    }
-            
+     if (div_monov_ratio < crossover_point) {
+	/* use only monovalent salt correction, Eq 22 (Owczarzy et al., 2004) */
+	correction
+	  = (((4.29 * gcPercent) - 3.95) * pow(10,-5) * log(K_mM / 1000.0))
+	    + (9.40 * pow(10,-6) * (pow(log(K_mM / 1000.0),2)));
+     } else {
+	/* magnesium effects are dominant, Eq 16 (Owczarzy et al., 2008) is used */
+	b =- 9.11 * pow(10,-6);
+	c = 6.26 * pow(10,-5);
+	e =- 4.82 * pow(10,-4);
+	f = 5.25 * pow(10,-4);
+	a = 3.92 * pow(10,-5);
+	d = 1.42 * pow(10,-5);
+	g = 8.31 * pow(10,-5);
+	if(div_monov_ratio < 6.0) {
+	   /* in particular ratio of conc of monov and div cations
+	    *             some parameters of Eq 16 must be corrected (a,d,g) */
+	   a = 3.92 * pow(10,-5) * (0.843 - (0.352 * sqrt(K_mM/1000.0) * log(K_mM/1000.0)));
+	   d = 1.42 * pow(10,-5) * (1.279 - 4.03 * pow(10,-3) * log(K_mM/1000.0) - 8.03 * pow(10,-3) * pow(log(K_mM/1000.0),2));
+	   g = 8.31 * pow(10,-5) * (0.486 - 0.258 * log(K_mM/1000.0) + 5.25 * pow(10,-3) * pow(log(K_mM/1000.0),3));
+	}
+	
+	correction = a + (b * log(free_divalent))
+	  + gcPercent * (c + (d * log(free_divalent)))
+	    + (1/(2 * (len - 1))) * (e + (f * log(free_divalent))
+				     + g * (pow((log(free_divalent)),2)));
+     }
+     /**** END: UPDATED SALT BY OWCZARZY *****/
+     if (sym == 1) {
+	   /* primer is symmetrical */
+	/* Equation A */
+	Tm = 1/((1/(delta_H 
+		    /
+		    (delta_S + 1.9872 * log(DNA_nM/1000000000.0)))) + correction) - T_KELVIN;
+     } else {
+	/* Equation B */
+	Tm = 1/((1/(delta_H
+		    /
+		    (delta_S + 1.9872 * log(DNA_nM/4000000000.0)))) + correction) - T_KELVIN;
+     } 
   }
-  return Tm;
- ERROR:  /* 
+   
+   
+   /***************************************/
+   return Tm;
+ERROR:  /* 
 	  * length of s was less than 2 or there was an illegal character in
 	  * s.
 	  */
