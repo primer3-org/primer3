@@ -1147,7 +1147,7 @@ choose_primers(const p3_global_settings *pa,
 /* BEGIN choose_pair_or_triple
 
    This function uses retval->fwd and retval->rev and
-   updates the the oligos in these array.
+   updates the oligos in these array.
 
    This function posibly uses retval->intl and updates its
    elements via choose_internal_oligo().
@@ -1181,14 +1181,23 @@ choose_pair_or_triple(p3retval *retval,
   int the_best_i, the_best_j;
 
   /* Hash maps used to store pairs that were computed */
-  std::hash_map<int, primer_pair*> **pairs;
+
+  std::hash_map<int, primer_pair*> **pairs; 
+  /* pairs is an array of pointers to hash maps.  It will be indexed
+     by the indices of the reverse primers in retval->rev. */
+
   std::hash_map<int, primer_pair*> *hmap, *best_hmap = NULL;
+  /* hmap and best_hmap will be pointers to hash maps also pointed to
+     by elements of pairs. */
+
   std::hash_map<int, primer_pair*>::iterator it;
   primer_pair *pp, *best_pp = NULL;
   int pair_found = 0;
 
-  pairs = (std::hash_map<int, primer_pair*>**) calloc (retval->rev.num_elem, 
-                                                       sizeof(std::hash_map<int, primer_pair*>*));
+  pairs =
+    (std::hash_map<int, primer_pair*>**) 
+    calloc (retval->rev.num_elem, 
+	    sizeof(std::hash_map<int, primer_pair*>*));
   if (!pairs) longjmp(_jmp_buf, 1);
   
   memset(&the_best_pair, 0, sizeof(the_best_pair));
@@ -1197,8 +1206,10 @@ choose_pair_or_triple(p3retval *retval,
 
   /* Pick pairs till we have enough. */     
   while(1) {
+
     /* FIX ME, is this memset really needed?  Apparently slow */
     memset(&the_best_pair, 0, sizeof(the_best_pair));
+
     the_best_i = -1;
     the_best_j = -1;
     /* To start put penalty to the maximum */
@@ -1207,7 +1218,10 @@ choose_pair_or_triple(p3retval *retval,
     /* Iterate over the reverse primers. */
     for (i = 0; i < retval->rev.num_elem; i++) {
 
-      hmap = pairs[i];
+      hmap = pairs[i];  
+      /* Pairs[i] is NULL if there has never been an assignment to
+	 pairs[i] because pairs was allocated by calloc, which
+	 sets the allocated memory to 0. */
 
       /* Only use a primer that *might be* legal or that the caller
          has provided and specified as "must use".  Primers are *NOT*
@@ -1215,19 +1229,24 @@ choose_pair_or_triple(p3retval *retval,
          order to avoid expensive computations (mostly alignments)
          unless necessary. */
       if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) {
-        /* Can free the memory used by the hmap associated to this reverse primer */
+        /* Can free the memory used by the hmap associated to this
+	   reverse primer */
         if (hmap) {
           for (it=hmap->begin(); it!=hmap->end(); it++) {
-            pp = it->second; /* shorten here? */
+	    /* it->second is the second element (i.e. the 'value', as
+	       opposed to the 'key'). */
+            pp = it->second;
             delete pp;
           }
+	  if (hmap == best_hmap) best_hmap = NULL;
           delete hmap;
+	  hmap = NULL;
           pairs[i] = NULL;
         }
         continue;
       }
 
-      /* If the pair can not be better than the one already 
+      /* If the pair cannot be better than the one already 
        * selected, then we can skip remaining reverse primers */
       if (pa->pr_pair_weights.primer_quality *
            (retval->rev.oligo[i].quality + retval->fwd.oligo[0].quality)
@@ -1250,10 +1269,14 @@ choose_pair_or_triple(p3retval *retval,
         /* Can free the memory used by the hmap associated to this reverse primer */
         if (hmap) {
           for (it=hmap->begin(); it!=hmap->end(); it++) {
-            pp = it->second;  /* shorten here? */
+	    /* it->second is the second element (i.e. the 'value', as
+	       opposed to the 'key'). */
+            pp = it->second;
             delete pp;
           }
+	  if (hmap == best_hmap) best_hmap = NULL;
           delete hmap;
+	  hmap = NULL;
           pairs[i] = NULL;
         }
         continue;
@@ -1269,10 +1292,14 @@ choose_pair_or_triple(p3retval *retval,
           /* Can free the memory used by the hmap associated to this reverse primer */
           if (hmap) {
             for (it=hmap->begin(); it!=hmap->end(); it++) {
+	      /* it->second is the second element (i.e. the 'value', as
+		 opposed to the 'key'). */
               pp = it->second;
-              delete pp; /* shorten here? */
+              delete pp;
             }
-            delete hmap;
+	    if (hmap == best_hmap) best_hmap = NULL;
+	    delete hmap;
+	    hmap = NULL;
             pairs[i] = NULL;
           }
           break;
@@ -1282,7 +1309,7 @@ choose_pair_or_triple(p3retval *retval,
            has provided and specified as "must use". */
         if (!OK_OR_MUST_USE(&retval->fwd.oligo[j])) continue;
 
-        /* If the pair can not be better than the one already 
+        /* If the pair cannot be better than the one already 
          * selected, then we can skip remaining forward primers 
          * for this reverse primer */
         if (pa->pr_pair_weights.primer_quality *
@@ -1291,13 +1318,15 @@ choose_pair_or_triple(p3retval *retval,
           break;
         }
 
-        /* Need to have this here because if we break just above then,
+        /* Need to have this here because if we break just above, then,
            at a latter iteration, we may need to examine the oligo
            pair with reverse oligo at i and forward oligo at j. */
         update_stats = 0;
         if (j > max_j_seen[i]) {
           if (trace_me)
-            fprintf(stderr, "updates ON: i=%d, j=%d, max_j_seen[%d]=%d\n", i, j, i, max_j_seen[i]);
+            fprintf(stderr, 
+		    "updates ON: i=%d, j=%d, max_j_seen[%d]=%d\n", 
+		    i, j, i, max_j_seen[i]);
           max_j_seen[i] = j;
           if (trace_me)
             fprintf(stderr, "max_j_seen[%d] --> %d\n", i, max_j_seen[i]);
@@ -1320,7 +1349,7 @@ choose_pair_or_triple(p3retval *retval,
           continue;
         }
 
-	/* Some simple checks first, before searching the hashmap */
+	/* Some simple checks first, before searching the hashmap */  /* FIX ME FIXME, problem is partly here. */
 	int must_use = 0;
 	if ((pa->primer_task == check_primers) || 
 	    ((retval->fwd.oligo[j].must_use != 0) &&
@@ -1343,7 +1372,8 @@ choose_pair_or_triple(p3retval *retval,
 	}
 
 	/* Check product size now */
-	double product_size = retval->rev.oligo[i].start - retval->fwd.oligo[j].start+1;
+	double product_size 
+	  = retval->rev.oligo[i].start - retval->fwd.oligo[j].start+1;
 
 	if (product_size < pa->pr_min[product_size_range_index] ||
 	    product_size > pa->pr_max[product_size_range_index]) {
@@ -1361,8 +1391,13 @@ choose_pair_or_triple(p3retval *retval,
           it = hmap->find(j);
           if (it != hmap->end()) {
             pair_found = 1;
-            pp = it->second;
-            if (pp) { /* pair was computed, it isn't illegal and it wasn't selected yet */
+
+	    /* it->second is the second element (i.e. the 'value', as
+	       opposed to the 'key'). */
+            pp = it->second; 
+            if (pp) { 
+	      /* The pair was computed, it isn't illegal and it wasn't
+		 selected yet */
 	      if (update_stats) {
 		pair_expl->considered++;
 		if (trace_me)
@@ -1395,9 +1430,12 @@ choose_pair_or_triple(p3retval *retval,
         if (!pair_found) {
           /* Characterize the pair. h is initialized by this
              call. */
-          int tmp = characterize_pair(retval, pa, sa,
-                                      j, i, product_size_range_index,
-                                      &h, dpal_arg_to_use, thal_arg_to_use, update_stats);
+          int tmp = 
+	    characterize_pair(retval, pa, sa, j, i,
+			      product_size_range_index,
+			      &h, dpal_arg_to_use,
+			      thal_arg_to_use,
+			      update_stats);
           if (tmp == PAIR_OK) {
 
             /* Choose internal oligo if needed */
@@ -1412,9 +1450,9 @@ choose_pair_or_triple(p3retval *retval,
                   pair_expl->internal++;
                 }
 
-                /* Mark the pair as not good - the entry in the hash map will be a NULL */
+                /* Mark the pair as not good - the entry in the hash
+		   map will be a NULL */
                 (*hmap)[j] = NULL;
-
                 continue;
               } else {
                 /* We DID choose an internal oligo, and we
@@ -1440,7 +1478,8 @@ choose_pair_or_triple(p3retval *retval,
             *pp = h;
             (*hmap)[j] = pp;
               
-            /* The current pair (h) is the new best pair if it is better than the best pair so far. */
+            /* The current pair (h) is the new best pair if it is
+	       better than the best pair so far. */
             if (compare_primer_pair(&h, &the_best_pair) < 0) {
               the_best_pair = h;
               the_best_i = i;
@@ -1480,11 +1519,12 @@ choose_pair_or_triple(p3retval *retval,
         /* We ran out of product-size-ranges. Exit the while loop. */
         break;
 
-        /* Our bookkeeping was incorrect unless the assertion below is true */
-        /* num_intervals > 1 and min_three_*_prime_distance > -1 both artifically
-           affect the statistics. */
-        PR_ASSERT(!((pa->num_intervals == 1) && ((pa->min_left_three_prime_distance == -1) ||
-						 (pa->min_right_three_prime_distance == -1)))
+        /* Our bookkeeping was incorrect unless the assertion below is
+	   true. If num_intervals > 1 or min_three_*_prime_distance >
+	   -1 the assertion below might not be true. */
+        PR_ASSERT(!((pa->num_intervals == 1) && 
+		    ((pa->min_left_three_prime_distance == -1) ||
+		     (pa->min_right_three_prime_distance == -1)))
                   || (best_pairs->num_pairs == pair_expl->ok));
       }
 
@@ -1522,14 +1562,19 @@ choose_pair_or_triple(p3retval *retval,
       }
     }
   } /* end of while(continue_trying == 1) */
-  free(max_j_seen);
 
+  /* Final cleanup of dynamically allocated storage for this
+     function. */
+  free(max_j_seen);
   for (i=0; i<retval->rev.num_elem; i++) {
     hmap = pairs[i];
     if (hmap) {
       for (it=hmap->begin(); it!=hmap->end(); it++) {
         pp = it->second;
-        delete pp; /* shorten here? */
+        if (pp != NULL)
+	  delete pp; /* IOANA, please review
+			pp can be NULL, see line
+		      (*hmap)[j] = NULL above */
       }
       delete hmap;
     }
@@ -1973,7 +2018,7 @@ make_complete_primer_lists(p3retval *retval,
                   const dpal_arg_holder *dpal_arg_to_use,
                   const thal_arg_holder *thal_arg_to_use)
 {
-  int exteme_var;
+  int extreme;
   int length, start;
   int n;
 
@@ -1981,23 +2026,23 @@ make_complete_primer_lists(p3retval *retval,
    PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
    if (pa->pick_left_primer) {
     /* We will need a left primer. */
-    exteme_var = 0;
+    extreme = 0;
     length = n - pa->p_args.min_size;
     start = pa->p_args.min_size - 1;
 
     /* Pick all good in the given range */
-    pick_primer_range(start, length, &exteme_var, &retval->fwd,
+    pick_primer_range(start, length, &extreme, &retval->fwd,
                       pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
 
   }  /* if (pa->pick_left_primer) */
   if ( pa->pick_right_primer ) {
     /* We will need a right primer */
-    exteme_var = n;
+    extreme = n;
     length = n - pa->p_args.min_size + 1;
     start = 0;
 
     /* Pick all good in the given range */
-    pick_primer_range(start, length, &exteme_var, &retval->rev,
+    pick_primer_range(start, length, &extreme, &retval->rev,
                       pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
   }
 
@@ -2005,10 +2050,10 @@ make_complete_primer_lists(p3retval *retval,
     /* We will need a internal oligo */
     length = n - pa->o_args.min_size;
     start = pa->o_args.min_size - 1;
-    exteme_var = 0;
+    extreme = 0;
 
     /* Pick all good in the given range */
-    pick_primer_range(start, length, &exteme_var, &retval->intl,
+    pick_primer_range(start, length, &extreme, &retval->intl,
                       pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
   }
 
@@ -2016,30 +2061,34 @@ make_complete_primer_lists(p3retval *retval,
 } /* make_complete_primer_lists */
 
 /*
- * Similar to make_complete_primer_lists -- but how different?
+ * Add caller-specified primers to retval->fwd, retval->rev, and/or
+ * retval->intl.  The primers do not have to be "legal". It is possible
+ * to add more than one primer to retval->fwd, etc, if the input
+ * primer is found in multiple locations in the template. Similar to
+ * make_complete_primer_lists.
  */
 static int
 add_primers_to_check(p3retval *retval,
-                  const p3_global_settings *pa,
-                  const seq_args *sa,
-                  const dpal_arg_holder *dpal_arg_to_use,
-                  const thal_arg_holder *thal_arg_to_use)
+		     const p3_global_settings *pa,
+		     const seq_args *sa,
+		     const dpal_arg_holder *dpal_arg_to_use,
+		     const thal_arg_holder *thal_arg_to_use)
 {
-  int exteme_var;
-  exteme_var=0;
+  int extreme = 0; /* Required when calling add_one_primer
+		      but not used in the current function. */
 
   if (sa->left_input) {
-    add_one_primer(sa->left_input, &exteme_var, &retval->fwd,
+    add_one_primer(sa->left_input, &extreme, &retval->fwd,
                    pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
   }
 
   if (sa->right_input) {
-    add_one_primer(sa->right_input, &exteme_var, &retval->rev,
+    add_one_primer(sa->right_input, &extreme, &retval->rev,
                    pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
   }
 
   if (sa->internal_input) {
-    add_one_primer(sa->internal_input, &exteme_var, &retval->intl,
+    add_one_primer(sa->internal_input, &extreme, &retval->intl,
                    pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
   }
 
