@@ -1,4 +1,4 @@
-# Copyright (c) 2007,2010
+# Copyright (c) 2007,2010,2011
 # Triinu Koressaar and Maido Remm
 # All rights reserved.
 # 

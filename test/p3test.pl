@@ -158,8 +158,11 @@ sub main() {
     # that get translated into file names inside the loop.
     for my $test (
 	
+		  'th-w-other-tasks',
+
 	          'primer_thermod_align',             
 	          'primer_thermod_align_formatted',
+
 
 		  # New tests that use new melting temperature
 		  # and thermodynamic alignments
@@ -274,7 +277,11 @@ sub main() {
 
         my $r;                  # Return value for tests
 
-	my %list_test = ('primer' => 1, 'primer1' => 1, 'primer1_th' => 1);
+	my %list_test 
+	    = ('primer' => 1,
+	       'primer1' => 1,
+	       'primer1_th' => 1,
+	       'th-w-other-tasks' => 1);
 
         if (exists($list_test{$test})) {
             # These tests generate primer lists, which
@@ -297,10 +304,18 @@ sub main() {
             # generate the necc. files; If $winFlag is 
             # set, run command with Windows backslashes
             # in path.
+	    my $settings = '';
+	
             if ($winFlag) {
-                $tmpCmd = "..\\$exe -strict_tags <../$input >../$tmp";
+		if ($test eq 'th-w-other-tasks') {
+		    $settings = '-p3_settings ..\\th-w-other-tasks-settings.txt -echo_settings';
+		}
+		$tmpCmd = "..\\$exe -strict_tags $settings ../$input >../$tmp";
             }  else {
-                $tmpCmd = "$valgrind_prefix ../$exe -strict_tags <../$input >../$tmp";
+		if ($test eq 'th-w-other-tasks') {
+		    $settings = '-p3_settings ../th-w-other-tasks-settings.txt -echo_settings';
+		}
+                $tmpCmd = "$valgrind_prefix ../$exe -strict_tags $settings ../$input >../$tmp";
             }
             $r = _nowarn_system($tmpCmd);
             # back to main directory
