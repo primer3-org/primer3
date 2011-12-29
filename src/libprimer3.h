@@ -459,20 +459,29 @@ typedef struct p3_global_settings {
 typedef enum oligo_type { OT_LEFT = 0, OT_RIGHT = 1, OT_INTL = 2 }
   oligo_type;
 
+/* This struct captures informatin about the similarity of
+   an oligo (primer) to elements in a mispriming (repeat)
+   library (which is read in from a fasta file). */
 typedef struct rep_sim {
-  char *name;       /* Name of the sequence from given file in fasta
-                     * format with maximum similarity to the oligo.
+  char *name;       /* Name of the sequence format with maximum
+		       similarity to the oligo.
                      */
+
   short min;        /* 
                      * The minimum score in slot 'score' (below).
                      * (Used when the objective function involves
                      * minimization of mispriming possibilities.)
                      */
-  short max;        /* The maximum score in slot 'score' (below). */
+
+  short max;        /* The index of the maximum score in slot 'score'
+		       (below). */
+
   double *score;    /* 
                     * Array of similarity (i.e. false-priming) scores,
                     * one for each entry in the 'repeat_lib' slot
-                    * of the primargs struct. 
+                    * of the primargs struct.  In libprimer3.c,
+		    * score is set to NULL to indicate that
+		    * the rep_sim structure is uninitialized.
                     */
 } rep_sim;
 
@@ -487,9 +496,8 @@ typedef struct oligo_problems {
 typedef struct primer_rec {
         
   rep_sim repeat_sim;
-  /* Name of the sequence from given file in fasta
-   * format with maximum similarity to the oligo
-   * and corresponding alignment score.
+  /* Information on the best repeat library (mispriming library)
+   * match for this oligo (primer), plus additional scores.
    */
         
   double temp; /* The oligo melting temperature calculated for the

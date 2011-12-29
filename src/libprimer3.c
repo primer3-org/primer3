@@ -2306,7 +2306,8 @@ pick_only_best_primer(const int start,
       /* Set the length of the primer */
       h.length = j;
 
-      /* Set repeat_sim to nothing */
+      /* Set repeat_sim to NULL as indicator that the repeat_sim
+         struct is not initialized. */
       h.repeat_sim.score = NULL;
 
       /* Figure out positions for left primers and internal oligos */
@@ -2542,7 +2543,7 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
     /* Set the length of the primer */
     h.length = j;
 
-    /* Set repeat_sim to nothing */
+    /* Set repeat_sim to nothing FIX ME FIXME */
     /* h.repeat_sim.score = NULL; */
 
     /* Figure out positions for forward primers */
@@ -2812,10 +2813,14 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
 
   const args_for_one_oligo_or_primer *po_args;
    
-  /* Initial slots in h */
+  /* Initialize slots in h */
   initialize_op(h);
   h->overlaps = 0;
+
+  /* Set repeat_sim to NULL as indicator that the repeat_sim
+     struct is not initialized. */
   h->repeat_sim.score = NULL;
+
   h->gc_content = h->num_ns = 0;
   h->overlaps_overlap_position = 0;
   h->template_mispriming = h->template_mispriming_r = ALIGN_SCORE_UNDEF;
@@ -3062,7 +3067,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
     }
   }
 
-  h->temp  /* Melting temperature */
+  h->temp  /* Oligo/primer melting temperature */
     = seqtm(oligo_seq, po_args->dna_conc,
             po_args->salt_conc,
             po_args->divalent_conc,
@@ -3111,9 +3116,9 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
       PR_ASSERT(!p3_ol_is_ok(h));
       return;
     }
-  } else 
-   /* Thermodynamical approach: for primers only  */
-   if ((must_use
+  } else {
+    /* Thermodynamical approach: for primers only  */
+    if ((must_use
        || pa->file_flag
        || retval->output_type == primer_list
        || po_args->weights.compl_any_th
@@ -3133,7 +3138,9 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
      } else  {
         h->self_any = h->self_end  = ALIGN_SCORE_UNDEF;
      }
-   if ((must_use
+  }
+
+  if ((must_use
         || pa->file_flag
         || retval->output_type == primer_list
         || po_args->weights.hairpin_th
@@ -3153,6 +3160,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
       h->hairpin_th = ALIGN_SCORE_UNDEF;
    }
    /* end of thermod. approach */
+
   if (((must_use
         || pa->file_flag
         || retval->output_type == primer_list
@@ -3181,6 +3189,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
                               thal_args_for_template_mispriming);
   }
    
+
   if (h->length > po_args->max_size ) {
     op_set_too_long(h);
     stats->size_max ++;
@@ -4679,6 +4688,9 @@ oligo_repeat_library_mispriming(primer_rec *h,
   /* End of checking against the repeat library */  
 }
 
+/* This functin carries out either the old "dpal" alignment or the
+   thermodynamic alignment, depending on the value of
+   pa->thermodynamic_alignment. */
 static void
 oligo_template_mispriming(primer_rec *h,
                           const p3_global_settings *pa,
@@ -6454,9 +6466,11 @@ p3_print_oligo_lists(const p3retval *retval,
     }
 
     /* Print the content to the file */
-    ret = p3_print_one_oligo_list(sa, retval->fwd.num_elem,
-                          retval->fwd.oligo, OT_LEFT,
-                          first_base_index, NULL != pa->p_args.repeat_lib, fh,pa->thermodynamic_alignment);
+    ret = 
+      p3_print_one_oligo_list(sa, retval->fwd.num_elem,
+			      retval->fwd.oligo, OT_LEFT,
+			      first_base_index, NULL != pa->p_args.repeat_lib, 
+			      fh,pa->thermodynamic_alignment);
     fclose(fh);
     if (ret) return 1;
   }
@@ -6592,60 +6606,36 @@ print_oligo(FILE *fh,
             int thermodynamical_approach)
 {
   int ret;
-  char *p =  /* WARNING, *p points to static storage that
-                is overwritten on next call to pr_oligo_sequence
-                or pr_oligo_rev_c_sequence. */
+
+  /* WARNING, *p points to static storage that is overwritten on next
+     call to pr_oligo_sequence or pr_oligo_rev_c_sequence. */
+  char *p = 
     (OT_RIGHT != type)
     ? pr_oligo_sequence(sa, h)
     : pr_oligo_rev_c_sequence(sa, h);
 
-  if (print_lib_sim) {
-     if(thermodynamical_approach==0) {
-        ret = fprintf(fh,
-                      "%4d %-30s %5d %2d %2d %5.2f %5.3f %5.2f %5.2f %5.2f %6.3f\n",
-                      index, p, h->start+sa->incl_s + first_base_index,
-                      h->length,
-                      h->num_ns, h->gc_content, h->temp,
-                      h->self_any,
-                      h->self_end,
-                      h->repeat_sim.score[h->repeat_sim.max],
-                      h->quality);
-     } else {
-        ret = fprintf(fh,
-                      "%4d %-30s %5d %2d %2d %5.2f %5.3f  %5.2f  %5.2f %5.2f %5.2f %6.3f\n",
-                      index, p, h->start+sa->incl_s + first_base_index,
-                      h->length,
-                      h->num_ns, h->gc_content, h->temp,
-                      h->self_any,
-                      h->self_end,
-                      h->hairpin_th,
-                      h->repeat_sim.score[h->repeat_sim.max],
-                      h->quality);
-     }
-  } else {
-     if(thermodynamical_approach==0) {
-        
-        ret = fprintf(fh,
-                      "%4d %-30s %5d %2d %2d %5.2f %5.3f %5.2f %5.2f %6.3f\n",
-                      index, p, h->start+sa->incl_s + first_base_index,
-                      h->length,
-                      h->num_ns, h->gc_content, h->temp,
-                      h->self_any,
-                      h->self_end,
-                      h->quality);
-     } else {
-        ret = fprintf(fh,
-                      "%4d %-30s %5d %2d %2d %5.2f %5.3f  %5.2f  %5.2f %5.2f %6.3f\n",
-                      index, p, h->start+sa->incl_s + first_base_index,
-                      h->length,
-                      h->num_ns, h->gc_content, h->temp,
-                      h->self_any,
-                      h->self_end,
-                      h->hairpin_th,
-                      h->quality);
-     }
-     
+  ret = fprintf(fh,
+		"%4d %-30s %5d %2d %2d %5.2f %5.3f %5.2f %5.2f", 
+		index, p, h->start+sa->incl_s + first_base_index,
+		h->length,
+		h->num_ns, h->gc_content, h->temp,
+		h->self_any,
+		h->self_end);
+  if (ret < 0) return 1;
+
+  if (1==thermodynamical_approach) {
+    ret = fprintf(fh, " %5.2f", h->hairpin_th);
+    if (ret < 0) return 1;
   }
+
+  if (ret < 0) return 1;
+  if (print_lib_sim) {
+    PR_ASSERT(h->repeat_sim.score != NULL);
+    ret = fprintf(fh, " %5.2f",
+		  h->repeat_sim.score[h->repeat_sim.max]);
+    if (ret < 0) return 1;
+  }
+  ret = fprintf(fh, " %6.3f\n", h->quality);
   if (ret < 0) return 1;
   else return 0;
 }
