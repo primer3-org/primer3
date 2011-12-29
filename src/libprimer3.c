@@ -2801,6 +2801,8 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   oligo_type l = otype;
   int poly_x, max_poly_x;
   int must_use = h->must_use;
+  int three_conditions 
+    = (must_use || pa->file_flag || retval->output_type == primer_list);
   const char *seq = sa->trimmed_seq;
   const thal_args *thal_args_for_template_mispriming 
     = use_end_for_th_template_mispriming 
@@ -3140,12 +3142,11 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
      }
   }
 
-  if ((must_use
-        || pa->file_flag
-        || retval->output_type == primer_list
-        || po_args->weights.hairpin_th
-        || po_args->weights.compl_any_th
-        || po_args->weights.compl_end_th)
+  if ((three_conditions
+       || po_args->weights.hairpin_th
+       || po_args->weights.compl_any_th  /* Triinu, is this needed? */
+       || po_args->weights.compl_end_th  /* Triinu, is this needed? */
+       )
        && pa->thermodynamic_alignment==1
        ) {
       oligo_hairpin(h, po_args,
@@ -3157,17 +3158,22 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
          return;
       }
    } else   {
-      h->hairpin_th = ALIGN_SCORE_UNDEF;
+    /* This will get calculated later if necessary, in characterize_pair. */
+    h->hairpin_th = ALIGN_SCORE_UNDEF;
    }
    /* end of thermod. approach */
 
+
+#if 0
+  /* FIX ME FIXME */
   if (((must_use
         || pa->file_flag
         || retval->output_type == primer_list
         || po_args->weights.repeat_sim
         || ((OT_RIGHT == l || OT_LEFT == l)
             && pa->p_args.weights.template_mispriming))
-      && pa->thermodynamic_alignment==0) 
+
+       && pa->thermodynamic_alignment==0) 
       || (pa->thermodynamic_alignment==1 && po_args->weights.repeat_sim)) {
 
     oligo_repeat_library_mispriming(h, pa, sa, l, stats,
@@ -3183,12 +3189,46 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
        || pa->file_flag
        || retval->output_type == primer_list
        || ((OT_RIGHT == l || OT_LEFT == l)
-	   && pa->p_args.weights.template_mispriming_th)) && pa->thermodynamic_alignment==1) {
+	   && pa->p_args.weights.template_mispriming_th))
+
+      && pa->thermodynamic_alignment==1)
+ {
+
     oligo_template_mispriming(h, pa, sa, l, stats,
                               dpal_arg_to_use->local_end,
                               thal_args_for_template_mispriming);
   }
-   
+  /* END FIX ME FIXME */   
+#else
+
+  if (three_conditions || po_args->weights.repeat_sim) {
+    oligo_repeat_library_mispriming(h, pa, sa, l, stats,
+                                    dpal_arg_to_use);
+  }
+
+
+  if (!OK_OR_MUST_USE(h)) return;
+
+  if (three_conditions
+      || 
+      ( /* Do we need template misprming for the penalty function? */
+       (OT_RIGHT == l || OT_LEFT == l)
+       && 
+       (
+	(pa->p_args.weights.template_mispriming && !pa->thermodynamic_alignment)
+	||
+	(pa->p_args.weights.template_mispriming_th && pa->thermodynamic_alignment)
+	)
+       )
+      ) {
+    if (OK_OR_MUST_USE(h)) {
+      oligo_template_mispriming(h, pa, sa, l, stats,
+				dpal_arg_to_use->local_end,
+				thal_args_for_template_mispriming);
+    }
+  }
+
+#endif
 
   if (h->length > po_args->max_size ) {
     op_set_too_long(h);
@@ -3219,6 +3259,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
     }
   }
 
+  /* FIX ME FIXME Steve, is this really needed? */
   op_set_completely_written(h);
 
 } /* calc_and_check_oligo_features */
@@ -3622,7 +3663,8 @@ compare_primer_pair(const void *x1, const void *x2)
 /*
  * Defines parameter values for given primer pair. Returns PAIR_OK if the pair is
  * acceptable; PAIR_FAILED otherwise.  This function sets the
- * various elements of *ppair.
+ * various elements of *ppair, and also calculates some key EXPENSIVE
+ * parameters for individual primers if they have not been set yet.
  */
 static int
 characterize_pair(p3retval *retval,
