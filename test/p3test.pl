@@ -158,6 +158,18 @@ sub main() {
     # that get translated into file names inside the loop.
     for my $test (
 	
+	          'primer_thermod_align',             
+	          'primer_thermod_align_formatted',
+
+		  # New tests that use new melting temperature
+		  # and thermodynamic alignments
+		  'primer1_th',
+		  'primer_mispriming_th',
+		  'primer_must_use_th',
+		  'primer_new_tasks_th',
+		  'primer_task_th',
+
+
 		  'test_compl_error',
 		  'test_left_to_right_of_right',
 	          'primer_boundary', # Put the quickest tests first.
@@ -220,9 +232,6 @@ sub main() {
                   'p3_3_prime_n',
 	          'primer_three_prime_distance',
 	
-	          'primer_thermod_align',             
-	          'primer_thermod_align_formatted',
-	
                   'primer_obj_fn',
 
                   'primer_lib_amb_codes',
@@ -265,7 +274,9 @@ sub main() {
 
         my $r;                  # Return value for tests
 
-        if ($test eq 'primer' || $test eq 'primer1') {
+	my %list_test = ('primer' => 1, 'primer1' => 1, 'primer1_th' => 1);
+
+        if (exists($list_test{$test})) {
             # These tests generate primer lists, which
             # need to be checked separately.
 
@@ -321,9 +332,15 @@ sub main() {
             $exit_stat = -1;
         }
 
-        if ($test eq 'primer' || $test eq 'primer1') {
+        if (exists($list_test{$test})) {
+	    # Special processing for tests that generate files containing
+	    # primer lists.
             my $list_tmp = $test.'_list_tmp';
             my $list_last = $test.'_list_last';
+	    if (!-r $list_last) {
+		print "Configuration error, $list_last does not exist or is not readable ";
+		$r = 1;
+	    }
             my @tempList = glob($list_last.'/*');
             # do _file by file_ comparison within primer_list_last to primer_list_tmp
             # since we are not using diff - diff used to do directory comparison

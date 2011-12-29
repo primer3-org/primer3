@@ -1,6 +1,6 @@
 # ======================================================================
 # (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009,
-#       2010
+#       2010,2011
 # Whitehead Institute for Biomedical Research, Steve Rozen, 
 # Andreas Untergasser and Helen Skaletsky
 # All rights reserved.
@@ -76,9 +76,9 @@ endif
 
 testthal:
 ifeq ($(TESTOPTS),--windows)
-	echo 'TESTING THERMODYNAMICAL ALIGNMENT CALCS' & perl thal_test.pl $(TESTOPTS)
+	echo 'TESTING THERMODYNAMIC ALIGNMENT CALCS' & perl thal_test.pl $(TESTOPTS)
 else
-	echo; echo; echo 'TESTING THERMODYNAMICAL ALIGNMENT CALCS'; echo; perl thal_test.pl $(TESTOPTS);
+	echo; echo; echo 'TESTING THERMODYNAMIC ALIGNMENT CALCS'; echo; perl thal_test.pl $(TESTOPTS);
 endif
 
 testtm:
@@ -112,6 +112,7 @@ else
 	echo; echo; echo 'CLEAN UP TEST DIRECTORIES'; echo; echo;
 	-rm -rf primer_list_tmp/*
 	-rm -rf primer1_list_tmp/*
+	-rm -rf primer1_th_list_tmp/*
 	-rm -f primer_global_err/*.tmp primer_global_err/*.tmp2 primer_global_err/*.bak
 	-rm -f *.tmp *.bak *.tmp.err *~
 	-rm -f hyb_probe_only.for hyb_probe_only.int 

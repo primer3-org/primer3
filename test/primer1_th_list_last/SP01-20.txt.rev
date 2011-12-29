@@ -1,0 +1,7 @@
+ACCEPTABLE RIGHT PRIMERS
+                                  1-based     #                self   self hair-  qual-
+   # sequence                       start ln  N   GC%     Tm any_th end_th   pin   lity
+   0 CCCCAACGGCCCCAGATT               118 18  0 66.67 62.999  0.00  0.00  0.00  4.999
+   1 CCCAACGGCCCCAGATTT               117 18  0 61.11 60.890  0.00  0.00  0.00  2.890
+   2 CCAACGGCCCCAGATTTC               116 18  0 61.11 59.299  0.00  0.00  0.00  2.701
+   3 CCCAACGGCCCCAGATTTC              117 19  0 63.16 61.971  0.00  0.00  0.00  2.971
