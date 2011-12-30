@@ -391,14 +391,18 @@ sub main() {
         my $r = system "grep ERROR *.vg */*.vg | grep -v 'ERROR SUMMARY: 0 errors'";
         if (!$r) { # !$r because grep returns 0 if something is found,
             # and if something is found, we have a problem.
+	    $all_ok = 0;
+	    print "\nValgrind ERRORs found [FAILED]";
             $exit_stat = -1;
         }
         $r = system "grep 'definitely lost' *.vg */*.vg | grep -v ' 0 bytes'";
         if (!$r) {
+	    print "\nValgrind LEAKSs found [WARNING]";
             $exit_stat = -1;
         }
         $r = system "grep 'possibly lost' *.vg */*.vg   | grep -v ' 0 bytes'";
         if (!$r) {
+	    print "\nValgrind LEAKSs found [WARNING]";
             $exit_stat = -1;
         }
     }
@@ -407,7 +411,7 @@ sub main() {
 
     print $all_ok ? "Passed all tests - [OK]\n\n\n" : "At least one test failed - [FAILED]\n\n\n";
 
-    exit $exit_stat;
+    exit 0 # $exit_stat; Change here, generally we want the testing to continue.
 }
 
 # Usage: perldiff("filename1", "filename2")
