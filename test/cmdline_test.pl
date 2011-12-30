@@ -4,7 +4,8 @@
 # For usage, see the usage statement in the code, below.
 #
 # ======================================================================
-# (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
+# (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,
+#  2010,2011
 # Whitehead Institute for Biomedical Research, Steve Rozen, 
 # Andreas Untergasser and Helen Skaletsky
 # All rights reserved.
@@ -82,6 +83,8 @@ sub main() {
             $i++;
           }
     }
+
+    print "\n\nTESTING command line arguments\n\n";
 
     # GetOptions handles various flag abbreviations and formats,
     # such as  -e ../src/primer3_core, --exe ../src/primer3_core, 
@@ -248,7 +251,7 @@ sub perldiff($$) {
     my @f2 = <F2>;
     # If different number of lines, return FAIL.
     if (@f1 != @f2) {
-        print "Different number of lines\n";
+        print "Different number of lines ($f1 versus $f2)\n";
         return 1;
     }
     # check for differences on the lines, themselves
