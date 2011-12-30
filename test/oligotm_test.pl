@@ -124,8 +124,8 @@ if ($do_valgrind) {
 }
 
 if(!$failure){
-    print STDERR "$nr: OK\n";
+    print STDERR "$nr: OK\n\n\n";
 }
 else{
-    print STDERR "$nr: $failure FAILURES\n";
+    print STDERR "$nr: $failure FAILURES\n\n\n";
 }
