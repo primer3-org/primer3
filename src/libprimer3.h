@@ -1169,27 +1169,52 @@ p3_set_program_name(const char *name);
  */
 char* p3_read_line(FILE *file);
 
+/* 
+   Return 1 iff the argument 'oligo' has any problems -- i.e.
+   violations of design constraints.
+ */
 int        p3_ol_has_any_problem(const primer_rec *oligo);
+
+/*  
+    Return a string details the the problems in 'oligo', i.e. the
+    constraints that 'oligo' violates.  WARNING: Returns a pointer to
+    static storage, which is over-written on next call.
+ */
 const char *p3_get_ol_problem_string(const primer_rec *oligo);
 
+
+/* 
+   Creates up to three files, the names of which are based on the
+   argument 'file'.  One file is a table of forward primers, one a table
+   of reverse primers, and one a table of internal hybridization
+   oligos, depending on what the caller to choose_primers() requested
+   (in the 'pa' argument).  Returns 0 on success, 1 on error.  On
+   error, check errno for ENOMEM. Used to implement P3_FILE_FLAG=1.
+ */
 int    p3_print_oligo_lists(const p3retval*, 
                             const seq_args *, 
                             const p3_global_settings *, 
                             pr_append_str *err,
                             const char* file_name);
 
-/* Must be called from main to allow dependency on 
- * input version=3 in future version can it be 
- * deleted.                                       */
+
+/* 
+   Translate the values in the stats struct into an warning string.
+   Call this function only if the 'stat's contains the _errors_
+   associated with a given primer i.e. that primer was supplied by the
+   caller and pick_anyway is set.
+*/
 void add_must_use_warnings(pr_append_str *warning,
-                      const char* text,
-                      const oligo_stats *stats);
+			   const char* text,
+			   const oligo_stats *stats);
 
 
 
-/* Reverse and complement the sequence seq and put the result in s.
+/* 
+   Reverse and complement the sequence seq and put the result in s.
    WARNING: It is up the caller to ensure that s points to enough
-   space. */ 
+   space.
+*/ 
 void   p3_reverse_complement(const char *, char *);
 
 #ifdef __cplusplus

@@ -1091,7 +1091,7 @@ choose_primers(const p3_global_settings *pa,
      thal_arg_to_use = create_thal_arg_holder();
   if (pa->primer_task == pick_primer_list) {
     make_complete_primer_lists(retval, pa, sa,
-                               dpal_arg_to_use,thal_arg_to_use);
+                               dpal_arg_to_use,thal_arg_to_use); /* Leak from here*/
   } else if (pa->primer_task == pick_sequencing_primers) {
     pick_sequencing_primer_list(retval, pa, sa,
                                 dpal_arg_to_use,thal_arg_to_use);
@@ -1664,11 +1664,12 @@ choose_internal_oligo(p3retval *retval,
 
 
 
-/* Call this function only if the 'stat's contains
-   the _errors_ associated with a given primer
-   i.e. that primer was supplied by the caller
-   and pick_anyway is set. */
-/* Translate the values in the struct into an warning sting message */
+/* 
+   Translate the values in the stats struct into an warning string.
+   Call this function only if the 'stat's contains the _errors_
+   associated with a given primer i.e. that primer was supplied by the
+   caller and pick_anyway is set.
+*/
 void
 add_must_use_warnings(pr_append_str *warning,
                       const char* text,
@@ -2032,7 +2033,7 @@ make_complete_primer_lists(p3retval *retval,
 
     /* Pick all good in the given range */
     pick_primer_range(start, length, &extreme, &retval->fwd,
-                      pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
+                      pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);  /* Leak from here */
 
   }  /* if (pa->pick_left_primer) */
   if ( pa->pick_right_primer ) {
@@ -2308,7 +2309,7 @@ pick_only_best_primer(const int start,
 
       /* Set repeat_sim to NULL as indicator that the repeat_sim
          struct is not initialized. */
-      h.repeat_sim.score = NULL;
+      h.repeat_sim.score = NULL;  /* Leak might be caused here. */
 
       /* Figure out positions for left primers and internal oligos */
       if (oligo->type != OT_RIGHT) {
@@ -2404,7 +2405,7 @@ pick_primer_range(const int start, const int length, int *extreme,
   char oligo_seq[MAX_PRIMER_LENGTH+1];
 
   /* Struct to store the primer parameters in */
-  primer_rec h;
+  primer_rec h;  /* FIX ME FIXME -- how is the value of h used? */
 
   /* Set pr_min to the very smallest
      allowable product size. */
@@ -2474,7 +2475,7 @@ pick_primer_range(const int start, const int length, int *extreme,
       oligo->expl.considered++;
       /* Calculate all the primer parameters */
       calc_and_check_oligo_features(pa, &h, oligo->type, dpal_arg_to_use, thal_arg_to_use,
-                                    sa, &oligo->expl, retval, oligo_seq);
+                                    sa, &oligo->expl, retval, oligo_seq);  /* Leak from here. */
        /* If primer has to be used or is OK */
       if (OK_OR_MUST_USE(&h)) {
         /* Calculate the penalty */
@@ -2821,7 +2822,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
 
   /* Set repeat_sim to NULL as indicator that the repeat_sim
      struct is not initialized. */
-  h->repeat_sim.score = NULL;
+  h->repeat_sim.score = NULL; /* Leak might be caused here. */
 
   h->gc_content = h->num_ns = 0;
   h->overlaps_overlap_position = 0;
@@ -4676,7 +4677,7 @@ oligo_repeat_library_mispriming(primer_rec *h,
     /* Library exists and is non-empty. */
 
     h->repeat_sim.score =
-      (double *) pr_safe_malloc(lib->seq_num * sizeof(double));
+      (double *) pr_safe_malloc(lib->seq_num * sizeof(double)); /* Leak here */
     h->repeat_sim.max = h->repeat_sim.min = 0;
     max = min = 0;
     h->repeat_sim.name = lib->names[0];
@@ -6466,10 +6467,14 @@ _check_and_adjust_1_interval(const char *tag_name,
 
 /* START OF WHAT SHOULD GO TO IO_PRIMER_FILES.C */
 
-/* return 0 on success, 1 on error */
-/* Check errno for ENOMEM */
-/* This function is for backward compatability
-   in boulder io testing. */
+/* 
+   Creates up to three files, the names of which are based on the
+   argument 'file'.  One file is a table of forward primers, one a table
+   of reverse primers, and one a table of internal hybridization
+   oligos, depending on what the caller to choose_primers() requested
+   (in the 'pa' argument).  Returns 0 on success, 1 on error.  On
+   error, check errno for ENOMEM. Used to implement P3_FILE_FLAG=1.
+ */
 int
 p3_print_oligo_lists(const p3retval *retval,
                      const seq_args *sa,
@@ -7844,6 +7849,10 @@ p3_ol_is_ok(const primer_rec *oligo) {
   return (oligo->problems.prob & OP_COMPLETELY_WRITTEN) != 0;
 }
  
+/* 
+   Return 1 iff the argument 'oligo' has any problems -- i.e.
+   violations of design constraints.
+ */
 int
 p3_ol_has_any_problem(const primer_rec *oligo) {
   return (oligo->problems.prob & any_problem) != 0;
@@ -7854,8 +7863,11 @@ any_5_prime_ol_extension_has_problem(const primer_rec *oligo) {
   return (oligo->problems.prob & five_prime_problem) != 0;
 }
 
-/*  returns a pointer to static storage, which
-    is over-written on next call */
+/*  
+    Return a string details the the problems in 'oligo', i.e. the
+    constraints that 'oligo' violates.  WARNING: Returns a pointer to
+    static storage, which is over-written on next call.
+ */
 #define ADD_OP_STR(COND, STR) if (prob & COND) { tmp = STR; strcpy(next, tmp); next += strlen(tmp); }
 const char *
 p3_get_ol_problem_string(const primer_rec *oligo) {
