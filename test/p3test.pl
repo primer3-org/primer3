@@ -57,7 +57,7 @@ sub _nowarn_system($);
 our $def_executable = "../src/primer3_core";
 our $exe = '../src/primer3_core';
 our $set_files = '../test/';
-our ($verbose, $do_valgrind, $winFlag, $fastFlag);
+our ($verbose, $do_valgrind, $winFlag, $fastFlag, $onetest);
 
 our %signo;
 
@@ -71,7 +71,8 @@ main();
 sub main() {
     my %args;
 
-    select STDERR; $| = 1;
+    # select STDERR;
+    $| = 1;
 
     $all_ok = 1;
     my $start_time;
@@ -93,10 +94,12 @@ sub main() {
                     'windows',
                     'fast',
                     'verbose',
+		    'onetest=s',
                     'executable=s',
                     )) {
         print "Usage: perl p3test.pl \\\n",
-        "    [--executable <primer3 executable>] [ --valgrind ] [  --verbose ] [--windows] [--fast]\n",
+        "    [--executable <primer3 executable>] [ --onetest <test_name> ] ",
+	"[ --valgrind ] [  --verbose ] [--windows] [--fast]\n",
         "\n",
         "    where <primer3 executable> defaults to ../src/primer3_core\n";
         exit -1;
@@ -116,7 +119,7 @@ sub main() {
     my $log_file_arg_for_valgrind = "--log-file-exactly";
     if ($do_valgrind) {
 	if (!-x $valgrind_exe) { 
-	    warn "Cannot find $valgrind_exe; will try `which valgrind`\n";
+	    print "Cannot find $valgrind_exe; will try `which valgrind`\n";
 	    $valgrind_exe= `which valgrind`;
 	    chomp($valgrind_exe);
 	    if (!$valgrind_exe || ! -x $valgrind_exe) {
@@ -152,17 +155,11 @@ sub main() {
     print "verbose mode\n" if $verbose;
     print "valgrind mode\n" if $do_valgrind;
 
-    test_fatal_errors();
-
-    # The range of this for loop is a set of test names
-    # that get translated into file names inside the loop.
-    for my $test (
-	
+    my @TESTS = ( 
 		  'th-w-other-tasks',
 
 	          'primer_thermod_align',             
 	          'primer_thermod_align_formatted',
-
 
 		  # New tests that use new melting temperature
 		  # and thermodynamic alignments
@@ -234,11 +231,23 @@ sub main() {
 
                   'p3_3_prime_n',
 	          'primer_three_prime_distance',
-	
+
                   'primer_obj_fn',
 
                   'primer_lib_amb_codes',
-                  ) {
+
+		  );
+
+
+    if (!$args{'onetest'}) {
+	test_fatal_errors();
+    } else {
+	@TESTS = $args{'onetest'};
+    }
+
+    # The range of this for loop is a set of test names
+    # that get translated into file names inside the loop.
+    for my $test (@TESTS) {
 
         # We are inside the for loop here....
         print "$test...";
