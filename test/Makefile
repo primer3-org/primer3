@@ -48,9 +48,9 @@ test: makeexes testcmdline testtm testdpal testthal testcore test_io_v3
 
 testcmdline:
 ifeq ($(TESTOPTS),--windows)
-	echo 'TESTING command line arguments' & perl cmdline_test.pl $(TESTOPTS)
+	perl cmdline_test.pl $(TESTOPTS)
 else 
-	- echo; echo; echo 'TESTING command line arguments'; echo; perl cmdline_test.pl $(TESTOPTS)
+	perl cmdline_test.pl $(TESTOPTS)
 endif
 
 test_io_v3:
@@ -83,9 +83,9 @@ endif
 
 testtm:
 ifeq ($(TESTOPTS),--windows)
-	echo 'TESTING Tm CALCS' & perl oligotm_test.pl $(TESTOPTS)
+	perl oligotm_test.pl $(TESTOPTS)
 else
-	echo; echo; echo 'TESTING Tm CALCS'; echo; perl oligotm_test.pl $(TESTOPTS);
+	perl oligotm_test.pl $(TESTOPTS)
 endif
 
 makeexes:

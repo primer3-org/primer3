@@ -45,6 +45,8 @@ our $exe = '../src/oligotm';
 my $do_valgrind;
 my %args;
 
+print "\nTESTING Tm CALCULATIONS\n\n";
+
 if (!GetOptions(\%args,
 		'valgrind',
 		'windows',
@@ -83,7 +85,7 @@ if ($winFlag) {
 
 die "Cannot execute $exe" unless -x $exe;
 
-print STDERR "Tests nr $nr-";
+print "Tm tests nr $nr-";
 
 open F, "oligotm.txt" or die "Cannot open oligotm.txt\n";
 while(<F>){
@@ -102,11 +104,11 @@ while(<F>){
     if($tm){
         if(abs($tm-$tmp[6])>EPSILON) {
             $failure++;
-            print STDERR "$cmd FAILED (expected $tm, got $tmp[6])\n";
+            print "$cmd FAILED (expected $tm, got $tmp[6])\n";
         }
     } else {
         $failure++;
-        print STDERR  "$cmd FAILED (no output)\n";
+        print "$cmd FAILED (no output)\n";
     }
     $nr++;
 }
@@ -119,13 +121,13 @@ if ($do_valgrind) {
     if (!$r) { 
         # !$r because grep returns 0 if something is found,
         # and if something is found, we have a problem.
-        print STDERR "valgrind found errors\n";
+        print "valgrind found errors\n";
     }
 }
 
 if(!$failure){
-    print STDERR "$nr: OK\n\n\n";
+    print "$nr: OK\n\n\n";
 }
 else{
-    print STDERR "$nr: $failure FAILURES\n\n\n";
+    print "\n$nr Tm tests: $failure FAILURES\n\n\n";
 }
