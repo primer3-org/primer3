@@ -4299,9 +4299,8 @@ align_thermod(const char *s1,
              /* This branch is taken only if there is a programming error, in
               *          that s1 or s2 were NULL or contained an illegal character. We
               *          try to print some debugging information before aborting. */
-	  fprintf(stderr, "%s", r.msg);
-             /* Always false, causes an abort: */
-             PR_ASSERT(r.temp != THAL_ERROR_SCORE);
+	     printf("PRIMER_ERROR=%s\n=\n", r.msg);
+	     exit(-1);
           }
      }
    return ((r.temp < 0.0) ? 0.0 : (double) (r.temp));

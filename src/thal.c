@@ -61,7 +61,7 @@
 #endif
 
 #ifndef THAL_MAX_SEQ
-#define THAL_MAX_SEQ   1600
+#define THAL_MAX_SEQ   10000
 #endif
 
 /* table where bp-s enthalpies, that retrieve to the most stable Tm, are saved */
@@ -87,6 +87,7 @@
 #endif
 
 #define CHECK_ERROR(COND,MSG) if (COND) { strcpy(o->msg, MSG); longjmp(_jmp_buf, 1); }
+#define PRINT_ERROR(COND,MSG) if (COND) { printf("PRIMER_ERROR=%s\n=\n", MSG); exit(-1); }
 #define THAL_OOM_ERROR { strcpy(o->msg, "Out of memory"); errno = ENOMEM; longjmp(_jmp_buf, 1); }
 #define THAL_IO_ERROR(f) { sprintf(o->msg, "Unable to open file %s", f); longjmp(_jmp_buf, 1); }
 
