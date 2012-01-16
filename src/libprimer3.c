@@ -975,10 +975,10 @@ create_seq_arg()
   r->start_codon_pos = PR_DEFAULT_START_CODON_POS;
   r->incl_l = -1; /* Indicates logical NULL. */
 
-  r->force_left_start = -1; /* Indicates logical NULL. */
-  r->force_left_end = -1; /* Indicates logical NULL. */
-  r->force_right_start = -1; /* Indicates logical NULL. */
-  r->force_right_end = -1; /* Indicates logical NULL. */
+  r->force_left_start = INT_MIN; /* Indicates logical NULL. */
+  r->force_left_end = INT_MIN; /* Indicates logical NULL. */
+  r->force_right_start = INT_MIN; /* Indicates logical NULL. */
+  r->force_right_end = INT_MIN; /* Indicates logical NULL. */
   r->primer_overlap_junctions_count = 0;
 
   r->n_quality = 0;
