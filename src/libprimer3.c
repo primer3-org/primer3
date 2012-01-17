@@ -7359,13 +7359,13 @@ p3_set_gs_primer_outside_penalty(p3_global_settings * p , double val) {
 
 void
 p3_set_gs_primer_mispriming_library(p3_global_settings * p , char * path) {
-  /* TO DO: Re-factor this? */
+  /* TO DO: Re-factor this? TO DO: Check for errors */
   p->p_args.repeat_lib = read_and_create_seq_lib(path, "mispriming library") ;
 }
 
 void
 p3_set_gs_primer_internal_oligo_mishyb_library(p3_global_settings * p , char * path) {
-  /* TO DO: Re-factor this? */
+  /* TO DO: Re-factor this? TO DO: Check for errors */
   p->o_args.repeat_lib = read_and_create_seq_lib(path, "internal oligio mishyb library") ;
 }
 
