@@ -2308,8 +2308,12 @@ pick_only_best_primer(const int start,
       h.length = j;
 
       /* Set repeat_sim to NULL as indicator that the repeat_sim
-         struct is not initialized. */
-      h.repeat_sim.score = NULL;  /* Leak might be caused here. */
+         struct is not initialized. De-allocate any memory allocated before. */
+      if (h.repeat_sim.score != NULL) {
+	/* Free up memory */
+	free(h.repeat_sim.score);
+	h.repeat_sim.score = NULL;
+      }
 
       /* Figure out positions for left primers and internal oligos */
       if (oligo->type != OT_RIGHT) {
@@ -2821,8 +2825,12 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   h->overlaps = 0;
 
   /* Set repeat_sim to NULL as indicator that the repeat_sim
-     struct is not initialized. */
-  h->repeat_sim.score = NULL; /* Leak might be caused here. */
+     struct is not initialized. De-allocate memory if any allocated before. */
+  if (h->repeat_sim.score != NULL) {
+    /* Free up memory */
+    free(h->repeat_sim.score);
+    h->repeat_sim.score = NULL;
+  }
 
   h->gc_content = h->num_ns = 0;
   h->overlaps_overlap_position = 0;
