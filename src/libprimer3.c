@@ -2282,6 +2282,7 @@ pick_only_best_primer(const int start,
   /* Struct to store the primer parameters in */
   primer_rec h;
   primer_rec best;
+  memset(&h, 0, sizeof(primer_rec));
   best.quality = 1000.00;
   found_primer = 0;
 
@@ -2410,6 +2411,7 @@ pick_primer_range(const int start, const int length, int *extreme,
 
   /* Struct to store the primer parameters in */
   primer_rec h;  /* FIX ME FIXME -- how is the value of h used? */
+  memset(&h, 0, sizeof(primer_rec));
 
   /* Set pr_min to the very smallest
      allowable product size. */
@@ -2527,6 +2529,7 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
 
   /* Struct to store the primer parameters in */
   primer_rec h;
+  memset(&h, 0, sizeof(primer_rec));
 
   /* Copy *primer into test_oligo */
   test_oligo[0] = '\0';
@@ -2639,6 +2642,7 @@ add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oli
 
   /* Struct to store the primer parameters in */
   primer_rec h;
+  memset(&h, 0, sizeof(primer_rec));
 
   /* Retun 1 for no primer found */
   found_primer = 1;
