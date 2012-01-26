@@ -391,6 +391,7 @@ static void   oligo_template_mispriming(primer_rec *,
 static int    pair_repeat_sim(primer_pair *, const p3_global_settings *);
 
 static void   free_repeat_sim_score(p3retval *);
+static void   free_primer_repeat_sim_score(primer_rec *); 
 
 /* edited by T. Koressaar for lowercase masking:  */
 static int    is_lowercase_masked(int position,
@@ -2283,6 +2284,7 @@ pick_only_best_primer(const int start,
   primer_rec h;
   primer_rec best;
   memset(&h, 0, sizeof(primer_rec));
+  memset(&best, 0, sizeof(primer_rec));
   best.quality = 1000.00;
   found_primer = 0;
 
@@ -2309,12 +2311,8 @@ pick_only_best_primer(const int start,
       h.length = j;
 
       /* Set repeat_sim to NULL as indicator that the repeat_sim
-         struct is not initialized. De-allocate any memory allocated before. */
-      if (h.repeat_sim.score != NULL) {
-	/* Free up memory */
-	free(h.repeat_sim.score);
-	h.repeat_sim.score = NULL;
-      }
+         struct is not initialized. */
+      h.repeat_sim.score = NULL;
 
       /* Figure out positions for left primers and internal oligos */
       if (oligo->type != OT_RIGHT) {
@@ -2356,14 +2354,23 @@ pick_only_best_primer(const int start,
         h.quality = p_obj_fn(pa, &h, oligo->type);
         /* Save the primer in the array */
         if (h.quality < best.quality) {
+	  /* Free memory used by previous best primer. */
+	  free_primer_repeat_sim_score(&best);
           best = h;
           found_primer = 1;
-        }
+        } else {
+	  /* Free memory used by this primer. */
+	  free_primer_repeat_sim_score(&h);
+	}
       }
-      else if (any_5_prime_ol_extension_has_problem(&h)) {
-        /* Break from the inner for loop, because there is no
-           legal longer oligo with the same 3' sequence. */
-        break;
+      else {
+	/* Free memory used by this primer. */
+	free_primer_repeat_sim_score(&h);
+	if (any_5_prime_ol_extension_has_problem(&h)) {
+	  /* Break from the inner for loop, because there is no
+	     legal longer oligo with the same 3' sequence. */
+	  break;
+	}
       }
     } /* j: Loop over possible primer length from min to max */
   } /* i: Loop over the sequence */
@@ -2494,10 +2501,14 @@ pick_primer_range(const int start, const int length, int *extreme,
         /* Update the most extreme primer variable */
         if ((h.start > *extreme) && (oligo->type == OT_RIGHT))
           *extreme = h.start;
-      } else if (any_5_prime_ol_extension_has_problem(&h)) {
-        /* Break from the inner for loop, because there is no
-           legal longer oligo with the same 3' sequence. */
-        break;
+      } else {
+	/* Free memory used by this primer. */
+	free_primer_repeat_sim_score(&h);
+	if (any_5_prime_ol_extension_has_problem(&h)) {
+	  /* Break from the inner for loop, because there is no
+	     legal longer oligo with the same 3' sequence. */
+	  break;
+	}
       }
     } /* j: Loop over possible primer length from min to max */
   } /* i: Loop over the sequence */
@@ -2605,6 +2616,9 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
       /* Update the most extreme primer variable */
       if ((h.start > *extreme) && (oligo->type == OT_RIGHT))
         *extreme = h.start;
+    } else {
+      /* Free memory used by this primer. */
+      free_primer_repeat_sim_score(&h);
     }
   } /* i: Loop over the sequence */
     /* Update array with how many primers are good */
@@ -2717,6 +2731,9 @@ add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oli
           (oligo->type == OT_RIGHT))
         *extreme =  h.start;
       /* Update the number of primers */
+  } else {
+    /* Free memory used by this primer. */
+    free_primer_repeat_sim_score(&h);
   }
   /* Update array with how many primers are good */
   /* Update statistics with how many primers are good */
@@ -2829,12 +2846,8 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   h->overlaps = 0;
 
   /* Set repeat_sim to NULL as indicator that the repeat_sim
-     struct is not initialized. De-allocate memory if any allocated before. */
-  if (h->repeat_sim.score != NULL) {
-    /* Free up memory */
-    free(h->repeat_sim.score);
-    h->repeat_sim.score = NULL;
-  }
+     struct is not initialized. */
+  h->repeat_sim.score = NULL;
 
   h->gc_content = h->num_ns = 0;
   h->overlaps_overlap_position = 0;
@@ -4946,6 +4959,15 @@ free_repeat_sim_score(p3retval *state)
       state->intl.oligo[i].repeat_sim.score = NULL;
     }
   }
+}
+
+static void
+free_primer_repeat_sim_score(primer_rec *h) 
+{ 
+  if (h->repeat_sim.score != NULL) { 
+    free(h->repeat_sim.score); 
+    h->repeat_sim.score = NULL;
+  } 
 }
 
 /*
