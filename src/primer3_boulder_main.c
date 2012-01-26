@@ -1,6 +1,6 @@
 /*
 Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009,
-2010,2011
+              2010,2011,2012
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky
 All rights reserved.
@@ -310,7 +310,7 @@ main(int argc, char *argv[])
       read_thermodynamic_parameters();
 
     input_found = 1;
-    if ((global_pa->primer_task == pick_detection_primers)
+    if ((global_pa->primer_task == generic)
                 && (global_pa->pick_internal_oligo == 1)){
       PR_ASSERT(global_pa->pick_internal_oligo);
     }

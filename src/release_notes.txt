@@ -1,25 +1,36 @@
-release 2.2.4 2011-08-31 ===============================================
+release 2.2.4 2012-01-26 ===============================================
 
-Several error corrections and minor cleanup.
+We changed the NULL value for SEQUNCE_FORCE_{LEFT,RIGHT}_START_END to
+-1000000, and make it an error to select PRIMER_FIRST_BASE_INDEX <=
+this value.  This is to correct an error when
+SEQUNCE_FORCE_{LEFT,RIGHT}_START_END was -1 (value previously used to
+indicate a NULL) but PRIMER_FIRST_BASE_INDEX was < 0, which caused the
+intended NULL value (-1) to be treated as a constraint on primer
+location (a constraint that was not possible to satisfy).
 
-Corrected errors:
+We changed the PRIMER_TASK of 'pick_detection_primers' to
+'generic' while retaining 'pick_detection_primers' as
+an alias for backward compatibility.
 
-Short, fixed-size buffer for the file/path names specified by the
-command line arguments -output, -error and for the settings file.
+The code now uses 'end' alignments when assessing template mispriming
+using thermodynamic alignments. This is consistent with approach taken
+with the previous alignment algorithm and with checking for mispriming
+against repeat libraries.
 
-Two other errors were in p3_set_gs_primer_self_end and
+In addition, several error corrections:
+
+Corrected a short, fixed-size buffer for the file/path names specified
+by the command line arguments -output, -error and for the settings
+file.
+
+Two other corrected errors were in p3_set_gs_primer_self_end and
 p3_set_gs_primer_internal_oligo_self_end, which erroneously multiplied
 their 'val' arguments by 100.
 
-Detect and handle situation in which user-supplied primers
-(SEQUENCE_PRIMER and SEQUENCE_PRIMER_REVCOMP) have the left primer to
-the right of the right primer.  Also issue a warning if user-supplied
-primers occur in more than one location in the template.
-
-In addition, the code now uses 'end' alignments when assessing
-template mispriming using thermodynamic alignments. This is consistent
-with approach taken with the previous alignment algorithm and
-with checking for mispriming against repeat libraries.
+Primer3 now detects and handle the situation in which user-supplied
+primers (SEQUENCE_PRIMER and SEQUENCE_PRIMER_REVCOMP) have the left
+primer to the right of the right primer.  Also issue a warning if
+user-supplied primers occur in more than one location in the template.
 
 release 2.2.3 2010-07-08 ===============================================
 

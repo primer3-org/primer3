@@ -1,6 +1,6 @@
 /*
 Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009,
- 2010,2011
+              2010,2011,2012
 Whitehead Institute for Biomedical Research, Steve Rozen
 (http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky
 All rights reserved.
@@ -84,16 +84,19 @@ if (!(COND)) {                                           \
     abort();                                             \
 }
 
-/* ANDREAS, we need documentation on these */
 /* Enum to define tasks primer3 can do */
 typedef enum task { 
   pick_pcr_primers               = 0,
-  /*  For backward compatibility, equivalent to pick_detection_primers */
+  /*  For backward compatibility, equivalent to
+      generic
+      plus pick_left_primer =1
+      plus pick_right_primer = 1
+      plus pick_internal_oligo = 0 */
   pick_pcr_primers_and_hyb_probe = 1,
   pick_left_only                 = 2,
   pick_right_only                = 3,
   pick_hyb_probe_only            = 4,
-  pick_detection_primers         = 5,
+  generic                        = 5,
   pick_cloning_primers           = 6,
   pick_discriminative_primers    = 7,    
   pick_sequencing_primers        = 8,
