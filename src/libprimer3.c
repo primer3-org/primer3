@@ -1091,7 +1091,7 @@ choose_primers(const p3_global_settings *pa,
      thal_arg_to_use = create_thal_arg_holder();
   if (pa->primer_task == pick_primer_list) {
     make_complete_primer_lists(retval, pa, sa,
-                               dpal_arg_to_use,thal_arg_to_use); /* Leak from here*/
+                               dpal_arg_to_use,thal_arg_to_use);
   } else if (pa->primer_task == pick_sequencing_primers) {
     pick_sequencing_primer_list(retval, pa, sa,
                                 dpal_arg_to_use,thal_arg_to_use);
@@ -2033,7 +2033,7 @@ make_complete_primer_lists(p3retval *retval,
 
     /* Pick all good in the given range */
     pick_primer_range(start, length, &extreme, &retval->fwd,
-                      pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);  /* Leak from here */
+                      pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
 
   }  /* if (pa->pick_left_primer) */
   if ( pa->pick_right_primer ) {
@@ -2479,7 +2479,7 @@ pick_primer_range(const int start, const int length, int *extreme,
       oligo->expl.considered++;
       /* Calculate all the primer parameters */
       calc_and_check_oligo_features(pa, &h, oligo->type, dpal_arg_to_use, thal_arg_to_use,
-                                    sa, &oligo->expl, retval, oligo_seq);  /* Leak from here. */
+                                    sa, &oligo->expl, retval, oligo_seq);
        /* If primer has to be used or is OK */
       if (OK_OR_MUST_USE(&h)) {
         /* Calculate the penalty */
@@ -4684,7 +4684,7 @@ oligo_repeat_library_mispriming(primer_rec *h,
     /* Library exists and is non-empty. */
 
     h->repeat_sim.score =
-      (double *) pr_safe_malloc(lib->seq_num * sizeof(double)); /* Leak here */
+      (double *) pr_safe_malloc(lib->seq_num * sizeof(double));
     h->repeat_sim.max = h->repeat_sim.min = 0;
     max = min = 0;
     h->repeat_sim.name = lib->names[0];
