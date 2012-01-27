@@ -32,7 +32,7 @@ Two other corrected errors were in p3_set_gs_primer_self_end and
 p3_set_gs_primer_internal_oligo_self_end, which erroneously multiplied
 their 'val' arguments by 100.
 
-Primer3 now detects and handle the situation in which user-supplied
+Primer3 now detects and handles the situation in which user-supplied
 primers (SEQUENCE_PRIMER and SEQUENCE_PRIMER_REVCOMP) have the left
 primer to the right of the right primer.  Also issue a warning if
 user-supplied primers occur in more than one location in the template.
