@@ -588,7 +588,6 @@ pr_set_default_global_args(p3_global_settings *a)
   a->pair_compl_end      = 3.0;
   a->pair_compl_any_th   = 47.0;
   a->pair_compl_end_th   = 47.0;
-  a->pair_hairpin_th     = 47.0;
   a->thermodynamic_alignment = 0;
   a->liberal_base        = 0;
   a->primer_task         = generic;
@@ -6058,7 +6057,7 @@ _pr_data_control(const p3_global_settings *pa,
   
   if (pa->p_args.max_self_any_th < 0
       || pa->p_args.max_self_end_th < 0 || pa->p_args.max_hairpin_th < 0
-      || pa->pair_compl_any_th < 0 || pa->pair_compl_end_th < 0 || pa->pair_hairpin_th < 0) {
+      || pa->pair_compl_any_th < 0 || pa->pair_compl_end_th < 0) {
      pr_append_new_chunk(glob_err,
                          "Illegal value for primer complementarity restrictions (thermod. approach)");
      return 1;
@@ -7760,12 +7759,6 @@ p3_set_gs_pair_compl_end_th(p3_global_settings * p , double  pair_compl_end_th)
 }
 
 void
-p3_set_gs_pair_hairpin_th(p3_global_settings * p , double  pair_hairpin_th) 
-{
-  p->pair_hairpin_th = pair_hairpin_th;
-}
-      
-void
 p3_set_gs_min_left_three_prime_distance(p3_global_settings *p, int min_distance) 
 {
   p->min_left_three_prime_distance = min_distance;
@@ -8284,7 +8277,6 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("  pair_compl_end %f\n", p->pair_compl_end) ;
     printf("  pair_compl_any_th %f\n", p->pair_compl_any_th) ;
     printf("  pair_compl_end_th %f\n", p->pair_compl_end_th) ;
-    printf("  pair_hairpin %f\n", p->pair_hairpin_th) ;
      
     printf("  min_left_three_prime_distance %i\n", p->min_left_three_prime_distance) ;
     printf("  min_right_three_prime_distance %i\n", p->min_right_three_prime_distance) ;

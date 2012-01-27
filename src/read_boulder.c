@@ -596,7 +596,6 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_PAIR_MAX_COMPL_END", pa->pair_compl_end);
       COMPARE_FLOAT("PRIMER_PAIR_MAX_COMPL_ANY_TH", pa->pair_compl_any_th);
       COMPARE_FLOAT("PRIMER_PAIR_MAX_COMPL_END_TH", pa->pair_compl_end_th);
-      COMPARE_FLOAT("PRIMER_PAIR_MAX_HAIRPIN_TH", pa->pair_hairpin_th);
       COMPARE_INT("P3_FILE_FLAG", res->file_flag);
       COMPARE_INT("PRIMER_PICK_ANYWAY", pa->pick_anyway);
       COMPARE_INT("PRIMER_GC_CLAMP", pa->gc_clamp);

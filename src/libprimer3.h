@@ -422,7 +422,6 @@ typedef struct p3_global_settings {
   double pair_compl_any_th;
   double pair_compl_end;
   double pair_compl_end_th;
-  double pair_hairpin_th;
    
   int thermodynamic_alignment;
   /* 
@@ -1101,7 +1100,6 @@ void p3_set_gs_pair_compl_any(p3_global_settings * p , double  pair_compl_any);
 void p3_set_gs_pair_compl_end(p3_global_settings * p , double  pair_compl_end);
 void p3_set_gs_pair_compl_any_th(p3_global_settings * p , double  pair_compl_any_th);
 void p3_set_gs_pair_compl_end_th(p3_global_settings * p , double  pair_compl_end_th);
-void p3_set_gs_pair_hairpin_th(p3_global_settings * p , double  pair_hairpin_th);
 
 void p3_set_gs_min_left_three_prime_distance(p3_global_settings *p, int min_distance);
 void p3_set_gs_min_right_three_prime_distance(p3_global_settings *p, int min_distance);
