@@ -5774,6 +5774,11 @@ _pr_data_control(const p3_global_settings *pa,
       && sa->n_quality == 0)
     pr_append_new_chunk(nonfatal_err, "Sequence quality data missing");
 
+  if (pa->first_base_index < PR_NULL_FORCE_POSITION) {
+    pr_append_new_chunk(glob_err, "Value too small at tag PRIMER_FIRST_BASE_INDEX");
+    return 1;
+  }
+
   if (pa->p_args.max_template_mispriming > SHRT_MAX && pa->thermodynamic_alignment == 0) {
     pr_append_new_chunk(glob_err, "Value too large at tag PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING");
     return 1;
