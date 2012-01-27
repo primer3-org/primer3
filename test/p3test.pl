@@ -326,7 +326,6 @@ sub main() {
 		}
                 $tmpCmd = "$valgrind_prefix ../$exe -strict_tags $settings ../$input >../$tmp";
             }
-	    print STDERR "$tmpCmd\n";
             $r = _nowarn_system($tmpCmd);
             # back to main directory
             if (!chdir "../") { die "chdir \"..\": $!\n" }
