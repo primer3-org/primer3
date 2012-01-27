@@ -1,4 +1,4 @@
-release 2.2.4 2012-01-26 ===============================================
+release 2.2.4 2012-01-27 ===============================================
 
 We changed the NULL value for SEQUNCE_FORCE_{LEFT,RIGHT}_START_END to
 -1000000, and make it an error to select PRIMER_FIRST_BASE_INDEX <=
@@ -8,14 +8,19 @@ indicate a NULL) but PRIMER_FIRST_BASE_INDEX was < 0, which caused the
 intended NULL value (-1) to be treated as a constraint on primer
 location (a constraint that was not possible to satisfy).
 
-We changed the PRIMER_TASK of 'pick_detection_primers' to
-'generic' while retaining 'pick_detection_primers' as
-an alias for backward compatibility.
+We changed the PRIMER_TASK of 'pick_detection_primers' to 'generic'
+while retaining 'pick_detection_primers' as an alias for backward
+compatibility.
 
 The code now uses 'end' alignments when assessing template mispriming
-using thermodynamic alignments. This is consistent with approach taken
-with the previous alignment algorithm and with checking for mispriming
-against repeat libraries.
+using thermodynamic alignments. This is consistent with the approach
+taken with the previous alignment algorithm and with checking for
+mispriming against repeat libraries.
+
+We removed PRIMER_PAIR_MAX_HAIRPIN (which was ignored).
+
+Primer3 now requires the user to set SEQUENCE_TARGET, not
+SEQUENCE_INCLUDED_REGION when PRIMER_TASK=pick_discriminative_primers
 
 In addition, several error corrections:
 
