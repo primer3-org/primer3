@@ -5454,12 +5454,6 @@ _adjust_seq_args(const p3_global_settings *pa,
 			"Task pick_sequencing_primers cannot be combined with included region");
     return;
   }
-  if (pa->primer_task == pick_discriminative_primers && sa->incl_l == -1) {
-    /* ioana, target remove this check*/
-    pr_append_new_chunk(nonfatal_err,
-			"Task pick_discriminative_primers requires a included region");
-    return;
-  }
 
   /*
      Complain if there is no sequence; We need to check this
@@ -5492,17 +5486,16 @@ _adjust_seq_args(const p3_global_settings *pa,
   }
   /* For pick_discriminative_primers set the forced positions */
   if (pa->primer_task == pick_discriminative_primers) {
-    /* ioana, target; 
-     Use the target argument here (sa->tar2).
-      if there not exactly one target (sa->tar2.count == 1)
-      call 
-    pr_append_new_chunk(nonfatal_err,
-			"Task pick_discriminative_primers requires exactly one SEQUENCE_TARGET");
-    */
-    sa->force_left_end = sa->incl_s;
-    sa->force_right_end = sa->incl_s + sa->incl_l - 1;
-    sa->incl_l = seq_len;
-    sa->incl_s = pa->first_base_index;
+    /* Changed here from incl_s and incl_l to sa->tar2->pairs[0][0/1] */
+    if (sa->tar2.count != 1) {
+      pr_append_new_chunk(nonfatal_err,
+			  "Task pick_discriminative_primers requires exactly one SEQUENCE_TARGET");
+    }
+    sa->force_left_end = sa->tar2.pairs[0][0];
+    sa->force_right_end = sa->tar2.pairs[0][0] + sa->tar2.pairs[0][1] - 1;
+    /* ioana: still need to update incl_l and incl_s? */
+    sa->tar2.pairs[0][1] = seq_len;
+    sa->tar2.pairs[0][0] = pa->first_base_index;
   }
 
   /* If no included region is specified,

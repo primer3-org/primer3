@@ -718,8 +718,8 @@ typedef struct seq_args {
                            * "included region").
                            */
 
-  interval_array_t2 tar2; /* The targets.  tar2->pairs[i][0] s the start
-                           * of the ith target, tar[i][1] its length.  */
+  interval_array_t2 tar2; /* The targets.  tar2->pairs[i][0] is the start
+                           * of the ith target, tar2->pairs[i][1] its length.  */
 
   interval_array_t2 excl2;/* The number of excluded regions. */
 
