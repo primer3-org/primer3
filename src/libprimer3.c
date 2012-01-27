@@ -5452,7 +5452,7 @@ _adjust_seq_args(const p3_global_settings *pa,
   }
   if (pa->primer_task == pick_sequencing_primers && sa->incl_l != -1) {
     pr_append_new_chunk(nonfatal_err,
-			"Task pick_sequencing_primers can not be combined with included region");
+			"Task pick_sequencing_primers cannot be combined with included region");
     return;
   }
   if (pa->primer_task == pick_discriminative_primers && sa->incl_l == -1) {
