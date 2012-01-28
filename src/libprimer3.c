@@ -5493,9 +5493,12 @@ _adjust_seq_args(const p3_global_settings *pa,
     }
     sa->force_left_end = sa->tar2.pairs[0][0];
     sa->force_right_end = sa->tar2.pairs[0][0] + sa->tar2.pairs[0][1] - 1;
-    /* ioana: still need to update incl_l and incl_s? */
-    sa->tar2.pairs[0][1] = seq_len;
-    sa->tar2.pairs[0][0] = pa->first_base_index;
+    /* ioana: looks like it works ok if we do not update tar2 : */
+    /* sa->tar2.pairs[0][1] = seq_len;
+       sa->tar2.pairs[0][0] = pa->first_base_index; */
+    /* Should we update these? (they were update before)
+       sa->incl_l = seq_len;
+       sa->incl_s = pa->first_base_index; */
   }
 
   /* If no included region is specified,
