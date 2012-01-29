@@ -2248,3 +2248,45 @@ ADDITIONAL OLIGOS
                     start  len      tm     gc%   any    3' seq
 
 
+PRIMER PICKING RESULTS FOR Test behavior of SEQUENCE_PRIMER_PAIR_OK_REGION_LIST with PRIMER_TASK=pick_primer_list
+
+No mispriming library specified
+Using 1-based sequence positions
+SEQUENCE SIZE: 100
+INCLUDED REGION SIZE: 100
+
+PAIR_OK_REGIONS (left_start, left_len, right_start, right_len)*: 1,20,49,17
+
+                    start  len      tm     gc%   any    3' seq
+ 1 LEFT_PRIMER          1   20   51.06   30.00 11.00  5.00 cttgattcaatgaatctcaa
+ 2 LEFT_PRIMER          2   19   49.45   26.32 11.00  5.00 ttgattcaatgaatctcaa
+ 3 LEFT_PRIMER          1   19   48.92   31.58 11.00  7.00 cttgattcaatgaatctca
+ 4 LEFT_PRIMER          3   18   47.09   27.78 11.00  3.00 tgattcaatgaatctcaa
+ 5 LEFT_PRIMER          2   18   47.09   27.78 11.00  7.00 ttgattcaatgaatctca
+ 6 LEFT_PRIMER          1   18   45.15   33.33 11.00  7.00 cttgattcaatgaatctc
+ 7 LEFT_PRIMER          3   17   44.38   29.41 11.00  5.00 tgattcaatgaatctca
+ 8 LEFT_PRIMER          4   17   43.02   29.41 11.00  2.00 gattcaatgaatctcaa
+ 9 LEFT_PRIMER          2   17   43.02   29.41 11.00  7.00 ttgattcaatgaatctc
+10 LEFT_PRIMER          1   17   42.26   29.41 11.00  9.00 cttgattcaatgaatct
+11 LEFT_PRIMER          4   16   39.89   31.25 11.00  4.00 gattcaatgaatctca
+12 LEFT_PRIMER          3   16   39.89   31.25 11.00  7.00 tgattcaatgaatctc
+13 LEFT_PRIMER          5   16   39.85   25.00  9.00  2.00 attcaatgaatctcaa
+14 LEFT_PRIMER          2   16   39.85   25.00 11.00  9.00 ttgattcaatgaatct
+15 LEFT_PRIMER          1   16   39.85   31.25 11.00 11.00 cttgattcaatgaatc
+
+                     start  len      tm     gc%   any    3' seq
+ 1 RIGHT_PRIMER        65   17   45.95   29.41  2.00  1.00 aaaaaaacacaatccAg
+ 2 RIGHT_PRIMER        65   16   43.92   25.00  2.00  0.00 aaaaaaacacaatccA
+ 3 RIGHT_PRIMER        64   16   43.31   31.25  2.00  1.00 aaaaaacacaatccAg
+
+Statistics
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left     954     0     0     0   939     0     0     0     0     0     0     0     0    15
+Right    954     0     0     0   951     0     0     0     0     0     0     0     0     3
+Pair Stats:
+considered 0, ok 0
+libprimer3 release 2.2.3
+
+
