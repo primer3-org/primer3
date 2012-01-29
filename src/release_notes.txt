@@ -1,26 +1,31 @@
-release 2.2.4 2012-01-27 ===============================================
+release 2.2.4 2012-01-29 ===============================================
 
-We changed the NULL value for SEQUNCE_FORCE_{LEFT,RIGHT}_START_END to
--1000000, and make it an error to select PRIMER_FIRST_BASE_INDEX <=
+We changed the NULL value for SEQUENCE_FORCE_{LEFT,RIGHT}_START_END to
+-1000000, and made it an error to select PRIMER_FIRST_BASE_INDEX <=
 this value.  This is to correct an error when
-SEQUNCE_FORCE_{LEFT,RIGHT}_START_END was -1 (value previously used to
+SEQUENCE_FORCE_{LEFT,RIGHT}_START_END was -1 (value previously used to
 indicate a NULL) but PRIMER_FIRST_BASE_INDEX was < 0, which caused the
 intended NULL value (-1) to be treated as a constraint on primer
 location (a constraint that was not possible to satisfy).
 
-We changed the PRIMER_TASK of 'pick_detection_primers' to 'generic'
-while retaining 'pick_detection_primers' as an alias for backward
-compatibility.
+We changed the PRIMER_TASK called 'pick_detection_primers' to
+'generic' while retaining 'pick_detection_primers' as an alias for
+backward compatibility.
 
 The code now uses 'end' alignments when assessing template mispriming
 using thermodynamic alignments. This is consistent with the approach
 taken with the previous alignment algorithm and with checking for
 mispriming against repeat libraries.
 
-We removed PRIMER_PAIR_MAX_HAIRPIN (which was ignored).
+We removed PRIMER_PAIR_MAX_HAIRPIN (which was ignored previously).
 
 Primer3 now requires the user to set SEQUENCE_TARGET, not
 SEQUENCE_INCLUDED_REGION when PRIMER_TASK=pick_discriminative_primers
+
+When PRIMER_TASK=pick_discriminative_primers or
+PRIMER_TASK=pick_cloning_primers the value of SEQUENCE_INCLUDED_REGION
+is no longer changed to the entire input sequence.
+
 
 In addition, several error corrections:
 
