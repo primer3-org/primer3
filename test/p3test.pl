@@ -511,7 +511,7 @@ sub test_fatal_errors() {
     # Get all the files that match primer_global_err/*.in:
     my @inputs = glob("./primer_global_err/*.in");
     my $r;
-    my $problem = 0;
+    my $fatal_error_problem = 0;
     print "\ntesting fatal errors...\n";
     my $output_and_err_tested = 0;
     for (@inputs) {
@@ -546,23 +546,23 @@ sub test_fatal_errors() {
             my $r = $? >> 8;
             print
                 "\nErroneous 0 exit status ($?) from command $cmd\n";
-            $problem = 1;
+            $fatal_error_problem = 1;
         }
         if (perldiff "$root.tmp", "$root.out") {
             print
                 "Difference found between $root.out and $root.tmp\nfrom $cmd\n\n";
-            $problem = 1;
+            $fatal_error_problem = 1;
         }
         if (perldiff "$root.tmp2", "$root.out2") {
             print 
                 "\nDifference found between $root.out2 and $root.tmp2\nfrom $cmd\n\n";
-            $problem = 1;
+            $fatal_error_problem = 1;
         }
     }
-    if ($problem == 1){
+    if ($fatal_error_problem == 1){
         $all_ok = 0;
     }
-    print $problem ? "[FAILED]" : "[OK]" ,"\n";
+    print $fatal_error_problem ? "[FAILED]" : "[OK]" ,"\n";
 }
 
 sub _nowarn_system($) {
@@ -580,6 +580,9 @@ sub _nowarn_system($) {
                 print "Presumably caused by catching SIGINT\n";
                 print "Tests halted\n\n";
                 print "\nWARNING: not all tests executed ... [FAILED]\n";
+		if (!$all_ok) {
+		    print "\n\nIn addition, at least 1 test FAILED ... [FAILED]\n\n";
+		}
                 exit;
             }
         }
