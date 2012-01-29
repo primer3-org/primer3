@@ -1349,7 +1349,7 @@ choose_pair_or_triple(p3retval *retval,
           continue;
         }
 
-	/* Some simple checks first, before searching the hashmap */  /* FIX ME FIXME, problem is partly here. */
+	/* Some simple checks first, before searching the hashmap */
 	int must_use = 0;
 	if ((pa->primer_task == check_primers) || 
 	    ((retval->fwd.oligo[j].must_use != 0) &&
@@ -2416,7 +2416,7 @@ pick_primer_range(const int start, const int length, int *extreme,
   char oligo_seq[MAX_PRIMER_LENGTH+1];
 
   /* Struct to store the primer parameters in */
-  primer_rec h;  /* FIX ME FIXME -- how is the value of h used? */
+  primer_rec h;
   memset(&h, 0, sizeof(primer_rec));
 
   /* Set pr_min to the very smallest
@@ -2560,9 +2560,6 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
 
     /* Set the length of the primer */
     h.length = j;
-
-    /* Set repeat_sim to nothing FIX ME FIXME */
-    /* h.repeat_sim.score = NULL; */
 
     /* Figure out positions for forward primers */
     if (oligo->type != OT_RIGHT) {
@@ -5480,10 +5477,8 @@ _adjust_seq_args(const p3_global_settings *pa,
       sa->force_left_start = sa->incl_s;
       sa->force_right_start = sa->incl_s + sa->incl_l - 1;
     }
-    /* Only affected formatted output, but confusing:
-       sa->incl_l = seq_len;
-       sa->incl_s = pa->first_base_index; */
   }
+
   /* For pick_discriminative_primers set the forced positions */
   if (pa->primer_task == pick_discriminative_primers) {
     /* Changed here from incl_s and incl_l to sa->tar2->pairs[0][0/1] */
@@ -5493,12 +5488,6 @@ _adjust_seq_args(const p3_global_settings *pa,
     }
     sa->force_left_end = sa->tar2.pairs[0][0];
     sa->force_right_end = sa->tar2.pairs[0][0] + sa->tar2.pairs[0][1] - 1;
-    /* ioana: looks like it works ok if we do not update tar2 : */
-    /* sa->tar2.pairs[0][1] = seq_len;
-       sa->tar2.pairs[0][0] = pa->first_base_index; */
-    /* Should we update these? (they were update before)
-       sa->incl_l = seq_len;
-       sa->incl_s = pa->first_base_index; */
   }
 
   /* If no included region is specified,
