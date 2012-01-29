@@ -560,24 +560,27 @@ pr_set_default_global_args(p3_global_settings *a)
   a->max_end_gc               = 5;
 
 /* Weights for objective functions for oligos and pairs. */
-  a->p_args.weights.temp_gt       = 1;
-  a->p_args.weights.temp_lt       = 1;
-  a->p_args.weights.length_gt     = 1;
-  a->p_args.weights.length_lt     = 1;
+  a->p_args.weights.compl_any     = 0;
+  a->p_args.weights.compl_any_th  = 0;
+  a->p_args.weights.compl_end     = 0;
+  a->p_args.weights.compl_end_th  = 0;
+  a->p_args.weights.end_quality   = 0;
+  a->p_args.weights.end_stability = 0;
   a->p_args.weights.gc_content_gt = 0;
   a->p_args.weights.gc_content_lt = 0;
-  a->p_args.weights.compl_any     = 0;
-  a->p_args.weights.compl_end     = 0;
-  a->p_args.weights.compl_any_th  = 0;
-  a->p_args.weights.compl_end_th  = 0;
   a->p_args.weights.hairpin_th    = 0;
-  a->p_args.weights.temp_cutoff   = 5;
+  a->p_args.weights.length_gt     = 1;
+  a->p_args.weights.length_lt     = 1;
   a->p_args.weights.num_ns        = 0;
+  a->p_args.weights.pos_penalty   = 1;
   a->p_args.weights.repeat_sim    = 0;
   a->p_args.weights.seq_quality   = 0;
-  a->p_args.weights.end_quality   = 0;
-  a->p_args.weights.pos_penalty   = 1;
-  a->p_args.weights.end_stability = 0;
+  a->p_args.weights.temp_cutoff   = 5;
+  a->p_args.weights.temp_gt       = 1;
+  a->p_args.weights.temp_lt       = 1;
+  a->p_args.weights.template_mispriming = 0.0;
+  a->p_args.weights.template_mispriming_th = 0.0;
+  /* End of weights for objective functions for oligos and pairs. */
 
   /* End of arguments for primers =========================== */
 

@@ -122,26 +122,28 @@ typedef struct pr_append_str {
  * "Global" arguments in the documentation.)
  */
 typedef struct oligo_weights {
-  double temp_gt;
-  double temp_lt;
-  double gc_content_gt;
-  double gc_content_lt;
+
   double compl_any;
   double compl_any_th;
   double compl_end;
   double compl_end_th;
-  double hairpin_th;
-  double temp_cutoff;
-  double repeat_sim;
-  double length_lt;
-  double length_gt;
-  double seq_quality;
   double end_quality;
-  double pos_penalty;
   double end_stability;
+  double gc_content_gt;
+  double gc_content_lt;
+  double hairpin_th;
+  double length_gt;
+  double length_lt;
   double num_ns;
+  double pos_penalty;
+  double repeat_sim;
+  double seq_quality;
+  double temp_cutoff;
+  double temp_gt;
+  double temp_lt;
   double template_mispriming;
   double template_mispriming_th;
+
 } oligo_weights;
 
 typedef struct pair_weights {
