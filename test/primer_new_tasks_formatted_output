@@ -1648,12 +1648,12 @@ OLIGO            start  len      tm     gc%   any    3' seq
 LEFT PRIMER         15   20   60.17   45.00  9.00  4.00 atggatgccatcaatgacct
 RIGHT PRIMER       217   20   59.99   60.00  4.00  2.00 ggactgagctgttcgaggac
 SEQUENCE SIZE: 1527
-INCLUDED REGION SIZE: 1527
+INCLUDED REGION SIZE: 203
 
 PRODUCT SIZE: 203, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 3.00
 
     0 atggatttgatggacatggatgccatcaatgacctccacttctctggacacagctccctc
-                     >>>>>>>>>>>>>>>>>>>>                         
+      ...............>>>>>>>>>>>>>>>>>>>>                         
 
    60 accaacacccctacttccgacgaggattatggttgcacctggaaccactggtctcccatc
                                                                   
@@ -1662,75 +1662,76 @@ PRODUCT SIZE: 203, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 3.00
                                                                   
 
   180 atcgaggacagaacaactgtcctcgaacagctcagtccatctatcaccacaaccaccacc
-                        <<<<<<<<<<<<<<<<<<<<                      
+                        <<<<<<<<<<<<<<<<<<<<......................
 
   240 accaccacaaccacggatgaggaagaagaagaaatggaaacaacaaccacaacaacaaca
-                                                                  
+      ............................................................
 
   300 acggcaataaaaacgcatgaagttggtgatgattcaaaagggctaaaactagtgcaccta
-                                                                  
+      ............................................................
 
   360 ttgatggctggcgcggaagccttaaccggttcaaccaaaaaccgtgacttagctcgagtg
-                                                                  
+      ............................................................
 
   420 atattgatccggctcaaggaattagtctcacaacatgctaacggctccaacatggagaga
-                                                                  
+      ............................................................
 
   480 cttgccgctcatttcaccgaagcccttcatggactactagaaggtgctgggggtgcgcat
-                                                                  
+      ............................................................
 
   540 aataaccaccatcaccacaacaacaacaaacattacctcaccacaaatggtccccacgac
-                                                                  
+      ............................................................
 
   600 aaccaaaacgacacacttgctgctttccaactacttcaagacatgtcaccttacgtcaaa
-                                                                  
+      ............................................................
 
   660 ttcggccacttcacagccaatcaagccatcatcgaagccgtggcccacgaacgccgcgtc
-                                                                  
+      ............................................................
 
   720 catgtcatcgactacgatatcatggaaggggtccaatgggcctcattaatccaatcactt
-                                                                  
+      ............................................................
 
   780 gcttccaacaacaacggtccacatcttcggataaccgcattatcgcggacaggaaccggc
-                                                                  
+      ............................................................
 
   840 cggaggtcaatcgccaccgtacaagaaaccggcaggcgattaacctcctttgccgcttcc
-                                                                  
+      ............................................................
 
   900 ctcggacaaccattttcttttcatcactgcagattagactccgatgaaactttccgtcct
-                                                                  
+      ............................................................
 
   960 tctgcattaaagcttgtacgtggagaggctttggttttcaactgcatgctgaatttacct
-                                                                  
+      ............................................................
 
  1020 caccttagttaccgtgcaccggaatcagttgcttcgtttttaaacggagcaaaaacgttg
-                                                                  
+      ............................................................
 
  1080 aatccaaagcttgtgacgttggttgaagaagaagttggttctgttattggtgggtttgtg
-                                                                  
+      ............................................................
 
  1140 gaaaggttcatggactcacttcatcattattcagcggtttttgattcattggaggctggt
-                                                                  
+      ............................................................
 
  1200 tttccgatgcagaaccgggcccggactttggtggagagggtattttttgggcctagaatt
-                                                                  
+      ............................................................
 
  1260 gcaggctcgttgggccggatatatagaacgggtggtgaagaggagagaaggtcatggggg
-                                                                  
+      ............................................................
 
  1320 gagtggttaggtgaggtagggtttaggggagttccggtgagctttgcaaatcattgtcaa
-                                                                  
+      ............................................................
 
  1380 gcaaagctgttgttagggctttttaatgatgggtatagggttgaagaggtgggtgtgggt
-                                                                  
+      ............................................................
 
  1440 agtaataagttggtgttggattggaaatcaagacgtttgctttctgcttccctttggact
-                                                                  
+      ............................................................
 
  1500 tgttcttcttcagattctgatttatag
-                                 
+      ...........................
 
 KEYS (in order of precedence):
+...... vector sequence
 >>>>>> left primer
 <<<<<< right primer
 
@@ -1740,6 +1741,103 @@ ADDITIONAL OLIGOS
  1 LEFT PRIMER         15   19   59.11   47.37  9.00  2.00 atggatgccatcaatgacc
    RIGHT PRIMER       217   20   59.99   60.00  4.00  2.00 ggactgagctgttcgaggac
    PRODUCT SIZE: 203, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 2.00
+
+
+PRIMER PICKING RESULTS FOR Pick cloning primers with only right primer
+
+No mispriming library specified
+Using 0-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+RIGHT_PRIMER       217   20   59.99   60.00  4.00  2.00 ggactgagctgttcgaggac
+SEQUENCE SIZE: 1527
+INCLUDED REGION SIZE: 203
+
+    0 atggatttgatggacatggatgccatcaatgacctccacttctctggacacagctccctc
+      ...............                                             
+
+   60 accaacacccctacttccgacgaggattatggttgcacctggaaccactggtctcccatc
+                                                                  
+
+  120 gtcaactgggacacctttacaggtgccccagatgactttcaccacctcatggacaccatc
+                                                                  
+
+  180 atcgaggacagaacaactgtcctcgaacagctcagtccatctatcaccacaaccaccacc
+                        <<<<<<<<<<<<<<<<<<<<......................
+
+  240 accaccacaaccacggatgaggaagaagaagaaatggaaacaacaaccacaacaacaaca
+      ............................................................
+
+  300 acggcaataaaaacgcatgaagttggtgatgattcaaaagggctaaaactagtgcaccta
+      ............................................................
+
+  360 ttgatggctggcgcggaagccttaaccggttcaaccaaaaaccgtgacttagctcgagtg
+      ............................................................
+
+  420 atattgatccggctcaaggaattagtctcacaacatgctaacggctccaacatggagaga
+      ............................................................
+
+  480 cttgccgctcatttcaccgaagcccttcatggactactagaaggtgctgggggtgcgcat
+      ............................................................
+
+  540 aataaccaccatcaccacaacaacaacaaacattacctcaccacaaatggtccccacgac
+      ............................................................
+
+  600 aaccaaaacgacacacttgctgctttccaactacttcaagacatgtcaccttacgtcaaa
+      ............................................................
+
+  660 ttcggccacttcacagccaatcaagccatcatcgaagccgtggcccacgaacgccgcgtc
+      ............................................................
+
+  720 catgtcatcgactacgatatcatggaaggggtccaatgggcctcattaatccaatcactt
+      ............................................................
+
+  780 gcttccaacaacaacggtccacatcttcggataaccgcattatcgcggacaggaaccggc
+      ............................................................
+
+  840 cggaggtcaatcgccaccgtacaagaaaccggcaggcgattaacctcctttgccgcttcc
+      ............................................................
+
+  900 ctcggacaaccattttcttttcatcactgcagattagactccgatgaaactttccgtcct
+      ............................................................
+
+  960 tctgcattaaagcttgtacgtggagaggctttggttttcaactgcatgctgaatttacct
+      ............................................................
+
+ 1020 caccttagttaccgtgcaccggaatcagttgcttcgtttttaaacggagcaaaaacgttg
+      ............................................................
+
+ 1080 aatccaaagcttgtgacgttggttgaagaagaagttggttctgttattggtgggtttgtg
+      ............................................................
+
+ 1140 gaaaggttcatggactcacttcatcattattcagcggtttttgattcattggaggctggt
+      ............................................................
+
+ 1200 tttccgatgcagaaccgggcccggactttggtggagagggtattttttgggcctagaatt
+      ............................................................
+
+ 1260 gcaggctcgttgggccggatatatagaacgggtggtgaagaggagagaaggtcatggggg
+      ............................................................
+
+ 1320 gagtggttaggtgaggtagggtttaggggagttccggtgagctttgcaaatcattgtcaa
+      ............................................................
+
+ 1380 gcaaagctgttgttagggctttttaatgatgggtatagggttgaagaggtgggtgtgggt
+      ............................................................
+
+ 1440 agtaataagttggtgttggattggaaatcaagacgtttgctttctgcttccctttggact
+      ............................................................
+
+ 1500 tgttcttcttcagattctgatttatag
+      ...........................
+
+KEYS (in order of precedence):
+...... vector sequence
+<<<<<< right primer
+
+
+ADDITIONAL OLIGOS
+                    start  len      tm     gc%   any    3' seq
+ 1 RIGHT_PRIMER       217   19   59.06   57.89  4.00  2.00 ggactgagctgttcgagga
 
 
 PRIMER PICKING RESULTS FOR Pick discriminative primers
@@ -1753,18 +1851,19 @@ SEQUENCE SIZE: 1527
 INCLUDED REGION SIZE: 1527
 
 PRODUCT SIZE: 201, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 5.00
+TARGETS (start, len)*: 35,163
 
     0 atggatttgatggacatggatgccatcaatgacctccacttctctggacacagctccctc
-                      >>>>>>>>>>>>>>>>>>>>                        
+                      >>>>>>>>>>>>>>>>>>>)************************
 
    60 accaacacccctacttccgacgaggattatggttgcacctggaaccactggtctcccatc
-                                                                  
+      ************************************************************
 
   120 gtcaactgggacacctttacaggtgccccagatgactttcaccacctcatggacaccatc
-                                                                  
+      ************************************************************
 
   180 atcgaggacagaacaactgtcctcgaacagctcagtccatctatcaccacaaccaccacc
-                       <<<<<<<<<<<<<<<<<<<<                       
+      *****************(<<<<<<<<<<<<<<<<<<<                       
 
   240 accaccacaaccacggatgaggaagaagaagaaatggaaacaacaaccacaacaacaaca
                                                                   
@@ -1833,6 +1932,7 @@ PRODUCT SIZE: 201, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 5.00
                                  
 
 KEYS (in order of precedence):
+****** target
 >>>>>> left primer
 <<<<<< right primer
 
@@ -1948,5 +2048,203 @@ ADDITIONAL OLIGOS
  2 LEFT PRIMER         15   21   62.05   47.62  9.00  6.00 atggatgccatcaatgacctc
    RIGHT PRIMER       126   20   60.11   55.00  3.00  1.00 agttgacgatgggagaccag
    PRODUCT SIZE: 112, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+
+PRIMER PICKING RESULTS FOR Pick a left primer and an internal oligo
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 0-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT_PRIMER       1471   20   60.00   50.00  4.00  0.00 gacgtttgctttctgcttcc
+INTERNAL_OLIGO    1471   20   60.00   50.00  4.00  0.00 gacgtttgctttctgcttcc
+SEQUENCE SIZE: 1527
+INCLUDED REGION SIZE: 1527
+
+    0 atggatttgatggacatggatgccatcaatgacctccacttctctggacacagctccctc
+                                                                  
+
+   60 accaacacccctacttccgacgaggattatggttgcacctggaaccactggtctcccatc
+                                                                  
+
+  120 gtcaactgggacacctttacaggtgccccagatgactttcaccacctcatggacaccatc
+                                                                  
+
+  180 atcgaggacagaacaactgtcctcgaacagctcagtccatctatcaccacaaccaccacc
+                                                                  
+
+  240 accaccacaaccacggatgaggaagaagaagaaatggaaacaacaaccacaacaacaaca
+                                                                  
+
+  300 acggcaataaaaacgcatgaagttggtgatgattcaaaagggctaaaactagtgcaccta
+                                                                  
+
+  360 ttgatggctggcgcggaagccttaaccggttcaaccaaaaaccgtgacttagctcgagtg
+                                                                  
+
+  420 atattgatccggctcaaggaattagtctcacaacatgctaacggctccaacatggagaga
+                                                                  
+
+  480 cttgccgctcatttcaccgaagcccttcatggactactagaaggtgctgggggtgcgcat
+                                                                  
+
+  540 aataaccaccatcaccacaacaacaacaaacattacctcaccacaaatggtccccacgac
+                                                                  
+
+  600 aaccaaaacgacacacttgctgctttccaactacttcaagacatgtcaccttacgtcaaa
+                                                                  
+
+  660 ttcggccacttcacagccaatcaagccatcatcgaagccgtggcccacgaacgccgcgtc
+                                                                  
+
+  720 catgtcatcgactacgatatcatggaaggggtccaatgggcctcattaatccaatcactt
+                                                                  
+
+  780 gcttccaacaacaacggtccacatcttcggataaccgcattatcgcggacaggaaccggc
+                                                                  
+
+  840 cggaggtcaatcgccaccgtacaagaaaccggcaggcgattaacctcctttgccgcttcc
+                                                                  
+
+  900 ctcggacaaccattttcttttcatcactgcagattagactccgatgaaactttccgtcct
+                                                                  
+
+  960 tctgcattaaagcttgtacgtggagaggctttggttttcaactgcatgctgaatttacct
+                                                                  
+
+ 1020 caccttagttaccgtgcaccggaatcagttgcttcgtttttaaacggagcaaaaacgttg
+                                                                  
+
+ 1080 aatccaaagcttgtgacgttggttgaagaagaagttggttctgttattggtgggtttgtg
+                                                                  
+
+ 1140 gaaaggttcatggactcacttcatcattattcagcggtttttgattcattggaggctggt
+                                                                  
+
+ 1200 tttccgatgcagaaccgggcccggactttggtggagagggtattttttgggcctagaatt
+                                                                  
+
+ 1260 gcaggctcgttgggccggatatatagaacgggtggtgaagaggagagaaggtcatggggg
+                                                                  
+
+ 1320 gagtggttaggtgaggtagggtttaggggagttccggtgagctttgcaaatcattgtcaa
+                                                                  
+
+ 1380 gcaaagctgttgttagggctttttaatgatgggtatagggttgaagaggtgggtgtgggt
+                                                                  
+
+ 1440 agtaataagttggtgttggattggaaatcaagacgtttgctttctgcttccctttggact
+                                     >>>>>>>>>>>>>>>>>>>>         
+
+ 1500 tgttcttcttcagattctgatttatag
+                                 
+
+KEYS (in order of precedence):
+>>>>>> left primer
+
+
+ADDITIONAL OLIGOS
+                    start  len      tm     gc%   any    3' seq
+ADDITIONAL OLIGOS
+                    start  len      tm     gc%   any    3' seq
+
+
+PRIMER PICKING RESULTS FOR Pick a right primer and an internal oligo
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 0-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+INTERNAL_OLIGO    1471   20   60.00   50.00  4.00  0.00 gacgtttgctttctgcttcc
+RIGHT_PRIMER      1490   20   60.00   50.00  4.00  2.00 ggaagcagaaagcaaacgtc
+SEQUENCE SIZE: 1527
+INCLUDED REGION SIZE: 1527
+
+    0 atggatttgatggacatggatgccatcaatgacctccacttctctggacacagctccctc
+                                                                  
+
+   60 accaacacccctacttccgacgaggattatggttgcacctggaaccactggtctcccatc
+                                                                  
+
+  120 gtcaactgggacacctttacaggtgccccagatgactttcaccacctcatggacaccatc
+                                                                  
+
+  180 atcgaggacagaacaactgtcctcgaacagctcagtccatctatcaccacaaccaccacc
+                                                                  
+
+  240 accaccacaaccacggatgaggaagaagaagaaatggaaacaacaaccacaacaacaaca
+                                                                  
+
+  300 acggcaataaaaacgcatgaagttggtgatgattcaaaagggctaaaactagtgcaccta
+                                                                  
+
+  360 ttgatggctggcgcggaagccttaaccggttcaaccaaaaaccgtgacttagctcgagtg
+                                                                  
+
+  420 atattgatccggctcaaggaattagtctcacaacatgctaacggctccaacatggagaga
+                                                                  
+
+  480 cttgccgctcatttcaccgaagcccttcatggactactagaaggtgctgggggtgcgcat
+                                                                  
+
+  540 aataaccaccatcaccacaacaacaacaaacattacctcaccacaaatggtccccacgac
+                                                                  
+
+  600 aaccaaaacgacacacttgctgctttccaactacttcaagacatgtcaccttacgtcaaa
+                                                                  
+
+  660 ttcggccacttcacagccaatcaagccatcatcgaagccgtggcccacgaacgccgcgtc
+                                                                  
+
+  720 catgtcatcgactacgatatcatggaaggggtccaatgggcctcattaatccaatcactt
+                                                                  
+
+  780 gcttccaacaacaacggtccacatcttcggataaccgcattatcgcggacaggaaccggc
+                                                                  
+
+  840 cggaggtcaatcgccaccgtacaagaaaccggcaggcgattaacctcctttgccgcttcc
+                                                                  
+
+  900 ctcggacaaccattttcttttcatcactgcagattagactccgatgaaactttccgtcct
+                                                                  
+
+  960 tctgcattaaagcttgtacgtggagaggctttggttttcaactgcatgctgaatttacct
+                                                                  
+
+ 1020 caccttagttaccgtgcaccggaatcagttgcttcgtttttaaacggagcaaaaacgttg
+                                                                  
+
+ 1080 aatccaaagcttgtgacgttggttgaagaagaagttggttctgttattggtgggtttgtg
+                                                                  
+
+ 1140 gaaaggttcatggactcacttcatcattattcagcggtttttgattcattggaggctggt
+                                                                  
+
+ 1200 tttccgatgcagaaccgggcccggactttggtggagagggtattttttgggcctagaatt
+                                                                  
+
+ 1260 gcaggctcgttgggccggatatatagaacgggtggtgaagaggagagaaggtcatggggg
+                                                                  
+
+ 1320 gagtggttaggtgaggtagggtttaggggagttccggtgagctttgcaaatcattgtcaa
+                                                                  
+
+ 1380 gcaaagctgttgttagggctttttaatgatgggtatagggttgaagaggtgggtgtgggt
+                                                                  
+
+ 1440 agtaataagttggtgttggattggaaatcaagacgtttgctttctgcttccctttggact
+                                     <<<<<<<<<<<<<<<<<<<<^^^^^^^^^
+
+ 1500 tgttcttcttcagattctgatttatag
+      ^^^^^^^^^^                 
+
+KEYS (in order of precedence):
+<<<<<< right primer
+
+
+ADDITIONAL OLIGOS
+                    start  len      tm     gc%   any    3' seq
+ADDITIONAL OLIGOS
+                    start  len      tm     gc%   any    3' seq
 
 
