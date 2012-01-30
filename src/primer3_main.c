@@ -640,6 +640,9 @@ make_lists(pa, sa, n_f, n_r, local_args, end_args, local_end_args)
       f_b=tar_r - 1;
     else 
       f_b = n - pr_min + pa->primer_max_size-1;
+
+    fprintf(stderr, "make_lists, tar_l is %d, tar_r is %d, f_b is %d\n", tar_l, tar_r, f_b);
+
     k = 0;
     if(pa->primer_task != pick_right_only && pa->primer_task != pick_hyb_probe_only){
     left=n; right=0;
