@@ -547,7 +547,6 @@ pr_set_default_global_args_2(p3_global_settings *a)
   a->p_args.divalent_conc    = 1.5;
   a->p_args.dntp_conc        = 0.6;
   a->o_args.dntp_conc        = 0.6;
-  a->o_args.divalent_conc    = 0.6;
 }
 
 /* Write the default values for default_values=1 into
