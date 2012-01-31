@@ -130,7 +130,8 @@ static jmp_buf _jmp_buf;
 
 /* Function declarations. */
 
-static void  pr_set_default_global_args(p3_global_settings *);
+static void  pr_set_default_global_args_1(p3_global_settings *);
+static void  pr_set_default_global_args_2(p3_global_settings *);
 static void _adjust_seq_args(const p3_global_settings *pa,
                              seq_args *sa,
                              pr_append_str *nonfatal_err,
@@ -503,7 +504,22 @@ p3_create_global_settings()
     return NULL;
   }
 
-  pr_set_default_global_args(r);
+  pr_set_default_global_args_2(r);
+
+  return r;
+}
+
+/* Allocate space for global settings and fill in defaults */
+p3_global_settings *
+p3_create_global_settings_default_version_1() 
+{
+  p3_global_settings *r;
+
+  if (!(r = (p3_global_settings *) malloc(sizeof(*r)))) {
+    return NULL;
+  }
+
+  pr_set_default_global_args_1(r);
 
   return r;
 }
@@ -519,9 +535,25 @@ p3_destroy_global_settings(p3_global_settings *a)
   }
 }
 
-/* Write the default values in global settings */
 static void
-pr_set_default_global_args(p3_global_settings *a) 
+pr_set_default_global_args_2(p3_global_settings *a) 
+/* Write the default values for default_values=2 into
+   the p3_global_settings struct */
+{
+  pr_set_default_global_args_1(a);
+  a->tm_santalucia           = santalucia_auto;
+  a->salt_corrections        = santalucia;
+  a->thermodynamic_alignment = 1;
+  a->p_args.divalent_conc    = 1.5;
+  a->p_args.dntp_conc        = 0.6;
+  a->o_args.dntp_conc        = 0.6;
+  a->o_args.divalent_conc    = 0.6;
+}
+
+/* Write the default values for default_values=1 into
+   the p3_global_settings struct */
+static void
+pr_set_default_global_args_1(p3_global_settings *a) 
 {
   memset(a, 0, sizeof(*a));
 
@@ -5259,7 +5291,7 @@ p3_get_pair_array_explain_string(const pair_array_t *pair_array)
 const char *
 libprimer3_release(void) 
 {
-  return "libprimer3 release 2.2.4";
+  return "libprimer3 release 2.3.0";
 }
 
 const char *

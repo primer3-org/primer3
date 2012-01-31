@@ -72,6 +72,8 @@ main(int argc, char *argv[])
   int strict_tags = 0;
   int echo_settings = 0;
   int io_version = 4;
+  int default_version = 2;
+  int dump_args = 0;
 
   p3_global_settings *global_pa;
   seq_args *sarg;
@@ -93,7 +95,8 @@ main(int argc, char *argv[])
     {"p3_settings_file", required_argument, 0, 'p'},
     {"echo_settings_file", no_argument, &echo_settings, 1},
     {"io_version", required_argument, 0, 'i'},
-    {"dump_args", no_argument, 0, 'd'},
+    {"default_version", required_argument, 0, 'd'},
+    {"Dump_args", no_argument, 0, 'D'},
     {"2x_compat", no_argument, 0, '2'},
     {"output", required_argument, 0, 'o'},
     {"error", required_argument, 0, 'e'},
@@ -123,12 +126,6 @@ main(int argc, char *argv[])
   signal(SIGINT, sig_handler);
   signal(SIGTERM, sig_handler);
 
-  /* Allocate the space for global settings and fill in default parameters */
-  global_pa = p3_create_global_settings();
-  if (!global_pa) {
-    exit(-2); /* Out of memory. */
-  }
-
   /* Read in the flags provided with the program call */
   opterr = 0;
   while ((opt = getopt_long_only(argc, argv, "", long_options, &option_index)) != -1) {
@@ -149,8 +146,20 @@ main(int argc, char *argv[])
       else
         io_version = -1;
       break;
-    case 'd':
-      global_pa->dump = 1 ;
+
+    case 'd': /* default_version */
+      if (!strcmp(optarg, "1"))
+        default_version = 1;
+      else if (!strcmp(optarg, "2"))
+        default_version = 2;
+      else
+        default_version = -1;
+      break;
+
+    case 'D':  /* Undocumented flag for testing; causes 
+		  values of arguments to be echoed to
+		  stdout. */
+      dump_args = 1;
       break;
     case '2':
       compat = 1;
@@ -200,7 +209,7 @@ main(int argc, char *argv[])
     printf("%s\n", pr_release);
     exit(0);
   }
-  if ((io_version == -1) || (invalid_flag == 1)) {
+  if ((io_version == -1) || (invalid_flag == 1) || (default_version == -1)) {
     print_usage();
     exit(-1);
   }
@@ -220,6 +229,21 @@ main(int argc, char *argv[])
       exit(-1);
     }
   }
+
+  /* Allocate the space for global settings and fill in default parameters */
+  if (default_version == 1)
+    global_pa = p3_create_global_settings_default_version_1();
+  else if (default_version == 2) 
+    global_pa = p3_create_global_settings();
+  else {
+    print_usage();
+    exit(-1);
+  }
+    
+  if (!global_pa) {
+    exit(-2); /* Out of memory. */
+  }
+  global_pa->dump = dump_args ;
 
   /* Settings files have to be read in just below, and
      the functions need a temporary sarg */

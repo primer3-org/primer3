@@ -5,7 +5,7 @@
 #
 # ======================================================================
 # (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2010,
-#  2011
+#  2011,2012
 # Whitehead Institute for Biomedical Research, Steve Rozen, 
 # Andreas Untergasser and Helen Skaletsky
 # All rights reserved.
@@ -260,6 +260,8 @@ sub main() {
             next;
         }
 
+	my $default_version = '-default_version=1';
+
         if ($test eq 'primer_lib_amb_codes') {
             if ($fastFlag) {
                 print "[skiped in fast mode]\n";       
@@ -319,24 +321,27 @@ sub main() {
 		if ($test eq 'th-w-other-tasks') {
 		    $settings = '-p3_settings ..\\th-w-other-tasks-settings.txt -echo_settings';
 		}
-		$tmpCmd = "..\\$exe -strict_tags $settings ../$input >../$tmp";
+		$tmpCmd = "..\\$exe $default_version -strict_tags $settings ../$input >../$tmp";
             }  else {
 		if ($test eq 'th-w-other-tasks') {
 		    $settings = '-p3_settings ../th-w-other-tasks-settings.txt -echo_settings';
 		}
-                $tmpCmd = "$valgrind_prefix ../$exe -strict_tags $settings ../$input >../$tmp";
+                $tmpCmd = "$valgrind_prefix ../$exe $default_version -strict_tags $settings ../$input >../$tmp";
             }
             $r = _nowarn_system($tmpCmd);
             # back to main directory
             if (!chdir "../") { die "chdir \"..\": $!\n" }
+
         } elsif ($test =~ /formatted$/) {
-            my $cmd = "$valgrind_prefix$exe -strict_tags -format_output <$input >$tmp";
+            my $cmd = "$valgrind_prefix$exe $default_version -strict_tags -format_output <$input >$tmp";
             $r = _nowarn_system($cmd);
+
         } elsif ($test =~ /_load_set/) {
-            my $cmd = "$valgrind_prefix$exe -strict_tags -p3_settings_file=$set_files$test.set -echo <$input >$tmp";
+            my $cmd = "$valgrind_prefix$exe $default_version -strict_tags -p3_settings_file=$set_files$test.set -echo <$input >$tmp";
             $r = _nowarn_system($cmd);
+
         } else {
-            my $cmd = "$valgrind_prefix$exe -strict_tags <$input >$tmp";
+            my $cmd = "$valgrind_prefix$exe $default_version -strict_tags <$input >$tmp";
             $r = _nowarn_system($cmd);
         }
 

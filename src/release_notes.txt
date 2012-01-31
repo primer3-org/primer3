@@ -1,6 +1,37 @@
-release 2.2.4 2012-01-29 ===============================================
+release 2.3.0 2012-01-31 ===============================================
 
-We changed the NULL value for SEQUENCE_FORCE_{LEFT,RIGHT}_START_END to
+1. *** We changed the following default values:
+
+1.1 Changing default oligo temperature calculations
+
+PRIMER_TM_FORMULA=1  (was 0)
+PRIMER_SALT_CORRECTIONS=1 (was 0)
+
+1.2 Making thermodynamic secondary structure calculations the default:
+
+PRIMER_THERMODYNAMIC_ALIGNMENT=1 (was 0)
+
+1.3 The following need reasonable values to support the changes in 1.1
+and 1.2 above:
+
+PRIMER_SALT_DIVALENT=1.5 (was 0.0)
+PRIMER_DNTP_CONC=0.6 (was 0.0)
+PRIMER_INTERNAL_DNTP_CONC=0.6 (was 0.0)
+
+1.4 To make old defaults easily accessible, we added a command line
+argument, --default_version=1, which directs primer3_core to use the
+old defaults. --default_version=2 directs primer3_core to use the new
+defaults.  The default is --default_version=2.
+
+1.5 IMPORTANT: because PRIMER_THERMODYNAMIC_ALIGNMENT=1,
+PRIMER_THERMODYNAMIC_PARAMETERS_PATH must point to the right location.
+This tag specifies the path to the directory that contains all the
+parameter files used by the thermodynamic approach. In Linux, there
+are two default locations that are tested if this tag is not defined:
+./primer3_config/ and /opt/primer3_config/. For Windows, there is only
+one default location: .\primer3_config\.
+
+2. We changed the NULL value for SEQUENCE_FORCE_{LEFT,RIGHT}_START_END to
 -1000000, and made it an error to select PRIMER_FIRST_BASE_INDEX <=
 this value.  This is to correct an error when
 SEQUENCE_FORCE_{LEFT,RIGHT}_START_END was -1 (value previously used to
@@ -8,36 +39,41 @@ indicate a NULL) but PRIMER_FIRST_BASE_INDEX was < 0, which caused the
 intended NULL value (-1) to be treated as a constraint on primer
 location (a constraint that was not possible to satisfy).
 
-We changed the PRIMER_TASK called 'pick_detection_primers' to
+3. We changed the PRIMER_TASK called 'pick_detection_primers' to
 'generic' while retaining 'pick_detection_primers' as an alias for
 backward compatibility.
 
-The code now uses 'end' alignments when assessing template mispriming
+4. The code now uses 'end' alignments when assessing template mispriming
 using thermodynamic alignments. This is consistent with the approach
 taken with the previous alignment algorithm and with checking for
 mispriming against repeat libraries.
 
-We removed PRIMER_PAIR_MAX_HAIRPIN (which was ignored previously).
+4. We removed PRIMER_PAIR_MAX_HAIRPIN (which was ignored previously).
 
-Primer3 now requires the user to set SEQUENCE_TARGET, not
+5. Primer3 now requires the user to set SEQUENCE_TARGET, not
 SEQUENCE_INCLUDED_REGION when PRIMER_TASK=pick_discriminative_primers
 
-When PRIMER_TASK=pick_discriminative_primers or
+5. When PRIMER_TASK=pick_discriminative_primers or
 PRIMER_TASK=pick_cloning_primers the value of SEQUENCE_INCLUDED_REGION
 is no longer changed to the entire input sequence.
 
+6. The handling of divalent cations when PRIMER_SALT_CORRECTIONS=2
+(not the default and not the recommended value) has been
+updated. 
 
-In addition, several error corrections:
+XXXXX Triinu add text XXXX
 
-Corrected a short, fixed-size buffer for the file/path names specified
+7. In addition, several error corrections:
+
+7.1 Corrected a short, fixed-size buffer for the file/path names specified
 by the command line arguments -output, -error and for the settings
 file.
 
-Two other corrected errors were in p3_set_gs_primer_self_end and
+7.2 Two other corrected errors were in p3_set_gs_primer_self_end and
 p3_set_gs_primer_internal_oligo_self_end, which erroneously multiplied
 their 'val' arguments by 100.
 
-Primer3 now detects and handles the situation in which user-supplied
+7.3 Primer3 now detects and handles the situation in which user-supplied
 primers (SEQUENCE_PRIMER and SEQUENCE_PRIMER_REVCOMP) have the left
 primer to the right of the right primer.  Also issue a warning if
 user-supplied primers occur in more than one location in the template.

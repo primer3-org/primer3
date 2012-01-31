@@ -930,7 +930,12 @@ int p3_set_sa_upcased_sequence(seq_args *sargs, const char *upcased_sequencd);
    set slots, get slots */
 /* ============================================================ */
 
+/* Use this for -default_version=2 (up-to-date defaults) */
 p3_global_settings *p3_create_global_settings();
+
+/* Use this for -default_version=1 (old defaults) */
+p3_global_settings *p3_create_global_settings_default_version_1();
+
 void p3_destroy_global_settings(p3_global_settings *);
 
 void p3_set_gs_prmin (p3_global_settings * p , int val, int i);
