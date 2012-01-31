@@ -49,7 +49,10 @@ PRIMER_INTERNAL_SALT_DIVALENT=1.5
 
 # Millimolar conc of dNTPs
 PRIMER_DNTP_CONC=0.6
-PRIMER_INTERNAL_DNTP_CONC=0.6
+
+# Correct, 0, since we are assuming
+# no dNTP's present when hybridizing.
+PRIMER_INTERNAL_DNTP_CONC=0.0
 
 PRIMER_DNA_CONC=50.0
 PRIMER_INTERNAL_DNA_CONC=50.0
