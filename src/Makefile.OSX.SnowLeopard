@@ -51,12 +51,16 @@
 TESTOPTS= 
 WINMAKE=mingw32-make
 
+ifndef DEVELOPER_SDK_DIR
+	DEVELOPER_SDK_DIR=/Developer/SDKs
+endif
+
 LDLIBS     = -lm
 AR         = ar
 CC         = gcc
 CPP        = g++
 O_OPTS     = -O2
-CC_OPTS    = -g -Wall -D__USE_FIXED_PROTOTYPES__ -isysroot /Developer/SDKs/MacOSX10.6.sdk -mmacosx-version-min=10.6 -arch i386 -arch x86_64
+CC_OPTS    = -g -Wall -D__USE_FIXED_PROTOTYPES__ -isysroot $(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk -mmacosx-version-min=10.6 -arch i386 -arch x86_64
 P_DEFINES  =
 
 CFLAGS  = $(CC_OPTS) $(O_OPTS)
