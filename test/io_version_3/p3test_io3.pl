@@ -6,6 +6,7 @@
 #
 # ======================================================================
 # (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008
+#     2009,2010,2011,2012
 # Whitehead Institute for Biomedical Research, Steve Rozen, 
 # Andreas Untergasser and Helen Skaletsky
 # All rights reserved.
@@ -266,9 +267,9 @@ sub main() {
             my $tmpCmd;
 
 	    if ($winFlag) {
-		$tmpCmd = "$valgrind_prefix ..\\$exe -strict_tags -io_version=3 <..\\$input >..\\$tmp";
+		$tmpCmd = "$valgrind_prefix ..\\$exe -default_version=1 -strict_tags -io_version=3 <..\\$input >..\\$tmp";
 	    } else {
-		$tmpCmd = "$valgrind_prefix ../$exe -strict_tags -io_version=3 <../$input >../$tmp";
+		$tmpCmd = "$valgrind_prefix ../$exe -default_version=1 -strict_tags -io_version=3 <../$input >../$tmp";
 	    }
             $r = _nowarn_system($tmpCmd);
             # back to main directory
@@ -278,10 +279,10 @@ sub main() {
 		chdir "../";
 	    }
         } elsif ($test =~ /formatted$/) {
-            my $cmd = "$valgrind_prefix$exe -strict_tags -io_version=3 -format_output <$input >$tmp";
+            my $cmd = "$valgrind_prefix$exe -default_version=1 -strict_tags -io_version=3 -format_output <$input >$tmp";
             $r = _nowarn_system($cmd);
         } else {
-            my $cmd = "$valgrind_prefix$exe -strict_tags -io_version=3 <$input >$tmp";
+            my $cmd = "$valgrind_prefix$exe -default_version=1 -strict_tags -io_version=3 <$input >$tmp";
             $r = _nowarn_system($cmd);
         }
 
@@ -456,7 +457,7 @@ sub test_fatal_errors() {
         my $valgrind_prefix
             = $do_valgrind ? sprintf $valgrind_format, $root : '';
 
-        my $cmd = "$valgrind_prefix$exe -io_version=3 <$_ > $root.tmp 2> $root.tmp2";
+        my $cmd = "$valgrind_prefix$exe -default_version=1 -io_version=3 <$_ > $root.tmp 2> $root.tmp2";
 
 	$r = _nowarn_system($cmd);
 
