@@ -5,7 +5,7 @@
 #
 # ======================================================================
 # (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,
-#  2010,2011
+#  2010,2011,2012
 # Whitehead Institute for Biomedical Research, Steve Rozen, 
 # Andreas Untergasser and Helen Skaletsky
 # All rights reserved.
@@ -161,13 +161,13 @@ sub main() {
     # Test 1 : check '-output' and 'input_file'
     $valgrind_prefix
        = $do_valgrind ? sprintf $valgrind_format, 'cmd_test1' : '';
-    $cmd = "$valgrind_prefix$exe --strict -o cmd_test1.tmp $input";
+    $cmd = "$valgrind_prefix$exe -default_version=1 --strict -o cmd_test1.tmp $input";
     $exit_stat = runtest(1, $cmd, $output, 0);
     
     # Test 2 : check '> output' and '< input_file'
     $valgrind_prefix
        = $do_valgrind ? sprintf $valgrind_format, 'cmd_test2' : '';
-    $cmd = "$valgrind_prefix$exe -st > cmd_test2.tmp < $input";
+    $cmd = "$valgrind_prefix$exe -default_version=1 -st > cmd_test2.tmp < $input";
     $exit_stat = runtest(2, $cmd, $output, 0);
     
     # Test 3 : check incorrect flag and '-error_file'
@@ -176,7 +176,7 @@ sub main() {
     $cmd = "$valgrind_prefix$exe -flag -err=cmd_test3.tmp < $input";
     $exit_stat = runtest(3, $cmd, 'cmd_test3_output', 255);
     
-    # Test 4 : check inexistent input file and '2> error_file'
+    # Test 4 : check nonexistent input file and '2> error_file'
     $valgrind_prefix
        = $do_valgrind ? sprintf $valgrind_format, 'cmd_test4' : '';
     $cmd = "$valgrind_prefix$exe invalid_input 2> cmd_test4.tmp";
