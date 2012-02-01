@@ -155,6 +155,14 @@ sub main() {
     print "verbose mode\n" if $verbose;
     print "valgrind mode\n" if $do_valgrind;
 
+    # Tests in %default_version2 use --default_version=2.
+    # Others use -default_version=1.
+    my %default_version2 = ('th-w-other-tasks' => 1,
+			    # 'primer_thermod_align' => 1,
+			    # 'primer_thermod_align_formatted', => 1,
+			    'primer1_th' => 1,
+			    );
+
     my @TESTS = ( 
 		  'th-w-other-tasks',
 
@@ -260,7 +268,12 @@ sub main() {
             next;
         }
 
-	my $default_version = '-default_version=1';
+	my $default_version;
+	if ($default_version2{$test}) {
+	    $default_version = '-default_version=2';
+	} else {
+	    $default_version = '-default_version=1';
+	}
 
         if ($test eq 'primer_lib_amb_codes') {
             if ($fastFlag) {
