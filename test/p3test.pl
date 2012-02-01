@@ -262,7 +262,11 @@ sub main() {
         print "$test...";
 
         if ($fastFlag && (($test eq 'p3_3_prime_n')
-                || ($test eq 'primer_obj_fn')
+            || ($test eq 'th-w-other-tasks')
+            || ($test eq 'primer_obj_fn')
+            || ($test eq 'primer1_th')
+            || ($test eq 'primer_mispriming_th')
+            || ($test eq 'primer_new_tasks_th')
 	        || ($test eq 'primer_thermod_align')
 	        || ($test eq 'primer_thermod_align_formatted'))) {
             print "[skiped in fast mode]\n";
@@ -434,7 +438,7 @@ sub main() {
             $exit_stat = -1;
         }
     }
-    print "Tests ran for ", (time() - $start_time), " seconds.\n";
+    print "\nTests ran for ", (time() - $start_time), " seconds.\n";
     print "\n\nDONE ", scalar(localtime), " ";
 
     print $all_ok ? "Passed all tests - [OK]\n\n\n" : "At least one test failed - [FAILED]\n\n\n";
