@@ -1,7 +1,7 @@
 /*
  Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009
  Whitehead Institute for Biomedical Research, Steve Rozen
- (http://jura.wi.mit.edu/rozen), and Helen Skaletsky
+ (http://purl.com/STEVEROZEN/), and Helen Skaletsky
  All rights reserved.
  
        This file is part of primer3 software suite.
