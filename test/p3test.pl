@@ -161,6 +161,7 @@ sub main() {
 			    # 'primer_thermod_align' => 1,
 			    # 'primer_thermod_align_formatted', => 1,
 			    'primer1_th' => 1,
+			    # Ioana, can you test / add more to this hash?
 			    );
 
     my @TESTS = ( 
