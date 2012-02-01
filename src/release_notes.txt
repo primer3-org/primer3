@@ -1,4 +1,4 @@
-release 2.3.0 2012-01-31 ===============================================
+release 2.3.0 2012-02-01 ===============================================
 
 1. *** We changed the following default values:
 
@@ -16,7 +16,6 @@ and 1.2 above:
 
 PRIMER_SALT_DIVALENT=1.5 (was 0.0)
 PRIMER_DNTP_CONC=0.6 (was 0.0)
-PRIMER_INTERNAL_DNTP_CONC=0.6 (was 0.0)
 
 1.4 To make old defaults easily accessible, we added a command line
 argument, --default_version=1, which directs primer3_core to use the
@@ -27,9 +26,14 @@ defaults.  The default is --default_version=2.
 PRIMER_THERMODYNAMIC_PARAMETERS_PATH must point to the right location.
 This tag specifies the path to the directory that contains all the
 parameter files used by the thermodynamic approach. In Linux, there
-are two default locations that are tested if this tag is not defined:
-./primer3_config/ and /opt/primer3_config/. For Windows, there is only
-one default location: .\primer3_config\.
+are two *default* locations that are tested if this tag is not
+defined: ./primer3_config/ and /opt/primer3_config/. For Windows,
+there is only one default location: .\primer3_config\.  If the the
+parameter files are not in one these locations, be sure to set
+PRIMER_THERMODYNAMIC_PARAMETERS_PATH
+
+1.6 Changed PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS to 0 by default.
+This is almost always the the behavior one wants.
 
 2. We changed the NULL value for SEQUENCE_FORCE_{LEFT,RIGHT}_START_END to
 -1000000, and made it an error to select PRIMER_FIRST_BASE_INDEX <=
@@ -58,10 +62,13 @@ PRIMER_TASK=pick_cloning_primers the value of SEQUENCE_INCLUDED_REGION
 is no longer changed to the entire input sequence.
 
 6. The handling of divalent cations when PRIMER_SALT_CORRECTIONS=2
-(not the default and not the recommended value) has been
-updated. 
-
-XXXXX Triinu add text XXXX
+(not the default and not the recommended value) has been updated. The
+rationale is that, when divalent cations are present, the formula by
+Owczarzy et al., 2004 (used previously by Primer3) can be improved
+upon as described in (Ahsen et al., 2010; Owczarzy et al.,
+2008). Therefore we have updated the melting temperature calculation
+to follow the scheme in Figure 9 of (Owczarzy et al., 2008). Please
+find references to these papers in the Primer3 manual.
 
 7. In addition, several error corrections:
 
