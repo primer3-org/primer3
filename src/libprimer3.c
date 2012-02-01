@@ -541,12 +541,12 @@ pr_set_default_global_args_2(p3_global_settings *a)
    the p3_global_settings struct */
 {
   pr_set_default_global_args_1(a);
-  a->tm_santalucia           = santalucia_auto;
-  a->salt_corrections        = santalucia;
-  a->thermodynamic_alignment = 1;
-  a->p_args.divalent_conc    = 1.5;
-  a->p_args.dntp_conc        = 0.6;
-  a->o_args.dntp_conc        = 0.6;
+  a->tm_santalucia                 = santalucia_auto;
+  a->salt_corrections              = santalucia;
+  a->thermodynamic_alignment       = 1;
+  a->p_args.divalent_conc          = 1.5;
+  a->p_args.dntp_conc              = 0.6;
+  a->lib_ambiguity_codes_consensus = 0;
 }
 
 /* Write the default values for default_values=1 into
