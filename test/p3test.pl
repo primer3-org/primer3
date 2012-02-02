@@ -158,7 +158,7 @@ sub main() {
     # Tests in %default_version2 use --default_version=2.
     # Others use -default_version=1.
     my %default_version2 = ('th-w-other-tasks' => 1,
-			    # 'primer_thermod_align' => 1,
+			    'primer_thermod_align' => 1,
 			    # 'primer_thermod_align_formatted' => 1,
 			    'primer1_th' => 1,
 			    # 'primer_mispriming_th' => 1,
