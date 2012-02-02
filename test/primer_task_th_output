@@ -10,6 +10,7 @@ PRIMER_PAIR_MAX_COMPL_END=8
 P3_FILE_FLAG=1
 PRIMER_EXPLAIN_FLAG=1
 PRIMER_TASK=pick_pcr_primers
+PRIMER_DNTP_CONC=0.0
 SEQUENCE_ID=pcr_primers
 SEQUENCE_TEMPLATE=TCCTACAGCTGTGGGAAAATGatgcgtacgatccatgctagctagctactatcgattagctatcatctactatcatctactatctactacacatctactatcatctacacacacacacacactaggccgctatatcatctagcGCCGCCATGTACACACTG
 SEQUENCE_TARGET=21,122

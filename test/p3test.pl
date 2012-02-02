@@ -159,9 +159,79 @@ sub main() {
     # Others use -default_version=1.
     my %default_version2 = ('th-w-other-tasks' => 1,
 			    # 'primer_thermod_align' => 1,
-			    # 'primer_thermod_align_formatted', => 1,
+			    # 'primer_thermod_align_formatted' => 1,
 			    'primer1_th' => 1,
-			    # Ioana, can you test / add more to this hash?
+			    # 'primer_mispriming_th' => 1,
+			    # 'primer_must_use_th' => 1,
+			    'primer_new_tasks_th' => 1,
+			    'primer_task_th' => 1,
+
+			    # 'test_compl_error' => 1,
+			    # 'test_left_to_right_of_right' => 1,
+			    # 'primer_boundary' => 1, # Put the quickest tests first.
+			    # 'primer_boundary1' => 1,
+			    # 'primer_boundary_formatted' => 1,
+			    # 'primer_boundary1_formatted' => 1,
+			    
+			    # 'primer_internal' => 1,
+			    # 'primer_internal1' => 1,
+			    # 'primer_internal_formatted' => 1,
+			    # 'primer_internal1_formatted' => 1,
+			    
+			    # 'primer_ok_regions' => 1,
+			    # 'primer_ok_regions_formatted' => 1,
+			    # 'primer_ok_regions2' => 1,
+
+			    # 'primer_tm_lc_masking' => 1,
+			    # 'primer_tm_lc_masking_formatted' => 1,
+
+			    # 'primer_start_codon' => 1,
+			    
+			    # 'primer_task' => 1,
+			    # 'primer_task_formatted' => 1,
+			    # 'primer_renewed_tasks' => 1,
+			    # 'primer_new_tasks' => 1,
+			    # 'primer_new_tasks_formatted' => 1,
+			    
+			    # 'primer_must_overlap_point' => 1,
+			    # 'primer_overlap_junction' => 1,
+			    
+			    # 'primer_all_settingsfiles' => 1,
+			    # 'primer_high_tm_load_set' => 1,
+			    # 'primer_high_gc_load_set' => 1,
+
+			    # 'primer_gc_end' => 1,
+			    # 'primer_check' => 1,
+			    # 'primer_must_use' => 1,
+			    # 'primer_must_use_formatted' => 1,
+			    # 'primer_syntax' => 1,
+			    # 'primer_end_pathology' => 1,
+			    # 'primer_num_best' => 1,
+			    # 'primer_quality_boundary' => 1,
+			    # 'primer' => 1,
+			    # 'primer1' => 1,
+			    # 'primer_mispriming' => 1,
+			    # 'primer_mispriming_formatted' => 1,
+			    # 'primer_mispriming_boundary1' => 1,
+			    # 'primer_mispriming_boundary1_formatted' => 1,
+			    # 'primer_mispriming_boundary2' => 1,
+			    # 'primer_mispriming_boundary2_formatted' => 1,
+			    # 'primer_mispriming_long_lib' => 1,
+			    # 'primer_rat' => 1,
+			    # 'primer_human' => 1,
+			    # 'long_seq' => 1,
+			    # 'primer_position_penalty' => 1,
+			    # 'primer_position_penalty_formatted' => 1,
+			    # 'p3-tmpl-mispriming' => 1,
+
+			    # Put slow tests last
+
+			    # 'p3_3_prime_n' => 1,
+			    # 'primer_three_prime_distance' => 1,
+			    
+			    # 'primer_obj_fn' => 1,
+			    
+			    # 'primer_lib_amb_codes' => 1,
 			    );
 
     my @TESTS = ( 

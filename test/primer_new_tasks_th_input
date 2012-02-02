@@ -6,6 +6,7 @@ SEQUENCE_ID=Check left only
 SEQUENCE_PRIMER=gtcctcgaacagctcagtcc
 PRIMER_TASK=check_primers
 PRIMER_PICK_ANYWAY=1
+PRIMER_DNTP_CONC=0.0
 =
 SEQUENCE_ID=Check internal only
 SEQUENCE_INTERNAL_OLIGO=ccacggatgaggaagaagaa
