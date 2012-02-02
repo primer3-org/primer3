@@ -161,7 +161,7 @@ sub main() {
 			    'primer_thermod_align' => 1,
 			    'primer_thermod_align_formatted' => 1,
 			    'primer1_th' => 1,
-			    # 'primer_mispriming_th' => 1,
+			    'primer_mispriming_th' => 1,
 			    # 'primer_must_use_th' => 1,
 			    'primer_new_tasks_th' => 1,
 			    'primer_task_th' => 1,
