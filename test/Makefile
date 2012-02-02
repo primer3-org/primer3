@@ -98,8 +98,10 @@ endif
 clean:
 ifeq ($(TESTOPTS),--windows)
 	echo 'CLEAN UP TEST DIRECTORIES'
-	del /Q /F primer_list_tmp\*
 	del /Q /F primer1_list_tmp\*
+	del /Q /F primer1_th_list_tmp\*
+	del /Q /F primer_list_tmp\*
+	del /Q /F th-w-other-tasks_list_tmp\*
 	del /Q /F primer_global_err\*.tmp primer_global_err\*.tmp2 primer_global_err\*.bak
 	del /Q /F *.tmp *.bak *.tmp.err *~
 	del /Q /F hyb_probe_only.for hyb_probe_only.int 
@@ -113,6 +115,7 @@ else
 	-rm -rf primer_list_tmp/*
 	-rm -rf primer1_list_tmp/*
 	-rm -rf primer1_th_list_tmp/*
+	-rm -rf th-w-other-tasks_list_tmp/*
 	-rm -f primer_global_err/*.tmp primer_global_err/*.tmp2 primer_global_err/*.bak
 	-rm -f *.tmp *.bak *.tmp.err *~
 	-rm -f hyb_probe_only.for hyb_probe_only.int 
