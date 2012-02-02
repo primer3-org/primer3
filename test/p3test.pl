@@ -168,7 +168,9 @@ sub main() {
 
 			    # 'test_compl_error' => 1,
 			    # 'test_left_to_right_of_right' => 1,
-			    # 'primer_boundary' => 1, # Put the quickest tests first.
+
+			    'primer_boundary' => 1, # Put the quickest tests first.
+
 			    # 'primer_boundary1' => 1,
 			    # 'primer_boundary_formatted' => 1,
 			    # 'primer_boundary1_formatted' => 1,
