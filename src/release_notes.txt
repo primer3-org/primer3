@@ -1,4 +1,4 @@
-release 2.3.0 2012-02-01 ===============================================
+release 2.3.0 2012-02-03 ===============================================
 
 1. *** We changed the following default values:
 
@@ -32,8 +32,31 @@ there is only one default location: .\primer3_config\.  If the the
 parameter files are not in one these locations, be sure to set
 PRIMER_THERMODYNAMIC_PARAMETERS_PATH
 
-1.6 Changed PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS to 0 by default.
-This is almost always the the behavior one wants.
+1.6 Changed default for 
+
+PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS=0 (was 1)
+
+(0 is almost always the the behavior one wants.)
+
+1.7 To get the behavior of -default_version=1 when -default_version=2
+set the following:
+
+PRIMER_TM_FORMULA=0
+PRIMER_SALT_CORRECTIONS=0
+PRIMER_THERMODYNAMIC_ALIGNMENT=0
+PRIMER_SALT_DIVALENT=0.0
+PRIMER_DNTP_CONC=0.0
+PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS=1
+
+1.8 To get the behavior of -default_version=1 when -default_version-1
+set the following:
+
+PRIMER_TM_FORMULA=1
+PRIMER_SALT_CORRECTIONS=1
+PRIMER_THERMODYNAMIC_ALIGNMENT=1
+PRIMER_SALT_DIVALENT=1.5
+PRIMER_DNTP_CONC=0.6
+PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS=0
 
 2. We changed the NULL value for SEQUENCE_FORCE_{LEFT,RIGHT}_START_END to
 -1000000, and made it an error to select PRIMER_FIRST_BASE_INDEX <=
