@@ -48,7 +48,7 @@ PRIMER_SALT_DIVALENT=0.0
 PRIMER_DNTP_CONC=0.0
 PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS=1
 
-1.8 To get the behavior of -default_version=1 when -default_version-1
+1.8 To get the behavior of -default_version=2 when -default_version=1
 set the following:
 
 PRIMER_TM_FORMULA=1
