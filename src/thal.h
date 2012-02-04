@@ -1,4 +1,5 @@
-/* Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009
+/* Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009,2010
+                 2011,2012
  Whitehead Institute for Biomedical Research, Steve Rozen
  (http://purl.com/STEVEROZEN/), and Helen Skaletsky
  All rights reserved.
@@ -103,7 +104,15 @@ int  get_thermodynamic_values(const char* path, thal_results *o);
 
 void destroy_thal_structures();
 
-/* Central method for finding the best alignment */
-void thal(const unsigned char *oligo1, const unsigned char *oligo2, const thal_args* a, thal_results* o);
+/* Central method for finding the best alignment.  On error, o->temp
+   is set to THAL_ERROR_SCORE and a message is put in o->msg.  The
+   error might be caused by ENOMEM. To determine this it is necessary
+   to check errno.
+*/
+
+void thal(const unsigned char *oligo1, 
+	  const unsigned char *oligo2, 
+	  const thal_args* a, 
+	  thal_results* o);
 
 #endif
