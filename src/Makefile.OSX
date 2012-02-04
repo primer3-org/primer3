@@ -1,6 +1,5 @@
 # ======================================================================
 # (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009
-#     2010,2011,2012
 # Whitehead Institute for Biomedical Research, Steve Rozen, 
 # Andreas Untergasser and Helen Skaletsky
 # All rights reserved.
@@ -52,20 +51,26 @@
 TESTOPTS= 
 WINMAKE=mingw32-make
 
-ifndef DEVELOPER_SDK_DIR
-	DEVELOPER_SDK_DIR=/Developer/SDKs
+ifndef SDKROOT
+	SDKROOT=/Developer/SDKs/MacOSX10.6.sdk
+endif
+ifndef MACOSX_DEPLOYMENT_TARGET
+	MACOSX_DEPLOYMENT_TARGET=10.6
+endif
+ifndef ARCHS
+	ARCHS=i386 x86_64
 endif
 
 LDLIBS     = -lm
-AR         = ar
 CC         = gcc
 CPP        = g++
+LIBTOOL    = libtool
 O_OPTS     = -O2
-CC_OPTS    = -g -Wall -D__USE_FIXED_PROTOTYPES__ -isysroot $(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk -mmacosx-version-min=10.6 -arch i386 -arch x86_64
+CC_OPTS    = -g -Wall -D__USE_FIXED_PROTOTYPES__ -isysroot $(SDKROOT) -mmacosx-version-min=$(MACOSX_DEPLOYMENT_TARGET) $(foreach ARCH,$(ARCHS),-arch $(ARCH))
 P_DEFINES  =
 
 CFLAGS  = $(CC_OPTS) $(O_OPTS)
-LDFLAGS = -g -arch i386 -arch x86_64
+LDFLAGS = -g $(foreach ARCH,$(ARCHS),-arch $(ARCH))
 
 # ======================================================================
 # If you have trouble with library skew when moving primer3 executables
@@ -95,7 +100,6 @@ LIBPRIMER3      = libprimer3.a
 LIBPRIMER3_DYN  = libprimer3.so.1.0.0
 LIBRARIES       = $(LIBPRIMER3) $(LIBDPAL) $(LIBTHAL) $(LIBOLIGOTM) 
 DYNLIBS         = $(LIBPRIMER3_DYN) $(LIBDPAL_DYN) $(LIBTHAL_DYN) $(LIBOLIGOTM_DYN)
-RANLIB          = ranlib
 
 PRIMER_OBJECTS1=primer3_boulder_main.o\
                 format_output.o\
@@ -126,29 +130,25 @@ else
 endif
 
 $(LIBOLIGOTM): oligotm.o
-	$(AR) rv $@ oligotm.o
-	$(RANLIB) $@
+	$(LIBTOOL) -static -o $@ oligotm.o
 
 $(LIBOLIGOTM_LIB): oligotm.o
 	$(CC) -shared -W1,-soname,liboligotm.so.1 -o $(LIBOLIGOTM_DYN) oligotm.o
 
 $(LIBDPAL): dpal_primer.o
-	$(AR) rv $@ dpal_primer.o
-	$(RANLIB) $@
+	$(LIBTOOL) -static -o $@ dpal_primer.o
 
 $(LIBDPAL_DYN): dpal_primer.o
 	$(CC) -shared -W1,-soname,libdpal.so.1 -o $(LIBDPAL_DYN_LIB) dpal_primer.o
 
 $(LIBTHAL): thal_primer.o
-	$(AR) rv $@ thal_primer.o
-	$(RANLIB) $@
+	$(LIBTOOL) -static -o $@ thal_primer.o
 
 $(LIBTHAL_DYN): thal_primer.o
 	$(CC) -shared -W1,-soname,libthal.so.1 -o $(LIBTHAL_DYN_LIB) thal_primer.o
 
 $(LIBPRIMER3): libprimer3.o p3_seq_lib.o
-	$(AR) rv $@ libprimer3.o p3_seq_lib.o
-	$(RANLIB) $@
+	$(LIBTOOL) -static -o $@ libprimer3.o p3_seq_lib.o
 
 $(LIBPRIMER3_DYN): libprimer3.o p3_seq_lib.o
 	$(CC) -shared -W1,-soname,liprimer3.so.1 -o $(LIBPRIMER3_DYN) libprimer3.o p3_seq_lib.o
