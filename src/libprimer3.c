@@ -4351,9 +4351,11 @@ align_thermod(const char *s1,
           {
              longjmp(_jmp_buf, 1);
           } else {
-             /* This branch is taken only if there is a programming error, in
-              *          that s1 or s2 were NULL or contained an illegal character. We
-              *          try to print some debugging information before aborting. */
+             /* This branch is taken if there is an error other than
+		ENOMEM, in which case we treat it as a fatal error. In
+		the future we might want to change some of the errors
+		to non-fatal errors.
+	     */
 	     printf("PRIMER_ERROR=%s\n=\n", r.msg);
 	     exit(-1);
           }

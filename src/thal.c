@@ -1,5 +1,6 @@
 /*
- Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2009,2010
+ Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2009,2010,
+               2011,2012
  Whitehead Institute for Biomedical Research, Steve Rozen
  (http://purl.com/STEVEROZEN/), and Helen Skaletsky
  All rights reserved.
@@ -86,8 +87,7 @@
 # define HEND5(i) hend5[i]
 #endif
 
-#define CHECK_ERROR(COND,MSG) if (COND) { strcpy(o->msg, MSG); longjmp(_jmp_buf, 1); }
-#define PRINT_ERROR(COND,MSG) if (COND) { printf("PRIMER_ERROR=%s\n=\n", MSG); exit(-1); }
+#define CHECK_ERROR(COND,MSG) if (COND) { strcpy(o->msg, MSG); errno = 0; longjmp(_jmp_buf, 1); }
 #define THAL_OOM_ERROR { strcpy(o->msg, "Out of memory"); errno = ENOMEM; longjmp(_jmp_buf, 1); }
 #define THAL_IO_ERROR(f) { sprintf(o->msg, "Unable to open file %s", f); longjmp(_jmp_buf, 1); }
 
@@ -382,21 +382,28 @@ thal(const unsigned char *oligo_f,
    oligo1 = oligo2 = NULL;
    strcpy(o->msg, "");
    o->temp = THAL_ERROR_SCORE;
+   errno = 0; 
 
    if (setjmp(_jmp_buf) != 0) {
      o->temp = THAL_ERROR_SCORE;
      return;  /* If we get here, that means we returned via a
-                 longjmp.  In this case errno should be ENOMEM. */
+                 longjmp.  In this case errno might be ENOMEM,
+		 but not necessarily. */
    }
 
    CHECK_ERROR(NULL == oligo_f, "NULL first sequence");
    CHECK_ERROR(NULL == oligo_r, "NULL second sequence");
    len_f = length_unsig_char(oligo_f);
    len_r = length_unsig_char(oligo_r);
+
+   /* The following error messages will be seen by end users and will
+      not be easy to understand. */
    CHECK_ERROR((len_f > THAL_MAX_ALIGN) && (len_r > THAL_MAX_ALIGN),
 	       "Sequences longer than THAL_MAX_ALIGN for thermodynamical alignment (nearest-neighbor approach)");
-   CHECK_ERROR((len_f > THAL_MAX_SEQ), "Sequence 1 longer than THAL_MAX_SEQ and alignment is requested");
-   CHECK_ERROR((len_r > THAL_MAX_SEQ), "Sequence 2 longer than THAL_MAX_SEQ and alignment is requested");
+   CHECK_ERROR((len_f > THAL_MAX_SEQ), 
+	       "Sequence 1 longer than THAL_MAX_SEQ and alignment is requested");
+   CHECK_ERROR((len_r > THAL_MAX_SEQ), 
+	       "Sequence 2 longer than THAL_MAX_SEQ and alignment is requested");
 
    CHECK_ERROR(NULL == a,  "NULL 'in' pointer");
    if (NULL == o) return; /* Leave it to the caller to crash */
@@ -466,6 +473,7 @@ thal(const unsigned char *oligo_f,
    } else {
       strcpy(o->msg, "Wrong alignment type!");
       o->temp = THAL_ERROR_SCORE;
+      errno=0;
 #ifdef DEBUG
       fprintf(stderr, o->msg);
 #endif

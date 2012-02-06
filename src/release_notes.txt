@@ -48,7 +48,7 @@ PRIMER_SALT_DIVALENT=0.0
 PRIMER_DNTP_CONC=0.0
 PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS=1
 
-1.8 To get the behavior of -default_version=1 when -default_version-1
+1.8 To get the behavior of -default_version=2 when -default_version=1
 set the following:
 
 PRIMER_TM_FORMULA=1
@@ -75,7 +75,7 @@ using thermodynamic alignments. This is consistent with the approach
 taken with the previous alignment algorithm and with checking for
 mispriming against repeat libraries.
 
-4. We removed PRIMER_PAIR_MAX_HAIRPIN (which was ignored previously).
+4. We removed PRIMER_PAIR_MAX_HAIRPIN_TH (which was ignored previously).
 
 5. Primer3 now requires the user to set SEQUENCE_TARGET, not
 SEQUENCE_INCLUDED_REGION when PRIMER_TASK=pick_discriminative_primers
