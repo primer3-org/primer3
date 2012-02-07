@@ -45,7 +45,7 @@ TESTOPTS =
 
 
 test: makeexes testcmdline testtm testdpal testthal testcore test_io_v3
-	echo; echo; echo "Testing complted. You must check the test output for the string FAILED"; echo; echo;
+	echo; echo; echo "Testing completed. You must check the test output for the string FAILED"; echo; echo;
 
 testcmdline:
 ifeq ($(TESTOPTS),--windows)
