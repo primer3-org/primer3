@@ -109,6 +109,8 @@ ifeq ($(TESTOPTS),--windows)
 	del /Q /F right_only.for right_only.rev left_only.for
 	del /Q /F pcr_primers_and_io.int pcr_primers_and_io.rev pcr_primers_and_io.for
 	del /Q /F pcr_primers.rev pcr_primers.for
+	del /Q /F pick_primer_list_and_file_flag_th_*.for pick_primer_list_and_file_flag_th_*.rev
+	del /Q /F pick_primer_list_and_file_flag_th_*.int
 	del /Q /F syntax*.for syntax*.int syntax*.rev
 	cd io_version_3 & $(WINMAKE) clean TESTOPTS=$(TESTOPTS)
 else
@@ -123,6 +125,8 @@ else
 	-rm -f right_only.for right_only.rev left_only.for
 	-rm -f pcr_primers_and_io.int pcr_primers_and_io.rev pcr_primers_and_io.for
 	-rm -f pcr_primers.rev pcr_primers.for
+	-rm -f pick_primer_list_and_file_flag_th_[1-4].for pick_primer_list_and_file_flag_th_[1-4].rev
+	-rm -f pick_primer_list_and_file_flag_th_[1-4].int
 	-rm -f syntax[0-1][0-9].for syntax[0-1][0-9].int syntax[0-1][0-9].rev
 	-rm -f oligotm.*.valg    # valgrind output from oligotm_test.pl --valgrind
 	-rm -f ntdpal.*.valg     # valgrind output from dpal_test.pl --valgrind
