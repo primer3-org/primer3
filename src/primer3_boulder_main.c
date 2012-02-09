@@ -333,6 +333,13 @@ main(int argc, char *argv[])
 	&& (thermodynamic_path_changed == 1))
       read_thermodynamic_parameters();
 
+    /* Check that we found the thermodynamic parameters in case the flag was set to 1. */
+    if ((global_pa->thermodynamic_alignment == 1) && (thermodynamic_params_path == NULL)) {
+      /* no parameter directory found, error */
+      printf("PRIMER_ERROR=thermodynamic approach chosen, but path to thermodynamic parameters not specified\n=\n");
+      exit(-1);
+    }
+
     input_found = 1;
     if ((global_pa->primer_task == generic)
                 && (global_pa->pick_internal_oligo == 1)){
@@ -496,9 +503,8 @@ read_thermodynamic_parameters()
       if (NULL == thermodynamic_params_path) exit (-2); /* Out of memory */
       strcpy(thermodynamic_params_path, ".\\primer3_config\\");
     } else {
-      /* no default directory found, error */
-      printf("PRIMER_ERROR=thermodynamic approach chosen, but path to thermodynamic parameters not specified\n=\n");
-      exit(-1);
+      /* no default directory found */
+      return;
     }
 #else
     /* in linux, check for ./primer3_config and /opt/primer3_config */
@@ -514,9 +520,8 @@ read_thermodynamic_parameters()
       if (NULL == thermodynamic_params_path) exit (-2); /* Out of memory */
       strcpy(thermodynamic_params_path, "/opt/primer3_config/");
     } else {
-      /* no default directory found, error */
-      printf("PRIMER_ERROR=thermodynamic approach chosen, but path to thermodynamic parameters not specified\n=\n");
-      exit(-1);
+      /* no default directory found */
+      return;
     }
 #endif
 
