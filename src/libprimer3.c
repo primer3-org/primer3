@@ -5292,7 +5292,7 @@ p3_get_pair_array_explain_string(const pair_array_t *pair_array)
 const char *
 libprimer3_release(void) 
 {
-  return "libprimer3 release 2.3.0";
+  return "libprimer3 release 2.3.1";
 }
 
 const char *
@@ -6360,6 +6360,20 @@ _pr_data_control(const p3_global_settings *pa,
     pr_append_new_chunk(glob_err,
                         "PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION > PRIMER_MAX_SIZE / 2");
     return 1;
+  }
+  
+  if (pa->p_args.divalent_conc > 0.0 && pa->p_args.dntp_conc <= 0.0) {
+    pr_append_new_chunk(warning,
+			"PRIMER_SALT_DIVALENT > 0.0 "
+			"but PRIMER_DNTP_CONC <= 0.0; "
+			"use reasonable value for PRIMER_DNTP_CONC");
+  }
+  
+  if (pa->o_args.divalent_conc > 0.0 && pa->o_args.dntp_conc <= 0.0) {
+    pr_append_new_chunk(warning,
+			"PRIMER_INTERNAL_SALT_DIVALENT > 0.0 "
+			"but PRIMER_INTERNAL_DNTP_CONC <= 0.0; "
+			"use reasonable value for PRIMER_INTERNAL_DNTP_CONC");
   }
 
   return (NULL == nonfatal_err->data && NULL == glob_err->data) ? 0 : 1;

@@ -1,3 +1,28 @@
+release 2.3.1 2012-02-27 ===============================================
+
+Minor corrections:
+
+1. Added warnings if PRIMER_SALT_DIVALENT > 0.0 but PRIMER_DNTP_CONC
+<= 0.0 or PRIMER_INTERNAL_SALT_DIVALENT > 0.0 but
+PRIMER_INTERNAL_DNTP_CONC <= 0.0.
+
+2. No longer an error if a settings file has
+PRIMER_THERMODYNAMIC_ALIGNMENT=1 but does not have a valide
+PRIMER_THERMODYNAMIC_PARAMETERS_PATH.
+(PRIMER_THERMODYNAMIC_PARAMETERS_PATH can then be set in the regular
+boulder IO input stream.)
+
+3. Updates to documetation on salt corrections.
+
+4. Corrections to primer3web_v3_0_0_default_settings.txt (removed
+non-existent tags and removed the setting of
+PRIMER_THERMODYNAMIC_PARAMETERS_PATH)
+
+5. Removed un-needed files from distribution .tar.gz file.
+
+6. Removed the -i option from the oligotm executable, as the
+necessary information is in the Primer3 manual.
+
 release 2.3.0 2012-02-03 ===============================================
 
 1. *** We changed the following default values:
