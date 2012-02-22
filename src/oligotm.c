@@ -479,8 +479,7 @@ oligotm(const  char *s,
 	    + (1/(2 * (len - 1))) * (e + (f * log(free_divalent))
 				     + g * (pow((log(free_divalent)),2)));
      }
-     /**** END: UPDATED SALT BY OWCZARZY *****/ /* triinu - important, this is not the end of the
-						   if else branch for OWCZARZY */
+     /**** END: UPDATED SALT BY OWCZARZY *****/
      if (sym == 1) {
 	   /* primer is symmetrical */
 	/* Equation A */
@@ -493,7 +492,7 @@ oligotm(const  char *s,
 		    /
 		    (delta_S + 1.9872 * log(DNA_nM/4000000000.0)))) + correction) - T_KELVIN;
      } 
-  } /* triinu - important - this is end of the if else branch */
+  } /* END else if (salt_corrections == owczarzy) { */
    
    
    /***************************************/
