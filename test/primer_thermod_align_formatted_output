@@ -58,7 +58,7 @@ Right   1290     0     0     0     0    32     0    38  1096      0     0     0 
 Intl    1565     0     0     0     0    32     0    60  1290      0     0     0     0     0   183
 Pair Stats:
 considered 25, unacceptable product size 20, ok 5
-libprimer3 release 2.2.3
+libprimer3 release 2.3.1
 
 
 PRIMER PICKING RESULTS FOR any_1
@@ -133,7 +133,7 @@ Right   3397     0     0     0     0     0     0   839  1673      0     0     1 
 Intl    3672     0     0     0     0     0     0   953  1734      0     0    14    22     0   949
 Pair Stats:
 considered 58, unacceptable product size 51, ok 7
-libprimer3 release 2.2.3
+libprimer3 release 2.3.1
 
 
 PRIMER PICKING RESULTS FOR any_salt
@@ -141,6 +141,8 @@ PRIMER PICKING RESULTS FOR any_salt
 No mispriming library specified
 No internal oligo mishyb library specified
 Using 0-based sequence positions
+WARNING: PRIMER_SALT_DIVALENT > 0.0 but PRIMER_DNTP_CONC <= 0.0; use reasonable value for PRIMER_DNTP_CONC
+
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
@@ -208,7 +210,7 @@ Right   3397     0     0     0     0     0     0    59  3137      0     0     0 
 Intl    3672     0     0     0     0     0     0   432  2545      0     0    10    22     0   663
 Pair Stats:
 considered 16, unacceptable product size 11, ok 5
-libprimer3 release 2.2.3
+libprimer3 release 2.3.1
 
 
 PRIMER PICKING RESULTS FOR any_weight
@@ -216,6 +218,8 @@ PRIMER PICKING RESULTS FOR any_weight
 No mispriming library specified
 No internal oligo mishyb library specified
 Using 0-based sequence positions
+WARNING: PRIMER_SALT_DIVALENT > 0.0 but PRIMER_DNTP_CONC <= 0.0; use reasonable value for PRIMER_DNTP_CONC
+
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
@@ -283,7 +287,7 @@ Right   3397     0     0     0     0     0     0    59  3137      0     0     0 
 Intl    3672     0     0     0     0     0     0   432  2545      0     0    37    22     0   636
 Pair Stats:
 considered 18, unacceptable product size 11, ok 7
-libprimer3 release 2.2.3
+libprimer3 release 2.3.1
 
 
 PRIMER PICKING RESULTS FOR any_2
@@ -291,6 +295,8 @@ PRIMER PICKING RESULTS FOR any_2
 No mispriming library specified
 No internal oligo mishyb library specified
 Using 0-based sequence positions
+WARNING: PRIMER_SALT_DIVALENT > 0.0 but PRIMER_DNTP_CONC <= 0.0; use reasonable value for PRIMER_DNTP_CONC
+
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
@@ -358,7 +364,7 @@ Right   3293     0     0     0     0     0     0    59  3043     14     0     0 
 Intl    3185     0     0     0     0     0     0   432  2188     82     0    34    22     0   427
 Pair Stats:
 considered 20, unacceptable product size 12, ok 8
-libprimer3 release 2.2.3
+libprimer3 release 2.3.1
 
 
 PRIMER PICKING RESULTS FOR any_no_effect
@@ -366,6 +372,8 @@ PRIMER PICKING RESULTS FOR any_no_effect
 No mispriming library specified
 No internal oligo mishyb library specified
 Using 0-based sequence positions
+WARNING: PRIMER_SALT_DIVALENT > 0.0 but PRIMER_DNTP_CONC <= 0.0; use reasonable value for PRIMER_DNTP_CONC
+
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
@@ -433,7 +441,7 @@ Right   3397     0     0     0     0     0     0    59  3137      0     0     0 
 Intl    3672     0     0     0     0     0     0   432  2545     11     0     4    22     0   658
 Pair Stats:
 considered 16, unacceptable product size 11, ok 5
-libprimer3 release 2.2.3
+libprimer3 release 2.3.1
 
 
 PRIMER PICKING RESULTS FOR end_th1
@@ -441,6 +449,8 @@ PRIMER PICKING RESULTS FOR end_th1
 No mispriming library specified
 No internal oligo mishyb library specified
 Using 0-based sequence positions
+WARNING: PRIMER_SALT_DIVALENT > 0.0 but PRIMER_DNTP_CONC <= 0.0; use reasonable value for PRIMER_DNTP_CONC
+
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
@@ -508,7 +518,7 @@ Right   3397     0     0     0     0     0     0    59  3137      0     0     0 
 Intl    3672     0     0     0     0     0     0   432  2545     11     0     4    22     0   658
 Pair Stats:
 considered 16, unacceptable product size 11, ok 5
-libprimer3 release 2.2.3
+libprimer3 release 2.3.1
 
 
 PRIMER PICKING RESULTS FOR end_th2
@@ -516,6 +526,8 @@ PRIMER PICKING RESULTS FOR end_th2
 No mispriming library specified
 No internal oligo mishyb library specified
 Using 0-based sequence positions
+WARNING: PRIMER_SALT_DIVALENT > 0.0 but PRIMER_DNTP_CONC <= 0.0; use reasonable value for PRIMER_DNTP_CONC
+
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
@@ -583,7 +595,7 @@ Right   3213     0     0     0     0     0     0    59  2968     23     0     0 
 Intl    2916     0     0     0     0     0     0   432  1999    116     0    22    22     0   325
 Pair Stats:
 considered 20, unacceptable product size 12, ok 8
-libprimer3 release 2.2.3
+libprimer3 release 2.3.1
 
 
 PRIMER PICKING RESULTS FOR hairpin1
@@ -591,6 +603,8 @@ PRIMER PICKING RESULTS FOR hairpin1
 No mispriming library specified
 No internal oligo mishyb library specified
 Using 0-based sequence positions
+WARNING: PRIMER_SALT_DIVALENT > 0.0 but PRIMER_DNTP_CONC <= 0.0; use reasonable value for PRIMER_DNTP_CONC
+
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
@@ -658,7 +672,7 @@ Right   3213     0     0     0     0     0     0    59  2968     23     0     0 
 Intl    2916     0     0     0     0     0     0   432  1999    116     0     4    22     0   343
 Pair Stats:
 considered 15, unacceptable product size 10, ok 5
-libprimer3 release 2.2.3
+libprimer3 release 2.3.1
 
 
 PRIMER PICKING RESULTS FOR hairpin2
@@ -666,6 +680,8 @@ PRIMER PICKING RESULTS FOR hairpin2
 No mispriming library specified
 No internal oligo mishyb library specified
 Using 0-based sequence positions
+WARNING: PRIMER_SALT_DIVALENT > 0.0 but PRIMER_DNTP_CONC <= 0.0; use reasonable value for PRIMER_DNTP_CONC
+
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
@@ -733,7 +749,7 @@ Right   3213     0     0     0     0     0     0    59  2968     23     0    12 
 Intl    2916     0     0     0     0     0     0   432  1999    116     0    26    22     0   321
 Pair Stats:
 considered 11, unacceptable product size 6, ok 5
-libprimer3 release 2.2.3
+libprimer3 release 2.3.1
 
 
 PRIMER PICKING RESULTS FOR hairpin3
@@ -741,6 +757,8 @@ PRIMER PICKING RESULTS FOR hairpin3
 No mispriming library specified
 No internal oligo mishyb library specified
 Using 0-based sequence positions
+WARNING: PRIMER_SALT_DIVALENT > 0.0 but PRIMER_DNTP_CONC <= 0.0; use reasonable value for PRIMER_DNTP_CONC
+
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
@@ -808,7 +826,7 @@ Right   3213     0     0     0     0     0     0    59  2968     23     0    32 
 Intl    2916     0     0     0     0     0     0   432  1999    116     0    22    22     0   325
 Pair Stats:
 considered 9, unacceptable product size 4, ok 5
-libprimer3 release 2.2.3
+libprimer3 release 2.3.1
 
 
 PRIMER PICKING RESULTS FOR template1
@@ -816,6 +834,8 @@ PRIMER PICKING RESULTS FOR template1
 No mispriming library specified
 No internal oligo mishyb library specified
 Using 0-based sequence positions
+WARNING: PRIMER_SALT_DIVALENT > 0.0 but PRIMER_DNTP_CONC <= 0.0; use reasonable value for PRIMER_DNTP_CONC
+
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
@@ -883,7 +903,7 @@ Right   3213     0     0     0     0     0     0    59  2968     23     0    32 
 Intl    2916     0     0     0     0     0     0   432  1999    116     0    22    22     0   325
 Pair Stats:
 considered 9, unacceptable product size 4, ok 5
-libprimer3 release 2.2.3
+libprimer3 release 2.3.1
 
 
 PRIMER PICKING RESULTS FOR template2
@@ -891,6 +911,8 @@ PRIMER PICKING RESULTS FOR template2
 No mispriming library specified
 No internal oligo mishyb library specified
 Using 0-based sequence positions
+WARNING: PRIMER_SALT_DIVALENT > 0.0 but PRIMER_DNTP_CONC <= 0.0; use reasonable value for PRIMER_DNTP_CONC
+
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
@@ -958,6 +980,6 @@ Right   3213     0     0     0     0     0     0    59  2968     23     0    32 
 Intl    2916     0     0     0     0     0     0   432  1999    116     0    22    22     0   325
 Pair Stats:
 considered 11, unacceptable product size 5, ok 6
-libprimer3 release 2.2.3
+libprimer3 release 2.3.1
 
 
