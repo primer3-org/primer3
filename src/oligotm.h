@@ -34,7 +34,8 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-     
+
+
 #ifndef _OLIGO_TM
 #define _OLIGO_TM 1
 
@@ -111,8 +112,7 @@ typedef enum salt_correction_type {
    thermodynamics", Proc Natl Acad Sci 95:1460-65
    http://dx.doi.org/10.1073/pnas.95.4.1460] is used.
    *THIS IS THE RECOMMENDED VALUE*.
-   Added by T. Koressaar
- 
+  
    If tm_method==breslauer_auto, then method for Tm
    calculations in the paper [Rychlik W, Spencer WJ and Rhoads RE
    (1990) "Optimization of the annealing temperature for DNA
@@ -139,16 +139,13 @@ typedef enum salt_correction_type {
    http://dx.doi.org/10.1073/pnas.95.4.1460] is used.
 
    *THIS IS THE RECOMMENDED VALUE*. 
-   Added by T.Koressaar
- 
+  
    If salt_corrections==owczarzy, then formula for
-   salt correction in the paper [Owczarzy R, You Y, Moreira BG,
-   Manthey JA, Huang L, Behlke MA and Walder JA (2004) "Effects of
-   sodium ions on DNA duplex oligomers: Improved predictions of
-   melting temperatures", Biochemistry 43:3537-54
-   http://dx.doi.org/10.1021/bi034621r] is used.
-   Added by T.Koressaar
-
+   salt correction in the paper [Owczarzy, R., Moreira, B.G., You, Y., 
+   Behlke, M.A., and Walder, J.A. (2008) "Predicting stability of DNA 
+   duplexes in solutions containing magnesium and monovalent cations", 
+   Biochemistry 47:5336-53 http://dx.doi.org/10.1021/bi702363u] is used.
+ 
  */
 
 double oligotm(const  char *seq,     /* The sequence. */
@@ -180,6 +177,7 @@ double seqtm(const  char *seq,  /* The sequence. */
              salt_correction_type salt_corrections /* See description above. */
              );
 
+     
 /* Return the delta G of disruption of oligo using the nearest neighbor model.
    The length of seq should be relatively short, 
    given the characteristics of the nearest
