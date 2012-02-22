@@ -318,8 +318,10 @@ static struct tetraloop* tetraloopEntropies = NULL; /* ther penalties for given 
 static struct tetraloop* tetraloopEnthalpies = NULL; /* ther penalties for given tetraloop seq-s */
 static jmp_buf _jmp_buf;
 
-
-/* Function to read the thermodynamic values from the parameter files, returns 0 in case of success */
+/* Read the thermodynamic values (parameters) from the parameter files
+   in the directory specified by 'path'.  Return 0 on success and -1
+   on error. The thermodynamic values are stored in multiple static
+   variables. */
 int 
 get_thermodynamic_values(const char* path, thal_results *o)
 {

@@ -100,6 +100,18 @@ typedef struct {
 
 void set_thal_default_args(thal_args *a);
 
+/* Read the thermodynamic values (parameters) from the parameter files
+   in the directory specified by 'path'.  Return 0 on success and -1
+   on error. The thermodynamic values are stored in multiple static
+   variables. */
+/* Here is an example of how this function is used in 
+   primer3_boulder_main.c: */
+#if 0
+  if (get_thermodynamic_values(thermodynamic_params_path, &o)) {
+    fprintf(stderr, "%s\n", o.msg);
+    exit(-1);
+  }
+#endif
 int  get_thermodynamic_values(const char* path, thal_results *o);
 
 void destroy_thal_structures();
