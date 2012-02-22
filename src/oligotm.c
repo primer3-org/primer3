@@ -480,7 +480,7 @@ oligotm(const  char *s,
 				     + g * (pow((log(free_divalent)),2)));
      }
      /**** END: UPDATED SALT BY OWCZARZY *****/ /* triinu - important, this is not the end of the
-						   if else branch */
+						   if else branch for OWCZARZY */
      if (sym == 1) {
 	   /* primer is symmetrical */
 	/* Equation A */
