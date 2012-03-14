@@ -1,3 +1,10 @@
+release 2.3.2 2012-03-15 ===============================================
+
+Minor corrections:
+
+1. _Removed_ warning if PRIMER_INTERNAL_SALT_DIVALENT > 0.0 but
+PRIMER_INTERNAL_DNTP_CONC <= 0.0.  (dNTPs not used in hybridizations.)
+
 release 2.3.1 2012-02-27 ===============================================
 
 Minor corrections:
