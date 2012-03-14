@@ -488,11 +488,6 @@ read_record(prog_args, pa, sa)
     sa->start_codon_pos -= pa->first_base_index;
     adjust_base_index_interval_list(sa->tar, sa->num_targets,
 				    pa->first_base_index);
-    int i;
-    fprintf(stderr, "After adjusting target intervals:\n");
-    for (i = 0; i <sa->num_targets; i++) {
-      fprintf(stderr, "%d - %d\n", sa->tar[i][0], sa->tar[i][1]);
-    }
     adjust_base_index_interval_list(sa->excl, sa->num_excl,
 				    pa->first_base_index);
     adjust_base_index_interval_list(sa->excl_internal,

@@ -530,7 +530,6 @@ _pr_data_control(pa, sa)
     if (check_intervals("TARGET", sa->num_targets, sa->tar, seq_len, sa)
 	== 1) return 1;
     sa->start_codon_pos -= sa->incl_s;
-    fprintf(stderr, "in check_resord start codon pos is now %d\n", sa->start_codon_pos);
 
     if (check_intervals("EXCLUDED_REGION", sa->num_excl, sa->excl,
 			seq_len, sa)
