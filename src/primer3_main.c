@@ -315,8 +315,10 @@ main(argc,argv)
 
 	n_f = n_m = n_r = 0;
 	if (NULL == sa->error.data && NULL == pa->glob_err.data) {
+	  fprintf(stderr, "Before pr_choice incl_s is %d, start codon pos is %d\n", sa->incl_s, sa->start_codon_pos);
 	    pr_choice(pa, sa, local_args, end_args, local_end_args, 
 			 &best_pairs, &n_f, &n_r, &n_m);
+	    fprintf(stderr, "After pr_choice incl_s is %d, start codon pos is %d\n", sa->incl_s, sa->start_codon_pos);
         }
 	if (NULL != pa->glob_err.data) 
 	    pr_append_new_chunk(&sa->error, pa->glob_err.data);
