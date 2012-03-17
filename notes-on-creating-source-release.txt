@@ -77,6 +77,7 @@ gzip primer3-<release number>.tar
 
 # do the upload
 scp primer3-<release number>.tar.gz <username>,primer3@frs.sourceforge.net:/home/frs/project/p/pr/primer3/primer3/<release_number>/
+(same for latest release notes and primer3_manual.htm)
 
 # or use the Project Admin - File Manager tab on the web interface (at https://sourceforge.net/projects/primer3/develop) 
 # after logging in. This may be also useful for creating new folder prior to the upload.
