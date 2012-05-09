@@ -99,6 +99,7 @@ typedef struct {
 /*** END OF TYPEDEFS ***/
 
 void set_thal_default_args(thal_args *a);
+void set_thal_oligo_default_args(thal_args *a);
 
 /* Read the thermodynamic values (parameters) from the parameter files
    in the directory specified by 'path'.  Return 0 on success and -1

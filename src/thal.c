@@ -633,6 +633,24 @@ set_thal_default_args(thal_args *a)
    a->dimer = 1; /* by default dimer structure is calculated */
 }
 
+/* Set default args for oligo */
+void
+set_thal_oligo_default_args(thal_args *a)    
+{
+   memset(a, 0, sizeof(*a));
+   a->debug = 0;
+   a->type = thal_any; /* thal_alignment_type THAL_ANY */
+   a->maxLoop = MAX_LOOP;
+   a->mv = 50; /* mM */
+   a->dv = 0.0; /* mM */
+   a->dntp = 0.0; /* mM */
+   a->dna_conc = 50; /* nM */
+   a->temp = 310.15; /* Kelvin */
+   a->temponly = 1; /* return only melting temperature of predicted structure */
+   a->dimer = 1; /* by default dimer structure is calculated */
+}
+
+
 static unsigned char 
 str2int(char c)
 {
@@ -2366,10 +2384,22 @@ symmetry_thermo(const unsigned char* seq)
 	  || (e=='T' && s!='A')) {
 	 return 0;
       }
+      if ((s=='a' && e!='t')
+	  || (s=='t' && e!='a')
+	  || (e=='a' && s!='t')
+	  || (e=='t' && s!='a')) {
+	 return 0;
+      }
       if ((s=='C' && e!='G')
 	  || (s=='G' && e!='C')
 	  || (e=='C' && s!='G')
 	  || (e=='G' && s!='C')) {
+	 return 0;
+      }
+      if ((s=='c' && e!='g')
+	  || (s=='g' && e!='c')
+	  || (e=='c' && s!='g')
+	  || (e=='g' && s!='c')) {
 	 return 0;
       }
       seq++;

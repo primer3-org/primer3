@@ -208,6 +208,7 @@ static void    choose_pair_or_triple(p3retval *,
                                     const seq_args *,
                                     const dpal_arg_holder *,
                                     const thal_arg_holder *,
+				    const thal_arg_holder *,
                                     pair_array_t *);
 
 static int    sequence_quality_is_ok(const p3_global_settings *, primer_rec *,
@@ -246,13 +247,15 @@ static int    make_complete_primer_lists(p3retval *retval,
                                 const p3_global_settings *pa,
                                 const seq_args *sa,
                                 const dpal_arg_holder *dpal_arg_to_use,
-                                const thal_arg_holder *thal_arg_to_use);
+                                const thal_arg_holder *thal_arg_to_use,
+				const thal_arg_holder *thal_oligo_arg_to_use);
 
 static int    add_primers_to_check(p3retval *retval,
                                 const p3_global_settings *pa,
                                 const seq_args *sa,
                                 const dpal_arg_holder *dpal_arg_to_use,
-                                const thal_arg_holder *thal_arg_to_use);
+                                const thal_arg_holder *thal_arg_to_use,
+				const thal_arg_holder *thal_oligo_arg_to_use);
 
 static int    pick_sequencing_primer_list(p3retval *retval,
                                 const p3_global_settings *pa,
@@ -899,7 +902,7 @@ static dpal_arg_holder *dpal_arg_to_use = NULL;
 /* ============================================================ */
 /* Create the thal arg holder */
 thal_arg_holder *
-create_thal_arg_holder () 
+create_thal_arg_holder (const p3_global_settings *pa) 
 {
    
    thal_arg_holder *h
@@ -908,20 +911,81 @@ create_thal_arg_holder ()
    h->any = (thal_args *) pr_safe_malloc(sizeof(*h->any));
    set_thal_default_args(h->any);
    h->any->type = thal_any;
+   h->any->mv = pa->p_args.salt_conc;
+   h->any->dv = pa->p_args.divalent_conc;
+   h->any->dntp = pa->p_args.dntp_conc;
+   h->any->dna_conc = pa->p_args.dna_conc;
    
    h->end1 = (thal_args *) pr_safe_malloc(sizeof(*h->end1));
    set_thal_default_args(h->end1);
    h->end1->type = thal_end1;
+   h->end1->mv = pa->p_args.salt_conc;
+   h->end1->dv = pa->p_args.divalent_conc;
+   h->end1->dntp = pa->p_args.dntp_conc;
+   h->end1->dna_conc = pa->p_args.dna_conc;
    
    h->end2 = (thal_args *) pr_safe_malloc(sizeof(*h->end2));
    set_thal_default_args(h->end2);
    h->end2->type = thal_end2;
+   h->end2->mv = pa->p_args.salt_conc;
+   h->end2->dv = pa->p_args.divalent_conc;
+   h->end2->dntp = pa->p_args.dntp_conc;
+   h->end2->dna_conc = pa->p_args.dna_conc;
    
    h->hairpin_th  = (thal_args *) pr_safe_malloc(sizeof(*h->hairpin_th));
    set_thal_default_args(h->hairpin_th); 
    h->hairpin_th->type = thal_hairpin;
+   h->hairpin_th->mv = pa->p_args.salt_conc;
+   h->hairpin_th->dv = pa->p_args.divalent_conc;
+   h->hairpin_th->dntp = pa->p_args.dntp_conc;
+   h->hairpin_th->dna_conc = pa->p_args.dna_conc;
+
    return h;
 }
+
+/* Create the thal oligo arg holder */
+thal_arg_holder *
+  create_thal_oligo_arg_holder (const p3_global_settings *pa)
+{
+   
+   thal_arg_holder *h
+     = (thal_arg_holder *) pr_safe_malloc(sizeof(thal_arg_holder));
+   
+   h->any = (thal_args *) pr_safe_malloc(sizeof(*h->any));
+   set_thal_oligo_default_args(h->any);
+   h->any->type = thal_any;
+   h->any->mv = pa->o_args.salt_conc;
+   h->any->dv = pa->o_args.divalent_conc;
+   h->any->dntp = pa->o_args.dntp_conc;
+   h->any->dna_conc = pa->o_args.dna_conc;
+   
+   h->end1 = (thal_args *) pr_safe_malloc(sizeof(*h->end1));
+   set_thal_oligo_default_args(h->end1);
+   h->end1->type = thal_end1;
+   h->end1->mv = pa->o_args.salt_conc;
+   h->end1->dv = pa->o_args.divalent_conc;
+   h->end1->dntp = pa->o_args.dntp_conc;
+   h->end1->dna_conc = pa->o_args.dna_conc;
+   
+   h->end2 = (thal_args *) pr_safe_malloc(sizeof(*h->end2));
+   set_thal_oligo_default_args(h->end2);
+   h->end2->type = thal_end2;
+   h->end2->mv = pa->o_args.salt_conc;
+   h->end2->dv = pa->o_args.divalent_conc;
+   h->end2->dntp = pa->o_args.dntp_conc;
+   h->end2->dna_conc = pa->o_args.dna_conc;
+   
+   h->hairpin_th  = (thal_args *) pr_safe_malloc(sizeof(*h->hairpin_th));
+   set_thal_oligo_default_args(h->hairpin_th);
+   h->hairpin_th->type = thal_hairpin;
+   h->hairpin_th->mv = pa->o_args.salt_conc;
+   h->hairpin_th->dv = pa->o_args.divalent_conc;
+   h->hairpin_th->dntp = pa->o_args.dntp_conc;
+   h->hairpin_th->dna_conc = pa->o_args.dna_conc;
+   
+   return h;
+}
+
 
 /* Free the thal arg holder */
 void
@@ -937,7 +1001,7 @@ destroy_thal_arg_holder(thal_arg_holder *h)
 }
 
 static thal_arg_holder *thal_arg_to_use = NULL;
-
+static thal_arg_holder *thal_oligo_arg_to_use = NULL;
 /* ============================================================ */
 /* END functions for thal_arg_holder                            */
 /* ============================================================ */
@@ -969,6 +1033,8 @@ destroy_dpal_thal_arg_holder() {
      destroy_dpal_arg_holder(dpal_arg_to_use);
    if(thal_arg_to_use)
      destroy_thal_arg_holder(thal_arg_to_use);
+   if(thal_oligo_arg_to_use)
+     destroy_thal_arg_holder(thal_oligo_arg_to_use);
 }
 
 const oligo_array *
@@ -1121,17 +1187,27 @@ choose_primers(const p3_global_settings *pa,
      scope, has not yet been initialized. */
   if (dpal_arg_to_use == NULL)
     dpal_arg_to_use = create_dpal_arg_holder();
-  if(thal_arg_to_use == NULL)
-     thal_arg_to_use = create_thal_arg_holder();
+   if(thal_arg_to_use == NULL) {
+      thal_arg_to_use = create_thal_arg_holder(pa);
+   } else {
+      destroy_thal_arg_holder(thal_arg_to_use);
+      thal_arg_to_use = create_thal_arg_holder(pa);
+   }
+   if(thal_oligo_arg_to_use == NULL) {
+      thal_oligo_arg_to_use = create_thal_oligo_arg_holder(pa);
+   } else {
+      destroy_thal_arg_holder(thal_oligo_arg_to_use);
+      thal_oligo_arg_to_use = create_thal_oligo_arg_holder(pa);
+   } 
   if (pa->primer_task == pick_primer_list) {
     make_complete_primer_lists(retval, pa, sa,
-                               dpal_arg_to_use,thal_arg_to_use);
+                               dpal_arg_to_use,thal_arg_to_use,thal_oligo_arg_to_use);
   } else if (pa->primer_task == pick_sequencing_primers) {
     pick_sequencing_primer_list(retval, pa, sa,
                                 dpal_arg_to_use,thal_arg_to_use);
   } else if (pa->primer_task == check_primers) {
     add_primers_to_check(retval, pa, sa,
-                         dpal_arg_to_use, thal_arg_to_use);
+                         dpal_arg_to_use, thal_arg_to_use, thal_oligo_arg_to_use);
   } else { /* The general way to pick primers */
     /* Populate the forward and reverse primer lists */
     if (make_detection_primer_lists(retval, pa, sa,
@@ -1142,7 +1218,7 @@ choose_primers(const p3_global_settings *pa,
     /* Populate the internal oligo lists */
     if ( pa->pick_internal_oligo) {
       if (make_internal_oligo_list(retval, pa, sa,
-                                   dpal_arg_to_use,thal_arg_to_use) != 0) {
+                                   dpal_arg_to_use,thal_oligo_arg_to_use) != 0) {
         /* There was an error*/
         return retval;
       }
@@ -1168,7 +1244,7 @@ choose_primers(const p3_global_settings *pa,
   /* Select primer pairs if needed */
   if (retval->output_type == primer_pairs) {
     choose_pair_or_triple(retval, pa, sa, dpal_arg_to_use, thal_arg_to_use,
-       &retval->best_pairs);
+       thal_oligo_arg_to_use, &retval->best_pairs);
   }
 
   return retval;
@@ -1198,6 +1274,7 @@ choose_pair_or_triple(p3retval *retval,
                       const seq_args *sa,
                       const dpal_arg_holder *dpal_arg_to_use,
                       const thal_arg_holder *thal_arg_to_use,
+		      const thal_arg_holder *thal_oligo_arg_to_use,
                       pair_array_t *best_pairs) {
   int i,j;   /* Loop index. */
   int n_int; /* Index of the internal oligo */
@@ -1477,7 +1554,7 @@ choose_pair_or_triple(p3retval *retval,
                 && pa->pick_internal_oligo) {
               if (choose_internal_oligo(retval, h.left, h.right,
                                         &n_int, sa, pa,
-                                        dpal_arg_to_use, thal_arg_to_use)!=0) {
+                                        dpal_arg_to_use, thal_oligo_arg_to_use)!=0) {
 
                 /* We were UNable to choose an internal oligo. */
                 if (update_stats) { 
@@ -1667,10 +1744,10 @@ choose_internal_oligo(p3retval *retval,
         p3_reverse_complement(oligo_seq, revc_oligo_seq);
           
         oligo_compl_thermod(h, &pa->o_args, &retval->intl.expl,
-                            thal_arg_to_use, oligo_seq, oligo_seq);
+                            thal_oligo_arg_to_use, oligo_seq, oligo_seq);
         if (!OK_OR_MUST_USE(h)) continue;
         oligo_hairpin(h, &pa->o_args,
-                      &retval->intl.expl, thal_arg_to_use,
+                      &retval->intl.expl, thal_oligo_arg_to_use,
                       oligo_seq);
         if (!OK_OR_MUST_USE(h)) continue;
       }
@@ -2051,7 +2128,8 @@ make_complete_primer_lists(p3retval *retval,
                   const p3_global_settings *pa,
                   const seq_args *sa,
                   const dpal_arg_holder *dpal_arg_to_use,
-                  const thal_arg_holder *thal_arg_to_use)
+                  const thal_arg_holder *thal_arg_to_use,
+		  const thal_arg_holder *thal_oligo_arg_to_use)
 {
   int extreme;
   int length, start;
@@ -2089,7 +2167,7 @@ make_complete_primer_lists(p3retval *retval,
 
     /* Pick all good in the given range */
     pick_primer_range(start, length, &extreme, &retval->intl,
-                      pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
+                      pa, sa, dpal_arg_to_use, thal_oligo_arg_to_use, retval);
   }
 
   return 0;
@@ -2107,7 +2185,8 @@ add_primers_to_check(p3retval *retval,
 		     const p3_global_settings *pa,
 		     const seq_args *sa,
 		     const dpal_arg_holder *dpal_arg_to_use,
-		     const thal_arg_holder *thal_arg_to_use)
+		     const thal_arg_holder *thal_arg_to_use,
+		     const thal_arg_holder *thal_oligo_arg_to_use)
 {
   int extreme = 0; /* Required when calling add_one_primer
 		      but not used in the current function. */
@@ -2124,7 +2203,7 @@ add_primers_to_check(p3retval *retval,
 
   if (sa->internal_input) {
     add_one_primer(sa->internal_input, &extreme, &retval->intl,
-                   pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
+                   pa, sa, dpal_arg_to_use, thal_oligo_arg_to_use, retval);
   }
 
   return 0;
