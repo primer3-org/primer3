@@ -4,22 +4,22 @@ STR	CCGCAGTAAGCTGCGG
 Calculated thermodynamical parameters for dimer:	16	dS = -146.99	dH = -50600	dG = -5011.14	t = 71.0918
 SEQ	//////----\\\\\\
 STR	CCGCAGTAAGCTGCGG
-Calculated thermodynamical parameters for dimer:	dS = -153.512	dH = -54000	dG = -6388.21	t = 15.7445
+Calculated thermodynamical parameters for dimer:	dS = -153.512	dH = -54000	dG = -6388.21	t = 11.5486
 SEQ	      TAAGCTGCGG
 SEQ	CCGCAG          
 STR	GGCGTC          
 STR	      GAATGACGCC
-Calculated thermodynamical parameters for dimer:	dS = -153.512	dH = -54000	dG = -6388.21	t = 15.7445
+Calculated thermodynamical parameters for dimer:	dS = -153.512	dH = -54000	dG = -6388.21	t = 11.5486
 SEQ	      TAAGCTGCGG
 SEQ	CCGCAG          
 STR	GGCGTC          
 STR	      GAATGACGCC
-Calculated thermodynamical parameters for dimer:	dS = -153.512	dH = -54000	dG = -6388.21	t = 15.7445
+Calculated thermodynamical parameters for dimer:	dS = -153.512	dH = -54000	dG = -6388.21	t = 11.5486
 SEQ	      TAAGCTGCGG
 SEQ	CCGCAG          
 STR	GGCGTC          
 STR	      GAATGACGCC
-Calculated thermodynamical parameters for dimer:	dS = -295.897	dH = -101000	dG = -20471.7	t = 33.5575
+Calculated thermodynamical parameters for dimer:	dS = -295.897	dH = -101000	dG = -20471.7	t = 31.0129
 SEQ	      TAAG      
 SEQ	CCGCAG    CTGCGG
 STR	GGCGTC    GACGCC
@@ -928,32 +928,32 @@ SEQ	GT
 SEQ	  GTGCAAAA
 STR	  CACGTTTT
 STR	 C        
-Calculated thermodynamical parameters for dimer:	dS = -149.687	dH = -48100	dG = -1674.58	t = -10.4438
-SEQ	AGTGTA T-    -----
-SEQ	      G  ACGG     
-STR	      C  TGCC     
-STR	       TG    AAAAC
-Calculated thermodynamical parameters for dimer:	dS = -145.277	dH = -48100	dG = -3042.25	t = -3.96056
-SEQ	AGTGTA T-    -----
-SEQ	      G  ACGG     
-STR	      C  TGCC     
-STR	       TG    AAAAC
-Calculated thermodynamical parameters for dimer:	dS = -112.307	dH = -39400	dG = -4567.89	t = -2.75841
+Calculated thermodynamical parameters for dimer:	dS = -170.579	dH = -51200	dG = 1705.21	t = -25.4978
+SEQ	AGT T GT    -----
+SEQ	   G A  ACGG     
+STR	   C T  TGCC     
+STR	    - G-    AAAAC
+Calculated thermodynamical parameters for dimer:	dS = -165.067	dH = -51200	dG = -4.385	t = -18.714
+SEQ	AGT T GT    -----
+SEQ	   G A  ACGG     
+STR	   C T  TGCC     
+STR	    - G-    AAAAC
+Calculated thermodynamical parameters for dimer:	dS = -112.307	dH = -39400	dG = -4567.89	t = -7.77551
 SEQ	AGTGTAGT    -----
 SEQ	        ACGG     
 STR	        TGCC     
 STR	     CTG    AAAAC
-Calculated thermodynamical parameters for dimer:	dS = -149.687	dH = -48100	dG = -1674.58	t = -10.4438
-SEQ	AGTGTA T-    -----
-SEQ	      G  ACGG     
-STR	      C  TGCC     
-STR	       TG    AAAAC
-Calculated thermodynamical parameters for dimer:	dS = -149.687	dH = -48100	dG = -1674.58	t = -10.4438
-SEQ	AGTGTA T-    -----
-SEQ	      G  ACGG     
-STR	      C  TGCC     
-STR	       TG    AAAAC
-Calculated thermodynamical parameters for dimer:	dS = -149.687	dH = -48100	dG = -1674.58	t = -10.4438
+Calculated thermodynamical parameters for dimer:	dS = -170.579	dH = -51200	dG = 1705.21	t = -25.4978
+SEQ	AGT T GT    -----
+SEQ	   G A  ACGG     
+STR	   C T  TGCC     
+STR	    - G-    AAAAC
+Calculated thermodynamical parameters for dimer:	dS = -170.579	dH = -51200	dG = 1705.21	t = -25.4978
+SEQ	AGT T GT    -----
+SEQ	   G A  ACGG     
+STR	   C T  TGCC     
+STR	    - G-    AAAAC
+Calculated thermodynamical parameters for dimer:	dS = -149.687	dH = -48100	dG = -1674.58	t = -14.3379
 SEQ	CAAAA    GT ------
 SEQ	     CCGT  C      
 STR	     GGCA  G      

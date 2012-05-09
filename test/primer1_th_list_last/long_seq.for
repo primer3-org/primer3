@@ -1,1276 +1,919 @@
 ACCEPTABLE LEFT PRIMERS
                                   1-based     #                self   self hair-  qual-
    # sequence                       start ln  N   GC%     Tm any_th end_th   pin   lity
-   0 ggcgatgctagctagctact             420 20  0 55.00 60.028 27.92 17.11 45.79  0.028
-   1 aggcgatgctagctagctac             419 20  0 55.00 60.028 25.93 19.27 45.79  0.028
-   2 tgctagctaggcgatgctag             411 20  0 55.00 60.028 18.85 18.85 34.61  0.028
-   3 actgatacgcgatgctagct             476 20  0 50.00 59.957 14.31  0.00  0.00  0.043
-   4 gatcgatgctagctaggcga             405 20  0 55.00 60.100 11.63 11.63  0.00  0.100
-   5 tcgatcgatgctagctaggc             403 20  0 55.00 60.100 14.43  4.26  0.00  0.100
-   6 tagctgatcgatcgtagcgg             565 20  0 55.00 60.101 20.84 12.83  0.00  0.101
-   7 gctgactgatcgatcgatgc             113 20  0 55.00 59.826 19.16 11.88 30.77  0.174
-   8 tatcatctctgcgcgatcga             361 20  0 50.00 59.747 18.39  0.00 35.72  0.253
-   9 atacgcgatgctagctagct             480 20  0 50.00 59.743 34.11 22.26 45.79  0.257
-  10 ctaggcgatgctagctagct             417 20  0 55.00 59.742 34.11 22.26 45.79  0.258
-  11 agctaggcgatgctagctag             415 20  0 55.00 59.742 12.97 12.97 35.50  0.258
-  12 ctagctaggcgatgctagct             413 20  0 55.00 59.742 14.10 12.65 38.99  0.258
-  13 gatgtgcggctagctagcta              89 20  0 55.00 60.312 23.61 18.39 44.99  0.312
-  14 atgtgcggctagctagctag              90 20  0 55.00 60.312 32.44 32.44 44.99  0.312
-  15 ggcgatctagctagctgact             583 20  0 55.00 59.671 13.17  3.02 35.42  0.329
-  16 acgcgatgctagctagctag             482 20  0 55.00 60.381 32.44 32.44 45.79  0.381
-  17 tcgatgctagctaggcgatg             407 20  0 55.00 60.382  9.74  0.00  0.00  0.382
-  18 gctgatcgatcgatgctagc             398 20  0 55.00 59.618 20.74 19.47 30.77  0.382
-  19 gctagctgatcgatcgatgc             394 20  0 55.00 59.618 19.16 15.93 30.77  0.382
-  20 atcatctctgcgcgatcgat             362 20  0 50.00 60.382 18.39  0.00 35.72  0.382
-  21 gactgatacgcgatgctagc             475 20  0 55.00 59.551  4.81  4.81  0.00  0.449
-  22 atcgatgctagctaggcgat             406 20  0 50.00 59.452 13.32 13.32  0.00  0.548
-  23 gctagctgactgatacgcga             468 20  0 55.00 60.589 13.65  0.00  0.00  0.589
-  24 agctagctgactgatacgcg             467 20  0 55.00 60.590 13.65  1.24  0.00  0.590
-  25 atgctagctaggcgatgcta             410 20  0 50.00 59.375  6.10  4.92  0.00  0.625
-  26 ctatcatctctgcgcgatcg             360 20  0 55.00 59.347  8.49  8.49 39.07  0.653
-  27 gatcgatgtgcggctagcta              85 20  0 55.00 60.662  4.04  0.00 46.36  0.662
-  28 atcgatgtgcggctagctag              86 20  0 55.00 60.663 12.97 12.97 46.36  0.663
-  29 gatgctagctaggcgatgct             409 20  0 55.00 60.668  2.84  4.12  0.00  0.668
-  30 gctactatcatctctgcgcg             356 20  0 55.00 59.273  0.00  0.00  0.00  0.727
-  31 gcgatcgatgctagctagct             373 20  0 55.00 60.731 34.11 22.26 45.79  0.731
-  32 cgtagcggcgatctagctag             577 20  0 60.00 60.791 11.05 11.05 35.42  0.791
-  33 tacgcgatgctagctagcta             481 20  0 50.00 59.105 34.11 22.97 45.79  0.895
-  34 cggcgatctagctagctgac             582 20  0 60.00 61.003 10.42  2.87 34.79  1.003
-  35 gctagctgatcgatcgtagc             563 20  0 55.00 58.995 18.37 18.37  0.00  1.005
-  36 gatcgatcgatgtgcggcta              81 20  0 55.00 61.006 13.79  0.00 39.24  1.006
-  37 cgatgctagctagctgatcg             555 20  0 55.00 58.993 31.29 29.14 45.79  1.007
-  38 atcgatcgatgtgcggctag              82 20  0 55.00 61.008 24.14  0.00 39.24  1.008
-  39 gctgactgatacgcgatgc              472 19  0 57.89 60.025  0.00  0.00  0.00  1.025
-  40 agctagctgatcatcgatgct            190 21  0 47.62 60.035 13.65  6.21  0.00  1.035
-  41 gctagctagctgactgatcga            105 21  0 52.38 60.037 29.42  0.00 42.45  1.037
-  42 tcatctctgcgcgatcgat              363 19  0 52.63 59.946 18.39  0.00 35.72  1.054
-  43 atcatctctgcgcgatcga              362 19  0 52.63 59.946 18.39  0.00 35.72  1.054
-  44 atcgatcgatgtgcggcta               82 19  0 52.63 59.945 24.14  0.00 39.24  1.055
-  45 gtagcggcgatctagctagc             578 20  0 60.00 61.071 12.46  3.21 37.51  1.071
-  46 gctgactagctgatcgatcg             596 20  0 55.00 58.924 11.69  7.82 43.26  1.076
-  47 gctagctgactgatcgatcg             109 20  0 55.00 58.924 12.79  9.85  0.00  1.076
-  48 gctgatcgatcgatgtgcg               78 19  0 57.89 60.097 24.66 13.37 42.69  1.097
-  49 tgtgcggctagctagctag               91 19  0 57.89 59.870 32.44 32.44 44.99  1.130
-  50 ggcgatgctagctagctacta            420 21  0 52.38 59.832 27.92 14.52 45.79  1.168
-  51 taggcgatgctagctagctac            418 21  0 52.38 59.832 25.93 19.27 45.79  1.168
-  52 tatcatctctgcgcgatcgat            361 21  0 47.62 60.172 18.39  6.37 35.72  1.172
-  53 gctagctagctgatcgatcga            390 21  0 52.38 60.172 29.42 17.65 42.45  1.172
-  54 gctagctagctgatcgatcga             70 21  0 52.38 60.172 29.42 17.65 42.45  1.172
-  55 tacgcgatgctagctagctag            481 21  0 52.38 60.172 32.44 32.44 45.79  1.172
-  56 gcatgcatgctactagctagc            453 21  0 52.38 60.172 33.92 10.68 46.41  1.172
-  57 tcatcgatcgatgcatgcatg            441 21  0 47.62 60.172 25.03 18.83 44.54  1.172
-  58 tcatcgatcgatgcatgcat             441 20  0 45.00 58.820 27.70 27.70 44.54  1.180
-  59 atcatcgatcgatgcatgca             440 20  0 45.00 58.820 28.45 17.45 44.54  1.180
-  60 catctctgcgcgatcgatg              364 19  0 57.89 59.810  8.23  8.23 35.72  1.190
-  61 tcgtagcggcgatctagcta             576 20  0 55.00 61.231  7.22  4.77 32.16  1.231
-  62 actgatacgcgatgctagcta            476 21  0 47.62 59.765 14.31  0.00  0.00  1.235
-  63 actgatcgatcgatgctagct            117 21  0 47.62 59.763 18.39  6.88 30.77  1.237
-  64 agctagctgatcgatcgatgt             73 21  0 47.62 59.763 13.65  0.00 30.77  1.237
-  65 tcgatgtgcggctagctag               87 19  0 57.89 60.242 12.97 12.97 46.36  1.242
-  66 tagcggcgatctagctagct             579 20  0 55.00 61.243 19.18 19.18 43.58  1.243
-  67 cgtagcggcgatctagcta              577 19  0 57.89 59.729  7.22  4.77 35.42  1.271
-  68 ctagctgatcgatcgtagcg             564 20  0 55.00 58.727 20.84 10.52  0.00  1.273
-  69 tagcggcgatctagctagc              579 19  0 57.89 59.725 12.46  4.60 37.51  1.275
-  70 catcgatcgatgcatgcatg             442 20  0 50.00 58.722 32.12 18.83 40.08  1.278
-  71 tcatctctgcgcgatcgatg             363 20  0 55.00 61.279 12.72 12.72 35.72  1.279
-  72 gctagctagctgatcgatcg             559 20  0 55.00 58.714 29.42  7.82 42.45  1.286
-  73 gctagctagctgatcgatcg             390 20  0 55.00 58.714 29.42  7.82 42.45  1.286
-  74 gctagctagctgatcgatcg              70 20  0 55.00 58.714 29.42  7.82 42.45  1.286
-  75 agcatcggattagctagctga              3 21  0 47.62 59.689 23.80 15.70  0.00  1.311
-  76 agctgatcgatcgtagcgg              566 19  0 57.89 60.315 20.84 12.83  0.00  1.315
-  77 cggcgatctagctagctga              582 19  0 57.89 59.650 16.81 11.71 34.79  1.350
-  78 ctagctgatcgatcgatgtgc             75 21  0 52.38 59.643 26.58 24.97 30.77  1.357
-  79 gctagctgatcgatcgatgtg             74 21  0 52.38 59.643  8.28  2.87 30.77  1.357
-  80 gctagctaggcgatgctagc             412 20  0 60.00 61.357 25.48 25.48 41.44  1.357
-  81 tagctagctgactgatacgcg            466 21  0 52.38 60.373 23.80  1.24  0.00  1.373
-  82 gctagctgactgatcgatcga            109 21  0 52.38 60.374 17.65 17.65  0.00  1.374
-  83 agctagctgactgatcgatcg            108 21  0 52.38 60.374 13.65  9.85  0.00  1.374
-  84 tgcatgctactagctagctga            456 21  0 47.62 59.620 18.14  4.19 43.02  1.380
-  85 atcgtagcggcgatctagc              575 19  0 57.89 60.388  7.73  0.00 41.93  1.388
-  86 cgatcgatgctagctaggcg             404 20  0 60.00 61.409 11.55  5.17  0.00  1.409
-  87 atcgatgtgcggctagcta               86 19  0 52.63 59.568  4.04  0.00 46.36  1.432
-  88 gctagctagctgactgatcg             105 20  0 55.00 58.563 29.42  0.00 42.45  1.437
-  89 atgctagctaggcgatgct              410 19  0 52.63 59.561  6.10  4.12  0.00  1.439
-  90 atacgcgatgctagctagcta            480 21  0 47.62 59.560 34.11 22.97 45.79  1.440
-  91 tgctagctagctgatcgatcg            558 21  0 52.38 60.441 34.11  7.82 45.79  1.441
-  92 cgatgctagctagctgatcga            555 21  0 52.38 60.441 33.61 20.06 42.51  1.441
-  93 tcgatgctagctagctgatcg            554 21  0 52.38 60.441 32.45 32.45 42.75  1.441
-  94 agctagctgatcgatcgtagc            562 21  0 52.38 60.441 21.71 21.71  0.00  1.441
-  95 gctagctagctgatcgatcgt            559 21  0 52.38 60.441 29.42  0.00 42.45  1.441
-  96 ctaggcgatgctagctagcta            417 21  0 52.38 59.559 34.11 22.97 45.79  1.441
-  97 tagctaggcgatgctagctag            414 21  0 52.38 59.559 13.56 12.97 37.05  1.441
-  98 ctagctaggcgatgctagcta            413 21  0 52.38 59.559 13.30 12.64 37.05  1.441
-  99 tagctgatcgatcgatgtgc              76 20  0 50.00 58.558 26.58 24.97 30.77  1.442
- 100 gatgctagctaggcgatgcta            409 21  0 52.38 60.444  6.10  4.92  0.00  1.444
- 101 atgctagctaggcgatgctag            410 21  0 52.38 60.444 18.85 18.85 34.61  1.444
- 102 gctagctgatcatcgatgct             191 20  0 50.00 58.539 11.29  6.70  0.00  1.461
- 103 agctagctgatcatcgatgc             190 20  0 50.00 58.539 16.98  4.42  0.00  1.461
- 104 gctgactgatacgcgatgct             472 20  0 55.00 61.494  0.00  0.00  0.00  1.494
- 105 agctgactgatacgcgatgc             471 20  0 55.00 61.494  0.61  0.00  0.00  1.494
- 106 gcgatcgatgctagctagcta            373 21  0 52.38 60.507 34.11 22.97 45.79  1.507
- 107 ggcgatctagctagctgacta            583 21  0 52.38 59.491 13.17  1.12 35.42  1.509
- 108 gatcgatgctagctaggcgat            405 21  0 52.38 60.510 16.48 16.48  0.00  1.510
- 109 atcgatcgatgctagctaggc            402 21  0 52.38 60.510 24.14  4.26 29.27  1.510
- 110 gatgtgcggctagctagct               89 19  0 57.89 60.540 33.39 19.18 44.99  1.540
- 111 ctgatcgatcgatgtgcgg               79 19  0 57.89 59.447 10.39  0.41 39.24  1.553
- 112 agctgatcgatcgatgtgcg              77 20  0 55.00 61.556 26.83 15.58 42.69  1.556
- 113 cgatcatcgatgctagctagc            548 21  0 52.38 59.444 29.88 29.88 43.66  1.556
- 114 taggcgatgctagctagcta             418 20  0 50.00 58.433 34.11 22.97 45.79  1.567
- 115 tagctaggcgatgctagcta             414 20  0 50.00 58.433 14.66 12.83 37.05  1.567
- 116 ctgatgctagtgatgcatgct             20 21  0 47.62 59.423 17.41  2.01 44.73  1.577
- 117 agctgatgctagtgatgcatg             18 21  0 47.62 59.423  0.00  0.00 44.73  1.577
- 118 tcatcgatgctagctagctga            551 21  0 47.62 59.417 19.61 15.33 45.79  1.583
- 119 agctagctactgatcgatgct            303 21  0 47.62 59.415 13.17  7.73  0.00  1.585
- 120 tcgatcgatgtgcggctag               83 19  0 57.89 60.606 14.43  0.00 39.24  1.606
- 121 gactgatcgatcgatgctagc            116 21  0 52.38 59.378 10.97  3.69 30.77  1.622
- 122 gctgactagctgatcgatcgt            596 21  0 52.38 60.642 13.00  0.00 43.26  1.642
- 123 agctagctgactgatcgatca            260 21  0 47.62 59.347 22.44 22.44 33.41  1.653
- 124 ctgactgatacgcgatgctag            473 21  0 52.38 59.312  0.00  0.00  0.00  1.688
- 125 ctagctgactgatacgcgatg            469 21  0 52.38 59.312  0.00  0.00  0.00  1.688
- 126 gctactatcatctctgcgcga            356 21  0 52.38 60.707  0.00  0.00  0.00  1.707
- 127 agctactatcatctctgcgcg            355 21  0 52.38 60.709  0.00  0.00  0.00  1.709
- 128 tgatgctagtgatgcatgct              21 20  0 45.00 58.290 17.41  2.01 44.73  1.710
- 129 atcatcgatcgatgcatgcat            440 21  0 42.86 59.288 27.70 27.70 44.54  1.712
- 130 acgcgatgctagctagcta              482 19  0 52.63 59.274 34.11 22.97 45.79  1.726
- 131 tacgcgatgctagctagct              481 19  0 52.63 59.274 34.11 22.26 45.79  1.726
- 132 actatcatctctgcgcgatc             359 20  0 50.00 58.270  1.58  0.00  0.00  1.730
- 133 actgatcgatcgatgctagc             117 20  0 50.00 58.270 18.39  8.75 30.77  1.730
- 134 gctagctgatcgatcgatgt              74 20  0 50.00 58.270  9.10  0.00 30.77  1.730
- 135 gcatgctactagctagctgac            457 21  0 52.38 59.233 10.45  0.68 43.02  1.767
- 136 ctatcatctctgcgcgatcga            360 21  0 52.38 60.771 18.39  0.00 35.72  1.771
- 137 gatacgcgatgctagctagct            479 21  0 52.38 60.775 34.11 22.26 45.79  1.775
- 138 atcgatgctagctaggcgatg            406 21  0 52.38 60.779 16.10  0.02  0.00  1.779
- 139 tgactgatacgcgatgctag             474 20  0 50.00 58.207  0.00  0.00  0.00  1.793
- 140 ctgactgatacgcgatgcta             473 20  0 50.00 58.207  0.00  0.00  0.00  1.793
- 141 tagctgactgatacgcgatg             470 20  0 50.00 58.207  0.00  0.00  0.00  1.793
- 142 ctgactgatcgatcgatgct             114 20  0 50.00 58.197 21.71  7.66 30.77  1.803
- 143 agctgactgatcgatcgatg             112 20  0 50.00 58.197 17.61  7.87 30.77  1.803
- 144 atgtgcggctagctagcta               90 19  0 52.63 59.184 23.61 18.39 44.99  1.816
- 145 tcggattagctagctgatgc               7 20  0 50.00 58.176 11.77 11.77 40.05  1.824
- 146 gcatcggattagctagctga               4 20  0 50.00 58.176 23.80 15.70  0.00  1.824
- 147 agcatcggattagctagctg               3 20  0 50.00 58.171 23.80  5.94  0.00  1.829
- 148 gatgctagctaggcgatgc              409 19  0 57.89 59.141  0.00  0.00  0.00  1.859
- 149 atcgtagcggcgatctagct             575 20  0 55.00 61.871  7.73  6.92 41.93  1.871
- 150 ctgatacgcgatgctagctag            477 21  0 52.38 59.113 12.97 12.97  0.00  1.887
- 151 tgcatgctactagctagctg             456 20  0 50.00 58.102 15.62  9.16 43.02  1.898
- 152 gatcgatgtgcggctagct               85 19  0 57.89 60.905 12.73  0.00 46.36  1.905
- 153 gctagctgactgatacgcg              468 19  0 57.89 59.086  4.46  1.24  0.00  1.914
- 154 ctctgcgcgatcgatgctag             367 20  0 60.00 61.946 17.64 13.63 35.72  1.946
- 155 tctgcgcgatcgatgctag              368 19  0 57.89 60.966 17.64 13.63 35.72  1.966
- 156 ctctgcgcgatcgatgcta              367 19  0 57.89 60.966 22.61 12.95 35.72  1.966
- 157 cgatgctagctaggcgatgc             408 20  0 60.00 61.968  7.08  0.00  0.00  1.968
- 158 gctgatgctagtgatgcatgc             19 21  0 52.38 60.973  8.53  8.53 44.73  1.973
- 159 gactgatacgcgatgctagct            475 21  0 52.38 60.975 14.31  0.00  0.00  1.975
- 160 gctagctgactgatacgcgat            468 21  0 52.38 60.975  4.46  0.00  0.00  1.975
- 161 tgatacgcgatgctagctag             478 20  0 50.00 57.994 12.97 12.97  0.00  2.006
- 162 ctgatacgcgatgctagcta             477 20  0 50.00 57.994 14.31  0.00  0.00  2.006
- 163 cgcgatcgatgctagctagc             372 20  0 60.00 62.011 29.88 29.88 40.33  2.011
- 164 gcgcgatcgatgctagctag             371 20  0 60.00 62.011 17.37 12.97 35.72  2.011
- 165 ctgatcgatcgatgctagct             399 20  0 50.00 57.983 14.63  0.00 30.77  2.017
- 166 agctgatcgatcgatgctag             397 20  0 50.00 57.983 22.53 13.26 28.24  2.017
- 167 ctagctgatcgatcgatgct             395 20  0 50.00 57.983 28.03 27.34 33.62  2.017
- 168 agctagctgatcgatcgatg             393 20  0 50.00 57.983 16.52  5.61 30.77  2.017
- 169 ctgatcgatcgatgctagct             118 20  0 50.00 57.983 14.63  0.00 30.77  2.017
- 170 agctagctgatcgatcgatg              73 20  0 50.00 57.983 16.52  5.61 30.77  2.017
- 171 catcggattagctagctgatgc             5 22  0 50.00 59.982 18.08 18.08 40.05  2.018
- 172 gcatcggattagctagctgatg             4 22  0 50.00 59.982 22.49 22.49 29.41  2.018
- 173 tcgatgctagctaggcgat              407 19  0 52.63 58.964  9.74  0.00  0.00  2.036
- 174 atcgatgctagctaggcga              406 19  0 52.63 58.964 11.63 11.63  0.00  2.036
- 175 actatcatctctgcgcgatcg            359 21  0 52.38 61.037  8.49  8.49 39.07  2.037
- 176 gcgcgatcgatgctagcta              371 19  0 57.89 61.037 17.37  0.00 35.72  2.037
- 177 atgcatgctactagctagctga           455 22  0 45.45 60.042 18.14  5.79 43.02  2.042
- 178 gctgatcgatcgatgctagct            398 21  0 52.38 61.044 22.84  7.55 30.77  2.044
- 179 agctgatcgatcgatgctagc            397 21  0 52.38 61.044 21.71 22.75 28.24  2.044
- 180 gctagctgatcgatcgatgct            394 21  0 52.38 61.044 28.03 27.34 33.62  2.044
- 181 agctagctgatcgatcgatgc            393 21  0 52.38 61.044 19.16 15.93 30.77  2.044
- 182 cgcgatcgatgctagctag              372 19  0 57.89 58.947 18.39 12.97 35.72  2.053
- 183 tcgtagcggcgatctagc               576 18  0 61.11 59.936  1.08  0.00 32.16  2.064
- 184 cgtagcggcgatctagct               577 18  0 61.11 59.935  6.92  6.92 35.42  2.065
- 185 gcggcgatctagctagct               581 18  0 61.11 59.933 19.18 19.18 34.71  2.067
- 186 agcggcgatctagctagc               580 18  0 61.11 59.933 12.46  3.21 37.51  2.067
- 187 ctgatgctagtgatgcatgc              20 20  0 50.00 57.924  8.53  8.53 44.73  2.076
- 188 gctgatgctagtgatgcatg              19 20  0 50.00 57.924  0.00  0.00 44.73  2.076
- 189 ctagctgactgatacgcgat             469 20  0 50.00 57.918  0.00  0.00  0.00  2.082
- 190 catgcatgctactagctagctg           454 22  0 50.00 59.917 14.63  9.16 43.02  2.083
- 191 ctagctgatcgatcgtagcgg            564 21  0 57.14 61.096 16.10 11.91  0.00  2.096
- 192 catcgatgctagctagctga             552 20  0 50.00 57.899 19.61 15.33 45.79  2.101
- 193 tcatcgatgctagctagctg             551 20  0 50.00 57.899 16.98  8.88 45.79  2.101
- 194 agctactatcatctctgcgc             355 20  0 50.00 57.898  0.00  0.00  0.00  2.102
- 195 gctagctactgatcgatgct             304 20  0 50.00 57.898  7.73  7.73  0.00  2.102
- 196 agctagctactgatcgatgc             303 20  0 50.00 57.898 13.17  0.00  0.00  2.102
- 197 agcatcggattagctagctgat             3 22  0 45.45 60.108 12.26  8.68  0.00  2.108
- 198 tgctagctaggcgatgcta              411 19  0 52.63 58.881 14.31  4.92  0.00  2.119
- 199 aagcatcggattagctagctg              2 21  0 47.62 58.879 23.80  5.94  0.00  2.121
- 200 tctgcgcgatcgatgcta               368 18  0 55.56 59.857 22.61 11.83 35.72  2.143
- 201 cgatgctagctaggcgatg              408 19  0 57.89 58.856  7.08  0.00  0.00  2.144
- 202 tcatcgatgctagctagctgat           551 22  0 45.45 59.845 20.20 16.65 45.79  2.155
- 203 atcatcgatgctagctagctga           550 22  0 45.45 59.845 19.61 14.91 45.79  2.155
- 204 agctagctgatcatcgatgcta           190 22  0 45.45 59.845 13.65  7.26  0.00  2.155
- 205 tagctagctgatcatcgatgct           189 22  0 45.45 59.845 11.29 10.29  0.00  2.155
- 206 atcgatcgatgtgcggct                82 18  0 55.56 60.166 24.14  0.00 39.24  2.166
- 207 gctagctgactgatcgatca             261 20  0 50.00 57.829 22.44 22.44 33.41  2.171
- 208 tagctagctgactgatcgatcg           107 22  0 50.00 60.174 23.80  9.85  0.00  2.174
- 209 gcatgctactagctagctga             457 20  0 50.00 57.814 18.14  4.34 43.02  2.186
- 210 tcgatgctactagctagctga            203 21  0 47.62 58.798 18.14  4.34 43.02  2.202
- 211 agctgatcatcatcgatgct             515 20  0 45.00 57.788  6.86  0.00 35.24  2.212
- 212 agctagctgactgatcgatcat           260 22  0 45.45 59.778 21.99 13.15 32.24  2.222
- 213 atcgatgtgcggctagct                86 18  0 55.56 59.771 12.73  0.00 46.36  2.229
- 214 tgactgatacgcgatgctagc            474 21  0 52.38 61.238  4.81  4.81  0.00  2.238
- 215 gctgactgatacgcgatgcta            472 21  0 52.38 61.238  0.00  0.00  0.00  2.238
- 216 tagctgactgatacgcgatgc            470 21  0 52.38 61.238  0.61  0.00  0.00  2.238
- 217 tagctagctgatcgatcgtagc           561 22  0 50.00 60.238 21.71 21.71  0.00  2.238
- 218 gctagctagctgatcgatcgta           559 22  0 50.00 60.238 29.42  0.00 42.45  2.238
- 219 tgatcgatcgatgctagctagg           400 22  0 50.00 60.239 21.71  1.75 30.77  2.239
- 220 ggcgatgctagctagctactat           420 22  0 50.00 60.239 27.92 17.20 45.79  2.239
- 221 gctgactgatcgatcgatgct            113 21  0 52.38 61.244 21.71  7.66 30.77  2.244
- 222 agctgactgatcgatcgatgc            112 21  0 52.38 61.244 19.16 14.32 30.77  2.244
- 223 gatcgatcgatgtgcggct               81 19  0 57.89 61.263 13.79  0.00 39.24  2.263
- 224 gctgatcatcgatgctactagc           195 22  0 50.00 59.727 13.54 11.85 45.61  2.273
- 225 gctagctgatcatcgatgctac           191 22  0 50.00 59.727  4.48  0.78  0.00  2.273
- 226 ctatcatcgatcgatgcatgca           438 22  0 45.45 59.725 21.67 20.24 44.54  2.275
- 227 actatcatcgatcgatgcatgc           437 22  0 45.45 59.725 24.60  8.53 44.54  2.275
- 228 gatcgatcgatgtgcggc                81 18  0 61.11 59.714 12.64  0.00 39.24  2.286
- 229 ctagctagctgactgatacgc            465 21  0 52.38 58.703 10.57  0.00  0.00  2.297
- 230 tagctgatcgatcgatgtgcg             76 21  0 52.38 61.299 26.83 15.58 42.69  2.299
- 231 agctgatcgatcgatgtgc               77 19  0 52.63 58.698 26.58 24.97 30.77  2.302
- 232 gctgatcatcatcgatgctagc           516 22  0 50.00 60.302  6.17  5.54 35.24  2.302
- 233 gctagctgatcatcatcgatgc           512 22  0 50.00 60.302 16.98  2.80 35.24  2.302
- 234 aagcatcggattagctagctga             2 22  0 45.45 60.306 23.80 15.70  0.00  2.306
- 235 gatgtgcggctagctagctag             89 21  0 57.14 61.309 32.44 32.44 44.99  2.309
- 236 gatcgatcgtagcggcga               570 18  0 61.11 60.318  8.57  4.69 43.59  2.318
- 237 tatcatcgatcgatgcatgca            439 21  0 42.86 58.678 30.67 20.29 44.54  2.322
- 238 atcggattagctagctgatgc              6 21  0 47.62 58.673 11.77 11.77 40.05  2.327
- 239 gcatcggattagctagctgat              4 21  0 47.62 58.673 12.26  8.68  0.00  2.327
- 240 gcggcgatctagctagctg              581 19  0 63.16 61.329 12.70  3.90 34.71  2.329
- 241 tgctactagctagctgactga            460 21  0 47.62 58.648 15.08  0.00 43.02  2.352
- 242 tgctagtgatgcatgctagt              24 20  0 45.00 57.636 20.17  6.58 31.61  2.364
- 243 ctactatcatctctgcgcga             357 20  0 50.00 57.636  0.00  0.00  0.00  2.364
- 244 actagctagctgactgatacgc           464 22  0 50.00 60.368 17.09  0.00  0.00  2.368
- 245 tgctagctagctgatcgatc             558 20  0 50.00 57.613 34.11 14.91 45.79  2.387
- 246 gatgctagctagctgatcga             556 20  0 50.00 57.613 25.55 10.24 45.79  2.387
- 247 tcgatgctagctagctgatc             554 20  0 50.00 57.613 18.13 13.13 45.79  2.387
- 248 gctagctagctgatcatcga             187 20  0 50.00 57.613 29.42  0.00 42.45  2.387
- 249 atgcatgctactagctagctg            455 21  0 47.62 58.602 15.62  9.16 43.02  2.398
- 250 catgcatgctactagctagct            454 21  0 47.62 58.602 19.18 19.18 43.02  2.398
- 251 tctctgcgcgatcgatgcta             366 20  0 55.00 62.413 22.61 12.95 35.72  2.413
- 252 tgatcgatcgatgctagctagt           119 22  0 45.45 59.586 21.71  0.93 30.77  2.414
- 253 actgatcgatcgatgctagcta           117 22  0 45.45 59.586 18.39  3.16 30.77  2.414
- 254 tagctagctgatcgatcgatgt            72 22  0 45.45 59.586  9.10  0.00 30.77  2.414
- 255 cgatcgatgctagctagctag            374 21  0 52.38 58.577 32.44 32.44 45.79  2.423
- 256 cgcgatgctagctagctag              483 19  0 57.89 58.573 32.44 32.44 45.79  2.427
- 257 aggcgatgctagctagcta              419 19  0 52.63 58.572 34.11 22.97 45.79  2.428
- 258 taggcgatgctagctagct              418 19  0 52.63 58.572 34.11 22.26 45.79  2.428
- 259 agctaggcgatgctagcta              415 19  0 52.63 58.572 14.31  0.00 35.50  2.428
- 260 tagctaggcgatgctagct              414 19  0 52.63 58.572 12.65 12.65 38.99  2.428
- 261 gctgactagctgatcgatcgta           596 22  0 50.00 60.431  5.46  0.00 43.26  2.431
- 262 gatcgatcgatgctagctagg            401 21  0 52.38 58.567 18.99  1.75 30.77  2.433
- 263 gctagctagctgactgatcgat           105 22  0 50.00 60.434 29.42  0.00 42.45  2.434
- 264 gatcgatgctagctaggcg              405 19  0 57.89 58.563 11.55  4.94  0.00  2.437
- 265 cgatcgatgctagctaggc              404 19  0 57.89 58.563 10.69  4.26  0.00  2.437
- 266 tagctagctgactgatacgc             466 20  0 50.00 57.549 23.80  0.00  0.00  2.451
- 267 agctagctgactgatcgatc             260 20  0 50.00 57.536 14.91 14.91  0.00  2.464
- 268 agctagctgactgatcgatc             108 20  0 50.00 57.536 14.91 14.91  0.00  2.464
- 269 aaagcatcggattagctagctg             1 22  0 45.45 59.524 23.80  5.94  0.00  2.476
- 270 aggcgatgctagctagctact            419 21  0 52.38 61.483 27.92 18.00 45.79  2.483
- 271 tcggattagctagctgatgcta             7 22  0 45.45 59.513 16.84  7.42 45.43  2.487
- 272 gctgactgatcgatcatcatgc           265 22  0 50.00 60.493 20.50 19.80 35.80  2.493
- 273 tagctactatcatctctgcgcg           354 22  0 50.00 60.495  0.00  0.00  0.00  2.495
- 274 ggcgatctagctagctgactag           583 22  0 54.55 60.496 13.17  6.98 44.57  2.496
- 275 ctgatcgatcgatgtgcggc              79 20  0 60.00 62.497 10.39  0.00 39.24  2.497
- 276 gctgatcgatcgatgtgcgg              78 20  0 60.00 62.497 24.66 16.90 39.24  2.497
- 277 tcgtagcggcgatctagct              576 19  0 57.89 61.503  6.92  6.92 32.16  2.503
- 278 agcggcgatctagctagct              580 19  0 57.89 61.519 19.18 19.18 39.54  2.519
- 279 ggcgatgctagctagctac              420 19  0 57.89 58.479 25.93 19.27 45.79  2.521
- 280 catcgatgctagctagctgatc           552 22  0 50.00 59.470 19.90 14.86 45.79  2.530
- 281 gatcatcgatgctagctagctg           549 22  0 50.00 59.470 16.68  8.88 45.79  2.530
- 282 ctagctagctgatcatcgatgc           188 22  0 50.00 59.470 16.98  4.42  0.00  2.530
- 283 gctagctagctgatcatcgatg           187 22  0 50.00 59.470 29.42 15.71 42.45  2.530
- 284 tcatctctgcgcgatcga               363 18  0 55.56 59.468 18.39  0.00 35.72  2.532
- 285 tcgatcgatgtgcggcta                83 18  0 55.56 59.465 14.43  0.00 39.24  2.535
- 286 acgcgatgctagctagct               482 18  0 55.56 59.460 34.11 22.26 45.79  2.540
- 287 tgatcgatcgatgtgcggc               80 19  0 57.89 61.549 16.02  3.29 39.24  2.549
- 288 atcatcgatcgatgcatgcatg           440 22  0 45.45 60.559 28.45 18.83 44.54  2.559
- 289 gatacgcgatgctagctagcta           479 22  0 50.00 60.559 34.11 22.97 45.79  2.559
- 290 atacgcgatgctagctagctag           480 22  0 50.00 60.560 32.44 32.44 45.79  2.560
- 291 ctagctaggcgatgctagctag           413 22  0 54.55 60.561 17.64 17.64 41.39  2.561
- 292 gctagctagctgatcgatcgat           390 22  0 50.00 60.561 29.42 24.92 42.45  2.561
- 293 gctagctagctgatcgatcgat            70 22  0 50.00 60.561 29.42 24.92 42.45  2.561
- 294 cgatcgatgctagctagcta             374 20  0 50.00 57.421 34.11 22.97 45.79  2.579
- 295 ctgcgcgatcgatgctag               369 18  0 61.11 59.415 15.39  9.26 35.72  2.585
- 296 aagcatcggattagctagct               2 20  0 45.00 57.413 19.18 19.18  0.00  2.587
- 297 gctagctgatcatcgatgcta            191 21  0 47.62 58.410 11.36  7.26  0.00  2.590
- 298 tagctagctgatcatcgatgc            189 21  0 47.62 58.410 16.98  4.42  0.00  2.590
- 299 actgatacgcgatgctagc              476 19  0 52.63 58.407  4.81  4.81  0.00  2.593
- 300 catcgatgctagctagctgat            552 21  0 47.62 58.406 20.20 16.65 45.79  2.594
- 301 atcatcgatgctagctagctg            550 21  0 47.62 58.406 16.98  8.88 45.79  2.594
- 302 atcgtagcggcgatctagcta            575 21  0 52.38 61.594  7.73  4.77 41.93  2.594
- 303 gctagctgactgatcgatcatc           261 22  0 50.00 59.406 19.14 17.05 32.24  2.594
- 304 atcgatcgatgctagctagg             402 20  0 50.00 57.396 24.14  1.75 29.27  2.604
- 305 atctctgcgcgatcgatgc              365 19  0 57.89 61.618 17.69 17.69 35.72  2.618
- 306 tgatcgatcgtagcggcg               569 18  0 61.11 60.621 16.51  0.00  0.00  2.621
- 307 gcatgctactagctagctgact           457 22  0 50.00 60.630 10.45  0.00 43.02  2.630
- 308 gatcgatgtgcggctagctag             85 21  0 57.14 61.630 12.97 12.97 46.36  2.630
- 309 atgtgcggctagctagct                90 18  0 55.56 59.369 33.39 19.18 44.99  2.631
- 310 atcatctctgcgcgatcgatg            362 21  0 52.38 61.633 12.72 12.72 35.72  2.633
- 311 tagctgatgctagtgatgca              17 20  0 45.00 57.345  0.00  0.00 45.43  2.655
- 312 agctagctgatcgatcgtag             562 20  0 50.00 57.344 13.65 12.05  0.00  2.656
- 313 ctagctagctgatcgatcgt             560 20  0 50.00 57.344 13.00  0.00  0.00  2.656
- 314 gctagctgactgatcgatcat            261 21  0 47.62 58.339 21.99 13.15 32.24  2.661
- 315 ctgatcgatcgtagcggcg              568 19  0 63.16 61.664 10.14  0.00  0.00  2.664
- 316 gcgatgctagctagctacta             421 20  0 50.00 57.333 27.92 14.52 45.79  2.667
- 317 ctgactgatacgcgatgct              473 19  0 52.63 58.330  0.00  0.00  0.00  2.670
- 318 agctgactgatacgcgatg              471 19  0 52.63 58.330  0.00  0.00  0.00  2.670
- 319 gctagctgatcgatcgtagcg            563 21  0 57.14 61.676 19.08 11.18  0.00  2.676
- 320 tcatcgatcgatgcatgca              441 19  0 47.37 58.308 25.03 20.24 44.54  2.692
- 321 ctagctgactgatcgatcga             110 20  0 50.00 57.276 17.65 17.65  0.00  2.724
- 322 tgatgctagtgatgcatgctag            21 22  0 45.45 59.262 17.25 17.25 44.73  2.738
- 323 ctgatgctagtgatgcatgcta            20 22  0 45.45 59.262  4.10  3.02 44.73  2.738
- 324 tagctgatgctagtgatgcatg            17 22  0 45.45 59.262  0.00  0.00 44.73  2.738
- 325 gatgctagtgatgcatgctagt            22 22  0 45.45 59.261 20.17  8.72 44.73  2.739
- 326 cgatgctactagctagctga             204 20  0 50.00 57.257 18.14  4.34 43.02  2.743
- 327 tcgatgctactagctagctg             203 20  0 50.00 57.257 14.63  7.64 43.02  2.743
- 328 agctagctactgatcgatgcta           303 22  0 45.45 59.252 13.17  8.06  0.00  2.748
- 329 tagctagctactgatcgatgct           302 22  0 45.45 59.252 23.20  7.73  0.00  2.748
- 330 tcgatgctactagctagctgat           203 22  0 45.45 59.252  4.61  0.00 43.02  2.748
- 331 atcgatgctactagctagctga           202 22  0 45.45 59.252 18.14  4.34 43.02  2.748
- 332 tcatcgatgctactagctagct           200 22  0 45.45 59.252 19.18 19.18 43.02  2.748
- 333 gactgatacgcgatgctagcta           475 22  0 50.00 60.751 14.31  0.00  0.00  2.751
- 334 actgatacgcgatgctagctag           476 22  0 50.00 60.752 12.97 12.97  0.00  2.752
- 335 gactgatcgatcgatgctagct           116 22  0 50.00 60.753 13.30  4.86 30.77  2.753
- 336 gctagctgactgatcgatcgat           109 22  0 50.00 60.753 24.92 24.92 35.62  2.753
- 337 tgcgcgatcgatgctagcta             370 20  0 55.00 62.756 22.61  5.24 35.72  2.756
- 338 gcggcgatctagctagctga             581 20  0 60.00 62.765 16.81 11.71 34.79  2.765
- 339 agcggcgatctagctagctg             580 20  0 60.00 62.771 12.70  3.90 40.44  2.771
- 340 ctactatcatctctgcgcgatc           357 22  0 50.00 59.220  1.58  0.00  0.00  2.780
- 341 gatgctagctagctgatcgatc           556 22  0 50.00 59.213 25.55 16.34 45.79  2.787
- 342 tatcatctctgcgcgatcg              361 19  0 52.63 58.199  8.49  8.49 39.07  2.801
- 343 tactatcatctctgcgcgatcg           358 22  0 50.00 60.811  8.49  8.49 39.07  2.811
- 344 tagctagctgactgatcgatca           259 22  0 45.45 59.187 23.80 22.44 33.41  2.813
- 345 tcgatcatcgatgctagctagc           547 22  0 50.00 60.816 29.88 29.88 43.18  2.816
- 346 gctgatcgatcgatgctagcta           398 22  0 50.00 60.816 22.84  7.92 30.77  2.816
- 347 tagctgatcgatcgatgctagc           396 22  0 50.00 60.816 25.79 22.75 31.20  2.816
- 348 gctagctgatcgatcgatgcta           394 22  0 50.00 60.816 27.92 26.25 31.20  2.816
- 349 tagctagctgatcgatcgatgc           392 22  0 50.00 60.816 19.16 15.93 30.77  2.816
- 350 ctaggcgatgctagctagctac           417 22  0 54.55 60.817 25.93 19.27 45.79  2.817
- 351 atgctagctagctgatcgatcg           557 22  0 50.00 60.818 34.11  7.82 45.79  2.818
- 352 cgatgctagctagctgatcgat           555 22  0 50.00 60.818 33.61 22.47 42.51  2.818
- 353 atcgatgctagctagctgatcg           553 22  0 50.00 60.818 32.45 32.45 42.75  2.818
- 354 cgatcatcgatgctagctagct           548 22  0 50.00 60.818 34.11 22.26 42.79  2.818
- 355 gctaggcgatgctagctag              416 19  0 57.89 58.179 12.97 12.97 30.46  2.821
- 356 ctagctaggcgatgctagc              413 19  0 57.89 58.179 14.10  5.00 32.80  2.821
- 357 gctagctaggcgatgctag              412 19  0 57.89 58.179 18.85 18.85 34.61  2.821
- 358 catctctgcgcgatcgatgc             364 20  0 60.00 62.823 17.69 17.69 35.72  2.823
- 359 tgatgctagtgatgcatgcta             21 21  0 42.86 58.170  4.10  3.02 44.73  2.830
- 360 aaagcatcggattagctagct              1 21  0 42.86 58.168 19.18 19.18  0.00  2.832
- 361 atgctagtgatgcatgctagt             23 21  0 42.86 58.164 20.17  7.00 43.35  2.836
- 362 gcgatctagctagctgactag            584 21  0 52.38 58.161 13.17  6.98 44.57  2.839
- 363 ctgactgatcgatcgatgctag           114 22  0 50.00 59.155 17.93 14.69 30.77  2.845
- 364 ctagctgactgatcgatcgatg           110 22  0 50.00 59.155 17.61  7.87 30.77  2.845
- 365 tactatcatctctgcgcgatc            358 21  0 47.62 58.155  1.58  0.00  0.00  2.845
- 366 gctagctactgatcgatgctac           304 22  0 50.00 59.151  4.59  0.13  0.00  2.849
- 367 ctactatcatctctgcgcgat            357 21  0 47.62 58.150  1.58  0.00  0.00  2.850
- 368 catcgatgctactagctagctg           201 22  0 50.00 59.149 14.63  7.64 43.02  2.851
- 369 agctgatcatcgatgctact             194 20  0 45.00 57.134 13.24  4.78  0.00  2.866
- 370 atgctagctagctgatcgatc            557 21  0 47.62 58.132 34.11 14.91 45.79  2.868
- 371 gatgctagctagctgatcgat            556 21  0 47.62 58.132 25.55 13.27 45.79  2.868
- 372 atcgatgctagctagctgatc            553 21  0 47.62 58.132 20.20 15.15 45.79  2.868
- 373 gatcatcgatgctagctagct            549 21  0 47.62 58.132 34.11 22.26 45.79  2.868
- 374 gctagctagctgatcatcgat            187 21  0 47.62 58.132 29.42  0.00 42.45  2.868
- 375 tatcatcgatcgatgcatgcat           439 22  0 40.91 59.132 30.67 27.70 44.54  2.868
- 376 atgcatgctactagctagct             455 20  0 45.00 57.114 19.18 19.18 43.02  2.886
- 377 tgctactagctagctgactgat           460 22  0 45.45 59.112 15.08  0.00 43.02  2.888
- 378 atgctactagctagctgactga           459 22  0 45.45 59.112 15.08  0.81 43.02  2.888
- 379 tgcatgctactagctagctgac           456 22  0 50.00 60.889 15.62  4.81 43.02  2.889
- 380 ctgatacgcgatgctagct              477 19  0 52.63 58.107 14.31  0.00  0.00  2.893
- 381 ggcgatctagctagctgac              583 19  0 57.89 58.106 10.42  2.87 35.42  2.894
- 382 cgatgtgcggctagctagc               88 19  0 63.16 61.902 28.99 28.99 46.36  2.902
- 383 tgctactagctagctgactg             460 20  0 50.00 57.090 15.08  0.00 43.02  2.910
- 384 tgactgatcgatcgatgctag            115 21  0 47.62 58.084 17.93 14.69 30.77  2.916
- 385 ctgactgatcgatcgatgcta            114 21  0 47.62 58.084 21.71 10.14 30.77  2.916
- 386 tagctgactgatcgatcgatg            111 21  0 47.62 58.084 17.61  7.87 30.77  2.916
- 387 catgcatgctactagctagc             454 20  0 50.00 57.074 17.09 10.68 44.40  2.926
- 388 gcatgcatgctactagctag             453 20  0 50.00 57.074 33.92 15.63 46.41  2.926
- 389 actgatcgatcatcatgctagc           269 22  0 45.45 59.071 21.99  4.81 35.80  2.929
- 390 tcgatgtgcggctagcta                87 18  0 55.56 59.064  4.04  0.00 46.36  2.936
- 391 agctgactgatcgatcatca             264 20  0 45.00 57.064 21.56 21.56 35.62  2.936
- 392 ctagctagctgatcgatcga             391 20  0 50.00 57.060 17.65 17.65  0.00  2.940
- 393 ctagctagctgatcgatcga              71 20  0 50.00 57.060 17.65 17.65  0.00  2.940
- 394 cggattagctagctgatgcta              8 21  0 47.62 58.058 16.84  0.00 45.43  2.942
- 395 gatcgatcgatgtgcggctag             81 21  0 57.14 61.947 13.79  0.00 39.24  2.947
- 396 ctatcatcgatcgatgcatgc            438 21  0 47.62 58.052 21.67  8.53 44.54  2.948
- 397 tgctagctaggcgatgct               411 18  0 55.56 59.050 14.31  4.12  0.00  2.950
- 398 gctgatcgatcgtagcggc              567 19  0 63.16 61.960 15.41 14.43  0.00  2.960
- 399 cgatcgatgtgcggctag                84 18  0 61.11 59.032  6.71  0.00 39.24  2.968
- 400 catgctactagctagctgactg           458 22  0 50.00 59.013 11.52  4.39 43.02  2.987
- 401 tgatcgatcgatgtgcggct              80 20  0 55.00 62.987 17.05  0.00 39.24  2.987
- 402 ctgactgatcgatcatcatgct           266 22  0 45.45 59.004 15.95  1.61 35.80  2.996
- 403 agctgactgatcgatcatcatg           264 22  0 45.45 59.004 17.77 14.64 35.80  2.996
- 404 agctagctgactgatacgcga            467 21  0 52.38 62.000 13.65  0.00  0.00  3.000
- 405 tgactgatcgatcgatgctagc           115 22  0 50.00 61.008 13.41  7.96 30.77  3.008
- 406 gctgactgatcgatcgatgcta           113 22  0 50.00 61.008 21.71 10.14 30.77  3.008
- 407 tagctgactgatcgatcgatgc           111 22  0 50.00 61.008 19.16 14.32 30.77  3.008
- 408 agctagctgatcgatcgatgtg            73 22  0 50.00 61.010 13.65  2.87 30.77  3.010
- 409 ctgatcgatcgatgctagctag           399 22  0 50.00 58.963 14.63 12.97 30.77  3.037
- 410 ctagctgatcgatcgatgctag           395 22  0 50.00 58.963 31.20 31.20 37.54  3.037
- 411 ctagctagctgatcgatcgatg           391 22  0 50.00 58.963 16.52  5.61 30.77  3.037
- 412 ctgatcgatcgatgctagctag           118 22  0 50.00 58.963 14.63 12.97 30.77  3.037
- 413 ctagctagctgatcgatcgatg            71 22  0 50.00 58.963 16.52  5.61 30.77  3.037
- 414 gcgatgctagctagctactatc           421 22  0 50.00 58.958 27.92 21.13 45.79  3.042
- 415 gactgatcgatcatcatgctagc          268 23  0 47.83 60.053 19.75  4.07 35.80  3.053
- 416 gatgtgcggctagctagc                89 18  0 61.11 58.936 28.99 28.99 46.36  3.064
- 417 gctagtgatgcatgctagtagtg           25 23  0 47.83 59.929 20.17  5.61  0.00  3.071
- 418 gctactatcatctctgcgcgat           356 22  0 50.00 61.073  1.58  0.00  0.00  3.073
- 419 atcggattagctagctgatgcta            6 23  0 43.48 59.922 16.84  9.64 45.43  3.078
- 420 gtagcggcgatctagctag              578 19  0 57.89 57.903 11.05 11.05 35.42  3.097
- 421 tgactgatcgatcatcatgct            267 21  0 42.86 57.900 22.22  7.32 35.80  3.100
- 422 ctagctactatcatctctgcgc           353 22  0 50.00 58.892  0.00  0.00  0.00  3.108
- 423 gctagctactatcatctctgcg           352 22  0 50.00 58.892  4.46  0.00  0.00  3.108
- 424 ctagctagctactgatcgatgc           301 22  0 50.00 58.892  8.77  0.00  0.00  3.108
- 425 gctagctagctactgatcgatg           300 22  0 50.00 58.892 29.42  2.93 42.45  3.108
- 426 cgatgctactagctagctgatc           204 22  0 50.00 58.892 10.28  6.17 43.02  3.108
- 427 gctactatcatcgatcgatgca           434 22  0 45.45 58.888 26.43 18.48 44.54  3.112
- 428 ctatcatcgatcgatgcatgcat          438 23  0 43.48 60.114 27.70 27.70 44.54  3.114
- 429 catcgatcgatgctagtatgct           325 22  0 45.45 58.885 32.12  4.38 40.08  3.115
- 430 tcgatcatcgatgctagctag            547 21  0 47.62 57.879 12.97 12.97 43.18  3.121
- 431 tgatcgatcgatgctagctag            400 21  0 47.62 57.879 21.71 12.97 30.77  3.121
- 432 ctgatcgatcgatgctagcta            399 21  0 47.62 57.879 14.63  0.00 30.77  3.121
- 433 tagctgatcgatcgatgctag            396 21  0 47.62 57.879 27.85 21.44 31.20  3.121
- 434 ctagctgatcgatcgatgcta            395 21  0 47.62 57.879 27.92 26.25 31.20  3.121
- 435 tagctagctgatcgatcgatg            392 21  0 47.62 57.879 16.52  5.61 30.77  3.121
- 436 tgatcgatcgatgctagctag            119 21  0 47.62 57.879 21.71 12.97 30.77  3.121
- 437 ctgatcgatcgatgctagcta            118 21  0 47.62 57.879 14.63  0.00 30.77  3.121
- 438 tagctagctgatcgatcgatg             72 21  0 47.62 57.879 16.52  5.61 30.77  3.121
- 439 gatcgatcgatgctagctagt            120 21  0 47.62 57.878 18.99  0.00 30.77  3.122
- 440 ctatcatctctgcgcgatcgat           360 22  0 50.00 61.132 18.39  6.37 35.72  3.132
- 441 gcgatgctagctagctactat            421 21  0 47.62 57.864 27.92 17.20 45.79  3.136
- 442 tgatcgatcgtagcggcga              569 19  0 57.89 62.144 16.51  4.69 43.59  3.144
- 443 tcgtagcggcgatctagctag            576 21  0 57.14 62.173 11.05 11.05 32.16  3.173
- 444 tactagctagctgactgatacgc          463 23  0 47.83 60.176  8.90  0.00  0.00  3.176
- 445 ctgatcatcatcgatgctagct           517 22  0 45.45 58.807 14.31  0.00 35.24  3.193
- 446 agctgatcatcatcgatgctag           515 22  0 45.45 58.807  1.65  0.00 35.24  3.193
- 447 ctagctgatcatcatcgatgct           513 22  0 45.45 58.807  9.21  3.04 35.24  3.193
- 448 agctagctgatcatcatcgatg           511 22  0 45.45 58.807 15.71 15.71 37.94  3.193
- 449 ctgatcgatcatcatgctagct           270 22  0 45.45 58.807 21.99  0.00 35.80  3.193
- 450 ctagctgactgatcgatcgat            110 21  0 47.62 57.806 24.92 24.92 35.62  3.194
- 451 ttagctagctgactgatcgatca          258 23  0 43.48 59.798 23.80 22.44 33.41  3.202
- 452 tagctactatcatctctgcgc            354 21  0 47.62 57.798  0.00  0.00  0.00  3.202
- 453 gctagctactgatcgatgcta            304 21  0 47.62 57.798  9.00  8.06  0.00  3.202
- 454 tagctagctactgatcgatgc            302 21  0 47.62 57.798 23.20  0.00  0.00  3.202
- 455 tcatcgatgctactagctagc            200 21  0 47.62 57.798 17.09 10.05 44.40  3.202
- 456 cgatgctactagctagctgat            204 21  0 47.62 57.792  4.13  0.00 43.02  3.208
- 457 atcgatgctactagctagctg            202 21  0 47.62 57.792 14.63  7.64 43.02  3.208
- 458 catcgatgctactagctagct            201 21  0 47.62 57.792 19.18 19.18 43.02  3.208
- 459 tctctgcgcgatcgatgc               366 18  0 61.11 61.229 17.69 17.69 35.72  3.229
- 460 aggcgatgctagctagctacta           419 22  0 50.00 61.230 27.92 14.52 45.79  3.230
- 461 taggcgatgctagctagctact           418 22  0 50.00 61.230 27.92 20.61 45.79  3.230
- 462 ctctgcgcgatcgatgct               367 18  0 61.11 61.232 22.61  0.00 35.72  3.232
- 463 ctgatgctagtgatgcatgctag           20 23  0 47.83 60.238 17.25 17.25 44.73  3.238
- 464 tcgatgctactagctagctgatc          203 23  0 47.83 60.238 10.69  7.42 43.02  3.238
- 465 agctagctactatcatctctgcg          351 23  0 47.83 60.238 13.17  0.00  0.00  3.238
- 466 ctagctagctactgatcgatgct          301 23  0 47.83 60.238  8.77  7.73  0.00  3.238
- 467 agctactatcatcgatcgatgca          433 23  0 43.48 60.238 28.32 20.18 44.54  3.238
- 468 atcatcgatgctagctagctgat          550 23  0 43.48 60.239 20.20 16.29 45.79  3.239
- 469 ctgatcgatcgtagcggc               568 18  0 61.11 58.727 10.14  0.00  0.00  3.273
- 470 gctgatcgatcgtagcgg               567 18  0 61.11 58.727 15.41 10.41  0.00  3.273
- 471 aggcgatgctagctagct               419 18  0 55.56 58.725 34.11 22.26 45.79  3.275
- 472 agctaggcgatgctagct               415 18  0 55.56 58.725 14.31  8.39 34.77  3.275
- 473 tgctagtgatgcatgctagtagt           24 23  0 43.48 60.302 20.17  8.72 31.61  3.302
- 474 gcgcgatcgatgctagct               371 18  0 61.11 61.306 17.37  0.00 35.72  3.306
- 475 tgatcatcatcgatgctagct            518 21  0 42.86 57.691 14.31  0.00 35.24  3.309
- 476 agctgatcatcatcgatgcta            515 21  0 42.86 57.691  0.00  0.00 35.24  3.309
- 477 tagctgatcatcatcgatgct            514 21  0 42.86 57.691  9.21  3.04 35.24  3.309
- 478 tgatcgatcatcatgctagct            271 21  0 42.86 57.691 23.50  0.00 31.00  3.309
- 479 ctagctagctgactgatacgcg           465 22  0 54.55 61.313 10.57  1.24  0.00  3.313
- 480 tgctagtgatgcatgctagtag            24 22  0 45.45 58.673 20.17 15.00 31.61  3.327
- 481 gctagtgatgcatgctagtagt            25 22  0 45.45 58.672 20.17  8.72  0.00  3.328
- 482 tagctagctgatcatcgatgcta          189 23  0 43.48 59.671 12.78 10.53  0.00  3.329
- 483 atcgatgctactagctagctgat          202 23  0 43.48 59.670  6.62  4.88 43.02  3.330
- 484 atcatcgatgctactagctagct          199 23  0 43.48 59.670 19.18 19.18 43.02  3.330
- 485 tgtgcggctagctagcta                91 18  0 55.56 58.656 23.61 18.39 44.99  3.344
- 486 agctagctgactgatacgc              467 19  0 52.63 57.642 13.65  0.00  0.00  3.358
- 487 tatcatcgatcgatgcatgcatg          439 23  0 43.48 60.360 30.67 18.83 44.54  3.360
- 488 cgatgtgcggctagctag                88 18  0 61.11 58.638 12.97 12.97 46.36  3.362
- 489 atgctactagctagctgactg            459 21  0 47.62 57.637 15.08  0.00 43.02  3.363
- 490 catgctactagctagctgact            458 21  0 47.62 57.637 11.52  0.00 43.02  3.363
- 491 catgctactagctagctgactga          458 23  0 47.83 60.364 11.52  0.00 43.02  3.364
- 492 agctactatcatcgatcgatgc           433 22  0 45.45 58.626 35.81 25.56 44.54  3.374
- 493 tatcatctctgcgcgatcgatg           361 22  0 50.00 61.383 12.72 12.72 35.72  3.383
- 494 agctgactgatcgatcatcat            264 21  0 42.86 57.616 21.32 13.77 35.80  3.384
- 495 actagctagctgatcatcatcga          508 23  0 43.48 59.607 18.14  0.00  0.00  3.393
- 496 tagctagctgactgatcgatcat          259 23  0 43.48 59.607 23.80 13.15 32.24  3.393
- 497 gatgctagctaggcgatgctag           409 22  0 54.55 61.393 18.85 18.85 34.61  3.393
- 498 cggcgatctagctagctgact            582 21  0 57.14 62.394 13.17  3.02 34.79  3.394
- 499 ctagctagctgatcgatcgat            391 21  0 47.62 57.600 24.92 24.92 35.62  3.400
- 500 ctagctagctgatcgatcgat             71 21  0 47.62 57.600 24.92 24.92 35.62  3.400
- 501 actgatcgatcatcatgctagct          269 23  0 43.48 60.428 21.99  0.00 35.80  3.428
- 502 ctagctagctgactgatcgatc           106 22  0 50.00 58.567 14.91 14.91  0.00  3.433
- 503 ctgactgatcgatcatcatgc            266 21  0 47.62 57.562 15.95  7.40 35.80  3.438
- 504 gctgactgatcgatcatcatg            265 21  0 47.62 57.562 17.77 14.64 35.80  3.438
- 505 tactatcatcgatcgatgcatgc          436 23  0 43.48 59.560 24.60  8.53 44.54  3.440
- 506 gcgatcgatgctagctagctag           373 22  0 54.55 61.441 32.44 32.44 45.79  3.441
- 507 gatcgatcgatgctagctaggc           401 22  0 54.55 61.448 18.99  4.26 30.77  3.448
- 508 gtgatgcatgctagtagtgatgt           29 23  0 43.48 59.551  7.18  0.00  0.00  3.449
- 509 gatgctagtgatgcatgctag             22 21  0 47.62 57.546 17.25 17.25 44.73  3.454
- 510 tgctagtgatgcatgctagta             24 21  0 42.86 57.546 20.17 15.91 31.61  3.454
- 511 tagcggcgatctagctagctg            579 21  0 57.14 62.457 14.23  4.55 41.33  3.457
- 512 gtagcggcgatctagctagct            578 21  0 57.14 62.458 19.18 19.18 43.58  3.458
- 513 tgctactagctagctgatcatca          207 23  0 43.48 59.540 15.08  2.80 43.02  3.460
- 514 atgctactagctagctgactgat          459 23  0 43.48 59.539 15.08  2.14 43.02  3.461
- 515 tagctgatcgatcgtagcg              565 19  0 52.63 57.539 20.84  7.17  0.00  3.461
- 516 gctagctagctactgatcgat            300 21  0 47.62 57.517 29.42  0.00 42.45  3.483
- 517 cgatgctactagctagctgatca          204 23  0 47.83 60.487 14.03  7.87 43.02  3.487
- 518 catcgatgctactagctagctga          201 23  0 47.83 60.487 18.14  4.34 43.02  3.487
- 519 tcatcgatgctactagctagctg          200 23  0 47.83 60.487 16.98  7.64 43.02  3.487
- 520 agctagctactgatcgatgctac          303 23  0 47.83 60.487 13.17  3.79  0.00  3.487
- 521 cgatcgatgctagctagct              374 19  0 52.63 57.507 34.11 22.26 45.79  3.493
- 522 atcgatcgatgctagtatgct            326 21  0 42.86 57.502 24.14  0.00 29.27  3.498
- 523 agctactgatcgatgctacatc           307 22  0 45.45 58.484  3.77  0.00 34.51  3.516
- 524 agtgatgcatgctagtagtga             28 21  0 42.86 57.471  0.00  0.00  0.00  3.529
- 525 gcatgcatgctactagctagct           453 22  0 50.00 61.538 33.92 19.18 46.41  3.538
- 526 gactgatcgatcgatgctagcta          116 23  0 47.83 60.546 13.30  0.00 30.77  3.546
- 527 ctgatcgatcgatgctagctagt          118 23  0 47.83 60.547 18.08  0.00 30.77  3.547
- 528 actgatcgatcgatgctagctag          117 23  0 47.83 60.547 18.39 12.97 30.77  3.547
- 529 ctagctagctgatcgatcgatgt           71 23  0 47.83 60.547  9.10  0.00 30.77  3.547
- 530 catcgatcgatgctagtatgc            325 21  0 47.62 57.452 32.12  0.00 40.08  3.548
- 531 gcgatgctagctagctactatca          421 23  0 47.83 60.548 28.44 13.65 45.79  3.548
- 532 tagctagctgactgatcgatc            259 21  0 47.62 57.451 23.80 14.91  0.00  3.549
- 533 tagctagctgactgatcgatc            107 21  0 47.62 57.451 23.80 14.91  0.00  3.549
- 534 ctagctagctgactgatcgat            106 21  0 47.62 57.445 10.57  0.00  0.00  3.555
- 535 agctgatgctagtgatgca               18 19  0 47.37 57.430  0.00  0.00 45.43  3.570
- 536 tcgatgctagctaggcga               407 18  0 55.56 58.427 11.55  9.08  0.00  3.573
- 537 tgatcgatcgatgctagctagta          119 23  0 43.48 59.424 21.71 13.94 30.77  3.576
- 538 gcgatgctagctagctact              421 19  0 52.63 57.415 27.92 17.11 45.79  3.585
- 539 ctgcgcgatcgatgctagc              369 19  0 63.16 62.586 15.86  7.84 35.72  3.586
- 540 agctagctgatcatcatcgat            511 21  0 42.86 57.405 13.65  0.00  0.00  3.595
- 541 tgcgcgatcgatgctagc               370 18  0 61.11 61.605 22.61 13.89 35.72  3.605
- 542 ctagctagctgatcgatcgtag           560 22  0 50.00 58.387 12.05 12.05  0.00  3.613
- 543 actagctagctgactgatacg            464 21  0 47.62 57.384 17.09  0.00  0.00  3.616
- 544 ctagctgactgatacgcga              469 19  0 52.63 57.370 13.65  0.00  0.00  3.630
- 545 gctactagctagctgactgat            461 21  0 47.62 57.360 11.97  0.00 39.91  3.640
- 546 ctgatcatcatcgatgctagc            517 21  0 47.62 57.358  4.81  4.81 35.24  3.642
- 547 gctgatcatcatcgatgctag            516 21  0 47.62 57.358  1.65  0.00 35.24  3.642
- 548 ctagctgatcatcatcgatgc            513 21  0 47.62 57.358 16.98  2.80 35.24  3.642
- 549 gctagctgatcatcatcgatg            512 21  0 47.62 57.358 15.71 15.71 37.94  3.642
- 550 ctgatcgatcatcatgctagc            270 21  0 47.62 57.358 21.99  4.81 35.80  3.642
- 551 agctactgatcgatgctacat            307 21  0 42.86 57.344  3.77  0.00  0.00  3.656
- 552 tgatcgatcgatgtgcggcta             80 21  0 52.38 62.663 17.05  0.00 39.24  3.663
- 553 atctctgcgcgatcgatg               365 18  0 55.56 58.327  8.29  0.42 35.72  3.673
- 554 catctctgcgcgatcgat               364 18  0 55.56 58.327 18.39  0.00 35.72  3.673
- 555 atcatctctgcgcgatcg               362 18  0 55.56 58.327  8.49  8.49 39.07  3.673
- 556 aagcatcggattagctagctgat            2 23  0 43.48 60.682 12.26  8.68  0.00  3.682
- 557 gatcatcgatgctactagctagc          198 23  0 47.83 59.315 17.09 10.05 44.40  3.685
- 558 gctactatcatcgatcgatgcat          434 23  0 43.48 59.311 29.36 24.57 44.54  3.689
- 559 agtgatgcatgctagtagtgatg           28 23  0 43.48 59.299  2.80  2.80  0.00  3.701
- 560 gatcgatgctagctaggcgatg           405 22  0 54.55 61.702 19.18  1.89  0.00  3.702
- 561 atcatcgatgctactagctagc           199 22  0 45.45 58.287 17.09 10.05 44.40  3.713
- 562 atctctgcgcgatcgatgcta            365 21  0 52.38 62.723 22.61 12.95 35.72  3.723
- 563 tagctagctgactgatacgcga           466 22  0 50.00 61.730 23.80  0.00  0.00  3.730
- 564 tagctagctgatcgatcgtag            561 21  0 47.62 57.269 12.05 12.05  0.00  3.731
- 565 ctagctagctgatcgatcgta            560 21  0 47.62 57.269  7.49  0.00  0.00  3.731
- 566 tcgatcgatgctagctagtag            122 21  0 47.62 57.269 14.43  0.00  0.00  3.731
- 567 gctagctactgatcgatgctaca          304 23  0 47.83 60.734  7.33  0.00  0.00  3.734
- 568 agctagctgactgatcgatcatc          260 23  0 47.83 60.736 19.14 17.05 32.24  3.736
- 569 agctagctgactgatcgatcga           108 22  0 50.00 61.737 17.65 17.65  0.00  3.737
- 570 tctctgcgcgatcgatgct              366 19  0 57.89 62.740 22.61  0.00 35.72  3.740
- 571 tgatgcatgctagtagtgatgt            30 22  0 40.91 58.256  7.18  0.00  0.00  3.744
- 572 gctaggcgatgctagctagct            416 21  0 57.14 62.746 34.11 22.26 45.79  3.746
- 573 gctagctaggcgatgctagct            412 21  0 57.14 62.746 28.80 21.82 42.17  3.746
- 574 tgatcgatcgatgtgcgg                80 18  0 55.56 58.244 16.02  0.00 39.24  3.756
- 575 cgatcgatgctagctaggcga            404 21  0 57.14 62.770 11.63 11.63  0.00  3.770
- 576 tcgatcgatgctagctaggcg            403 21  0 57.14 62.770 14.43  7.79  0.00  3.770
- 577 atcgatcgatgcatgcatg              443 19  0 47.37 57.226 24.14 18.83 32.86  3.774
- 578 catcgatcgatgcatgcat              442 19  0 47.37 57.226 32.12 27.70 40.08  3.774
- 579 actagctagctgatcatcatcg           508 22  0 45.45 58.219 18.14  0.00  0.00  3.781
- 580 ctgatcatcgatgctactagct           196 22  0 45.45 58.219  6.53  0.00 43.59  3.781
- 581 agctgatcatcgatgctactag           194 22  0 45.45 58.219  9.47  5.60  0.00  3.781
- 582 ctagctgatcatcgatgctact           192 22  0 45.45 58.219  9.35  3.46  0.00  3.781
- 583 tttagctagctgactgatcga            257 21  0 42.86 57.216  0.00  0.00  0.00  3.784
- 584 tagctagctgatcgatcgatgtg           72 23  0 47.83 60.793  5.76  0.30 30.77  3.793
- 585 gctagctagctgatcatcatct           146 22  0 45.45 58.203 29.42  0.00 42.45  3.797
- 586 tcatcgatgctagctagctgatc          551 23  0 47.83 60.797 19.90 14.86 45.79  3.797
- 587 gatcatcgatgctagctagctga          549 23  0 47.83 60.797 19.61 14.91 45.79  3.797
- 588 ctagctagctgatcatcgatgct          188 23  0 47.83 60.799 11.29 10.29  0.00  3.799
- 589 tcgatgctagctagctgatcga           554 22  0 50.00 61.799 36.63 35.26 44.34  3.799
- 590 gctactatcatcgatcgatgc            434 21  0 47.62 57.184 35.81 23.36 44.54  3.816
- 591 agctagctactatcatcgatcga          429 23  0 43.48 59.170 17.65 17.65  0.00  3.830
- 592 ttagctagctgactgatcgatc           258 22  0 45.45 58.159 23.80 14.91  0.00  3.841
- 593 ctagctgactgatcgatcatca           262 22  0 45.45 58.155 21.56 21.56 35.62  3.845
- 594 aaagcatcggattagctagctga            1 23  0 43.48 60.870 23.80 15.70  0.00  3.870
- 595 tgatgctagtgatgcatgctagt           21 23  0 43.48 60.871 20.17  8.72 44.73  3.871
- 596 agctgactgatacgcgatgct            471 21  0 52.38 62.876  4.84  0.00  0.00  3.876
- 597 gatgctagtgatgcatgctagta           22 23  0 43.48 59.113 20.17 17.68 44.73  3.887
- 598 atgctagtgatgcatgctagtag           23 23  0 43.48 59.110 20.17 15.00 43.35  3.890
- 599 tgctagctagctactatcatcga          425 23  0 43.48 59.102 34.11 12.30 45.79  3.898
- 600 tagctagctactgatcgatgcta          302 23  0 43.48 59.102 23.20  8.06  0.00  3.898
- 601 tcatcatcgatgctagctagt            521 21  0 42.86 57.067 18.08  0.00 35.24  3.933
- 602 tcgatcatcatgctagctact            274 21  0 42.86 57.067  0.00  0.00  0.00  3.933
- 603 tgatcatcgatgctactagct            197 21  0 42.86 57.067 13.24  0.00 43.59  3.933
- 604 agctgatcatcgatgctacta            194 21  0 42.86 57.067 13.24  1.21  0.00  3.933
- 605 tagctgatcatcgatgctact            193 21  0 42.86 57.067  9.35  3.46  0.00  3.933
- 606 atgctagtgatgcatgctagta            23 22  0 40.91 58.055 20.17 17.68 43.35  3.945
- 607 tcgatcgatgctagtatgctag           327 22  0 45.45 58.044 14.43  8.66 43.08  3.956
- 608 gcgatctagctagctgact              584 19  0 52.63 57.034 13.17  3.02  0.00  3.966
- 609 gctactgatcgatgctacatc            308 21  0 47.62 57.028  0.00  0.00 34.51  3.972
- 610 cggcgatctagctagctg               582 18  0 61.11 58.018 12.70  3.90 35.42  3.982
- 611 gctagctgactgatcgatcatca          261 23  0 47.83 60.983 21.56 21.56 35.62  3.983
- 612 cgatgtgcggctagctagcta             88 21  0 57.14 62.984 23.61 18.39 44.99  3.984
- 613 actatcatctctgcgcgat              359 19  0 47.37 57.015  1.58  0.00  0.00  3.985
- 614 catcggattagctagctgatg              5 21  0 47.62 57.003 17.31 17.67  0.00  3.997
- 615 taggcgatgctagctagctacta          418 23  0 47.83 60.998 21.26 14.26 45.79  3.998
- 616 tagctgactgatcgatcatca            263 21  0 42.86 57.000 21.56 21.56 35.62  4.000
- 617 actagctagctgatcatcatcgat         508 24  0 41.67 59.995 18.14  0.00  0.00  4.005
- 618 agtgatgcatgctagtagtgat            28 22  0 40.91 57.984  0.00  0.00  0.00  4.016
- 619 tgctactagctagctgactgata          460 23  0 43.48 58.967 15.08  0.00 43.02  4.033
- 620 ctagctagctgatcatcatcga           509 22  0 45.45 57.958  7.49  0.00  0.00  4.042
- 621 gctgatcatcgatgctactagct          195 23  0 47.83 61.046 16.42  0.98 43.59  4.046
- 622 agctgatcatcgatgctactagc          194 23  0 47.83 61.046 16.19 16.19 45.61  4.046
- 623 gctagctgatcatcgatgctact          191 23  0 47.83 61.046  7.69  4.10  0.00  4.046
- 624 agctagctgatcatcgatgctac          190 23  0 47.83 61.046 13.65  3.38  0.00  4.046
- 625 tagctactatcatcgatcgatgca         432 24  0 41.67 60.057 28.32 20.18 44.54  4.057
- 626 tagctagctactatcatctctgcg         350 24  0 45.83 60.058 23.20  0.00  0.00  4.058
- 627 ctagctagctactgatcgatgcta         301 24  0 45.83 60.058  8.77  8.06  0.00  4.058
- 628 tgctagctagctgatcgatcgt           558 22  0 50.00 62.058 34.11  0.00 45.79  4.058
- 629 agctactatcatctctgcgcga           355 22  0 50.00 62.058  0.00  0.00  0.00  4.058
- 630 gatgctagtgatgcatgctagtag          22 24  0 45.83 60.059 20.17 15.00 44.73  4.059
- 631 gctatttagctagctgactgatcg         253 24  0 45.83 60.060  3.13  0.00 42.45  4.060
- 632 tgctactagctagctgatcatcat         207 24  0 41.67 59.933 15.08  0.00 43.02  4.067
- 633 atgctactagctagctgatcatca         206 24  0 41.67 59.933 15.08  5.99 43.02  4.067
- 634 tgatcgatcatcatgctagctac          271 23  0 43.48 58.931 23.50  0.00 31.00  4.069
- 635 gtgcggctagctagctag                92 18  0 61.11 57.926 32.44 32.44 44.99  4.074
- 636 gtgatgcatgctagtagtgatg            29 22  0 45.45 57.921  2.80  2.80  0.00  4.079
- 637 ctagctagctgactgatcgatcg          106 23  0 52.17 61.091 12.79  9.85  0.00  4.091
- 638 ctagctactgatcgatgctaca           305 22  0 45.45 57.898 10.00  0.00  0.00  4.102
- 639 cggcgatctagctagctgacta           582 22  0 54.55 62.109 13.17  1.12 34.79  4.109
- 640 atgctagctaggcgatgc               410 18  0 55.56 57.890  6.10  0.00  0.00  4.110
- 641 ctgatcgatcatcatgctagctac         270 24  0 45.83 59.882 21.99  0.00 35.80  4.118
- 642 gctactagctagctgatcatca           505 22  0 45.45 57.879  9.82  0.00 39.91  4.121
- 643 gctactagctagctgatcatca           208 22  0 45.45 57.879  9.82  0.00 39.91  4.121
- 644 tgctactagctagctgatcatc           207 22  0 45.45 57.879 15.08  1.36 43.02  4.121
- 645 gatgctactagctagctgatca           205 22  0 45.45 57.879 11.72  6.23 43.02  4.121
- 646 ctgactgatacgcgatgctagc           473 22  0 54.55 62.128  4.81  4.81  0.00  4.128
- 647 gctgactgatacgcgatgctag           472 22  0 54.55 62.128  0.00  0.00  0.00  4.128
- 648 ctagctgactgatacgcgatgc           469 22  0 54.55 62.128  0.61  0.00  0.00  4.128
- 649 gctagctgactgatacgcgatg           468 22  0 54.55 62.128  4.46  0.00  0.00  4.128
- 650 tgactgatcgatcatcatgctag          267 23  0 43.48 58.866 22.22 13.58 35.80  4.134
- 651 ctgactgatcgatcatcatgcta          266 23  0 43.48 58.866 15.95  3.71 35.80  4.134
- 652 tagctgactgatcgatcatcatg          263 23  0 43.48 58.866 17.77 14.64 35.80  4.134
- 653 ctagctagctgatcgatcgtagc          560 23  0 52.17 61.151 21.71 21.71  0.00  4.151
- 654 gctagctagctgatcgatcgtag          559 23  0 52.17 61.151 29.42 12.05 42.45  4.151
- 655 ctgatcgatcgatgctagctagg          399 23  0 52.17 61.158 18.51  1.75 30.77  4.158
- 656 ggcgatgctagctagctactatc          420 23  0 52.17 61.161 19.16 14.41 45.79  4.161
- 657 gatcgatcgatgctagctagtag          120 23  0 47.83 58.829 18.99  0.00 30.77  4.171
- 658 ttagctagctgactgatcgatcat         258 24  0 41.67 60.177 23.80 13.15 32.24  4.177
- 659 tgctactagctagctgactgatac         460 24  0 45.83 60.177 15.08  0.00 43.02  4.177
- 660 ctgactgatcgatcatcatgctag         266 24  0 45.83 59.822 15.95  7.43 35.80  4.178
- 661 ctagctgactgatcgatcatcatg         262 24  0 45.83 59.822 17.77 14.64 35.80  4.178
- 662 ctagctgatcgatcgatgtgcg            75 22  0 54.55 62.180 26.83 15.69 42.69  4.180
- 663 tttagctagctgactgatcgatc          257 23  0 43.48 58.807 14.91 14.91  0.00  4.193
- 664 tgactgatcgatcatcatgcta           267 22  0 40.91 57.803 22.22  8.03 35.80  4.197
- 665 gctagtagctatcgatcatcga           536 22  0 45.45 57.783  7.69  7.69 44.72  4.217
- 666 gctagctactatcatcgatcga           430 22  0 45.45 57.783 17.65 17.65  0.00  4.217
- 667 gatcgatcgatgctagctagta           120 22  0 45.45 57.783 18.99 13.94 30.77  4.217
- 668 agctagctactatcatcgatcg           429 22  0 45.45 57.777 13.17  6.08  0.00  4.223
- 669 atcgatcgatgctagctagtag           121 22  0 45.45 57.777 24.14  0.00 29.27  4.223
- 670 catgcatgctactagctagctga          454 23  0 47.83 61.236 18.14  5.79 43.02  4.236
- 671 atgcatgctactagctagctgac          455 23  0 47.83 61.237 15.62  4.81 43.02  4.237
- 672 tgatcatcatcgatgctagctagt         518 24  0 41.67 60.238 18.08  0.00 35.24  4.238
- 673 tgatcgatcatcatgctagctact         271 24  0 41.67 60.238 23.50  0.00 31.00  4.238
- 674 actgatcgatcatcatgctagcta         269 24  0 41.67 60.238 21.99  0.00 35.80  4.238
- 675 catcgatcgatgctagtatgcta          325 23  0 43.48 58.753 32.12  1.05 40.08  4.247
- 676 tttagctagctgactgatcgat           257 22  0 40.91 57.736  0.00  0.00  0.00  4.264
- 677 atttagctagctgactgatcga           256 22  0 40.91 57.736  0.00  0.00  0.00  4.264
- 678 cgcgatcgatgctagcta               372 18  0 55.56 57.717 18.39  0.00 35.72  4.283
- 679 catcgatcgatgctagtatgctag         325 24  0 45.83 59.708 32.12 10.45 40.08  4.292
- 680 actatcatcgatcgatgcatgca          437 23  0 43.48 61.296 24.60 20.24 44.54  4.296
- 681 tagctagctactgatcgatgctac         302 24  0 45.83 60.297 23.20  3.79  0.00  4.297
- 682 agcatcggattagctagctgatg            3 23  0 47.83 61.299 22.49 22.49 29.41  4.299
- 683 tgctagctagctactatcatcg           425 22  0 45.45 57.700 34.11  6.71 45.79  4.300
- 684 cgatgctagctagctactatca           422 22  0 45.45 57.700 28.44 13.65 45.79  4.300
- 685 gctgatgctagtgatgcatgct            19 22  0 50.00 62.312 17.41  2.01 44.73  4.312
- 686 agctgatgctagtgatgcatgc            18 22  0 50.00 62.312  8.53  8.53 44.73  4.312
- 687 agctagctgactgatacgcgat           467 22  0 50.00 62.317 13.65  0.00  0.00  4.317
- 688 tgatcatcatcgatgctagctag          518 23  0 43.48 58.678 12.97 12.97 35.24  4.322
- 689 ctgatcatcatcgatgctagcta          517 23  0 43.48 58.678 14.31  0.00 35.24  4.322
- 690 tagctgatcatcatcgatgctag          514 23  0 43.48 58.678  4.35  0.00 35.24  4.322
- 691 ctagctgatcatcatcgatgcta          513 23  0 43.48 58.678  9.39  3.93 35.24  4.322
- 692 tagctagctgatcatcatcgatg          510 23  0 43.48 58.678 15.71 15.71 37.94  4.322
- 693 ctgatcgatcatcatgctagcta          270 23  0 43.48 58.678 21.99  0.00 35.80  4.322
- 694 gatcatcatcgatgctagctagt          519 23  0 43.48 58.677 18.08  0.00 35.24  4.323
- 695 gatcgatcatcatgctagctact          272 23  0 43.48 58.677 16.77  0.00  0.00  4.323
- 696 gctgactagctgatcgatcgtag          596 23  0 52.17 61.332 13.51 13.51 43.26  4.332
- 697 gctagctagctgactgatcgatc          105 23  0 52.17 61.341 29.42 14.91 42.45  4.341
- 698 tgatcgatcgatgctagctagtag         119 24  0 45.83 60.356 21.71  0.00 30.77  4.356
- 699 ctgatcgatcgatgctagctagta         118 24  0 45.83 60.356 18.08 13.94 30.77  4.356
- 700 ctgatcatcatcgatgctagctag         517 24  0 45.83 59.644 12.97 12.97 35.24  4.356
- 701 ctagctgatcatcatcgatgctag         513 24  0 45.83 59.644 14.05 12.13 37.02  4.356
- 702 ctagctagctgatcatcatcgatg         509 24  0 45.83 59.644 15.71 15.71 37.94  4.356
- 703 tttagctagctgactgatcgatca         257 24  0 41.67 60.358 22.44 22.44 33.41  4.358
- 704 actatcatctctgcgcgatcga           359 22  0 50.00 62.365 18.39  0.00 35.72  4.365
- 705 agctgatcgatcgtagcg               566 18  0 55.56 57.634 20.84  7.17  0.00  4.366
- 706 gctactagctagctgactgatac          461 23  0 47.83 58.626 11.97  0.00 39.91  4.374
- 707 tgatacgcgatgctagctagct           478 22  0 50.00 62.377 34.11 22.26 45.79  4.377
- 708 agctgatcgatcgatgctagct           397 22  0 50.00 62.388 25.03 25.03 33.65  4.388
- 709 agctagctgatcgatcgatgct           393 22  0 50.00 62.388 28.03 27.34 33.62  4.388
- 710 ctagctgactgatcgatcatcat          262 23  0 43.48 58.612 21.32 15.11 35.80  4.388
- 711 agctagctactatcatctctgc           351 22  0 45.45 57.608 13.17  0.00  0.00  4.392
- 712 ctagctactatcatctctgcgcg          353 23  0 52.17 61.393  0.00  0.00  0.00  4.393
- 713 tgatcatcatcgatgctagcta           518 22  0 40.91 57.602 14.31  0.00 35.24  4.398
- 714 tagctgatcatcatcgatgcta           514 22  0 40.91 57.602 11.00  3.42 35.24  4.398
- 715 tgatcgatcatcatgctagcta           271 22  0 40.91 57.602 23.50  0.00 31.00  4.398
- 716 atcatcatcgatgctagctagt           520 22  0 40.91 57.595 18.08  0.00 35.24  4.405
- 717 atcgatcatcatgctagctact           273 22  0 40.91 57.595  0.00  0.00  0.00  4.405
- 718 agctagctactatcatcgatcgat         429 24  0 41.67 59.573 19.77 19.77 32.71  4.427
- 719 gctagctgatcgatcgatgtgc            74 22  0 54.55 62.443 26.58 24.97 30.77  4.443
- 720 gctaggcgatgctagctagcta           416 22  0 54.55 62.444 34.11 22.97 45.79  4.444
- 721 gctagctaggcgatgctagcta           412 22  0 54.55 62.444 28.80 21.45 42.17  4.444
- 722 gatacgcgatgctagctagctag          479 23  0 52.17 61.452 32.44 32.44 45.79  4.452
- 723 tagctgactgatcgatcatcat           263 22  0 40.91 57.531 21.32 15.11 35.80  4.469
- 724 ctactatcatcgatcgatgcatgc         435 24  0 45.83 60.470 24.60  8.53 44.54  4.470
- 725 gctactatcatcgatcgatgcatg         434 24  0 45.83 60.470 24.21 19.49 44.54  4.470
- 726 atcgtagcggcgatctagctag           575 22  0 54.55 62.478 11.05 11.05 41.93  4.478
- 727 tagctagctgactgatcgatcga          107 23  0 47.83 61.487 23.80 17.65  0.00  4.487
- 728 tgctagctagctactatcatcgat         425 24  0 41.67 59.509 34.11  0.00 45.79  4.491
- 729 atgctagctagctactatcatcga         424 24  0 41.67 59.509 34.11 14.83 45.79  4.491
- 730 tagctactatcatcgatcgatgc          432 23  0 43.48 58.505 35.81 25.56 44.54  4.495
- 731 atcgatcgatgctagtatgctag          326 23  0 43.48 58.501 24.14  8.66 43.08  4.499
- 732 ctagtgatgcatgctagtagtga           26 23  0 43.48 58.483 14.94  0.00  0.00  4.517
- 733 ctagctactatcatcgatcgatgc         431 24  0 45.83 59.472 35.81 25.56 44.54  4.528
- 734 tagctagctgactgatcgatcatc         259 24  0 45.83 60.536 23.80 17.05 32.24  4.536
- 735 tactagctagctgatcatcatcga         507 24  0 41.67 59.449  0.00  0.00  0.00  4.551
- 736 gctagctagctactatcatcga           426 22  0 45.45 57.437 29.42  0.00 42.45  4.563
- 737 tgactgatacgcgatgctagct           474 22  0 50.00 62.569 14.31  0.00  0.00  4.569
- 738 agctgactgatacgcgatgcta           471 22  0 50.00 62.569  4.84  0.00  0.00  4.569
- 739 tagctgactgatacgcgatgct           470 22  0 50.00 62.569  7.67  5.01  0.00  4.569
- 740 aggcgatgctagctagctactat          419 23  0 47.83 61.570 27.92 17.20 45.79  4.570
- 741 atcgatcgatgctagtatgcta           326 22  0 40.91 57.423 24.14  0.00 29.27  4.577
- 742 ctagctagctgatcatcatcgat          509 23  0 43.48 58.422  7.49  0.00  0.00  4.578
- 743 agctgactgatcgatcgatgct           112 22  0 50.00 62.580 21.71 17.84 30.77  4.580
- 744 ctagctagctgatcatcgatgcta         188 24  0 45.83 60.596 11.58 10.46  0.00  4.596
- 745 atcgatgctactagctagctgatc         202 24  0 45.83 60.596 10.69  7.42 43.02  4.596
- 746 gatcatcgatgctactagctagct         198 24  0 45.83 60.596 19.18 19.18 43.02  4.596
- 747 agctactatcatcgatcgatgcat         433 24  0 41.67 60.598 29.36 24.57 44.54  4.598
- 748 gtgatgcatgctagtagtgatgta          29 24  0 41.67 59.398  7.18  3.92  0.00  4.602
- 749 gctgatcatcatcgatgctagct          516 23  0 47.83 61.603 15.64  3.27 35.24  4.603
- 750 agctgatcatcatcgatgctagc          515 23  0 47.83 61.603 15.46 14.60 35.24  4.603
- 751 gctagctgatcatcatcgatgct          512 23  0 47.83 61.603  9.21  3.04 35.24  4.603
- 752 agctagctgatcatcatcgatgc          511 23  0 47.83 61.603 16.98  2.80 35.24  4.603
- 753 tagtgatgcatgctagtagtga            27 22  0 40.91 57.391  0.00  0.00  0.00  4.609
- 754 ctactagctagctgactgatacg          462 23  0 47.83 58.387  0.00  0.00  0.00  4.613
- 755 atgctactagctagctgactgata         459 24  0 41.67 59.382 15.08  0.00 43.02  4.618
- 756 tagctactgatcgatgctacatc          306 23  0 43.48 58.368 10.00  0.00 34.51  4.632
- 757 gactgatacgcgatgctagctag          475 23  0 52.17 61.633 12.97 12.97  0.00  4.633
- 758 ctagctactgatcgatgctacat          305 23  0 43.48 58.364 10.00  0.00  0.00  4.636
- 759 gctagctactatcatctctgcgc          352 23  0 52.17 61.644  4.46  0.00  0.00  4.644
- 760 gctagctagctactgatcgatgc          300 23  0 52.17 61.644 29.42  7.51 42.45  4.644
- 761 gctactagctagctgatcatcat          505 23  0 43.48 58.350  9.82  0.00 39.91  4.650
- 762 gctactagctagctgatcatcat          208 23  0 43.48 58.350  9.82  0.00 39.91  4.650
- 763 atgctactagctagctgatcatc          206 23  0 43.48 58.350 15.08  2.59 43.02  4.650
- 764 gatgctactagctagctgatcat          205 23  0 43.48 58.350 14.46  9.64 43.02  4.650
- 765 ctagctactgatcgatgctacatc         305 24  0 45.83 59.349 10.00  0.00 34.51  4.651
- 766 gctactagctagctgatcatcatc         505 24  0 45.83 59.343  9.82  0.00 39.91  4.657
- 767 gctactagctagctgatcatcatc         208 24  0 45.83 59.343  9.82  0.00 39.91  4.657
- 768 gatgctactagctagctgatcatc         205 24  0 45.83 59.343 17.31 15.14 43.02  4.657
- 769 gctgatcatcatctagctagtagc         154 24  0 45.83 59.343 10.66 10.66 45.79  4.657
- 770 tgatgctagtgatgcatgctagta          21 24  0 41.67 60.663 20.17 17.68 44.73  4.663
- 771 atgctagtgatgcatgctagtagt          23 24  0 41.67 60.664 20.17 10.04 43.35  4.664
- 772 tagctagctgatcatcatcgat           510 22  0 40.91 57.329  5.76  0.00  0.00  4.671
- 773 ctactatcatctctgcgcgatcg          357 23  0 52.17 61.686  8.49  8.49 39.07  4.686
- 774 tactagctagctgactgatacg           463 22  0 45.45 57.310  8.90  0.00  0.00  4.690
- 775 cgcgatgctagctagcta               483 18  0 55.56 57.306 34.11 22.97 45.79  4.694
- 776 gatgctagctagctgatcgatcg          556 23  0 52.17 61.697 25.55  7.82 45.79  4.697
- 777 cgatgctagctagctgatcgatc          555 23  0 52.17 61.697 33.61 25.84 42.51  4.697
- 778 gctgatcgatcgatgctagctag          398 23  0 52.17 61.697 22.84 13.46 30.77  4.697
- 779 ctagctgatcgatcgatgctagc          395 23  0 52.17 61.697 31.96 29.33 36.53  4.697
- 780 gctagctgatcgatcgatgctag          394 23  0 52.17 61.697 34.73 34.73 41.62  4.697
- 781 ctagctagctgatcgatcgatgc          391 23  0 52.17 61.697 19.16 15.93 30.77  4.697
- 782 gctagctagctgatcgatcgatg          390 23  0 52.17 61.697 29.42  5.61 42.45  4.697
- 783 gctagctagctgatcgatcgatg           70 23  0 52.17 61.697 29.42  5.61 42.45  4.697
- 784 gctactagctagctgactgata           461 22  0 45.45 57.286 11.97  0.00 39.91  4.714
- 785 gatcgatcatcatgctagctac           272 22  0 45.45 57.284 16.77  0.00  0.00  4.716
- 786 catgctactagctagctgactgat         458 24  0 45.83 60.719 11.52  0.00 43.02  4.719
- 787 cgatgctagctaggcgat               408 18  0 55.56 57.277  6.29  0.00  0.00  4.723
- 788 atcgatgctagctaggcg               406 18  0 55.56 57.277 11.55  4.94  0.00  4.723
- 789 tagctactgatcgatgctacat           306 22  0 40.91 57.270 10.00  0.00  0.00  4.730
- 790 gctagctactatcatcgatcgat          430 23  0 43.48 58.251 19.77 19.77 32.71  4.749
- 791 atgctactagctagctgatcat           206 22  0 40.91 57.239 15.08  6.80 43.02  4.761
- 792 gcatgctactagctagctgactg          457 23  0 52.17 61.776 10.45  5.13 43.02  4.776
- 793 tgcatgctagtagtgatgtatacg          33 24  0 41.67 59.224 17.41  0.00  0.00  4.776
- 794 gcatgctagtagtgatgtatacgt          34 24  0 41.67 59.223  7.18  0.00  0.00  4.777
- 795 atttagctagctgactgatcgatc         256 24  0 41.67 59.219 14.91 14.91  0.00  4.781
- 796 gactgatcgatcatcatgctag           268 22  0 45.45 57.215 19.75 10.90 35.80  4.785
- 797 atttagctagctgactgatcgat          256 23  0 39.13 58.215  0.00  0.00  0.00  4.785
- 798 gctgactgatcgatcatcatgct          265 23  0 47.83 61.788 22.64  9.89 35.80  4.788
- 799 agctgactgatcgatcatcatgc          264 23  0 47.83 61.788 22.57 22.57 35.80  4.788
- 800 tgctagctagctgatcgatcgta          558 23  0 47.83 61.796 34.11 12.30 45.79  4.796
- 801 tagctactatcatctctgcgcga          354 23  0 47.83 61.796  0.00  0.00  0.00  4.796
- 802 atgctagctagctactatcatcg          424 23  0 43.48 58.175 34.11  1.63 45.79  4.825
- 803 cgatgctagctagctactatcat          422 23  0 43.48 58.175 28.44 16.36 45.79  4.825
- 804 gatgctagctagctactatcatcg         423 24  0 45.83 59.170 27.25  7.54 45.79  4.830
- 805 cgatgctagctagctactatcatc         422 24  0 45.83 59.170 28.44 20.38 45.79  4.830
- 806 tgatcatcgatgctactagctagc         197 24  0 45.83 60.834 17.09 10.05 44.40  4.834
- 807 gctgatcatcgatgctactagcta         195 24  0 45.83 60.834 16.42  2.72 43.59  4.834
- 808 tagctgatcatcgatgctactagc         193 24  0 45.83 60.834 16.19 16.19 45.61  4.834
- 809 gctagctgatcatcgatgctacta         191 24  0 45.83 60.834  7.10  4.12  0.00  4.834
- 810 tagctagctgatcatcgatgctac         189 24  0 45.83 60.834 12.78  6.89  0.00  4.834
- 811 cgatgctactagctagctgatcat         204 24  0 45.83 60.835 14.46 10.32 43.02  4.835
- 812 catcgatgctactagctagctgat         201 24  0 45.83 60.835  9.15  4.88 43.02  4.835
- 813 atcatcgatgctactagctagctg         199 24  0 45.83 60.835 16.98  7.64 43.02  4.835
- 814 tagtgatgcatgctagtagtgatg          27 24  0 41.67 59.155  7.47  2.80  0.00  4.845
- 815 agtgatgcatgctagtagtgatgt          28 24  0 41.67 60.846  7.18  0.00  0.00  4.846
- 816 tgatgcatgctagtagtgatgta           30 23  0 39.13 58.147  7.18  3.92  0.00  4.853
- 817 ctgactgatcgatcgatgctagc          114 23  0 52.17 61.878 13.41  7.96 30.77  4.878
- 818 gctgactgatcgatcgatgctag          113 23  0 52.17 61.878 17.93 14.69 30.77  4.878
- 819 ctagctgactgatcgatcgatgc          110 23  0 52.17 61.878 19.16 14.32 30.77  4.878
- 820 gctagctgactgatcgatcgatg          109 23  0 52.17 61.878 17.61  7.87 30.77  4.878
- 821 tcatcatcgatgctagctagtag          521 23  0 43.48 58.114  0.00  0.00 35.24  4.886
- 822 tactagctagctgatcatcatcg          507 23  0 43.48 58.114  0.00  0.00  0.00  4.886
- 823 tcgatcatcatgctagctactag          274 23  0 43.48 58.114  0.00  0.00 34.17  4.886
- 824 tgatcatcgatgctactagctag          197 23  0 43.48 58.114 15.63 15.63 43.59  4.886
- 825 ctgatcatcgatgctactagcta          196 23  0 43.48 58.114  6.53  0.00 43.59  4.886
- 826 tagctgatcatcgatgctactag          193 23  0 43.48 58.114  9.47  5.60  0.00  4.886
- 827 ctagctgatcatcgatgctacta          192 23  0 43.48 58.114  7.10  4.12  0.00  4.886
- 828 ctactagctagctgatcatcatcg         506 24  0 45.83 59.110  0.00  0.00  0.00  4.890
- 829 ctgatcatcgatgctactagctag         196 24  0 45.83 59.110 15.63 15.63 43.59  4.890
- 830 ctagctgatcatcgatgctactag         192 24  0 45.83 59.110 10.55 10.55  0.00  4.890
- 831 gcgatgctagctagctactatcat         421 24  0 45.83 60.894 28.44 16.36 45.79  4.894
- 832 gctagctagctgatcatcatctag         146 24  0 45.83 59.102 29.42  8.03 39.85  4.898
- 833 gctagctagctgatcatcatcta          146 23  0 43.48 58.097 29.42  0.00 42.45  4.903
- 834 ctagtgatgcatgctagtagtg            26 22  0 45.45 57.072 14.94  0.00  0.00  4.928
- 835 gctactatcatctctgcgcgatc          356 23  0 52.17 61.936  1.58  0.00  0.00  4.936
- 836 catcgatgctagctagctgatcg          552 23  0 52.17 61.939 32.45 32.45 42.75  4.939
- 837 cgatcatcgatgctagctagctg          548 23  0 52.17 61.939 16.68  8.88 42.79  4.939
- 838 gctgatcgatcgatgtgc                78 18  0 55.56 57.052 24.33 21.10 30.77  4.948
- 839 tagctagctactatcatcgatcga         428 24  0 41.67 59.031 23.20 17.65  0.00  4.969
- 840 agctagctgatcgatcgtagcg           562 22  0 54.55 62.971 22.25 13.08  0.00  4.971
- 841 tgactgatacgcgatgct               474 18  0 50.00 57.028  0.00  0.00  0.00  4.972
- 842 gatcatcatcgatgctagctag           519 22  0 45.45 57.019 12.97 12.97 35.24  4.981
- 843 tcatcatcgatgctagctagta           521 22  0 40.91 57.005 18.08 13.94 35.24  4.995
- 844 tcgatcatcatgctagctacta           274 22  0 40.91 57.005  0.00  0.00  0.00  4.995
- 845 tgatcatcgatgctactagcta           197 22  0 40.91 57.005 13.24  0.00 43.59  4.995
- 846 tagctgatcatcgatgctacta           193 22  0 40.91 57.005  8.28  3.75  0.00  4.995
- 847 gctgatgctagtgatgcatgcta           19 23  0 47.83 62.040  4.10  3.02 44.73  5.040
- 848 tagctgatgctagtgatgcatgc           17 23  0 47.83 62.040  8.53  8.53 44.73  5.040
- 849 tagctagctgactgatacgcgat          466 23  0 47.83 62.044 23.80  0.00  0.00  5.044
- 850 ctagctagctactatcatcgatcga        427 25  0 44.00 59.949 23.20 17.65  0.00  5.051
- 851 agctagctgactgatcgatcgat          108 23  0 47.83 62.053 24.92 24.92 35.62  5.053
- 852 ctactagctagctgactgatacgc         462 24  0 50.00 61.062  0.00  0.00  0.00  5.062
- 853 gctactagctagctgactgatacg         461 24  0 50.00 61.062  9.82  0.00 39.91  5.062
- 854 tgatcatcatcgatgctagctagta        518 25  0 40.00 60.062 18.08 13.94 35.24  5.062
- 855 tgatcgatcatcatgctagctacta        271 25  0 40.00 60.062 23.50  0.00 31.00  5.062
- 856 ctagtgatgcatgctagtagtgatg         26 25  0 44.00 60.064 14.94  2.80  0.00  5.064
- 857 gctagctagctactatcatcgatc         426 24  0 45.83 58.932 29.42  0.00 42.45  5.068
- 858 gctagctactgatcgatgctacat         304 24  0 45.83 61.072  7.33  0.00  0.00  5.072
- 859 tactatcatcgatcgatgcatgca         436 24  0 41.67 61.074 24.60 20.24 44.54  5.074
- 860 catcggattagctagctgatgcta           5 24  0 45.83 61.077 18.53  9.64 45.43  5.077
- 861 gctagctagctactatcatcgat          426 23  0 43.48 57.922 29.42  0.00 42.45  5.078
- 862 ctagtgatgcatgctagtagtgat          26 24  0 41.67 58.911 14.94  0.00  0.00  5.089
- 863 tactatcatctctgcgcgatcga          358 23  0 47.83 62.092 18.39  0.00 35.72  5.092
- 864 tgatacgcgatgctagctagcta          478 23  0 47.83 62.103 34.11 22.97 45.79  5.103
- 865 tcgatgctagctagctgatcgat          554 23  0 47.83 62.111 35.07 23.21 42.23  5.111
- 866 tcgatcatcgatgctagctagct          547 23  0 47.83 62.111 34.11 22.26 42.48  5.111
- 867 agctgatcgatcgatgctagcta          397 23  0 47.83 62.111 25.97  9.92 34.35  5.111
- 868 tagctgatcgatcgatgctagct          396 23  0 47.83 62.111 27.89 27.89 37.78  5.111
- 869 agctagctgatcgatcgatgcta          393 23  0 47.83 62.111 27.92 26.25 31.20  5.111
- 870 tagctagctgatcgatcgatgct          392 23  0 47.83 62.111 28.03 27.34 33.62  5.111
- 871 ctaggcgatgctagctagctact          417 23  0 52.17 62.112 27.92 20.61 45.79  5.112
- 872 atgctagctagctactatcatcgat        424 25  0 40.00 59.886 34.11 15.80 45.79  5.114
- 873 tagtgatgcatgctagtagtgat           27 23  0 39.13 57.886  7.47  0.00  0.00  5.114
- 874 atcatcgatgctagctagctgatc         550 24  0 45.83 61.134 19.90 14.86 45.79  5.134
- 875 gatcatcgatgctagctagctgat         549 24  0 45.83 61.134 20.20 17.77 45.79  5.134
- 876 tactagctagctgatcatcatcgat        507 25  0 40.00 59.828  0.00  0.00  0.00  5.172
- 877 gctagctagctgatcatcgatgc          187 23  0 52.17 62.193 29.42  4.42 42.45  5.193
- 878 gctagtgatgcatgctagtagtga          25 24  0 45.83 61.195 20.17  0.00  0.00  5.195
- 879 tgcatgctactagctagctgact          456 23  0 47.83 62.197 15.62  0.34 43.02  5.197
- 880 aaagcatcggattagctagctgat           1 24  0 41.67 61.209 12.26  8.68  0.00  5.209
- 881 ctactatcatcgatcgatgcatg          435 23  0 43.48 57.788 24.21 19.49 44.54  5.212
- 882 gtgatgcatgctagtagtgatgtat         29 25  0 40.00 59.774  0.00  0.00  0.00  5.226
- 883 ctatcatctctgcgcgatcgatg          360 23  0 52.17 62.227 12.72 12.72 35.72  5.227
- 884 ctatcatcgatcgatgcatgcatg         438 24  0 45.83 61.229 21.68 18.83 44.54  5.229
- 885 tgactgatacgcgatgctagcta          474 23  0 47.83 62.287 14.31  0.00  0.00  5.287
- 886 tagctgactgatacgcgatgcta          470 23  0 47.83 62.287  9.43  5.30  0.00  5.287
- 887 tgctagtagtgatgtatacgtagct         37 25  0 40.00 59.713  4.83  4.22  0.00  5.287
- 888 tgactgatcgatcgatgctagct          115 23  0 47.83 62.296 15.57  6.99 30.77  5.296
- 889 agctgactgatcgatcgatgcta          112 23  0 47.83 62.296 21.71 10.14 30.77  5.296
- 890 tagctgactgatcgatcgatgct          111 23  0 47.83 62.296 26.22 24.36 30.77  5.296
- 891 atgctactagctagctgatcatcat        206 25  0 40.00 60.296 15.08  7.02 43.02  5.296
- 892 ctagctagctactatcatcgatcg         427 24  0 45.83 58.703  7.32  6.08  0.00  5.297
- 893 tagctagctactatcatcgatcg          428 23  0 43.48 57.691 23.20  6.08  0.00  5.309
- 894 gactgatcgatcatcatgctagct         268 24  0 45.83 61.313 19.75  2.77 35.80  5.313
- 895 gctagctgactgatcgatcatcat         261 24  0 45.83 61.313 21.32 15.11 35.80  5.313
- 896 ctatttagctagctgactgatcga         254 24  0 41.67 58.679  0.00  0.00  0.00  5.321
- 897 taggcgatgctagctagctactat         418 24  0 45.83 61.333 19.29  9.41 45.79  5.333
- 898 gcatgctagtagtgatgtatacg           34 23  0 43.48 57.659  7.18  0.00  0.00  5.341
- 899 tatttagctagctgactgatcga          255 23  0 39.13 57.650  0.00  0.00  0.00  5.350
- 900 ctactagctagctgatcatcatcga        506 25  0 44.00 60.352  0.00  0.00  0.00  5.352
- 901 atgctagctagctgatcgatcgt          557 23  0 47.83 62.360 34.11 10.11 45.79  5.360
- 902 agctactatcatctctgcgcgat          355 23  0 47.83 62.360  1.58  0.00  0.00  5.360
- 903 gctgatcatcatcgatgctagcta         516 24  0 45.83 61.370 15.64  4.18 35.24  5.370
- 904 tagctgatcatcatcgatgctagc         514 24  0 45.83 61.370 15.46 14.60 35.24  5.370
- 905 gctagctgatcatcatcgatgcta         512 24  0 45.83 61.370  9.39  3.93 35.24  5.370
- 906 tagctagctgatcatcatcgatgc         510 24  0 45.83 61.370 16.98  2.80 35.24  5.370
- 907 atgcatgctagtagtgatgtatacg         32 25  0 40.00 59.604  5.79  0.00  0.00  5.396
- 908 tgatgcatgctagtagtgatgtat          30 24  0 37.50 58.592  6.75  6.75  0.00  5.408
- 909 gactgatcgatcgatgctagctag         116 24  0 50.00 61.409 13.30 12.97 30.77  5.409
- 910 tgctagctagctactatcatcgatc        425 25  0 44.00 60.409 34.11  7.30 45.79  5.409
- 911 gatgctagctagctactatcatcga        423 25  0 44.00 60.409 27.25  9.74 45.79  5.409
- 912 tagctactatcatcgatcgatgcat        432 25  0 40.00 60.410 29.36 24.57 44.54  5.410
- 913 gctatttagctagctgactgatc          253 23  0 43.48 57.572  3.13  0.00 42.45  5.428
- 914 tgctagtgatgcatgctagtagtg          24 24  0 45.83 61.434 20.17  5.61 31.61  5.434
- 915 ctagctagctactatcatctctgc         349 24  0 45.83 58.562 23.20  0.00  0.00  5.438
- 916 gctagctagctactatcatctctg         348 24  0 45.83 58.562 29.42  1.98 42.45  5.438
- 917 gatcatcatcgatgctagctagta         519 24  0 41.67 58.557 18.08 13.94 35.24  5.443
- 918 gatcgatcatcatgctagctacta         272 24  0 41.67 58.557 16.77  0.00  0.00  5.443
- 919 atcatcatcgatgctagctagtag         520 24  0 41.67 58.554  0.00  0.00 35.24  5.446
- 920 atcgatcatcatgctagctactag         273 24  0 41.67 58.554  0.00  0.00 34.17  5.446
- 921 tagctagctactatcatctctgc          350 23  0 43.48 57.527 23.20  0.00  0.00  5.473
- 922 atcatcatcgatgctagctagta          520 23  0 39.13 57.514 18.08 13.94 35.24  5.486
- 923 atcgatcatcatgctagctacta          273 23  0 39.13 57.514  0.00  0.00  0.00  5.486
- 924 gatcatcatcgatgctagctagtag        519 25  0 44.00 59.494  0.00  0.00 35.24  5.506
- 925 gatcgatcatcatgctagctactag        272 25  0 44.00 59.494 16.77  0.00 34.17  5.506
- 926 catgctactagctagctgactgata        458 25  0 44.00 60.526 11.52  0.00 43.02  5.526
- 927 atgctactagctagctgactgatac        459 25  0 44.00 60.527 15.08  0.00 43.02  5.527
- 928 actagctagctgatcatcatctact        211 25  0 40.00 59.471 18.14  0.73  0.00  5.529
- 929 tgactgatcgatcatcatgctagc         267 24  0 45.83 61.547 22.22  9.43 35.80  5.547
- 930 gctgactgatcgatcatcatgcta         265 24  0 45.83 61.547 22.64 11.25 35.80  5.547
- 931 tagctgactgatcgatcatcatgc         263 24  0 45.83 61.547 22.57 22.57 35.80  5.547
- 932 tgctagtagtgatgtatacgtagc          37 24  0 41.67 58.446  0.15  0.15  0.00  5.554
- 933 ctagctagctgactgatacgcga          465 23  0 52.17 62.571 10.57  0.00  0.00  5.571
- 934 tagctagctactatcatcgatcgat        428 25  0 40.00 59.423 23.20 19.77 32.71  5.577
- 935 gctactagctagctgatcatcatct        208 25  0 44.00 60.585  9.82  0.00 39.91  5.585
- 936 agctgatcatcatctagctagtagc        153 25  0 44.00 60.585 10.66 10.66 34.43  5.585
- 937 actatcatcgatcgatgcatgcat         437 24  0 41.67 61.615 27.70 27.70 44.54  5.615
- 938 gcatgcatgctactagctagctg          453 23  0 52.17 62.629 33.92  9.63 46.41  5.629
- 939 ctagctagctgatcgatcgatgtg          71 24  0 50.00 61.642  7.49  0.30 30.77  5.642
- 940 agtgatgcatgctagtagtgatgta         28 25  0 40.00 60.646  7.18  3.92  0.00  5.646
- 941 tagtgatgcatgctagtagtgatgt         27 25  0 40.00 60.646  7.18  0.00  0.00  5.646
- 942 actatcatctctgcgcgatcgat          359 23  0 47.83 62.652 18.39  6.37 35.72  5.652
- 943 ctatttagctagctgactgatcg          254 23  0 43.48 57.339  0.00  0.00  0.00  5.661
- 944 tagctagctgatcgatcgtagcg          561 23  0 52.17 62.677 22.25 13.08  0.00  5.677
- 945 gcatcggattagctagctgatgc            4 23  0 52.17 62.687 28.25 28.25 36.53  5.687
- 946 tgcatgctagtagtgatgtatacgt         33 25  0 40.00 60.700 17.41  0.00  0.00  5.700
- 947 tttagctagctgactgatcgatcat        257 25  0 40.00 60.702 21.99 13.15 32.24  5.702
- 948 atttagctagctgactgatcgatca        256 25  0 40.00 60.702 22.44 22.44 33.41  5.702
- 949 gctagctagctactatcatctct          348 23  0 43.48 57.266 29.42  0.00 42.45  5.734
- 950 ctgatgctagtgatgcatgctagt          20 24  0 45.83 61.736 20.17  8.72 44.73  5.736
- 951 tcgatgctactagctagctgatca         203 24  0 45.83 61.747 14.03  7.87 43.02  5.747
- 952 tcatcgatgctactagctagctga         200 24  0 45.83 61.747 18.14  4.34 43.02  5.747
- 953 aagcatcggattagctagctgatg           2 24  0 45.83 61.794 22.49 22.49 29.41  5.794
- 954 agtgatgtatacgtagctagtagc          44 24  0 41.67 58.201 10.66 10.66 45.79  5.799
- 955 gctagtagtgatgtatacgtagct          38 24  0 41.67 58.201  1.28  1.28  0.00  5.799
- 956 tagctagctgactgatcgatcgat         107 24  0 45.83 61.800 24.92 24.92 35.62  5.800
- 957 tgctactagctagctgatcatcatc        207 25  0 44.00 60.816 15.08  0.00 43.02  5.816
- 958 gatgctactagctagctgatcatca        205 25  0 44.00 60.816 20.13 13.36 43.02  5.816
- 959 actagctagctgactgatacgcg          464 23  0 52.17 62.816 17.09  1.24  0.00  5.816
- 960 actagctagctgatcatcatctac         211 24  0 41.67 58.178 18.14  0.00  0.00  5.822
- 961 tagctgatcgatcgatgctagcta         396 24  0 45.83 61.857 29.64 27.96 35.94  5.857
- 962 tagctagctgatcgatcgatgcta         392 24  0 45.83 61.857 27.92 26.25 31.20  5.857
- 963 ctaggcgatgctagctagctacta         417 24  0 50.00 61.857 19.75 13.97 45.79  5.857
- 964 tatttagctagctgactgatcgat         255 24  0 37.50 58.112  0.00  0.00  0.00  5.888
- 965 gcatgctagtagtgatgtatacgta         34 25  0 40.00 59.089  7.18  0.00  0.00  5.911
- 966 tatttagctagctgactgatcgatc        255 25  0 40.00 59.084 14.91 14.91  0.00  5.916
- 967 ctatttagctagctgactgatcgat        254 25  0 40.00 59.082  0.00  0.00  0.00  5.918
- 968 ctagctagctactatcatctctgcg        349 25  0 48.00 60.920 23.20  0.66  0.00  5.920
- 969 ctagctactatcatcgatcgatgca        431 25  0 44.00 60.922 28.32 20.18 44.54  5.922
- 970 cggcgatctagctagctgactag          582 23  0 56.52 62.926 13.17  6.98 44.57  5.926
- 971 tgatcgatcgatgctagctaggc          400 23  0 52.17 62.955 21.71  7.87 30.77  5.955
- 972 agctagctactgatcgatgctaca         303 24  0 45.83 61.988 13.17  0.00  0.00  5.988
- 973 tgactgatcgatcgatgctagcta         115 24  0 45.83 62.034 15.57  6.49 30.77  6.034
- 974 tagctgactgatcgatcgatgcta         111 24  0 45.83 62.034 27.65 24.48 30.77  6.034
- 975 catgctagtagtgatgtatacgtagc        35 26  0 42.31 59.961  0.15  0.15  0.00  6.039
- 976 gcatgctagtagtgatgtatacgtag        34 26  0 42.31 59.961  7.18  0.00  0.00  6.039
- 977 actgatcgatcgatgctagctagt         117 24  0 45.83 62.039 18.39 10.14 30.77  6.039
- 978 ctatttagctagctgactgatcgatc       254 26  0 42.31 59.960 14.91 14.91  0.00  6.040
- 979 ttagctagctgactgatcgatcatc        258 25  0 44.00 61.041 23.80 17.05 32.24  6.041
- 980 atgctagtagtgatgtatacgtagct        36 26  0 38.46 60.068  4.83  4.22  0.00  6.068
- 981 ctagctagctgatcatcatctact         212 24  0 41.67 57.930  7.49  0.73  0.00  6.070
- 982 ctactagctagctgatcatcatct         209 24  0 41.67 57.930  0.00  0.00  0.00  6.070
- 983 agctgatcatcatctagctagtag         153 24  0 41.67 57.930  2.78  0.00 34.43  6.070
- 984 ctagctgatcatcatctagctagt         151 24  0 41.67 57.930 16.41  0.49 40.32  6.070
- 985 atgctagctagctgatcgatcgta         557 24  0 45.83 62.096 34.11 14.83 45.79  6.096
- 986 tagctactatcatctctgcgcgat         354 24  0 45.83 62.096  1.58  0.00  0.00  6.096
- 987 gactgatcgatcatcatgctagcta        268 25  0 44.00 61.099 19.75  0.00 35.80  6.099
- 988 ctgatcatcatcgatgctagctagt        517 25  0 44.00 61.101 18.08  0.00 35.24  6.101
- 989 actagctagctgatcatcatcgatg        508 25  0 44.00 61.101 18.14 15.71 37.94  6.101
- 990 ctgatcgatcatcatgctagctact        270 25  0 44.00 61.101 21.99  0.00 35.80  6.101
- 991 atgctagtagtgatgtatacgtagc         36 25  0 40.00 58.855  0.15  0.15  0.00  6.145
- 992 ctagctagctactgatcgatgctac        301 25  0 48.00 61.145  8.77  3.79  0.00  6.145
- 993 gctagctagctactatcatctctgc        348 25  0 48.00 61.152 29.42  6.57 42.45  6.152
- 994 agctagctgatcatcatctactatca       214 26  0 38.46 59.840 13.65  0.00  0.00  6.160
- 995 ctgatcgatcgatgctagctagtag        118 25  0 48.00 61.197 14.63  0.43 30.77  6.197
- 996 agctagctgactgatcgatcatca         260 24  0 45.83 62.232 21.56 21.56 35.62  6.232
- 997 gctagctagctactatcatcgatcg        426 25  0 48.00 61.252 29.42  6.08 42.45  6.252
- 998 gctatttagctagctgactgatcga        253 25  0 44.00 61.268  3.13  0.00 42.45  6.268
- 999 ctagctagctactatcatcgatcgat       427 26  0 42.31 60.291 23.20 19.77 32.71  6.291
-1000 agctgatcatcgatgctactagct         194 24  0 45.83 62.294 19.76 18.85 43.59  6.294
-1001 agctagctgatcatcgatgctact         190 24  0 45.83 62.294 13.65  5.46  0.00  6.294
-1002 catgcatgctactagctagctgac         454 24  0 50.00 62.304 12.04  4.81 43.02  6.304
-1003 ctagctagctgactgatcgatcga         106 24  0 50.00 62.312 17.65 17.65  0.00  6.312
-1004 actgatcgatcatcatgctagctac        269 25  0 44.00 61.328 21.99  0.00 35.80  6.328
-1005 tgatgcatgctagtagtgatgtatac        30 26  0 38.46 59.623  3.83  1.40  0.00  6.377
-1006 gtgatgcatgctagtagtgatgtata        29 26  0 38.46 59.623  0.00  0.00  0.00  6.377
-1007 tactatcatctctgcgcgatcgat         358 24  0 45.83 62.379 18.39  6.37 35.72  6.379
-1008 tactatcatcgatcgatgcatgcat        436 25  0 40.00 61.389 27.70 27.70 44.54  6.389
-1009 gctagctgatcatcatctactatca        215 25  0 40.00 58.607  4.46  0.00  0.00  6.393
-1010 aggcgatgctagctagctactatc         419 24  0 50.00 62.396 19.34 14.41 45.79  6.396
-1011 atcgatgctagctagctgatcgat         553 24  0 45.83 62.400 36.39 36.39 46.19  6.400
-1012 gctactagctagctgatcatcatcta       208 26  0 42.31 60.404  9.82  0.00 39.91  6.404
-1013 tagctgatcatcatctagctagtagc       152 26  0 42.31 60.404 10.66 10.66 36.09  6.404
-1014 tgctagtagtgatgtatacgtagcta        37 26  0 38.46 59.564  5.48  3.40  0.00  6.436
-1015 gatgcatgctagtagtgatgtatacg        31 26  0 42.31 60.453  2.03  0.00  0.00  6.453
-1016 tagtgatgcatgctagtagtgatgta        27 26  0 38.46 60.461  7.18  3.92  0.00  6.461
-1017 cgatgctagctagctactatcatcg        422 25  0 48.00 61.477 29.12 26.80 45.79  6.477
-1018 atgcatgctactagctagctgact         455 24  0 45.83 62.485 15.62  2.52 43.02  6.485
-1019 tgatgctagtgatgcatgctagtag         21 25  0 44.00 61.505 20.17 15.00 44.73  6.505
-1020 ctgatgctagtgatgcatgctagta         20 25  0 44.00 61.505 20.17 17.68 44.73  6.505
-1021 gctagtgatgcatgctagtagtgat         25 25  0 44.00 61.506 20.17  3.61  0.00  6.506
-1022 gatgctagtgatgcatgctagtagt         22 25  0 44.00 61.506 20.17 11.60 44.73  6.506
-1023 tgcatgctagtagtgatgtatacgta        33 26  0 38.46 60.515 17.41  0.00  0.00  6.515
-1024 tatttagctagctgactgatcgatca       255 26  0 38.46 60.516 22.44 22.44 33.41  6.516
-1025 tgatgcatgctagtagtgatgtata         30 25  0 36.00 58.479  0.00  0.00  0.00  6.521
-1026 tactagctagctgactgatacgcg         463 24  0 50.00 62.538  8.90  1.24  0.00  6.538
-1027 tgctagctagctgatcgatcgtag         558 24  0 50.00 62.603 34.11 12.05 45.79  6.603
-1028 ctagctactatcatctctgcgcga         353 24  0 50.00 62.603  0.00  0.00  0.00  6.603
-1029 ggcgatgctagctagctactatca         420 24  0 50.00 62.629 21.87 12.52 45.79  6.629
-1030 agctagctgatcatcatctactatc        214 25  0 40.00 58.369 13.65  0.00  0.00  6.631
-1031 agctagctgatcatcatctactat         214 24  0 37.50 57.345 13.65  0.00  0.00  6.655
-1032 gctactagctagctgatcatcatcg        505 25  0 48.00 61.656  9.82  0.00 39.91  6.656
-1033 cgatgctactagctagctgatcatc        204 25  0 48.00 61.656 18.71 17.44 43.02  6.656
-1034 catcgatgctactagctagctgatc        201 25  0 48.00 61.656 10.69  7.42 43.02  6.656
-1035 gatcatcgatgctactagctagctg        198 25  0 48.00 61.656 14.63  7.64 43.02  6.656
-1036 ctgatcatcgatgctactagctagc        196 25  0 48.00 61.656 17.09 10.05 44.40  6.656
-1037 gctgatcatcgatgctactagctag        195 25  0 48.00 61.656 16.42 15.63 43.59  6.656
-1038 ctagctgatcatcgatgctactagc        192 25  0 48.00 61.656 16.19 16.19 45.61  6.656
-1039 gctagctgatcatcgatgctactag        191 25  0 48.00 61.656 15.22 15.22  0.00  6.656
-1040 ctagctagctgatcatcgatgctac        188 25  0 48.00 61.656 12.78  6.89  0.00  6.656
-1041 agctactatcatcgatcgatgcatg        433 25  0 44.00 61.662 24.21 19.49 44.54  6.662
-1042 actagctagctgatcatcatctacta       211 26  0 38.46 59.328 18.14  1.60  0.00  6.672
-1043 tactagctagctgatcatcatctact       210 26  0 38.46 59.328  0.73  0.73  0.00  6.672
-1044 ctactagctagctgatcatcatcgat       506 26  0 42.31 60.681  0.00  0.00  0.00  6.681
-1045 gcgatgctagctagctactatcatc        421 25  0 48.00 61.710 28.44 20.38 45.79  6.710
-1046 atgctagtgatgcatgctagtagtg         23 25  0 44.00 61.736 20.17  5.61 43.35  6.736
-1047 atgctagctagctactatcatcgatc       424 26  0 42.31 60.736 34.11  7.30 45.79  6.736
-1048 gatgctagctagctactatcatcgat       423 26  0 42.31 60.736 27.25 12.71 45.79  6.736
-1049 tagctagctactgatcgatgctaca        302 25  0 44.00 61.746 23.20  1.05  0.00  6.746
-1050 gtagtgatgtatacgtagctagtagc        42 26  0 42.31 59.249 10.66 10.66 45.79  6.751
-1051 actgatcgatcgatgctagctagta        117 25  0 44.00 61.797 18.39 13.94 30.77  6.797
-1052 gatgcatgctagtagtgatgtatac         31 25  0 40.00 58.175 17.41  0.00  0.00  6.825
-1053 gctgatgctagtgatgcatgctag          19 24  0 50.00 62.833 17.25 17.25 44.73  6.833
-1054 agctgatcatcatcgatgctagct         515 24  0 45.83 62.835 18.60 17.58 36.46  6.835
-1055 agctagctgatcatcatcgatgct         511 24  0 45.83 62.835 13.65  3.04 35.24  6.835
-1056 ctagctagctgactgatacgcgat         465 24  0 50.00 62.838 10.57  0.00  0.00  6.838
-1057 atgcatgctagtagtgatgtatac          32 24  0 37.50 57.161  5.79  0.00  0.00  6.839
-1058 agctagctactatcatctctgcgc         351 24  0 50.00 62.858 13.17  0.00  0.00  6.858
-1059 gctagctagctactgatcgatgct         300 24  0 50.00 62.858 29.42  7.73 42.45  6.858
-1060 ctactatcatctctgcgcgatcga         357 24  0 50.00 62.878 18.39  0.00 35.72  6.878
-1061 gctagctactgatcgatgctacatc        304 25  0 48.00 61.879  7.33  0.35 34.51  6.879
-1062 ctactatcatcgatcgatgcatgca        435 25  0 44.00 61.886 24.60 20.24 44.54  6.886
-1063 tgatacgcgatgctagctagctag         478 24  0 50.00 62.892 32.44 32.44 45.79  6.892
-1064 ctgatacgcgatgctagctagcta         477 24  0 50.00 62.892 34.11 22.97 45.79  6.892
-1065 tagtgatgtatacgtagctagtagc         43 25  0 40.00 58.104 10.66 10.66 45.79  6.896
-1066 gctagtagtgatgtatacgtagcta         38 25  0 40.00 58.104  2.60  0.56  0.00  6.896
-1067 tcgatgctagctagctgatcgatc         554 24  0 50.00 62.898 35.07 26.30 42.23  6.898
-1068 tgatcatcatcgatgctagctagtag       518 26  0 42.31 60.902 10.40  0.00 35.24  6.902
-1069 ctgatcatcatcgatgctagctagta       517 26  0 42.31 60.902 18.08 13.94 35.24  6.902
-1070 tactagctagctgatcatcatcgatg       507 26  0 42.31 60.902 15.71 15.71 37.94  6.902
-1071 tgatcgatcatcatgctagctactag       271 26  0 42.31 60.902 23.50  0.00 31.00  6.902
-1072 ctgatcgatcatcatgctagctacta       270 26  0 42.31 60.902 21.99  0.00 35.80  6.902
-1073 agctgatcgatcgatgctagctag         397 24  0 50.00 62.904 25.97 15.22 34.35  6.904
-1074 ctagctgatcgatcgatgctagct         395 24  0 50.00 62.904 29.90 27.89 36.53  6.904
-1075 agctagctgatcgatcgatgctag         393 24  0 50.00 62.904 34.73 34.73 41.62  6.904
-1076 ctagctagctgatcgatcgatgct         391 24  0 50.00 62.904 28.03 27.34 33.62  6.904
-1077 tactagctagctgatcatcatctac        210 25  0 40.00 58.081  0.00  0.00  0.00  6.919
-1078 gctagctgatcatcatctactatc         215 24  0 41.67 57.062  4.46  0.00  0.00  6.938
-1079 gatcatcgatgctagctagctgatc        549 25  0 48.00 61.939 31.25 29.26 45.79  6.939
-1080 agtgatgcatgctagtagtgatgtat        28 26  0 38.46 60.969  0.00  0.00  0.00  6.969
-1081 gctagtagtgatgtatacgtagctag        38 26  0 42.31 59.027  4.11  4.11  0.00  6.973
-1082 tagctagctgactgatcgatcatca        259 25  0 44.00 61.981 23.80 21.56 35.62  6.981
-1083 gctagctactatcatcgatcgatgc        430 25  0 48.00 61.981 35.81 25.56 44.54  6.981
-1084 ctactagctagctgatcatcatctac       209 26  0 42.31 59.015  0.00  0.00  0.00  6.985
-1085 gcatgctactagctagctgactga         457 24  0 50.00 62.987 10.45  0.00 43.02  6.987
-1086 agtagtgatgtatacgtagctagt          41 24  0 37.50 57.012  3.54  3.54  0.00  6.988
-1087 gctagctgatcatcatctactatcat       215 26  0 38.46 59.001  4.46  0.00  0.00  6.999
-1088 agctgatcatcatctactatcatca        218 25  0 36.00 57.993  0.00  0.00  0.00  7.007
-1089 atgcatgctagtagtgatgtatacgt        32 26  0 38.46 61.018  5.79  0.00  0.00  7.018
-1090 atttagctagctgactgatcgatcat       256 26  0 38.46 61.022 21.99 13.15 32.24  7.022
-1091 tcgatgctactagctagctgatcat        203 25  0 44.00 62.040 14.46 10.32 43.02  7.040
-1092 atcgatgctactagctagctgatca        202 25  0 44.00 62.040 14.03  7.87 43.02  7.040
-1093 tcatcgatgctactagctagctgat        200 25  0 44.00 62.040 16.98  4.88 43.02  7.040
-1094 atcatcgatgctactagctagctga        199 25  0 44.00 62.040 18.14  4.34 43.02  7.040
-1095 tgatcatcgatgctactagctagct        197 25  0 44.00 62.040 19.18 19.18 43.02  7.040
-1096 agctgatcatcgatgctactagcta        194 25  0 44.00 62.040 19.83  5.23 43.59  7.040
-1097 tagctgatcatcgatgctactagct        193 25  0 44.00 62.040 22.19 22.19 43.59  7.040
-1098 agctagctgatcatcgatgctacta        190 25  0 44.00 62.040 13.65  6.68  0.00  7.040
-1099 tagctagctgatcatcgatgctact        189 25  0 44.00 62.040 12.42 10.06  0.00  7.040
-1100 atgctagtagtgatgtatacgtagcta       36 27  0 37.04 59.911  5.48  3.40  0.00  7.089
-1101 atgctactagctagctgatcatcatc       206 26  0 42.31 61.130 15.08  0.00 43.02  7.130
-1102 gatgctactagctagctgatcatcat       205 26  0 42.31 61.130 20.13 15.45 43.02  7.130
-1103 gctagctgatcatcatctactatcatc      215 27  0 40.74 59.861  4.46  0.00  0.00  7.139
-1104 taggcgatgctagctagctactatc        418 25  0 48.00 62.141 19.29 14.41 45.79  7.141
-1105 ctaggcgatgctagctagctactat        417 25  0 48.00 62.145 20.02 10.48 45.79  7.145
-1106 ctagctagctgatcatcatctacta        212 25  0 40.00 57.842  7.49  1.60  0.00  7.158
-1107 ctactagctagctgatcatcatcta        209 25  0 40.00 57.842  0.00  0.00  0.00  7.158
-1108 tagctgatcatcatctagctagtag        152 25  0 40.00 57.842  8.41  0.00 36.09  7.158
-1109 ctagctgatcatcatctagctagta        151 25  0 40.00 57.842 16.41  1.80 40.32  7.158
-1110 gctgatcatcatcgatgctagctag        516 25  0 48.00 62.165 15.64 12.97 35.24  7.165
-1111 ctagctgatcatcatcgatgctagc        513 25  0 48.00 62.165 13.90 14.60 36.11  7.165
-1112 gctagctgatcatcatcgatgctag        512 25  0 48.00 62.165 17.87 17.87 40.75  7.165
-1113 ctagctagctgatcatcatcgatgc        509 25  0 48.00 62.165 16.98  2.80 35.24  7.165
-1114 agctagctgatcatcatctactatcat      214 27  0 37.04 60.181 13.65  0.00  0.00  7.181
-1115 ctactagctagctgatcatcatctact      209 27  0 40.74 60.181  0.73  0.73  0.00  7.181
-1116 ctagctgatcatcatctagctagtag       151 26  0 42.31 58.789 16.41  5.21 40.32  7.211
-1117 ctagctactatcatcgatcgatgcat       431 26  0 42.31 61.228 29.36 24.57 44.54  7.228
-1118 aaagcatcggattagctagctgatg          1 25  0 44.00 62.249 22.49 22.49 29.41  7.249
-1119 agctagctactgatcgatgctacat        303 25  0 44.00 62.272 13.17  2.03  0.00  7.272
-1120 tagctagctgatcatcatctactatca      213 27  0 37.04 59.689  1.91  0.00  0.00  7.311
-1121 actagctagctgatcatcatctactat      211 27  0 37.04 59.688 18.14  0.00  0.00  7.312
-1122 ctgactgatcgatcatcatgctagc        266 25  0 48.00 62.333 15.95  3.89 35.80  7.333
-1123 gctgactgatcgatcatcatgctag        265 25  0 48.00 62.333 22.64 16.49 35.80  7.333
-1124 ctagctgactgatcgatcatcatgc        262 25  0 48.00 62.333 22.57 22.57 35.80  7.333
-1125 gctagctgactgatcgatcatcatg        261 25  0 48.00 62.333 17.77 14.64 35.80  7.333
-1126 tgctagtagtgatgtatacgtagctag       37 27  0 40.74 60.395  4.11  4.11  0.00  7.395
-1127 agtagtgatgtatacgtagctagtagc       41 27  0 40.74 60.395 10.66 10.66 45.79  7.395
-1128 gctagtagtgatgtatacgtagctagt       38 27  0 40.74 60.395 10.61 10.61  0.00  7.395
-1129 tagctactatcatcgatcgatgcatg       432 26  0 42.31 61.445 24.21 19.49 44.54  7.445
-1130 ctagtgatgcatgctagtagtgatgt        26 26  0 42.31 61.460 14.94  0.00  0.00  7.460
-1131 gctgatcatcatctactatcatcatca      219 27  0 37.04 59.533  0.00  0.00  0.00  7.467
-1132 tgctactagctagctgactgatacg        460 25  0 48.00 62.470 15.08  0.00 43.02  7.470
-1133 agctagctgactgatcgatcatcat        260 25  0 44.00 62.507 21.32 15.11 35.80  7.507
-1134 tttagctagctgactgatcgatcatc       257 26  0 42.31 61.507 19.14 17.05 32.24  7.507
-1135 catgctactagctagctgactgatac       458 26  0 46.15 61.557 11.52  0.00 43.02  7.557
-1136 catgctagtagtgatgtatacgtag         35 25  0 40.00 57.441  0.06  0.00  0.00  7.559
-1137 agctgatcatcatcgatgctagcta        515 25  0 44.00 62.561 18.66  6.67 37.06  7.561
-1138 tagctgatcatcatcgatgctagct        514 25  0 44.00 62.561 21.30 21.30 39.99  7.561
-1139 agctagctgatcatcatcgatgcta        511 25  0 44.00 62.561 13.65  3.93 35.24  7.561
-1140 tagctagctgatcatcatcgatgct        510 25  0 44.00 62.561  9.21  4.54 35.24  7.561
-1141 gctatttagctagctgactgatcgat       253 26  0 42.31 61.564  3.13  0.00 42.45  7.564
-1142 ctagctagctgactgatcgatcgat        106 25  0 48.00 62.579 24.92 24.92 35.62  7.579
-1143 agctgatcatcatctactatcatcat       218 26  0 34.62 58.415  0.00  0.00  0.00  7.585
-1144 tagctagctactatcatctctgcgc        350 25  0 48.00 62.587 23.20  0.00  0.00  7.587
-1145 gctagctagctactgatcgatgcta        300 25  0 48.00 62.587 29.42  8.06 42.45  7.587
-1146 actatcatcgatcgatgcatgcatg        437 25  0 44.00 62.622 22.47 18.83 44.54  7.622
-1147 tgctagtgatgcatgctagtagtga         24 25  0 44.00 62.622 20.17  8.82 31.61  7.622
-1148 tagctgatcgatcgatgctagctag        396 25  0 48.00 62.632 28.25 16.40 35.94  7.632
-1149 ctagctgatcgatcgatgctagcta        395 25  0 48.00 62.632 29.90 27.04 36.53  7.632
-1150 tagctagctgatcgatcgatgctag        392 25  0 48.00 62.632 34.73 34.73 41.62  7.632
-1151 ctagctagctgatcgatcgatgcta        391 25  0 48.00 62.632 27.92 26.25 31.20  7.632
-1152 gtgatgcatgctagtagtgatgtatac       29 27  0 40.74 60.659  3.97  1.74  0.00  7.659
-1153 agctgatcatcatctactatcatcatc      218 27  0 37.04 59.314  0.00  0.00  0.00  7.686
-1154 tagctagctgatcatcatctactat        213 25  0 36.00 57.279  1.91  0.00  0.00  7.721
-1155 tagctagctgatcatcatctactatc       213 26  0 38.46 58.269  1.91  0.00  0.00  7.731
-1156 tgactgatcgatcatcatgctagct        267 25  0 44.00 62.733 22.22  5.65 35.80  7.733
-1157 agctgactgatcgatcatcatgcta        264 25  0 44.00 62.733 25.31 12.99 35.80  7.733
-1158 tagctgactgatcgatcatcatgct        263 25  0 44.00 62.733 26.99 26.99 35.80  7.733
-1159 ctagctagctgatcatcatctactat       212 26  0 38.46 58.265  3.18  0.00  0.00  7.735
-1160 agtgatgcatgctagtagtgatgtata       28 27  0 37.04 60.779  0.00  0.00  0.00  7.779
-1161 tagtgatgcatgctagtagtgatgtat       27 27  0 37.04 60.779  7.47  0.00  0.00  7.779
-1162 tgactgatcgatcgatgctagctag        115 25  0 48.00 62.800 15.57 12.97 30.77  7.800
-1163 ctgactgatcgatcgatgctagcta        114 25  0 48.00 62.800 15.57  7.41 30.77  7.800
-1164 tagctgactgatcgatcgatgctag        111 25  0 48.00 62.800 25.51 20.74 30.77  7.800
-1165 ctagctgactgatcgatcgatgcta        110 25  0 48.00 62.800 25.59 23.49 30.77  7.800
-1166 tagctagctgactgatcgatcgatg        107 25  0 48.00 62.800 23.80  7.87 30.77  7.800
-1167 gactgatcgatcgatgctagctagt        116 25  0 48.00 62.802 18.08  7.84 30.77  7.802
-1168 tactagctagctgatcatcatctacta      210 27  0 37.04 59.196  2.39  1.60  0.00  7.804
-1169 tagctgatcatcgatgctactagcta       193 26  0 42.31 61.805 24.03 22.29 43.59  7.805
-1170 tagctagctgatcatcgatgctacta       189 26  0 42.31 61.805 13.79 10.27  0.00  7.805
-1171 atgcatgctagtagtgatgtatacgta       32 27  0 37.04 60.828  5.79  0.00  0.00  7.828
-1172 tatttagctagctgactgatcgatcat      255 27  0 37.04 60.831 21.99 13.15 32.24  7.831
-1173 ctagctagctgatcatcatctactatc      212 27  0 40.74 59.162  3.18  0.00  0.00  7.838
-1174 gatgctagctagctgatcgatcgta        556 25  0 48.00 62.854 25.55  7.55 45.79  7.854
-1175 tagctactatcatctctgcgcgatc        354 25  0 48.00 62.854  0.00  0.00  0.00  7.854
-1176 gctgatcatcatctactatcatcat        219 25  0 36.00 57.142  0.00  0.00  0.00  7.858
-1177 atgctagctagctgatcgatcgtag        557 25  0 48.00 62.859 34.11 12.05 45.79  7.859
-1178 ctagctactatcatctctgcgcgat        353 25  0 48.00 62.859  1.58  0.00  0.00  7.859
-1179 gctgatcatcatctactatcatcatc       219 26  0 38.46 58.126  0.00  0.00  0.00  7.874
-1180 ggcgatgctagctagctactatcat        420 25  0 48.00 62.887 21.87 14.61 45.79  7.887
-1181 gctactatcatcgatcgatgcatgc        434 25  0 48.00 62.926 24.60 19.27 44.54  7.926
-1182 tagctgatgctagtgatgcatgcta         17 25  0 44.00 62.971 10.74  8.70 44.73  7.971
-1183 tgctactagctagctgatcatcatct       207 26  0 42.31 61.987 15.08  0.00 43.02  7.987
-1184 tagctagctactgatcgatgctacat       302 26  0 42.31 62.028 23.20  0.00  0.00  8.028
-1185 agtagtgatgtatacgtagctagtag        41 26  0 38.46 57.950  4.77  0.00  0.00  8.050
-1186 ctagtagtgatgtatacgtagctagt        39 26  0 38.46 57.950 10.32 10.32  0.00  8.050
-1187 catgctagtagtgatgtatacgtagct       35 27  0 40.74 61.089  4.83  4.22  0.00  8.089
-1188 gactgatcgatcatcatgctagctac       268 26  0 46.15 62.094 19.75  3.49 35.80  8.094
-1189 tagctgatcatcatctactatcatca       217 26  0 34.62 57.906  0.00  0.00  0.00  8.094
-1190 ctactatcatcgatcgatgcatgcat       435 26  0 42.31 62.157 27.70 27.70 44.54  8.157
-1191 ctagctgatcatcatctactatcatca      216 27  0 37.04 58.826  0.00  0.00  0.00  8.174
-1192 ctagctgatcatcatctagctagtagc      151 27  0 44.44 61.196 16.41 10.66 40.32  8.196
-1193 tagctagctgactgatcgatcatcat       259 26  0 42.31 62.255 23.80 15.11 35.80  8.255
-1194 ctagtgatgcatgctagtagtgatgta       26 27  0 40.74 61.255 14.94  3.92  0.00  8.255
-1195 ctgatgctagtgatgcatgctagtag        20 26  0 46.15 62.269 15.00 15.00 44.73  8.269
-1196 tgcatgctagtagtgatgtatacgtag       33 27  0 40.74 61.300 17.41  0.00  0.00  8.300
-1197 ctatttagctagctgactgatcgatca      254 27  0 40.74 61.304 22.44 22.44 33.41  8.304
-1198 tagctgatcatcatcgatgctagcta       514 26  0 42.31 62.307 23.30 21.42 37.06  8.307
-1199 tagctagctgatcatcatcgatgcta       510 26  0 42.31 62.307  9.39  4.84 35.24  8.307
-1200 atcgatgctactagctagctgatcat       202 26  0 42.31 62.312 14.46  9.64 43.02  8.312
-1201 atcatcgatgctactagctagctgat       199 26  0 42.31 62.312 16.98  4.29 43.02  8.312
-1202 tactatcatcgatcgatgcatgcatg       436 26  0 42.31 62.371 22.47 18.83 44.54  8.371
-1203 gctagctagctactatcatcgatcga       426 26  0 46.15 62.381 29.42 17.65 42.45  8.381
-1204 gctactagctagctgatcatcatctac      208 27  0 44.44 61.407  9.82  0.00 39.91  8.407
-1205 ttagctagctgactgatcgatcatca       258 26  0 42.31 62.416 23.80 21.56 35.62  8.416
-1206 tgactgatcgatcatcatgctagcta       267 26  0 42.31 62.472 22.22  6.22 35.80  8.472
-1207 tagctgactgatcgatcatcatgcta       263 26  0 42.31 62.472 28.50 27.06 35.80  8.472
-1208 actgatcgatcatcatgctagctact       269 26  0 42.31 62.478 21.99  0.00 35.80  8.478
-1209 gctagtgatgcatgctagtagtgatg        25 26  0 46.15 62.484 20.17  4.19  0.00  8.484
-1210 gatgctagtgatgcatgctagtagtg        22 26  0 46.15 62.484 17.91  7.49 44.73  8.484
-1211 ctagctagctactgatcgatgctaca       301 26  0 46.15 62.503  8.77  1.97  0.00  8.503
-1212 gatgctagctagctactatcatcgatc      423 27  0 44.44 61.506 27.25 15.74 45.79  8.506
-1213 gactgatcgatcgatgctagctagta       116 26  0 46.15 62.543 18.08 13.94 30.77  8.543
-1214 actgatcgatcgatgctagctagtag       117 26  0 46.15 62.548 18.39  7.63 30.77  8.548
-1215 tgctagctagctactatcatcgatcg       425 26  0 46.15 62.599 34.11  5.11 45.79  8.599
-1216 cgatgctagctagctactatcatcga       422 26  0 46.15 62.599 31.65 15.28 45.79  8.599
-1217 ctagctgatcatcatctactatcatc       216 26  0 38.46 57.395  0.00  0.00  0.00  8.605
-1218 ctgatcatcatcgatgctagctagtag      517 27  0 44.44 61.665  6.02  0.00 35.24  8.665
-1219 ctactagctagctgatcatcatcgatg      506 27  0 44.44 61.665 15.71 15.71 37.94  8.665
-1220 ctgatcgatcatcatgctagctactag      270 27  0 44.44 61.665 21.99  3.12 35.80  8.665
-1221 tagctgatcatcatctactatcatcat      217 27  0 33.33 58.315  0.00  0.00  0.00  8.685
-1222 atgctactagctagctgactgatacg       459 26  0 46.15 62.723 15.08  0.00 43.02  8.723
-1223 tgctactagctagctgatcatcatcta      207 27  0 40.74 61.761 15.08  0.00 43.02  8.761
-1224 tgatgcatgctagtagtgatgtatacg       30 27  0 40.74 61.778  4.56  0.00  0.00  8.778
-1225 gatgcatgctagtagtgatgtatacgt       31 27  0 40.74 61.779  2.03  0.00  0.00  8.779
-1226 gctactagctagctgatcatcatcga       505 26  0 46.15 62.779  9.82  0.00 39.91  8.779
-1227 tcgatgctactagctagctgatcatc       203 26  0 46.15 62.779 18.71 17.44 43.02  8.779
-1228 tcatcgatgctactagctagctgatc       200 26  0 46.15 62.779 16.98  7.42 43.02  8.779
-1229 gatcatcgatgctactagctagctga       198 26  0 46.15 62.779 18.14  4.34 43.02  8.779
-1230 ctgatcatcgatgctactagctagct       196 26  0 46.15 62.784 19.18 19.18 43.02  8.784
-1231 agctgatcatcgatgctactagctag       194 26  0 46.15 62.784 19.83 15.63 43.59  8.784
-1232 ctagctgatcatcgatgctactagct       192 26  0 46.15 62.784 22.19 22.19 43.59  8.784
-1233 agctagctgatcatcgatgctactag       190 26  0 46.15 62.784 15.22 15.22  0.00  8.784
-1234 ctagctagctgatcatcgatgctact       188 26  0 46.15 62.784 12.42 10.06  0.00  8.784
-1235 atttagctagctgactgatcgatcatc      256 27  0 40.74 61.785 19.14 17.05 32.24  8.785
-1236 tctactatcatcatcatctactagct       230 26  0 34.62 57.155  0.00  0.00  0.00  8.845
-1237 tgctagtgatgcatgctagtagtgat        24 26  0 42.31 62.874 20.17  3.61 31.61  8.874
-1238 atgctagtgatgcatgctagtagtga        23 26  0 42.31 62.874 20.17 10.56 43.35  8.874
-1239 tgatgctagtgatgcatgctagtagt        21 26  0 42.31 62.874 20.17 11.60 44.73  8.874
-1240 ctaggcgatgctagctagctactatc       417 26  0 50.00 62.874 20.02 14.58 45.79  8.874
-1241 gatgctactagctagctgatcatcatc      205 27  0 44.44 61.885 20.13 17.59 43.02  8.885
-1242 gcatgctactagctagctgactgata       457 26  0 46.15 62.956 10.45  0.00 43.02  8.956
-1243 ctgatcatcatctactatcatcatca       220 26  0 34.62 57.026  0.00  0.00  0.00  8.974
-1244 cgatgctactagctagctgatcatca       204 26  0 46.15 62.998 21.63 14.65 43.02  8.998
-1245 catcgatgctactagctagctgatca       201 26  0 46.15 62.998 14.03  7.87 43.02  8.998
-1246 tgatcatcgatgctactagctagctg       197 26  0 46.15 62.998 14.63  7.64 43.02  8.998
-1247 agctagctactgatcgatgctacatc       303 26  0 46.15 62.999 13.17  3.93 34.51  8.999
-1248 tagtagtgatgtatacgtagctagtag       40 27  0 37.04 57.869 11.42  0.00  0.00  9.131
-1249 ctagtagtgatgtatacgtagctagta       39 27  0 37.04 57.869 11.48 10.47  0.00  9.131
-1250 ctagctactatcatcgatcgatgcatg      431 27  0 44.44 62.177 24.21 19.49 44.54  9.177
-1251 actgatcgatcatcatgctagctacta      269 27  0 40.74 62.236 21.99  0.00 35.80  9.236
-1252 atgctactagctagctgatcatcatct      206 27  0 40.74 62.254 15.08  0.00 43.02  9.254
-1253 gcatgctagtagtgatgtatacgtagc       34 27  0 44.44 62.283  7.18  0.15  0.00  9.283
-1254 gctatttagctagctgactgatcgatc      253 27  0 44.44 62.291 14.91 14.91 42.45  9.291
-1255 atctactatcatcatcatctactagct      229 27  0 33.33 57.592  0.00  0.00  0.00  9.408
-1256 catctactatcatcatcatctactagc      228 27  0 37.04 57.549  0.00  0.00  0.00  9.451
-1257 tgatcatcatctactatcatcatcatc      221 27  0 33.33 57.467  0.00  0.00  0.00  9.533
-1258 tagctgatcatcgatgctactagctag      193 27  0 44.44 62.534 22.74 15.63 43.59  9.534
-1259 ctagctgatcatcgatgctactagcta      192 27  0 44.44 62.534 22.79 21.63 43.59  9.534
-1260 tagctagctgatcatcgatgctactag      189 27  0 44.44 62.534 15.22 15.22  0.00  9.534
-1261 ctagctagctgatcatcgatgctacta      188 27  0 44.44 62.534 12.43 10.22  0.00  9.534
-1262 ctgatcatcatctactatcatcatcat      220 27  0 33.33 57.462  0.00  0.00  0.00  9.538
-1263 gctagctagctactatcatcgatcgat      426 27  0 44.44 62.627 29.42 19.77 42.45  9.627
-1264 ttagctagctgactgatcgatcatcat      258 27  0 40.74 62.665 23.80 15.11 35.80  9.665
-1265 tagctagctactgatcgatgctacatc      302 27  0 44.44 62.742 23.20  3.93 34.51  9.742
-1266 ctagctagctactgatcgatgctacat      301 27  0 44.44 62.747  8.77  0.00  0.00  9.747
-1267 gatcatcatctactatcatcatcatct      222 27  0 33.33 57.242  0.00  0.00  0.00  9.758
-1268 tttagctagctgactgatcgatcatca      257 27  0 40.74 62.820 21.56 21.56 35.62  9.820
-1269 tagctagctactatcatcgatcgatgc      428 27  0 44.44 62.833 35.81 25.56 44.54  9.833
-1270 atgctagctagctactatcatcgatcg      424 27  0 44.44 62.838 34.11  6.08 45.79  9.838
-1271 cgatgctagctagctactatcatcgat      422 27  0 44.44 62.838 31.65 17.86 45.79  9.838
-1272 tctactatcatcatcatctactagcta      230 27  0 33.33 57.100  0.00  0.00  0.00  9.900
+   0 tgctagctaggcgatgctag             411 20  0 55.00 60.028 23.16 23.16 38.59  0.028
+   1 actgatacgcgatgctagct             476 20  0 50.00 59.957 17.69  1.35  0.00  0.043
+   2 gatcgatgctagctaggcga             405 20  0 55.00 60.100 16.30 16.30  0.00  0.100
+   3 tcgatcgatgctagctaggc             403 20  0 55.00 60.100 18.63  8.45  0.00  0.100
+   4 tagctgatcgatcgtagcgg             565 20  0 55.00 60.101 25.02 17.36  0.00  0.101
+   5 gctgactgatcgatcgatgc             113 20  0 55.00 59.826 24.08 17.09 35.21  0.174
+   6 tatcatctctgcgcgatcga             361 20  0 50.00 59.747 22.07  1.72 38.48  0.253
+   7 agctaggcgatgctagctag             415 20  0 55.00 59.742 17.46 17.46 41.54  0.258
+   8 ctagctaggcgatgctagct             413 20  0 55.00 59.742 18.68 17.35 43.53  0.258
+   9 ggcgatctagctagctgact             583 20  0 55.00 59.671 17.44  7.44 37.58  0.329
+  10 tcgatgctagctaggcgatg             407 20  0 55.00 60.382 14.03  0.00  0.00  0.382
+  11 gctgatcgatcgatgctagc             398 20  0 55.00 59.618 25.97 24.79 35.21  0.382
+  12 gctagctgatcgatcgatgc             394 20  0 55.00 59.618 24.08 21.09 35.21  0.382
+  13 atcatctctgcgcgatcgat             362 20  0 50.00 60.382 22.07  5.02 38.48  0.382
+  14 gactgatacgcgatgctagc             475 20  0 55.00 59.551  8.61  8.61  0.00  0.449
+  15 atcgatgctagctaggcgat             406 20  0 50.00 59.452 18.43 18.43  0.00  0.548
+  16 gctagctgactgatacgcga             468 20  0 55.00 60.589 16.29  0.00  0.00  0.589
+  17 agctagctgactgatacgcg             467 20  0 55.00 60.590 17.99  3.89  0.00  0.590
+  18 atgctagctaggcgatgcta             410 20  0 50.00 59.375 10.59  8.91  0.00  0.625
+  19 ctatcatctctgcgcgatcg             360 20  0 55.00 59.347 12.19 12.19 39.07  0.653
+  20 gatgctagctaggcgatgct             409 20  0 55.00 60.668  7.01  7.53  0.00  0.668
+  21 gctactatcatctctgcgcg             356 20  0 55.00 59.273  0.00  0.00  0.00  0.727
+  22 cgtagcggcgatctagctag             577 20  0 60.00 60.791 15.64 15.64 37.58  0.791
+  23 cggcgatctagctagctgac             582 20  0 60.00 61.003 14.84  7.25 38.70  1.003
+  24 gctagctgatcgatcgtagc             563 20  0 55.00 58.995 23.70 23.70  0.00  1.005
+  25 gatcgatcgatgtgcggcta              81 20  0 55.00 61.006 19.16  0.00 41.65  1.006
+  26 atcgatcgatgtgcggctag              82 20  0 55.00 61.008 29.65  0.00 41.65  1.008
+  27 gctgactgatacgcgatgc              472 19  0 57.89 60.025  0.00  0.00  0.00  1.025
+  28 agctagctgatcatcgatgct            190 21  0 47.62 60.035 17.99 11.09  0.00  1.035
+  29 gctagctagctgactgatcga            105 21  0 52.38 60.037 34.38  0.00 46.11  1.037
+  30 tcatctctgcgcgatcgat              363 19  0 52.63 59.946 22.07  0.12 38.48  1.054
+  31 atcatctctgcgcgatcga              362 19  0 52.63 59.946 22.07  1.72 38.48  1.054
+  32 atcgatcgatgtgcggcta               82 19  0 52.63 59.945 29.65  0.00 41.65  1.055
+  33 gtagcggcgatctagctagc             578 20  0 60.00 61.071 16.97  7.15 39.86  1.071
+  34 gctagctgactgatcgatcg             109 20  0 55.00 58.924 16.84 13.89  0.00  1.076
+  35 gctgatcgatcgatgtgcg               78 19  0 57.89 60.097 29.87 18.15 42.69  1.097
+  36 tatcatctctgcgcgatcgat            361 21  0 47.62 60.172 22.07 11.47 38.48  1.172
+  37 gctagctagctgatcgatcga            390 21  0 52.38 60.172 34.38 22.52 46.11  1.172
+  38 gctagctagctgatcgatcga             70 21  0 52.38 60.172 34.38 22.52 46.11  1.172
+  39 catctctgcgcgatcgatg              364 19  0 57.89 59.810 13.74 13.74 38.48  1.190
+  40 tcgtagcggcgatctagcta             576 20  0 55.00 61.231 11.55  9.27 36.40  1.231
+  41 actgatacgcgatgctagcta            476 21  0 47.62 59.765 17.69  3.08  0.00  1.235
+  42 actgatcgatcgatgctagct            117 21  0 47.62 59.763 23.29 11.70 35.21  1.237
+  43 agctagctgatcgatcgatgt             73 21  0 47.62 59.763 17.99  2.62 35.21  1.237
+  44 tagcggcgatctagctagct             579 20  0 55.00 61.243 23.74 23.74 46.60  1.243
+  45 cgtagcggcgatctagcta              577 19  0 57.89 59.729 11.55  9.27 37.58  1.271
+  46 ctagctgatcgatcgtagcg             564 20  0 55.00 58.727 25.02 15.05  0.00  1.273
+  47 tagcggcgatctagctagc              579 19  0 57.89 59.725 16.97  9.14 39.86  1.275
+  48 catcgatcgatgcatgcatg             442 20  0 50.00 58.722 37.80 23.31 44.93  1.278
+  49 tcatctctgcgcgatcgatg             363 20  0 55.00 61.279 18.01 18.01 38.48  1.279
+  50 gctagctagctgatcgatcg             559 20  0 55.00 58.714 34.38 11.90 46.11  1.286
+  51 gctagctagctgatcgatcg             390 20  0 55.00 58.714 34.38 11.90 46.11  1.286
+  52 gctagctagctgatcgatcg              70 20  0 55.00 58.714 34.38 11.90 46.11  1.286
+  53 agcatcggattagctagctga              3 21  0 47.62 59.689 28.29 20.88  0.00  1.311
+  54 agctgatcgatcgtagcgg              566 19  0 57.89 60.315 25.02 17.36  0.00  1.315
+  55 cggcgatctagctagctga              582 19  0 57.89 59.650 21.57 16.66 38.70  1.350
+  56 ctagctgatcgatcgatgtgc             75 21  0 52.38 59.643 31.83 30.04 35.21  1.357
+  57 gctagctgatcgatcgatgtg             74 21  0 52.38 59.643 12.06  6.93 35.21  1.357
+  58 gctagctaggcgatgctagc             412 20  0 60.00 61.357 30.41 30.41 46.19  1.357
+  59 tagctagctgactgatacgcg            466 21  0 52.38 60.373 28.29  3.89  0.00  1.373
+  60 gctagctgactgatcgatcga            109 21  0 52.38 60.374 22.52 22.52  0.00  1.374
+  61 agctagctgactgatcgatcg            108 21  0 52.38 60.374 17.99 13.89  0.00  1.374
+  62 cgatcgatgctagctaggcg             404 20  0 60.00 61.409 15.59  9.14  0.00  1.409
+  63 gctagctagctgactgatcg             105 20  0 55.00 58.563 34.38  1.84 46.11  1.437
+  64 atgctagctaggcgatgct              410 19  0 52.63 59.561 10.59  7.53  0.00  1.439
+  65 agctagctgatcgatcgtagc            562 21  0 52.38 60.441 26.87 26.87  0.00  1.441
+  66 gctagctagctgatcgatcgt            559 21  0 52.38 60.441 34.38  2.65 46.11  1.441
+  67 tagctaggcgatgctagctag            414 21  0 52.38 59.559 18.42 17.46 42.44  1.441
+  68 ctagctaggcgatgctagcta            413 21  0 52.38 59.559 18.69 17.64 42.44  1.441
+  69 tagctgatcgatcgatgtgc              76 20  0 50.00 58.558 31.83 30.04 35.21  1.442
+  70 gatgctagctaggcgatgcta            409 21  0 52.38 60.444  9.82  8.91  0.00  1.444
+  71 atgctagctaggcgatgctag            410 21  0 52.38 60.444 23.16 23.16 38.59  1.444
+  72 gctagctgatcatcgatgct             191 20  0 50.00 58.539 16.29 12.14  0.00  1.461
+  73 agctagctgatcatcgatgc             190 20  0 50.00 58.539 21.42  9.22  0.00  1.461
+  74 gctgactgatacgcgatgct             472 20  0 55.00 61.494  2.33  0.00  0.00  1.494
+  75 agctgactgatacgcgatgc             471 20  0 55.00 61.494  3.47  0.00  0.00  1.494
+  76 ggcgatctagctagctgacta            583 21  0 52.38 59.491 17.44  5.40 37.58  1.509
+  77 gatcgatgctagctaggcgat            405 21  0 52.38 60.510 21.61 21.61  0.00  1.510
+  78 atcgatcgatgctagctaggc            402 21  0 52.38 60.510 29.65  8.45 33.56  1.510
+  79 ctgatcgatcgatgtgcgg               79 19  0 57.89 59.447 15.54  5.83 41.65  1.553
+  80 agctgatcgatcgatgtgcg              77 20  0 55.00 61.556 31.92 20.26 42.69  1.556
+  81 cgatcatcgatgctagctagc            548 21  0 52.38 59.444 34.89 34.89 46.99  1.556
+  82 tagctaggcgatgctagcta             414 20  0 50.00 58.433 19.37 17.81 42.44  1.567
+  83 agctagctactgatcgatgct            303 21  0 47.62 59.415 17.56 11.51  0.00  1.585
+  84 tcgatcgatgtgcggctag               83 19  0 57.89 60.606 18.63  0.00 41.65  1.606
+  85 gactgatcgatcgatgctagc            116 21  0 52.38 59.378 15.86  8.45 35.21  1.622
+  86 agctagctgactgatcgatca            260 21  0 47.62 59.347 26.99 26.99 35.44  1.653
+  87 ctgactgatacgcgatgctag            473 21  0 52.38 59.312  1.70  0.00  0.00  1.688
+  88 ctagctgactgatacgcgatg            469 21  0 52.38 59.312  0.00  0.00  0.00  1.688
+  89 gctactatcatctctgcgcga            356 21  0 52.38 60.707  2.71  2.71  0.00  1.707
+  90 agctactatcatctctgcgcg            355 21  0 52.38 60.709  0.00  0.00  0.00  1.709
+  91 actatcatctctgcgcgatc             359 20  0 50.00 58.270  4.99  0.00  0.00  1.730
+  92 actgatcgatcgatgctagc             117 20  0 50.00 58.270 23.29 13.61 35.21  1.730
+  93 gctagctgatcgatcgatgt              74 20  0 50.00 58.270 14.29  2.62 35.21  1.730
+  94 ctatcatctctgcgcgatcga            360 21  0 52.38 60.771 22.07  1.72 38.48  1.771
+  95 atcgatgctagctaggcgatg            406 21  0 52.38 60.779 21.16  4.37  0.00  1.779
+  96 tgactgatacgcgatgctag             474 20  0 50.00 58.207  1.70  0.00  0.00  1.793
+  97 ctgactgatacgcgatgcta             473 20  0 50.00 58.207  2.33  0.00  0.00  1.793
+  98 tagctgactgatacgcgatg             470 20  0 50.00 58.207  0.00  0.00  0.00  1.793
+  99 ctgactgatcgatcgatgct             114 20  0 50.00 58.197 26.44 12.40 35.21  1.803
+ 100 agctgactgatcgatcgatg             112 20  0 50.00 58.197 23.05 13.21 35.21  1.803
+ 101 tcggattagctagctgatgc               7 20  0 50.00 58.176 17.46 17.46 40.05  1.824
+ 102 gcatcggattagctagctga               4 20  0 50.00 58.176 28.29 20.88  0.00  1.824
+ 103 agcatcggattagctagctg               3 20  0 50.00 58.171 28.29 10.80  0.00  1.829
+ 104 gatgctagctaggcgatgc              409 19  0 57.89 59.141  4.18  0.00  0.00  1.859
+ 105 ctgatacgcgatgctagctag            477 21  0 52.38 59.113 17.46 17.46  0.00  1.887
+ 106 gctagctgactgatacgcg              468 19  0 57.89 59.086  8.21  3.89  0.00  1.914
+ 107 ctctgcgcgatcgatgctag             367 20  0 60.00 61.946 21.94 18.16 38.48  1.946
+ 108 tctgcgcgatcgatgctag              368 19  0 57.89 60.966 21.94 18.16 38.48  1.966
+ 109 ctctgcgcgatcgatgcta              367 19  0 57.89 60.966 26.61 17.10 38.48  1.966
+ 110 cgatgctagctaggcgatgc             408 20  0 60.00 61.968 11.09  0.00  0.00  1.968
+ 111 gactgatacgcgatgctagct            475 21  0 52.38 60.975 17.69  1.35  0.00  1.975
+ 112 gctagctgactgatacgcgat            468 21  0 52.38 60.975  8.21  0.00  0.00  1.975
+ 113 tgatacgcgatgctagctag             478 20  0 50.00 57.994 17.46 17.46  0.00  2.006
+ 114 ctgatacgcgatgctagcta             477 20  0 50.00 57.994 17.69  3.08  0.00  2.006
+ 115 cgcgatcgatgctagctagc             372 20  0 60.00 62.011 34.89 34.89 43.67  2.011
+ 116 gcgcgatcgatgctagctag             371 20  0 60.00 62.011 21.66 17.46 38.48  2.011
+ 117 ctgatcgatcgatgctagct             399 20  0 50.00 57.983 19.70  2.01 35.21  2.017
+ 118 agctgatcgatcgatgctag             397 20  0 50.00 57.983 27.33 18.05 34.69  2.017
+ 119 ctagctgatcgatcgatgct             395 20  0 50.00 57.983 33.87 33.38 38.16  2.017
+ 120 agctagctgatcgatcgatg             393 20  0 50.00 57.983 21.99 11.03 35.21  2.017
+ 121 ctgatcgatcgatgctagct             118 20  0 50.00 57.983 19.70  2.01 35.21  2.017
+ 122 agctagctgatcgatcgatg              73 20  0 50.00 57.983 21.99 11.03 35.21  2.017
+ 123 catcggattagctagctgatgc             5 22  0 50.00 59.982 24.41 24.41 40.05  2.018
+ 124 gcatcggattagctagctgatg             4 22  0 50.00 59.982 27.81 27.81 33.28  2.018
+ 125 tcgatgctagctaggcgat              407 19  0 52.63 58.964 14.03  3.01  0.00  2.036
+ 126 atcgatgctagctaggcga              406 19  0 52.63 58.964 16.30 16.30  0.00  2.036
+ 127 actatcatctctgcgcgatcg            359 21  0 52.38 61.037 12.19 12.19 39.07  2.037
+ 128 gcgcgatcgatgctagcta              371 19  0 57.89 61.037 21.66  3.08 38.48  2.037
+ 129 gctgatcgatcgatgctagct            398 21  0 52.38 61.044 27.88 12.70 35.21  2.044
+ 130 agctgatcgatcgatgctagc            397 21  0 52.38 61.044 27.33 27.90 34.69  2.044
+ 131 gctagctgatcgatcgatgct            394 21  0 52.38 61.044 33.87 33.38 38.16  2.044
+ 132 agctagctgatcgatcgatgc            393 21  0 52.38 61.044 24.08 21.09 35.21  2.044
+ 133 cgcgatcgatgctagctag              372 19  0 57.89 58.947 22.07 17.46 38.48  2.053
+ 134 tcgtagcggcgatctagc               576 18  0 61.11 59.936  4.70  0.00 36.40  2.064
+ 135 cgtagcggcgatctagct               577 18  0 61.11 59.935 11.03 11.03 37.58  2.065
+ 136 gcggcgatctagctagct               581 18  0 61.11 59.933 23.74 23.74 38.05  2.067
+ 137 agcggcgatctagctagc               580 18  0 61.11 59.933 16.97  7.15 39.86  2.067
+ 138 ctagctgactgatacgcgat             469 20  0 50.00 57.918  1.43  0.00  0.00  2.082
+ 139 ctagctgatcgatcgtagcgg            564 21  0 57.14 61.096 20.31 16.15  0.00  2.096
+ 140 agctactatcatctctgcgc             355 20  0 50.00 57.898  0.00  0.00  0.00  2.102
+ 141 gctagctactgatcgatgct             304 20  0 50.00 57.898 11.51 11.51  0.00  2.102
+ 142 agctagctactgatcgatgc             303 20  0 50.00 57.898 17.56  1.76  0.00  2.102
+ 143 agcatcggattagctagctgat             3 22  0 45.45 60.108 17.84 15.13  0.00  2.108
+ 144 tgctagctaggcgatgcta              411 19  0 52.63 58.881 17.69  8.91  0.00  2.119
+ 145 aagcatcggattagctagctg              2 21  0 47.62 58.879 28.29 10.80  0.00  2.121
+ 146 tctgcgcgatcgatgcta               368 18  0 55.56 59.857 26.61 16.13 38.48  2.143
+ 147 cgatgctagctaggcgatg              408 19  0 57.89 58.856 11.09  0.00  0.00  2.144
+ 148 agctagctgatcatcgatgcta           190 22  0 45.45 59.845 17.99 13.09  0.00  2.155
+ 149 tagctagctgatcatcgatgct           189 22  0 45.45 59.845 16.29 15.30  0.00  2.155
+ 150 atcgatcgatgtgcggct                82 18  0 55.56 60.166 29.65  4.36 41.65  2.166
+ 151 gctagctgactgatcgatca             261 20  0 50.00 57.829 26.99 26.99 35.44  2.171
+ 152 tagctagctgactgatcgatcg           107 22  0 50.00 60.174 28.29 13.89  0.00  2.174
+ 153 agctgatcatcatcgatgct             515 20  0 45.00 57.788 11.25  0.72 40.32  2.212
+ 154 agctagctgactgatcgatcat           260 22  0 45.45 59.778 26.67 18.02 36.62  2.222
+ 155 tgactgatacgcgatgctagc            474 21  0 52.38 61.238  8.61  8.61  0.00  2.238
+ 156 gctgactgatacgcgatgcta            472 21  0 52.38 61.238  2.33  0.00  0.00  2.238
+ 157 tagctgactgatacgcgatgc            470 21  0 52.38 61.238  3.47  0.00  0.00  2.238
+ 158 tagctagctgatcgatcgtagc           561 22  0 50.00 60.238 26.87 26.87  0.00  2.238
+ 159 gctagctagctgatcgatcgta           559 22  0 50.00 60.238 34.38  3.07 46.11  2.238
+ 160 tgatcgatcgatgctagctagg           400 22  0 50.00 60.239 26.44  6.29 35.21  2.239
+ 161 gctgactgatcgatcgatgct            113 21  0 52.38 61.244 26.44 12.40 35.21  2.244
+ 162 agctgactgatcgatcgatgc            112 21  0 52.38 61.244 24.08 19.43 35.21  2.244
+ 163 gatcgatcgatgtgcggct               81 19  0 57.89 61.263 19.16  0.00 41.65  2.263
+ 164 gctgatcatcgatgctactagc           195 22  0 50.00 59.727 18.08 16.44 45.61  2.273
+ 165 gctagctgatcatcgatgctac           191 22  0 50.00 59.727  9.57  5.47  0.00  2.273
+ 166 gatcgatcgatgtgcggc                81 18  0 61.11 59.714 18.10  0.95 41.65  2.286
+ 167 ctagctagctgactgatacgc            465 21  0 52.38 58.703 14.90  0.00  0.00  2.297
+ 168 tagctgatcgatcgatgtgcg             76 21  0 52.38 61.299 31.92 20.26 42.69  2.299
+ 169 agctgatcgatcgatgtgc               77 19  0 52.63 58.698 31.83 30.04 35.21  2.302
+ 170 gctgatcatcatcgatgctagc           516 22  0 50.00 60.302 10.80 10.34 40.32  2.302
+ 171 gctagctgatcatcatcgatgc           512 22  0 50.00 60.302 21.42  7.40 40.32  2.302
+ 172 aagcatcggattagctagctga             2 22  0 45.45 60.306 28.29 20.88  0.00  2.306
+ 173 gatcgatcgtagcggcga               570 18  0 61.11 60.318 13.01  8.51 45.59  2.318
+ 174 atcggattagctagctgatgc              6 21  0 47.62 58.673 17.46 17.46 40.05  2.327
+ 175 gcatcggattagctagctgat              4 21  0 47.62 58.673 17.84 15.13  0.00  2.327
+ 176 gcggcgatctagctagctg              581 19  0 63.16 61.329 17.07  8.17 38.05  2.329
+ 177 tgctagtgatgcatgctagt              24 20  0 45.00 57.636 24.96 11.17 35.89  2.364
+ 178 ctactatcatctctgcgcga             357 20  0 50.00 57.636  2.71  2.71  0.00  2.364
+ 179 actagctagctgactgatacgc           464 22  0 50.00 60.368 21.52  0.00  0.00  2.368
+ 180 gctagctagctgatcatcga             187 20  0 50.00 57.613 34.38  0.24 46.11  2.387
+ 181 tctctgcgcgatcgatgcta             366 20  0 55.00 62.413 26.61 17.10 38.48  2.413
+ 182 tgatcgatcgatgctagctagt           119 22  0 45.45 59.586 26.44  5.69 35.21  2.414
+ 183 actgatcgatcgatgctagcta           117 22  0 45.45 59.586 23.29  7.65 35.21  2.414
+ 184 tagctagctgatcgatcgatgt            72 22  0 45.45 59.586 14.29  2.62 35.21  2.414
+ 185 agctaggcgatgctagcta              415 19  0 52.63 58.572 17.69  3.08 41.54  2.428
+ 186 tagctaggcgatgctagct              414 19  0 52.63 58.572 17.35 17.35 43.53  2.428
+ 187 gatcgatcgatgctagctagg            401 21  0 52.38 58.567 23.89  6.29 35.21  2.433
+ 188 gctagctagctgactgatcgat           105 22  0 50.00 60.434 34.38  0.00 46.11  2.434
+ 189 gatcgatgctagctaggcg              405 19  0 57.89 58.563 15.59  9.02  0.00  2.437
+ 190 cgatcgatgctagctaggc              404 19  0 57.89 58.563 14.87  8.45  0.00  2.437
+ 191 tagctagctgactgatacgc             466 20  0 50.00 57.549 28.29  0.00  0.00  2.451
+ 192 agctagctgactgatcgatc             260 20  0 50.00 57.536 19.32 19.32  0.00  2.464
+ 193 agctagctgactgatcgatc             108 20  0 50.00 57.536 19.32 19.32  0.00  2.464
+ 194 aaagcatcggattagctagctg             1 22  0 45.45 59.524 28.29 10.80  0.00  2.476
+ 195 gctgactgatcgatcatcatgc           265 22  0 50.00 60.493 25.66 25.12 41.77  2.493
+ 196 tagctactatcatctctgcgcg           354 22  0 50.00 60.495  0.00  0.00  0.00  2.495
+ 197 ctgatcgatcgatgtgcggc              79 20  0 60.00 62.497 15.54  4.15 41.65  2.497
+ 198 gctgatcgatcgatgtgcgg              78 20  0 60.00 62.497 29.87 22.23 41.65  2.497
+ 199 tcgtagcggcgatctagct              576 19  0 57.89 61.503 11.03 11.03 36.40  2.503
+ 200 agcggcgatctagctagct              580 19  0 57.89 61.519 23.74 23.74 42.96  2.519
+ 201 ctagctagctgatcatcgatgc           188 22  0 50.00 59.470 21.42  9.22  0.00  2.530
+ 202 gctagctagctgatcatcgatg           187 22  0 50.00 59.470 34.38 20.23 46.11  2.530
+ 203 tcatctctgcgcgatcga               363 18  0 55.56 59.468 22.07  0.00 38.48  2.532
+ 204 tcgatcgatgtgcggcta                83 18  0 55.56 59.465 18.63  0.00 41.65  2.535
+ 205 tgatcgatcgatgtgcggc               80 19  0 57.89 61.549 21.27  8.44 41.65  2.549
+ 206 ctagctaggcgatgctagctag           413 22  0 54.55 60.561 22.99 22.99 46.84  2.561
+ 207 gctagctagctgatcgatcgat           390 22  0 50.00 60.561 34.38 30.53 46.11  2.561
+ 208 gctagctagctgatcgatcgat            70 22  0 50.00 60.561 34.38 30.53 46.11  2.561
+ 209 ctgcgcgatcgatgctag               369 18  0 61.11 59.415 19.79 13.97 38.48  2.585
+ 210 aagcatcggattagctagct               2 20  0 45.00 57.413 23.74 23.74  0.00  2.587
+ 211 gctagctgatcatcgatgcta            191 21  0 47.62 58.410 16.61 13.09  0.00  2.590
+ 212 tagctagctgatcatcgatgc            189 21  0 47.62 58.410 21.42  9.22  0.00  2.590
+ 213 actgatacgcgatgctagc              476 19  0 52.63 58.407  8.61  8.61  0.00  2.593
+ 214 gctagctgactgatcgatcatc           261 22  0 50.00 59.406 23.93 21.92 36.62  2.594
+ 215 atcgatcgatgctagctagg             402 20  0 50.00 57.396 29.65  6.29 33.56  2.604
+ 216 atctctgcgcgatcgatgc              365 19  0 57.89 61.618 22.01 22.01 38.48  2.618
+ 217 tgatcgatcgtagcggcg               569 18  0 61.11 60.621 20.58  0.86  0.00  2.621
+ 218 atcatctctgcgcgatcgatg            362 21  0 52.38 61.633 18.01 18.01 38.48  2.633
+ 219 agctagctgatcgatcgtag             562 20  0 50.00 57.344 17.99 16.86  0.00  2.656
+ 220 ctagctagctgatcgatcgt             560 20  0 50.00 57.344 16.40  2.65  0.00  2.656
+ 221 gctagctgactgatcgatcat            261 21  0 47.62 58.339 26.67 18.02 36.62  2.661
+ 222 ctgatcgatcgtagcggcg              568 19  0 63.16 61.664 14.21  0.86  0.00  2.664
+ 223 ctgactgatacgcgatgct              473 19  0 52.63 58.330  2.33  0.00  0.00  2.670
+ 224 agctgactgatacgcgatg              471 19  0 52.63 58.330  0.00  0.00  0.00  2.670
+ 225 gctagctgatcgatcgtagcg            563 21  0 57.14 61.676 24.18 16.49  0.00  2.676
+ 226 ctagctgactgatcgatcga             110 20  0 50.00 57.276 22.52 22.52  0.00  2.724
+ 227 agctagctactgatcgatgcta           303 22  0 45.45 59.252 17.56 12.23  0.00  2.748
+ 228 tagctagctactgatcgatgct           302 22  0 45.45 59.252 27.80 11.51  0.00  2.748
+ 229 gactgatacgcgatgctagcta           475 22  0 50.00 60.751 17.69  3.08  0.00  2.751
+ 230 actgatacgcgatgctagctag           476 22  0 50.00 60.752 17.46 17.46  0.00  2.752
+ 231 gactgatcgatcgatgctagct           116 22  0 50.00 60.753 18.04  9.56 35.21  2.753
+ 232 gctagctgactgatcgatcgat           109 22  0 50.00 60.753 30.53 30.53 37.90  2.753
+ 233 tgcgcgatcgatgctagcta             370 20  0 55.00 62.756 26.61  9.85 38.48  2.756
+ 234 gcggcgatctagctagctga             581 20  0 60.00 62.765 21.57 16.66 38.70  2.765
+ 235 agcggcgatctagctagctg             580 20  0 60.00 62.771 17.07  8.17 44.87  2.771
+ 236 ctactatcatctctgcgcgatc           357 22  0 50.00 59.220  4.99  0.00  0.00  2.780
+ 237 tatcatctctgcgcgatcg              361 19  0 52.63 58.199 12.19 12.19 39.07  2.801
+ 238 tactatcatctctgcgcgatcg           358 22  0 50.00 60.811 12.19 12.19 39.07  2.811
+ 239 tagctagctgactgatcgatca           259 22  0 45.45 59.187 28.29 26.99 35.44  2.813
+ 240 gctgatcgatcgatgctagcta           398 22  0 50.00 60.816 27.88 12.57 35.21  2.816
+ 241 tagctgatcgatcgatgctagc           396 22  0 50.00 60.816 30.84 27.90 36.80  2.816
+ 242 gctagctgatcgatcgatgcta           394 22  0 50.00 60.816 34.11 32.56 36.80  2.816
+ 243 tagctagctgatcgatcgatgc           392 22  0 50.00 60.816 24.08 21.09 35.21  2.816
+ 244 gctaggcgatgctagctag              416 19  0 57.89 58.179 17.46 17.46 35.42  2.821
+ 245 ctagctaggcgatgctagc              413 19  0 57.89 58.179 18.68  9.44 36.95  2.821
+ 246 gctagctaggcgatgctag              412 19  0 57.89 58.179 23.16 23.16 38.59  2.821
+ 247 catctctgcgcgatcgatgc             364 20  0 60.00 62.823 22.01 22.01 38.48  2.823
+ 248 aaagcatcggattagctagct              1 21  0 42.86 58.168 23.74 23.74  0.00  2.832
+ 249 ctgactgatcgatcgatgctag           114 22  0 50.00 59.155 22.81 19.44 35.21  2.845
+ 250 ctagctgactgatcgatcgatg           110 22  0 50.00 59.155 23.05 13.21 35.21  2.845
+ 251 tactatcatctctgcgcgatc            358 21  0 47.62 58.155  4.99  0.00  0.00  2.845
+ 252 gctagctactgatcgatgctac           304 22  0 50.00 59.151  8.57  4.26  0.00  2.849
+ 253 ctactatcatctctgcgcgat            357 21  0 47.62 58.150  4.99  2.52  0.00  2.850
+ 254 agctgatcatcgatgctact             194 20  0 45.00 57.134 17.14  8.95  0.00  2.866
+ 255 gctagctagctgatcatcgat            187 21  0 47.62 58.132 34.38  0.00 46.11  2.868
+ 256 ctgatacgcgatgctagct              477 19  0 52.63 58.107 17.69  1.35  0.00  2.893
+ 257 ggcgatctagctagctgac              583 19  0 57.89 58.106 14.84  7.25 37.58  2.894
+ 258 tgactgatcgatcgatgctag            115 21  0 47.62 58.084 22.81 19.44 35.21  2.916
+ 259 ctgactgatcgatcgatgcta            114 21  0 47.62 58.084 26.44 14.64 35.21  2.916
+ 260 tagctgactgatcgatcgatg            111 21  0 47.62 58.084 23.05 13.21 35.21  2.916
+ 261 actgatcgatcatcatgctagc           269 22  0 45.45 59.071 26.67  8.61 41.77  2.929
+ 262 agctgactgatcgatcatca             264 20  0 45.00 57.064 26.49 26.49 39.98  2.936
+ 263 ctagctagctgatcgatcga             391 20  0 50.00 57.060 22.52 22.52  0.00  2.940
+ 264 ctagctagctgatcgatcga              71 20  0 50.00 57.060 22.52 22.52  0.00  2.940
+ 265 gatcgatcgatgtgcggctag             81 21  0 57.14 61.947 19.16  0.00 41.65  2.947
+ 266 tgctagctaggcgatgct               411 18  0 55.56 59.050 17.69  7.53  0.00  2.950
+ 267 gctgatcgatcgtagcggc              567 19  0 63.16 61.960 20.49 19.38  0.00  2.960
+ 268 cgatcgatgtgcggctag                84 18  0 61.11 59.032 10.82  0.00 41.65  2.968
+ 269 tgatcgatcgatgtgcggct              80 20  0 55.00 62.987 22.21  0.00 41.65  2.987
+ 270 ctgactgatcgatcatcatgct           266 22  0 45.45 59.004 20.99  6.82 41.77  2.996
+ 271 agctgactgatcgatcatcatg           264 22  0 45.45 59.004 22.70 19.51 41.77  2.996
+ 272 agctagctgactgatacgcga            467 21  0 52.38 62.000 17.99  0.00  0.00  3.000
+ 273 tgactgatcgatcgatgctagc           115 22  0 50.00 61.008 18.17 12.52 35.21  3.008
+ 274 gctgactgatcgatcgatgcta           113 22  0 50.00 61.008 26.44 14.64 35.21  3.008
+ 275 tagctgactgatcgatcgatgc           111 22  0 50.00 61.008 24.08 19.43 35.21  3.008
+ 276 agctagctgatcgatcgatgtg            73 22  0 50.00 61.010 17.99  6.93 35.21  3.010
+ 277 ctgatcgatcgatgctagctag           399 22  0 50.00 58.963 19.70 17.46 35.21  3.037
+ 278 ctagctgatcgatcgatgctag           395 22  0 50.00 58.963 37.86 37.86 43.17  3.037
+ 279 ctagctagctgatcgatcgatg           391 22  0 50.00 58.963 21.99 11.03 35.21  3.037
+ 280 ctgatcgatcgatgctagctag           118 22  0 50.00 58.963 19.70 17.46 35.21  3.037
+ 281 ctagctagctgatcgatcgatg            71 22  0 50.00 58.963 21.99 11.03 35.21  3.037
+ 282 gactgatcgatcatcatgctagc          268 23  0 47.83 60.053 24.51  9.03 41.77  3.053
+ 283 gctagtgatgcatgctagtagtg           25 23  0 47.83 59.929 24.96 10.54  0.00  3.071
+ 284 gctactatcatctctgcgcgat           356 22  0 50.00 61.073  4.99  2.52  0.00  3.073
+ 285 gtagcggcgatctagctag              578 19  0 57.89 57.903 15.64 15.64 37.58  3.097
+ 286 tgactgatcgatcatcatgct            267 21  0 42.86 57.900 26.79 12.28 41.77  3.100
+ 287 ctagctactatcatctctgcgc           353 22  0 50.00 58.892  0.00  0.00  0.00  3.108
+ 288 gctagctactatcatctctgcg           352 22  0 50.00 58.892  8.21  0.00  0.00  3.108
+ 289 ctagctagctactgatcgatgc           301 22  0 50.00 58.892 14.00  1.76  0.00  3.108
+ 290 gctagctagctactgatcgatg           300 22  0 50.00 58.892 34.38  7.78 46.11  3.108
+ 291 catcgatcgatgctagtatgct           325 22  0 45.45 58.885 37.80 10.02 44.93  3.115
+ 292 tgatcgatcgatgctagctag            400 21  0 47.62 57.879 26.44 17.46 35.21  3.121
+ 293 ctgatcgatcgatgctagcta            399 21  0 47.62 57.879 19.70  3.77 35.21  3.121
+ 294 tagctgatcgatcgatgctag            396 21  0 47.62 57.879 34.03 27.12 36.80  3.121
+ 295 ctagctgatcgatcgatgcta            395 21  0 47.62 57.879 34.11 32.56 36.80  3.121
+ 296 tagctagctgatcgatcgatg            392 21  0 47.62 57.879 21.99 11.03 35.21  3.121
+ 297 tgatcgatcgatgctagctag            119 21  0 47.62 57.879 26.44 17.46 35.21  3.121
+ 298 ctgatcgatcgatgctagcta            118 21  0 47.62 57.879 19.70  3.77 35.21  3.121
+ 299 tagctagctgatcgatcgatg             72 21  0 47.62 57.879 21.99 11.03 35.21  3.121
+ 300 gatcgatcgatgctagctagt            120 21  0 47.62 57.878 23.89  3.56 35.21  3.122
+ 301 ctatcatctctgcgcgatcgat           360 22  0 50.00 61.132 22.07 11.47 38.48  3.132
+ 302 tgatcgatcgtagcggcga              569 19  0 57.89 62.144 20.58  8.51 45.59  3.144
+ 303 tcgtagcggcgatctagctag            576 21  0 57.14 62.173 15.64 15.64 36.40  3.173
+ 304 tactagctagctgactgatacgc          463 23  0 47.83 60.176 13.17  0.00  0.00  3.176
+ 305 ctgatcatcatcgatgctagct           517 22  0 45.45 58.807 17.69  1.76 40.32  3.193
+ 306 agctgatcatcatcgatgctag           515 22  0 45.45 58.807  5.93  2.76 40.32  3.193
+ 307 ctagctgatcatcatcgatgct           513 22  0 45.45 58.807 14.14  8.34 40.32  3.193
+ 308 agctagctgatcatcatcgatg           511 22  0 45.45 58.807 20.23 20.23 41.48  3.193
+ 309 ctgatcgatcatcatgctagct           270 22  0 45.45 58.807 26.67  0.00 41.77  3.193
+ 310 ctagctgactgatcgatcgat            110 21  0 47.62 57.806 30.53 30.53 37.90  3.194
+ 311 ttagctagctgactgatcgatca          258 23  0 43.48 59.798 28.29 26.99 35.44  3.202
+ 312 tagctactatcatctctgcgc            354 21  0 47.62 57.798  0.00  0.00  0.00  3.202
+ 313 gctagctactgatcgatgcta            304 21  0 47.62 57.798 12.99 12.23  0.00  3.202
+ 314 tagctagctactgatcgatgc            302 21  0 47.62 57.798 27.80  1.76  0.00  3.202
+ 315 tctctgcgcgatcgatgc               366 18  0 61.11 61.229 22.01 22.01 38.48  3.229
+ 316 ctctgcgcgatcgatgct               367 18  0 61.11 61.232 26.61  0.00 38.48  3.232
+ 317 agctagctactatcatctctgcg          351 23  0 47.83 60.238 17.56  0.00  0.00  3.238
+ 318 ctagctagctactgatcgatgct          301 23  0 47.83 60.238 14.00 11.51  0.00  3.238
+ 319 ctgatcgatcgtagcggc               568 18  0 61.11 58.727 14.21  0.00  0.00  3.273
+ 320 gctgatcgatcgtagcgg               567 18  0 61.11 58.727 20.49 15.03  0.00  3.273
+ 321 agctaggcgatgctagct               415 18  0 55.56 58.725 17.69 13.00 39.84  3.275
+ 322 tgctagtgatgcatgctagtagt           24 23  0 43.48 60.302 24.96 12.98 35.89  3.302
+ 323 gcgcgatcgatgctagct               371 18  0 61.11 61.306 21.66  1.35 38.48  3.306
+ 324 tgatcatcatcgatgctagct            518 21  0 42.86 57.691 17.69  1.76 40.32  3.309
+ 325 agctgatcatcatcgatgcta            515 21  0 42.86 57.691  0.24  0.00 40.32  3.309
+ 326 tagctgatcatcatcgatgct            514 21  0 42.86 57.691 14.14  8.34 40.32  3.309
+ 327 tgatcgatcatcatgctagct            271 21  0 42.86 57.691 27.48  0.00 37.38  3.309
+ 328 ctagctagctgactgatacgcg           465 22  0 54.55 61.313 14.90  3.89  0.00  3.313
+ 329 tgctagtgatgcatgctagtag            24 22  0 45.45 58.673 24.96 19.76 35.89  3.327
+ 330 gctagtgatgcatgctagtagt            25 22  0 45.45 58.672 24.96 12.98  0.00  3.328
+ 331 tagctagctgatcatcgatgcta          189 23  0 43.48 59.671 17.82 15.89  0.00  3.329
+ 332 agctagctgactgatacgc              467 19  0 52.63 57.642 17.99  0.00  0.00  3.358
+ 333 tatcatctctgcgcgatcgatg           361 22  0 50.00 61.383 18.01 18.01 38.48  3.383
+ 334 agctgactgatcgatcatcat            264 21  0 42.86 57.616 26.31 18.90 41.77  3.384
+ 335 actagctagctgatcatcatcga          508 23  0 43.48 59.607 22.43  0.00  0.00  3.393
+ 336 tagctagctgactgatcgatcat          259 23  0 43.48 59.607 28.29 18.02 36.62  3.393
+ 337 gatgctagctaggcgatgctag           409 22  0 54.55 61.393 23.16 23.16 38.59  3.393
+ 338 cggcgatctagctagctgact            582 21  0 57.14 62.394 17.44  7.44 38.70  3.394
+ 339 ctagctagctgatcgatcgat            391 21  0 47.62 57.600 30.53 30.53 37.90  3.400
+ 340 ctagctagctgatcgatcgat             71 21  0 47.62 57.600 30.53 30.53 37.90  3.400
+ 341 actgatcgatcatcatgctagct          269 23  0 43.48 60.428 26.67  4.70 41.77  3.428
+ 342 ctagctagctgactgatcgatc           106 22  0 50.00 58.567 19.32 19.32  0.00  3.433
+ 343 ctgactgatcgatcatcatgc            266 21  0 47.62 57.562 20.99 12.19 41.77  3.438
+ 344 gctgactgatcgatcatcatg            265 21  0 47.62 57.562 22.70 19.51 41.77  3.438
+ 345 gatcgatcgatgctagctaggc           401 22  0 54.55 61.448 23.89  8.45 35.21  3.448
+ 346 gtgatgcatgctagtagtgatgt           29 23  0 43.48 59.551 11.60  0.00  0.00  3.449
+ 347 tgctagtgatgcatgctagta             24 21  0 42.86 57.546 24.96 21.25 35.89  3.454
+ 348 tagcggcgatctagctagctg            579 21  0 57.14 62.457 18.98  9.30 45.57  3.457
+ 349 gtagcggcgatctagctagct            578 21  0 57.14 62.458 23.74 23.74 46.60  3.458
+ 350 tagctgatcgatcgtagcg              565 19  0 52.63 57.539 25.02 11.96  0.00  3.461
+ 351 gctagctagctactgatcgat            300 21  0 47.62 57.517 34.38  0.00 46.11  3.483
+ 352 agctagctactgatcgatgctac          303 23  0 47.83 60.487 17.56  7.81  0.00  3.487
+ 353 atcgatcgatgctagtatgct            326 21  0 42.86 57.502 29.65  2.17 33.56  3.498
+ 354 agctactgatcgatgctacatc           307 22  0 45.45 58.484  7.41  0.00 37.97  3.516
+ 355 agtgatgcatgctagtagtga             28 21  0 42.86 57.471  0.00  0.00  0.00  3.529
+ 356 gactgatcgatcgatgctagcta          116 23  0 47.83 60.546 18.04  4.19 35.21  3.546
+ 357 ctgatcgatcgatgctagctagt          118 23  0 47.83 60.547 22.18  3.56 35.21  3.547
+ 358 actgatcgatcgatgctagctag          117 23  0 47.83 60.547 23.29 17.46 35.21  3.547
+ 359 ctagctagctgatcgatcgatgt           71 23  0 47.83 60.547 14.29  2.62 35.21  3.547
+ 360 catcgatcgatgctagtatgc            325 21  0 47.62 57.452 37.80  0.00 44.93  3.548
+ 361 tagctagctgactgatcgatc            259 21  0 47.62 57.451 28.29 19.32  0.00  3.549
+ 362 tagctagctgactgatcgatc            107 21  0 47.62 57.451 28.29 19.32  0.00  3.549
+ 363 ctagctagctgactgatcgat            106 21  0 47.62 57.445 14.90  0.00  0.00  3.555
+ 364 tcgatgctagctaggcga               407 18  0 55.56 58.427 15.59 13.52  0.00  3.573
+ 365 tgatcgatcgatgctagctagta          119 23  0 43.48 59.424 26.44 18.77 35.21  3.576
+ 366 ctgcgcgatcgatgctagc              369 19  0 63.16 62.586 20.26 12.12 38.48  3.586
+ 367 agctagctgatcatcatcgat            511 21  0 42.86 57.405 17.99  0.00  0.00  3.595
+ 368 tgcgcgatcgatgctagc               370 18  0 61.11 61.605 26.61 17.77 38.48  3.605
+ 369 ctagctagctgatcgatcgtag           560 22  0 50.00 58.387 16.86 16.86  0.00  3.613
+ 370 actagctagctgactgatacg            464 21  0 47.62 57.384 21.52  2.77  0.00  3.616
+ 371 ctagctgactgatacgcga              469 19  0 52.63 57.370 16.29  0.00  0.00  3.630
+ 372 gctactagctagctgactgat            461 21  0 47.62 57.360 15.96  3.00 44.92  3.640
+ 373 ctgatcatcatcgatgctagc            517 21  0 47.62 57.358  8.61  8.61 40.32  3.642
+ 374 gctgatcatcatcgatgctag            516 21  0 47.62 57.358  5.93  2.76 40.32  3.642
+ 375 ctagctgatcatcatcgatgc            513 21  0 47.62 57.358 21.42  7.40 40.32  3.642
+ 376 gctagctgatcatcatcgatg            512 21  0 47.62 57.358 20.23 20.23 41.48  3.642
+ 377 ctgatcgatcatcatgctagc            270 21  0 47.62 57.358 26.67  8.61 41.77  3.642
+ 378 agctactgatcgatgctacat            307 21  0 42.86 57.344  7.41  0.00  0.00  3.656
+ 379 tgatcgatcgatgtgcggcta             80 21  0 52.38 62.663 22.21  0.24 41.65  3.663
+ 380 atctctgcgcgatcgatg               365 18  0 55.56 58.327 12.03  4.19 38.48  3.673
+ 381 catctctgcgcgatcgat               364 18  0 55.56 58.327 22.07  1.26 38.48  3.673
+ 382 atcatctctgcgcgatcg               362 18  0 55.56 58.327 12.19 12.19 39.07  3.673
+ 383 aagcatcggattagctagctgat            2 23  0 43.48 60.682 17.84 15.13  0.00  3.682
+ 384 agtgatgcatgctagtagtgatg           28 23  0 43.48 59.299  7.49  7.49  0.00  3.701
+ 385 gatcgatgctagctaggcgatg           405 22  0 54.55 61.702 24.26  6.24  0.00  3.702
+ 386 atctctgcgcgatcgatgcta            365 21  0 52.38 62.723 26.61 17.10 38.48  3.723
+ 387 tagctagctgactgatacgcga           466 22  0 50.00 61.730 28.29  0.00  0.00  3.730
+ 388 tagctagctgatcgatcgtag            561 21  0 47.62 57.269 16.86 16.86  0.00  3.731
+ 389 ctagctagctgatcgatcgta            560 21  0 47.62 57.269 11.68  3.07  0.00  3.731
+ 390 tcgatcgatgctagctagtag            122 21  0 47.62 57.269 18.63  2.63  0.00  3.731
+ 391 gctagctactgatcgatgctaca          304 23  0 47.83 60.734 11.21  0.06  0.00  3.734
+ 392 agctagctgactgatcgatcatc          260 23  0 47.83 60.736 23.93 21.92 36.62  3.736
+ 393 agctagctgactgatcgatcga           108 22  0 50.00 61.737 22.52 22.52  0.00  3.737
+ 394 tctctgcgcgatcgatgct              366 19  0 57.89 62.740 26.61  0.00 38.48  3.740
+ 395 tgatgcatgctagtagtgatgt            30 22  0 40.91 58.256 11.60  0.00  0.00  3.744
+ 396 tgatcgatcgatgtgcgg                80 18  0 55.56 58.244 21.27  0.00 41.65  3.756
+ 397 cgatcgatgctagctaggcga            404 21  0 57.14 62.770 16.30 16.30  0.00  3.770
+ 398 tcgatcgatgctagctaggcg            403 21  0 57.14 62.770 18.63 11.67  0.00  3.770
+ 399 atcgatcgatgcatgcatg              443 19  0 47.37 57.226 29.65 23.31 37.30  3.774
+ 400 catcgatcgatgcatgcat              442 19  0 47.37 57.226 37.80 33.45 44.93  3.774
+ 401 actagctagctgatcatcatcg           508 22  0 45.45 58.219 22.43  3.40  0.00  3.781
+ 402 ctgatcatcgatgctactagct           196 22  0 45.45 58.219 10.86  0.00 45.92  3.781
+ 403 agctgatcatcgatgctactag           194 22  0 45.45 58.219 13.67  9.68  0.00  3.781
+ 404 ctagctgatcatcgatgctact           192 22  0 45.45 58.219 14.85  7.80  0.00  3.781
+ 405 tttagctagctgactgatcga            257 21  0 42.86 57.216  0.38  0.00  0.00  3.784
+ 406 tagctagctgatcgatcgatgtg           72 23  0 47.83 60.793 10.14  4.94 35.21  3.793
+ 407 gctagctagctgatcatcatct           146 22  0 45.45 58.203 34.38  0.00 46.11  3.797
+ 408 ctagctagctgatcatcgatgct          188 23  0 47.83 60.799 16.29 15.30  0.00  3.799
+ 409 agctagctactatcatcgatcga          429 23  0 43.48 59.170 22.52 22.52  0.00  3.830
+ 410 ttagctagctgactgatcgatc           258 22  0 45.45 58.159 28.29 19.32  0.00  3.841
+ 411 ctagctgactgatcgatcatca           262 22  0 45.45 58.155 26.49 26.49 39.98  3.845
+ 412 aaagcatcggattagctagctga            1 23  0 43.48 60.870 28.29 20.88  0.00  3.870
+ 413 agctgactgatacgcgatgct            471 21  0 52.38 62.876  7.57  2.13  0.00  3.876
+ 414 tagctagctactgatcgatgcta          302 23  0 43.48 59.102 27.80 12.23  0.00  3.898
+ 415 tcatcatcgatgctagctagt            521 21  0 42.86 57.067 22.18  3.56 40.32  3.933
+ 416 tcgatcatcatgctagctact            274 21  0 42.86 57.067  0.00  0.00  0.00  3.933
+ 417 tgatcatcgatgctactagct            197 21  0 42.86 57.067 17.14  0.00 45.92  3.933
+ 418 agctgatcatcgatgctacta            194 21  0 42.86 57.067 17.14  4.89  0.00  3.933
+ 419 tagctgatcatcgatgctact            193 21  0 42.86 57.067 14.85  7.80  0.00  3.933
+ 420 tcgatcgatgctagtatgctag           327 22  0 45.45 58.044 18.63 13.77 46.09  3.956
+ 421 gcgatctagctagctgact              584 19  0 52.63 57.034 17.44  7.44  0.00  3.966
+ 422 gctactgatcgatgctacatc            308 21  0 47.62 57.028  2.44  0.00 37.97  3.972
+ 423 cggcgatctagctagctg               582 18  0 61.11 58.018 17.07  8.17 37.58  3.982
+ 424 gctagctgactgatcgatcatca          261 23  0 47.83 60.983 26.49 26.49 39.98  3.983
+ 425 actatcatctctgcgcgat              359 19  0 47.37 57.015  4.99  2.52  0.00  3.985
+ 426 catcggattagctagctgatg              5 21  0 47.62 57.003 23.69 23.29  0.00  3.997
+ 427 tagctgactgatcgatcatca            263 21  0 42.86 57.000 26.49 26.49 39.98  4.000
+ 428 actagctagctgatcatcatcgat         508 24  0 41.67 59.995 22.43  0.00  0.00  4.005
+ 429 agtgatgcatgctagtagtgat            28 22  0 40.91 57.984  0.00  0.00  0.00  4.016
+ 430 ctagctagctgatcatcatcga           509 22  0 45.45 57.958 11.68  0.00  0.00  4.042
+ 431 gctgatcatcgatgctactagct          195 23  0 47.83 61.046 20.91  5.24 45.92  4.046
+ 432 agctgatcatcgatgctactagc          194 23  0 47.83 61.046 20.78 20.78 45.61  4.046
+ 433 gctagctgatcatcgatgctact          191 23  0 47.83 61.046 12.59  8.92  0.00  4.046
+ 434 agctagctgatcatcgatgctac          190 23  0 47.83 61.046 17.99  7.99  0.00  4.046
+ 435 tagctagctactatcatctctgcg         350 24  0 45.83 60.058 27.80  0.00  0.00  4.058
+ 436 ctagctagctactgatcgatgcta         301 24  0 45.83 60.058 14.00 12.23  0.00  4.058
+ 437 agctactatcatctctgcgcga           355 22  0 50.00 62.058  2.71  2.71  0.00  4.058
+ 438 gctatttagctagctgactgatcg         253 24  0 45.83 60.060  7.27  0.00 46.11  4.060
+ 439 tgatcgatcatcatgctagctac          271 23  0 43.48 58.931 27.48  0.00 37.38  4.069
+ 440 gtgatgcatgctagtagtgatg            29 22  0 45.45 57.921  7.49  7.49  0.00  4.079
+ 441 ctagctagctgactgatcgatcg          106 23  0 52.17 61.091 16.84 13.89  0.00  4.091
+ 442 ctagctactgatcgatgctaca           305 22  0 45.45 57.898 13.79  1.61  0.00  4.102
+ 443 cggcgatctagctagctgacta           582 22  0 54.55 62.109 17.44  5.40 38.70  4.109
+ 444 atgctagctaggcgatgc               410 18  0 55.56 57.890 10.59  0.00  0.00  4.110
+ 445 ctgatcgatcatcatgctagctac         270 24  0 45.83 59.882 26.67  0.00 41.77  4.118
+ 446 gctactagctagctgatcatca           505 22  0 45.45 57.879 14.37  0.00 44.92  4.121
+ 447 gctactagctagctgatcatca           208 22  0 45.45 57.879 14.37  0.00 44.92  4.121
+ 448 ctgactgatacgcgatgctagc           473 22  0 54.55 62.128  8.61  8.61  0.00  4.128
+ 449 gctgactgatacgcgatgctag           472 22  0 54.55 62.128  1.70  0.00  0.00  4.128
+ 450 ctagctgactgatacgcgatgc           469 22  0 54.55 62.128  3.47  0.00  0.00  4.128
+ 451 gctagctgactgatacgcgatg           468 22  0 54.55 62.128  8.21  0.00  0.00  4.128
+ 452 tgactgatcgatcatcatgctag          267 23  0 43.48 58.866 26.79 18.40 41.77  4.134
+ 453 ctgactgatcgatcatcatgcta          266 23  0 43.48 58.866 20.99  8.89 41.77  4.134
+ 454 tagctgactgatcgatcatcatg          263 23  0 43.48 58.866 22.70 19.51 41.77  4.134
+ 455 ctagctagctgatcgatcgtagc          560 23  0 52.17 61.151 26.87 26.87  0.00  4.151
+ 456 gctagctagctgatcgatcgtag          559 23  0 52.17 61.151 34.38 16.86 46.11  4.151
+ 457 ctgatcgatcgatgctagctagg          399 23  0 52.17 61.158 22.67  6.29 35.21  4.158
+ 458 gatcgatcgatgctagctagtag          120 23  0 47.83 58.829 23.89  2.63 35.21  4.171
+ 459 ttagctagctgactgatcgatcat         258 24  0 41.67 60.177 28.29 18.02 36.62  4.177
+ 460 ctgactgatcgatcatcatgctag         266 24  0 45.83 59.822 20.99 12.80 41.77  4.178
+ 461 ctagctgactgatcgatcatcatg         262 24  0 45.83 59.822 22.70 19.51 41.77  4.178
+ 462 ctagctgatcgatcgatgtgcg            75 22  0 54.55 62.180 31.92 20.85 42.69  4.180
+ 463 tttagctagctgactgatcgatc          257 23  0 43.48 58.807 19.32 19.32  0.00  4.193
+ 464 tgactgatcgatcatcatgcta           267 22  0 40.91 57.803 26.79 13.11 41.77  4.197
+ 465 gctagctactatcatcgatcga           430 22  0 45.45 57.783 22.52 22.52  0.00  4.217
+ 466 gatcgatcgatgctagctagta           120 22  0 45.45 57.783 23.89 18.77 35.21  4.217
+ 467 agctagctactatcatcgatcg           429 22  0 45.45 57.777 17.56  9.87  0.00  4.223
+ 468 atcgatcgatgctagctagtag           121 22  0 45.45 57.777 29.65  2.63 33.56  4.223
+ 469 tgatcatcatcgatgctagctagt         518 24  0 41.67 60.238 22.18  3.56 40.32  4.238
+ 470 tgatcgatcatcatgctagctact         271 24  0 41.67 60.238 27.48  0.00 37.38  4.238
+ 471 actgatcgatcatcatgctagcta         269 24  0 41.67 60.238 26.67  2.76 41.77  4.238
+ 472 catcgatcgatgctagtatgcta          325 23  0 43.48 58.753 37.80  6.23 44.93  4.247
+ 473 tttagctagctgactgatcgat           257 22  0 40.91 57.736  0.38  0.00  0.00  4.264
+ 474 atttagctagctgactgatcga           256 22  0 40.91 57.736  4.16  0.00  0.00  4.264
+ 475 cgcgatcgatgctagcta               372 18  0 55.56 57.717 22.07  3.08 38.48  4.283
+ 476 catcgatcgatgctagtatgctag         325 24  0 45.83 59.708 37.80 16.01 44.93  4.292
+ 477 tagctagctactgatcgatgctac         302 24  0 45.83 60.297 27.80  7.81  0.00  4.297
+ 478 agcatcggattagctagctgatg            3 23  0 47.83 61.299 27.81 27.81 33.28  4.299
+ 479 agctagctgactgatacgcgat           467 22  0 50.00 62.317 17.99  0.00  0.00  4.317
+ 480 tgatcatcatcgatgctagctag          518 23  0 43.48 58.678 17.46 17.46 40.32  4.322
+ 481 ctgatcatcatcgatgctagcta          517 23  0 43.48 58.678 17.69  2.41 40.32  4.322
+ 482 tagctgatcatcatcgatgctag          514 23  0 43.48 58.678  9.90  2.76 40.32  4.322
+ 483 ctagctgatcatcatcgatgcta          513 23  0 43.48 58.678 14.58  9.63 40.32  4.322
+ 484 tagctagctgatcatcatcgatg          510 23  0 43.48 58.678 20.23 20.23 41.48  4.322
+ 485 ctgatcgatcatcatgctagcta          270 23  0 43.48 58.678 26.67  2.76 41.77  4.322
+ 486 gatcatcatcgatgctagctagt          519 23  0 43.48 58.677 22.18  3.56 40.32  4.323
+ 487 gatcgatcatcatgctagctact          272 23  0 43.48 58.677 21.11  0.00  0.00  4.323
+ 488 gctagctagctgactgatcgatc          105 23  0 52.17 61.341 34.38 19.32 46.11  4.341
+ 489 tgatcgatcgatgctagctagtag         119 24  0 45.83 60.356 26.44  2.63 35.21  4.356
+ 490 ctgatcgatcgatgctagctagta         118 24  0 45.83 60.356 22.18 18.77 35.21  4.356
+ 491 ctgatcatcatcgatgctagctag         517 24  0 45.83 59.644 17.46 17.46 40.32  4.356
+ 492 ctagctgatcatcatcgatgctag         513 24  0 45.83 59.644 19.54 18.30 42.07  4.356
+ 493 ctagctagctgatcatcatcgatg         509 24  0 45.83 59.644 20.23 20.23 41.48  4.356
+ 494 tttagctagctgactgatcgatca         257 24  0 41.67 60.358 26.99 26.99 35.44  4.358
+ 495 actatcatctctgcgcgatcga           359 22  0 50.00 62.365 22.07  1.72 38.48  4.365
+ 496 agctgatcgatcgtagcg               566 18  0 55.56 57.634 25.02 11.96  0.00  4.366
+ 497 gctactagctagctgactgatac          461 23  0 47.83 58.626 15.96  1.42 44.92  4.374
+ 498 agctgatcgatcgatgctagct           397 22  0 50.00 62.388 30.32 30.32 38.42  4.388
+ 499 agctagctgatcgatcgatgct           393 22  0 50.00 62.388 33.87 33.38 38.16  4.388
+ 500 ctagctgactgatcgatcatcat          262 23  0 43.48 58.612 26.31 20.43 41.77  4.388
+ 501 agctagctactatcatctctgc           351 22  0 45.45 57.608 17.56  0.00  0.00  4.392
+ 502 ctagctactatcatctctgcgcg          353 23  0 52.17 61.393  0.00  0.00  0.00  4.393
+ 503 tgatcatcatcgatgctagcta           518 22  0 40.91 57.602 17.69  3.08 40.32  4.398
+ 504 tagctgatcatcatcgatgcta           514 22  0 40.91 57.602 15.95  9.16 40.32  4.398
+ 505 tgatcgatcatcatgctagcta           271 22  0 40.91 57.602 27.48  3.08 37.38  4.398
+ 506 atcatcatcgatgctagctagt           520 22  0 40.91 57.595 22.18  3.56 40.32  4.405
+ 507 atcgatcatcatgctagctact           273 22  0 40.91 57.595  0.00  0.00  0.00  4.405
+ 508 agctagctactatcatcgatcgat         429 24  0 41.67 59.573 25.37 25.37 35.13  4.427
+ 509 gctagctgatcgatcgatgtgc            74 22  0 54.55 62.443 31.83 30.04 35.21  4.443
+ 510 tagctgactgatcgatcatcat           263 22  0 40.91 57.531 26.31 20.43 41.77  4.469
+ 511 tagctagctgactgatcgatcga          107 23  0 47.83 61.487 28.29 22.52  0.00  4.487
+ 512 atcgatcgatgctagtatgctag          326 23  0 43.48 58.501 29.65 13.77 46.09  4.499
+ 513 ctagtgatgcatgctagtagtga           26 23  0 43.48 58.483 20.00  1.46  0.00  4.517
+ 514 tagctagctgactgatcgatcatc         259 24  0 45.83 60.536 28.29 21.92 36.62  4.536
+ 515 tactagctagctgatcatcatcga         507 24  0 41.67 59.449  0.00  0.00  0.00  4.551
+ 516 gctagctagctactatcatcga           426 22  0 45.45 57.437 34.38  0.00 46.11  4.563
+ 517 tgactgatacgcgatgctagct           474 22  0 50.00 62.569 17.69  1.35  0.00  4.569
+ 518 agctgactgatacgcgatgcta           471 22  0 50.00 62.569  7.57  0.00  0.00  4.569
+ 519 tagctgactgatacgcgatgct           470 22  0 50.00 62.569 10.87  8.44  0.00  4.569
+ 520 atcgatcgatgctagtatgcta           326 22  0 40.91 57.423 29.65  0.00 33.56  4.577
+ 521 ctagctagctgatcatcatcgat          509 23  0 43.48 58.422 11.68  0.00  0.00  4.578
+ 522 agctgactgatcgatcgatgct           112 22  0 50.00 62.580 26.44 23.13 35.21  4.580
+ 523 ctagctagctgatcatcgatgcta         188 24  0 45.83 60.596 16.78 15.81  0.00  4.596
+ 524 gtgatgcatgctagtagtgatgta          29 24  0 41.67 59.398 11.60  8.84  0.00  4.602
+ 525 gctgatcatcatcgatgctagct          516 23  0 47.83 61.603 20.15  8.14 40.32  4.603
+ 526 agctgatcatcatcgatgctagc          515 23  0 47.83 61.603 20.04 19.26 40.32  4.603
+ 527 gctagctgatcatcatcgatgct          512 23  0 47.83 61.603 14.14  8.34 40.32  4.603
+ 528 agctagctgatcatcatcgatgc          511 23  0 47.83 61.603 21.42  7.40 40.32  4.603
+ 529 tagtgatgcatgctagtagtga            27 22  0 40.91 57.391  0.01  0.00  0.00  4.609
+ 530 ctactagctagctgactgatacg          462 23  0 47.83 58.387  3.12  0.00  0.00  4.613
+ 531 tagctactgatcgatgctacatc          306 23  0 43.48 58.368 13.79  0.00 37.97  4.632
+ 532 gactgatacgcgatgctagctag          475 23  0 52.17 61.633 17.46 17.46  0.00  4.633
+ 533 ctagctactgatcgatgctacat          305 23  0 43.48 58.364 13.79  0.09  0.00  4.636
+ 534 gctagctactatcatctctgcgc          352 23  0 52.17 61.644  8.21  0.00  0.00  4.644
+ 535 gctagctagctactgatcgatgc          300 23  0 52.17 61.644 34.38 12.71 46.11  4.644
+ 536 gctactagctagctgatcatcat          505 23  0 43.48 58.350 14.37  0.00 44.92  4.650
+ 537 gctactagctagctgatcatcat          208 23  0 43.48 58.350 14.37  0.00 44.92  4.650
+ 538 ctagctactgatcgatgctacatc         305 24  0 45.83 59.349 13.79  0.00 37.97  4.651
+ 539 gctactagctagctgatcatcatc         505 24  0 45.83 59.343 14.37  0.00 44.92  4.657
+ 540 gctactagctagctgatcatcatc         208 24  0 45.83 59.343 14.37  0.00 44.92  4.657
+ 541 gctgatcatcatctagctagtagc         154 24  0 45.83 59.343 15.25 15.25 45.79  4.657
+ 542 tagctagctgatcatcatcgat           510 22  0 40.91 57.329 10.14  0.00  0.00  4.671
+ 543 ctactatcatctctgcgcgatcg          357 23  0 52.17 61.686 12.19 12.19 39.07  4.686
+ 544 tactagctagctgactgatacg           463 22  0 45.45 57.310 13.17  0.00  0.00  4.690
+ 545 gctgatcgatcgatgctagctag          398 23  0 52.17 61.697 27.88 18.22 35.21  4.697
+ 546 ctagctgatcgatcgatgctagc          395 23  0 52.17 61.697 38.64 35.38 43.05  4.697
+ 547 gctagctgatcgatcgatgctag          394 23  0 52.17 61.697 41.07 41.07 46.89  4.697
+ 548 ctagctagctgatcgatcgatgc          391 23  0 52.17 61.697 24.08 21.09 35.21  4.697
+ 549 gctagctagctgatcgatcgatg          390 23  0 52.17 61.697 34.38 11.03 46.11  4.697
+ 550 gctagctagctgatcgatcgatg           70 23  0 52.17 61.697 34.38 11.03 46.11  4.697
+ 551 gctactagctagctgactgata           461 22  0 45.45 57.286 15.96  3.69 44.92  4.714
+ 552 gatcgatcatcatgctagctac           272 22  0 45.45 57.284 21.11  0.00  0.00  4.716
+ 553 cgatgctagctaggcgat               408 18  0 55.56 57.277 10.81  3.01  0.00  4.723
+ 554 atcgatgctagctaggcg               406 18  0 55.56 57.277 15.59  9.02  0.00  4.723
+ 555 tagctactgatcgatgctacat           306 22  0 40.91 57.270 13.79  0.09  0.00  4.730
+ 556 gctagctactatcatcgatcgat          430 23  0 43.48 58.251 25.37 25.37 35.13  4.749
+ 557 tgcatgctagtagtgatgtatacg          33 24  0 41.67 59.224 20.79  0.00  0.00  4.776
+ 558 gcatgctagtagtgatgtatacgt          34 24  0 41.67 59.223 11.60  0.00  0.00  4.777
+ 559 atttagctagctgactgatcgatc         256 24  0 41.67 59.219 19.32 19.32  0.00  4.781
+ 560 gactgatcgatcatcatgctag           268 22  0 45.45 57.215 24.51 15.87 41.77  4.785
+ 561 atttagctagctgactgatcgat          256 23  0 39.13 58.215  4.16  0.00  0.00  4.785
+ 562 gctgactgatcgatcatcatgct          265 23  0 47.83 61.788 27.72 15.10 41.77  4.788
+ 563 agctgactgatcgatcatcatgc          264 23  0 47.83 61.788 27.74 27.74 41.77  4.788
+ 564 tagctactatcatctctgcgcga          354 23  0 47.83 61.796  2.71  2.71  0.00  4.796
+ 565 gctgatcatcgatgctactagcta         195 24  0 45.83 60.834 20.91  7.37 45.92  4.834
+ 566 tagctgatcatcgatgctactagc         193 24  0 45.83 60.834 20.78 20.78 45.61  4.834
+ 567 gctagctgatcatcgatgctacta         191 24  0 45.83 60.834 11.65  8.83  0.00  4.834
+ 568 tagctagctgatcatcgatgctac         189 24  0 45.83 60.834 17.82 12.06  0.00  4.834
+ 569 tagtgatgcatgctagtagtgatg          27 24  0 41.67 59.155 11.56  7.49  0.00  4.845
+ 570 agtgatgcatgctagtagtgatgt          28 24  0 41.67 60.846 11.60  0.00  0.00  4.846
+ 571 tgatgcatgctagtagtgatgta           30 23  0 39.13 58.147 11.60  8.84  0.00  4.853
+ 572 ctgactgatcgatcgatgctagc          114 23  0 52.17 61.878 18.17 12.52 35.21  4.878
+ 573 gctgactgatcgatcgatgctag          113 23  0 52.17 61.878 22.81 19.44 35.21  4.878
+ 574 ctagctgactgatcgatcgatgc          110 23  0 52.17 61.878 24.08 19.43 35.21  4.878
+ 575 gctagctgactgatcgatcgatg          109 23  0 52.17 61.878 23.05 13.21 35.21  4.878
+ 576 tcatcatcgatgctagctagtag          521 23  0 43.48 58.114  2.81  0.00 40.32  4.886
+ 577 tactagctagctgatcatcatcg          507 23  0 43.48 58.114  0.00  0.00  0.00  4.886
+ 578 tcgatcatcatgctagctactag          274 23  0 43.48 58.114  0.00  0.00 37.62  4.886
+ 579 tgatcatcgatgctactagctag          197 23  0 43.48 58.114 20.04 20.04 45.92  4.886
+ 580 ctgatcatcgatgctactagcta          196 23  0 43.48 58.114 10.86  0.00 45.92  4.886
+ 581 tagctgatcatcgatgctactag          193 23  0 43.48 58.114 13.67  9.68  0.00  4.886
+ 582 ctagctgatcatcgatgctacta          192 23  0 43.48 58.114 11.65  8.83  0.00  4.886
+ 583 ctactagctagctgatcatcatcg         506 24  0 45.83 59.110  1.08  0.00  0.00  4.890
+ 584 ctgatcatcgatgctactagctag         196 24  0 45.83 59.110 20.04 20.04 45.92  4.890
+ 585 ctagctgatcatcgatgctactag         192 24  0 45.83 59.110 15.68 15.68  0.00  4.890
+ 586 gctagctagctgatcatcatctag         146 24  0 45.83 59.102 34.38 13.13 44.71  4.898
+ 587 gctagctagctgatcatcatcta          146 23  0 43.48 58.097 34.38  0.00 46.11  4.903
+ 588 ctagtgatgcatgctagtagtg            26 22  0 45.45 57.072 20.00  3.96  0.00  4.928
+ 589 gctactatcatctctgcgcgatc          356 23  0 52.17 61.936  4.99  0.00  0.00  4.936
+ 590 gctgatcgatcgatgtgc                78 18  0 55.56 57.052 29.71 26.38 35.21  4.948
+ 591 tagctagctactatcatcgatcga         428 24  0 41.67 59.031 27.80 22.52  0.00  4.969
+ 592 agctagctgatcgatcgtagcg           562 22  0 54.55 62.971 27.20 18.31  0.00  4.971
+ 593 tgactgatacgcgatgct               474 18  0 50.00 57.028  2.33  0.00  0.00  4.972
+ 594 gatcatcatcgatgctagctag           519 22  0 45.45 57.019 17.46 17.46 40.32  4.981
+ 595 tcatcatcgatgctagctagta           521 22  0 40.91 57.005 22.18 18.77 40.32  4.995
+ 596 tcgatcatcatgctagctacta           274 22  0 40.91 57.005  0.00  0.00  0.00  4.995
+ 597 tgatcatcgatgctactagcta           197 22  0 40.91 57.005 17.14  1.01 45.92  4.995
+ 598 tagctgatcatcgatgctacta           193 22  0 40.91 57.005 12.62  8.42  0.00  4.995
+ 599 tagctagctgactgatacgcgat          466 23  0 47.83 62.044 28.29  0.00  0.00  5.044
+ 600 ctagctagctactatcatcgatcga        427 25  0 44.00 59.949 27.80 22.52  0.00  5.051
+ 601 agctagctgactgatcgatcgat          108 23  0 47.83 62.053 30.53 30.53 37.90  5.053
+ 602 ctactagctagctgactgatacgc         462 24  0 50.00 61.062  3.61  0.00  0.00  5.062
+ 603 gctactagctagctgactgatacg         461 24  0 50.00 61.062 14.37  0.00 44.92  5.062
+ 604 tgatcatcatcgatgctagctagta        518 25  0 40.00 60.062 22.18 18.77 40.32  5.062
+ 605 tgatcgatcatcatgctagctacta        271 25  0 40.00 60.062 27.48  0.00 37.38  5.062
+ 606 ctagtgatgcatgctagtagtgatg         26 25  0 44.00 60.064 20.00  7.49  0.00  5.064
+ 607 gctagctagctactatcatcgatc         426 24  0 45.83 58.932 34.38  4.20 46.11  5.068
+ 608 gctagctactgatcgatgctacat         304 24  0 45.83 61.072 11.21  0.00  0.00  5.072
+ 609 gctagctagctactatcatcgat          426 23  0 43.48 57.922 34.38  0.00 46.11  5.078
+ 610 ctagtgatgcatgctagtagtgat          26 24  0 41.67 58.911 20.00  4.64  0.00  5.089
+ 611 tactatcatctctgcgcgatcga          358 23  0 47.83 62.092 22.07  1.72 38.48  5.092
+ 612 agctgatcgatcgatgctagcta          397 23  0 47.83 62.111 31.26 14.51 40.03  5.111
+ 613 tagctgatcgatcgatgctagct          396 23  0 47.83 62.111 33.22 33.22 42.08  5.111
+ 614 agctagctgatcgatcgatgcta          393 23  0 47.83 62.111 34.11 32.56 36.80  5.111
+ 615 tagctagctgatcgatcgatgct          392 23  0 47.83 62.111 33.87 33.38 38.16  5.111
+ 616 tagtgatgcatgctagtagtgat           27 23  0 39.13 57.886 11.56  0.00  0.00  5.114
+ 617 tactagctagctgatcatcatcgat        507 25  0 40.00 59.828  0.00  0.00  0.00  5.172
+ 618 gctagctagctgatcatcgatgc          187 23  0 52.17 62.193 34.38  9.22 46.11  5.193
+ 619 gctagtgatgcatgctagtagtga          25 24  0 45.83 61.195 24.96  4.57  0.00  5.195
+ 620 aaagcatcggattagctagctgat           1 24  0 41.67 61.209 17.84 15.13  0.00  5.209
+ 621 gtgatgcatgctagtagtgatgtat         29 25  0 40.00 59.774  1.07  1.07  0.00  5.226
+ 622 ctatcatctctgcgcgatcgatg          360 23  0 52.17 62.227 18.01 18.01 38.48  5.227
+ 623 tgactgatacgcgatgctagcta          474 23  0 47.83 62.287 17.69  3.08  0.00  5.287
+ 624 tagctgactgatacgcgatgcta          470 23  0 47.83 62.287 12.64  9.09  0.00  5.287
+ 625 tgctagtagtgatgtatacgtagct         37 25  0 40.00 59.713  9.37  8.73  0.00  5.287
+ 626 tgactgatcgatcgatgctagct          115 23  0 47.83 62.296 20.19 11.59 35.21  5.296
+ 627 agctgactgatcgatcgatgcta          112 23  0 47.83 62.296 26.44 14.64 35.21  5.296
+ 628 tagctgactgatcgatcgatgct          111 23  0 47.83 62.296 31.98 30.27 35.21  5.296
+ 629 ctagctagctactatcatcgatcg         427 24  0 45.83 58.703 12.49  9.87  0.00  5.297
+ 630 tagctagctactatcatcgatcg          428 23  0 43.48 57.691 27.80  9.87  0.00  5.309
+ 631 gactgatcgatcatcatgctagct         268 24  0 45.83 61.313 24.51  7.81 41.77  5.313
+ 632 gctagctgactgatcgatcatcat         261 24  0 45.83 61.313 26.31 20.43 41.77  5.313
+ 633 ctatttagctagctgactgatcga         254 24  0 41.67 58.679  0.00  0.00  0.00  5.321
+ 634 gcatgctagtagtgatgtatacg           34 23  0 43.48 57.659 11.60  0.00  0.00  5.341
+ 635 tatttagctagctgactgatcga          255 23  0 39.13 57.650  0.00  0.00  0.00  5.350
+ 636 ctactagctagctgatcatcatcga        506 25  0 44.00 60.352  1.08  0.00  0.00  5.352
+ 637 agctactatcatctctgcgcgat          355 23  0 47.83 62.360  4.99  2.52  0.00  5.360
+ 638 gctgatcatcatcgatgctagcta         516 24  0 45.83 61.370 20.15  8.49 40.32  5.370
+ 639 tagctgatcatcatcgatgctagc         514 24  0 45.83 61.370 20.04 19.26 40.32  5.370
+ 640 gctagctgatcatcatcgatgcta         512 24  0 45.83 61.370 14.58  9.63 40.32  5.370
+ 641 tagctagctgatcatcatcgatgc         510 24  0 45.83 61.370 21.42  7.40 40.32  5.370
+ 642 atgcatgctagtagtgatgtatacg         32 25  0 40.00 59.604 11.70  0.00  0.00  5.396
+ 643 tgatgcatgctagtagtgatgtat          30 24  0 37.50 58.592 12.66 12.66  0.00  5.408
+ 644 gactgatcgatcgatgctagctag         116 24  0 50.00 61.409 18.04 17.46 35.21  5.409
+ 645 gctatttagctagctgactgatc          253 23  0 43.48 57.572  7.27  0.00 46.11  5.428
+ 646 tgctagtgatgcatgctagtagtg          24 24  0 45.83 61.434 24.96 10.54 35.89  5.434
+ 647 ctagctagctactatcatctctgc         349 24  0 45.83 58.562 27.80  0.00  0.00  5.438
+ 648 gctagctagctactatcatctctg         348 24  0 45.83 58.562 34.38  6.79 46.11  5.438
+ 649 gatcatcatcgatgctagctagta         519 24  0 41.67 58.557 22.18 18.77 40.32  5.443
+ 650 gatcgatcatcatgctagctacta         272 24  0 41.67 58.557 21.11  0.00  0.00  5.443
+ 651 atcatcatcgatgctagctagtag         520 24  0 41.67 58.554  2.13  0.00 40.32  5.446
+ 652 atcgatcatcatgctagctactag         273 24  0 41.67 58.554  0.00  0.00 37.62  5.446
+ 653 tagctagctactatcatctctgc          350 23  0 43.48 57.527 27.80  0.00  0.00  5.473
+ 654 atcatcatcgatgctagctagta          520 23  0 39.13 57.514 22.18 18.77 40.32  5.486
+ 655 atcgatcatcatgctagctacta          273 23  0 39.13 57.514  0.00  0.00  0.00  5.486
+ 656 gatcatcatcgatgctagctagtag        519 25  0 44.00 59.494  0.21  0.00 40.32  5.506
+ 657 gatcgatcatcatgctagctactag        272 25  0 44.00 59.494 21.11  0.00 37.62  5.506
+ 658 actagctagctgatcatcatctact        211 25  0 40.00 59.471 22.43  6.99  0.00  5.529
+ 659 tgactgatcgatcatcatgctagc         267 24  0 45.83 61.547 26.79 14.13 41.77  5.547
+ 660 gctgactgatcgatcatcatgcta         265 24  0 45.83 61.547 27.72 16.42 41.77  5.547
+ 661 tagctgactgatcgatcatcatgc         263 24  0 45.83 61.547 27.74 27.74 41.77  5.547
+ 662 tgctagtagtgatgtatacgtagc          37 24  0 41.67 58.446  4.93  4.93  0.00  5.554
+ 663 ctagctagctgactgatacgcga          465 23  0 52.17 62.571 14.90  0.00  0.00  5.571
+ 664 tagctagctactatcatcgatcgat        428 25  0 40.00 59.423 27.80 25.37 35.13  5.577
+ 665 gctactagctagctgatcatcatct        208 25  0 44.00 60.585 14.37  0.00 44.92  5.585
+ 666 agctgatcatcatctagctagtagc        153 25  0 44.00 60.585 15.25 15.25 40.45  5.585
+ 667 ctagctagctgatcgatcgatgtg          71 24  0 50.00 61.642 11.68  4.94 35.21  5.642
+ 668 agtgatgcatgctagtagtgatgta         28 25  0 40.00 60.646 11.60  8.84  0.00  5.646
+ 669 tagtgatgcatgctagtagtgatgt         27 25  0 40.00 60.646 11.60  0.00  0.00  5.646
+ 670 actatcatctctgcgcgatcgat          359 23  0 47.83 62.652 22.07 11.47 38.48  5.652
+ 671 ctatttagctagctgactgatcg          254 23  0 43.48 57.339  0.00  0.00  0.00  5.661
+ 672 tagctagctgatcgatcgtagcg          561 23  0 52.17 62.677 27.20 18.31  0.00  5.677
+ 673 gcatcggattagctagctgatgc            4 23  0 52.17 62.687 34.10 34.10 41.15  5.687
+ 674 tgcatgctagtagtgatgtatacgt         33 25  0 40.00 60.700 20.79  0.00  0.00  5.700
+ 675 tttagctagctgactgatcgatcat        257 25  0 40.00 60.702 26.67 18.02 36.62  5.702
+ 676 atttagctagctgactgatcgatca        256 25  0 40.00 60.702 26.99 26.99 35.44  5.702
+ 677 gctagctagctactatcatctct          348 23  0 43.48 57.266 34.38  0.00 46.11  5.734
+ 678 aagcatcggattagctagctgatg           2 24  0 45.83 61.794 27.81 27.81 33.28  5.794
+ 679 agtgatgtatacgtagctagtagc          44 24  0 41.67 58.201 15.25 15.25 45.79  5.799
+ 680 gctagtagtgatgtatacgtagct          38 24  0 41.67 58.201  5.92  5.92  0.00  5.799
+ 681 tagctagctgactgatcgatcgat         107 24  0 45.83 61.800 30.53 30.53 37.90  5.800
+ 682 actagctagctgactgatacgcg          464 23  0 52.17 62.816 21.52  3.89  0.00  5.816
+ 683 actagctagctgatcatcatctac         211 24  0 41.67 58.178 22.43  0.00  0.00  5.822
+ 684 tagctgatcgatcgatgctagcta         396 24  0 45.83 61.857 34.98 33.55 41.05  5.857
+ 685 tagctagctgatcgatcgatgcta         392 24  0 45.83 61.857 34.11 32.56 36.80  5.857
+ 686 tatttagctagctgactgatcgat         255 24  0 37.50 58.112  1.68  0.00  0.00  5.888
+ 687 gcatgctagtagtgatgtatacgta         34 25  0 40.00 59.089 11.60  0.00  0.00  5.911
+ 688 tatttagctagctgactgatcgatc        255 25  0 40.00 59.084 19.32 19.32  0.00  5.916
+ 689 ctatttagctagctgactgatcgat        254 25  0 40.00 59.082  0.00  0.00  0.00  5.918
+ 690 ctagctagctactatcatctctgcg        349 25  0 48.00 60.920 27.80  5.75  0.00  5.920
+ 691 tgatcgatcgatgctagctaggc          400 23  0 52.17 62.955 26.44 12.49 35.21  5.955
+ 692 agctagctactgatcgatgctaca         303 24  0 45.83 61.988 17.56  3.03  0.00  5.988
+ 693 tgactgatcgatcgatgctagcta         115 24  0 45.83 62.034 20.19 11.16 35.21  6.034
+ 694 tagctgactgatcgatcgatgcta         111 24  0 45.83 62.034 33.43 30.74 35.21  6.034
+ 695 catgctagtagtgatgtatacgtagc        35 26  0 42.31 59.961  4.93  4.93  0.00  6.039
+ 696 gcatgctagtagtgatgtatacgtag        34 26  0 42.31 59.961 11.60  0.00  0.00  6.039
+ 697 actgatcgatcgatgctagctagt         117 24  0 45.83 62.039 23.29 15.07 35.21  6.039
+ 698 ctatttagctagctgactgatcgatc       254 26  0 42.31 59.960 19.32 19.32  0.00  6.040
+ 699 ttagctagctgactgatcgatcatc        258 25  0 44.00 61.041 28.29 21.92 36.62  6.041
+ 700 atgctagtagtgatgtatacgtagct        36 26  0 38.46 60.068  9.37  8.73  0.00  6.068
+ 701 ctagctagctgatcatcatctact         212 24  0 41.67 57.930 11.68  6.99  0.00  6.070
+ 702 ctactagctagctgatcatcatct         209 24  0 41.67 57.930  1.08  0.00  0.00  6.070
+ 703 agctgatcatcatctagctagtag         153 24  0 41.67 57.930  7.49  3.73 40.45  6.070
+ 704 ctagctgatcatcatctagctagt         151 24  0 41.67 57.930 21.70  5.56 46.15  6.070
+ 705 tagctactatcatctctgcgcgat         354 24  0 45.83 62.096  4.99  2.52  0.00  6.096
+ 706 gactgatcgatcatcatgctagcta        268 25  0 44.00 61.099 24.51  4.57 41.77  6.099
+ 707 ctgatcatcatcgatgctagctagt        517 25  0 44.00 61.101 22.18  3.56 40.32  6.101
+ 708 actagctagctgatcatcatcgatg        508 25  0 44.00 61.101 22.43 20.23 41.48  6.101
+ 709 ctgatcgatcatcatgctagctact        270 25  0 44.00 61.101 26.67  0.00 41.77  6.101
+ 710 atgctagtagtgatgtatacgtagc         36 25  0 40.00 58.855  4.93  4.93  0.00  6.145
+ 711 ctagctagctactgatcgatgctac        301 25  0 48.00 61.145 14.00  7.81  0.00  6.145
+ 712 gctagctagctactatcatctctgc        348 25  0 48.00 61.152 34.38 11.74 46.11  6.152
+ 713 agctagctgatcatcatctactatca       214 26  0 38.46 59.840 17.99  0.00  0.00  6.160
+ 714 ctgatcgatcgatgctagctagtag        118 25  0 48.00 61.197 19.70  5.49 35.21  6.197
+ 715 agctagctgactgatcgatcatca         260 24  0 45.83 62.232 26.49 26.49 39.98  6.232
+ 716 gctagctagctactatcatcgatcg        426 25  0 48.00 61.252 34.38  9.87 46.11  6.252
+ 717 gctatttagctagctgactgatcga        253 25  0 44.00 61.268  7.27  0.00 46.11  6.268
+ 718 ctagctagctactatcatcgatcgat       427 26  0 42.31 60.291 27.80 25.37 35.13  6.291
+ 719 agctgatcatcgatgctactagct         194 24  0 45.83 62.294 24.11 23.60 45.92  6.294
+ 720 agctagctgatcatcgatgctact         190 24  0 45.83 62.294 17.99 10.88  0.00  6.294
+ 721 ctagctagctgactgatcgatcga         106 24  0 50.00 62.312 22.52 22.52  0.00  6.312
+ 722 actgatcgatcatcatgctagctac        269 25  0 44.00 61.328 26.67  0.00 41.77  6.328
+ 723 tgatgcatgctagtagtgatgtatac        30 26  0 38.46 59.623  9.19  6.43  0.00  6.377
+ 724 gtgatgcatgctagtagtgatgtata        29 26  0 38.46 59.623  4.23  0.00  0.00  6.377
+ 725 tactatcatctctgcgcgatcgat         358 24  0 45.83 62.379 22.07 11.47 38.48  6.379
+ 726 gctagctgatcatcatctactatca        215 25  0 40.00 58.607  8.21  0.00  0.00  6.393
+ 727 gctactagctagctgatcatcatcta       208 26  0 42.31 60.404 14.37  0.00 44.92  6.404
+ 728 tagctgatcatcatctagctagtagc       152 26  0 42.31 60.404 15.25 15.25 41.48  6.404
+ 729 tgctagtagtgatgtatacgtagcta        37 26  0 38.46 59.564 10.00  8.05  0.00  6.436
+ 730 gatgcatgctagtagtgatgtatacg        31 26  0 42.31 60.453  7.40  0.00  0.00  6.453
+ 731 tagtgatgcatgctagtagtgatgta        27 26  0 38.46 60.461 11.60  8.84  0.00  6.461
+ 732 gctagtgatgcatgctagtagtgat         25 25  0 44.00 61.506 24.96  8.51  0.00  6.506
+ 733 tgcatgctagtagtgatgtatacgta        33 26  0 38.46 60.515 20.79  0.00  0.00  6.515
+ 734 tatttagctagctgactgatcgatca       255 26  0 38.46 60.516 26.99 26.99 35.44  6.516
+ 735 tgatgcatgctagtagtgatgtata         30 25  0 36.00 58.479  4.13  0.00  0.00  6.521
+ 736 tactagctagctgactgatacgcg         463 24  0 50.00 62.538 13.17  3.89  0.00  6.538
+ 737 ctagctactatcatctctgcgcga         353 24  0 50.00 62.603  2.71  2.71  0.00  6.603
+ 738 agctagctgatcatcatctactatc        214 25  0 40.00 58.369 17.99  0.00  0.00  6.631
+ 739 agctagctgatcatcatctactat         214 24  0 37.50 57.345 17.99  0.00  0.00  6.655
+ 740 gctactagctagctgatcatcatcg        505 25  0 48.00 61.656 14.37  0.00 44.92  6.656
+ 741 gctgatcatcgatgctactagctag        195 25  0 48.00 61.656 20.91 20.04 45.92  6.656
+ 742 ctagctgatcatcgatgctactagc        192 25  0 48.00 61.656 20.78 20.78 45.61  6.656
+ 743 gctagctgatcatcgatgctactag        191 25  0 48.00 61.656 20.13 20.13  0.00  6.656
+ 744 ctagctagctgatcatcgatgctac        188 25  0 48.00 61.656 17.82 12.06  0.00  6.656
+ 745 actagctagctgatcatcatctacta       211 26  0 38.46 59.328 22.43  8.11  0.00  6.672
+ 746 tactagctagctgatcatcatctact       210 26  0 38.46 59.328  6.99  6.99  0.00  6.672
+ 747 ctactagctagctgatcatcatcgat       506 26  0 42.31 60.681  1.08  0.00  0.00  6.681
+ 748 tagctagctactgatcgatgctaca        302 25  0 44.00 61.746 27.80  5.02  0.00  6.746
+ 749 gtagtgatgtatacgtagctagtagc        42 26  0 42.31 59.249 15.25 15.25 45.79  6.751
+ 750 actgatcgatcgatgctagctagta        117 25  0 44.00 61.797 23.29 18.77 35.21  6.797
+ 751 gatgcatgctagtagtgatgtatac         31 25  0 40.00 58.175 20.79  1.70  0.00  6.825
+ 752 agctgatcatcatcgatgctagct         515 24  0 45.83 62.835 23.00 22.41 41.74  6.835
+ 753 agctagctgatcatcatcgatgct         511 24  0 45.83 62.835 17.99  8.34 40.32  6.835
+ 754 ctagctagctgactgatacgcgat         465 24  0 50.00 62.838 14.90  0.00  0.00  6.838
+ 755 atgcatgctagtagtgatgtatac          32 24  0 37.50 57.161 11.70  0.53  0.00  6.839
+ 756 agctagctactatcatctctgcgc         351 24  0 50.00 62.858 17.56  0.00  0.00  6.858
+ 757 gctagctagctactgatcgatgct         300 24  0 50.00 62.858 34.38 11.51 46.11  6.858
+ 758 ctactatcatctctgcgcgatcga         357 24  0 50.00 62.878 22.07  1.72 38.48  6.878
+ 759 gctagctactgatcgatgctacatc        304 25  0 48.00 61.879 11.21  4.40 37.97  6.879
+ 760 tagtgatgtatacgtagctagtagc         43 25  0 40.00 58.104 15.25 15.25 45.79  6.896
+ 761 gctagtagtgatgtatacgtagcta         38 25  0 40.00 58.104  7.24  5.34  0.00  6.896
+ 762 tgatcatcatcgatgctagctagtag       518 26  0 42.31 60.902 14.93  0.00 40.32  6.902
+ 763 ctgatcatcatcgatgctagctagta       517 26  0 42.31 60.902 22.18 18.77 40.32  6.902
+ 764 tactagctagctgatcatcatcgatg       507 26  0 42.31 60.902 20.23 20.23 41.48  6.902
+ 765 tgatcgatcatcatgctagctactag       271 26  0 42.31 60.902 27.48  0.00 37.38  6.902
+ 766 ctgatcgatcatcatgctagctacta       270 26  0 42.31 60.902 26.67  1.37 41.77  6.902
+ 767 agctgatcgatcgatgctagctag         397 24  0 50.00 62.904 31.26 19.90 40.03  6.904
+ 768 ctagctgatcgatcgatgctagct         395 24  0 50.00 62.904 35.51 33.22 43.05  6.904
+ 769 agctagctgatcgatcgatgctag         393 24  0 50.00 62.904 41.07 41.07 46.89  6.904
+ 770 ctagctagctgatcgatcgatgct         391 24  0 50.00 62.904 33.87 33.38 38.16  6.904
+ 771 tactagctagctgatcatcatctac        210 25  0 40.00 58.081  0.00  0.00  0.00  6.919
+ 772 gctagctgatcatcatctactatc         215 24  0 41.67 57.062  8.21  0.00  0.00  6.938
+ 773 agtgatgcatgctagtagtgatgtat        28 26  0 38.46 60.969  1.07  1.07  0.00  6.969
+ 774 gctagtagtgatgtatacgtagctag        38 26  0 42.31 59.027  8.99  8.99  0.00  6.973
+ 775 tagctagctgactgatcgatcatca        259 25  0 44.00 61.981 28.29 26.49 39.98  6.981
+ 776 ctactagctagctgatcatcatctac       209 26  0 42.31 59.015  1.08  0.00  0.00  6.985
+ 777 agtagtgatgtatacgtagctagt          41 24  0 37.50 57.012  8.68  8.68  0.00  6.988
+ 778 gctagctgatcatcatctactatcat       215 26  0 38.46 59.001  8.21  0.00  0.00  6.999
+ 779 agctgatcatcatctactatcatca        218 25  0 36.00 57.993  0.00  0.00  0.00  7.007
+ 780 atgcatgctagtagtgatgtatacgt        32 26  0 38.46 61.018 11.70  0.00  0.00  7.018
+ 781 atttagctagctgactgatcgatcat       256 26  0 38.46 61.022 26.67 18.02 36.62  7.022
+ 782 agctgatcatcgatgctactagcta        194 25  0 44.00 62.040 24.59  9.79 45.92  7.040
+ 783 tagctgatcatcgatgctactagct        193 25  0 44.00 62.040 27.00 27.00 45.92  7.040
+ 784 agctagctgatcatcgatgctacta        190 25  0 44.00 62.040 17.99 11.59  0.00  7.040
+ 785 tagctagctgatcatcgatgctact        189 25  0 44.00 62.040 17.55 15.53  0.00  7.040
+ 786 atgctagtagtgatgtatacgtagcta       36 27  0 37.04 59.911 10.00  8.05  0.00  7.089
+ 787 gctagctgatcatcatctactatcatc      215 27  0 40.74 59.861  8.21  0.00  0.00  7.139
+ 788 ctagctagctgatcatcatctacta        212 25  0 40.00 57.842 11.68  8.11  0.00  7.158
+ 789 ctactagctagctgatcatcatcta        209 25  0 40.00 57.842  1.08  0.00  0.00  7.158
+ 790 tagctgatcatcatctagctagtag        152 25  0 40.00 57.842 13.40  3.73 41.48  7.158
+ 791 ctagctgatcatcatctagctagta        151 25  0 40.00 57.842 21.70  7.13 46.15  7.158
+ 792 gctgatcatcatcgatgctagctag        516 25  0 48.00 62.165 20.15 17.46 40.32  7.165
+ 793 ctagctgatcatcatcgatgctagc        513 25  0 48.00 62.165 19.27 19.26 41.96  7.165
+ 794 gctagctgatcatcatcgatgctag        512 25  0 48.00 62.165 23.70 23.70 45.51  7.165
+ 795 ctagctagctgatcatcatcgatgc        509 25  0 48.00 62.165 21.42  7.40 40.32  7.165
+ 796 agctagctgatcatcatctactatcat      214 27  0 37.04 60.181 17.99  0.00  0.00  7.181
+ 797 ctactagctagctgatcatcatctact      209 27  0 40.74 60.181  6.99  6.99  0.00  7.181
+ 798 ctagctgatcatcatctagctagtag       151 26  0 42.31 58.789 21.70 10.73 46.15  7.211
+ 799 aaagcatcggattagctagctgatg          1 25  0 44.00 62.249 27.81 27.81 33.28  7.249
+ 800 agctagctactgatcgatgctacat        303 25  0 44.00 62.272 17.56  6.16  0.00  7.272
+ 801 tagctagctgatcatcatctactatca      213 27  0 37.04 59.689  8.31  0.00  0.00  7.311
+ 802 actagctagctgatcatcatctactat      211 27  0 37.04 59.688 22.43  2.36  0.00  7.312
+ 803 ctgactgatcgatcatcatgctagc        266 25  0 48.00 62.333 20.99  8.86 41.77  7.333
+ 804 gctgactgatcgatcatcatgctag        265 25  0 48.00 62.333 27.72 21.73 41.77  7.333
+ 805 ctagctgactgatcgatcatcatgc        262 25  0 48.00 62.333 27.74 27.74 41.77  7.333
+ 806 gctagctgactgatcgatcatcatg        261 25  0 48.00 62.333 22.70 19.51 41.77  7.333
+ 807 tgctagtagtgatgtatacgtagctag       37 27  0 40.74 60.395  8.99  8.99  0.00  7.395
+ 808 agtagtgatgtatacgtagctagtagc       41 27  0 40.74 60.395 15.25 15.25 45.79  7.395
+ 809 gctagtagtgatgtatacgtagctagt       38 27  0 40.74 60.395 15.55 15.55  0.00  7.395
+ 810 ctagtgatgcatgctagtagtgatgt        26 26  0 42.31 61.460 20.00  0.00  0.00  7.460
+ 811 gctgatcatcatctactatcatcatca      219 27  0 37.04 59.533  0.00  0.00  0.00  7.467
+ 812 agctagctgactgatcgatcatcat        260 25  0 44.00 62.507 26.31 20.43 41.77  7.507
+ 813 tttagctagctgactgatcgatcatc       257 26  0 42.31 61.507 23.93 21.92 36.62  7.507
+ 814 catgctagtagtgatgtatacgtag         35 25  0 40.00 57.441  4.74  0.00  0.00  7.559
+ 815 agctgatcatcatcgatgctagcta        515 25  0 44.00 62.561 23.50 10.90 43.19  7.561
+ 816 tagctgatcatcatcgatgctagct        514 25  0 44.00 62.561 26.21 26.21 44.79  7.561
+ 817 agctagctgatcatcatcgatgcta        511 25  0 44.00 62.561 17.99  9.63 40.32  7.561
+ 818 tagctagctgatcatcatcgatgct        510 25  0 44.00 62.561 14.14 10.38 40.32  7.561
+ 819 gctatttagctagctgactgatcgat       253 26  0 42.31 61.564  7.27  0.00 46.11  7.564
+ 820 ctagctagctgactgatcgatcgat        106 25  0 48.00 62.579 30.53 30.53 37.90  7.579
+ 821 agctgatcatcatctactatcatcat       218 26  0 34.62 58.415  0.00  0.00  0.00  7.585
+ 822 tagctagctactatcatctctgcgc        350 25  0 48.00 62.587 27.80  0.00  0.00  7.587
+ 823 gctagctagctactgatcgatgcta        300 25  0 48.00 62.587 34.38 12.23 46.11  7.587
+ 824 tgctagtgatgcatgctagtagtga         24 25  0 44.00 62.622 24.96 13.57 35.89  7.622
+ 825 tagctgatcgatcgatgctagctag        396 25  0 48.00 62.632 33.71 21.46 41.05  7.632
+ 826 ctagctgatcgatcgatgctagcta        395 25  0 48.00 62.632 35.51 32.61 43.05  7.632
+ 827 tagctagctgatcgatcgatgctag        392 25  0 48.00 62.632 41.07 41.07 46.89  7.632
+ 828 ctagctagctgatcgatcgatgcta        391 25  0 48.00 62.632 34.11 32.56 36.80  7.632
+ 829 gtgatgcatgctagtagtgatgtatac       29 27  0 40.74 60.659  9.56  7.17  0.00  7.659
+ 830 agctgatcatcatctactatcatcatc      218 27  0 37.04 59.314  0.00  0.00  0.00  7.686
+ 831 tagctagctgatcatcatctactat        213 25  0 36.00 57.279  8.31  0.00  0.00  7.721
+ 832 tagctagctgatcatcatctactatc       213 26  0 38.46 58.269  8.31  0.00  0.00  7.731
+ 833 tgactgatcgatcatcatgctagct        267 25  0 44.00 62.733 26.79 10.55 41.77  7.733
+ 834 agctgactgatcgatcatcatgcta        264 25  0 44.00 62.733 30.60 18.10 41.77  7.733
+ 835 tagctgactgatcgatcatcatgct        263 25  0 44.00 62.733 32.31 32.31 41.77  7.733
+ 836 ctagctagctgatcatcatctactat       212 26  0 38.46 58.265  9.41  0.00  0.00  7.735
+ 837 agtgatgcatgctagtagtgatgtata       28 27  0 37.04 60.779  4.23  0.00  0.00  7.779
+ 838 tagtgatgcatgctagtagtgatgtat       27 27  0 37.04 60.779 11.56  0.00  0.00  7.779
+ 839 tgactgatcgatcgatgctagctag        115 25  0 48.00 62.800 20.19 17.46 35.21  7.800
+ 840 ctgactgatcgatcgatgctagcta        114 25  0 48.00 62.800 20.19 11.97 35.21  7.800
+ 841 tagctgactgatcgatcgatgctag        111 25  0 48.00 62.800 31.45 26.34 35.21  7.800
+ 842 ctagctgactgatcgatcgatgcta        110 25  0 48.00 62.800 31.54 29.68 35.21  7.800
+ 843 tagctagctgactgatcgatcgatg        107 25  0 48.00 62.800 28.29 13.21 35.21  7.800
+ 844 gactgatcgatcgatgctagctagt        116 25  0 48.00 62.802 22.18 12.64 35.21  7.802
+ 845 tactagctagctgatcatcatctacta      210 27  0 37.04 59.196  8.79  8.11  0.00  7.804
+ 846 tagctgatcatcgatgctactagcta       193 26  0 42.31 61.805 28.86 27.39 45.92  7.805
+ 847 tagctagctgatcatcgatgctacta       189 26  0 42.31 61.805 18.93 16.03  0.00  7.805
+ 848 atgcatgctagtagtgatgtatacgta       32 27  0 37.04 60.828 11.70  0.00  0.00  7.828
+ 849 tatttagctagctgactgatcgatcat      255 27  0 37.04 60.831 26.67 18.02 36.62  7.831
+ 850 ctagctagctgatcatcatctactatc      212 27  0 40.74 59.162  9.41  0.06  0.00  7.838
+ 851 tagctactatcatctctgcgcgatc        354 25  0 48.00 62.854  0.00  0.00  0.00  7.854
+ 852 gctgatcatcatctactatcatcat        219 25  0 36.00 57.142  0.00  0.00  0.00  7.858
+ 853 ctagctactatcatctctgcgcgat        353 25  0 48.00 62.859  4.99  2.52  0.00  7.859
+ 854 gctgatcatcatctactatcatcatc       219 26  0 38.46 58.126  0.00  0.00  0.00  7.874
+ 855 tagctagctactgatcgatgctacat       302 26  0 42.31 62.028 27.80  3.08  0.00  8.028
+ 856 agtagtgatgtatacgtagctagtag        41 26  0 38.46 57.950  9.92  1.30  0.00  8.050
+ 857 ctagtagtgatgtatacgtagctagt        39 26  0 38.46 57.950 15.52 15.52  0.00  8.050
+ 858 catgctagtagtgatgtatacgtagct       35 27  0 40.74 61.089  9.37  8.73  0.00  8.089
+ 859 gactgatcgatcatcatgctagctac       268 26  0 46.15 62.094 24.51  8.36 41.77  8.094
+ 860 tagctgatcatcatctactatcatca       217 26  0 34.62 57.906  0.00  0.00  0.00  8.094
+ 861 ctagctgatcatcatctactatcatca      216 27  0 37.04 58.826  0.00  0.00  0.00  8.174
+ 862 ctagctgatcatcatctagctagtagc      151 27  0 44.44 61.196 21.70 15.25 46.15  8.196
+ 863 tagctagctgactgatcgatcatcat       259 26  0 42.31 62.255 28.29 20.43 41.77  8.255
+ 864 ctagtgatgcatgctagtagtgatgta       26 27  0 40.74 61.255 20.00  8.84  0.00  8.255
+ 865 tgcatgctagtagtgatgtatacgtag       33 27  0 40.74 61.300 20.79  0.00  0.00  8.300
+ 866 ctatttagctagctgactgatcgatca      254 27  0 40.74 61.304 26.99 26.99 35.44  8.304
+ 867 tagctgatcatcatcgatgctagcta       514 26  0 42.31 62.307 28.23 26.63 43.19  8.307
+ 868 tagctagctgatcatcatcgatgcta       510 26  0 42.31 62.307 14.58 11.03 40.32  8.307
+ 869 gctagctagctactatcatcgatcga       426 26  0 46.15 62.381 34.38 22.52 46.11  8.381
+ 870 gctactagctagctgatcatcatctac      208 27  0 44.44 61.407 14.37  0.00 44.92  8.407
+ 871 ttagctagctgactgatcgatcatca       258 26  0 42.31 62.416 28.29 26.49 39.98  8.416
+ 872 tgactgatcgatcatcatgctagcta       267 26  0 42.31 62.472 26.79 11.24 41.77  8.472
+ 873 tagctgactgatcgatcatcatgcta       263 26  0 42.31 62.472 33.83 32.61 41.77  8.472
+ 874 actgatcgatcatcatgctagctact       269 26  0 42.31 62.478 26.67  0.00 41.77  8.478
+ 875 gctagtgatgcatgctagtagtgatg        25 26  0 46.15 62.484 24.96  9.07  0.00  8.484
+ 876 ctagctagctactgatcgatgctaca       301 26  0 46.15 62.503 14.00  5.87  0.00  8.503
+ 877 gactgatcgatcgatgctagctagta       116 26  0 46.15 62.543 22.18 18.77 35.21  8.543
+ 878 actgatcgatcgatgctagctagtag       117 26  0 46.15 62.548 23.29 12.42 35.21  8.548
+ 879 ctagctgatcatcatctactatcatc       216 26  0 38.46 57.395  0.00  0.00  0.00  8.605
+ 880 ctgatcatcatcgatgctagctagtag      517 27  0 44.44 61.665 10.30  1.36 40.32  8.665
+ 881 ctactagctagctgatcatcatcgatg      506 27  0 44.44 61.665 20.23 20.23 41.48  8.665
+ 882 ctgatcgatcatcatgctagctactag      270 27  0 44.44 61.665 26.67  8.14 41.77  8.665
+ 883 tagctgatcatcatctactatcatcat      217 27  0 33.33 58.315  0.00  0.00  0.00  8.685
+ 884 tgatgcatgctagtagtgatgtatacg       30 27  0 40.74 61.778  9.81  0.00  0.00  8.778
+ 885 gatgcatgctagtagtgatgtatacgt       31 27  0 40.74 61.779  7.40  0.00  0.00  8.779
+ 886 gctactagctagctgatcatcatcga       505 26  0 46.15 62.779 14.37  0.00 44.92  8.779
+ 887 agctgatcatcgatgctactagctag       194 26  0 46.15 62.784 24.59 20.04 45.92  8.784
+ 888 ctagctgatcatcgatgctactagct       192 26  0 46.15 62.784 27.00 27.00 45.92  8.784
+ 889 agctagctgatcatcgatgctactag       190 26  0 46.15 62.784 20.13 20.13  0.00  8.784
+ 890 ctagctagctgatcatcgatgctact       188 26  0 46.15 62.784 17.55 15.53  0.00  8.784
+ 891 atttagctagctgactgatcgatcatc      256 27  0 40.74 61.785 23.93 21.92 36.62  8.785
+ 892 tctactatcatcatcatctactagct       230 26  0 34.62 57.155  0.00  0.00  0.00  8.845
+ 893 tgctagtgatgcatgctagtagtgat        24 26  0 42.31 62.874 24.96  8.51 35.89  8.874
+ 894 ctgatcatcatctactatcatcatca       220 26  0 34.62 57.026  0.00  0.00  0.00  8.974
+ 895 agctagctactgatcgatgctacatc       303 26  0 46.15 62.999 17.56  7.89 37.97  8.999
+ 896 tagtagtgatgtatacgtagctagtag       40 27  0 37.04 57.869 16.78  1.30  0.00  9.131
+ 897 ctagtagtgatgtatacgtagctagta       39 27  0 37.04 57.869 16.85 15.97  0.00  9.131
+ 898 actgatcgatcatcatgctagctacta      269 27  0 40.74 62.236 26.67  1.37 41.77  9.236
+ 899 gcatgctagtagtgatgtatacgtagc       34 27  0 44.44 62.283 11.60  4.93  0.00  9.283
+ 900 gctatttagctagctgactgatcgatc      253 27  0 44.44 62.291 19.32 19.32 46.11  9.291
+ 901 atctactatcatcatcatctactagct      229 27  0 33.33 57.592  0.00  0.00  0.00  9.408
+ 902 catctactatcatcatcatctactagc      228 27  0 37.04 57.549  0.00  0.00  0.00  9.451
+ 903 tgatcatcatctactatcatcatcatc      221 27  0 33.33 57.467  0.00  0.00  0.00  9.533
+ 904 tagctgatcatcgatgctactagctag      193 27  0 44.44 62.534 27.70 20.04 45.92  9.534
+ 905 ctagctgatcatcgatgctactagcta      192 27  0 44.44 62.534 27.76 26.73 45.92  9.534
+ 906 tagctagctgatcatcgatgctactag      189 27  0 44.44 62.534 20.13 20.13  0.00  9.534
+ 907 ctagctagctgatcatcgatgctacta      188 27  0 44.44 62.534 17.74 15.95  0.00  9.534
+ 908 ctgatcatcatctactatcatcatcat      220 27  0 33.33 57.462  0.00  0.00  0.00  9.538
+ 909 gctagctagctactatcatcgatcgat      426 27  0 44.44 62.627 34.38 25.37 46.11  9.627
+ 910 ttagctagctgactgatcgatcatcat      258 27  0 40.74 62.665 28.29 20.43 41.77  9.665
+ 911 tagctagctactgatcgatgctacatc      302 27  0 44.44 62.742 27.80  7.89 37.97  9.742
+ 912 ctagctagctactgatcgatgctacat      301 27  0 44.44 62.747 14.00  2.51  0.00  9.747
+ 913 gatcatcatctactatcatcatcatct      222 27  0 33.33 57.242  0.00  0.00  0.00  9.758
+ 914 tttagctagctgactgatcgatcatca      257 27  0 40.74 62.820 26.49 26.49 39.98  9.820
+ 915 tctactatcatcatcatctactagcta      230 27  0 33.33 57.100  0.00  0.00  0.00  9.900

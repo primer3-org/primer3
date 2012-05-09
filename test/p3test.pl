@@ -165,7 +165,8 @@ sub main() {
 			    'primer_must_use_th' => 1,
 			    'primer_new_tasks_th' => 1,
 			    'primer_task_th' => 1,
-
+	                    'primer_thal_args' => 1,
+	
 			    # 'test_compl_error' => 1,
 			    # 'test_left_to_right_of_right' => 1,
 
@@ -249,6 +250,7 @@ sub main() {
 		  'primer_must_use_th',
 		  'primer_new_tasks_th',
 		  'primer_task_th',
+	          'primer_thal_args',
 
 
 		  'test_compl_error',
