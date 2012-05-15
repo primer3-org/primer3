@@ -939,7 +939,8 @@ create_thal_arg_holder (const p3_global_settings *pa)
    h->hairpin_th->dv = pa->p_args.divalent_conc;
    h->hairpin_th->dntp = pa->p_args.dntp_conc;
    h->hairpin_th->dna_conc = pa->p_args.dna_conc;
-
+   h->hairpin_th->dimer = 0;
+   
    return h;
 }
 
@@ -982,6 +983,7 @@ thal_arg_holder *
    h->hairpin_th->dv = pa->o_args.divalent_conc;
    h->hairpin_th->dntp = pa->o_args.dntp_conc;
    h->hairpin_th->dna_conc = pa->o_args.dna_conc;
+   h->hairpin_th->dimer = 0;
    
    return h;
 }
