@@ -1,3 +1,11 @@
+release 2.3.3 2012-05-18 ===============================================
+
+Major correction:
+
+1. Fixed error in which non-default values of monovalent and divalent
+salt concentrations and non-default values of dNTP and DNA
+concentrations were being ignored in thermodynamic calculations.
+
 release 2.3.2 2012-03-15 ===============================================
 
 Minor corrections:
