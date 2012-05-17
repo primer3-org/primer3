@@ -902,7 +902,7 @@ static dpal_arg_holder *dpal_arg_to_use = NULL;
 /* ============================================================ */
 /* Create the thal arg holder */
 thal_arg_holder *
-create_thal_arg_holder (const p3_global_settings *pa) 
+create_thal_arg_holder (const args_for_one_oligo_or_primer *po_args)
 {
    
    thal_arg_holder *h
@@ -911,83 +911,38 @@ create_thal_arg_holder (const p3_global_settings *pa)
    h->any = (thal_args *) pr_safe_malloc(sizeof(*h->any));
    set_thal_default_args(h->any);
    h->any->type = thal_any;
-   h->any->mv = pa->p_args.salt_conc;
-   h->any->dv = pa->p_args.divalent_conc;
-   h->any->dntp = pa->p_args.dntp_conc;
-   h->any->dna_conc = pa->p_args.dna_conc;
+   h->any->mv = po_args->salt_conc;
+   h->any->dv = po_args->divalent_conc;
+   h->any->dntp = po_args->dntp_conc;
+   h->any->dna_conc = po_args->dna_conc;
    
    h->end1 = (thal_args *) pr_safe_malloc(sizeof(*h->end1));
    set_thal_default_args(h->end1);
    h->end1->type = thal_end1;
-   h->end1->mv = pa->p_args.salt_conc;
-   h->end1->dv = pa->p_args.divalent_conc;
-   h->end1->dntp = pa->p_args.dntp_conc;
-   h->end1->dna_conc = pa->p_args.dna_conc;
+   h->end1->mv = po_args->salt_conc;
+   h->end1->dv = po_args->divalent_conc;
+   h->end1->dntp = po_args->dntp_conc;
+   h->end1->dna_conc = po_args->dna_conc;
    
    h->end2 = (thal_args *) pr_safe_malloc(sizeof(*h->end2));
    set_thal_default_args(h->end2);
    h->end2->type = thal_end2;
-   h->end2->mv = pa->p_args.salt_conc;
-   h->end2->dv = pa->p_args.divalent_conc;
-   h->end2->dntp = pa->p_args.dntp_conc;
-   h->end2->dna_conc = pa->p_args.dna_conc;
+   h->end2->mv = po_args->salt_conc;
+   h->end2->dv = po_args->divalent_conc;
+   h->end2->dntp = po_args->dntp_conc;
+   h->end2->dna_conc = po_args->dna_conc;
    
    h->hairpin_th  = (thal_args *) pr_safe_malloc(sizeof(*h->hairpin_th));
    set_thal_default_args(h->hairpin_th); 
    h->hairpin_th->type = thal_hairpin;
-   h->hairpin_th->mv = pa->p_args.salt_conc;
-   h->hairpin_th->dv = pa->p_args.divalent_conc;
-   h->hairpin_th->dntp = pa->p_args.dntp_conc;
-   h->hairpin_th->dna_conc = pa->p_args.dna_conc;
+   h->hairpin_th->mv = po_args->salt_conc;
+   h->hairpin_th->dv = po_args->divalent_conc;
+   h->hairpin_th->dntp = po_args->dntp_conc;
+   h->hairpin_th->dna_conc = po_args->dna_conc;
    h->hairpin_th->dimer = 0;
    
    return h;
 }
-
-/* Create the thal oligo arg holder */
-thal_arg_holder *
-  create_thal_oligo_arg_holder (const p3_global_settings *pa)
-{
-   
-   thal_arg_holder *h
-     = (thal_arg_holder *) pr_safe_malloc(sizeof(thal_arg_holder));
-   
-   h->any = (thal_args *) pr_safe_malloc(sizeof(*h->any));
-   set_thal_oligo_default_args(h->any);
-   h->any->type = thal_any;
-   h->any->mv = pa->o_args.salt_conc;
-   h->any->dv = pa->o_args.divalent_conc;
-   h->any->dntp = pa->o_args.dntp_conc;
-   h->any->dna_conc = pa->o_args.dna_conc;
-   
-   h->end1 = (thal_args *) pr_safe_malloc(sizeof(*h->end1));
-   set_thal_oligo_default_args(h->end1);
-   h->end1->type = thal_end1;
-   h->end1->mv = pa->o_args.salt_conc;
-   h->end1->dv = pa->o_args.divalent_conc;
-   h->end1->dntp = pa->o_args.dntp_conc;
-   h->end1->dna_conc = pa->o_args.dna_conc;
-   
-   h->end2 = (thal_args *) pr_safe_malloc(sizeof(*h->end2));
-   set_thal_oligo_default_args(h->end2);
-   h->end2->type = thal_end2;
-   h->end2->mv = pa->o_args.salt_conc;
-   h->end2->dv = pa->o_args.divalent_conc;
-   h->end2->dntp = pa->o_args.dntp_conc;
-   h->end2->dna_conc = pa->o_args.dna_conc;
-   
-   h->hairpin_th  = (thal_args *) pr_safe_malloc(sizeof(*h->hairpin_th));
-   set_thal_oligo_default_args(h->hairpin_th);
-   h->hairpin_th->type = thal_hairpin;
-   h->hairpin_th->mv = pa->o_args.salt_conc;
-   h->hairpin_th->dv = pa->o_args.divalent_conc;
-   h->hairpin_th->dntp = pa->o_args.dntp_conc;
-   h->hairpin_th->dna_conc = pa->o_args.dna_conc;
-   h->hairpin_th->dimer = 0;
-   
-   return h;
-}
-
 
 /* Free the thal arg holder */
 void
@@ -1190,16 +1145,16 @@ choose_primers(const p3_global_settings *pa,
   if (dpal_arg_to_use == NULL)
     dpal_arg_to_use = create_dpal_arg_holder();
    if(thal_arg_to_use == NULL) {
-      thal_arg_to_use = create_thal_arg_holder(pa);
+      thal_arg_to_use = create_thal_arg_holder(&pa->p_args);
    } else {
       destroy_thal_arg_holder(thal_arg_to_use);
-      thal_arg_to_use = create_thal_arg_holder(pa);
+      thal_arg_to_use = create_thal_arg_holder(&pa->p_args);
    }
    if(thal_oligo_arg_to_use == NULL) {
-      thal_oligo_arg_to_use = create_thal_oligo_arg_holder(pa);
+      thal_oligo_arg_to_use = create_thal_arg_holder(&pa->o_args);
    } else {
       destroy_thal_arg_holder(thal_oligo_arg_to_use);
-      thal_oligo_arg_to_use = create_thal_oligo_arg_holder(pa);
+      thal_oligo_arg_to_use = create_thal_arg_holder(&pa->o_args);
    } 
   if (pa->primer_task == pick_primer_list) {
     make_complete_primer_lists(retval, pa, sa,
