@@ -95,7 +95,8 @@ sub runtest($$$$$) {
 sub main() {
     my %args;
 
-    select STDERR;              # By default, print to STDERR
+    # select STDERR;
+    $| = 1;
 
     if (!GetOptions(\%args,
                     'valgrind',

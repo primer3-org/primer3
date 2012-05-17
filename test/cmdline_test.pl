@@ -72,7 +72,8 @@ main();
 sub main() {
     my %args;
 
-    select STDERR; $| = 1;
+    # select STDERR;
+    $| = 1;
 
     $all_ok = 1;
 
