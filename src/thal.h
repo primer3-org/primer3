@@ -47,8 +47,27 @@
 # define THAL_ERROR_SCORE -_INFINITY
 #endif
 
+/* The maximum length of _one_ of the two sequences being aligned in a
+   thermodynamic alignment. In other words, the length of one sequence
+   must be <= THAL_MAX_ALIGN, but the other sequence can be longer.
+   The rationale behind this value (60) is that this is the maxium
+   reasonable length for nearest neighbor models. It is the maxium
+   length at which we can restrict our model to only two states of
+   melting: fully intact duplex or completely dissociated single
+   strands. */
 #ifndef THAL_MAX_ALIGN
 #define THAL_MAX_ALIGN 60
+#endif
+
+/* The maxium length of the other sequence in a thermodynamic
+   alignment. This value can be increased, though alignments against
+   very long sequences will be quite slow. As of 2012-05-18, we only
+   potentially see sequences longer this when checking for mispriming
+   in the template ('max_template_mispriming') in libprimer3.c, which
+   is really designed to find sites of ectopic primer very close (a
+   few kilobases) from the location of the cadidate primer. */
+#ifndef THAL_MAX_SEQ
+#define THAL_MAX_SEQ   10000
 #endif
 
 /*** BEGIN CONSTANTS ***/

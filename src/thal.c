@@ -61,10 +61,6 @@
 #define THAL_EXIT_ON_ERROR 0
 #endif
 
-#ifndef THAL_MAX_SEQ
-#define THAL_MAX_SEQ   10000
-#endif
-
 /* table where bp-s enthalpies, that retrieve to the most stable Tm, are saved */
 #ifdef EnthalpyDPT
 # undef EnthalpyDPT
@@ -401,11 +397,14 @@ thal(const unsigned char *oligo_f,
    /* The following error messages will be seen by end users and will
       not be easy to understand. */
    CHECK_ERROR((len_f > THAL_MAX_ALIGN) && (len_r > THAL_MAX_ALIGN),
-	       "Sequences longer than THAL_MAX_ALIGN for thermodynamical alignment (nearest-neighbor approach)");
+	       "Sequences longer than THAL_MAX_ALIGN for "
+	       "thermodynamical alignment (nearest-neighbor approach)");
    CHECK_ERROR((len_f > THAL_MAX_SEQ), 
-	       "Sequence 1 longer than THAL_MAX_SEQ and alignment is requested");
+	       "Sequence 1 longer than THAL_MAX_SEQ and "
+	       "alignment is requested");
    CHECK_ERROR((len_r > THAL_MAX_SEQ), 
-	       "Sequence 2 longer than THAL_MAX_SEQ and alignment is requested");
+	       "Sequence 2 longer than THAL_MAX_SEQ and "
+	       "alignment is requested");
 
    CHECK_ERROR(NULL == a,  "NULL 'in' pointer");
    if (NULL == o) return; /* Leave it to the caller to crash */
