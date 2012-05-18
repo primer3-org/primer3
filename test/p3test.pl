@@ -65,6 +65,8 @@ our $valgrind_format;
                    
 # Global variable for Errors
 my $all_ok;
+my $start_time;
+my $end_prev_test_time;
 
 main();
 
@@ -75,8 +77,8 @@ sub main() {
     $| = 1;
 
     $all_ok = 1;
-    my $start_time;
     $start_time = time();
+    $end_prev_test_time = $start_time;
 
     if (defined $Config{sig_name}) {
           my $i = 0;
@@ -94,7 +96,7 @@ sub main() {
                     'windows',
                     'fast',
                     'verbose',
-		    'onetest=s',
+                    'onetest=s',
                     'executable=s',
                     )) {
         print "Usage: perl p3test.pl \\\n",
@@ -238,86 +240,84 @@ sub main() {
 			    );
 
     my @TESTS = ( 
-		  'th-w-other-tasks',
+			# New tests that use new melting temperature
+			# and thermodynamic alignments
+			# Put the quickest tests first.
+			'primer_must_use_th',
+			'primer_task_th',
+			'primer_thal_args',
 
-	          'primer_thermod_align',             
-	          'primer_thermod_align_formatted',
+			'test_compl_error',
+			'test_left_to_right_of_right',
+			'primer_boundary',
+			'primer_boundary1',
+			'primer_boundary_formatted',
+			'primer_boundary1_formatted',
 
-		  # New tests that use new melting temperature
-		  # and thermodynamic alignments
-		  'primer1_th',
-		  'primer_mispriming_th',
-		  'primer_must_use_th',
-		  'primer_new_tasks_th',
-		  'primer_task_th',
-	          'primer_thal_args',
+			'primer_internal',
+			'primer_internal1',
+			'primer_internal_formatted',
+			'primer_internal1_formatted',
 
+			'primer_ok_regions',
+			'primer_ok_regions_formatted',
+			'primer_ok_regions2',
 
-		  'test_compl_error',
-		  'test_left_to_right_of_right',
-	          'primer_boundary', # Put the quickest tests first.
-                  'primer_boundary1',
-                  'primer_boundary_formatted',
-                  'primer_boundary1_formatted',
+			'primer_tm_lc_masking',
+			'primer_tm_lc_masking_formatted',
 
-                  'primer_internal',
-                  'primer_internal1',
-                  'primer_internal_formatted',
-                  'primer_internal1_formatted',
+			'primer_start_codon',
 
-	          'primer_ok_regions',
-	          'primer_ok_regions_formatted',
-                  'primer_ok_regions2',
+			'primer_task',
+			'primer_task_formatted',
+			'primer_renewed_tasks',
+			'primer_new_tasks',
+			'primer_new_tasks_formatted',
 
-                  'primer_tm_lc_masking',
-                  'primer_tm_lc_masking_formatted',
+			'primer_must_overlap_point',
+			'primer_overlap_junction',
 
-                  'primer_start_codon',
+			'primer_all_settingsfiles',
+			'primer_high_tm_load_set',
+			'primer_high_gc_load_set',
 
-                  'primer_task',
-                  'primer_task_formatted',
-                  'primer_renewed_tasks',
-                  'primer_new_tasks',
-                  'primer_new_tasks_formatted',
+			'primer_gc_end',
+			'primer_check',
+			'primer_must_use',
+			'primer_must_use_formatted',
+			'primer_syntax',
+			'primer_end_pathology',
+			'primer_num_best',
+			'primer_quality_boundary',
+			'primer',
+			'primer1',
+			'primer_mispriming',
+			'primer_mispriming_formatted',
+			'primer_mispriming_boundary1',
+			'primer_mispriming_boundary1_formatted',
+			'primer_mispriming_boundary2',
+			'primer_mispriming_boundary2_formatted',
+			'primer_mispriming_long_lib',
+			'primer_rat',
+			'primer_human',
+			'long_seq',
+			'primer_position_penalty',
+			'primer_position_penalty_formatted',
+			'p3-tmpl-mispriming',
 
-                  'primer_must_overlap_point',
-	          'primer_overlap_junction',
+			'primer_three_prime_distance',
 
-                  'primer_all_settingsfiles',
-                  'primer_high_tm_load_set',
-                  'primer_high_gc_load_set',
+			'primer_obj_fn',
+			'p3_3_prime_n',
 
-                  'primer_gc_end',
-                  'primer_check',
-                  'primer_must_use',
-                  'primer_must_use_formatted',
-                  'primer_syntax',
-                  'primer_end_pathology',
-                  'primer_num_best',
-                  'primer_quality_boundary',
-                  'primer',
-                  'primer1',
-                  'primer_mispriming',
-                  'primer_mispriming_formatted',
-                  'primer_mispriming_boundary1',
-                  'primer_mispriming_boundary1_formatted',
-                  'primer_mispriming_boundary2',
-                  'primer_mispriming_boundary2_formatted',
-                  'primer_mispriming_long_lib',
-                  'primer_rat',
-                  'primer_human',
-                  'long_seq',
-                  'primer_position_penalty',
-                  'primer_position_penalty_formatted',
-                  'p3-tmpl-mispriming',
-                  # Put slow tests last
-
-                  'p3_3_prime_n',
-	          'primer_three_prime_distance',
-
-                  'primer_obj_fn',
-
-                  'primer_lib_amb_codes',
+			# Put slow tests last
+			'primer_mispriming_th',
+			'th-w-other-tasks',
+			'primer_new_tasks_th',
+			'primer_thermod_align',             
+			'primer_thermod_align_formatted',
+			'primer1_th',
+			'primer_lib_amb_codes',
 
 		  );
 
@@ -335,8 +335,7 @@ sub main() {
         # We are inside the for loop here....
         print "$test...";
 
-        if ($fastFlag && (($test eq 'p3_3_prime_n')
-            || ($test eq 'th-w-other-tasks')
+        if ($fastFlag && (($test eq 'th-w-other-tasks')
             || ($test eq 'primer_obj_fn')
             || ($test eq 'primer1_th')
             || ($test eq 'primer_mispriming_th')
@@ -446,10 +445,16 @@ sub main() {
 
         $r = perldiff $output, $tmp;
         if ($r == 0) {
-            print "[OK]\n";
+            print "[OK] ";
+             print (time() - $end_prev_test_time);
+             $end_prev_test_time = time();
+             print "s\n";
         } else {
             $all_ok = 0;
-            print "[FAILED]\n";
+            print "[FAILED] ";
+            print (time() - $end_prev_test_time);
+            $end_prev_test_time = time();
+            print "s\n";
             $exit_stat = -1;
         }
 
@@ -476,11 +481,17 @@ sub main() {
             }
             print $test. "_list_files...";
             if ($r == 0) {
-                print "[OK]\n";
+                print "[OK] ";
+                print (time() - $end_prev_test_time);
+                $end_prev_test_time = time();
+                print "s\n";
             } 
             else {
                 $all_ok = 0;
-                print "[FAILED]\n";
+                print "[FAILED]";
+                print (time() - $end_prev_test_time);
+                $end_prev_test_time = time();
+                print "s\n";
                 $exit_stat = -1;
             }
         }
@@ -659,7 +670,10 @@ sub test_fatal_errors() {
     if ($fatal_error_problem == 1){
         $all_ok = 0;
     }
-    print $fatal_error_problem ? "[FAILED]" : "[OK]" ,"\n";
+    print $fatal_error_problem ? "[FAILED]" : "[OK]" ," ";
+    print (time() - $end_prev_test_time);   
+    $end_prev_test_time = time();
+    print "s\n";
 }
 
 sub _nowarn_system($) {
