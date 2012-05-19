@@ -54,6 +54,11 @@ WINMAKE=mingw32-make
 ifndef SDKROOT
 	SDKROOT=`xcode-select -print-path`/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.6.sdk
 endif
+
+ifneq (exists, $(shell [ -d $(SDKROOT) ] ) && echo exists )
+	SDKROOT=`xcode-select -print-path`/SDKs/MacOSX10.6.sdk
+endif
+
 ifndef MACOSX_DEPLOYMENT_TARGET
 	MACOSX_DEPLOYMENT_TARGET=10.6
 endif
