@@ -50,18 +50,22 @@
 # with valgrind, a leak and memory access checker.
 TESTOPTS= 
 WINMAKE=mingw32-make
+DEVELOPER=`xcode-select -print-path`
+
+# this is clumsy, but deals with the moving compilers on OSX
 
 ifndef SDKROOT
-	SDKROOT=`xcode-select -print-path`/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.6.sdk
+	SDKROOT=$(DEVELOPER)/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.6.sdk
 endif
 
-ifneq (exists, $(shell [ -d $(SDKROOT) ] ) && echo exists )
-	SDKROOT=`xcode-select -print-path`/SDKs/MacOSX10.6.sdk
+ifneq (exists, $(shell [ -d $(SDKROOT) ] && echo exists))
+	SDKROOT=$(DEVELOPER)/SDKs/MacOSX10.6.sdk
 endif
 
 ifndef MACOSX_DEPLOYMENT_TARGET
 	MACOSX_DEPLOYMENT_TARGET=10.6
 endif
+
 ifndef ARCHS
 	ARCHS=i386 x86_64
 endif
