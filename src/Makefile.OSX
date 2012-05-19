@@ -52,7 +52,7 @@ TESTOPTS=
 WINMAKE=mingw32-make
 
 ifndef SDKROOT
-	SDKROOT=/Developer/SDKs/MacOSX10.6.sdk
+	SDKROOT=`xcode-select -print-path`/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.6.sdk
 endif
 ifndef MACOSX_DEPLOYMENT_TARGET
 	MACOSX_DEPLOYMENT_TARGET=10.6
