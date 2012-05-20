@@ -3,14 +3,14 @@
 # also change in create_tag_files_and_docs.pl (primer3/documentation/trunk/)
 
 # 1 DO A CLEAN CHECKOUT AND TEST IT
-svn co https://primer3.svn.sourceforge.net/svnroot/primer3
+svn co https://primer3.svn.sourceforge.net/svnroot/primer3/primer3/trunk
 
 # go to primer3/primer3/trunk/src/ and do
+
 make test
 
 ..OR...
 
-# go to primer3/primer3/trunk/src/
 sh paranoid_tests.sh
 
 # also test on Windows: clean checkout + make test TESTOPTS=--windows
