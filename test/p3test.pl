@@ -65,8 +65,6 @@ our $valgrind_format;
                    
 # Global variable for Errors
 my $all_ok;
-my $start_time;
-my $end_prev_test_time;
 
 main();
 
@@ -77,8 +75,7 @@ sub main() {
     $| = 1;
 
     $all_ok = 1;
-    $start_time = time();
-    $end_prev_test_time = $start_time;
+    my $overall_start_time = time();
 
     if (defined $Config{sig_name}) {
           my $i = 0;
@@ -334,6 +331,7 @@ sub main() {
 
         # We are inside the for loop here....
         print "$test...";
+	my $test_start_time = time();
 
         if ($fastFlag && (($test eq 'th-w-other-tasks')
             || ($test eq 'primer_obj_fn')
@@ -444,17 +442,14 @@ sub main() {
         }
 
         $r = perldiff $output, $tmp;
+	print ((time() - $test_start_time), "s ");
+
         if ($r == 0) {
-            print "[OK] ";
-             print (time() - $end_prev_test_time);
-             $end_prev_test_time = time();
-             print "s\n";
+            print "[OK]\n";
+
         } else {
             $all_ok = 0;
-            print "[FAILED] ";
-            print (time() - $end_prev_test_time);
-            $end_prev_test_time = time();
-            print "s\n";
+            print "[FAILED]\n";
             $exit_stat = -1;
         }
 
@@ -481,17 +476,10 @@ sub main() {
             }
             print $test. "_list_files...";
             if ($r == 0) {
-                print "[OK] ";
-                print (time() - $end_prev_test_time);
-                $end_prev_test_time = time();
-                print "s\n";
-            } 
-            else {
+                print "[OK]\n";
+            } else {
                 $all_ok = 0;
-                print "[FAILED]";
-                print (time() - $end_prev_test_time);
-                $end_prev_test_time = time();
-                print "s\n";
+                print "[FAILED]\n";
                 $exit_stat = -1;
             }
         }
@@ -523,7 +511,7 @@ sub main() {
             $exit_stat = -1;
         }
     }
-    print "\nTests ran for ", (time() - $start_time), " seconds.\n";
+    print "\nTests in $0 ran for ", (time() - $overall_start_time), " s\n";
     print "\n\nDONE ", scalar(localtime), " ";
 
     print $all_ok ? "Passed all tests - [OK]\n\n\n" : "At least one test failed - [FAILED]\n\n\n";
@@ -670,10 +658,7 @@ sub test_fatal_errors() {
     if ($fatal_error_problem == 1){
         $all_ok = 0;
     }
-    print $fatal_error_problem ? "[FAILED]" : "[OK]" ," ";
-    print (time() - $end_prev_test_time);   
-    $end_prev_test_time = time();
-    print "s\n";
+    print(($fatal_error_problem ? "[FAILED]" : "[OK]") ,"\n");
 }
 
 sub _nowarn_system($) {
