@@ -1,6 +1,6 @@
 # 0 UPDATE RELEASE NUMBER
-# change in libprimer3_release() (liprimer3.c)
-# also change in create_tag_files_and_docs.pl (primer3/documentation/trunk/)
+# 0.1 change in libprimer3_release() (liprimer3.c)
+# 0.2 change in create_tag_files_and_docs.pl (primer3/documentation/trunk/)
 
 # 1 DO A CLEAN CHECKOUT AND TEST IT
 svn co https://primer3.svn.sourceforge.net/svnroot/primer3/primer3/trunk
@@ -31,8 +31,10 @@ firefox script_output/primer3_manual.htm
 
 # 3 TEST TAGGED RELEASE
 svn co https://primer3.svn.sourceforge.net/svnroot/primer3/primer3/tags/release-<release number>
+# OPTIONALLY, test it all again in this directory (May not be worth it
+# since testing takes much longer than creating the files system copy
+# plust the .tar.gz file, and then testing that.)
 cd ...primer3/primer3/tags/release-<release number>/src # Where you did the check out.
-# test it all again in this directory
 make test
 make clean
 
@@ -51,6 +53,7 @@ rm -rf */.svn
 rm -rf */*/.svn
 rm -rf */*/*/.svn
 rm notes-on-creating-source-release.txt
+rm p3_th_settings.txt # This is not needed by users
 
 # look for other hidden L/Unix files
 ls -ld .??*
