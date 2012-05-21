@@ -18,21 +18,21 @@ sh paranoid_tests.sh
 # 2 TAG THE RELEASE -- create the directory under primer3/primer3/tags/
 cd primer3/primer3
 svn cp trunk tags/release-<release number>
-svn ci  -m 'tagged release <release number>'
+svn ci  -m 'tagged release-<release number>'
 
 # 2.1 TAG THE *DOCUMENTATION* RELEASE AND TEST
 cd primer3/documentation
 svn cp trunk tags/release-<release number>
-svn ci  -m 'tagged DOCUMENTATION release <release number>'
+svn ci  -m 'tagged DOCUMENTATION release-<release number>'
 cd tags/release-<release number>
 perl create_tag_files_and_doc.pl
 # make sure the file script_ouput/primer3_manual.htm is intact, e.g.
 firefox script_output/primer3_manual.htm
 
 # 3 TEST TAGGED RELEASE
-svn co https://primer3.svn.sourceforge.net/svnroot/primer3
-cd primer3/primer3/tags/release-<release number>/src
-# test it all again in the primer3/primer3/tags/release-<release number> directory
+svn co https://primer3.svn.sourceforge.net/svnroot/primer3/primer3/tags/release-<release number>
+cd ...primer3/primer3/tags/release-<release number>/src # Where you did the check out.
+# test it all again in this directory
 make test
 make clean
 
