@@ -181,8 +181,13 @@ if(a.debug == 0) {
 	 } else if(strcmp(argv[i+1],"HAIRPIN")==0) {
 	    a.type = thal_hairpin;
 	    a.dimer = 0;
+	 } else if (strcmp(argv[i+1], "ANY")==0) {
+   	    a.type = thal_any; /* ANY */  
 	 } else {
-	    a.type = thal_any; /* ANY */  
+#ifdef DEBUG
+	    fprintf(stderr, usage, argv[0]);
+#endif
+	    exit(-1);
 	 }
 	 i++;
       } else if (!strncmp("-d", argv[i], 2)) { /* dna conc */
