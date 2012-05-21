@@ -4069,8 +4069,9 @@ characterize_pair(p3retval *retval,
          if (!must_use) return PAIR_FAILED;
       }
       ppair->compl_end = align_thermod(s1, s2_rev, thal_arg_to_use->end1);
-      if(ppair->compl_end < align_thermod(s1, s2_rev, thal_arg_to_use->end2)) {
-         ppair->compl_end = align_thermod(s1, s2_rev, thal_arg_to_use->end2);
+      compl_end        = align_thermod(s1, s2_rev, thal_arg_to_use->end2); /* Triinu Please check */
+      if (ppair->compl_end < compl_end) {
+         ppair->compl_end = compl_end;
       }
       if (ppair->compl_end > pa->pair_compl_end_th) {
          if (update_stats) {
