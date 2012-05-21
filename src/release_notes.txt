@@ -23,6 +23,10 @@ PRIMER_THERMODYNAMIC_PARAMETERS_PATH)
 6. Removed the -i option from the oligotm executable, as the
 necessary information is in the Primer3 manual.
 
+7. Updated PRIMER_PRODUCT_SIZE_RANGE in
+primer3web_v3_0_0_default_settings to same value as in previous
+version of primer3web.
+
 release 2.3.0 2012-02-03 ===============================================
 
 1. *** We changed the following default values:
