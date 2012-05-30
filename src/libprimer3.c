@@ -1087,8 +1087,10 @@ choose_primers(const p3_global_settings *pa,
   PR_ASSERT(NULL != pa);
   PR_ASSERT(NULL != sa);
 
-  if (pa->dump)
+  if (pa->dump) {
+    printf("Start of choose_primers:\n");
     p3_print_args(pa, sa) ;
+  }
 
   /* Set the general output type */
   if (pa->pick_left_primer && pa->pick_right_primer) {
@@ -1118,6 +1120,10 @@ choose_primers(const p3_global_settings *pa,
   /* Change some parameters to fit the task */
   _adjust_seq_args(pa, sa, &retval->per_sequence_err,&retval->warnings);
 
+  if (pa->dump) {
+    printf("After _adjust_seq_args\n");
+    p3_print_args(pa, sa) ;
+  }
 
   if (!pr_is_empty(&retval->per_sequence_err)) return retval;
 
@@ -1136,6 +1142,7 @@ choose_primers(const p3_global_settings *pa,
                        ) !=0 ) {
     return retval;
   }
+
 
   set_retval_both_stop_codons(sa, retval);
 
@@ -1202,6 +1209,11 @@ choose_primers(const p3_global_settings *pa,
   if (retval->output_type == primer_pairs) {
     choose_pair_or_triple(retval, pa, sa, dpal_arg_to_use, thal_arg_to_use,
        thal_oligo_arg_to_use, &retval->best_pairs);
+  }
+
+  if (pa->dump) {
+    printf("End of choose_primers:\n");
+    p3_print_args(pa, sa) ;
   }
 
   return retval;
@@ -1703,7 +1715,10 @@ choose_internal_oligo(p3retval *retval,
         oligo_compl_thermod(h, &pa->o_args, &retval->intl.expl,
                             thal_oligo_arg_to_use, oligo_seq, oligo_seq);
         if (!OK_OR_MUST_USE(h)) continue;
-        oligo_hairpin(h, &pa->o_args,
+      }
+      if(h->hairpin_th == ALIGN_SCORE_UNDEF && pa->thermodynamic_alignment==1) {
+	_pr_substr(sa->trimmed_seq, h->start, h->length, oligo_seq);
+	oligo_hairpin(h, &pa->o_args,
                       &retval->intl.expl, thal_oligo_arg_to_use,
                       oligo_seq);
         if (!OK_OR_MUST_USE(h)) continue;
@@ -3236,8 +3251,10 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
 
   if ((three_conditions
        || po_args->weights.hairpin_th
-       || po_args->weights.compl_any_th  /* Triinu, is this needed? */
-       || po_args->weights.compl_end_th  /* Triinu, is this needed? */
+#if 0
+        || po_args->weights.compl_any_th /* Triinu, is this needed? */
+        || po_args->weights.compl_end_th /* Triinu, is this needed? */
+#endif
        )
        && pa->thermodynamic_alignment==1
        ) {
@@ -4610,6 +4627,7 @@ primer_mispriming_to_template(primer_rec *h,
     } else PR_ASSERT(0); /* Should not get here. */
   }
 }
+
 static void
 primer_mispriming_to_template_thermod(primer_rec *h,
                                       const p3_global_settings *pa,
@@ -4648,7 +4666,7 @@ primer_mispriming_to_template_thermod(primer_rec *h,
       target_r = &sa->upcased_seq_r[0];
    } else { /* l == OT_RIGHT */
       if (debug)
-        fprintf(stderr, "first_untrimmed = %d, last_untrimmed = %d\n",
+        fprintf(stdout, "first_untrimmed = %d, last_untrimmed = %d\n",
                 first_untrimmed, last_untrimmed);
       oseq = &s[0];
       target = &sa->upcased_seq_r[0];
@@ -4663,18 +4681,19 @@ primer_mispriming_to_template_thermod(primer_rec *h,
      }
    
      /* 1. Align to the template 5' of the oligo. */
-     tmp_char = target_r[first_untrimmed];
+     /* tmp_char = target_r[first_untrimmed]; Corrected 2012-05-30 */
+     tmp_char = target[first_untrimmed];
      target[first_untrimmed] = '\0';
    
      tmp_score = align_thermod(oseq, target, align_args);
    
      if (debug) {
-        if (l == OT_LEFT) fprintf(stderr, "\n************ OLIGO = LEFT\n");
-        else fprintf(stderr,              "\n************ OLIGO = RIGHT\n");
-        fprintf(stderr, "first_untrimmed = %d, last_untrimmed = %d, first = %d, last = %d\n",
+        if (l == OT_LEFT) fprintf(stdout, "\n************ OLIGO = LEFT\n");
+        else fprintf(stdout,              "\n************ OLIGO = RIGHT\n");
+        fprintf(stdout, "first_untrimmed = %d, last_untrimmed = %d, first = %d, last = %d\n",
                 first_untrimmed, last_untrimmed, first, last);
         
-        fprintf(stderr, "5' of oligo: Score %f aligning %s against %s\n\n", tmp_score,
+        fprintf(stdout, "5' of oligo: Score %f aligning %s against %s\n\n", tmp_score,
                 oseq, target);
      }
    target[first_untrimmed] = tmp_char;
@@ -4684,7 +4703,7 @@ primer_mispriming_to_template_thermod(primer_rec *h,
      = align_thermod(oseq, &target[0] + last_untrimmed + 1, align_args);
    
      if (debug)
-         fprintf(stderr, "3' of oligo Score %f aligning %s against %s\n\n",
+         fprintf(stdout, "3' of oligo Score %f aligning %s against %s\n\n",
                              h->template_mispriming, oseq, &target[0] + last_untrimmed + 1);
    
      /* 3. Take the max of 1. and 2. */
@@ -4696,9 +4715,12 @@ primer_mispriming_to_template_thermod(primer_rec *h,
          = align_thermod(oseq, target_r, align_args);
    
      if (debug)
-         fprintf(stderr, "other strand Score %f aligning %s against %s\n\n",
+         fprintf(stdout,
+		 "In primer_mispriming_to_template_thermod\n"
+		 " other strand Score %f aligning %s against %s\n\n",
                              h->template_mispriming_r, oseq, target_r);
-   if (pa->p_args.max_template_mispriming_th >= 0
+
+     if (pa->p_args.max_template_mispriming_th >= 0
        && oligo_max_template_mispriming_thermod(h)
        > pa->p_args.max_template_mispriming_th) {
       op_set_high_similarity_to_multiple_template_sites(h);
@@ -5329,7 +5351,7 @@ p3_get_pair_array_explain_string(const pair_array_t *pair_array)
 const char *
 libprimer3_release(void) 
 {
-  return "libprimer3 release 2.3.3";
+  return "libprimer3 release 2.3.4";
 }
 
 const char *
@@ -6580,11 +6602,12 @@ _check_and_adjust_1_interval(const char *tag_name,
 
 /* 
    Creates up to three files, the names of which are based on the
-   argument 'file'.  One file is a table of forward primers, one a table
-   of reverse primers, and one a table of internal hybridization
-   oligos, depending on what the caller to choose_primers() requested
-   (in the 'pa' argument).  Returns 0 on success, 1 on error.  On
-   error, check errno for ENOMEM. Used to implement P3_FILE_FLAG=1.
+   argument 'file_name'.  One file is a table of forward primers, one
+   a table of reverse primers, and one a table of internal
+   hybridization oligos, depending on what the caller to
+   choose_primers() requested (in the 'pa' argument).  Returns 0 on
+   success, 1 on error.  On error, check errno for ENOMEM. Used to
+   implement P3_FILE_FLAG=1.
  */
 int
 p3_print_oligo_lists(const p3retval *retval,
