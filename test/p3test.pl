@@ -531,6 +531,8 @@ sub perldiff($$) {
     # If different number of lines, return FAIL.
     if (@f1 != @f2) {
         print "Different number of lines\n";
+	print "On command line in test directory run\n";
+	print "diff $f1 $f2\n";
         return 1;
     }
     # check for differences on the lines, themselves
@@ -596,6 +598,9 @@ sub perldiff($$) {
         if ($l1 ne $l2) {
             print 
                 "Difference found at line $linenumber:\n<  $l1_orig\n>  $l2_orig\n";
+	    print "There may be additional differences.\n";
+	    print "On command line in test directory run\n";
+	    print "diff $f1 $f2\n";
             return 1;
         }
     }
