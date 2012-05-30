@@ -1,3 +1,10 @@
+release 2.3.4 2012-05-30 ===============================================
+
+Major correction:
+
+1. Fixed error in which PRIMER_..._.._TEMPLATE_MISPRIMING_TH was
+   calcluated incorrectly.
+
 release 2.3.3 2012-05-18 ===============================================
 
 Major correction:
