@@ -464,8 +464,8 @@ print_boulder(int io_version,
        printf("DEBUG_PRIMER_RIGHT%s_TEMPLATE_MISPRIMING_TOP_TH=%.4f\n", suffix,
 	      rev->template_mispriming);
        printf("DEBUG_PRIMER_RIGHT%s_TEMPLATE_MISPRIMING_R_TH=%.4f\n", suffix,
-#endif	      rev->template_mispriming_r);
-
+	      rev->template_mispriming_r);
+#endif
      }
      /************************************************************************************/
      /* Print the pair parameters*/
