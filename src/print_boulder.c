@@ -448,15 +448,25 @@ print_boulder(int io_version,
          (oligo_max_template_mispriming(rev) != ALIGN_SCORE_UNDEF))
       printf("PRIMER_RIGHT%s_TEMPLATE_MISPRIMING=%.4f\n", suffix,
              oligo_max_template_mispriming(rev));
-     /* Print primer template mispriming thermodynamical approach*/
+
+     /* Print primer template mispriming, thermodynamical approach*/
      if ( (pa->thermodynamic_alignment == 1) && (go_fwd == 1) &&
-	  (oligo_max_template_mispriming_thermod(fwd) != ALIGN_SCORE_UNDEF))
+	  (oligo_max_template_mispriming_thermod(fwd) != ALIGN_SCORE_UNDEF)) {
        printf("PRIMER_LEFT%s_TEMPLATE_MISPRIMING_TH=%.4f\n", suffix,
 	      oligo_max_template_mispriming_thermod(fwd));
+     }
+
      if ( (pa->thermodynamic_alignment == 1) && (go_rev == 1) &&
-	  (oligo_max_template_mispriming_thermod(rev) != ALIGN_SCORE_UNDEF))
+	  (oligo_max_template_mispriming_thermod(rev) != ALIGN_SCORE_UNDEF)) {
        printf("PRIMER_RIGHT%s_TEMPLATE_MISPRIMING_TH=%.4f\n", suffix,
 	      oligo_max_template_mispriming_thermod(rev));
+#if 0
+       printf("DEBUG_PRIMER_RIGHT%s_TEMPLATE_MISPRIMING_TOP_TH=%.4f\n", suffix,
+	      rev->template_mispriming);
+       printf("DEBUG_PRIMER_RIGHT%s_TEMPLATE_MISPRIMING_R_TH=%.4f\n", suffix,
+#endif	      rev->template_mispriming_r);
+
+     }
      /************************************************************************************/
      /* Print the pair parameters*/
     if (retval->output_type == primer_pairs) {
