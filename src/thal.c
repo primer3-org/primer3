@@ -2375,30 +2375,18 @@ symmetry_thermo(const unsigned char* seq)
    seq_end--;
    while(i<mp) {
       i++;
-      s=*seq;
-      e=*seq_end;
+      s=toupper(*seq);
+      e=toupper(*seq_end);
       if ((s=='A' && e!='T')
 	  || (s=='T' && e!='A')
 	  || (e=='A' && s!='T')
 	  || (e=='T' && s!='A')) {
 	 return 0;
       }
-      if ((s=='a' && e!='t')
-	  || (s=='t' && e!='a')
-	  || (e=='a' && s!='t')
-	  || (e=='t' && s!='a')) {
-	 return 0;
-      }
       if ((s=='C' && e!='G')
 	  || (s=='G' && e!='C')
 	  || (e=='C' && s!='G')
 	  || (e=='G' && s!='C')) {
-	 return 0;
-      }
-      if ((s=='c' && e!='g')
-	  || (s=='g' && e!='c')
-	  || (e=='c' && s!='g')
-	  || (e=='g' && s!='c')) {
 	 return 0;
       }
       seq++;
