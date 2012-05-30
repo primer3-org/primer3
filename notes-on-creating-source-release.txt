@@ -70,20 +70,23 @@ cp <SVN PRIMER3>/documentation/tags/release-<release number>/script_output/prime
 
 # 5 TAR AND GZIP THE FILE SYSTEM COPY AND TEST IT
 
-tar cvf primer3-<release number>.tar <SOMEWHERE>primer3-<release number>
-gzip primer3-<release number>.tar
+tar cvfz primer3-<release number>.tar.gz <SOMEWHERE>primer3-<release number>
 
 # Test the tar'ed source release
-# take primer3-<release number>.tar.gz to another location, unzip, and test it.
+# take primer3-<release number>.tar.gz to another location, unzip/untar it, and test it.
 
 # 6 UPLOAD TO SOURCEFORGE AND MAKE THE primer3-<release number>.tar.gz visible to the world
 
-# do the upload
+# Do the upload.
+#
+# Use the Files tab on the web interface (at https://sourceforge.net/projects/primer3/develop) 
+# after logging in. This may be also useful for creating new folder prior to the upload.
+#
+# or
+#
 scp primer3-<release number>.tar.gz <username>,primer3@frs.sourceforge.net:/home/frs/project/p/pr/primer3/primer3/<release_number>/
 (same for latest release notes and primer3_manual.htm)
 
-# or use the Project Admin - File Manager tab on the web interface (at https://sourceforge.net/projects/primer3/develop) 
-# after logging in. This may be also useful for creating new folder prior to the upload.
 
 # check if the file is available for download (may need to wait several minutes until the site gets updated):
 firefox https://sourceforge.net/projects/primer3/files/
@@ -94,6 +97,7 @@ firefox https://sourceforge.net/projects/primer3/files/
 
 # get the files:
 rsync -avz <username>,primer3@web.sourceforge.net:htdocs/ .
+# You will need to supply your SourceForge user name
 
 # edit & modify
 
