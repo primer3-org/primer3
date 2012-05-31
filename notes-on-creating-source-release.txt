@@ -40,8 +40,8 @@ make clean
 
 # 4 MAKE A FILE SYSTEM COPY OF THE RELEASE AND REMOVE SVN STUFF FROM IT
 
-# cd to the .../primer3/tags/ directory and make a *file system* only
-# copy
+# cd to the *newly checked-out* .../primer3/tags/ directory and make a
+# *file system* only copy
 
 cp -rfp release-<release number> <SOMEWHERE>/primer3-<release number>
 
@@ -53,7 +53,7 @@ rm -rf */.svn
 rm -rf */*/.svn
 rm -rf */*/*/.svn
 rm notes-on-creating-source-release.txt
-rm p3_th_settings.txt # This is not needed by users
+rm p3_th_settings.txt
 
 # look for other hidden L/Unix files
 ls -ld .??*
@@ -73,7 +73,11 @@ cp <SVN PRIMER3>/documentation/tags/release-<release number>/script_output/prime
 tar cvfz primer3-<release number>.tar.gz <SOMEWHERE>primer3-<release number>
 
 # Test the tar'ed source release
-# take primer3-<release number>.tar.gz to another location, unzip/untar it, and test it.
+# take primer3-<release number>.tar.gz to another location, unzip/untar it, and test it,
+# either with
+make test
+# or
+sh paranoid_tests.sh  >& test.out &
 
 # 6 UPLOAD TO SOURCEFORGE AND MAKE THE primer3-<release number>.tar.gz visible to the world
 
@@ -93,7 +97,13 @@ firefox https://sourceforge.net/projects/primer3/files/
 
 # 7 DOWNLOAD THE NEWLY UPLOADED primer3-<release number>.tar.gz FROM SOURCEFORGE AND TEST IT
 
-# 8 UPDATE THE SOURCEFORGE WEBPAGE
+# 8 MAKE primer3-<release number>.tag.gz the default for all OSes.
+# In browser go to https://sourceforge.net/projects/primer3/files/primer3/<release number>
+# Click on the "Circle-I" button near the file primer-<release number>.tar.gz, and look on
+# lower right of page for "Default Download For:", then find "Select all" and click on it.
+# Then click on "Save" (lower left)
+
+# 9 UPDATE THE SOURCEFORGE WEBPAGE
 
 # get the files:
 rsync -avz <username>,primer3@web.sourceforge.net:htdocs/ .
