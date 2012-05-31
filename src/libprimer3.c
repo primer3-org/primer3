@@ -1366,7 +1366,7 @@ choose_pair_or_triple(p3retval *retval,
       for (j=0; j<retval->fwd.num_elem; j++) {
 
         /* We check the reverse oligo again, because we may
-           determined that it is "not ok", even though
+           have determined that it is "not ok", even though
            (as a far as we knew), it was ok above. */
         if (!OK_OR_MUST_USE(&retval->rev.oligo[i])) {
           /* Can free the memory used by the hmap associated to this reverse primer */
@@ -1399,7 +1399,7 @@ choose_pair_or_triple(p3retval *retval,
         }
 
         /* Need to have this here because if we break just above, then,
-           at a latter iteration, we may need to examine the oligo
+           at a later iteration, we may need to examine the oligo
            pair with reverse oligo at i and forward oligo at j. */
         update_stats = 0;
         if (j > max_j_seen[i]) {
@@ -1710,7 +1710,7 @@ choose_internal_oligo(p3retval *retval,
        
       if (h->self_any == ALIGN_SCORE_UNDEF && pa->thermodynamic_alignment==1) {
         _pr_substr(sa->trimmed_seq, h->start, h->length, oligo_seq);
-        p3_reverse_complement(oligo_seq, revc_oligo_seq);
+	p3_reverse_complement(oligo_seq, revc_oligo_seq);
           
         oligo_compl_thermod(h, &pa->o_args, &retval->intl.expl,
                             thal_oligo_arg_to_use, oligo_seq, oligo_seq);
