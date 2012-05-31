@@ -3,7 +3,7 @@ release 2.3.4 2012-05-30 ===============================================
 Major correction:
 
 1. Fixed error in which PRIMER_..._..._TEMPLATE_MISPRIMING_TH was
-   calcluated incorrectly in libprimer3.c
+   calculated incorrectly in libprimer3.c
 
 release 2.3.3 2012-05-18 ===============================================
 
@@ -29,7 +29,7 @@ Minor corrections:
 PRIMER_INTERNAL_DNTP_CONC <= 0.0.
 
 2. No longer an error if a settings file has
-PRIMER_THERMODYNAMIC_ALIGNMENT=1 but does not have a valide
+PRIMER_THERMODYNAMIC_ALIGNMENT=1 but does not have a valid
 PRIMER_THERMODYNAMIC_PARAMETERS_PATH.
 (PRIMER_THERMODYNAMIC_PARAMETERS_PATH can then be set in the regular
 boulder IO input stream.)
