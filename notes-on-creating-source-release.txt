@@ -26,14 +26,14 @@ svn cp trunk tags/release-<release number>
 svn ci  -m 'tagged DOCUMENTATION release-<release number>'
 cd tags/release-<release number>
 perl create_tag_files_and_doc.pl
-# make sure the file script_ouput/primer3_manual.htm is intact, e.g.
+# make sure the file script_output/primer3_manual.htm is intact, e.g.
 firefox script_output/primer3_manual.htm
 
 # 3 TEST TAGGED RELEASE
 svn co https://primer3.svn.sourceforge.net/svnroot/primer3/primer3/tags/release-<release number>
 # OPTIONALLY, test it all again in this directory (May not be worth it
 # since testing takes much longer than creating the files system copy
-# plust the .tar.gz file, and then testing that.)
+# plus the .tar.gz file, and then testing that.)
 cd ...primer3/primer3/tags/release-<release number>/src # Where you did the check out.
 make test
 make clean
@@ -81,29 +81,25 @@ sh paranoid_tests.sh  >& test.out &
 
 # 6 UPLOAD TO SOURCEFORGE AND MAKE THE primer3-<release number>.tar.gz visible to the world
 
-# Do the upload.
-#
 # Use the Files tab on the web interface (at https://sourceforge.net/projects/primer3/develop) 
-# after logging in. This may be also useful for creating new folder prior to the upload.
-#
-# or
-#
-scp primer3-<release number>.tar.gz <username>,primer3@frs.sourceforge.net:/home/frs/project/p/pr/primer3/primer3/<release_number>/
-(same for latest release notes and primer3_manual.htm)
+# *after logging in* to create the folder for the new release, then upload the new files
+# either from the SourceForge web interface, or by the local command
 
+scp primer3-<release number>.tar.gz <user-name>,primer3@frs.sourceforge.net:/home/frs/project/p/pr/primer3/primer3/<release_number>/
+(same for latest release notes and primer3_manual.htm)
 
 # check if the file is available for download (may need to wait several minutes until the site gets updated):
 firefox https://sourceforge.net/projects/primer3/files/
 
 # 7 DOWNLOAD THE NEWLY UPLOADED primer3-<release number>.tar.gz FROM SOURCEFORGE AND TEST IT
 
-# 8 MAKE primer3-<release number>.tag.gz the default for all OSes.
+# 8 MAKE primer3-<release number>.tag.gz THE DEFAULT FOR ALL OSes.
 # In browser go to https://sourceforge.net/projects/primer3/files/primer3/<release number>
 # Click on the "Circle-I" button near the file primer-<release number>.tar.gz, and look on
 # lower right of page for "Default Download For:", then find "Select all" and click on it.
 # Then click on "Save" (lower left)
 
-# 9 UPDATE THE SOURCEFORGE WEBPAGE
+# 9 UPDATE THE SOURCEFORGE WEB PAGE
 
 # get the files:
 rsync -avz <username>,primer3@web.sourceforge.net:htdocs/ .
