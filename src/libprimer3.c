@@ -357,7 +357,7 @@ static void   oligo_compl(primer_rec *,
                           const char *oligo_seq,
                           const char *revc_oligo_seq
                           );
-static void   oligo_compl_thermod(primer_rec *,
+static void   oligo_compl_thermod(primer_rec *, /* TO DO 2012-06-01 -- update by removing last argument. */
                           const args_for_one_oligo_or_primer *po_args,
                           oligo_stats *,
                           const thal_arg_holder *,
