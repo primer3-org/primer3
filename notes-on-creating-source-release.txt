@@ -105,7 +105,14 @@ firefox https://sourceforge.net/projects/primer3/files/
 rsync -avz <username>,primer3@web.sourceforge.net:htdocs/ .
 # You will need to supply your SourceForge user name
 
-# edit & modify
+# edit & modify:
+# At top level, replace primer3_manual.htm with the most up-to-date version.
+# Edit releases.php to add the URL of the most recent release on the 
+# SourceForge site.
 
 # upload them back:
 rsync -avz *.php <username>,primer3@web.sourceforge.net:htdocs/
+# Review messages to confirm that releases.php is uploaded
+
+rsync -avz *.htm <username>,primer3@web.sourceforge.net:htdocs/
+# Review messages to confirm that newest primer3_manual.htm is uploaded
