@@ -64,7 +64,7 @@ sub read_file($$)
 	# skip empty lines and comments
 	if ($line =~ /^\s*$/) { next; }
 	if ($line =~ "^#") { next; }
-	unless ($line =~ /(\S*)=(\S*)/) { print STDERR "wrong line format: $line\n"; next; }
+	unless ($line =~ /(\S*)=(.*)/) { print STDERR "wrong line format: $line\n"; next; }
 	my $tag = $1;
 	my $value = $2;
 	$tags->{$tag} = $value;
@@ -84,7 +84,7 @@ my @only1;
 
 # cmp tags1 with tags2 print anything common different
 print "Common tags with different values:\n";
-foreach my $tag (keys %tags1) {
+foreach my $tag (sort (keys %tags1)) {
     if (defined($tags2{$tag})) {
 	if ($tags1{$tag} ne $tags2{$tag}) {
 	    print "\t$tag:\n\t\t$file1: $tag=$tags1{$tag}\n\t\t$file2: $tag=$tags2{$tag}\n"
