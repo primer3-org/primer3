@@ -966,7 +966,6 @@ void p3_set_gs_primer_self_any_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_self_end(p3_global_settings * p , double val);
 void p3_set_gs_primer_self_end_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_hairpin_th(p3_global_settings * p , double val);
-void p3_set_gs_primer_thermodynamic_alignment(p3_global_settings * p , int val);
 void p3_set_gs_primer_file_flag(p3_global_settings * p , int val);
 void p3_set_gs_primer_pick_anyway(p3_global_settings * p , int val);
 void p3_set_gs_primer_gc_clamp(p3_global_settings * p , int val);
@@ -1084,6 +1083,9 @@ args_for_one_oligo_or_primer *p3_get_global_settings_p_args(p3_global_settings *
 args_for_one_oligo_or_primer *p3_get_global_settings_o_args(p3_global_settings * p);
 int p3_set_afogop_seq_lib(args_for_one_oligo_or_primer *, seq_lib *);
 int p3_set_afogop_opt_tm(args_for_one_oligo_or_primer *, double);
+
+/* max_end_gc must be >= 0 and <= 5 */
+void p3_set_gs_max_end_gc(p3_global_settings *p, int max_end_gc);
 
 void p3_set_gs_max_end_stability(p3_global_settings * p , int max_end_stability);
 void p3_set_gs_gc_clamp(p3_global_settings * p , int gc_clamp);

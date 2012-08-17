@@ -5937,7 +5937,7 @@ _pr_data_control(const p3_global_settings *pa,
     return 1;
   }
 
-  /* PRIMER_MAX_END_GC must be >= 0 and <= 5 */
+  /* Must be >= 0 and <= 5 */
   if ((pa->max_end_gc < 0) 
       || (pa->max_end_gc > 5)) {
     pr_append_new_chunk(glob_err,
@@ -7518,12 +7518,6 @@ p3_set_gs_primer_lowercase_masking(p3_global_settings * p , int val) {
 }
 
 void
-p3_set_gs_primer_thermodynamic_alignment(p3_global_settings * p , int val) {   
-   p->thermodynamic_alignment = val ;
-}
-
-
-void
 p3_set_gs_primer_wt_tm_gt(p3_global_settings * p , double val) {
   p->p_args.weights.temp_gt = val ;
 }
@@ -7779,6 +7773,11 @@ p3_set_gs_quality_range_min(p3_global_settings * p , int quality_range_min){
 void
 p3_set_gs_quality_range_max(p3_global_settings * p , int quality_range_max){
   p->quality_range_max = quality_range_max ;
+}
+
+void 
+p3_set_gs_max_end_gc(p3_global_settings *p, int max_end_gc) {
+  p->max_end_gc = max_end_gc;
 }
 
 void
