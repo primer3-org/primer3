@@ -1078,8 +1078,6 @@ p3retval *
 choose_primers(const p3_global_settings *pa,
                seq_args *sa)
 {
-  
-  /* Andreas, I changed the order of statements here. */
   /* Create retval and set were to find the results */
   p3retval *retval = create_p3retval();
   if (retval == NULL)  return NULL;
@@ -1112,6 +1110,14 @@ choose_primers(const p3_global_settings *pa,
    * ENOMEM.
    */
   if (setjmp(_jmp_buf) != 0) {
+    /* IOANA-NEW
+       one possible solution would be to jump to here, and then
+       check errno to decide what to do.  We would have to pick
+       a reasonable errno.  Alternatively, we could have another
+       static variable of our own and check that, e.g.
+       a top level static int thermodynamic_alignment_length_error.
+       In any case, this would be a persequence error, not a global
+       error. */
     destroy_p3retval(retval);
     return NULL;  /* If we get here, that means we returned via a
                      longjmp.  In this case errno should be ENOMEM. */
@@ -4386,6 +4392,16 @@ align_thermod(const char *s1,
 {  
   int thal_trace=0;
    thal_results r;
+   /* IOANA-NEW
+      This is the single call to thal().
+      Below, there is a check to see if r.temp == THAL_ERROR_SCORE,
+      and if so, the code prints out a boulder-IO error
+      and exits.  This is is not good.  But.... align_thermod
+      is called in many places, so probably not a good idea
+      to update the functionality of align_thermod to
+      provide an error code.  Maybe we can use the longjmp?
+      
+    */
    thal((const unsigned char *) s1, (const unsigned char *) s2, a, &r);
    if (thal_trace) {
      fprintf(stdout, 
@@ -4846,7 +4862,7 @@ oligo_repeat_library_mispriming(primer_rec *h,
   /* End of checking against the repeat library */  
 }
 
-/* This functin carries out either the old "dpal" alignment or the
+/* This function carries out either the old "dpal" alignment or the
    thermodynamic alignment, depending on the value of
    pa->thermodynamic_alignment. */
 static void
