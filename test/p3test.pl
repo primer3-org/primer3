@@ -245,6 +245,7 @@ sub main() {
 			'primer_must_use_th',
 			'primer_task_th',
 			'primer_thal_args',
+	                'primer_thal_max_seq_error',
 
 			'test_compl_error',
 			'test_left_to_right_of_right',

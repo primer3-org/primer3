@@ -373,7 +373,7 @@ thal(const unsigned char *oligo_f,
    int *bp;
    unsigned char *oligo2_rev = NULL;
    double mh, ms;
-   
+
    send5 = hend5 = NULL;
    enthalpyDPT = entropyDPT = NULL;
    numSeq1 = numSeq2 = NULL;
@@ -396,19 +396,6 @@ thal(const unsigned char *oligo_f,
 
    /* The following error messages will be seen by end users and will
       not be easy to understand. */
-   /* IOANA-NEW
-      The errors that are not well handled are the next 3.
-      Currently they are handled by jumping to the setjmp above.
-      The code above then sets o->temp to THAL_ERROR_SCORE,
-      and returns from the current function.
-      The problem is that these are not necessarily programming
-      errors as the calling code is written, but Jian, who
-      is using the programming interface, just has his program
-      exit with nothing to indicate the error.
-      So far all issues have been with the second two errors
-      (based on THAL_MAX_SEQ), but I think they could
-      occur based on THAL_MAX_ALIGN too.
-   */
    CHECK_ERROR((len_f > THAL_MAX_ALIGN) && (len_r > THAL_MAX_ALIGN),
 	       "Sequences longer than THAL_MAX_ALIGN for "
 	       "thermodynamical alignment (nearest-neighbor approach)");
@@ -1291,6 +1278,7 @@ fillMatrix(int maxLoop, thal_results *o)
 {
    int d, i, j, ii, jj;
    double* SH;
+
    SH = (double*) safe_malloc(2 * sizeof(double), o);
    for (i = 1; i <= len1; ++i) {
       for (j = 1; j <= len2; ++j) {

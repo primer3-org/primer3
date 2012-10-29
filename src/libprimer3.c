@@ -128,6 +128,14 @@ typedef struct thal_arg_holder {
 
 static jmp_buf _jmp_buf;
 
+static int thermodynamic_alignment_length_error = 0;
+static char *thermodynamic_alignment_length_error_msg = NULL;
+
+/* Variables needed in choose_pair_or_triple, need to be global
+   for memory de-allocation reasons. Full description given in the function. */
+static int *max_j_seen;
+static std::hash_map<int, primer_pair*> **pairs;
+
 /* Function declarations. */
 
 static void  pr_set_default_global_args_1(p3_global_settings *);
@@ -1069,6 +1077,32 @@ destroy_seq_args(seq_args *sa)
 /* END functions for seq_arg_holder                             */
 /* ============================================================ */
 
+
+/* Function used to de-allocate the memory used by the hash maps
+   allocated in choose_pair_or_triple. */
+static void free_pair_memory(int rev_num_elem)
+{
+  std::hash_map<int, primer_pair*> *hmap;
+  std::hash_map<int, primer_pair*>::iterator it;
+  primer_pair *pp;
+  int i;
+
+  free(max_j_seen);
+  for (i=0; i<rev_num_elem; i++) {
+    hmap = pairs[i];
+    if (hmap) {
+      for (it=hmap->begin(); it!=hmap->end(); it++) {
+        pp = it->second;
+        if (pp != NULL)
+	  delete pp;
+      }
+      delete hmap;
+    }
+  }
+  free(pairs);
+}
+
+
 /* ============================================================ */
 /* BEGIN choose_primers()                                       */
 /* The main primer3 interface                                   */
@@ -1110,17 +1144,21 @@ choose_primers(const p3_global_settings *pa,
    * ENOMEM.
    */
   if (setjmp(_jmp_buf) != 0) {
-    /* IOANA-NEW
-       one possible solution would be to jump to here, and then
-       check errno to decide what to do.  We would have to pick
-       a reasonable errno.  Alternatively, we could have another
-       static variable of our own and check that, e.g.
-       a top level static int thermodynamic_alignment_length_error.
-       In any case, this would be a persequence error, not a global
-       error. */
+    /* Check if this was a thermodynamic alignment length error. */
+    if (thermodynamic_alignment_length_error == 1) {
+      thermodynamic_alignment_length_error = 0;
+      /* Set per sequence error */
+      pr_append_new_chunk(&retval->per_sequence_err, 
+			  thermodynamic_alignment_length_error_msg);
+      free(thermodynamic_alignment_length_error_msg);
+      thermodynamic_alignment_length_error_msg = NULL;
+      /* Other necessary cleanup. */
+      free_pair_memory(retval->rev.num_elem);
+      return retval;
+    }
+    /* This was a memory error. */
     destroy_p3retval(retval);
-    return NULL;  /* If we get here, that means we returned via a
-                     longjmp.  In this case errno should be ENOMEM. */
+    return NULL;  /* If we get here, that means errno should be ENOMEM. */
   }
 
   /* Change some parameters to fit the task */
@@ -1253,9 +1291,9 @@ choose_pair_or_triple(p3retval *retval,
                       pair_array_t *best_pairs) {
   int i,j;   /* Loop index. */
   int n_int; /* Index of the internal oligo */
-  int *max_j_seen;   /* The maximum value of j (loop index for forward primers)
-                        that has been examined for every reverse primer
-                        index (i) */
+  /*int *max_j_seen; */  /* The maximum value of j (loop index for forward primers)
+                            that has been examined for every reverse primer
+                            index (i) -- global variable now */
   int update_stats = 1;  /* Flag to indicate whether pair_stats
                             should be updated. */
   primer_pair h;             /* The current pair which is being evaluated. */
@@ -1268,9 +1306,9 @@ choose_pair_or_triple(p3retval *retval,
 
   /* Hash maps used to store pairs that were computed */
 
-  std::hash_map<int, primer_pair*> **pairs; 
+  /* std::hash_map<int, primer_pair*> **pairs; */
   /* pairs is an array of pointers to hash maps.  It will be indexed
-     by the indices of the reverse primers in retval->rev. */
+     by the indices of the reverse primers in retval->rev. -- global var now */
 
   std::hash_map<int, primer_pair*> *hmap, *best_hmap = NULL;
   /* hmap and best_hmap will be pointers to hash maps also pointed to
@@ -1651,21 +1689,7 @@ choose_pair_or_triple(p3retval *retval,
 
   /* Final cleanup of dynamically allocated storage for this
      function. */
-  free(max_j_seen);
-  for (i=0; i<retval->rev.num_elem; i++) {
-    hmap = pairs[i];
-    if (hmap) {
-      for (it=hmap->begin(); it!=hmap->end(); it++) {
-        pp = it->second;
-        if (pp != NULL)
-	  delete pp; /* IOANA, please review
-			pp can be NULL, see line
-		      (*hmap)[j] = NULL above */
-      }
-      delete hmap;
-    }
-  }
-  free(pairs);
+  free_pair_memory(retval->rev.num_elem);
 }
 /* ============================================================ */
 /* END choose_pair_or_triple                                    */
@@ -4385,23 +4409,25 @@ align(const char *s1,
   return ((r.score < 0.0) ? 0.0 : r.score / PR_ALIGN_SCORE_PRECISION);
 }
 
+/* Helper function */
+static int
+_set_string(char **loc, const char *new_string) {
+  if (*loc) {
+    free(*loc);
+  }
+  if (!(*loc = (char *) malloc(strlen(new_string) + 1)))
+    return 1; /* ENOMEM */
+  strcpy(*loc, new_string);
+  return 0;
+}
+
 static double
 align_thermod(const char *s1,
               const char *s2,
               const thal_args *a) 
 {  
-  int thal_trace=0;
+   int thal_trace=0;
    thal_results r;
-   /* IOANA-NEW
-      This is the single call to thal().
-      Below, there is a check to see if r.temp == THAL_ERROR_SCORE,
-      and if so, the code prints out a boulder-IO error
-      and exits.  This is is not good.  But.... align_thermod
-      is called in many places, so probably not a good idea
-      to update the functionality of align_thermod to
-      provide an error code.  Maybe we can use the longjmp?
-      
-    */
    thal((const unsigned char *) s1, (const unsigned char *) s2, a, &r);
    if (thal_trace) {
      fprintf(stdout, 
@@ -4417,18 +4443,18 @@ align_thermod(const char *s1,
    if (r.temp == THAL_ERROR_SCORE) 
      {
         /* There was an error. */
-        if (errno == ENOMEM) 
-          {
-             longjmp(_jmp_buf, 1);
-          } else {
-             /* This branch is taken if there is an error other than
-		ENOMEM, in which case we treat it as a fatal error. In
-		the future we might want to change some of the errors
-		to non-fatal errors.
-	     */
-	     printf("PRIMER_ERROR=%s\n=\n", r.msg);
-	     exit(-1);
-          }
+        if (errno == ENOMEM) {
+	  longjmp(_jmp_buf, 1);
+	} else {
+	  /* This branch is taken if there is an error other than
+	     ENOMEM, in which case we treat it as a per sequence error.
+	  */
+	  /* Save the error string */
+	  if (!_set_string(&thermodynamic_alignment_length_error_msg, r.msg)) {
+	    thermodynamic_alignment_length_error = 1;
+	  }
+	  longjmp(_jmp_buf, 1);
+	}
      }
    return ((r.temp < 0.0) ? 0.0 : (double) (r.temp));
 }
@@ -6951,18 +6977,6 @@ p3_get_sa_n_quality(seq_args *sargs) {
 /* ============================================================ */
 /* BEGIN 'set' functions for seq_args                           */
 /* ============================================================ */
-
-/* Helper function */
-static int
-_set_string(char **loc, const char *new_string) {
-  if (*loc) {
-    free(*loc);
-  }
-  if (!(*loc = (char *) malloc(strlen(new_string) + 1)))
-    return 1; /* ENOMEM */
-  strcpy(*loc, new_string);
-  return 0;
-}
 
 int
 p3_set_sa_sequence(seq_args *sargs, const char *sequence) {
