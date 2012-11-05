@@ -552,6 +552,8 @@ typedef struct primer_rec {
         
   oligo_problems problems;
   char   overlaps_overlap_position;
+
+  char template_mispriming_ok; /* Non-0 if the oligo was checked for this already and it is ok. */
         
 } primer_rec;
 

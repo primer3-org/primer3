@@ -2963,6 +2963,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   h->gc_content = h->num_ns = 0;
   h->overlaps_overlap_position = 0;
   h->template_mispriming = h->template_mispriming_r = ALIGN_SCORE_UNDEF;
+  h->template_mispriming_ok = 0;
    
   PR_ASSERT(OT_LEFT == l || OT_RIGHT == l || OT_INTL == l);
    
@@ -4058,10 +4059,10 @@ characterize_pair(p3retval *retval,
     oligo_repeat_library_mispriming(&retval->fwd.oligo[m], pa, sa, OT_LEFT,
                                     &retval->fwd.expl,dpal_arg_to_use);
     if (OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
-	oligo_template_mispriming(&retval->fwd.oligo[m], pa, sa, OT_LEFT,
-				  &retval->fwd.expl,
-				  dpal_arg_to_use->local_end,
-				  thal_args_for_template_mispriming);
+      oligo_template_mispriming(&retval->fwd.oligo[m], pa, sa, OT_LEFT,
+				&retval->fwd.expl,
+				dpal_arg_to_use->local_end,
+				thal_args_for_template_mispriming);
     }
     if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
       pair_expl->considered--;
@@ -4659,14 +4660,18 @@ primer_mispriming_to_template(primer_rec *h,
     fprintf(stderr, "other strand Score %f aligning %s against %s\n\n",
             h->template_mispriming_r, oseq, target_r);
 
-  if (pa->p_args.max_template_mispriming >= 0
-      && oligo_max_template_mispriming(h)
-      > pa->p_args.max_template_mispriming) {
-    op_set_high_similarity_to_multiple_template_sites(h);
-    if (OT_LEFT == l || OT_RIGHT == l ) {
+  if (pa->p_args.max_template_mispriming >= 0) {
+    if (oligo_max_template_mispriming(h)
+	> pa->p_args.max_template_mispriming) {
+      op_set_high_similarity_to_multiple_template_sites(h);
+      if (OT_LEFT == l || OT_RIGHT == l ) {
         ostats->template_mispriming++;
         ostats->ok--;
-    } else PR_ASSERT(0); /* Should not get here. */
+      } else PR_ASSERT(0); /* Should not get here. */
+    } else {
+      /* This oligo is ok, mark it so we do not do this check again. */
+      h->template_mispriming_ok = 1;
+    }
   }
 }
 
@@ -4720,16 +4725,16 @@ primer_mispriming_to_template_thermod(primer_rec *h,
             tmp = (seqlen - last_untrimmed) - 1;
             last_untrimmed  = (seqlen - first_untrimmed) - 1;
             first_untrimmed = tmp;
-     }
+   }
    
-     /* 1. Align to the template 5' of the oligo. */
-     /* tmp_char = target_r[first_untrimmed]; Corrected 2012-05-30 */
-     tmp_char = target[first_untrimmed];
-     target[first_untrimmed] = '\0';
+   /* 1. Align to the template 5' of the oligo. */
+   /* tmp_char = target_r[first_untrimmed]; Corrected 2012-05-30 */
+   tmp_char = target[first_untrimmed];
+   target[first_untrimmed] = '\0';
    
-     tmp_score = align_thermod(oseq, target, align_args);
-   
-     if (debug) {
+   tmp_score = align_thermod(oseq, target, align_args);
+     
+   if (debug) {
         if (l == OT_LEFT) fprintf(stdout, "\n************ OLIGO = LEFT\n");
         else fprintf(stdout,              "\n************ OLIGO = RIGHT\n");
         fprintf(stdout, "first_untrimmed = %d, last_untrimmed = %d, first = %d, last = %d\n",
@@ -4737,40 +4742,44 @@ primer_mispriming_to_template_thermod(primer_rec *h,
         
         fprintf(stdout, "5' of oligo: Score %f aligning %s against %s\n\n", tmp_score,
                 oseq, target);
-     }
+   }
    target[first_untrimmed] = tmp_char;
    
    /* 2. Align to the template 3' of the oligo. */
    h->template_mispriming
      = align_thermod(oseq, &target[0] + last_untrimmed + 1, align_args);
    
-     if (debug)
-         fprintf(stdout, "3' of oligo Score %f aligning %s against %s\n\n",
-                             h->template_mispriming, oseq, &target[0] + last_untrimmed + 1);
+   if (debug)
+     fprintf(stdout, "3' of oligo Score %f aligning %s against %s\n\n",
+	     h->template_mispriming, oseq, &target[0] + last_untrimmed + 1);
    
-     /* 3. Take the max of 1. and 2. */
-     if (tmp_score > h->template_mispriming)
-         h->template_mispriming = tmp_score;
+   /* 3. Take the max of 1. and 2. */
+   if (tmp_score > h->template_mispriming)
+     h->template_mispriming = tmp_score;
    
-     /* 4. Align to the reverse strand of the template. */
-     h->template_mispriming_r
-         = align_thermod(oseq, target_r, align_args);
+   /* 4. Align to the reverse strand of the template. */
+   h->template_mispriming_r
+     = align_thermod(oseq, target_r, align_args);
    
-     if (debug)
-         fprintf(stdout,
-		 "In primer_mispriming_to_template_thermod\n"
-		 " other strand Score %f aligning %s against %s\n\n",
-                             h->template_mispriming_r, oseq, target_r);
+   if (debug)
+     fprintf(stdout,
+	     "In primer_mispriming_to_template_thermod\n"
+	     " other strand Score %f aligning %s against %s\n\n",
+	     h->template_mispriming_r, oseq, target_r);
 
-     if (pa->p_args.max_template_mispriming_th >= 0
-       && oligo_max_template_mispriming_thermod(h)
-       > pa->p_args.max_template_mispriming_th) {
-      op_set_high_similarity_to_multiple_template_sites(h);
-      if (OT_LEFT == l || OT_RIGHT == l ) {
-         ostats->template_mispriming++;
-         ostats->ok--;
-      }
-      else PR_ASSERT(0); /* Should not get here. */
+   if (pa->p_args.max_template_mispriming_th >= 0) {
+     if (oligo_max_template_mispriming_thermod(h)
+	 > pa->p_args.max_template_mispriming_th) {
+       op_set_high_similarity_to_multiple_template_sites(h);
+       if (OT_LEFT == l || OT_RIGHT == l ) {
+	 ostats->template_mispriming++;
+	 ostats->ok--;
+       }
+       else PR_ASSERT(0); /* Should not get here. */
+     } else {
+       /* This oligo is ok, mark it so we do not do this check again. */
+       h->template_mispriming_ok = 1;
+     }
    }
 }
 
@@ -4907,6 +4916,11 @@ oligo_template_mispriming(primer_rec *h,
   int first, last; /* Indexes of first and last bases of the oligo in
                      sa->trimmed_seq, that is, WITHIN THE INCLUDED
                      REGION. */
+  
+  /* Check if we already did this and the oligo was ok. */
+  if (h->template_mispriming_ok) {
+    return;
+  }
 
   oligo_compute_sequence_and_reverse(h, sa, l, &first, &last, s, s_r);
 
