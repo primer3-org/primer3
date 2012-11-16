@@ -10,6 +10,8 @@ Minor correction:
 3. Removed intentional compile time division by zero in thal.c if
    macro INFINITY is defined.
 
+4. Updated text in error messages from function thal() to make them more informative.
+
 release 2.3.4 2012-05-30 ===============================================
 
 Major correction:
