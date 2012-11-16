@@ -146,9 +146,9 @@ sub main() {
     close X;
     # Check the output.....
     if ($foo[0] eq "Error: Sequence 2 longer than DPAL_MAX_ALIGN and alignment is requested\n") {
-        print "OK\n"
+        print "[OK]\n"
     } else {
-	print "FAILED\n";
+	print "[FAILED]\n";
 	$exit_status = -1;
     }
 

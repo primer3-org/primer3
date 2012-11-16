@@ -91,6 +91,10 @@
 #define atPenaltyS(a, b) atpS[a][b]
 #define atPenaltyH(a, b) atpH[a][b]
 
+#define STR(X) #X
+#define LONG_SEQ_ERR_STR(MAX_LEN) "Target sequence length > maximum allowed (" STR(MAX_LEN) ") in thermodynamic alignment"
+#define XSTR(X) STR(X)
+
 #define SMALL_NON_ZERO 0.000001
 #define DBL_EQ(X,Y) (((X) - (Y)) < (SMALL_NON_ZERO) ? (1) : (2)) /* 1 when numbers are equal */
 
@@ -401,14 +405,12 @@ thal(const unsigned char *oligo_f,
    /* The following error messages will be seen by end users and will
       not be easy to understand. */
    CHECK_ERROR((len_f > THAL_MAX_ALIGN) && (len_r > THAL_MAX_ALIGN),
-	       "Sequences longer than THAL_MAX_ALIGN for "
-	       "thermodynamical alignment (nearest-neighbor approach)");
+	       "Both sequences longer than " XSTR(THAL_MAX_ALIGN)
+               " for thermodynamic alignment");
    CHECK_ERROR((len_f > THAL_MAX_SEQ), 
-	       "Sequence 1 longer than THAL_MAX_SEQ and "
-	       "alignment is requested");
+	       LONG_SEQ_ERR_STR(THAL_MAX_SEQ) " (1)");
    CHECK_ERROR((len_r > THAL_MAX_SEQ), 
-	       "Sequence 2 longer than THAL_MAX_SEQ and "
-	       "alignment is requested");
+	       LONG_SEQ_ERR_STR(THAL_MAX_SEQ) " (2)");
 
    CHECK_ERROR(NULL == a,  "NULL 'in' pointer");
    if (NULL == o) return; /* Leave it to the caller to crash */

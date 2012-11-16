@@ -151,10 +151,10 @@ sub main() {
     @foo = <X>;                 # Snarf it
     close X;
     # Check the output.....
-    if ($foo[0] eq "Error: Sequences longer than THAL_MAX_ALIGN for thermodynamical alignment (nearest-neighbor approach)\n") {
-        print "1................................... OK\n"
+    if ($foo[0] eq "Error: Both sequences longer than 60 for thermodynamic alignment\n") {
+        print "1................................... [OK]\n"
     } else {
-	print "$foo[0]\n1.................................. FAILED\n";
+	print "$foo[0]\n1.................................. [FAILED]\n";
 	$exit_status = -1;
     }
     unlink("thal.tmp");
