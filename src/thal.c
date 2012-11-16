@@ -104,7 +104,11 @@
 # ifdef INTEGER
 const double _INFINITY = 999999.0;
 # else
+# ifdef INFINITY
+const double _INFINITY = INFINITY;
+# else
 const double _INFINITY = 1.0 / 0.0;
+# endif
 # endif
 
 static const double R = 1.9872; /* cal/Kmol */
