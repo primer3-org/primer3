@@ -261,8 +261,9 @@ main(int argc, char *argv[])
 		 global_pa, sarg, &fatal_parse_err,
 		 &nonfatal_parse_err, &warnings, &read_boulder_record_res);
     destroy_pr_append_str_data(&p3_settings_path);
-    /* Check if the thermodynamical alignment flag was given */
-    if (global_pa->thermodynamic_alignment == 1)
+    /* Check if any thermodynamical alignment flag was given */
+    if ((global_pa->thermodynamic_alignment == 1) || 
+	(global_pa->thermodynamic_template_alignment == 1))
       read_thermodynamic_parameters();
   }
 
@@ -327,14 +328,17 @@ main(int argc, char *argv[])
       break; /* There were no more boulder records */
     }
 
-    /* Check if the thermodynamical alignment flag was given and the
+    /* Check if any thermodynamical alignment flag was given and the
        path to the parameter files changed - we need to reread them */
-    if ((global_pa->thermodynamic_alignment == 1)
+    if (((global_pa->thermodynamic_alignment == 1) ||
+	 (global_pa->thermodynamic_template_alignment == 1))
 	&& (thermodynamic_path_changed == 1))
       read_thermodynamic_parameters();
 
-    /* Check that we found the thermodynamic parameters in case the flag was set to 1. */
-    if ((global_pa->thermodynamic_alignment == 1) && (thermodynamic_params_path == NULL)) {
+    /* Check that we found the thermodynamic parameters in case any thermodynamic flag was set to 1. */
+    if (((global_pa->thermodynamic_alignment == 1) ||
+	 (global_pa->thermodynamic_template_alignment == 1))
+	&& (thermodynamic_params_path == NULL)) {
       /* no parameter directory found, error */
       printf("PRIMER_ERROR=thermodynamic approach chosen, but path to thermodynamic parameters not specified\n=\n");
       exit(-1);
@@ -342,7 +346,7 @@ main(int argc, char *argv[])
 
     input_found = 1;
     if ((global_pa->primer_task == generic)
-                && (global_pa->pick_internal_oligo == 1)){
+	&& (global_pa->pick_internal_oligo == 1)){
       PR_ASSERT(global_pa->pick_internal_oligo);
     }
 
@@ -464,7 +468,8 @@ main(int argc, char *argv[])
          End of the primary working loop */
 
   /* To avoid being distracted when looking for leaks: */
-  if (global_pa->thermodynamic_alignment == 1)
+  if ((global_pa->thermodynamic_alignment == 1) ||
+      (global_pa->thermodynamic_template_alignment == 1))
     destroy_thal_structures();
   p3_destroy_global_settings(global_pa);
   global_pa = NULL;

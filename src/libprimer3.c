@@ -552,12 +552,13 @@ pr_set_default_global_args_2(p3_global_settings *a)
    the p3_global_settings struct */
 {
   pr_set_default_global_args_1(a);
-  a->tm_santalucia                 = santalucia_auto;
-  a->salt_corrections              = santalucia;
-  a->thermodynamic_alignment       = 1;
-  a->p_args.divalent_conc          = 1.5;
-  a->p_args.dntp_conc              = 0.6;
-  a->lib_ambiguity_codes_consensus = 0;
+  a->tm_santalucia                    = santalucia_auto;
+  a->salt_corrections                 = santalucia;
+  a->thermodynamic_alignment          = 1;
+  a->thermodynamic_template_alignment = 1;
+  a->p_args.divalent_conc             = 1.5;
+  a->p_args.dntp_conc                 = 0.6;
+  a->lib_ambiguity_codes_consensus    = 0;
 }
 
 /* Write the default values for default_values=1 into
@@ -634,6 +635,7 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->pair_compl_any_th   = 47.0;
   a->pair_compl_end_th   = 47.0;
   a->thermodynamic_alignment = 0;
+  a->thermodynamic_template_alignment = 0;
   a->liberal_base        = 0;
   a->primer_task         = generic;
   a->pick_left_primer    = 1;
@@ -3318,7 +3320,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
 
     oligo_repeat_library_mispriming(h, pa, sa, l, stats,
                                     dpal_arg_to_use);
-    if (pa->thermodynamic_alignment==0 && OK_OR_MUST_USE(h)) {
+    if (pa->thermodynamic_template_alignment==0 && OK_OR_MUST_USE(h)) {
       oligo_template_mispriming(h, pa, sa, l, stats,
 				dpal_arg_to_use->local_end,
 				thal_args_for_template_mispriming);
@@ -3331,7 +3333,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
        || ((OT_RIGHT == l || OT_LEFT == l)
 	   && pa->p_args.weights.template_mispriming_th))
 
-      && pa->thermodynamic_alignment==1)
+      && pa->thermodynamic_template_alignment==1)
  {
 
     oligo_template_mispriming(h, pa, sa, l, stats,
@@ -3351,13 +3353,13 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
 
   if (three_conditions
       || 
-      ( /* Do we need template misprming for the penalty function? */
+      ( /* Do we need template mispriming for the penalty function? */
        (OT_RIGHT == l || OT_LEFT == l)
        && 
        (
-	(pa->p_args.weights.template_mispriming && !pa->thermodynamic_alignment)
+	(pa->p_args.weights.template_mispriming && !pa->thermodynamic_template_alignment)
 	||
-	(pa->p_args.weights.template_mispriming_th && pa->thermodynamic_alignment)
+	(pa->p_args.weights.template_mispriming_th && pa->thermodynamic_template_alignment)
 	)
        )
       ) {
@@ -3625,13 +3627,13 @@ p_obj_fn(const p3_global_settings *pa,
            sum += pa->p_args.weights.seq_quality *
 	     (pa->quality_range_max - h->seq_quality);  /* Look for end seq quality */
 
-      if (pa->p_args.weights.template_mispriming && pa->thermodynamic_alignment==0) {
+      if (pa->p_args.weights.template_mispriming && pa->thermodynamic_template_alignment==0) {
         PR_ASSERT(oligo_max_template_mispriming(h) != ALIGN_SCORE_UNDEF);
         sum += pa->p_args.weights.template_mispriming *
           oligo_max_template_mispriming(h);
       }
                                             
-      if (pa->p_args.weights.template_mispriming_th && pa->thermodynamic_alignment==1) {
+      if (pa->p_args.weights.template_mispriming_th && pa->thermodynamic_template_alignment==1) {
 
 	PR_ASSERT(oligo_max_template_mispriming_thermod(h) != ALIGN_SCORE_UNDEF);
 
@@ -4165,7 +4167,7 @@ characterize_pair(p3retval *retval,
   /* ============================================================= */
   /* Calculate _pair_ mispriming, if necessary. */
  
-   if (pa->thermodynamic_alignment == 0) {
+   if (pa->thermodynamic_template_alignment == 0) {
      if (!_pr_need_pair_template_mispriming(pa))
         ppair->template_mispriming = ALIGN_SCORE_UNDEF;
      else {
@@ -4359,12 +4361,12 @@ obj_fn(const p3_global_settings *pa, primer_pair *h)
   if(pa->pr_pair_weights.repeat_sim)
     sum += pa->pr_pair_weights.repeat_sim * h->repeat_sim;
 
-  if (pa->pr_pair_weights.template_mispriming && pa->thermodynamic_alignment==0) {
+  if (pa->pr_pair_weights.template_mispriming && pa->thermodynamic_template_alignment==0) {
     PR_ASSERT(pa->pr_pair_weights.template_mispriming >= 0.0);
     PR_ASSERT(h->template_mispriming >= 0.0);
     sum += pa->pr_pair_weights.template_mispriming * h->template_mispriming;
   }
-   if (pa->pr_pair_weights.template_mispriming_th && pa->thermodynamic_alignment==1) {
+  if (pa->pr_pair_weights.template_mispriming_th && pa->thermodynamic_template_alignment==1) {
       PR_ASSERT(pa->pr_pair_weights.template_mispriming_th >= 0.0);
       PR_ASSERT(h->template_mispriming >= 0.0);
       if((lower_tm - pa->pr_pair_weights.temp_cutoff) <= h->template_mispriming)
@@ -4899,7 +4901,7 @@ oligo_repeat_library_mispriming(primer_rec *h,
 
 /* This function carries out either the old "dpal" alignment or the
    thermodynamic alignment, depending on the value of
-   pa->thermodynamic_alignment. */
+   pa->thermodynamic_template_alignment. */
 static void
 oligo_template_mispriming(primer_rec *h,
                           const p3_global_settings *pa,
@@ -4926,11 +4928,11 @@ oligo_template_mispriming(primer_rec *h,
 
   /* Calculate maximum similarity to ectopic sites in the template. */
   if (l == OT_RIGHT || l == OT_LEFT) {
-    if (pa->thermodynamic_alignment == 0 && _pr_need_template_mispriming(pa))
+    if (pa->thermodynamic_template_alignment == 0 && _pr_need_template_mispriming(pa))
       primer_mispriming_to_template(h, pa, sa, l,
                                     ostats, first,
                                     last, s, s_r, d_align_args);
-    if (pa->thermodynamic_alignment == 1 && _pr_need_template_mispriming_thermod(pa))
+    if (pa->thermodynamic_template_alignment == 1 && _pr_need_template_mispriming_thermod(pa))
       primer_mispriming_to_template_thermod(h, pa, sa, l,
                                             ostats, first,
                                             last, s, s_r, t_align_args);
@@ -5915,13 +5917,13 @@ _pr_data_control(const p3_global_settings *pa,
     return 1;
   }
 
-  if (pa->p_args.max_template_mispriming > SHRT_MAX && pa->thermodynamic_alignment == 0) {
-    pr_append_new_chunk(glob_err, "Value too large at tag PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING");
+  if (pa->p_args.max_template_mispriming > SHRT_MAX && pa->thermodynamic_template_alignment == 0) {
+    pr_append_new_chunk(glob_err, "Value too large at tag PRIMER_MAX_TEMPLATE_MISPRIMING");
     return 1;
   }
 
-  if (pa->pair_max_template_mispriming > SHRT_MAX && pa->thermodynamic_alignment == 0) {
-    pr_append_new_chunk(glob_err, "Value too large at tag PRIMER_MAX_TEMPLATE_MISPRIMING");
+  if (pa->pair_max_template_mispriming > SHRT_MAX && pa->thermodynamic_template_alignment == 0) {
+    pr_append_new_chunk(glob_err, "Value too large at tag PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING");
     return 1;
   }
 
@@ -5940,10 +5942,10 @@ _pr_data_control(const p3_global_settings *pa,
     return 1;
   }
 
-  if (pa->o_args.max_template_mispriming >= 0 && pa->thermodynamic_alignment==0)
+  if (pa->o_args.max_template_mispriming >= 0 && pa->thermodynamic_template_alignment==0)
     pr_append_new_chunk(glob_err,
                         "PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB is not supported");
-  if (pa->o_args.max_template_mispriming_th >= 0 && pa->thermodynamic_alignment==1)
+  if (pa->o_args.max_template_mispriming_th >= 0 && pa->thermodynamic_template_alignment==1)
     pr_append_new_chunk(glob_err,
                         "PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_TH is not supported");
   if (pa->p_args.min_size < 1)
@@ -7835,11 +7837,6 @@ p3_set_gs_lowercase_masking(p3_global_settings * p , int lowercase_masking){
 }
 
 void
-p3_set_gs_thermodynamic_alignment(p3_global_settings * p , int thermodynamic_alignment) {   
-   p->thermodynamic_alignment = thermodynamic_alignment;
-}
-
-void
 p3_set_gs_outside_penalty(p3_global_settings * p , double outside_penalty){
   p->outside_penalty = outside_penalty;
 }
@@ -8395,6 +8392,7 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("  max_end_gc %i\n", p->max_end_gc);
     printf("  lowercase_masking %i\n", p->lowercase_masking) ;
     printf("  thermodynamic_alignment %i\n", p->thermodynamic_alignment);
+    printf("  thermodynamic_template_alignment %i\n", p->thermodynamic_template_alignment);
     printf("  outside_penalty %f\n", p->outside_penalty) ;
     printf("  inside_penalty %f\n", p->inside_penalty) ;
     printf("  number of product size ranges: %d\n", p->num_intervals);

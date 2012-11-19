@@ -427,14 +427,21 @@ typedef struct p3_global_settings {
    
   int thermodynamic_alignment;
   /* 
-     Enables to use approach of thermodynamical alignment for dimer,
-     hairpin, and template mispriming calculations.
+     Enables to use approach of thermodynamical alignment for dimer
+     and hairpin calculations.
    
      0 = Use alignment *not* based on thermodynamics - the only dimer
      calculation approach until primer3 2.2.0.  No hairpins are
      calculated.
 
      1 = Use alignment based on thermodynamics. Hairpins are calculated
+  */
+  int thermodynamic_template_alignment;
+  /* 
+     Enables to use approach of thermodynamical alignment for template 
+     mispriming calculations.
+     0 = Use alignment *not* based on thermodynamics.
+     1 = Use alignment based on thermodynamics.
   */
 
   double max_diff_tm; 
@@ -1092,7 +1099,6 @@ void p3_set_gs_max_end_gc(p3_global_settings *p, int max_end_gc);
 void p3_set_gs_max_end_stability(p3_global_settings * p , int max_end_stability);
 void p3_set_gs_gc_clamp(p3_global_settings * p , int gc_clamp);
 void p3_set_gs_lowercase_masking(p3_global_settings * p , int lowercase_masking);
-void p3_set_gs_thermodynamic_alignment(p3_global_settings * p , int thermodynamic_alignment);
 void p3_set_gs_outside_penalty(p3_global_settings * p , double outside_penalty);
 void p3_set_gs_inside_penalty(p3_global_settings * p , double inside_penalty);
 
