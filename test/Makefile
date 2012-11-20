@@ -105,7 +105,6 @@ ifeq ($(TESTOPTS),--windows)
 	del /Q /F pick_primer_list_and_file_flag_th_*.for pick_primer_list_and_file_flag_th_*.rev
 	del /Q /F pick_primer_list_and_file_flag_th_*.int
 	del /Q /F syntax*.for syntax*.int syntax*.rev
-	cd io_version_3 & $(WINMAKE) clean TESTOPTS=$(TESTOPTS)
 else
 	echo; echo; echo 'CLEAN UP TEST DIRECTORIES'; echo; echo;
 	-rm -rf primer_list_tmp/*
@@ -130,5 +129,4 @@ else
 	-rm -f *.vg */*.vg       # valgrind output from p3test{,z}.pl --valgrind
 	-rm -f *.vg.core.*       # core files from crashed valgrind test
 	-rm -f ./core # in case we crashed and left a core file
-	cd io_version_3; make clean
 endif
