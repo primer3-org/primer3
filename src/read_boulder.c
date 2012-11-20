@@ -758,7 +758,7 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_LOWERCASE_MASKING",
                   pa->lowercase_masking); 
       /* added by T. Koressaar */
-      COMPARE_INT("PRIMER_THERMODYNAMIC_ALIGNMENT", pa->thermodynamic_alignment);
+      COMPARE_INT("PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT", pa->thermodynamic_oligo_alignment);
       COMPARE_INT("PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT", pa->thermodynamic_template_alignment);
       if (COMPARE("PRIMER_THERMODYNAMIC_PARAMETERS_PATH")) {
         if (thermodynamic_params_path == NULL) {

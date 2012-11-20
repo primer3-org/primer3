@@ -314,53 +314,53 @@ print_boulder(int io_version,
              intl->gc_content);
 
     /* Print primer self_any */
-    if (go_fwd == 1 && pa->thermodynamic_alignment==0)
+    if (go_fwd == 1 && pa->thermodynamic_oligo_alignment==0)
       printf("PRIMER_LEFT%s_SELF_ANY=%.2f\n", suffix,
              fwd->self_any);
-    if (go_rev == 1 && pa->thermodynamic_alignment==0)
+    if (go_rev == 1 && pa->thermodynamic_oligo_alignment==0)
       printf("PRIMER_RIGHT%s_SELF_ANY=%.2f\n", suffix,
              rev->self_any);
-    if (go_int == 1 && pa->thermodynamic_alignment==0)
+    if (go_int == 1 && pa->thermodynamic_oligo_alignment==0)
       printf("PRIMER_%s%s_SELF_ANY=%.2f\n", int_oligo, suffix,
              intl->self_any);
-     if (go_int == 1 && pa->thermodynamic_alignment==1)
+     if (go_int == 1 && pa->thermodynamic_oligo_alignment==1)
        printf("PRIMER_%s%s_SELF_ANY_TH=%.2f\n", int_oligo, suffix,
 	      intl->self_any);
     /* Print primer self_any thermodynamical approach */
-     if (go_fwd == 1 && pa->thermodynamic_alignment==1)
+     if (go_fwd == 1 && pa->thermodynamic_oligo_alignment==1)
        printf("PRIMER_LEFT%s_SELF_ANY_TH=%.2f\n", suffix,
 	      fwd->self_any);
-     if (go_rev == 1 && pa->thermodynamic_alignment==1)
+     if (go_rev == 1 && pa->thermodynamic_oligo_alignment==1)
        printf("PRIMER_RIGHT%s_SELF_ANY_TH=%.2f\n", suffix,
 	      rev->self_any);
     /* Print primer self_end*/
-    if (go_fwd == 1 && pa->thermodynamic_alignment==0)
+    if (go_fwd == 1 && pa->thermodynamic_oligo_alignment==0)
       printf("PRIMER_LEFT%s_SELF_END=%.2f\n", suffix,
              fwd->self_end);
-    if (go_rev == 1 && pa->thermodynamic_alignment==0)
+    if (go_rev == 1 && pa->thermodynamic_oligo_alignment==0)
       printf("PRIMER_RIGHT%s_SELF_END=%.2f\n", suffix,
              rev->self_end);
-    if (go_int == 1 && pa->thermodynamic_alignment==0)
+    if (go_int == 1 && pa->thermodynamic_oligo_alignment==0)
       printf("PRIMER_%s%s_SELF_END=%.2f\n", int_oligo, suffix,
              intl->self_end);
-     if (go_int == 1 && pa->thermodynamic_alignment==1)
+     if (go_int == 1 && pa->thermodynamic_oligo_alignment==1)
        printf("PRIMER_%s%s_SELF_END_TH=%.2f\n", int_oligo, suffix,
 	      intl->self_end);
      /* Print primer self_end thermodynamical approach */
-     if (go_fwd == 1 && pa->thermodynamic_alignment==1)
+     if (go_fwd == 1 && pa->thermodynamic_oligo_alignment==1)
        printf("PRIMER_LEFT%s_SELF_END_TH=%.2f\n", suffix,
 	      fwd->self_end);
-     if (go_rev == 1 && pa->thermodynamic_alignment==1)
+     if (go_rev == 1 && pa->thermodynamic_oligo_alignment==1)
        printf("PRIMER_RIGHT%s_SELF_END_TH=%.2f\n", suffix,
 	      rev->self_end);
      /* Print primer hairpin */
-     if (go_fwd == 1 && pa->thermodynamic_alignment==1)
+     if (go_fwd == 1 && pa->thermodynamic_oligo_alignment==1)
        printf("PRIMER_LEFT%s_HAIRPIN_TH=%.2f\n", suffix,
 	      fwd->hairpin_th);
-     if (go_rev == 1 && pa->thermodynamic_alignment==1)
+     if (go_rev == 1 && pa->thermodynamic_oligo_alignment==1)
        printf("PRIMER_RIGHT%s_HAIRPIN_TH=%.2f\n", suffix,
 	      rev->hairpin_th);
-     if (go_int == 1 && pa->thermodynamic_alignment==1)
+     if (go_int == 1 && pa->thermodynamic_oligo_alignment==1)
        printf("PRIMER_%s%s_HAIRPIN_TH=%.2f\n", int_oligo, suffix,
 	      intl->hairpin_th);
      /*Print out primer mispriming scores */
@@ -474,17 +474,17 @@ print_boulder(int io_version,
         printf("PRIMER_%s%s_MIN_SEQ_QUALITY=%d\n", int_oligo,
                suffix, intl->seq_quality);
       /* Print pair comp_any */
-       if(pa->thermodynamic_alignment==0)
+       if(pa->thermodynamic_oligo_alignment==0)
 	 printf("PRIMER_PAIR%s_COMPL_ANY=%.2f\n", suffix,
 		retval->best_pairs.pairs[i].compl_any);
-       if(pa->thermodynamic_alignment==1)
+       if(pa->thermodynamic_oligo_alignment==1)
 	 printf("PRIMER_PAIR%s_COMPL_ANY_TH=%.2f\n", suffix,
 		retval->best_pairs.pairs[i].compl_any);
        /* Print pair comp_end */
-       if(pa->thermodynamic_alignment==0)
+       if(pa->thermodynamic_oligo_alignment==0)
 	 printf("PRIMER_PAIR%s_COMPL_END=%.2f\n", suffix,
 		retval->best_pairs.pairs[i].compl_end);
-       if(pa->thermodynamic_alignment==1)
+       if(pa->thermodynamic_oligo_alignment==1)
 	 printf("PRIMER_PAIR%s_COMPL_END_TH=%.2f\n", suffix,
 		retval->best_pairs.pairs[i].compl_end);
        if (io_version == 3) {

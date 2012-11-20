@@ -425,7 +425,7 @@ typedef struct p3_global_settings {
   double pair_compl_end;
   double pair_compl_end_th;
    
-  int thermodynamic_alignment;
+  int thermodynamic_oligo_alignment;
   /* 
      Enables to use approach of thermodynamical alignment for dimer
      and hairpin calculations.
