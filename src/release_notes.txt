@@ -1,6 +1,37 @@
 release 2.3.5 XXXXXXXXXXXXXXXXXXXXXX
 
-Minor correction:
+Important changes:
+
+1. The tag PRIMER_THERMODYNAMIC_ALIGNMENT was replaced by two new tags:
+
+   - PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT which governs hairpin 
+and oligo-oligo interactions. Therefore, whenever it is set to 1 
+(the default) thermodynamic alignments will be used for oligo-
+oligo interactions and hairpins.
+
+   - PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT which governs the 
+oligo-template interactions and, when set to 1 (the default), will 
+cause primer3 to use the thermodynamic alignment against templates.
+
+The reason for this change is to provide the option of using the 
+old alignment for oligo-template interactions when the thermodynamic 
+alignment is too slow or the template is too long (there is a hard 
+limit THAL_MAX_SEQ=10k on the length of sequences involved in 
+thermodynamic alignments).
+
+2. Modified the error handling of non-memory related errors that
+can occur during the thermodynamic alignment. They are no longer
+fatal errors.
+
+3. Made a performance improvement for the case when thermodynamic 
+alignment is used for templates: the alignment is done only once
+for each oligo and the result is kept. This way we avoid performing
+the same expensive alignment more than once.
+
+4. Removed io_version 3, which was only kept for backward compatibility
+with very old versions of primer3.
+
+Minor corrections:
 
 1. Removed redundant function p3_set_gs_primer_thermodynamic_alignment
 
