@@ -139,9 +139,7 @@ main(int argc, char *argv[])
       }
       break;
     case 'i':
-      if (!strcmp(optarg, "3"))
-        io_version = 3;
-      else if (!strcmp(optarg, "4"))
+      if (!strcmp(optarg, "4"))
         io_version = 4;
       else
         io_version = -1;
@@ -403,14 +401,10 @@ main(int argc, char *argv[])
     retval = choose_primers(global_pa, sarg);
     if (NULL == retval) exit(-2); /* Out of memory. */
 
-    /* This is old code to make it compatible with version 3 input.
-       In future versions it can be deleted!
-       If it was necessary to use a left_input, right_input,
+    /* If it was necessary to use a left_input, right_input,
        or internal_oligo_input primer that was
        unacceptable, then add warnings. */
-
-    if (global_pa->pick_anyway && (io_version == 3
-                || format_output)) {
+    if (global_pa->pick_anyway && format_output) {
       if (sarg->left_input) {
         add_must_use_warnings(&retval->warnings,
                               "Left primer", &retval->fwd.expl);
@@ -424,7 +418,6 @@ main(int argc, char *argv[])
                               "Hybridization probe", &retval->intl.expl);
       }
     }
-    /* End of the old code for compatibility. */
 
     if (pr_is_empty(&retval->glob_err)
         && pr_is_empty(&retval->per_sequence_err)) {
@@ -549,7 +542,7 @@ print_usage()
   fprintf(stderr, "\n\nUSAGE: %s %s %s %s %s %s %s %s %s %s\n", pr_program_name,
           "[-format_output]", 
 	  "[-default_version=1|-default_version=2",
-	  "[-io_version=3|-io_version=4]", 
+	  "[-io_version=4]", 
 	  "[-p3_settings_file=<file_path>]",
 	  "[-echo_settings_file]",
 	  "[-strict_tags]", 

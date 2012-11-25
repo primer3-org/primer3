@@ -87,16 +87,11 @@ print_boulder(int io_version,
     
   /* This deals with the renaming of the internal oligo */
   const char *new_oligo_name = "INTERNAL";
-  const char *old_oligo_name = "INTERNAL_OLIGO";
   char *int_oligo = (char*) new_oligo_name;
 
   /* Check: are all pointers linked to something*/
   PR_ASSERT(NULL != pa);
   PR_ASSERT(NULL != sa);
-    
-  if (io_version == 3) {
-    int_oligo = (char*) old_oligo_name;
-  }
         
   /* Check if there are warnings and print them */
   if ((warning = p3_get_rv_and_gs_warnings(retval, pa)) != NULL) { 
@@ -236,21 +231,12 @@ print_boulder(int io_version,
     }
       
     /* Get the number for pimer counting in suffix[0] */
-    if ((i == 0) && (io_version == 3) ){
-      suffix[0] = '\0';
-    } else { 
-      sprintf(suffix, "_%d", i);
-    }
-
+    sprintf(suffix, "_%d", i);
+    
     /* Print out the Pair Penalties */
     if (retval->output_type == primer_pairs) {
-      if (io_version == 3) {
-        printf("PRIMER_PAIR_PENALTY%s=%.4f\n", suffix,
-               retval->best_pairs.pairs[i].pair_quality);
-      } else {
-        printf("PRIMER_PAIR%s_PENALTY=%f\n", suffix,
-               retval->best_pairs.pairs[i].pair_quality);
-      }
+      printf("PRIMER_PAIR%s_PENALTY=%f\n", suffix,
+	     retval->best_pairs.pairs[i].pair_quality);
     }
 
     /* Print single primer penalty */
@@ -364,49 +350,26 @@ print_boulder(int io_version,
        printf("PRIMER_%s%s_HAIRPIN_TH=%.2f\n", int_oligo, suffix,
 	      intl->hairpin_th);
      /*Print out primer mispriming scores */
-    if (io_version == 3) {
-		if (seq_lib_num_seq(pa->p_args.repeat_lib) > 0) {
-		  if (go_fwd == 1)
-		    printf("PRIMER_LEFT%s_MISPRIMING_SCORE=%.2f, %s\n", suffix,
-		           fwd->repeat_sim.score[fwd->repeat_sim.max],
-		           fwd->repeat_sim.name);
-		  if (go_rev == 1)
-		    printf("PRIMER_RIGHT%s_MISPRIMING_SCORE=%.2f, %s\n", suffix,
-		           rev->repeat_sim.score[rev->repeat_sim.max],
-		           rev->repeat_sim.name);
-		  if (retval->output_type == primer_pairs)
-		    printf("PRIMER_PAIR%s_MISPRIMING_SCORE=%.2f, %s\n", suffix,
-		           retval->best_pairs.pairs[i].repeat_sim,
-		           retval->best_pairs.pairs[i].rep_name);
-		}
-    
-		/* Print out internal oligo mispriming scores */
-		if (go_int == 1 && seq_lib_num_seq(pa->o_args.repeat_lib) > 0)
-		  printf("PRIMER_%s%s_MISHYB_SCORE=%.2f, %s\n", int_oligo, suffix,
-		         intl->repeat_sim.score[intl->repeat_sim.max],
-		         intl->repeat_sim.name);
-    } else {
-		if (seq_lib_num_seq(pa->p_args.repeat_lib) > 0) {
-		  if (go_fwd == 1)
-		    printf("PRIMER_LEFT%s_LIBRARY_MISPRIMING=%.2f, %s\n", suffix,
-		           fwd->repeat_sim.score[fwd->repeat_sim.max],
-		           fwd->repeat_sim.name);
-		  if (go_rev == 1)
-		    printf("PRIMER_RIGHT%s_LIBRARY_MISPRIMING=%.2f, %s\n", suffix,
-		           rev->repeat_sim.score[rev->repeat_sim.max],
-		           rev->repeat_sim.name);
-		  if (retval->output_type == primer_pairs)
-		    printf("PRIMER_PAIR%s_LIBRARY_MISPRIMING=%.2f, %s\n", suffix,
-		           retval->best_pairs.pairs[i].repeat_sim,
-		           retval->best_pairs.pairs[i].rep_name);
-		}
+     if (seq_lib_num_seq(pa->p_args.repeat_lib) > 0) {
+       if (go_fwd == 1)
+	 printf("PRIMER_LEFT%s_LIBRARY_MISPRIMING=%.2f, %s\n", suffix,
+		fwd->repeat_sim.score[fwd->repeat_sim.max],
+		fwd->repeat_sim.name);
+       if (go_rev == 1)
+	 printf("PRIMER_RIGHT%s_LIBRARY_MISPRIMING=%.2f, %s\n", suffix,
+		rev->repeat_sim.score[rev->repeat_sim.max],
+		rev->repeat_sim.name);
+       if (retval->output_type == primer_pairs)
+	 printf("PRIMER_PAIR%s_LIBRARY_MISPRIMING=%.2f, %s\n", suffix,
+		retval->best_pairs.pairs[i].repeat_sim,
+		retval->best_pairs.pairs[i].rep_name);
+     }
 		
-		/* Print out internal oligo mispriming scores */
-		if (go_int == 1 && seq_lib_num_seq(pa->o_args.repeat_lib) > 0)
-		  printf("PRIMER_%s%s_LIBRARY_MISHYB=%.2f, %s\n", int_oligo, suffix,
-		         intl->repeat_sim.score[intl->repeat_sim.max],
-		         intl->repeat_sim.name);
-    }
+     /* Print out internal oligo mispriming scores */
+     if (go_int == 1 && seq_lib_num_seq(pa->o_args.repeat_lib) > 0)
+       printf("PRIMER_%s%s_LIBRARY_MISHYB=%.2f, %s\n", int_oligo, suffix,
+	      intl->repeat_sim.score[intl->repeat_sim.max],
+	      intl->repeat_sim.name);
 
     /* If a sequence quality was provided, print it*/
     if (NULL != sa->quality){
@@ -487,39 +450,21 @@ print_boulder(int io_version,
        if(pa->thermodynamic_oligo_alignment==1)
 	 printf("PRIMER_PAIR%s_COMPL_END_TH=%.2f\n", suffix,
 		retval->best_pairs.pairs[i].compl_end);
-       if (io_version == 3) {
-	  /* Print product size */
-	  printf("PRIMER_PRODUCT_SIZE%s=%d\n", suffix,
-		 retval->best_pairs.pairs[i].product_size);
-        /* Print the product Tm if a Tm range is defined */
-        if (pa->product_max_tm != PR_DEFAULT_PRODUCT_MAX_TM ||
-            pa->product_min_tm != PR_DEFAULT_PRODUCT_MIN_TM) {
-          printf("PRIMER_PRODUCT_TM%s=%.4f\n", suffix,
-                 retval->best_pairs.pairs[i].product_tm);
-                    
-          printf("PRIMER_PRODUCT_TM_OLIGO_TM_DIFF%s=%.4f\n", suffix,
-                 retval->best_pairs.pairs[i].product_tm_oligo_tm_diff);
-                
-          printf("PRIMER_PAIR%s_T_OPT_A=%.4f\n", suffix,
-                 retval->best_pairs.pairs[i].t_opt_a);
-        }
-      } else {
-        /* Print product size */
-        printf("PRIMER_PAIR%s_PRODUCT_SIZE=%d\n", suffix,
-               retval->best_pairs.pairs[i].product_size);
-        /* Print the product Tm if a Tm range is defined */
-        if (pa->product_max_tm != PR_DEFAULT_PRODUCT_MAX_TM ||
-            pa->product_min_tm != PR_DEFAULT_PRODUCT_MIN_TM) {
-          printf("PRIMER_PAIR%s_PRODUCT_TM=%.4f\n", suffix,
-                 retval->best_pairs.pairs[i].product_tm);
-                    
-          printf("PRIMER_PAIR%s_PRODUCT_TM_OLIGO_TM_DIFF=%.4f\n", suffix,
-                 retval->best_pairs.pairs[i].product_tm_oligo_tm_diff);
-                
-          printf("PRIMER_PAIR%s_T_OPT_A=%.4f\n", suffix,
-                 retval->best_pairs.pairs[i].t_opt_a);
-        }
-      }
+       /* Print product size */
+       printf("PRIMER_PAIR%s_PRODUCT_SIZE=%d\n", suffix,
+	      retval->best_pairs.pairs[i].product_size);
+       /* Print the product Tm if a Tm range is defined */
+       if (pa->product_max_tm != PR_DEFAULT_PRODUCT_MAX_TM ||
+	   pa->product_min_tm != PR_DEFAULT_PRODUCT_MIN_TM) {
+	 printf("PRIMER_PAIR%s_PRODUCT_TM=%.4f\n", suffix,
+		retval->best_pairs.pairs[i].product_tm);
+	 
+	 printf("PRIMER_PAIR%s_PRODUCT_TM_OLIGO_TM_DIFF=%.4f\n", suffix,
+		retval->best_pairs.pairs[i].product_tm_oligo_tm_diff);
+	 
+	 printf("PRIMER_PAIR%s_T_OPT_A=%.4f\n", suffix,
+		retval->best_pairs.pairs[i].t_opt_a);
+       }
       
       /* Print the primer pair template mispriming */
       if ((pa->thermodynamic_template_alignment == 0) && (retval->best_pairs.pairs[i].template_mispriming != ALIGN_SCORE_UNDEF))
@@ -580,8 +525,7 @@ print_all_explain(const p3_global_settings *pa,
 
   if ( pa->pick_internal_oligo == 1
       && !(pa->pick_anyway && sa->internal_input)) 
-    printf("PRIMER_INTERNAL_%sEXPLAIN=%s\n",
-           (io_version == 3 ? "OLIGO_" : ""),
+    printf("PRIMER_INTERNAL_EXPLAIN=%s\n",
            p3_get_oligo_array_explain_string(p3_get_rv_intl(retval)));
 
   if (pa->pick_right_primer == 1 
