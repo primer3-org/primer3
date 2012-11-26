@@ -7567,6 +7567,16 @@ p3_set_gs_primer_lowercase_masking(p3_global_settings * p , int val) {
 }
 
 void
+p3_set_gs_primer_thermodynamic_oligo_alignment(p3_global_settings * p , int val) {   
+   p->thermodynamic_oligo_alignment = val ;
+}
+
+void
+p3_set_gs_primer_thermodynamic_template_alignment(p3_global_settings * p , int val) {   
+   p->thermodynamic_template_alignment = val ;
+}
+
+void
 p3_set_gs_primer_wt_tm_gt(p3_global_settings * p , double val) {
   p->p_args.weights.temp_gt = val ;
 }

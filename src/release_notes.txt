@@ -33,15 +33,13 @@ with very old versions of primer3.
 
 Minor corrections:
 
-1. Removed redundant function p3_set_gs_primer_thermodynamic_alignment
-
-2. Added function p3_set_max_end_gc (sets max_end_gc in the
+1. Added function p3_set_max_end_gc (sets max_end_gc in the
    primer_global_settings struct).
 
-3. Removed intentional compile time division by zero in thal.c if
+2. Removed intentional compile time division by zero in thal.c if
    macro INFINITY is defined.
 
-4. Updated text in error messages from function thal() to make them more informative.
+3. Updated text in error messages from function thal() to make them more informative.
 
 release 2.3.4 2012-05-30 ===============================================
 
