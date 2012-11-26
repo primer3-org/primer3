@@ -1,6 +1,7 @@
 # 0 UPDATE RELEASE NUMBER
-# 0.1 change in libprimer3_release() (liprimer3.c)
+# 0.1 change in libprimer3_release() (libprimer3.c)
 # 0.2 change in create_tag_files_and_docs.pl (primer3/documentation/trunk/)
+# 0.3 change in p3test.pl (primer3/primer3/trunk/test)
 
 # 1 DO A CLEAN CHECKOUT AND TEST IT
 svn co https://primer3.svn.sourceforge.net/svnroot/primer3/primer3/trunk

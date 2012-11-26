@@ -541,7 +541,7 @@ print_usage()
 
   fprintf(stderr, "\n\nUSAGE: %s %s %s %s %s %s %s %s %s %s\n", pr_program_name,
           "[-format_output]", 
-	  "[-default_version=1|-default_version=2",
+	  "[-default_version=1|-default_version=2]",
 	  "[-io_version=4]", 
 	  "[-p3_settings_file=<file_path>]",
 	  "[-echo_settings_file]",

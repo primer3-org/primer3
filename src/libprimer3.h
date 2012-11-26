@@ -1027,7 +1027,7 @@ void p3_set_gs_primer_internal_oligo_mishyb_library(p3_global_settings * p , cha
 void p3_set_gs_primer_max_end_stability(p3_global_settings * p , double val);
 void p3_set_gs_primer_lowercase_masking(p3_global_settings * p , int val);
 void p3_set_gs_primer_thermodynamic_oligo_alignment(p3_global_settings * p , int val);
-    void p3_set_gs_primer_thermodynamic_template_alignment(p3_global_settings * p , int val);
+void p3_set_gs_primer_thermodynamic_template_alignment(p3_global_settings * p , int val);
 void p3_set_gs_primer_wt_tm_gt(p3_global_settings * p , double val);
 void p3_set_gs_primer_wt_tm_lt(p3_global_settings * p , double val);
 void p3_set_gs_primer_wt_gc_percent_gt(p3_global_settings * p , double val);

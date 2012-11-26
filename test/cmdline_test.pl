@@ -183,6 +183,12 @@ sub main() {
     $cmd = "$valgrind_prefix$exe invalid_input 2> cmd_test4.tmp";
     $exit_stat = runtest(4, $cmd, 'cmd_test4_output', 255);
 
+    # Test 5 : check that io_version=3 fails
+    $valgrind_prefix
+       = $do_valgrind ? sprintf $valgrind_format, 'cmd_test5' : '';
+    $cmd = "$valgrind_prefix$exe -io_version=3 2> cmd_test5.tmp";
+    $exit_stat = runtest(5, $cmd, 'cmd_test5_output', 255);
+
     # ================================================== 
     # If we were running under valgrind to look for memory-related
     # errors (reading uninitialized memory, writing off the end of
