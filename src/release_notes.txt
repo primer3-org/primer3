@@ -19,6 +19,12 @@ alignment is too slow or the template is too long (there is a hard
 limit THAL_MAX_SEQ=10k on the length of sequences involved in 
 thermodynamic alignments).
 
+1.1 Added corresponding functions to libprimer3.c and libprimer3.h:
+
+p3_set_gs_primer_thermodynamic_oligo_alignment
+p3_set_gs_primer_thermodynamic_template_alignment
+
+
 2. Modified the error handling of non-memory related errors that
 can occur during the thermodynamic alignment. They are no longer
 fatal errors.
@@ -34,12 +40,13 @@ with very old versions of primer3.
 Minor corrections:
 
 1. Added function p3_set_max_end_gc (sets max_end_gc in the
-   primer_global_settings struct).
+primer_global_settings struct).
 
 2. Removed intentional compile time division by zero in thal.c if
-   macro INFINITY is defined.
+macro INFINITY is defined.
 
-3. Updated text in error messages from function thal() to make them more informative.
+3. Updated text in error messages from function thal() to make them
+more informative.
 
 release 2.3.4 2012-05-30 ===============================================
 
