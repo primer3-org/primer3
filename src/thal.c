@@ -779,7 +779,7 @@ static double
 saltCorrectS (double mv, double dv, double dntp)
 {
    if(dv<=0) dntp=dv;
-   return 0.368*((log((mv+120*(sqrt(fmax(0.0, dv-dntp)))/1000))); 
+   return 0.368*((log((mv+120*(sqrt(fmax(0.0, dv-dntp))))/1000)));
 }
 
 
