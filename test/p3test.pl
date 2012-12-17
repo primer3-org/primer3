@@ -249,6 +249,7 @@ sub main() {
 
 			'test_compl_error',
 			'test_left_to_right_of_right',
+                        'dv_conc_vs_dntp_conc',
 			'primer_boundary',
 			'primer_boundary1',
 			'primer_boundary_formatted',

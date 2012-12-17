@@ -37,6 +37,9 @@ the same expensive alignment more than once.
 4. Removed io_version 3, which was only kept for backward compatibility
 with very old versions of primer3.
 
+5. Fixed error in which PRIMER_DNTP_CONC > PRIMER_SALT_DIVALENT causes 
+Primer3 to crash.
+
 Minor corrections:
 
 1. Added function p3_set_max_end_gc (sets max_end_gc in the
