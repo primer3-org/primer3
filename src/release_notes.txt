@@ -24,7 +24,6 @@ thermodynamic alignments).
 p3_set_gs_primer_thermodynamic_oligo_alignment
 p3_set_gs_primer_thermodynamic_template_alignment
 
-
 2. Modified the error handling of non-memory related errors that
 can occur during the thermodynamic alignment. They are no longer
 fatal errors.
@@ -37,8 +36,11 @@ the same expensive alignment more than once.
 4. Removed io_version 3, which was only kept for backward compatibility
 with very old versions of primer3.
 
-5. Fixed error in which PRIMER_DNTP_CONC > PRIMER_SALT_DIVALENT causes 
+5. Fixed an error in which PRIMER_DNTP_CONC > PRIMER_SALT_DIVALENT causes 
 Primer3 to crash.
+
+6. Fixed a bug that made Primer3 not generate results in some cases
+when PRIMER_FIRST_BASE_INDEX is negative.
 
 Minor corrections:
 
