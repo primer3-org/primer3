@@ -26,7 +26,7 @@ cd primer3/documentation
 svn cp trunk tags/release-<release number>
 svn ci  -m 'tagged DOCUMENTATION release-<release number>'
 cd tags/release-<release number>
-perl create_tag_files_and_doc.pl
+perl create_tag_files_and_docs.pl
 # make sure the file script_output/primer3_manual.htm is intact, e.g.
 firefox script_output/primer3_manual.htm
 
