@@ -1,7 +1,7 @@
 # 0 UPDATE RELEASE NUMBER
 # 0.1 change in libprimer3_release() (libprimer3.c)
-# 0.2 change in create_tag_files_and_docs.pl (primer3/documentation/trunk/)
-# 0.3 change in p3test.pl (primer3/primer3/trunk/test)
+# 0.2 change in create_tag_files_and_docs.pl the value of $scriptP3Version (primer3/documentation/trunk/)
+# 0.3 change in p3test.pl:77 (primer3/primer3/trunk/test)
 
 # 1 DO A CLEAN CHECKOUT AND TEST IT
 svn co https://primer3.svn.sourceforge.net/svnroot/primer3/primer3/trunk
@@ -14,7 +14,7 @@ make test
 
 sh paranoid_tests.sh
 
-# also test on Windows: clean checkout + make test TESTOPTS=--windows
+# also test on Windows: clean checkout + mingw32-make test TESTOPTS=--windows (in src folder)
 
 # 2 TAG THE RELEASE -- create the directory under primer3/primer3/tags/
 cd primer3/primer3
