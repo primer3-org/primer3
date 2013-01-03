@@ -199,6 +199,25 @@ sub main() {
     exit $exit_status;
 }
 
+sub round_numbers($) 
+{
+    my ($line) = @_;
+    my ($i, $t1, $t2);
+    my $new = "";
+    chomp($line);
+    my @fields = split("\t", $line);
+    for $i (0..$#fields) {
+	if ($fields[$i] =~ /([a-zA-Z0-9]\s*=\s*-*)([0-9.]+)/) {
+	    $t1 = $1;
+	    $t2 = $2;
+	    $t2 = sprintf "%0.*f", 1, $t2;
+	    $fields[$i] = $t1.$t2;
+	}
+    }
+    $new = join("\t", @fields);
+    return $new;
+}
+
 # Usage: perldiff("filename1", "filename2")
 # Return 0 if no differences are found,
 # othewise return 1;
@@ -228,7 +247,16 @@ sub perldiff($$) {
 
         $linenumber++;
         # Check for difference between two edited lines (line by line)
-        if ($l1 ne $l2) {
+	# special case for lines with thermodynamical parameters values (round to 1 decimal)
+	if ($l1 =~ /Calculated thermodynamical parameters for dimer/) {
+	    my $new_l1 = round_numbers($l1);
+	    my $new_l2 = round_numbers($l2);
+	    if ($new_l1 ne $new_l2) {
+		print 
+		    "Difference found at line $linenumber:\n<  $l1_orig\n>  $l2_orig\n";
+		return 1;
+	    }
+	} elsif ($l1 ne $l2) {
             print 
                 "Difference found at line $linenumber:\n<  $l1_orig\n>  $l2_orig\n";
             return 1;
