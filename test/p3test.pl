@@ -176,6 +176,11 @@ sub main() {
 			    # 'primer_boundary1' => 1,
 			    # 'primer_boundary_formatted' => 1,
 			    # 'primer_boundary1_formatted' => 1,
+ 
+                            'primer3_v1_1_4_default_settings',
+                            'primer3web_v0_4_0_default_settings',
+   	                    'primer3web_v3_0_0_default_settings',
+                            'primer3web_v4_0_0_default_settings',
 			    
 			    # 'primer_internal' => 1,
 			    # 'primer_internal1' => 1,
@@ -255,6 +260,11 @@ sub main() {
 			'primer_boundary1',
 			'primer_boundary_formatted',
 			'primer_boundary1_formatted',
+
+                        'primer3_v1_1_4_default_settings',
+                        'primer3web_v0_4_0_default_settings',
+	                'primer3web_v3_0_0_default_settings',
+                        'primer3web_v4_0_0_default_settings',
 
 			'primer_internal',
 			'primer_internal1',
@@ -426,7 +436,11 @@ sub main() {
             # back to main directory
             if (!chdir "../") { die "chdir \"..\": $!\n" }
 
-        } elsif ($test =~ /formatted$/) {
+        } elsif ($test =~ /settings$/) {
+	    my $cmd = "$valgrind_prefix$exe $default_version -strict_tags -p3_settings_file=../$test.txt -echo <$input >$tmp";
+            $r = _nowarn_system($cmd);
+
+	} elsif ($test =~ /formatted$/) {
             my $cmd = "$valgrind_prefix$exe $default_version -strict_tags -format_output <$input >$tmp";
             $r = _nowarn_system($cmd);
 
