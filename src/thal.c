@@ -104,6 +104,8 @@
 # define isFinite(x) finite(x)
 #endif
 
+#define isPositive(x) ((x) > 0 ? (1) : (0))
+
 /*** BEGIN CONSTANTS ***/
 # ifdef INTEGER
 const double _INFINITY = 999999.0;
@@ -1554,6 +1556,7 @@ RSH(int i, int j, double* EntropyEnthalpy)
       H1 = _INFINITY;
       S1 = -1.0;
    }
+   
    if(isFinite(dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]]) && isFinite(dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]])) {
       S2 = atPenaltyS(numSeq1[i], numSeq2[j]) + dangleEntropies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]] +
 	dangleEntropies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]];
@@ -1563,6 +1566,7 @@ RSH(int i, int j, double* EntropyEnthalpy)
 	 H2 = _INFINITY;
 	 S2 = -1.0;
       }
+      
       T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
       if(isFinite(H1)) {
 	 T1 = (H1 + dplx_init_H) / (S1 + dplx_init_S + RC);
@@ -1768,6 +1772,10 @@ calc_hairpin(int i, int j, double* EntropyEnthalpy, int traceback)
       EntropyEnthalpy[1] = _INFINITY;
       EntropyEnthalpy[0] = -1.0;
    }
+   if(isPositive(EntropyEnthalpy[1]) && isPositive(EntropyEnthalpy[0]) && (!isPositive(EnthalpyDPT(i, j)) || !isPositive(EntropyDPT(i, j)))) { /* if both, S and H are positive */
+      EntropyEnthalpy[1] = _INFINITY;
+      EntropyEnthalpy[0] = -1.0;
+   }
    T1 = (EntropyEnthalpy[1] + dplx_init_H) / ((EntropyEnthalpy[0] + dplx_init_S + RC));
    T2 = (EnthalpyDPT(i, j) + dplx_init_H) / ((EntropyDPT(i, j)) + dplx_init_S + RC);
    if(T1 < T2 && traceback == 0) {
@@ -1839,7 +1847,10 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
 	    H = _INFINITY;
 	    S = -1.0;
 	 }
-
+	 if(isPositive(H) && isPositive(S) && (!isPositive(EnthalpyDPT(ii, jj)) || !isPositive(EntropyDPT(ii, jj)))) { /* if both, S and H are positive */
+	    H = _INFINITY;
+	    S = -1.0;
+	 }
 	 T1 = (H + dplx_init_H) / ((S + dplx_init_S) + RC);
 	 T2 = (EnthalpyDPT(ii, jj) + dplx_init_H) / ((EntropyDPT(ii, jj)) + dplx_init_S + RC);
 
@@ -1858,7 +1869,10 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
 	    H = _INFINITY;
 	    S = -1.0;
 	 }
-
+	 if(isPositive(H) && isPositive(S) && (!isPositive(EnthalpyDPT(i, j)) || !isPositive(EntropyDPT(i, j)))){ /* if both, S and H are positive */
+	    H = _INFINITY;
+	    S = -1.0;
+	 }
 	 T1 = (H + dplx_init_H) / ((S + dplx_init_S) + RC);
 	 T2 = (EnthalpyDPT(ii, jj) + dplx_init_H) / (EntropyDPT(ii, jj) + dplx_init_S + RC);
 	 if((T1 > T2) || ((traceback && T1 >= T2) || (traceback==1))) {
@@ -1878,7 +1892,10 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
 	 H = _INFINITY;
 	 S = -1.0;
       }
-
+      if(isPositive(H) && isPositive(S) && (!isPositive(EnthalpyDPT(ii, jj)) || !isPositive(EntropyDPT(ii, jj)))) { /* if both, S and H are positive */
+	 H = _INFINITY;
+	 S = -1.0;
+      }    
       T1 = (H + dplx_init_H) / ((S + dplx_init_S) + RC);
       T2 = (EnthalpyDPT(ii, jj) + dplx_init_H) / (EntropyDPT(ii, jj) + dplx_init_S + RC);
 
@@ -1899,6 +1916,10 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
 	tstackEntropies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]] + (ILAS * abs(loopSize1 - loopSize2));
       S += EntropyDPT(i, j);
       if(!isFinite(H)) {
+	 H = _INFINITY;
+	 S = -1.0;
+      }
+      if(isPositive(H) && isPositive(S) && (!isPositive(EnthalpyDPT(ii, jj)) || !isPositive(EntropyDPT(ii, jj)))) { /* if both, S and H are positive */
 	 H = _INFINITY;
 	 S = -1.0;
       }
@@ -1994,7 +2015,10 @@ calc_bulge_internal2(int i, int j, int ii, int jj, double* EntropyEnthalpy, int 
 	    H = _INFINITY;
 	    S = -1.0;
 	 }
-
+	 if(isPositive(H) && isPositive(S) && (!isPositive(EnthalpyDPT(i, j)) || !isPositive(EntropyDPT(i, j)))) { /* if both, S and H are positive */
+	    H = _INFINITY;
+	    S = -1.0;
+	 }
 	 T1 = (H + dplx_init_H) / ((S + dplx_init_S) + RC);
 	 T2 = (EnthalpyDPT(i, j) + dplx_init_H) / ((EntropyDPT(i, j)) + dplx_init_S + RC);
 
@@ -2016,6 +2040,10 @@ calc_bulge_internal2(int i, int j, int ii, int jj, double* EntropyEnthalpy, int 
 	    H = _INFINITY;
 	    S = -1.0;
 	 }
+	 if(isPositive(H) && isPositive(S) && (!isPositive(EnthalpyDPT(i, j)) || !isPositive(EntropyDPT(i, j)))) { /* if both, S and H are positive */
+	    H = _INFINITY;
+	    S = -1.0;
+	 }	 
 	 T1 = (H + dplx_init_H) / ((S + dplx_init_S) + RC);
 	 T2 = (EnthalpyDPT(i, j) + dplx_init_H) / (EntropyDPT(i, j) + dplx_init_S + RC);
 
@@ -2038,6 +2066,10 @@ calc_bulge_internal2(int i, int j, int ii, int jj, double* EntropyEnthalpy, int 
       if(traceback!=1)
 	H += EnthalpyDPT(ii, jj);
       if(!isFinite(H)) {
+	 H = _INFINITY;
+	 S = -1.0;
+      }
+      if(isPositive(H)==1 && isPositive(S)==1 && (!isPositive(EnthalpyDPT(i, j)) || !isPositive(EntropyDPT(i, j)))) { /* if both, S and H are positive */
 	 H = _INFINITY;
 	 S = -1.0;
       }
@@ -2066,7 +2098,10 @@ calc_bulge_internal2(int i, int j, int ii, int jj, double* EntropyEnthalpy, int 
 	 H = _INFINITY;
 	 S = -1.0;
       }
-
+      if(isPositive(H) && isPositive(S) && (!isPositive(EnthalpyDPT(i, j)) || !isPositive(EntropyDPT(i, j)))){ /* if both, S and H are positive */
+	 H = _INFINITY;
+	 S = -1.0;
+      }
       T1 = (H + dplx_init_H) / ((S + dplx_init_S) + RC);
       T2 = (EnthalpyDPT(i, j) + dplx_init_H) / ((EntropyDPT(i, j)) + dplx_init_S + RC);
       if((T1 > T2) || ((traceback && T1 >= T2) || (traceback==1))) {
