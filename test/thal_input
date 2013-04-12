@@ -406,3 +406,5 @@
 -s1 agtgtagtacgg -s2 caaaaccgtgtc -maxloop 3
 -s1 agtgtagtacgg -s2 caaaaccgtgtc -a END1
 -s1 agtgtagtacgg -s2 caaaaccgtgtc -a END2
+-s1 CCAAAACCCATGATGATGATGGGTTTTGG -a HAIRPIN
+-s1 CCCCAAAACCCATGATGATGATGGGTTTTGGGG -a HAIRPIN
