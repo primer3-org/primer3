@@ -726,7 +726,7 @@ ACCEPTABLE RIGHT PRIMERS
  722 catgatgatcgatcagtcagctagc        285 25  0 48.00 62.333 22.18  8.99 45.35  7.333
  723 gatcgactagctagctacgatcgat        632 25  0 48.00 62.391 35.29 33.15 41.10  7.391
  724 atcgactagctagctacgatcgatc        631 25  0 48.00 62.391 30.75 18.00 35.52  7.391
- 725 tgatgatgatagtagatgatgatcagc      245 27  0 37.04 59.533  0.00  0.00 30.71  7.467
+ 725 tgatgatgatagtagatgatgatcagc      245 27  0 37.04 59.533  0.00  0.00 37.84  7.467
  726 atgatgatcgatcagtcagctagct        284 25  0 44.00 62.507 29.63 17.88 45.35  7.507
  727 gatgatcgatcagtcagctagctaaa       282 26  0 42.31 61.507 26.17  4.66 41.24  7.507
  728 tagctagcatcgatgatgatcagct        539 25  0 44.00 62.561 23.67 23.67 42.87  7.561
@@ -779,16 +779,16 @@ ACCEPTABLE RIGHT PRIMERS
  775 gatgatcgatcagtcagctagctaaat      282 27  0 40.74 61.785 26.17  9.71 41.24  8.785
  776 agctagtagatgatgatgatagtaga       255 26  0 34.62 57.155  2.87  0.00  0.00  8.845
  777 ctagctagctacgatcgatcagctag       626 26  0 50.00 62.848 40.11 40.11 43.70  8.848
- 778 tgatgatgatagtagatgatgatcag       245 26  0 34.62 57.026  0.90  0.00 30.71  8.974
+ 778 tgatgatgatagtagatgatgatcag       245 26  0 34.62 57.026  0.90  0.00 37.84  8.974
  779 gatgtagcatcgatcagtagctagct       328 26  0 46.15 62.999 23.74 23.74 35.96  8.999
  780 tagtagctagcatgatgatcgatcagt      295 27  0 40.74 62.236 12.39  3.56 45.35  9.236
  781 gctaaatagctagtagatgatgatgat      262 27  0 33.33 57.689 15.95  0.00 46.11  9.311
  782 agctagtagatgatgatgatagtagat      255 27  0 33.33 57.592  2.87  0.00  0.00  9.408
  783 gctagtagatgatgatgatagtagatg      254 27  0 37.04 57.549  2.87  0.00  0.00  9.451
- 784 gatgatgatgatagtagatgatgatca      247 27  0 33.33 57.467  0.00  0.00 37.65  9.533
+ 784 gatgatgatgatagtagatgatgatca      247 27  0 33.33 57.467  0.00  0.00 44.47  9.533
  785 ctagtagcatcgatgatcagctagcta      215 27  0 44.44 62.534 26.51 20.00 29.76  9.534
  786 tagtagcatcgatgatcagctagctag      214 27  0 44.44 62.534 20.52 17.46 29.76  9.534
- 787 atgatgatgatagtagatgatgatcag      246 27  0 33.33 57.462  0.90  0.00 37.12  9.538
+ 787 atgatgatgatagtagatgatgatcag      246 27  0 33.33 57.462  0.90  0.00 44.01  9.538
  788 atcgatcgatgatagtagctagctagc      452 27  0 44.44 62.627 34.67 34.67 40.92  9.627
  789 atgatgatcgatcagtcagctagctaa      284 27  0 40.74 62.665 29.63 14.44 45.35  9.665
  790 gatgtagcatcgatcagtagctagcta      328 27  0 44.44 62.742 23.52 19.77 35.96  9.742

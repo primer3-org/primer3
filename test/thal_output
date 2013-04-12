@@ -958,3 +958,9 @@ SEQ	CAAAA    GT ------
 SEQ	     CCGT  C      
 STR	     GGCA  G      
 STR	         T- ATGTGA
+Calculated thermodynamical parameters for dimer:	29	dS = -240.662	dH = -81400	dG = -6758.72	t = 65.0839
+SEQ	///////////-------\\\\\\\\\\\
+STR	CCAAAACCCATGATGATGATGGGTTTTGG
+Calculated thermodynamical parameters for dimer:	33	dS = -282.667	dH = -97400	dG = -9730.92	t = 71.4254
+SEQ	/////////////-------\\\\\\\\\\\\\
+STR	CCCCAAAACCCATGATGATGATGGGTTTTGGGG
