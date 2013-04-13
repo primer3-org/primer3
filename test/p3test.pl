@@ -530,8 +530,8 @@ sub main() {
             $exit_stat = -1;
         }
     }
-    print "\nTests in $0 ran for ", (time() - $overall_start_time), " s\n";
-    print "\n\nDONE ", scalar(localtime), " ";
+    print "\nTests in $0 ran for ", (time() - $overall_start_time), " s \(", ((time() - $overall_start_time)/60), " min\)\n";
+    print "\nDONE ", scalar(localtime), " ";
 
     print $all_ok ? "Passed all tests - [OK]\n\n\n" : "At least one test failed - [FAILED]\n\n\n";
 
