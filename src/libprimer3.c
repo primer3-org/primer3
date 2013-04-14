@@ -411,6 +411,14 @@ static int    is_lowercase_masked(int position,
                                    primer_rec *h,
                                    oligo_stats *);
 
+static int    primer_must_match(const p3_global_settings *pa,
+		                        primer_rec *h,
+		                        oligo_type otype,
+		                        oligo_stats *stats,
+		                        const char *input_oligo_seq);
+
+static int    compare_nucleotides(const char a, const char b);
+
 static void set_retval_both_stop_codons(const seq_args *sa, p3retval *retval);
 
 /* Functions to set bitfield parameters for oligos (or primers) */
@@ -424,6 +432,7 @@ static int bf_get_infinite_pos_penalty(const primer_rec *);
 /* Functions to record problems with oligos (or primers) */
 static void initialize_op(primer_rec *);
 static void op_set_completely_written(primer_rec *);
+static void op_set_must_match_err(primer_rec *o);
 static void op_set_too_many_ns(primer_rec *);
 static void op_set_overlaps_target(primer_rec *);
 static void op_set_high_gc_content(primer_rec *);
@@ -542,6 +551,12 @@ p3_destroy_global_settings(p3_global_settings *a)
   if (NULL != a) {
     destroy_seq_lib(a->p_args.repeat_lib);
     destroy_seq_lib(a->o_args.repeat_lib);
+    if (NULL != a->must_match_five_prime) {
+    	free(a->must_match_five_prime);
+    }
+    if (NULL != a->must_match_three_prime) {
+    	free(a->must_match_three_prime);
+    }
     free(a);
   }
 }
@@ -653,6 +668,8 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->inside_penalty      = PR_DEFAULT_INSIDE_PENALTY;
   a->max_end_stability   = 100.0;
   a->lowercase_masking   = 0;
+  a->must_match_five_prime  = NULL;
+  a->must_match_three_prime = NULL;
   a->product_max_tm      = PR_DEFAULT_PRODUCT_MAX_TM;
   a->product_min_tm      = PR_DEFAULT_PRODUCT_MIN_TM;
   a->product_opt_tm      = PR_UNDEFINED_DBL_OPT;
@@ -3017,6 +3034,18 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   }
   /* end T. Koressar's changes */
 
+  /* edited by A. Untergasser for forcing sequence use */
+  if ((pa->must_match_five_prime != NULL) or
+		  (pa->must_match_three_prime != NULL)) {
+    if (primer_must_match(pa, h, otype, stats, oligo_seq)) {
+      if (!must_use) {
+    	  op_set_must_match_err(h);
+    	  return;
+      }
+    }
+  }
+  /* end A. Untergasser's changes */
+
   gc_and_n_content(j, k-j+1, sa->trimmed_seq, h);
 
   if (h->num_ns > po_args->num_ns_accepted) {
@@ -5138,6 +5167,87 @@ is_lowercase_masked(int position,
     return 1;
   }
   return 0;
+}
+
+/*
+ Edited by A. Untergasser
+ */
+static int
+primer_must_match(const p3_global_settings *pa, primer_rec *h, oligo_type otype,
+        oligo_stats *stats,
+        /* This is 5'->3' on the template sequence: */
+        const char *input_oligo_seq)
+{
+	const char *seq = input_oligo_seq;
+	char *test;
+	int length = h->length - 5;
+	if (pa->must_match_five_prime != NULL) {
+		test = pa->must_match_five_prime;
+		for (int i = 0; i < 5; i++) {
+			if (!compare_nucleotides(*seq, *test)) {
+				return 1;
+			}
+			seq++;
+			test++;
+		}
+	}
+	if (pa->must_match_three_prime != NULL) {
+		test = pa->must_match_three_prime;
+		seq = seq + length;
+		for (int i = 0; i < 5; i++) {
+			if (!compare_nucleotides(*seq, *test)) {
+				return 1;
+			}
+			seq++;
+			test++;
+		}
+	}
+    return 0;
+}
+
+/* For a [NACTG] is allowed, for b [NACTGRYWSMKBHDV].*/
+static int compare_nucleotides(const char a, const char b) {
+    char x = a;
+	char y = b;
+	/* Convert to uppercase */
+	if(a >= 'a' && a <= 'z'){
+    	x = ('A' + a - 'a');
+    }
+    if(b >= 'b' && b <= 'z'){
+    	y = ('A' + b - 'a');
+    }
+
+	if ( x == y ) {
+		return 1;
+	}
+	if (( x == 'N') or (y == 'N')) {
+		return 1;
+	}
+	if (x == 'A') {
+		if ((y == 'R') or (y == 'W') or (y == 'M') or
+			(y == 'H') or (y == 'D') or (y == 'V')){
+			return 1;
+		}
+	}
+	if (x == 'G') {
+		if ((y == 'R') or (y == 'S') or (y == 'K') or
+			(y == 'B') or (y == 'D') or (y == 'V')){
+			return 1;
+		}
+	}
+	if (x == 'C') {
+		if ((y == 'Y') or (y == 'S') or (y == 'M') or
+			(y == 'B') or (y == 'H') or (y == 'V')){
+			return 1;
+		}
+	}
+	if (x == 'T') {
+		if ((y == 'Y') or (y == 'W') or (y == 'K') or
+			(y == 'B') or (y == 'H') or (y == 'D')){
+			return 1;
+		}
+	}
+	return 0;
 }
 
 /* Put substring of seq starting at n with length m into s. */
@@ -8011,6 +8121,7 @@ initialize_op(primer_rec *oligo) {
 #define OP_DOES_NOT_AMPLIFY_ORF                (1UL << 27)
 #define OP_TOO_MANY_GC_AT_END                  (1UL << 28) /* 3prime problem*/
 #define OP_HIGH_HAIRPIN                        (1UL << 29) /* 3prime problem*/
+#define OP_MUST_MATCH_ERR                      (1UL << 30)
 
 /* Space for more Errors */
 
@@ -8179,6 +8290,12 @@ op_set_does_not_amplify_orf(primer_rec *oligo) {
 static void
 op_set_completely_written(primer_rec *oligo) {
   oligo->problems.prob |= OP_COMPLETELY_WRITTEN;
+}
+
+static void
+op_set_must_match_err(primer_rec *oligo) {
+  oligo->problems.prob |= OP_MUST_MATCH_ERR;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void
