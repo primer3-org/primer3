@@ -5178,10 +5178,11 @@ primer_must_match(const p3_global_settings *pa, primer_rec *h, oligo_type otype,
         /* This is 5'->3' on the template sequence: */
         const char *input_oligo_seq)
 {
-	const char *seq = input_oligo_seq;
+	const char *seq;
 	char *test;
 	int length = h->length - 5;
 	if (pa->must_match_five_prime != NULL) {
+		seq = input_oligo_seq;
 		test = pa->must_match_five_prime;
 		for (int i = 0; i < 5; i++) {
 			if (!compare_nucleotides(*seq, *test)) {
@@ -5192,6 +5193,7 @@ primer_must_match(const p3_global_settings *pa, primer_rec *h, oligo_type otype,
 		}
 	}
 	if (pa->must_match_three_prime != NULL) {
+		seq = input_oligo_seq;
 		test = pa->must_match_three_prime;
 		seq = seq + length;
 		for (int i = 0; i < 5; i++) {
