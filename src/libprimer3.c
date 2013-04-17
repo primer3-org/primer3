@@ -1839,6 +1839,9 @@ add_must_use_warnings(pr_append_str *warning,
   if (stats->gmasked)
     pr_append_w_sep(&s, sep, "Masked with lowercase letter");
 
+  if (stats->must_match_fail)
+    pr_append_w_sep(&s, sep, "Failed must_match requirements");
+
   if (s.data) {
     pr_append_new_chunk(warning, text);
     pr_append(warning, " is unacceptable: ");
@@ -5174,7 +5177,7 @@ is_lowercase_masked(int position,
  */
 static int
 primer_must_match(const p3_global_settings *pa, primer_rec *h, oligo_type otype,
-        oligo_stats *stats,
+		oligo_stats *global_oligo_stats,
         /* This is 5'->3' on the template sequence: */
         const char *input_oligo_seq)
 {
@@ -5186,6 +5189,7 @@ primer_must_match(const p3_global_settings *pa, primer_rec *h, oligo_type otype,
 		test = pa->must_match_five_prime;
 		for (int i = 0; i < 5; i++) {
 			if (!compare_nucleotides(*seq, *test)) {
+				global_oligo_stats->must_match_fail++;
 				return 1;
 			}
 			seq++;
@@ -5198,6 +5202,7 @@ primer_must_match(const p3_global_settings *pa, primer_rec *h, oligo_type otype,
 		seq = seq + length;
 		for (int i = 0; i < 5; i++) {
 			if (!compare_nucleotides(*seq, *test)) {
+				global_oligo_stats->must_match_fail++;
 				return 1;
 			}
 			seq++;
@@ -5496,6 +5501,7 @@ p3_oligo_explain_string(const oligo_stats *stat)
   IF_SP_AND_CHECK(", high template mispriming score %d",
                   stat->template_mispriming)
   IF_SP_AND_CHECK(", lowercase masking of 3' end %d",stat->gmasked)
+  IF_SP_AND_CHECK(", failed must_match requirements %d",stat->must_match_fail)
   IF_SP_AND_CHECK(", not in any ok left region %d", 
                   stat->not_in_any_left_ok_region)
   IF_SP_AND_CHECK(", not in any ok right region %d", 
@@ -8233,6 +8239,8 @@ p3_get_ol_problem_string(const primer_rec *oligo) {
                " Too short;")
     ADD_OP_STR(OP_DOES_NOT_AMPLIFY_ORF,
                " Would not amplify an open reading frame;")
+    ADD_OP_STR(OP_MUST_MATCH_ERR,
+               " Failed must_match requirements;")
   }
   return output;
 }

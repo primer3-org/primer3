@@ -696,8 +696,8 @@ typedef struct oligo_stats {
                              (valid for left primers only).                 */
   int template_mispriming; /* Template mispriming score too high.           */
   int ok;                  /* Number of acceptable oligos.                  */
-  int gmasked;             /* Added by T. Koressaar, number of gmasked
-			      oligos */
+  int gmasked;             /* Added by T. Koressaar, number of gmasked oligos */
+  int must_match_fail;     /* Added by A. Untergasser, number of oligos failing must match*/
   int not_in_any_left_ok_region; /* Oligo not included in any of the
                                     left regions given in
                                     PRIMER_PAIR_OK_REGION_LIST. */
