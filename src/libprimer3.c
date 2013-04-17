@@ -3049,19 +3049,11 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   /* end T. Koressar's changes */
 
   /* edited by A. Untergasser for forcing sequence use */
-  char *match_three_prime;
-  char *match_five_prime;
-  if (otype == OT_INTL) {
-	  match_three_prime = pa->o_args.must_match_three_prime;
-	  match_five_prime = pa->o_args.must_match_five_prime;
-  } else {
-	  match_three_prime = pa->p_args.must_match_three_prime;
-	  match_five_prime = pa->p_args.must_match_five_prime;
-  }
-
-  if ((match_three_prime != NULL) or
-		  (match_five_prime != NULL)) {
-    if (primer_must_match(pa, h, stats, oligo_seq, match_three_prime, match_five_prime)) {
+  if ((po_args->must_match_five_prime != NULL) or
+		  (po_args->must_match_three_prime != NULL)) {
+    if (primer_must_match(pa, h, stats, oligo_seq,
+                          po_args->must_match_three_prime,
+                          po_args->must_match_five_prime)) {
       if (!must_use) {
     	  op_set_must_match_err(h);
     	  return;
