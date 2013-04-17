@@ -67,7 +67,7 @@ LDFLAGS = -g
 # ======================================================================
 # If you have trouble with library skew when moving primer3 executables
 # between systems, you might want to set LIBOPTS to -static
-LIBOPTS =
+LIBOPTS = -static
 
 ifeq ($(TESTOPTS),--windows)
 	PRIMER_EXE      = primer3_core.exe

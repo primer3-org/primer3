@@ -413,9 +413,10 @@ static int    is_lowercase_masked(int position,
 
 static int    primer_must_match(const p3_global_settings *pa,
 		                        primer_rec *h,
-		                        oligo_type otype,
 		                        oligo_stats *stats,
-		                        const char *input_oligo_seq);
+		                        const char *input_oligo_seq,
+                                char *match_three_prime,
+                                char *match_five_prime);
 
 static int    compare_nucleotides(const char a, const char b);
 
@@ -549,14 +550,20 @@ void
 p3_destroy_global_settings(p3_global_settings *a) 
 {
   if (NULL != a) {
+    if (NULL != a->p_args.must_match_five_prime) {
+    	free(a->p_args.must_match_five_prime);
+    }
+    if (NULL != a->p_args.must_match_three_prime) {
+    	free(a->p_args.must_match_three_prime);
+    }
+    if (NULL != a->o_args.must_match_five_prime) {
+    	free(a->o_args.must_match_five_prime);
+    }
+    if (NULL != a->o_args.must_match_three_prime) {
+    	free(a->o_args.must_match_three_prime);
+    }
     destroy_seq_lib(a->p_args.repeat_lib);
     destroy_seq_lib(a->o_args.repeat_lib);
-    if (NULL != a->must_match_five_prime) {
-    	free(a->must_match_five_prime);
-    }
-    if (NULL != a->must_match_three_prime) {
-    	free(a->must_match_three_prime);
-    }
     free(a);
   }
 }
@@ -638,6 +645,8 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->p_args.weights.temp_lt       = 1;
   a->p_args.weights.template_mispriming = 0.0;
   a->p_args.weights.template_mispriming_th = 0.0;
+  a->p_args.must_match_five_prime  = NULL;
+  a->p_args.must_match_three_prime = NULL;
   /* End of weights for objective functions for oligos and pairs. */
 
   /* End of arguments for primers =========================== */
@@ -668,8 +677,6 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->inside_penalty      = PR_DEFAULT_INSIDE_PENALTY;
   a->max_end_stability   = 100.0;
   a->lowercase_masking   = 0;
-  a->must_match_five_prime  = NULL;
-  a->must_match_three_prime = NULL;
   a->product_max_tm      = PR_DEFAULT_PRODUCT_MAX_TM;
   a->product_min_tm      = PR_DEFAULT_PRODUCT_MIN_TM;
   a->product_opt_tm      = PR_UNDEFINED_DBL_OPT;
@@ -717,6 +724,8 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->o_args.weights.repeat_sim    = 0;
   a->o_args.weights.seq_quality   = 0;
   a->o_args.weights.end_quality   = 0;
+  a->o_args.must_match_five_prime  = NULL;
+  a->o_args.must_match_three_prime = NULL;
 
   a->pr_pair_weights.primer_quality  = 1;
   a->pr_pair_weights.io_quality      = 0;
@@ -3038,9 +3047,19 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   /* end T. Koressar's changes */
 
   /* edited by A. Untergasser for forcing sequence use */
-  if ((pa->must_match_five_prime != NULL) or
-		  (pa->must_match_three_prime != NULL)) {
-    if (primer_must_match(pa, h, otype, stats, oligo_seq)) {
+  char *match_three_prime;
+  char *match_five_prime;
+  if (otype == OT_INTL) {
+	  match_three_prime = pa->o_args.must_match_three_prime;
+	  match_five_prime = pa->o_args.must_match_five_prime;
+  } else {
+	  match_three_prime = pa->p_args.must_match_three_prime;
+	  match_five_prime = pa->p_args.must_match_five_prime;
+  }
+
+  if ((match_three_prime != NULL) or
+		  (match_five_prime != NULL)) {
+    if (primer_must_match(pa, h, stats, oligo_seq, match_three_prime, match_five_prime)) {
       if (!must_use) {
     	  op_set_must_match_err(h);
     	  return;
@@ -5176,17 +5195,16 @@ is_lowercase_masked(int position,
  Edited by A. Untergasser
  */
 static int
-primer_must_match(const p3_global_settings *pa, primer_rec *h, oligo_type otype,
-		oligo_stats *global_oligo_stats,
+primer_must_match(const p3_global_settings *pa, primer_rec *h, oligo_stats *global_oligo_stats,
         /* This is 5'->3' on the template sequence: */
-        const char *input_oligo_seq)
+        const char *input_oligo_seq, char *match_three_prime, char *match_five_prime)
 {
 	const char *seq;
 	char *test;
 	int length = h->length - 5;
-	if (pa->must_match_five_prime != NULL) {
+	if (match_five_prime != NULL) {
 		seq = input_oligo_seq;
-		test = pa->must_match_five_prime;
+		test = match_five_prime;
 		for (int i = 0; i < 5; i++) {
 			if (!compare_nucleotides(*seq, *test)) {
 				global_oligo_stats->must_match_fail++;
@@ -5196,9 +5214,9 @@ primer_must_match(const p3_global_settings *pa, primer_rec *h, oligo_type otype,
 			test++;
 		}
 	}
-	if (pa->must_match_three_prime != NULL) {
+	if (match_three_prime != NULL) {
 		seq = input_oligo_seq;
-		test = pa->must_match_three_prime;
+		test = match_three_prime;
 		seq = seq + length;
 		for (int i = 0; i < 5; i++) {
 			if (!compare_nucleotides(*seq, *test)) {
