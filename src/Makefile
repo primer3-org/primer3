@@ -67,15 +67,16 @@ LDFLAGS = -g
 # ======================================================================
 # If you have trouble with library skew when moving primer3 executables
 # between systems, you might want to set LIBOPTS to -static
-LIBOPTS = -static
 
 ifeq ($(TESTOPTS),--windows)
+	LIBOPTS         = -static
 	PRIMER_EXE      = primer3_core.exe
 	NTDPAL_EXE      = ntdpal.exe
 	NTTHAL_EXE      = ntthal.exe
 	OLIGOTM_EXE     = oligotm.exe
 	LONG_SEQ_EXE	= long_seq_tm_test.exe
 else
+	LIBOPTS         =
 	PRIMER_EXE      = primer3_core
 	NTDPAL_EXE      = ntdpal
 	NTTHAL_EXE      = ntthal

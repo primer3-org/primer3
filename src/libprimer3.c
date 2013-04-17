@@ -420,6 +420,8 @@ static int    primer_must_match(const p3_global_settings *pa,
 
 static int    compare_nucleotides(const char a, const char b);
 
+static int    test_must_match_parameters(char *test);
+
 static void set_retval_both_stop_codons(const seq_args *sa, p3retval *retval);
 
 /* Functions to set bitfield parameters for oligos (or primers) */
@@ -5275,6 +5277,42 @@ static int compare_nucleotides(const char a, const char b) {
 	return 0;
 }
 
+static int test_must_match_parameters(char *test) {
+	int i = 0;
+	char x;
+	while (*test != '\0') {
+		/* First to UPPER letters */
+		if((*test >= 'a') && (*test <= 'z')){
+	    	x = ('A' + (*test) - 'a');
+	    } else {
+	    	x = *test;
+	    }
+		/* Second check that it is in Range A-Z */
+		if((x < 'A') || (x > 'Z')){
+	    	return 1;
+	    }
+		/* Check it is NACTGRYWSMKBHDV */
+		if((x == 'N') ||
+           (x == 'A') || (x == 'C') ||
+           (x == 'T') || (x == 'G') ||
+           (x == 'R') || (x == 'Y') ||
+           (x == 'W') || (x == 'S') ||
+           (x == 'M') || (x == 'K') ||
+           (x == 'B') || (x == 'H') ||
+           (x == 'D') || (x == 'V')){
+			test++;
+			i++;
+	    } else {
+	    	return 1;
+	    }
+	}
+	/* Check it is 5 letters */
+	if (i != 5) {
+		return 1;
+	}
+	return 0;
+}
+
 /* Put substring of seq starting at n with length m into s. */
 void
 _pr_substr(const char *seq, int n, int m, char *s)
@@ -6622,6 +6660,36 @@ _pr_data_control(const p3_global_settings *pa,
 			"but PRIMER_DNTP_CONC <= 0.0; "
 			"use reasonable value for PRIMER_DNTP_CONC");
   }
+
+  if ((pa->p_args.must_match_five_prime != NULL) &&
+      (test_must_match_parameters(pa->p_args.must_match_five_prime))) {
+    pr_append_new_chunk(glob_err,
+                        "Illegal values for PRIMER_MUST_MATCH_FIVE_PRIME");
+    return 1;
+  }
+
+  if ((pa->p_args.must_match_three_prime != NULL) &&
+      (test_must_match_parameters(pa->p_args.must_match_three_prime))) {
+    pr_append_new_chunk(glob_err,
+                        "Illegal values for PRIMER_MUST_MATCH_THREE_PRIME");
+    return 1;
+  }
+
+  if ((pa->o_args.must_match_five_prime != NULL) &&
+      (test_must_match_parameters(pa->o_args.must_match_five_prime))) {
+    pr_append_new_chunk(glob_err,
+                        "Illegal values for PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME");
+    return 1;
+  }
+
+  if ((pa->o_args.must_match_three_prime != NULL) &&
+      (test_must_match_parameters(pa->o_args.must_match_three_prime))) {
+    pr_append_new_chunk(glob_err,
+                        "Illegal values for PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME");
+    return 1;
+  }
+
+
 
   return (NULL == nonfatal_err->data && NULL == glob_err->data) ? 0 : 1;
 } /* _pr_data_control */
