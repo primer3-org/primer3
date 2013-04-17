@@ -321,6 +321,7 @@ sub main() {
 
 			'primer_obj_fn',
 			'p3_3_prime_n',
+			'primer_must_match',
 
 			# Put slow tests last
 			'primer_mispriming_th',
