@@ -6209,6 +6209,33 @@ _pr_data_control(const p3_global_settings *pa,
     return 1;
   }
 
+  if (pa->num_return < 1) {
+    pr_append_new_chunk(glob_err,
+                        "PRIMER_NUM_RETURN < 1");
+    return 1;
+  }
+
+  if ((pa->p_args.must_match_five_prime != NULL) && (strlen(pa->p_args.must_match_five_prime) != 5)) {
+    pr_append_new_chunk(glob_err,
+                        "PRIMER_MUST_MATCH_FIVE_PRIME must have 5 characters");
+    return 1;
+  }
+  if ((pa->p_args.must_match_three_prime != NULL) && (strlen(pa->p_args.must_match_three_prime) != 5)) {
+    pr_append_new_chunk(glob_err,
+                        "PRIMER_MUST_MATCH_THREE_PRIME must have 5 characters");
+    return 1;
+  }
+  if ((pa->o_args.must_match_five_prime != NULL) && (strlen(pa->o_args.must_match_five_prime) != 5)) {
+    pr_append_new_chunk(glob_err,
+                        "PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME must have 5 characters");
+    return 1;
+  }
+  if ((pa->o_args.must_match_three_prime != NULL) && (strlen(pa->o_args.must_match_three_prime) != 5)) {
+    pr_append_new_chunk(glob_err,
+                        "PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME must have 5 characters");
+    return 1;
+  }
+
   if (sa->incl_l >= INT_MAX) {
     pr_append_new_chunk(nonfatal_err, "Value for SEQUENCE_INCLUDED_REGION too large");
     return 1;

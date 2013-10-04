@@ -244,7 +244,6 @@ typedef struct args_for_one_oligo_or_primer {
      G Guanine
      C Cytosine
      T Thymine
-     U Uracil
 
      R Purine (A or G)
      Y Pyrimidine (C or T)
