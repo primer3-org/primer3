@@ -94,6 +94,11 @@ main(int argc, const char**argv)
 	if (!strncmp("-p", argv[i], 2)) {
 	    a.debug = 1;
 	} else if (!strncmp("-l", argv[i], 2)) {
+	  if (i+1 >= argc) {
+	    /* Missing value */
+	    fprintf(stderr, msg, argv[0]);
+	    exit(-1);
+	  }
 	  a.gapl = (int) (strtod(argv[i+1],(char **)NULL) * -100);
 	  i++;
         } else if (!strncmp("-e", argv[i], 2)) {
@@ -103,9 +108,19 @@ main(int argc, const char**argv)
 	} else if (!strncmp("-h", argv[i], 2)) {
 	  use_h_matrix = 1;
 	} else if (!strncmp("-g", argv[i], 2)) {
+	  if (i+1 >= argc) {
+	    /* Missing value */
+	    fprintf(stderr, msg, argv[0]);
+	    exit(-1);
+	  }
 	  a.gap = (int) (strtod(argv[i+1],(char **)NULL) * -100);
 	  i++;
 	} else if (!strncmp("-m", argv[i], 2)) {
+	  if (i+1 >= argc) {
+	    /* Missing value */
+	    fprintf(stderr, msg, argv[0]);
+	    exit(-1);
+	  }
 	  a.max_gap = strtol(argv[i+1], &endptr, 10);
 	  if ('\0' != *endptr) {
 	    fprintf(stderr, msg, argv[0]);

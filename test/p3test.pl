@@ -252,6 +252,7 @@ sub main() {
 			'primer_thal_args',
 	                'primer_thal_max_seq_error',
 	                'primer_first_base_index',
+                        'primer_must_match',
 
 			'test_compl_error',
 			'test_left_to_right_of_right',

@@ -123,6 +123,11 @@ main(int argc, char **argv)
 
    for (i=1; i < argc; ++i) {
      if (!strncmp("-mv", argv[i], 3)) { /* conc of monovalent cations */
+       if (i+1 >= argc) {
+	 /* Missing value */
+	 fprintf(stderr, msg, argv[0]);
+	 exit(-1);
+       }
        mv = strtol(argv[i+1], &endptr, 10);
        if ('\0' != *endptr) {
 	 fprintf(stderr, msg, argv[0]);
@@ -130,6 +135,11 @@ main(int argc, char **argv)
        }
        i++;
      } else if (!strncmp("-dv", argv[i], 3)) { /* conc of divalent cations; added by T.Koressaar */
+       if (i+1 >= argc) {
+	 /* Missing value */
+	 fprintf(stderr, msg, argv[0]);
+	 exit(-1);
+       }
        dv = strtod(argv[i+1], &endptr);
        if('\0' != *endptr) {
 	 fprintf(stderr, msg, argv[0]);
@@ -137,6 +147,11 @@ main(int argc, char **argv)
        }
        i++;
      } else if (!strncmp("-n", argv[i], 2)) { /* conc of dNTP; added by T.Koressaar */
+       if (i+1 >= argc) {
+	 /* Missing value */
+	 fprintf(stderr, msg, argv[0]);
+	 exit(-1);
+       }
        n = strtod(argv[i+1], &endptr);
        if('\0' != *endptr) {
 	 fprintf(stderr, msg, argv[0]);
@@ -144,6 +159,11 @@ main(int argc, char **argv)
        }
        i++;
      } else if (!strncmp("-d", argv[i], 2)) {
+       if (i+1 >= argc) {
+	 /* Missing value */
+	 fprintf(stderr, msg, argv[0]);
+	 exit(-1);
+       }
        d = strtol(argv[i+1], &endptr, 10);
        if ('\0' != *endptr) {
 	 fprintf(stderr, msg, argv[0]);
@@ -151,6 +171,11 @@ main(int argc, char **argv)
        }
        i++;
      } else if (!strncmp("-tp", argv[i], 3)) { /* added by T.Koressaar */
+       if (i+1 >= argc) {
+	 /* Missing value */
+	 fprintf(stderr, msg, argv[0]);
+	 exit(-1);
+       }
        tm_santalucia = (int)strtol(argv[i+1], &endptr, 10);
        if ('\0' != *endptr || tm_santalucia<0 || tm_santalucia>1) {	  
 	 fprintf(stderr, msg, argv[0]);
@@ -158,6 +183,11 @@ main(int argc, char **argv)
        }
        i++;
      } else if (!strncmp("-sc", argv[i], 3)) { /* added by T.Koressaar */
+       if (i+1 >= argc) {
+	 /* Missing value */
+	 fprintf(stderr, msg, argv[0]);
+	 exit(-1);
+       }
        salt_corrections = (int)strtol(argv[i+1], &endptr, 10);
        if ('\0' != *endptr || salt_corrections<0 || salt_corrections>2) {
 	 fprintf(stderr, msg, argv[0]);

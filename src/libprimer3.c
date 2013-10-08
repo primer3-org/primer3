@@ -411,6 +411,15 @@ static int    is_lowercase_masked(int position,
                                    primer_rec *h,
                                    oligo_stats *);
 
+static int    primer_must_match(const p3_global_settings *pa,
+				primer_rec *h,
+				oligo_stats *stats,
+				const char *input_oligo_seq,
+                                char *match_three_prime,
+                                char *match_five_prime);
+static int    compare_nucleotides(const char a, const char b);
+static int    test_must_match_parameters(char *test);
+
 static void set_retval_both_stop_codons(const seq_args *sa, p3retval *retval);
 
 /* Functions to set bitfield parameters for oligos (or primers) */
@@ -424,6 +433,7 @@ static int bf_get_infinite_pos_penalty(const primer_rec *);
 /* Functions to record problems with oligos (or primers) */
 static void initialize_op(primer_rec *);
 static void op_set_completely_written(primer_rec *);
+static void op_set_must_match_err(primer_rec *);
 static void op_set_too_many_ns(primer_rec *);
 static void op_set_overlaps_target(primer_rec *);
 static void op_set_high_gc_content(primer_rec *);
@@ -540,6 +550,18 @@ void
 p3_destroy_global_settings(p3_global_settings *a) 
 {
   if (NULL != a) {
+    if (NULL != a->p_args.must_match_five_prime) {
+    	free(a->p_args.must_match_five_prime);
+    }
+    if (NULL != a->p_args.must_match_three_prime) {
+    	free(a->p_args.must_match_three_prime);
+    }
+    if (NULL != a->o_args.must_match_five_prime) {
+    	free(a->o_args.must_match_five_prime);
+    }
+    if (NULL != a->o_args.must_match_three_prime) {
+    	free(a->o_args.must_match_three_prime);
+    }
     destroy_seq_lib(a->p_args.repeat_lib);
     destroy_seq_lib(a->o_args.repeat_lib);
     free(a);
@@ -623,6 +645,8 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->p_args.weights.temp_lt       = 1;
   a->p_args.weights.template_mispriming = 0.0;
   a->p_args.weights.template_mispriming_th = 0.0;
+  a->p_args.must_match_five_prime  = NULL;
+  a->p_args.must_match_three_prime = NULL;
   /* End of weights for objective functions for oligos and pairs. */
 
   /* End of arguments for primers =========================== */
@@ -700,6 +724,8 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->o_args.weights.repeat_sim    = 0;
   a->o_args.weights.seq_quality   = 0;
   a->o_args.weights.end_quality   = 0;
+  a->o_args.must_match_five_prime  = NULL;
+  a->o_args.must_match_three_prime = NULL;
 
   a->pr_pair_weights.primer_quality  = 1;
   a->pr_pair_weights.io_quality      = 0;
@@ -1821,6 +1847,9 @@ add_must_use_warnings(pr_append_str *warning,
   /* edited by T. Koressaar for lowercase masking: */
   if (stats->gmasked)
     pr_append_w_sep(&s, sep, "Masked with lowercase letter");
+
+  if (stats->must_match_fail)
+    pr_append_w_sep(&s, sep, "Failed must_match requirements");
 
   if (s.data) {
     pr_append_new_chunk(warning, text);
@@ -3016,6 +3045,20 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
     }
   }
   /* end T. Koressar's changes */
+
+  /* edited by A. Untergasser for forcing sequence use */
+  if ((po_args->must_match_five_prime != NULL) or
+      (po_args->must_match_three_prime != NULL)) {
+    if (primer_must_match(pa, h, stats, oligo_seq,
+                          po_args->must_match_three_prime,
+                          po_args->must_match_five_prime)) {
+      if (!must_use) {
+	op_set_must_match_err(h);
+	return;
+      }
+    }
+  }
+  /* end A. Untergasser's changes */
 
   gc_and_n_content(j, k-j+1, sa->trimmed_seq, h);
 
@@ -5140,6 +5183,128 @@ is_lowercase_masked(int position,
   return 0;
 }
 
+/*
+ Edited by A. Untergasser
+ */
+static int
+primer_must_match(const p3_global_settings *pa, primer_rec *h, oligo_stats *global_oligo_stats,
+		  /* This is 5'->3' on the template sequence: */
+		  const char *input_oligo_seq, char *match_three_prime, char *match_five_prime)
+{
+  const char *seq;
+  char *test;
+  int length = h->length - 5;
+  if (match_five_prime != NULL) {
+    seq = input_oligo_seq;
+    test = match_five_prime;
+    for (int i = 0; i < 5; i++) {
+      if (!compare_nucleotides(*seq, *test)) {
+	global_oligo_stats->must_match_fail++;
+	return 1;
+      }
+      seq++;
+      test++;
+    }
+  }
+  if (match_three_prime != NULL) {
+    seq = input_oligo_seq;
+    test = match_three_prime;
+    seq = seq + length;
+    for (int i = 0; i < 5; i++) {
+      if (!compare_nucleotides(*seq, *test)) {
+	global_oligo_stats->must_match_fail++;
+	return 1;
+      }
+      seq++;
+      test++;
+		}
+  }
+  return 0;
+}
+
+/* For a [NACTG] is allowed, for b [NACTGRYWSMKBHDV].*/
+static int compare_nucleotides(const char a, const char b) 
+{
+  char x = a;
+  char y = b;
+  /* Convert to uppercase */
+  if(a >= 'a' && a <= 'z'){
+    x = ('A' + a - 'a');
+  }
+  if(b >= 'b' && b <= 'z'){
+    y = ('A' + b - 'a');
+  }
+  
+  if ( x == y ) {
+    return 1;
+  }
+  if (( x == 'N') or (y == 'N')) {
+    return 1;
+  }
+  if (x == 'A') {
+    if ((y == 'R') or (y == 'W') or (y == 'M') or
+	(y == 'H') or (y == 'D') or (y == 'V')){
+      return 1;
+    }
+  }
+  if (x == 'G') {
+    if ((y == 'R') or (y == 'S') or (y == 'K') or
+	(y == 'B') or (y == 'D') or (y == 'V')){
+      return 1;
+    }
+  }
+  if (x == 'C') {
+    if ((y == 'Y') or (y == 'S') or (y == 'M') or
+	(y == 'B') or (y == 'H') or (y == 'V')){
+      return 1;
+    }
+  }
+  if (x == 'T') {
+    if ((y == 'Y') or (y == 'W') or (y == 'K') or
+	(y == 'B') or (y == 'H') or (y == 'D')){
+      return 1;
+    }
+  }
+  return 0;
+}
+
+static int test_must_match_parameters(char *test) 
+{
+  int i = 0;
+  char x;
+  while (*test != '\0') {
+    /* First to UPPER letters */
+    if ((*test >= 'a') && (*test <= 'z')){
+      x = ('A' + (*test) - 'a');
+    } else {
+      x = *test;
+    }
+    /* Second check that it is in Range A-Z */
+    if ((x < 'A') || (x > 'Z')){
+      return 1;
+    }
+    /* Check it is NACTGRYWSMKBHDV */
+    if ((x == 'N') ||
+	(x == 'A') || (x == 'C') ||
+	(x == 'T') || (x == 'G') ||
+	(x == 'R') || (x == 'Y') ||
+	(x == 'W') || (x == 'S') ||
+	(x == 'M') || (x == 'K') ||
+	(x == 'B') || (x == 'H') ||
+	(x == 'D') || (x == 'V')){
+      test++;
+      i++;
+    } else {
+      return 1;
+    }
+  }
+  /* Check it is 5 letters */
+  if (i != 5) {
+    return 1;
+  }
+  return 0;
+}
+
 /* Put substring of seq starting at n with length m into s. */
 void
 _pr_substr(const char *seq, int n, int m, char *s)
@@ -5384,6 +5549,7 @@ p3_oligo_explain_string(const oligo_stats *stat)
   IF_SP_AND_CHECK(", high template mispriming score %d",
                   stat->template_mispriming)
   IF_SP_AND_CHECK(", lowercase masking of 3' end %d",stat->gmasked)
+  IF_SP_AND_CHECK(", failed must_match requirements %d",stat->must_match_fail)
   IF_SP_AND_CHECK(", not in any ok left region %d", 
                   stat->not_in_any_left_ok_region)
   IF_SP_AND_CHECK(", not in any ok right region %d", 
@@ -6043,6 +6209,27 @@ _pr_data_control(const p3_global_settings *pa,
     return 1;
   }
 
+  if ((pa->p_args.must_match_five_prime != NULL) && (strlen(pa->p_args.must_match_five_prime) != 5)) {
+    pr_append_new_chunk(glob_err,
+                        "PRIMER_MUST_MATCH_FIVE_PRIME must have 5 characters");
+    return 1;
+  }
+  if ((pa->p_args.must_match_three_prime != NULL) && (strlen(pa->p_args.must_match_three_prime) != 5)) {
+    pr_append_new_chunk(glob_err,
+                        "PRIMER_MUST_MATCH_THREE_PRIME must have 5 characters");
+    return 1;
+  }
+  if ((pa->o_args.must_match_five_prime != NULL) && (strlen(pa->o_args.must_match_five_prime) != 5)) {
+    pr_append_new_chunk(glob_err,
+                        "PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME must have 5 characters");
+    return 1;
+  }
+  if ((pa->o_args.must_match_three_prime != NULL) && (strlen(pa->o_args.must_match_three_prime) != 5)) {
+    pr_append_new_chunk(glob_err,
+                        "PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME must have 5 characters");
+    return 1;
+  }
+
   if (sa->incl_l >= INT_MAX) {
     pr_append_new_chunk(nonfatal_err, "Value for SEQUENCE_INCLUDED_REGION too large");
     return 1;
@@ -6487,6 +6674,34 @@ _pr_data_control(const p3_global_settings *pa,
 			"use reasonable value for PRIMER_DNTP_CONC");
   }
 
+  if ((pa->p_args.must_match_five_prime != NULL) &&
+      (test_must_match_parameters(pa->p_args.must_match_five_prime))) {
+    pr_append_new_chunk(glob_err,
+                        "Illegal values for PRIMER_MUST_MATCH_FIVE_PRIME");
+    return 1;
+  }
+
+  if ((pa->p_args.must_match_three_prime != NULL) &&
+      (test_must_match_parameters(pa->p_args.must_match_three_prime))) {
+    pr_append_new_chunk(glob_err,
+                        "Illegal values for PRIMER_MUST_MATCH_THREE_PRIME");
+    return 1;
+  }
+  
+  if ((pa->o_args.must_match_five_prime != NULL) &&
+      (test_must_match_parameters(pa->o_args.must_match_five_prime))) {
+    pr_append_new_chunk(glob_err,
+                        "Illegal values for PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME");
+    return 1;
+  }
+  
+  if ((pa->o_args.must_match_three_prime != NULL) &&
+      (test_must_match_parameters(pa->o_args.must_match_three_prime))) {
+    pr_append_new_chunk(glob_err,
+                        "Illegal values for PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME");
+    return 1;
+  }
+  
   return (NULL == nonfatal_err->data && NULL == glob_err->data) ? 0 : 1;
 } /* _pr_data_control */
 
@@ -8011,6 +8226,7 @@ initialize_op(primer_rec *oligo) {
 #define OP_DOES_NOT_AMPLIFY_ORF                (1UL << 27)
 #define OP_TOO_MANY_GC_AT_END                  (1UL << 28) /* 3prime problem*/
 #define OP_HIGH_HAIRPIN                        (1UL << 29) /* 3prime problem*/
+#define OP_MUST_MATCH_ERR                      (1UL << 30)
 
 /* Space for more Errors */
 
@@ -8120,6 +8336,8 @@ p3_get_ol_problem_string(const primer_rec *oligo) {
                " Too short;")
     ADD_OP_STR(OP_DOES_NOT_AMPLIFY_ORF,
                " Would not amplify an open reading frame;")
+    ADD_OP_STR(OP_MUST_MATCH_ERR,
+               " Failed must_match requirements;")
   }
   return output;
 }
@@ -8179,6 +8397,12 @@ op_set_does_not_amplify_orf(primer_rec *oligo) {
 static void
 op_set_completely_written(primer_rec *oligo) {
   oligo->problems.prob |= OP_COMPLETELY_WRITTEN;
+}
+
+static void
+op_set_must_match_err(primer_rec *oligo) {
+  oligo->problems.prob |= OP_MUST_MATCH_ERR;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
 static void

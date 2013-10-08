@@ -229,6 +229,33 @@ typedef struct args_for_one_oligo_or_primer {
 
   double max_template_mispriming;
   double max_template_mispriming_th;
+
+  char *must_match_five_prime;
+  char *must_match_three_prime;
+  /* Primers and Oligos must match this 5 prime and 3 prime sequences.
+     This allows to select a set of primer pair with an identical 3' end
+     to avoid primer dimers. On the 5 prime end bases quenching
+     flourochromes can be avoided.
+     The sequence must be 5 nucletides long and can contain the following letters:
+
+     N Any nucleotide
+
+     A Adenine
+     G Guanine
+     C Cytosine
+     T Thymine
+
+     R Purine (A or G)
+     Y Pyrimidine (C or T)
+     W Weak (A or T)
+     S Strong (G or C)
+     M Amino (A or C)
+     K Keto (G or T)
+     B Not A (G or C or T)
+     H Not G (A or C or T)
+     D Not C (A or G or T)
+     V Not T (A or G or C)
+  */
 } args_for_one_oligo_or_primer;
 
 /* Maxima needed for interface data structures. */
@@ -670,6 +697,8 @@ typedef struct oligo_stats {
   int ok;                  /* Number of acceptable oligos.                  */
   int gmasked;             /* Added by T. Koressaar, number of gmasked
 			      oligos */
+  int must_match_fail;     /* Added by A. Untergasser, number of oligos 
+			      failing must match */
   int not_in_any_left_ok_region; /* Oligo not included in any of the
                                     left regions given in
                                     PRIMER_PAIR_OK_REGION_LIST. */
