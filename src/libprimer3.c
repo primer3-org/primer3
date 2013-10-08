@@ -3434,6 +3434,8 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
         && ((h->start + h->length - pa->min_3_prime_overlap_of_junction))
         > sa->primer_overlap_junctions[for_i]) {
       h->overlaps_overlap_position = 1;
+      /* no need to continue checking */
+      break;
     }
     if (OT_RIGHT == l
         && ((h->start - h->length + pa->min_3_prime_overlap_of_junction) 
@@ -3441,6 +3443,8 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
         && ((h->start - pa->min_5_prime_overlap_of_junction + 1))
         > sa->primer_overlap_junctions[for_i]) {
       h->overlaps_overlap_position = 1;
+      /* no need to continue checking */
+      break;
     }
   }
 
