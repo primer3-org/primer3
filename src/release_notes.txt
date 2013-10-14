@@ -1,3 +1,23 @@
+release 2.3.6 2013-10-xx ===============================================
+
+Important changes:
+
+1. Four new input tags were added:
+- PRIMER_MUST_MATCH_THREE_PRIME
+- PRIMER_MUST_MATCH_FIVE_PRIME
+- PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME
+- PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME
+The MUST_MATCH tags allow to define 5 nt patterns which the first and 
+the last five bases of a primer or oligo have to match. For example, 
+the pattern "NNGTN" would require the 3rd and 2nd last bases to be G and 
+T respectively.
+
+Minor fixes:
+
+1. Fixed two bugs in ntdpal and oligotm that caused segmentation fault
+whenever these binaries were called without specifying a given
+option value.
+
 release 2.3.5 2013-01-03 ===============================================
 
 Important changes:
