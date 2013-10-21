@@ -31,7 +31,7 @@ perl create_tag_files_and_docs.pl
 firefox script_output/primer3_manual.htm
 
 # 3 TEST TAGGED RELEASE
-svn co https://primer3.svn.sourceforge.net/svnroot/primer3/primer3/tags/release-<release number>
+svn checkout svn://svn.code.sf.net/p/primer3/code/primer3/tags/release-<release number>
 # OPTIONALLY, test it all again in this directory (May not be worth it
 # since testing takes much longer than creating the files system copy
 # plus the .tar.gz file, and then testing that.)
