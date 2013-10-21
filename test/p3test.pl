@@ -74,7 +74,7 @@ sub main() {
     # select STDERR;
     $| = 1;
 
-    print "$0 for primer3_core version 2.3.5\n";
+    print "$0 for primer3_core version 2.3.6\n";
     
     $all_ok = 1;
     my $overall_start_time = time();
@@ -252,6 +252,7 @@ sub main() {
 			'primer_thal_args',
 	                'primer_thal_max_seq_error',
 	                'primer_first_base_index',
+                        'primer_must_match',
 
 			'test_compl_error',
 			'test_left_to_right_of_right',

@@ -118,6 +118,16 @@ extern double strtod();
        continue;                                   \
    }
 
+#define OVERWRITE_COMPARE_AND_MALLOC(TAG,T)        \
+   if (COMPARE(TAG)) {                             \
+       if (T) {                                    \
+	 free(T);				   \
+       }                                           \
+       T = (char*) _rb_safe_malloc(datum_len + 1); \
+       strcpy(T, datum);                           \
+       continue;                                   \
+   }
+
 #define COMPARE_FLOAT(TAG,T)                      \
    if (COMPARE(TAG)) {                            \
        parse_double(TAG, datum, &(T), parse_err); \
@@ -513,6 +523,11 @@ read_boulder_record(FILE *file_input,
         }
         continue;
       }
+      /* added by A. Untergasser */
+      OVERWRITE_COMPARE_AND_MALLOC("PRIMER_MUST_MATCH_FIVE_PRIME", pa->p_args.must_match_five_prime);
+      OVERWRITE_COMPARE_AND_MALLOC("PRIMER_MUST_MATCH_THREE_PRIME", pa->p_args.must_match_three_prime);
+      OVERWRITE_COMPARE_AND_MALLOC("PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME", pa->o_args.must_match_five_prime);
+      OVERWRITE_COMPARE_AND_MALLOC("PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME", pa->o_args.must_match_three_prime);
       /* weights for objective functions  */
       /* CHANGE TEMP/temp -> TM/tm */
       COMPARE_FLOAT("PRIMER_WT_TM_GT", pa->p_args.weights.temp_gt);

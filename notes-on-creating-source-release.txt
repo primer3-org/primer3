@@ -4,7 +4,7 @@
 # 0.3 change in p3test.pl:77 (primer3/primer3/trunk/test)
 
 # 1 DO A CLEAN CHECKOUT AND TEST IT
-svn co https://primer3.svn.sourceforge.net/svnroot/primer3/primer3/trunk
+svn checkout svn://svn.code.sf.net/p/primer3/code/primer3/trunk
 
 # go to primer3/primer3/trunk/src/ and do
 
