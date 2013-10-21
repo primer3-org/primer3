@@ -74,7 +74,7 @@ sub main() {
     # select STDERR;
     $| = 1;
 
-    print "$0 for primer3_core version 2.3.5\n";
+    print "$0 for primer3_core version 2.3.6\n";
     
     $all_ok = 1;
     my $overall_start_time = time();
