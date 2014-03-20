@@ -1,3 +1,9 @@
+release 2.3.7 201x-xx-xx ===============================================
+
+Minor changes:
+1. updated oligotm executable to accept float values as input for the 
+concentration of monovalent cations and for concentration of DNA strands.
+
 release 2.3.6 2013-10-22 ===============================================
 
 Important changes:
