@@ -111,7 +111,7 @@ main(int argc, char **argv)
 "    51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA\n";
 
    char *endptr, *seq;
-   long mv = 50, d = 50;
+   double mv = 50, d = 50;
    double dv = 0, n = 0;
    int tm_santalucia=0, salt_corrections=0;
    int i, j, len;
@@ -128,7 +128,7 @@ main(int argc, char **argv)
 	 fprintf(stderr, msg, argv[0]);
 	 exit(-1);
        }
-       mv = strtol(argv[i+1], &endptr, 10);
+       mv = strtod(argv[i+1], &endptr);
        if ('\0' != *endptr) {
 	 fprintf(stderr, msg, argv[0]);
 	 exit(-1);
@@ -164,7 +164,7 @@ main(int argc, char **argv)
 	 fprintf(stderr, msg, argv[0]);
 	 exit(-1);
        }
-       d = strtol(argv[i+1], &endptr, 10);
+       d = strtod(argv[i+1], &endptr);
        if ('\0' != *endptr) {
 	 fprintf(stderr, msg, argv[0]);
 	 exit(-1);
