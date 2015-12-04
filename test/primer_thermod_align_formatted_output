@@ -5,8 +5,8 @@ No internal oligo mishyb library specified
 Using 0-based sequence positions
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         11   20   59.70   55.00    0.00   0.00    0.00 GACTTCACTTTCCGACCCTG
-RIGHT PRIMER       113   20   59.96   50.00    9.59   0.00    0.00 TGACGGTCATCATGGTGAGT
-INTERNAL OLIGO      44   20   60.71   60.00    0.00   0.00   40.53 CACCCACGAGTGAAGACTCC
+RIGHT PRIMER       113   20   59.96   50.00    3.73   0.00    0.00 TGACGGTCATCATGGTGAGT
+INTERNAL OLIGO      44   20   60.71   60.00    1.74   0.00   40.53 CACCCACGAGTGAAGACTCC
 SEQUENCE SIZE: 178
 INCLUDED REGION SIZE: 178
 
@@ -30,24 +30,24 @@ ADDITIONAL OLIGOS
                     start  len      tm     gc%  any_th  3'_th hairpin seq
 
  1 LEFT PRIMER         10   20   59.70   50.00    0.00   0.00    0.00 TGACTTCACTTTCCGACCCT
-   RIGHT PRIMER       113   20   59.96   50.00    9.59   0.00    0.00 TGACGGTCATCATGGTGAGT
-   INTERNAL OLIGO      44   20   60.71   60.00    0.00   0.00   40.53 CACCCACGAGTGAAGACTCC
+   RIGHT PRIMER       113   20   59.96   50.00    3.73   0.00    0.00 TGACGGTCATCATGGTGAGT
+   INTERNAL OLIGO      44   20   60.71   60.00    1.74   0.00   40.53 CACCCACGAGTGAAGACTCC
    PRODUCT SIZE: 104, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  2 LEFT PRIMER         11   20   59.70   55.00    0.00   0.00    0.00 GACTTCACTTTCCGACCCTG
-   RIGHT PRIMER       114   20   60.11   55.00    9.19   0.00    0.00 CTGACGGTCATCATGGTGAG
-   INTERNAL OLIGO      44   20   60.71   60.00    0.00   0.00   40.53 CACCCACGAGTGAAGACTCC
+   RIGHT PRIMER       114   20   60.11   55.00    3.73   0.00    0.00 CTGACGGTCATCATGGTGAG
+   INTERNAL OLIGO      44   20   60.71   60.00    1.74   0.00   40.53 CACCCACGAGTGAAGACTCC
    PRODUCT SIZE: 104, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  3 LEFT PRIMER         10   20   59.70   50.00    0.00   0.00    0.00 TGACTTCACTTTCCGACCCT
-   RIGHT PRIMER       114   20   60.11   55.00    9.19   0.00    0.00 CTGACGGTCATCATGGTGAG
-   INTERNAL OLIGO      44   20   60.71   60.00    0.00   0.00   40.53 CACCCACGAGTGAAGACTCC
+   RIGHT PRIMER       114   20   60.11   55.00    3.73   0.00    0.00 CTGACGGTCATCATGGTGAG
+   INTERNAL OLIGO      44   20   60.71   60.00    1.74   0.00   40.53 CACCCACGAGTGAAGACTCC
    PRODUCT SIZE: 105, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER          2   20   59.29   50.00    0.00   0.00    0.00 GCCGAGGATGACTTCACTTT
-   RIGHT PRIMER       113   20   59.96   50.00    9.59   0.00    0.00 TGACGGTCATCATGGTGAGT
-   INTERNAL OLIGO      44   20   60.71   60.00    0.00   0.00   40.53 CACCCACGAGTGAAGACTCC
-   PRODUCT SIZE: 112, PAIR ANY_TH COMPL: 8.76, PAIR 3'_TH COMPL: 2.04
+   RIGHT PRIMER       113   20   59.96   50.00    3.73   0.00    0.00 TGACGGTCATCATGGTGAGT
+   INTERNAL OLIGO      44   20   60.71   60.00    1.74   0.00   40.53 CACCCACGAGTGAAGACTCC
+   PRODUCT SIZE: 112, PAIR ANY_TH COMPL: 7.99, PAIR 3'_TH COMPL: 3.92
 
 Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
@@ -58,7 +58,7 @@ Right   1290     0     0     0     0    32     0    38  1096      0     0     0 
 Intl    1565     0     0     0     0    32     0    60  1290      0     0     0     0     0   183
 Pair Stats:
 considered 25, unacceptable product size 20, ok 5
-libprimer3 release 2.3.5
+libprimer3 release 2.3.6
 
 
 PRIMER PICKING RESULTS FOR any_1
@@ -67,9 +67,9 @@ No mispriming library specified
 No internal oligo mishyb library specified
 Using 0-based sequence positions
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
-LEFT PRIMER         17   20   60.01   50.00    2.42   0.00   42.83 CAAGCAATACGACCTGCTGA
+LEFT PRIMER         17   20   60.01   50.00    6.12   0.00   42.83 CAAGCAATACGACCTGCTGA
 RIGHT PRIMER       168   20   59.98   50.00    0.00   0.00   39.48 ATCGCAAGTGAGGATGAGCT
-INTERNAL OLIGO     116   21   60.58   38.10   12.25  10.49   37.82 CGTGTGCAAAACATTTTCACA
+INTERNAL OLIGO     116   21   60.58   38.10    8.89   8.89   37.82 CGTGTGCAAAACATTTTCACA
 SEQUENCE SIZE: 404
 INCLUDED REGION SIZE: 404
 
@@ -104,22 +104,22 @@ KEYS (in order of precedence):
 ADDITIONAL OLIGOS
                     start  len      tm     gc%  any_th  3'_th hairpin seq
 
- 1 LEFT PRIMER         17   20   60.01   50.00    2.42   0.00   42.83 CAAGCAATACGACCTGCTGA
+ 1 LEFT PRIMER         17   20   60.01   50.00    6.12   0.00   42.83 CAAGCAATACGACCTGCTGA
    RIGHT PRIMER       191   20   59.94   40.00    5.65   0.00   39.80 CAAAAGATTTTGGCGGGTAA
    INTERNAL OLIGO     149   20   59.98   50.00    0.00   0.00    0.00 AGCTCATCCTCACTTGCGAT
    PRODUCT SIZE: 175, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
- 2 LEFT PRIMER         17   20   60.01   50.00    2.42   0.00   42.83 CAAGCAATACGACCTGCTGA
-   RIGHT PRIMER       368   20   59.75   60.00    8.58   0.00    0.00 CCGTACGCACTATAGGAGCC
+ 2 LEFT PRIMER         17   20   60.01   50.00    6.12   0.00   42.83 CAAGCAATACGACCTGCTGA
+   RIGHT PRIMER       368   20   59.75   60.00    7.28   0.00    0.00 CCGTACGCACTATAGGAGCC
    INTERNAL OLIGO     149   20   59.98   50.00    0.00   0.00    0.00 AGCTCATCCTCACTTGCGAT
    PRODUCT SIZE: 352, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  3 LEFT PRIMER        149   20   59.98   50.00    0.00   0.00    0.00 AGCTCATCCTCACTTGCGAT
-   RIGHT PRIMER       368   20   59.75   60.00    8.58   0.00    0.00 CCGTACGCACTATAGGAGCC
+   RIGHT PRIMER       368   20   59.75   60.00    7.28   0.00    0.00 CCGTACGCACTATAGGAGCC
    INTERNAL OLIGO     172   20   59.94   40.00    4.21   4.21   43.62 TTACCCGCCAAAATCTTTTG
-   PRODUCT SIZE: 220, PAIR ANY_TH COMPL: 7.44, PAIR 3'_TH COMPL: 0.00
+   PRODUCT SIZE: 220, PAIR ANY_TH COMPL: 9.42, PAIR 3'_TH COMPL: 0.00
 
- 4 LEFT PRIMER         17   20   60.01   50.00    2.42   0.00   42.83 CAAGCAATACGACCTGCTGA
+ 4 LEFT PRIMER         17   20   60.01   50.00    6.12   0.00   42.83 CAAGCAATACGACCTGCTGA
    RIGHT PRIMER       232   20   59.70   50.00    0.00   0.00    0.00 CACTAAAGCGGGATTTGAGG
    INTERNAL OLIGO     149   20   59.98   50.00    0.00   0.00    0.00 AGCTCATCCTCACTTGCGAT
    PRODUCT SIZE: 216, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
@@ -133,7 +133,7 @@ Right   3397     0     0     0     0     0     0   839  1673      0     0     1 
 Intl    3672     0     0     0     0     0     0   953  1734      0     0    14    22     0   949
 Pair Stats:
 considered 58, unacceptable product size 51, ok 7
-libprimer3 release 2.3.5
+libprimer3 release 2.3.6
 
 
 PRIMER PICKING RESULTS FOR any_salt
@@ -186,20 +186,20 @@ ADDITIONAL OLIGOS
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
- 2 LEFT PRIMER        224   20   60.39   45.00    0.00   0.00    0.00 GCTTTAGTGTAGTAGTGAGC
-   RIGHT PRIMER       401   20   61.03   40.00    0.00   0.00    0.00 ATACTGATGTCTATAGTGCG
-   INTERNAL OLIGO     340   20   59.83   45.00    0.00   0.00    0.00 GCAGAAAAAGGCTCCTATAG
-   PRODUCT SIZE: 178, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
-
- 3 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
+ 2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
- 4 LEFT PRIMER        103   19   59.90   42.11    2.59   0.51    0.00 TCTATCTGTACAACGTGTG
+ 3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+
+ 4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
+   RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
+   INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
+   PRODUCT SIZE: 145, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
 Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
@@ -209,8 +209,8 @@ Left    3397     0     0     0     0     0     0    52  3139      0     0     1 
 Right   3397     0     0     0     0     0     0    59  3137      0     0     0    22     0   179
 Intl    3672     0     0     0     0     0     0   432  2545      0     0    10    22     0   663
 Pair Stats:
-considered 15, unacceptable product size 10, ok 5
-libprimer3 release 2.3.5
+considered 18, unacceptable product size 11, high template mispriming score 1, ok 6
+libprimer3 release 2.3.6
 
 
 PRIMER PICKING RESULTS FOR any_weight
@@ -263,20 +263,20 @@ ADDITIONAL OLIGOS
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
- 2 LEFT PRIMER        224   20   60.39   45.00    0.00   0.00    0.00 GCTTTAGTGTAGTAGTGAGC
-   RIGHT PRIMER       401   20   61.03   40.00    0.00   0.00    0.00 ATACTGATGTCTATAGTGCG
-   INTERNAL OLIGO     340   20   59.83   45.00    0.00   0.00    0.00 GCAGAAAAAGGCTCCTATAG
-   PRODUCT SIZE: 178, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
-
- 3 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
+ 2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
- 4 LEFT PRIMER        103   19   59.90   42.11    2.59   0.51    0.00 TCTATCTGTACAACGTGTG
+ 3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+
+ 4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
+   RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
+   INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
+   PRODUCT SIZE: 145, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
 Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
@@ -286,8 +286,8 @@ Left    3397     0     0     0     0     0     0    52  3139      0     0     1 
 Right   3397     0     0     0     0     0     0    59  3137      0     0     0    22     0   179
 Intl    3672     0     0     0     0     0     0   432  2545      0     0    10    22     0   663
 Pair Stats:
-considered 15, unacceptable product size 10, ok 5
-libprimer3 release 2.3.5
+considered 20, unacceptable product size 11, high template mispriming score 3, ok 6
+libprimer3 release 2.3.6
 
 
 PRIMER PICKING RESULTS FOR any_2
@@ -340,31 +340,31 @@ ADDITIONAL OLIGOS
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
- 2 LEFT PRIMER        224   20   60.39   45.00    0.00   0.00    0.00 GCTTTAGTGTAGTAGTGAGC
-   RIGHT PRIMER       401   20   61.03   40.00    0.00   0.00    0.00 ATACTGATGTCTATAGTGCG
-   INTERNAL OLIGO     340   20   59.83   45.00    0.00   0.00    0.00 GCAGAAAAAGGCTCCTATAG
-   PRODUCT SIZE: 178, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
-
- 3 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
+ 2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
- 4 LEFT PRIMER        103   19   59.90   42.11    2.59   0.51    0.00 TCTATCTGTACAACGTGTG
+ 3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+
+ 4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
+   RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
+   INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
+   PRODUCT SIZE: 145, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
 Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3155     0     0     0     0     0     0    52  2924     32     0     1    22     0   124
-Right   3213     0     0     0     0     0     0    59  2968     23     0     0    19     0   144
-Intl    3185     0     0     0     0     0     0   432  2188     82     0    10    22     0   451
+Left    3146     0     0     0     0     0     0    52  2915     33     0     1    22     0   123
+Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
+Intl    3126     0     0     0     0     0     0   432  2140     83     0    10    22     0   439
 Pair Stats:
-considered 15, unacceptable product size 10, ok 5
-libprimer3 release 2.3.5
+considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
+libprimer3 release 2.3.6
 
 
 PRIMER PICKING RESULTS FOR any_no_effect
@@ -417,15 +417,15 @@ ADDITIONAL OLIGOS
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
- 2 LEFT PRIMER        224   20   60.39   45.00    0.00   0.00    0.00 GCTTTAGTGTAGTAGTGAGC
-   RIGHT PRIMER       401   20   61.03   40.00    0.00   0.00    0.00 ATACTGATGTCTATAGTGCG
-   INTERNAL OLIGO     340   20   59.83   45.00    0.00   0.00    0.00 GCAGAAAAAGGCTCCTATAG
-   PRODUCT SIZE: 178, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
-
- 3 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
+ 2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+
+ 3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
+   RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
+   INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
+   PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
@@ -436,12 +436,12 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3397     0     0     0     0     0     0    52  3139      1     0     1    22     0   182
+Left    3397     0     0     0     0     0     0    52  3139      0     0     1    22     0   183
 Right   3397     0     0     0     0     0     0    59  3137      0     0     0    22     0   179
-Intl    3672     0     0     0     0     0     0   432  2545     11     0     4    22     0   658
+Intl    3672     0     0     0     0     0     0   432  2545      2     0    10    22     0   661
 Pair Stats:
-considered 17, unacceptable product size 11, ok 6
-libprimer3 release 2.3.5
+considered 18, unacceptable product size 11, high template mispriming score 1, ok 6
+libprimer3 release 2.3.6
 
 
 PRIMER PICKING RESULTS FOR end_th1
@@ -494,15 +494,15 @@ ADDITIONAL OLIGOS
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
- 2 LEFT PRIMER        224   20   60.39   45.00    0.00   0.00    0.00 GCTTTAGTGTAGTAGTGAGC
-   RIGHT PRIMER       401   20   61.03   40.00    0.00   0.00    0.00 ATACTGATGTCTATAGTGCG
-   INTERNAL OLIGO     340   20   59.83   45.00    0.00   0.00    0.00 GCAGAAAAAGGCTCCTATAG
-   PRODUCT SIZE: 178, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
-
- 3 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
+ 2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+
+ 3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
+   RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
+   INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
+   PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
@@ -513,12 +513,12 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3397     0     0     0     0     0     0    52  3139      1     0     1    22     0   182
+Left    3397     0     0     0     0     0     0    52  3139      0     0     1    22     0   183
 Right   3397     0     0     0     0     0     0    59  3137      0     0     0    22     0   179
-Intl    3672     0     0     0     0     0     0   432  2545     11     0     4    22     0   658
+Intl    3672     0     0     0     0     0     0   432  2545      2     0    10    22     0   661
 Pair Stats:
-considered 17, unacceptable product size 11, ok 6
-libprimer3 release 2.3.5
+considered 18, unacceptable product size 11, high template mispriming score 1, ok 6
+libprimer3 release 2.3.6
 
 
 PRIMER PICKING RESULTS FOR end_th2
@@ -571,15 +571,15 @@ ADDITIONAL OLIGOS
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
- 2 LEFT PRIMER        224   20   60.39   45.00    0.00   0.00    0.00 GCTTTAGTGTAGTAGTGAGC
-   RIGHT PRIMER       401   20   61.03   40.00    0.00   0.00    0.00 ATACTGATGTCTATAGTGCG
-   INTERNAL OLIGO     340   20   59.83   45.00    0.00   0.00    0.00 GCAGAAAAAGGCTCCTATAG
-   PRODUCT SIZE: 178, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
-
- 3 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
+ 2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+
+ 3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
+   RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
+   INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
+   PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
@@ -590,12 +590,12 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3075     0     0     0     0     0     0    52  2860     42     0     0    22     0    99
-Right   3118     0     0     0     0     0     0    59  2890     38     0     0    17     0   114
-Intl    2916     0     0     0     0     0     0   432  1999    116     0     4    22     0   343
+Left    3089     0     0     0     0     0     0    52  2863     40     0     1    22     0   111
+Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
+Intl    3030     0     0     0     0     0     0   432  2088    102     0    10    22     0   376
 Pair Stats:
-considered 14, unacceptable product size 5, ok 9
-libprimer3 release 2.3.5
+considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
+libprimer3 release 2.3.6
 
 
 PRIMER PICKING RESULTS FOR hairpin1
@@ -648,15 +648,15 @@ ADDITIONAL OLIGOS
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
- 2 LEFT PRIMER        224   20   60.39   45.00    0.00   0.00    0.00 GCTTTAGTGTAGTAGTGAGC
-   RIGHT PRIMER       401   20   61.03   40.00    0.00   0.00    0.00 ATACTGATGTCTATAGTGCG
-   INTERNAL OLIGO     340   20   59.83   45.00    0.00   0.00    0.00 GCAGAAAAAGGCTCCTATAG
-   PRODUCT SIZE: 178, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
-
- 3 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
+ 2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+
+ 3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
+   RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
+   INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
+   PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
@@ -667,12 +667,12 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3075     0     0     0     0     0     0    52  2860     42     0     0    22     0    99
-Right   3118     0     0     0     0     0     0    59  2890     38     0     0    17     0   114
-Intl    2916     0     0     0     0     0     0   432  1999    116     0     4    22     0   343
+Left    3089     0     0     0     0     0     0    52  2863     40     0     8    22     0   104
+Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
+Intl    3030     0     0     0     0     0     0   432  2088    102     0    10    22     0   376
 Pair Stats:
-considered 14, unacceptable product size 5, ok 9
-libprimer3 release 2.3.5
+considered 19, unacceptable product size 8, high template mispriming score 3, ok 8
+libprimer3 release 2.3.6
 
 
 PRIMER PICKING RESULTS FOR hairpin2
@@ -725,15 +725,15 @@ ADDITIONAL OLIGOS
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
- 2 LEFT PRIMER        224   20   60.39   45.00    0.00   0.00    0.00 GCTTTAGTGTAGTAGTGAGC
-   RIGHT PRIMER       401   20   61.03   40.00    0.00   0.00    0.00 ATACTGATGTCTATAGTGCG
-   INTERNAL OLIGO     340   20   59.83   45.00    0.00   0.00    0.00 GCAGAAAAAGGCTCCTATAG
-   PRODUCT SIZE: 178, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
-
- 3 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
+ 2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+
+ 3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
+   RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
+   INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
+   PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
@@ -744,12 +744,12 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3075     0     0     0     0     0     0    52  2860     42     0     0    22     0    99
-Right   3118     0     0     0     0     0     0    59  2890     38     0     0    17     0   114
-Intl    2916     0     0     0     0     0     0   432  1999    116     0     4    22     0   343
+Left    3089     0     0     0     0     0     0    52  2863     40     0     1    22     0   111
+Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
+Intl    3030     0     0     0     0     0     0   432  2088    102     0    10    22     0   376
 Pair Stats:
-considered 14, unacceptable product size 5, ok 9
-libprimer3 release 2.3.5
+considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
+libprimer3 release 2.3.6
 
 
 PRIMER PICKING RESULTS FOR hairpin3
@@ -802,15 +802,15 @@ ADDITIONAL OLIGOS
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
- 2 LEFT PRIMER        224   20   60.39   45.00    0.00   0.00    0.00 GCTTTAGTGTAGTAGTGAGC
-   RIGHT PRIMER       401   20   61.03   40.00    0.00   0.00    0.00 ATACTGATGTCTATAGTGCG
-   INTERNAL OLIGO     340   20   59.83   45.00    0.00   0.00    0.00 GCAGAAAAAGGCTCCTATAG
-   PRODUCT SIZE: 178, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
-
- 3 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
+ 2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+
+ 3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
+   RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
+   INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
+   PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
@@ -821,12 +821,12 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3075     0     0     0     0     0     0    52  2860     42     0     0    22     0    99
-Right   3118     0     0     0     0     0     0    59  2890     38     0     0    17     0   114
-Intl    2916     0     0     0     0     0     0   432  1999    116     0    22    22     0   325
+Left    3089     0     0     0     0     0     0    52  2863     40     0     1    22     0   111
+Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
+Intl    3030     0     0     0     0     0     0   432  2088    102     0    28    22     0   358
 Pair Stats:
-considered 14, unacceptable product size 5, ok 9
-libprimer3 release 2.3.5
+considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
+libprimer3 release 2.3.6
 
 
 PRIMER PICKING RESULTS FOR template1
@@ -884,10 +884,10 @@ ADDITIONAL OLIGOS
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
- 3 LEFT PRIMER        224   20   60.39   45.00    0.00   0.00    0.00 GCTTTAGTGTAGTAGTGAGC
-   RIGHT PRIMER       401   20   61.03   40.00    0.00   0.00    0.00 ATACTGATGTCTATAGTGCG
-   INTERNAL OLIGO     340   20   59.83   45.00    0.00   0.00    0.00 GCAGAAAAAGGCTCCTATAG
-   PRODUCT SIZE: 178, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+ 3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
+   RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
+   INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
+   PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
@@ -898,12 +898,12 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3075     0     0     0     0     0     0    52  2860     42     0     0    22     0    99
-Right   3118     0     0     0     0     0     0    59  2890     38     0     0    17     0   114
-Intl    2916     0     0     0     0     0     0   432  1999    116     0    22    22     0   325
+Left    3089     0     0     0     0     0     0    52  2863     40     0     1    22     0   111
+Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
+Intl    3030     0     0     0     0     0     0   432  2088    102     0    28    22     0   358
 Pair Stats:
-considered 14, unacceptable product size 5, ok 9
-libprimer3 release 2.3.5
+considered 20, unacceptable product size 11, high template mispriming score 1, ok 8
+libprimer3 release 2.3.6
 
 
 PRIMER PICKING RESULTS FOR template2
@@ -961,10 +961,10 @@ ADDITIONAL OLIGOS
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
- 3 LEFT PRIMER        224   20   60.39   45.00    0.00   0.00    0.00 GCTTTAGTGTAGTAGTGAGC
-   RIGHT PRIMER       401   20   61.03   40.00    0.00   0.00    0.00 ATACTGATGTCTATAGTGCG
-   INTERNAL OLIGO     340   20   59.83   45.00    0.00   0.00    0.00 GCAGAAAAAGGCTCCTATAG
-   PRODUCT SIZE: 178, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+ 3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
+   RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
+   INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
+   PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
@@ -975,12 +975,12 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3075     0     0     0     0     0     0    52  2860     42     0     0    22     0    99
-Right   3118     0     0     0     0     0     0    59  2890     38     0     0    17     0   114
-Intl    2916     0     0     0     0     0     0   432  1999    116     0    22    22     0   325
+Left    3089     0     0     0     0     0     0    52  2863     40     0     1    22     0   111
+Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
+Intl    3030     0     0     0     0     0     0   432  2088    102     0    28    22     0   358
 Pair Stats:
-considered 14, unacceptable product size 5, ok 9
-libprimer3 release 2.3.5
+considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
+libprimer3 release 2.3.6
 
 
 PRIMER PICKING RESULTS FOR template2_and_repeat_library
@@ -1038,10 +1038,10 @@ ADDITIONAL OLIGOS
    INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00       AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
- 3 LEFT PRIMER        224   20   60.39   45.00    0.00   0.00    0.00 11.00 GCTTTAGTGTAGTAGTGAGC
-   RIGHT PRIMER       401   20   61.03   40.00    0.00   0.00    0.00 12.00 ATACTGATGTCTATAGTGCG
-   INTERNAL OLIGO     340   20   59.83   45.00    0.00   0.00    0.00       GCAGAAAAAGGCTCCTATAG
-   PRODUCT SIZE: 178, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+ 3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 11.00 TCTATCTGTACAACGTGTG
+   RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 11.00 GACCTGTAATAGCTCACTAC
+   INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00       AAACAGCTCATCCTCACTTG
+   PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 11.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 12.00 GCTCACTACTACACTAAAGC
@@ -1052,12 +1052,12 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-   lib  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin   sim     X  stab    ok
-Left    3075     0     0     0     0     0     0    52  2860     42     0     0     0    22     0    99
-Right   3118     0     0     0     0     0     0    59  2890     38     0     0     0    17     0   114
-Intl    2916     0     0     0     0     0     0   432  1999    116     0    22     0    22     0   325
+Left    3089     0     0     0     0     0     0    52  2863     40     0     1     0    22     0   111
+Right   3209     0     0     0     0     0     0    59  2966     24     0     0     0    18     0   142
+Intl    3030     0     0     0     0     0     0   432  2088    102     0    28     0    22     0   358
 Pair Stats:
-considered 14, unacceptable product size 5, ok 9
-libprimer3 release 2.3.5
+considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
+libprimer3 release 2.3.6
 
 
 PRIMER PICKING RESULTS FOR template3
@@ -1068,28 +1068,28 @@ Using 0-based sequence positions
 WARNING: PRIMER_SALT_DIVALENT > 0.0 but PRIMER_DNTP_CONC <= 0.0; use reasonable value for PRIMER_DNTP_CONC
 
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin   rep seq
-LEFT PRIMER          8   19   59.84   31.58    0.00   0.00    0.00 12.00 CATTCAATACAAGCAATAC
-RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 12.00 GCTCACTACTACACTAAAGC
-INTERNAL OLIGO      72   20   59.96   45.00    0.00   0.00    0.00       GCTCATTAAGACCGTACGAT
+LEFT PRIMER         10   18   61.54   33.33    0.00   0.00    0.00 10.00 TTCAATACAAGCAATACG
+RIGHT PRIMER       122   18   61.01   44.44    0.00   0.00    0.00 11.00 GCACACGTTGTACAGATA
+INTERNAL OLIGO      55   20   59.80   40.00    0.00   0.00    0.00       TCATCAAAGGAAAGTGAGCT
 SEQUENCE SIZE: 404
 INCLUDED REGION SIZE: 404
 
-PRODUCT SIZE: 236, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+PRODUCT SIZE: 113, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
     0 AGTGAGCTCATTCAATACAAGCAATACGACCTGCTGATTATCGACGATATTCAGTTCATC
-              >>>>>>>>>>>>>>>>>>>                                 
+                >>>>>>>>>>>>>>>>>>                           ^^^^^
 
    60 AAAGGAAAGTGAGCTCATTAAGACCGTACGATGGAAGAATTTTTCTATCTGTACAACGTG
-                  ^^^^^^^^^^^^^^^^^^^^                            
+      ^^^^^^^^^^^^^^^                              <<<<<<<<<<<<<<<
 
   120 TGCAAAACATTTTCACAATGAGAAAAAACAGCTCATCCTCACTTGCGATGTTTTACCCGC
-                                                                  
+      <<<                                                         
 
   180 CAAAATCTTTTGCACCGAAGGTATGGACGACCGCCTCAAATCCCGCTTTAGTGTAGTAGT
-                                                  <<<<<<<<<<<<<<<<
+                                                                  
 
   240 GAGCTATTACAGGTCGTGGGGGCTGACCGCAGTAAGCTGCGGCTTTGGAACTCGAGCCGC
-      <<<<                                                        
+                                                                  
 
   300 CCGAATTGGAAATGCGCAAAACCGTGTCTATCGCCATTTTGCAGAAAAAGGCTCCTATAG
                                                                   
@@ -1105,35 +1105,35 @@ KEYS (in order of precedence):
 ADDITIONAL OLIGOS
                     start  len      tm     gc%  any_th  3'_th hairpin   rep seq
 
- 1 LEFT PRIMER         46   19   60.82   31.58    0.00   0.00    0.00 10.00 ATATTCAGTTCATCAAAGG
+ 1 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 11.00 TCTATCTGTACAACGTGTG
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 12.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO      72   20   59.96   45.00    0.00   0.00    0.00       GCTCATTAAGACCGTACGAT
-   PRODUCT SIZE: 198, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+   INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00       AAACAGCTCATCCTCACTTG
+   PRODUCT SIZE: 141, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  2 LEFT PRIMER          8   19   59.84   31.58    0.00   0.00    0.00 12.00 CATTCAATACAAGCAATAC
-   RIGHT PRIMER       241   19   59.75   42.11    0.00   0.00    0.00 11.00 TCACTACTACACTAAAGCG
-   INTERNAL OLIGO      72   20   59.96   45.00    0.00   0.00    0.00       GCTCATTAAGACCGTACGAT
-   PRODUCT SIZE: 234, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
-
- 3 LEFT PRIMER          7   20   62.06   30.00    0.00   0.00    0.00 12.00 TCATTCAATACAAGCAATAC
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 12.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO      72   20   59.96   45.00    0.00   0.00    0.00       GCTCATTAAGACCGTACGAT
-   PRODUCT SIZE: 237, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+   INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00       AAACAGCTCATCCTCACTTG
+   PRODUCT SIZE: 236, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
- 4 LEFT PRIMER          8   19   59.84   31.58    0.00   0.00    0.00 12.00 CATTCAATACAAGCAATAC
-   RIGHT PRIMER       242   20   61.41   45.00    0.00   0.00    0.00 12.00 CTCACTACTACACTAAAGCG
-   INTERNAL OLIGO      72   20   59.96   45.00    0.00   0.00    0.00       GCTCATTAAGACCGTACGAT
-   PRODUCT SIZE: 235, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+ 3 LEFT PRIMER         46   19   60.82   31.58    0.00   0.00    0.00 10.00 ATATTCAGTTCATCAAAGG
+   RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 12.00 GCTCACTACTACACTAAAGC
+   INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00       AAACAGCTCATCCTCACTTG
+   PRODUCT SIZE: 198, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+
+ 4 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 11.00 TCTATCTGTACAACGTGTG
+   RIGHT PRIMER       241   19   59.75   42.11    0.00   0.00    0.00 11.00 TCACTACTACACTAAAGCG
+   INTERNAL OLIGO     145   20   59.87   45.00    0.00   0.00    0.00       AAACAGCTCATCCTCACTTG
+   PRODUCT SIZE: 139, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
 Statistics
          con   too    in    in   not          no    tm    tm   high  high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-   lib  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin   sim     X  stab    ok
-Left    3075     0     0     0     0     0     0    52  2860     42     0    18     3    22     0    78
-Right   3118     0     0     0     0     0     0    59  2890     38     0    25     0    17     0    89
-Intl    2916     0     0     0     0     0     0   432  1999    116     0    22     0    22     0   325
+Left    3089     0     0     0     0     0     0    52  2863     40     0    25     3    22     0    84
+Right   3209     0     0     0     0     0     0    59  2966     24     0    38     0    18     0   104
+Intl    3030     0     0     0     0     0     0   432  2088    102     0    28     0    22     0   358
 Pair Stats:
-considered 7017, unacceptable product size 2861, high any compl 150, no internal oligo 210, high template mispriming score 97, ok 3699
-libprimer3 release 2.3.5
+considered 8911, unacceptable product size 3799, high any compl 86, no internal oligo 571, high template mispriming score 119, ok 4336
+libprimer3 release 2.3.6
 
 

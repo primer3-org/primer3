@@ -29,7 +29,7 @@ AC_GG 500
 AC_GT inf
 AC_TA 5300
 AC_TC 0
-AC_TG  -8400
+AC_TG inf
 AC_TT 700
 AG_AA inf
 AG_AC -900
@@ -59,7 +59,7 @@ AT_GA -700
 AT_GC inf
 AT_GG inf
 AT_GT inf
-AT_TA  -7200
+AT_TA inf
 AT_TC -1200
 AT_TG -2500
 AT_TT -2700
@@ -191,7 +191,7 @@ GT_TA -2500
 GT_TC inf
 GT_TG 4100
 GT_TT inf
-TA_AA 4700
+TA_AA inf
 TA_AC 3400
 TA_AG 700
 TA_AT inf
@@ -247,7 +247,7 @@ TT_CA 700
 TT_CC inf
 TT_CG inf
 TT_CT inf
-TT_GA -100
+TT_GA -1000
 TT_GC inf
 TT_GG 5800
 TT_GT inf

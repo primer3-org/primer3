@@ -39,7 +39,7 @@ AG_CC	inf
 AG_CG	inf
 AG_CT	inf
 AG_GA	inf
-AG_GC	-13.2
+AG_GC	inf
 AG_GG	inf
 AG_GT	inf
 AG_TA	inf
@@ -121,7 +121,7 @@ CT_CT	inf
 CT_GA	-21.0
 CT_GC	inf
 CT_GG	inf
-CT_GT	-15.8
+CT_GT	inf
 CT_TA	inf
 CT_TC	inf
 CT_TG	inf
@@ -164,7 +164,7 @@ GG_AG	inf
 GG_AT	inf
 GG_CA	inf
 GG_CC	-19.9
-GG_CG	-15.8
+GG_CG	inf
 GG_CT	inf
 GG_GA	inf
 GG_GC	inf
@@ -246,7 +246,7 @@ TT_CA	inf
 TT_CC	inf
 TT_CG	inf
 TT_CT	inf
-TT_GA	-9
+TT_GA	inf
 TT_GC	inf
 TT_GG	inf
 TT_GT	inf

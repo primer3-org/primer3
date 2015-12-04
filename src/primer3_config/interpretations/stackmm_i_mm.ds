@@ -35,7 +35,7 @@ AG_AC	-4.2
 AG_AG	inf
 AG_AT	inf
 AG_CA	inf
-AG_CC	0.6
+AG_CC	-0.6
 AG_CG	inf
 AG_CT	inf
 AG_GA	inf
@@ -88,7 +88,7 @@ CC_CG	8.9
 CC_CT	inf
 CC_GA	-0.6
 CC_GC	-7.2
-CC_GG	-19.9
+CC_GG	inf
 CC_GT	-4.5
 CC_TA	inf
 CC_TC	inf
@@ -163,7 +163,7 @@ GG_AC	-2.3
 GG_AG	inf
 GG_AT	inf
 GG_CA	3.2
-GG_CC	-19.9
+GG_CC	inf
 GG_CG	-15.8
 GG_CT	10.4
 GG_GA	inf
@@ -174,7 +174,7 @@ GG_TA	inf
 GG_TC	80
 GG_TG	inf
 GG_TT	16.3
-GT_AA	23
+GT_AA	-2.3
 GT_AC	inf
 GT_AG	inf
 GT_AT	inf
@@ -239,7 +239,7 @@ TG_TC	-15.8
 TG_TG	inf
 TG_TT	inf
 TT_AA	inf
-TT_AC	-7
+TT_AC	0.7
 TT_AG	-5.3
 TT_AT	-1.5
 TT_CA	0.2
