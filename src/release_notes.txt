@@ -1,3 +1,62 @@
+release 2.3.8 201x-xx-xx ===============================================
+Major correction:
+In some cases, ntthal resulted with two different dimer structures depending
+on the order of the two oligo sequences were given by the user. 
+
+For example:
+
+ntthal -s1 ACTGGAAAGAGGAAGGACTGGT -s2 TGGGACATCTCTATACCTTCCTCT
+
+Calculated thermodynamical parameters for dimer:        dS = -207.817 dH = -73000     dG = -8545.56   t = 26.0559
+SEQ     ACTGGAAA        ACTGGT---------
+SEQ             GAGGAAGG
+STR             CTCCTTCC
+STR            T        ATATCTCTACAGGGT
+
+
+If the order of two oligo sequences change places, ntthal resulted with
+other structure and other values of thermodynamic parameters.
+
+ntthal -s2 ACTGGAAAGAGGAAGGACTGGT -s1 TGGGACATCTCTATACCTTCCTCT
+
+Calculated thermodynamical parameters for dimer:        dS = -290.416 dH = -93600     dG = -3527.63   t = 13.4587
+SEQ     TGGGA  TCTCTATA        T-------
+SEQ          CA        CCTTCCTC
+STR          GT        GGAAGGAG
+STR        TG  CA------        AAAGGTCA
+
+
+What was modified in the code:
+
+1. calculation of melting temperature values were replaced with calculation
+of dG values as calculating Tm values cannot result always the most stabile
+dimer as dimers melting temperature depends significantly on salt correction
+2. Dimers 5` end stability was calculated only when the most stabile dimer
+was found. Now 5` ends stability is also considered at each dynamic
+programming stage.
+3. Some values of thermodynamic table were changed as they were not
+symmetrical
+4. Although AT dangling ends are more stable than AT pairing, ntthal now
+prefers AT pairing to AT dangling end.
+
+Now primer3 results:
+ntthal -s1 ACTGGAAAGAGGAAGGACTGGT -s2 TGGGACATCTCTATACCTTCCTCT
+
+Calculated thermodynamical parameters for dimer:        dS = -198.019   dH = -69700     dG = -8284.27   t = 24.4823
+SEQ     ACTGGAA         ACTGGT---------
+SEQ            AGAGGAAGG
+STR            TCTCCTTCC
+STR                     ATATCTCTACAGGGT
+
+ntthal -s2 ACTGGAAAGAGGAAGGACTGGT -s1 TGGGACATCTCTATACCTTCCTCT
+
+Calculated thermodynamical parameters for dimer:        dS = -198.019   dH = -69700     dG = -8284.27   t = 24.4823
+SEQ     TGGGACATCTCTATA         -------
+SEQ                    CCTTCCTCT
+STR                    GGAAGGAGA
+STR              TGGTCA         AAGGTCA
+
+We have also added tests for this bug.
 release 2.3.7 201x-xx-xx ===============================================
 
 Minor changes:
