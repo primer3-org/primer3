@@ -5235,7 +5235,7 @@ static int compare_nucleotides(const char a, const char b)
   if(a >= 'a' && a <= 'z'){
     x = ('A' + a - 'a');
   }
-  if(b >= 'b' && b <= 'z'){
+  if(b >= 'a' && b <= 'z'){
     y = ('A' + b - 'a');
   }
   
