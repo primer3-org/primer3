@@ -5,7 +5,7 @@
 #
 # ======================================================================
 # (c) Copyright 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2010,
-#  2011,2012
+#  2011,2012,2016
 # Whitehead Institute for Biomedical Research, Steve Rozen, 
 # Andreas Untergasser and Helen Skaletsky
 # All rights reserved.
@@ -74,7 +74,7 @@ sub main() {
     # select STDERR;
     $| = 1;
 
-    print "$0 for primer3_core version 2.3.6\n";
+    print "$0 for primer3_core version 2.3.7\n";
     
     $all_ok = 1;
     my $overall_start_time = time();

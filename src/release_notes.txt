@@ -1,5 +1,7 @@
-release 2.3.8 201x-xx-xx ===============================================
+release 2.3.7 201x-xx-xx ===============================================
+
 Major correction:
+
 In some cases, ntthal resulted with two different dimer structures depending
 on the order of the two oligo sequences were given by the user. 
 
@@ -57,9 +59,9 @@ STR                    GGAAGGAGA
 STR              TGGTCA         AAGGTCA
 
 We have also added tests for this bug.
-release 2.3.7 201x-xx-xx ===============================================
 
-Minor changes:
+Minor fixes:
+
 1. updated oligotm executable to accept float values as input for the 
 concentration of monovalent cations and for concentration of DNA strands.
 
