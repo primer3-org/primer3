@@ -46,7 +46,7 @@ main(int argc, const char**argv)
     dpal_args a;
     dpal_results r;
     const unsigned char *s1, *s2;
-    //int tmp_ret;
+    int tmp_ret;
     int i;
     int print_align_end = 0; /* 
                               * Print align_end_1 and align_end_2 from
@@ -86,7 +86,7 @@ main(int argc, const char**argv)
       "       e is equivalent to G.\n\n";
 
     if (argc < 4) {
-      //tmp_ret = fprintf(stderr, msg, argv[0]);
+      tmp_ret = fprintf(stderr, msg, argv[0]);
       exit(-1);
     }
     dpal_set_default_nt_args(&a);
@@ -176,7 +176,7 @@ main(int argc, const char**argv)
 
     dpal(s1, s2, &a, &r);
     if (r.score == DPAL_ERROR_SCORE) {
-      //tmp_ret = fprintf(stderr, "Error: %s\n", r.msg);
+      tmp_ret = fprintf(stderr, "Error: %s\n", r.msg);
       exit(-1);
     }
     if (a.score_only) {
