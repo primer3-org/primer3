@@ -88,6 +88,7 @@ main(int argc, const char**argv)
     if (argc < 4) {
       tmp_ret = fprintf(stderr, msg, argv[0]);
       exit(-1);
+      return tmp_ret;
     }
     dpal_set_default_nt_args(&a);
     for (i=1; i < argc; ++i) {
@@ -178,6 +179,7 @@ main(int argc, const char**argv)
     if (r.score == DPAL_ERROR_SCORE) {
       tmp_ret = fprintf(stderr, "Error: %s\n", r.msg);
       exit(-1);
+      return tmp_ret;
     }
     if (a.score_only) {
       printf("%.2f\n", 0.01 * r.score);
