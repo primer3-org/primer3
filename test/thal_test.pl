@@ -53,7 +53,7 @@ our $do_valgrind;
 
 our %signo;
 
-our $valgrind_exe = "/usr/local/bin/valgrind";
+our $valgrind_exe = "/usr/bin/valgrind";
 our $valgrind_format;
 our $winFlag;
 our $exe = '../src/ntthal';
@@ -118,12 +118,18 @@ sub main() {
         exit -1;
     }
 
-    if ((!-x $valgrind_exe) && ($do_valgrind)) { 
-        warn "Cannot find $valgrind_exe; will try `which valgrind`\n";
-        $valgrind_exe= `which valgrind`;
-        chomp($valgrind_exe);
-        if (!$valgrind_exe || ! -x $valgrind_exe) {
-            die "Cannot execute $valgrind_exe";
+    if ($do_valgrind) { 
+        if (!-x $valgrind_exe) {
+            print "Cannot find $valgrind_exe; will try `/usr/local/bin/valgrind`\n";
+            $valgrind_exe = "/usr/local/bin/valgrind";
+        }
+        if (!-x $valgrind_exe) {
+            warn "Cannot find $valgrind_exe; will try `which valgrind`\n";
+            $valgrind_exe= `which valgrind`;
+            chomp($valgrind_exe);
+            if (!$valgrind_exe || ! -x $valgrind_exe) {
+                die "Cannot execute $valgrind_exe";
+            }
         }
     }
 

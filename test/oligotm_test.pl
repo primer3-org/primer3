@@ -62,13 +62,19 @@ if ($winFlag && $do_valgrind) {
     exit -1;
 }
 
-my $valgrind_exe = "/usr/local/bin/valgrind";
-if ((!-x $valgrind_exe) && ($do_valgrind)) { 
-    warn "Cannot find $valgrind_exe; will try `which valgrind`\n";
-    $valgrind_exe= `which valgrind`;
-    chomp($valgrind_exe);
-    if (!$valgrind_exe || ! -x $valgrind_exe) {
-        die "Cannot execute $valgrind_exe";
+my $valgrind_exe = "/usr/bin/valgrind";
+if ($do_valgrind) { 
+   if (!-x $valgrind_exe) {
+       print "Cannot find $valgrind_exe; will try `/usr/local/bin/valgrind`\n";
+       $valgrind_exe = "/usr/local/bin/valgrind";
+    }
+    if (!-x $valgrind_exe) {
+       warn "Cannot find $valgrind_exe; will try `which valgrind`\n";
+       $valgrind_exe= `which valgrind`;
+       chomp($valgrind_exe);
+       if (!$valgrind_exe || ! -x $valgrind_exe) {
+          die "Cannot execute $valgrind_exe";
+       }
     }
 }
 
@@ -104,11 +110,11 @@ while(<F>){
     if($tm){
         if(abs($tm-$tmp[6])>EPSILON) {
             $failure++;
-            print "$cmd FAILED (expected $tm, got $tmp[6])\n";
+            print "$cmd [FAILED] (expected $tm, got $tmp[6])\n";
         }
     } else {
         $failure++;
-        print "$cmd FAILED (no output)\n";
+        print "$cmd [FAILED] (no output)\n";
     }
     $nr++;
 }
@@ -126,8 +132,8 @@ if ($do_valgrind) {
 }
 
 if(!$failure){
-    print "$nr: OK\n\n\n";
+    print "$nr: [OK]\n\n\n";
 }
 else{
-    print "\n$nr Tm tests: $failure FAILURES\n\n\n";
+    print "\n$nr Tm tests: $failure [FAILURES]\n\n\n";
 }

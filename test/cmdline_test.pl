@@ -114,10 +114,14 @@ sub main() {
         exit -1;
     }
 
-    my $valgrind_exe = "/usr/local/bin/valgrind";
+    my $valgrind_exe = "/usr/bin/valgrind";
     my $log_file_arg_for_valgrind = "--log-file-exactly";
     if ($do_valgrind) {
-	if (!-x $valgrind_exe) { 
+        if (!-x $valgrind_exe) {
+            print "Cannot find $valgrind_exe; will try `/usr/local/bin/valgrind`\n";
+            $valgrind_exe = "/usr/local/bin/valgrind";
+        }
+        if (!-x $valgrind_exe) { 
 	    warn "Cannot find $valgrind_exe; will try `which valgrind`\n";
 	    $valgrind_exe= `which valgrind`;
 	    chomp($valgrind_exe);
@@ -162,19 +166,19 @@ sub main() {
     # Test 1 : check '-output' and 'input_file'
     $valgrind_prefix
        = $do_valgrind ? sprintf $valgrind_format, 'cmd_test1' : '';
-    $cmd = "$valgrind_prefix$exe -default_version=1 --strict -o cmd_test1.tmp $input";
+    $cmd = "$valgrind_prefix$exe --default_version=1 --strict --output=cmd_test1.tmp $input";
     $exit_stat = runtest(1, $cmd, $output, 0);
     
     # Test 2 : check '> output' and '< input_file'
     $valgrind_prefix
        = $do_valgrind ? sprintf $valgrind_format, 'cmd_test2' : '';
-    $cmd = "$valgrind_prefix$exe -default_version=1 -st > cmd_test2.tmp < $input";
+    $cmd = "$valgrind_prefix$exe --default_version=1 --st > cmd_test2.tmp < $input";
     $exit_stat = runtest(2, $cmd, $output, 0);
     
     # Test 3 : check incorrect flag and '-error_file'
     $valgrind_prefix
        = $do_valgrind ? sprintf $valgrind_format, 'cmd_test3' : '';
-    $cmd = "$valgrind_prefix$exe -flag -err=cmd_test3.tmp < $input";
+    $cmd = "$valgrind_prefix$exe --flag --err=cmd_test3.tmp < $input";
     $exit_stat = runtest(3, $cmd, 'cmd_test3_output', 255);
     
     # Test 4 : check nonexistent input file and '2> error_file'
@@ -186,7 +190,7 @@ sub main() {
     # Test 5 : check that io_version=3 fails
     $valgrind_prefix
        = $do_valgrind ? sprintf $valgrind_format, 'cmd_test5' : '';
-    $cmd = "$valgrind_prefix$exe -io_version=3 2> cmd_test5.tmp";
+    $cmd = "$valgrind_prefix$exe --io_version=3 2> cmd_test5.tmp";
     $exit_stat = runtest(5, $cmd, 'cmd_test5_output', 255);
 
     # ================================================== 
@@ -224,7 +228,7 @@ sub runtest($$$$) {
     my ($i, $cmd, $output, $exit) = @_;
     
     print "Test $i... ";
-    
+  
     $r = _nowarn_system($cmd);
     if ($winFlag) {
 	$r = $r >> 8;

@@ -116,9 +116,13 @@ sub main() {
         exit -1;
     }
 
-    my $valgrind_exe = "/usr/local/bin/valgrind";
+    my $valgrind_exe = "/usr/bin/valgrind";
     my $log_file_arg_for_valgrind = "--log-file-exactly";
     if ($do_valgrind) {
+        if (!-x $valgrind_exe) {
+            print "Cannot find $valgrind_exe; will try `/usr/local/bin/valgrind`\n";
+            $valgrind_exe = "/usr/local/bin/valgrind";
+        }
 	if (!-x $valgrind_exe) { 
 	    print "Cannot find $valgrind_exe; will try `which valgrind`\n";
 	    $valgrind_exe= `which valgrind`;
@@ -362,9 +366,9 @@ sub main() {
 
 	my $default_version;
 	if ($default_version2{$test}) {
-	    $default_version = '-default_version=2';
+	    $default_version = '--default_version=2';
 	} else {
-	    $default_version = '-default_version=1';
+	    $default_version = '--default_version=1';
 	}
 
         if ($test eq 'primer_lib_amb_codes') {
@@ -374,7 +378,7 @@ sub main() {
             }
             print 
                 "\nNOTE: this test takes _much_ longer than the others ",
-                "(10 to 20 minutes or more).\n",
+                "(5 to 20 minutes or more).\n",
                 "starting $test at ", scalar(localtime), "...";
         }
         my $valgrind_prefix
@@ -424,33 +428,33 @@ sub main() {
 	
             if ($winFlag) {
 		if ($test eq 'th-w-other-tasks') {
-		    $settings = '-p3_settings ..\\th-w-other-tasks-settings.txt -echo_settings';
+		    $settings = '--p3_settings ..\\th-w-other-tasks-settings.txt --echo_settings';
 		}
-		$tmpCmd = "..\\$exe $default_version -strict_tags $settings ../$input >../$tmp";
+		$tmpCmd = "..\\$exe $default_version --strict_tags $settings ../$input >../$tmp";
             }  else {
 		if ($test eq 'th-w-other-tasks') {
-		    $settings = '-p3_settings ../th-w-other-tasks-settings.txt -echo_settings';
+		    $settings = '--p3_settings ../th-w-other-tasks-settings.txt --echo_settings';
 		}
-                $tmpCmd = "$valgrind_prefix ../$exe $default_version -strict_tags $settings ../$input >../$tmp";
+                $tmpCmd = "$valgrind_prefix ../$exe $default_version --strict_tags $settings ../$input >../$tmp";
             }
             $r = _nowarn_system($tmpCmd);
             # back to main directory
             if (!chdir "../") { die "chdir \"..\": $!\n" }
 
         } elsif ($test =~ /settings$/) {
-	    my $cmd = "$valgrind_prefix$exe $default_version -strict_tags -p3_settings_file=../$test.txt -echo <$input >$tmp";
+	    my $cmd = "$valgrind_prefix$exe $default_version --strict_tags --p3_settings_file=../$test.txt --echo <$input >$tmp";
             $r = _nowarn_system($cmd);
 
 	} elsif ($test =~ /formatted$/) {
-            my $cmd = "$valgrind_prefix$exe $default_version -strict_tags -format_output <$input >$tmp";
+            my $cmd = "$valgrind_prefix$exe $default_version --strict_tags --format_output <$input >$tmp";
             $r = _nowarn_system($cmd);
 
         } elsif ($test =~ /_load_set/) {
-            my $cmd = "$valgrind_prefix$exe $default_version -strict_tags -p3_settings_file=$set_files$test.set -echo <$input >$tmp";
+            my $cmd = "$valgrind_prefix$exe $default_version --strict_tags --p3_settings_file=$set_files$test.set --echo <$input >$tmp";
             $r = _nowarn_system($cmd);
 
         } else {
-            my $cmd = "$valgrind_prefix$exe $default_version -strict_tags <$input >$tmp";
+            my $cmd = "$valgrind_prefix$exe $default_version --strict_tags <$input >$tmp";
             $r = _nowarn_system($cmd);
         }
 
@@ -649,17 +653,17 @@ sub test_fatal_errors() {
 	if ($_ =~ /bad_settings\d\.in/) {
 	    # For testing the settings files we need the
 	    # names of tests and the settings to be parallel
-	    $cmd = "$valgrind_prefix$exe -strict_tags -p3_settings_file $_ primer_global_err/input_for_settings_tests.txt  > $root.tmp 2> $root.tmp2";
+	    $cmd = "$valgrind_prefix$exe --strict_tags --p3_settings_file $_ primer_global_err/input_for_settings_tests.txt  > $root.tmp 2> $root.tmp2";
 	    # print STDERR $cmd, "\n";
 	} else {
 	    if ($output_and_err_tested) {
-		$cmd = "$valgrind_prefix$exe -strict_tags <$_ > $root.tmp 2> $root.tmp2";
+		$cmd = "$valgrind_prefix$exe --strict_tags <$_ > $root.tmp 2> $root.tmp2";
 	    } else {
 		# We need to test the -output and -error command line arguments plus
                 # simply taking the file name as an argument (no "<")
-		$cmd = "$valgrind_prefix$exe -strict_tags $_ -output $root.tmp -error $root.tmp2";
+		$cmd = "$valgrind_prefix$exe --strict_tags $_ --output $root.tmp --error $root.tmp2";
 		$output_and_err_tested = 1;
-		print "Testing -output and -error flags on\n$cmd\n";
+		print "Testing --output and --error flags on\n$cmd\n";
 	    }
 	}
 
