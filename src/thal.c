@@ -101,7 +101,7 @@
 #ifdef INTEGER
 # define isFinite(x) (x < _INFINITY / 2)
 #else
-# define isFinite(x) finite(x)
+# define isFinite(x) isfinite(x)
 #endif
 
 #define isPositive(x) ((x) > 0 ? (1) : (0))
@@ -129,9 +129,9 @@ const double ABSOLUTE_ZERO = 273.15;
 const double TEMP_KELVIN = 310.15;
 const int MAX_LOOP = 30; /* the maximum size of loop that can be calculated; for larger loops formula must be implemented */
 const int MIN_LOOP = 0;
-static const char BASES[5] = {'A', 'C', 'G', 'T', 'N'}; /* bases to be considered - N is every symbol that is not A, G, C,$
-						  */
-static const char BASE_PAIRS[4][4] = {"A-T", "C-G", "G-C", "T-A" }; /* allowed basepairs */
+//static const char BASES[5] = {'A', 'C', 'G', 'T', 'N'}; /* bases to be considered - N is every symbol that is not A, G, C,$
+//						  */
+//static const char BASE_PAIRS[4][4] = {"A-T", "C-G", "G-C", "T-A" }; /* allowed basepairs */
 /* matrix for allowed; bp 0 - no bp, watson crick bp - 1 */
 static const int BPI[5][5] =  {
      {0, 0, 0, 1, 0}, /* A, C, G, T, N; */
@@ -2843,7 +2843,7 @@ equal(double a, double b)
    return a == b;
 #endif
 
-   if (!finite(a) || !finite(b))
+   if (!isfinite(a) || !isfinite(b))
      return 0;
    return fabs(a - b) < 1e-5;
 
