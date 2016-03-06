@@ -665,12 +665,6 @@ typedef struct interval_array_t4 {
   int count;     /* total number of pairs */
 } interval_array_t4;
 
-int 
-interval_array_t2_count(const interval_array_t2 *array);
-
-const int *
-interval_array_t2_get_pair(const interval_array_t2 *array, int i);
-
 typedef struct oligo_stats {
   int considered;          /* Total number of tested oligos of given type   */
   int ns;                  /* Number of oligos rejected because of Ns       */

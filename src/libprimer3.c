@@ -390,7 +390,8 @@ static void   oligo_repeat_library_mispriming(primer_rec *,
                                               const seq_args *,
                                               oligo_type,
                                               oligo_stats *,
-                                              const dpal_arg_holder *);
+                                              const dpal_arg_holder *,
+                                              pr_append_str *);
 
 static void   oligo_template_mispriming(primer_rec *,
                                         const p3_global_settings *,
@@ -801,20 +802,6 @@ p3_add_to_2_interval_array(interval_array_t4 *interval_arr, int i1, int i2, int 
 /* ============================================================ */
 /* END functions for global settings                            */
 /* ============================================================ */
-
-int
-interval_array_t2_count(const interval_array_t2 *array) 
-{
-  return array->count;
-}
-
-const int *
-interval_array_t2_get_pair(const interval_array_t2 *array, int i) 
-{
-  if (i > array->count) abort();
-  if (i < 0) abort();
-  return array->pairs[i];
-}
 
 /* ============================================================ */
 /* BEGIN functions for p3retval                                 */
@@ -1784,7 +1771,7 @@ choose_internal_oligo(p3retval *retval,
        
       if (h->repeat_sim.score == NULL) {
         oligo_repeat_library_mispriming(h, pa, sa, OT_INTL, &retval->intl.expl,
-                                        dpal_arg_to_use);
+                                        dpal_arg_to_use, &retval->glob_err);
         if (!OK_OR_MUST_USE(h)) continue;
       }
 
@@ -3362,7 +3349,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
       || (pa->thermodynamic_oligo_alignment==1 && po_args->weights.repeat_sim)) {
 
     oligo_repeat_library_mispriming(h, pa, sa, l, stats,
-                                    dpal_arg_to_use);
+                                    dpal_arg_to_use, &retval->glob_err);
     if (pa->thermodynamic_template_alignment==0 && OK_OR_MUST_USE(h)) {
       oligo_template_mispriming(h, pa, sa, l, stats,
 				dpal_arg_to_use->local_end,
@@ -3388,7 +3375,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
 
   if (three_conditions || po_args->weights.repeat_sim) {
     oligo_repeat_library_mispriming(h, pa, sa, l, stats,
-                                    dpal_arg_to_use);
+                                    dpal_arg_to_use, &retval->glob_err);
   }
 
 
@@ -4106,7 +4093,7 @@ characterize_pair(p3retval *retval,
   if (retval->fwd.oligo[m].repeat_sim.score == NULL) {
     /* We have not yet checked the oligo against the repeat library. */
     oligo_repeat_library_mispriming(&retval->fwd.oligo[m], pa, sa, OT_LEFT,
-                                    &retval->fwd.expl,dpal_arg_to_use);
+                                    &retval->fwd.expl,dpal_arg_to_use, &retval->glob_err);
     if (OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
       oligo_template_mispriming(&retval->fwd.oligo[m], pa, sa, OT_LEFT,
 				&retval->fwd.expl,
@@ -4121,7 +4108,7 @@ characterize_pair(p3retval *retval,
    
   if (retval->rev.oligo[n].repeat_sim.score == NULL) {
     oligo_repeat_library_mispriming(&retval->rev.oligo[n], pa, sa, OT_RIGHT,
-                                    &retval->rev.expl, dpal_arg_to_use);
+                                    &retval->rev.expl, dpal_arg_to_use, &retval->glob_err);
     if (OK_OR_MUST_USE(&retval->rev.oligo[n])) {
       oligo_template_mispriming(&retval->rev.oligo[n], pa, sa, OT_RIGHT,
 				&retval->rev.expl, 
@@ -4858,7 +4845,8 @@ oligo_repeat_library_mispriming(primer_rec *h,
                                 const seq_args *sa,
                                 oligo_type l,
                                 oligo_stats *ostats,
-                                const dpal_arg_holder *dpal_arg_to_use)
+                                const dpal_arg_holder *dpal_arg_to_use,
+                                pr_append_str *error)
 {
   char
     s[MAX_PRIMER_LENGTH+1],     /* Will contain the oligo sequence. */
@@ -4920,10 +4908,11 @@ oligo_repeat_library_mispriming(primer_rec *h,
                  ? dpal_arg_to_use->local_end_ambig
                  : dpal_arg_to_use->local));
 
-
       if (w > SHRT_MAX || w < SHRT_MIN) {
-        abort(); /* TO DO, propagate error */
         /* This check is necessary for the next 9 lines */
+        pr_append_new_chunk( error,
+         "Out of range error occured calculating match to repeat library");
+        return;
       }
       h->repeat_sim.score[i] = w;
       if(w > max){
