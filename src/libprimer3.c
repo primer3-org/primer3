@@ -5569,7 +5569,7 @@ p3_get_pair_array_explain_string(const pair_array_t *pair_array)
 const char *
 libprimer3_release(void) 
 {
-  return "libprimer3 release 2.3.7";
+  return "libprimer3 release 2.4.0";
 }
 
 const char *
@@ -5799,8 +5799,8 @@ _adjust_seq_args(const p3_global_settings *pa,
       pr_append_new_chunk(nonfatal_err,
 			  "Task pick_discriminative_primers requires exactly one SEQUENCE_TARGET");
     }
-    sa->force_left_end = sa->tar2.pairs[0][0];
-    sa->force_right_end = sa->tar2.pairs[0][0] + sa->tar2.pairs[0][1] - 1;
+    sa->force_left_end = sa->tar2.pairs[0][0] - 1;
+    sa->force_right_end = sa->tar2.pairs[0][0] + sa->tar2.pairs[0][1];
   }
 
   /* If no included region is specified,

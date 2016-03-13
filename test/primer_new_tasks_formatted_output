@@ -1845,16 +1845,16 @@ PRIMER PICKING RESULTS FOR Pick discriminative primers
 No mispriming library specified
 Using 0-based sequence positions
 OLIGO            start  len      tm     gc%   any    3' seq
-LEFT PRIMER         16   20   61.87   50.00  7.00  6.00 tggatgccatcaatgacctc
-RIGHT PRIMER       216   20   59.13   55.00  4.00  4.00 gactgagctgttcgaggaca
+LEFT PRIMER         15   20   60.17   45.00  9.00  4.00 atggatgccatcaatgacct
+RIGHT PRIMER       217   20   59.99   60.00  4.00  2.00 ggactgagctgttcgaggac
 SEQUENCE SIZE: 1527
 INCLUDED REGION SIZE: 1527
 
-PRODUCT SIZE: 201, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 5.00
+PRODUCT SIZE: 203, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 3.00
 TARGETS (start, len)*: 35,163
 
     0 atggatttgatggacatggatgccatcaatgacctccacttctctggacacagctccctc
-                      >>>>>>>>>>>>>>>>>>>)************************
+                     >>>>>>>>>>>>>>>>>>>>*************************
 
    60 accaacacccctacttccgacgaggattatggttgcacctggaaccactggtctcccatc
       ************************************************************
@@ -1863,7 +1863,7 @@ TARGETS (start, len)*: 35,163
       ************************************************************
 
   180 atcgaggacagaacaactgtcctcgaacagctcagtccatctatcaccacaaccaccacc
-      *****************(<<<<<<<<<<<<<<<<<<<                       
+      ******************<<<<<<<<<<<<<<<<<<<<                      
 
   240 accaccacaaccacggatgaggaagaagaagaaatggaaacaacaaccacaacaacaaca
                                                                   
@@ -1939,9 +1939,9 @@ KEYS (in order of precedence):
 ADDITIONAL OLIGOS
                     start  len      tm     gc%   any    3' seq
 
- 1 LEFT PRIMER         17   19   58.82   52.63  7.00  6.00 ggatgccatcaatgacctc
-   RIGHT PRIMER       216   20   59.13   55.00  4.00  4.00 gactgagctgttcgaggaca
-   PRODUCT SIZE: 200, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 5.00
+ 1 LEFT PRIMER         16   19   59.87   47.37  7.00  4.00 tggatgccatcaatgacct
+   RIGHT PRIMER       217   20   59.99   60.00  4.00  2.00 ggactgagctgttcgaggac
+   PRODUCT SIZE: 202, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 3.00
 
 
 PRIMER PICKING RESULTS FOR Pick start fixed left primer unique

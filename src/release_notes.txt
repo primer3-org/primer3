@@ -1,3 +1,19 @@
+release 2.4.0 to be released  ===============================================
+
+Major correction:
+1. The PRIMER_TASK pick_discriminative_primers was modified. Now the primer
+   border the provided SEQUENCE_TARGET and do not overlap by one basepair.
+
+Minor fixes:
+1. The test scripts were updated to use the default valgrind path and to
+   use the --type comand line arguments instead of -type.
+
+2. In thal.c the function finite() was replaced by the c99 isfinite().
+
+3. In libprimer3 all abort() functions were removed and error handling
+   implemented.
+
+
 release 2.3.7 2016-02-18 ===============================================
 
 Major correction:
