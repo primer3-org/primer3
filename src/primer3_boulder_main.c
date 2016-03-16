@@ -540,14 +540,14 @@ print_usage()
   fprintf(stderr, "%s", primer3_copyright());
 
   fprintf(stderr, "\n\nUSAGE: %s %s %s %s %s %s %s %s %s %s\n", pr_program_name,
-          "[-format_output]", 
-	  "[-default_version=1|-default_version=2]",
-	  "[-io_version=4]", 
-	  "[-p3_settings_file=<file_path>]",
-	  "[-echo_settings_file]",
-	  "[-strict_tags]", 
-	  "[-output=<file_path>]", 
-	  "[-error=<file_path>]",
+          "[--format_output]", 
+	  "[--default_version=1|--default_version=2]",
+	  "[--io_version=4]", 
+	  "[--p3_settings_file=<file_path>]",
+	  "[--echo_settings_file]",
+	  "[--strict_tags]", 
+	  "[--output=<file_path>]", 
+	  "[--error=<file_path>]",
 	  "[input_file]");
   fprintf(stderr, "This is primer3 (%s)\n", pr_release);
   fprintf(stderr, "Input can also be provided on standard input.\n");
