@@ -2617,7 +2617,7 @@ traceback(int i, int j, double RT, int* ps1, int* ps2, int maxLoop, thal_results
 	 break;
       }
       done = 0;
-      if (i > 1 && j > 1 && equal(EntropyDPT(i,j), Ss(i - 1, j - 1, 1) + EntropyDPT(i - 1, j - 1))) {
+      if (i > 1 && j > 1 && equal(EntropyDPT(i,j), Ss(i - 1, j - 1, 1) + EntropyDPT(i - 1, j - 1)) && equal(EnthalpyDPT(i,j), Hs(i - 1, j - 1, 1) + EnthalpyDPT(i - 1, j - 1))) {
 	 i = i - 1;
 	 j = j - 1;
 	 ps1[i - 1] = j;
