@@ -44,7 +44,7 @@ WINMAKE=mingw32-make
 TESTOPTS =
 
 
-test: makeexes testcmdline testtm testdpal testthal testcore
+test: makeexes testcmdline testtm testdpal testthal testmasker testcore
 	echo; echo; echo "Testing completed. You must check the test output for the string FAILED"; echo; echo;
 
 testcmdline:
@@ -73,6 +73,13 @@ ifeq ($(TESTOPTS),--windows)
 	echo 'TESTING THERMODYNAMIC ALIGNMENT CALCS' & perl thal_test.pl $(TESTOPTS)
 else
 	echo; echo; echo 'TESTING THERMODYNAMIC ALIGNMENT CALCS'; echo; perl thal_test.pl $(TESTOPTS);
+endif
+
+testmasker:
+ifeq ($(TESTOPTS),--windows)
+	echo 'TESTING MASKER' & perl masker_test.pl $(TESTOPTS)
+else
+	echo; echo; echo 'TESTING MASKER'; echo; perl masker_test.pl $(TESTOPTS);
 endif
 
 testtm:
@@ -123,9 +130,11 @@ else
 	-rm -f oligotm.*.valg    # valgrind output from oligotm_test.pl --valgrind
 	-rm -f ntdpal.*.valg     # valgrind output from dpal_test.pl --valgrind
 	-rm -f ntthal.*.valg     # valgrind output from thal_test.pl --valgrind
+	-rm -f masker.*.valg     # valgrind output from thal_test.pl --valgrind
 	-rm -f oligotm.*.valg.*  # valgrind output from oligotm_test.pl --valgrind
 	-rm -f ntdpal.*.valg.*   # valgrind output from dpal_test.pl --valgrind
 	-rm -f ntthal.*.valg.*   # valgrind output from thal_test.pl --valgrind
+	-rm -f masker.*.valg.*   # valgrind output from masker_test.pl --valgrind
 	-rm -f *.vg */*.vg       # valgrind output from p3test{,z}.pl --valgrind
 	-rm -f *.vg.core.*       # core files from crashed valgrind test
 	-rm -f ./core # in case we crashed and left a core file

@@ -258,6 +258,9 @@ sub main() {
 	                'primer_first_base_index',
                         'primer_must_match',
 
+                         'primer_masker',
+                         'primer_masker_formatted',
+                          
 			'test_compl_error',
 			'test_left_to_right_of_right',
                         'dv_conc_vs_dntp_conc',
@@ -326,6 +329,9 @@ sub main() {
 
 			'primer_obj_fn',
 			'p3_3_prime_n',
+			
+			'primer_masker',
+			'primer_masker_formatted',
 
 			# Put slow tests last
 			'primer_mispriming_th',
