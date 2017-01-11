@@ -1,3 +1,39 @@
+release 3.0.0 beta to be released
+===============================================
+This release adds a new feature to primer3_core and related C code.
+
+PCR PRIMER DESIGN TEMPLATE MASKING BEFORE PRIMER DESIGN. This feature
+helps to prevent designing primers to template regions that are repetitive.
+Primers with more binding sites tend to have higher failure rates. The
+masking is based on statistical model (see Documentation for details).
+
+NEW INPUT TAGS AND DEFAULT VALUES:
+PRIMER_MASK_TEMPLATE=0
+PRIMER_FAILURE_RATE=0.2
+PRIMER_MASK_5P_DIRECTION=1
+PRIMER_MASK_3P_DIRECTION=1
+PRIMER_MASKING_LIST_PREFIX=homo_sapiens
+PRIMER_WT_FAILURE_RATE=0.0
+PRIMER_KMER_LISTS_PATH=../kmer_lists/
+
+See the documentation for details. The tag PRIMER_MASK_TEMPLATE directs
+primer3_core to premask template sequence for primer design.
+
+NEW EXECUTABLE: masker
+
+masker masks repetitive regions in INPUTFILE (given as fasta and/or multiple
+fasta format) based on statistical approach.
+
+IMPORTANT: because PRIMER_MASK_TEMPLATE=1,
+PRIMER_KMER_LISTS_PATH must point to the right location.
+This tag specifies the path to the directory that contains kmer list files
+used by the template masking approach. The default location: ../kmer_lists/  If  the
+list files are not in that location, be sure to set
+PRIMER_KMER_LISTS_PATH
+
+By default, directory ../kmer_lists/ contains example kmers. Software for
+making kmers can be downloaded http://bioinfo.ut.ee/FastGT/index.php?r=site/index
+
 release 2.4.0 to be released  ===============================================
 
 Major correction:

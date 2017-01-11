@@ -52,6 +52,7 @@ typedef struct read_boulder_record_results {
 
 extern char *thermodynamic_params_path; /* path to thermodynamic parameter files */
 extern int   thermodynamic_path_changed;/* if this is set to 1, we need to re-read the thermodynamic parameters from new path */
+extern char *kmer_lists_path; /* path to kmer lists files */
 
 /* 
  * Read data from file_input until a "=" line occurs.  Assign

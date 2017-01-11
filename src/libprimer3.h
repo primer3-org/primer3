@@ -46,6 +46,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <float.h> /* DBL_MIN */
 
 #include "oligotm.h"
+#include "masker.h"
 
 #ifdef __cplusplus
   extern "C" {
@@ -143,6 +144,7 @@ typedef struct oligo_weights {
   double temp_lt;
   double template_mispriming;
   double template_mispriming_th;
+  double failure_rate;
 
 } oligo_weights;
 
@@ -493,7 +495,15 @@ typedef struct p3_global_settings {
 					       overlap an overlap
 					       junction. */
   int    min_3_prime_overlap_of_junction;
- 
+
+  int    mask_template;
+  int    masking_parameters_changed;
+  /* Turn on masking of the trimmed_orig_seq (added by M. Lepamets)*/
+      
+  masker_parameters mp;
+   /*
+    a struct containing all masking parameters
+   */
   int dump;  /* dump fields for global settings and seq args if dump == 1 */
 } p3_global_settings;
 
@@ -588,6 +598,8 @@ typedef struct primer_rec {
   char   overlaps_overlap_position;
 
   char template_mispriming_ok; /* Non-0 if the oligo was checked for this already and it is ok. */
+  
+  double failure_rate; /* Primer failure rate due to non-specific priming */
         
 } primer_rec;
 
@@ -664,6 +676,11 @@ typedef struct interval_array_t4 {
   int any_pair;  /* set to 1 if both intervals are given as empty */
   int count;     /* total number of pairs */
 } interval_array_t4;
+
+int interval_array_t2_count(const interval_array_t2 *array);
+
+const int *
+interval_array_t2_get_pair(const interval_array_t2 *array, int i);
 
 typedef struct oligo_stats {
   int considered;          /* Total number of tested oligos of given type   */
@@ -788,6 +805,11 @@ typedef struct seq_args {
   /* Element add by T. Koressaar support lowercase masking: */
   char *trimmed_orig_seq; /* Trimmed version of the original,
                              mixed-case sequence. */
+  
+  /* Added by M. Lepamets */
+  char *trimmed_masked_seq; /* Masked version of the trimmed seq */
+  char *trimmed_masked_seq_r; /* Masked version of the other strand
+                                of the trimmed seq */                           
 
   char *upcased_seq;      /* Upper case version of sequence
                              (_not_ trimmed). */

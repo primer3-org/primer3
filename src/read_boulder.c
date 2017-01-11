@@ -42,6 +42,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h> /* memset, strlen,  strcmp, ... */
 #include <float.h>
 #include "read_boulder.h"
+#include "masker.h"
 
 #define INIT_BUF_SIZE 1024
 #define INIT_LIB_SIZE  500
@@ -49,6 +50,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 char *thermodynamic_params_path = NULL;
 int   thermodynamic_path_changed = 1;
+
+char *kmer_lists_path = NULL;
 
 /* Static functions. */
 static void *_rb_safe_malloc(size_t x);
@@ -502,9 +505,9 @@ read_boulder_record(FILE *file_input,
       }
       if (COMPARE("P3_COMMENT")) continue;
       COMPARE_FLOAT("PRIMER_MAX_END_STABILITY", pa->max_end_stability);
-
       COMPARE_INT("PRIMER_LOWERCASE_MASKING",
-                  pa->lowercase_masking); 
+                  pa->lowercase_masking);
+
       /* added by T. Koressaar */
       COMPARE_INT("PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT", pa->thermodynamic_oligo_alignment);
       COMPARE_INT("PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT", pa->thermodynamic_template_alignment);
@@ -521,6 +524,13 @@ read_boulder_record(FILE *file_input,
 	  strcpy(thermodynamic_params_path, datum);
 	  thermodynamic_path_changed = 1;
         }
+        continue;
+      }  
+        if (COMPARE("PRIMER_KMER_LISTS_PATH")) {
+           if (kmer_lists_path == NULL) {
+               kmer_lists_path = (char*) _rb_safe_malloc(datum_len + 1);
+               strcpy(kmer_lists_path, datum);
+           }
         continue;
       }
       /* added by A. Untergasser */
@@ -552,6 +562,8 @@ read_boulder_record(FILE *file_input,
                     pa->p_args.weights.template_mispriming);
       COMPARE_FLOAT("PRIMER_WT_TEMPLATE_MISPRIMING_TH",
 		                        pa->p_args.weights.template_mispriming_th);
+      COMPARE_FLOAT("PRIMER_WT_FAILURE_RATE",
+                                              pa->p_args.weights.failure_rate);                        
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_TM_GT", pa->o_args.weights.temp_gt);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_TM_LT", pa->o_args.weights.temp_lt);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_GC_PERCENT_GT", pa->o_args.weights.gc_content_gt);
@@ -597,6 +609,23 @@ read_boulder_record(FILE *file_input,
                     pa->pr_pair_weights.template_mispriming);
       COMPARE_FLOAT("PRIMER_PAIR_WT_TEMPLATE_MISPRIMING_TH",
 		    pa->pr_pair_weights.template_mispriming_th);
+      if (COMPARE("PRIMER_MASK_TEMPLATE")) {
+                    parse_int("PRIMER_MASK_TEMPLATE", datum, &pa->mask_template, parse_err);  
+                    pa->lowercase_masking = pa->mask_template;
+                    pa->masking_parameters_changed = pa->mask_template;
+                    continue;
+      }
+      COMPARE_FLOAT("PRIMER_FAILURE_RATE", pa->mp.failure_rate);
+      COMPARE_INT("PRIMER_MASK_5P_DIRECTION", pa->mp.nucl_masked_in_5p_direction);
+      COMPARE_INT("PRIMER_MASK_3P_DIRECTION", pa->mp.nucl_masked_in_3p_direction);
+      if (COMPARE("PRIMER_MASKING_LIST_PREFIX")) {
+        if(pa->mp.list_prefix == NULL){
+	   pa->mp.list_prefix = (char*) _rb_safe_malloc(datum_len + 1);
+	   strcpy(pa->mp.list_prefix, datum);
+	   pa->masking_parameters_changed = 1;
+        }
+        continue;
+      }
     }
     /* End of reading the tags in the right place */
         
@@ -854,7 +883,9 @@ read_p3_file(const char *file_name,
 				pa, sa, fatal_err, 
 				nonfatal_err, warnings, 
 				read_boulder_record_res);
-
+  if(pa->mask_template){
+    pa->lowercase_masking=pa->mask_template;
+  }
   if (echo_output) printf("P3_SETTINGS_FILE_END=\n");
   if (file) fclose(file);
          

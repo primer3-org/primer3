@@ -61,6 +61,7 @@ namespace std
 #include "thal.h"
 #include "oligotm.h"
 #include "libprimer3.h"
+#include "masker.h"
 
 /* #define's */
 
@@ -759,7 +760,19 @@ pr_set_default_global_args_1(p3_global_settings *a)
   
   a->min_5_prime_overlap_of_junction = 7;
   a->min_3_prime_overlap_of_junction = 4;
-    
+  
+  a->mask_template                   = 0;
+  a->masking_parameters_changed      = 0;
+  a->mp.mdir                         = both_separately;
+  a->mp.failure_rate                 = 0.2;
+  a->mp.nucl_masked_in_5p_direction  = 1;
+  a->mp.nucl_masked_in_3p_direction  = 0;
+  a->mp.print_sequence               = 0;
+  a->mp.do_soft_masking              = 1;
+  a->mp.nlists                       = DEFAULT_NLISTS;
+  a->mp.list_prefix                  = DEFAULT_LIST_FILE_PREFIX;
+  a->mp.fp                           = NULL;
+  a->mp.formula_intercept            = DEFAULT_INTERCEPT;  
 }
 
 /* Add a pair of integers to an  array of intervals */
@@ -802,6 +815,20 @@ p3_add_to_2_interval_array(interval_array_t4 *interval_arr, int i1, int i2, int 
 /* ============================================================ */
 /* END functions for global settings                            */
 /* ============================================================ */
+
+int
+  interval_array_t2_count(const interval_array_t2 *array)
+{
+  return array->count;
+}
+  
+const int *
+  interval_array_t2_get_pair(const interval_array_t2 *array, int i)
+{
+   if (i > array->count) abort();
+      if (i < 0) abort();
+         return array->pairs[i];
+}                
 
 /* ============================================================ */
 /* BEGIN functions for p3retval                                 */
@@ -1081,7 +1108,10 @@ destroy_seq_args(seq_args *sa)
 
   /* edited by T. Koressaar for lowercase masking */
   free(sa->trimmed_orig_seq);
-
+  
+  free(sa->trimmed_masked_seq_r);
+  free(sa->trimmed_masked_seq);
+  
   free(sa->upcased_seq);
   free(sa->upcased_seq_r);
   free(sa->sequence_name);
@@ -2969,6 +2999,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   const char *revc_oligo_seq;
 
   const args_for_one_oligo_or_primer *po_args;
+  oligo_pair op = {0};
    
   /* Initialize slots in h */
   initialize_op(h);
@@ -3023,13 +3054,21 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
     if (!pa->pick_anyway) return;
   }
 
-  /* edited by T. Koressaar for lowercase masking */
+  /* edited by T. Koressaar and M. Lepamets for lowercase masking */
   if(pa->lowercase_masking == 1) {
+    char *sequence_check = sa->trimmed_orig_seq;
+    if (pa->mask_template == 1) {
+       if (l == OT_LEFT) sequence_check = sa->trimmed_masked_seq;
+       else if (l == OT_RIGHT) sequence_check = sa->trimmed_masked_seq_r;
+    }                          
     if (is_lowercase_masked(three_prime_pos,
-                            sa->trimmed_orig_seq,
+                            sequence_check,
                             h, stats)) {
       if (!must_use) return;
     }
+  } else if(pa->lowercase_masking == 0 && pa->mask_template == 1){
+           pr_append_new_chunk(&retval->warnings, "Use PRIMER_LOWERCASE_MASKING=1 when using PRIMER_MASK_TEMPLATE=1.");
+           return;
   }
   /* end T. Koressar's changes */
 
@@ -3434,7 +3473,15 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
       break;
     }
   }
-
+  /* Calculate failure rate */
+  /* Added by M. Lepamets */
+   h->failure_rate = 0.0;
+   if (pa->mask_template && h->length >= pa->mp.window_size) {
+     op.fwd = string_to_word (oligo_seq, h->length, pa->mp.window_size);
+     op.rev = op.fwd; /* not used in this calculation */
+     calculate_scores (&op, &pa->mp, pa->mp.window_size);
+     h->failure_rate = op.score_fwd;
+   }
   /* FIX ME FIXME Steve, is this really needed? */
   op_set_completely_written(h);
 
@@ -3595,6 +3642,11 @@ p_obj_fn(const p3_global_settings *pa,
            sum += pa->p_args.weights.length_lt * (pa->p_args.opt_size - h->length);
       if (pa->p_args.weights.length_gt && h->length > pa->p_args.opt_size)
            sum += pa->p_args.weights.length_gt * (h->length - pa->p_args.opt_size);
+      
+      /* edited by M. Lepamets */
+      if (pa->p_args.weights.failure_rate) {
+           sum += pa->p_args.weights.failure_rate * h->failure_rate;
+      }     
 
       /* BEGIN: secondary structures */
       if (pa->thermodynamic_oligo_alignment==0) {
@@ -5845,7 +5897,35 @@ _adjust_seq_args(const p3_global_settings *pa,
     /* edited by T. Koressaar for lowercase masking */
     sa->trimmed_orig_seq = (char *) pr_safe_malloc(sa->incl_l + 1);
     _pr_substr(sa->sequence, sa->incl_s, sa->incl_l, sa->trimmed_orig_seq);
-
+    
+    /* Masks original trimmed sequence */
+    /* edited by M. Lepamets */
+    if (pa->mask_template && (pa->pick_left_primer == 1 && pa->pick_right_primer == 1)) {
+       input_sequence *input_seq;
+       output_sequence *output_seq;
+                          
+       input_seq = create_input_sequence_from_string (sa->trimmed_orig_seq, nonfatal_err);
+       output_seq =  create_output_sequence ((unsigned long long) sa->incl_l, pa->mp.mdir, nonfatal_err);
+                
+       read_and_mask_sequence (input_seq, output_seq, &pa->mp, nonfatal_err, 0);
+       if (output_seq->sequence) {
+          if (pa->mp.mdir == fwd) {
+             sa->trimmed_masked_seq = (char *) pr_safe_malloc(sa->incl_l + 1);
+             strcpy (sa->trimmed_masked_seq, output_seq->sequence);
+          } else if (pa->mp.mdir == rev) {
+             sa->trimmed_masked_seq_r = (char *) pr_safe_malloc(sa->incl_l + 1);
+             strcpy (sa->trimmed_masked_seq_r, output_seq->sequence);
+          }
+       } else {
+             sa->trimmed_masked_seq = (char *) pr_safe_malloc(sa->incl_l + 1);
+             strcpy (sa->trimmed_masked_seq, output_seq->sequence_fwd);
+             sa->trimmed_masked_seq_r = (char *) pr_safe_malloc(sa->incl_l + 1);
+             strcpy (sa->trimmed_masked_seq_r, output_seq->sequence_rev);
+       }
+       delete_input_sequence (input_seq);
+       delete_output_sequence (output_seq);
+    }
+                                                                                                           
     /* Copies the whole sequence into upcased_seq */
     sa->upcased_seq = (char *) pr_safe_malloc(strlen(sa->sequence) + 1);
     strcpy(sa->upcased_seq, sa->sequence);
@@ -8646,6 +8726,11 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("  min_right_three_prime_distance %i\n", p->min_right_three_prime_distance) ;
     printf("  min_5_prime_overlap_of_junction %i\n", p->min_5_prime_overlap_of_junction);
     printf("  min_3_prime_overlap_of_junction %i\n", p->min_3_prime_overlap_of_junction);
+    printf("  mask_template %i\n", p->mask_template);
+    printf("  failure_rate %f\n", p->mp.failure_rate);
+    printf("  nucl_masked_in_5p_direction %i\n", p->mp.nucl_masked_in_5p_direction);
+    printf("  nucl_masked_in_3p_direction %i\n", p->mp.nucl_masked_in_3p_direction);
+    printf("  list_prefix %s\n", p->mp.list_prefix);
     printf("  dump %i\n", p->dump);
 
     printf("  begin pr_pair_weights\n") ;
@@ -8690,6 +8775,7 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("num_ns %f\n", p->p_args.weights.num_ns) ;
     printf("template_mispriming %f\n", p->p_args.weights.template_mispriming) ;
     printf("template_mispriming_th %f\n", p->p_args.weights.template_mispriming_th) ;
+    printf("failure_rate %f\n", p->p_args.weights.failure_rate) ;
     printf("end oligo_weights\n") ;
 
     printf("opt_tm %f\n", p->p_args.opt_tm) ;
@@ -8803,6 +8889,8 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("*sequence_file %s\n", s->sequence_file) ;
     printf("*trimmed_seq %s\n", s->trimmed_seq) ;
     printf("*trimmed_orig_seq %s\n", s->trimmed_orig_seq) ;
+    printf("*trimmed_masked_seq %s\n", s->trimmed_masked_seq) ;
+    printf("*trimmed_masked_seq_r %s\n", s->trimmed_masked_seq_r) ;
     printf("*upcased_seq %s\n", s->upcased_seq) ;
     printf("*upcased_seq_r %s\n", s->upcased_seq_r) ;
     printf("*left_input %s\n", s->left_input) ;
