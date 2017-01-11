@@ -1,0 +1,22 @@
+../test/masker.fna
+-l ../kmer_lists/homo_sapiens_11.list ../test/masker.fna
+-lp ../kmer_lists/homo_sapiens ../test/masker.fna
+-p 0 ../test/masker.fna
+-p 1 ../test/masker.fna
+-p 1.1 ../test/masker.fna
+-p 100 ../test/masker.fna
+-a 5 -l ../kmer_lists/homo_sapiens_11.list ../test/masker.fna
+-a 0 -l ../kmer_lists/homo_sapiens_11.list ../test/masker.fna
+-m3 10 -l ../kmer_lists/homo_sapiens_16.list ../test/masker.fna
+-m3 1 -l ../kmer_lists/homo_sapiens_16.list ../test/masker.fna
+-m3 1000 -l ../kmer_lists/homo_sapiens_16.list ../test/masker.fna
+-m5 10 -l ../kmer_lists/homo_sapiens_16.list ../test/masker.fna
+-m5 0 -l ../kmer_lists/homo_sapiens_16.list ../test/masker.fna
+-m5 1000 -l ../kmer_lists/homo_sapiens_16.list ../test/masker.fna
+-c A -l ../kmer_lists/homo_sapiens_16.list ../test/masker.fna
+-c AA -l ../kmer_lists/homo_sapiens_16.list ../test/masker.fna
+-c T -l ../kmer_lists/homo_sapiens_16.list ../test/masker.fna
+-c \* -l ../kmer_lists/homo_sapiens_16.list ../test/masker.fna
+-c \- -l ../kmer_lists/homo_sapiens_16.list ../test/masker.fna
+-c \. -l ../kmer_lists/homo_sapiens_16.list ../test/masker.fna
+-c \, -l ../kmer_lists/homo_sapiens_16.list ../test/masker.fna
