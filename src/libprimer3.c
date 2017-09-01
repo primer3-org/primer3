@@ -764,7 +764,7 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->mask_template                   = 0;
   a->masking_parameters_changed      = 0;
   a->mp.mdir                         = both_separately;
-  a->mp.failure_rate                 = 0.2;
+  a->mp.failure_rate                 = 0.1;
   a->mp.nucl_masked_in_5p_direction  = 1;
   a->mp.nucl_masked_in_3p_direction  = 0;
   a->mp.print_sequence               = 0;

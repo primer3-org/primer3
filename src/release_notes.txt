@@ -9,7 +9,7 @@ masking is based on statistical model (see Documentation for details).
 
 NEW INPUT TAGS AND DEFAULT VALUES:
 PRIMER_MASK_TEMPLATE=0
-PRIMER_FAILURE_RATE=0.2
+PRIMER_FAILURE_RATE=0.1
 PRIMER_MASK_5P_DIRECTION=1
 PRIMER_MASK_3P_DIRECTION=1
 PRIMER_MASKING_LIST_PREFIX=homo_sapiens
@@ -19,7 +19,7 @@ PRIMER_KMER_LISTS_PATH=../kmer_lists/
 See the documentation for details. The tag PRIMER_MASK_TEMPLATE directs
 primer3_core to premask template sequence for primer design.
 
-NEW EXECUTABLE: masker
+NEW EXECUTABLE: primer3_masker
 
 masker masks repetitive regions in INPUTFILE (given as fasta and/or multiple
 fasta format) based on statistical approach.

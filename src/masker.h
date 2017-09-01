@@ -36,7 +36,7 @@
 
 /* default masking parameter values */
 #define PRINT_SEQUENCE 1 /* used only for commandline tool */
-#define DEFAULT_FAILURE_RATE 0.2
+#define DEFAULT_FAILURE_RATE 0.1
 #define DEFAULT_ABS_CUTOFF 0 
 #define DEFAULT_MASK_CHAR 'N'
 #define DEFAULT_MASKING_DIRECTION both_on_same /* used only for commandline tool */

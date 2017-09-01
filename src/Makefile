@@ -75,14 +75,14 @@ ifeq ($(TESTOPTS),--windows)
 	NTTHAL_EXE      = ntthal.exe
 	OLIGOTM_EXE     = oligotm.exe
 	LONG_SEQ_EXE	= long_seq_tm_test.exe
-	MASKER_EXE      = masker.exe
+	MASKER_EXE      = primer3_masker.exe
 else
 	PRIMER_EXE      = primer3_core
 	NTDPAL_EXE      = ntdpal
 	NTTHAL_EXE      = ntthal
 	OLIGOTM_EXE     = oligotm
 	LONG_SEQ_EXE	= long_seq_tm_test
-	MASKER_EXE      = masker
+	MASKER_EXE      = primer3_masker
 endif
 LIBOLIGOTM      = liboligotm.a
 LIBOLIGOTM_DYN  = liboligotm.so.1.2.0

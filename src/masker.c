@@ -9,6 +9,7 @@
 #include <fcntl.h>
 #include <math.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include "masker.h"
 #include "libprimer3.h"
@@ -157,6 +158,10 @@ create_formula_parameters_from_list_file_prefix (const char *list_name_prefix, c
 	char list_file_name[300];
 	formula_parameters *fp;
 	sprintf(list_file_name, "%s%s_%u.list", kmer_lists_path, list_name_prefix, word_length);
+	if(0 != access(list_file_name,0)){
+		pr_append_new_chunk_external (parse_err, "Cannot find list file");
+		return NULL;
+	}
 	fp = create_formula_parameters_from_list_file_name (list_file_name, parse_err);
 	return fp;
 }

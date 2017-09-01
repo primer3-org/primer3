@@ -613,19 +613,25 @@ read_boulder_record(FILE *file_input,
                     parse_int("PRIMER_MASK_TEMPLATE", datum, &pa->mask_template, parse_err);  
                     pa->lowercase_masking = pa->mask_template;
                     pa->masking_parameters_changed = pa->mask_template;
-                    continue;
+                    // continue;
       }
       COMPARE_FLOAT("PRIMER_FAILURE_RATE", pa->mp.failure_rate);
       COMPARE_INT("PRIMER_MASK_5P_DIRECTION", pa->mp.nucl_masked_in_5p_direction);
       COMPARE_INT("PRIMER_MASK_3P_DIRECTION", pa->mp.nucl_masked_in_3p_direction);
       if (COMPARE("PRIMER_MASKING_LIST_PREFIX")) {
-        if(pa->mp.list_prefix == NULL){
-	   pa->mp.list_prefix = (char*) _rb_safe_malloc(datum_len + 1);
-	   strcpy(pa->mp.list_prefix, datum);
-	   pa->masking_parameters_changed = 1;
-        }
+         if(pa->mp.list_prefix == NULL){
+	    pa->mp.list_prefix = (char*) _rb_safe_malloc(datum_len + 1);
+	    strcpy(pa->mp.list_prefix, datum);
+	    pa->masking_parameters_changed = 1;
+         }  else if (strcmp(pa->mp.list_prefix, datum)){
+             // free(pa->mp.list_prefix);
+             pa->mp.list_prefix = (char*) _rb_safe_malloc(datum_len + 1);
+             strcpy(pa->mp.list_prefix, datum);
+             pa->masking_parameters_changed = 1;
+         }
         continue;
       }
+      
     }
     /* End of reading the tags in the right place */
         
