@@ -1,0 +1,20 @@
+# Compiled Object files
+*.o
+
+# Compiled Static libraries
+*.a
+
+# Executables
+src/long_seq_tm_test
+src/ntdpal
+src/ntthal
+src/oligotm
+src/primer3_core
+src/primer3_masker
+src/*.exe
+
+# Temporary Test Files
+test/*.tmp
+test/*.tmp2
+test/primer_global_err/*.tmp
+test/primer_global_err/*.tmp2
