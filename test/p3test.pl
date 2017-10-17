@@ -1,3 +1,4 @@
+#!/usr/bin/perl
 
 # Regression test driver for the primer3_core executable.
 #
@@ -65,6 +66,25 @@ our $valgrind_format;
                    
 # Global variable for Errors
 my $all_ok;
+
+# Create empty directories if needed
+if (!(-d "../test/primer_list_tmp")) {
+    mkdir "../test/primer_list_tmp";
+    print "mkdir: ../test/primer_list_tmp\n";
+}
+if (!(-d "../test/primer1_list_tmp")) {
+    mkdir "../test/primer1_list_tmp";
+    print "mkdir: ../test/primer1_list_tmp\n";
+}
+if (!(-d "../test/primer1_th_list_tmp")) {
+    mkdir "../test/primer1_th_list_tmp";
+    print "mkdir: ../test/primer1_th_list_tmp\n";
+}
+if (!(-d "../test/th-w-other-tasks_list_tmp")) {
+    mkdir "../test/th-w-other-tasks_list_tmp";
+    print "mkdir: ../test/th-w-other-tasks_list_tmp\n";
+}
+
 
 main();
 
