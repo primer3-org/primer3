@@ -3974,8 +3974,8 @@ Statistics
          con   too    in    in   not          no    tm    tm  high  high        high lower      
          sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end  case      
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
-Left  180335     0     0     0     0  8877     0 34005101808     0     2  1117     0   530 33996
-Right 180325     0     0     0     0  8926     0 33987101882     0     1  1108     0   480 33941
+Left  180225     0     0     0     0  9272     0 34005101808     0     2  1142     0     0 33996
+Right 180230     0     0     0     0  9290     0 33987101882     0     1  1129     0     0 33941
 Intl  180500     0     0     0     0  9272     0 34043102015     0     0  1142     0     0 34028
 Pair Stats:
 considered 338, unacceptable product size 331, high any compl 1, ok 6
@@ -4970,8 +4970,8 @@ Statistics
          con   too    in    in   not          no    tm    tm  high  high        high lower      
          sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end  case      
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
-Left  180335     0     0     0     0  8877     0 34005101808     0     2  1117     0   530 33996
-Right 180325     0     0     0     0  8926     0 33987101882     0     1  1108     0   480 33941
+Left  180225     0     0     0     0  9272     0 34005101808     0     2  1142     0     0 33996
+Right 180230     0     0     0     0  9290     0 33987101882     0     1  1129     0     0 33941
 Intl  180500     0     0     0     0  9272     0 34043102015     0     0  1142     0     0 34028
 Pair Stats:
 considered 338, unacceptable product size 331, high any compl 1, ok 6

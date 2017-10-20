@@ -56,7 +56,7 @@ our %signo;
 our $valgrind_exe = "/usr/bin/valgrind";
 our $valgrind_format;
 our $winFlag;
-our $exe = '../src/masker';
+our $exe = '../src/primer3_masker';
 
 sub perldiff($$);
 sub main();
