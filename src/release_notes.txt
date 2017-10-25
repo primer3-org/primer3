@@ -1,5 +1,4 @@
-release 3.0.0 beta to be released
-===============================================
+release 2.4.0 to be released  ===============================================
 This release adds a new feature to primer3_core and related C code.
 
 PCR PRIMER DESIGN TEMPLATE MASKING BEFORE PRIMER DESIGN. This feature
@@ -35,9 +34,7 @@ By default, directory ../kmer_lists/ contains example kmers. Software for
 making kmers can be downloaded http://bioinfo.ut.ee/FastGT/index.php?r=site/index
 Premade list files can be downloaded from: http://primer3.ut.ee/lists.htm
 
-
-release 2.4.0 to be released  ===============================================
-
+In 2016:
 Major correction:
 1. The long primer3_core comand line options with single hyphen (-myargs) 
    are depreciated. Use double hyphens (--myargs) instead. 
