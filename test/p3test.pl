@@ -468,7 +468,7 @@ sub main() {
             if (!chdir "../") { die "chdir \"..\": $!\n" }
 
         } elsif ($test =~ /settings$/) {
-	    my $cmd = "$valgrind_prefix$exe $default_version --strict_tags --p3_settings_file=../$test.txt --echo <$input >$tmp";
+	    my $cmd = "$valgrind_prefix$exe $default_version --strict_tags --p3_settings_file=../settings_files/$test.txt --echo <$input >$tmp";
             $r = _nowarn_system($cmd);
 
 	} elsif ($test =~ /formatted$/) {

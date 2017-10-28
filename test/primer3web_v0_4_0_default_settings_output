@@ -1,4 +1,4 @@
-P3_SETTINGS_FILE_USED=../primer3web_v0_4_0_default_settings.txt
+P3_SETTINGS_FILE_USED=../settings_files/primer3web_v0_4_0_default_settings.txt
 P3_FILE_TYPE=settings
 P3_FILE_ID=Default settings of primer3web version 0.4.0
 PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT=0

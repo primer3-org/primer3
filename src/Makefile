@@ -43,7 +43,7 @@
 # general users and for biologist programmers. In: Krawetz S, Misener S
 # (eds) Bioinformatics Methods and Protocols: Methods in Molecular
 # Biology. Humana Press, Totowa, NJ, pp 365-386.  Source code available
-# from https://sourceforge.net/projects/primer3/
+# from https://github.com/primer3-org/primer3
 # ======================================================================
 
 # For VALGRIND -- see end of this makefile for testing primer3_core

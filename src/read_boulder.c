@@ -829,10 +829,10 @@ read_p3_file(const char *file_name,
 	       file_name);
     return ret_par;
   }
-  if (strcmp(line1,
-	     "Primer3 File - http://primer3.sourceforge.net")) {
+  if ((strcmp(line1,"Primer3 File - http://primer3.org") != 0) &&
+      (strcmp(line1,"Primer3 File - http://primer3.sourceforge.net") != 0)) {
       pr_append2(fatal_err,
-		 "First line must be \"Primer3 File - http://primer3.sourceforge.net\" in ",
+                 "First line must be \"Primer3 File - http://primer3.org\" in ",
 		 file_name);
       return ret_par;
   }

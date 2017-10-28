@@ -1,4 +1,4 @@
-P3_SETTINGS_FILE_USED=../primer3web_v4_0_0_default_settings.txt
+P3_SETTINGS_FILE_USED=../settings_files/primer3web_v4_0_0_default_settings.txt
 P3_FILE_TYPE=settings
 PRIMER_FIRST_BASE_INDEX=1
 PRIMER_TASK=generic

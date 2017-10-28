@@ -1,4 +1,4 @@
-Primer3 File - http://primer3.sourceforge.net
+Primer3 File - http://primer3.org
 P3_FILE_TYPE=settings
 
 PRIMER_FIRST_BASE_INDEX=1
