@@ -60,3 +60,5 @@ test/syntax09.rev
 test/syntax10.for
 test/syntax10.int
 test/syntax10.rev
+
+.DS_Store
