@@ -53,7 +53,7 @@
 static void print_help (int exit_value);
 void print_parameters (masker_parameters *mp);
 
-const char *pr_programme_name = "masker";
+const char *pr_programme_name = "primer3_masker";
 
 int 
 main (int argc, const char *argv[]) 
