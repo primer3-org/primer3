@@ -526,7 +526,7 @@ read_boulder_record(FILE *file_input,
         }
         continue;
       }  
-        if (COMPARE("PRIMER_KMER_LISTS_PATH")) {
+        if (COMPARE("PRIMER_MASK_KMERLIST_PATH")) {
            if (kmer_lists_path == NULL) {
                kmer_lists_path = (char*) _rb_safe_malloc(datum_len + 1);
                strcpy(kmer_lists_path, datum);
@@ -562,7 +562,7 @@ read_boulder_record(FILE *file_input,
                     pa->p_args.weights.template_mispriming);
       COMPARE_FLOAT("PRIMER_WT_TEMPLATE_MISPRIMING_TH",
 		                        pa->p_args.weights.template_mispriming_th);
-      COMPARE_FLOAT("PRIMER_WT_FAILURE_RATE",
+      COMPARE_FLOAT("PRIMER_WT_MASK_FAILURE_RATE",
                                               pa->p_args.weights.failure_rate);                        
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_TM_GT", pa->o_args.weights.temp_gt);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_TM_LT", pa->o_args.weights.temp_lt);
@@ -615,10 +615,10 @@ read_boulder_record(FILE *file_input,
                     pa->masking_parameters_changed = pa->mask_template;
                     continue;
       }
-      COMPARE_FLOAT("PRIMER_FAILURE_RATE", pa->mp.failure_rate);
+      COMPARE_FLOAT("PRIMER_MASK_FAILURE_RATE", pa->mp.failure_rate);
       COMPARE_INT("PRIMER_MASK_5P_DIRECTION", pa->mp.nucl_masked_in_5p_direction);
       COMPARE_INT("PRIMER_MASK_3P_DIRECTION", pa->mp.nucl_masked_in_3p_direction);
-      if (COMPARE("PRIMER_MASKING_LIST_PREFIX")) {
+      if (COMPARE("PRIMER_MASK_KMERLIST_PREFIX")) {
          if(pa->mp.list_prefix == NULL){
 	    pa->mp.list_prefix = (char*) _rb_safe_malloc(datum_len + 1);
 	    strcpy(pa->mp.list_prefix, datum);
