@@ -564,6 +564,9 @@ p3_destroy_global_settings(p3_global_settings *a)
     if (NULL != a->o_args.must_match_three_prime) {
     	free(a->o_args.must_match_three_prime);
     }
+    if (NULL != a->mp.list_prefix) {
+    	free(a->mp.list_prefix);
+    }
     destroy_seq_lib(a->p_args.repeat_lib);
     destroy_seq_lib(a->o_args.repeat_lib);
     free(a);
@@ -770,7 +773,8 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->mp.print_sequence               = 0;
   a->mp.do_soft_masking              = 1;
   a->mp.nlists                       = DEFAULT_NLISTS;
-  a->mp.list_prefix                  = DEFAULT_LIST_FILE_PREFIX;
+  a->mp.list_prefix                  = (char *) pr_safe_malloc (strlen (DEFAULT_LIST_FILE_PREFIX + 1));
+  strcpy (a->mp.list_prefix, DEFAULT_LIST_FILE_PREFIX);
   a->mp.fp                           = NULL;
   a->mp.formula_intercept            = DEFAULT_INTERCEPT;  
 }
