@@ -624,7 +624,7 @@ read_boulder_record(FILE *file_input,
 	    strcpy(pa->mp.list_prefix, datum);
 	    pa->masking_parameters_changed = 1;
          }  else if (strcmp(pa->mp.list_prefix, datum)){
-             // free(pa->mp.list_prefix);
+             free(pa->mp.list_prefix);
              pa->mp.list_prefix = (char*) _rb_safe_malloc(datum_len + 1);
              strcpy(pa->mp.list_prefix, datum);
              pa->masking_parameters_changed = 1;

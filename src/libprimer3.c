@@ -773,7 +773,7 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->mp.print_sequence               = 0;
   a->mp.do_soft_masking              = 1;
   a->mp.nlists                       = DEFAULT_NLISTS;
-  a->mp.list_prefix                  = (char *) pr_safe_malloc (strlen (DEFAULT_LIST_FILE_PREFIX + 1));
+  a->mp.list_prefix                  = (char *) pr_safe_malloc (strlen (DEFAULT_LIST_FILE_PREFIX) + 1);
   strcpy (a->mp.list_prefix, DEFAULT_LIST_FILE_PREFIX);
   a->mp.fp                           = NULL;
   a->mp.formula_intercept            = DEFAULT_INTERCEPT;  
