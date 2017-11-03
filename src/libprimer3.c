@@ -463,8 +463,7 @@ static void op_set_does_not_amplify_orf(primer_rec *);
 
 /* Global static variables. */
 static const char *primer3_copyright_char_star = "\n"
-"Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008\n"
-"  2009,2010,2011,2012\n"
+"Copyright (c) 1996-2017\n"
 "Whitehead Institute for Biomedical Research, Steve Rozen\n"
 "(http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky\n"
 "All rights reserved.\n"
