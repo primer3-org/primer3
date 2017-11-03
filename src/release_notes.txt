@@ -1,4 +1,4 @@
-release 2.4.0 to be released  ===============================================
+release 2.4.0 2017-11-03  ===============================================
 This release adds a new feature to primer3_core and related C code.
 
 PCR PRIMER DESIGN TEMPLATE MASKING BEFORE PRIMER DESIGN. This feature
