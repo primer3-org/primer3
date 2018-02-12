@@ -421,7 +421,7 @@ oligotm(const  char *s,
      double gcPercent=0;
      double free_divalent; /* conc of divalent cations minus dNTP conc */
      int i;
-     for(i = 0; i <= len && d != NULL && d != '\0';) {
+     for(i = 0; i <= len && d != NULL && *d != '\0';) {
 	if(*d == 'C' || *d == 'G') {
 	   gcPercent++;
 	}  

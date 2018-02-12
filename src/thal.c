@@ -426,12 +426,12 @@ thal(const unsigned char *oligo_f,
 	       "Illegal type");
    o->align_end_1 = -1;
    o->align_end_2 = -1;
-   if ('\0' == oligo_f) {
+   if (oligo_f && '\0' == *oligo_f) {
       strcpy(o->msg, "Empty first sequence");
       o->temp = 0.0;
       return;
    }
-   if ('\0' == oligo_r) {
+   if (oligo_r && '\0' == *oligo_r) {
       strcpy(o->msg, "Empty second sequence");
       o->temp = 0.0;
       return;
@@ -1200,7 +1200,7 @@ tableStartATS(double atp_value, double atpS[5][5])
    for (i = 0; i < 5; ++i)
      for (j = 0; j < 5; ++j)
        atpS[i][j] = 0.00000000001;
-     atpS[0][3] = atpS[3][0] = atp_value;
+   atpS[0][3] = atpS[3][0] = atp_value;
 }
 
 
@@ -1213,7 +1213,7 @@ tableStartATH(double atp_value, double atpH[5][5])
      for (j = 0; j < 5; ++j)
        atpH[i][j] = 0.0;
 
-     atpH[0][3] = atpH[3][0] = atp_value;
+   atpH[0][3] = atpH[3][0] = atp_value;
 }
 
 static int 

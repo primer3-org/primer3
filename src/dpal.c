@@ -1033,7 +1033,8 @@ print_align(const unsigned char *X,
     fprintf(stderr, "\n");
     for(i=j;i<j+70;i++) fprintf(stderr, "%c",sxy[i]);
     fprintf(stderr, "\n");
-    for(i=j;i<j+70;i++) fprintf(stderr, "%c",sy[i]); fprintf(stderr,"\n");
+    for(i=j;i<j+70;i++) fprintf(stderr, "%c",sy[i]);
+    fprintf(stderr,"\n");
     for(i=0;i<70;i++)   fprintf(stderr, "_");
     fprintf(stderr, "\n");
     j +=70;
