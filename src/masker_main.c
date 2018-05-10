@@ -39,7 +39,6 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "masker.h"
 #include "libprimer3.h"
 
 /* maximum number of variables allowed in the probability formula */

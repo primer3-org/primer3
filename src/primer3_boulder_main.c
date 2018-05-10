@@ -44,9 +44,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include "thal.h"
-#include "format_output.h"
 #include "libprimer3.h"
+#include "format_output.h"
 #include "read_boulder.h"
 #include "print_boulder.h"
 

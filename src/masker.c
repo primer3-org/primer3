@@ -1,6 +1,3 @@
-#include <fstream>
-#include <iostream>
-
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -11,7 +8,6 @@
 #include <unistd.h>
 #include <errno.h>
 
-#include "masker.h"
 #include "libprimer3.h"
 
 unsigned int glistmaker_code_match = 'G' << 24 | 'T' << 16 | '4' << 8 | 'C';

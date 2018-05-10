@@ -54,9 +54,9 @@ WINMAKE=mingw32-make
 LDLIBS     = -lm
 AR         = ar
 CC         = gcc
-CPP        = g++
+CXX        = g++
 O_OPTS     = -O2
-CC_OPTS    = -g -Wall -D__USE_FIXED_PROTOTYPES__
+CC_OPTS    = -g -Wall
 P_DEFINES  =
 
 CFLAGS  = $(CC_OPTS) $(O_OPTS)
@@ -101,8 +101,7 @@ RANLIB          = ranlib
 PRIMER_OBJECTS1=primer3_boulder_main.o\
                 format_output.o\
                 read_boulder.o\
-                print_boulder.o\
-                masker.o
+                print_boulder.o
 
 PRIMER_OBJECTS=$(PRIMER_OBJECTS1) $(LIBRARIES)
 PRIMER_DYN_OBJECTS=$(PRIMER_OBJECTS1) $(DYNLIBS)
@@ -163,67 +162,67 @@ $(LIBMASKER_DYN): masker.o
 	$(CC) -shared -W1,-soname,libmasker.so.1 -o $(LIBMASKER_DYN) masker.o
 
 $(PRIMER_EXE): $(PRIMER_OBJECTS)
-	$(CPP) $(LDFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
+	$(CXX) -lstdc++ $(LDFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
 
-libprimer3.o: libprimer3.c libprimer3.h p3_seq_lib.h dpal.h thal.h oligotm.h
-	$(CPP) -c $(CFLAGS) -Wno-deprecated $(P_DEFINES) -o $@ libprimer3.c
+libprimer3.o: libprimer3.cc libprimer3.h p3_seq_lib.h dpal.h thal.h oligotm.h
+	$(CXX) -c $(CFLAGS) $(P_DEFINES) -o $@ libprimer3.cc
 
 $(NTDPAL_EXE): ntdpal_main.o dpal.o
-	$(CPP) $(LDFLAGS) -o $@ ntdpal_main.o dpal.o
+	$(CC) $(LDFLAGS) -o $@ ntdpal_main.o dpal.o
 
 $(NTTHAL_EXE): thal_main.o thal.o
-	$(CPP) $(LDFLAGS) -o $@ thal_main.o thal.o $(LDLIBS)
+	$(CC) $(LDFLAGS) -o $@ thal_main.o thal.o $(LDLIBS)
 
 $(OLIGOTM_EXE): oligotm_main.c oligotm.h $(LIBOLIGOTM)
-	$(CPP) $(CFLAGS) -o $@ oligotm_main.c $(LIBOLIGOTM) $(LIBOPTS) $(LDLIBS)
+	$(CC) $(CFLAGS) -o $@ oligotm_main.c $(LIBOLIGOTM) $(LIBOPTS) $(LDLIBS)
 
 $(LONG_SEQ_EXE): long_seq_tm_test_main.c oligotm.o
-	$(CPP) $(CFLAGS) -o $@ long_seq_tm_test_main.c oligotm.o $(LIBOPTS) $(LDLIBS)
+	$(CC) $(CFLAGS) -o $@ long_seq_tm_test_main.c oligotm.o $(LIBOPTS) $(LDLIBS)
 
 $(MASKER_EXE): masker_main.c $(LIBRARIES)
-	$(CPP) $(CFLAGS) -o $@ masker_main.c $(LIBRARIES) $(LIBOPTS) $(LDLIBS)
+	$(CXX) -lstdc++ $(CFLAGS) -o $@ masker_main.c $(LIBRARIES) $(LIBOPTS) $(LDLIBS)
 
 read_boulder.o: read_boulder.c read_boulder.h libprimer3.h dpal.h thal.h p3_seq_lib.h 
-	$(CPP) -c $(CFLAGS) $(P_DEFINES) -o $@ read_boulder.c
+	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ read_boulder.c
 
 print_boulder.o: print_boulder.c print_boulder.h libprimer3.h p3_seq_lib.h 
-	$(CPP) -c $(CFLAGS) $(P_DEFINES) -o $@ print_boulder.c
+	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ print_boulder.c
 
 dpal.o: dpal.c dpal.h
-	$(CPP) -c $(CFLAGS) -o $@ dpal.c
+	$(CC) -c $(CFLAGS) -o $@ dpal.c
 
 # We use '-ffloat-store' on windows to prevent undesirable
 # precision which may lead to differences in floating point results.
 thal.o: thal.c thal.h
-	$(CPP) -c $(CFLAGS) -ffloat-store -o $@ thal.c
+	$(CC) -c $(CFLAGS) -ffloat-store -o $@ thal.c
 
 p3_seq_lib.o: p3_seq_lib.c p3_seq_lib.h libprimer3.h
-	$(CPP) -c $(CFLAGS) -o $@ p3_seq_lib.c
+	$(CC) -c $(CFLAGS) -o $@ p3_seq_lib.c
 
 dpal_primer.o: dpal.c dpal.h
-	$(CPP) -c $(CFLAGS) $(P_DEFINES) -o $@ dpal.c
+	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ dpal.c
 
 thal_primer.o: thal.c thal.h
-	$(CPP) -c $(CFLAGS) -ffloat-store $(P_DEFINES) -o $@ thal.c
+	$(CC) -c $(CFLAGS) -ffloat-store $(P_DEFINES) -o $@ thal.c
 
 format_output.o: format_output.c format_output.h libprimer3.h dpal.h thal.h p3_seq_lib.h 
-	$(CPP) -c $(CFLAGS) $(P_DEFINES) -o $@ format_output.c
+	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ format_output.c
 
 ntdpal_main.o: ntdpal_main.c dpal.h
-	$(CPP) -c $(CC_OPTS) -o $@ ntdpal_main.c
+	$(CC) -c $(CC_OPTS) -o $@ ntdpal_main.c
 
 thal_main.o: thal_main.c thal.h
-	$(CPP) -c $(CFLAGS) -o $@ thal_main.c
+	$(CC) -c $(CFLAGS) -o $@ thal_main.c
 # We use CC_OPTS above rather than CFLAGS because
 # gcc 2.7.2 crashes while compiling ntdpal_main.c with -O2
 
 oligotm.o: oligotm.c oligotm.h
 
 primer3_boulder_main.o: primer3_boulder_main.c libprimer3.h dpal.h thal.h oligotm.h format_output.h print_boulder.h read_boulder.h
-	$(CPP) -c $(CFLAGS) $(P_DEFINES) primer3_boulder_main.c
+	$(CC) -c $(CFLAGS) $(P_DEFINES) primer3_boulder_main.c
 
 masker.o: masker.c masker.h libprimer3.h
-	$(CPP) -c $(CFLAGS) $(P_DEFINES) masker.c
+	$(CC) -c $(CFLAGS) $(P_DEFINES) masker.c
 
 primer_test: test
 

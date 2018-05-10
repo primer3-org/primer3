@@ -45,23 +45,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <float.h>
 #include <string.h>
 #include <ctype.h> /* toupper */
-
-#ifdef __GNUC__
-#include <ext/hash_map>
-#else
-#include <hash_map>
-#endif
+#include <unordered_map>
 
 namespace std
 {
   using namespace __gnu_cxx;
 }
 
-#include "dpal.h"
-#include "thal.h"
-#include "oligotm.h"
 #include "libprimer3.h"
-#include "masker.h"
 
 /* #define's */
 
@@ -135,7 +126,7 @@ static char *thermodynamic_alignment_length_error_msg = NULL;
 /* Variables needed in choose_pair_or_triple, need to be global
    for memory de-allocation reasons. Full description given in the function. */
 static int *max_j_seen;
-static std::hash_map<int, primer_pair*> **pairs;
+static std::unordered_map<int, primer_pair*> **pairs;
 
 /* Function declarations. */
 
@@ -1130,8 +1121,8 @@ destroy_seq_args(seq_args *sa)
    allocated in choose_pair_or_triple. */
 static void free_pair_memory(int rev_num_elem)
 {
-  std::hash_map<int, primer_pair*> *hmap;
-  std::hash_map<int, primer_pair*>::iterator it;
+  std::unordered_map<int, primer_pair*> *hmap;
+  std::unordered_map<int, primer_pair*>::iterator it;
   primer_pair *pp;
   int i;
 
@@ -1354,22 +1345,22 @@ choose_pair_or_triple(p3retval *retval,
 
   /* Hash maps used to store pairs that were computed */
 
-  /* std::hash_map<int, primer_pair*> **pairs; */
+  /* std::unordered_map<int, primer_pair*> **pairs; */
   /* pairs is an array of pointers to hash maps.  It will be indexed
      by the indices of the reverse primers in retval->rev. -- global var now */
 
-  std::hash_map<int, primer_pair*> *hmap, *best_hmap = NULL;
+  std::unordered_map<int, primer_pair*> *hmap, *best_hmap = NULL;
   /* hmap and best_hmap will be pointers to hash maps also pointed to
      by elements of pairs. */
 
-  std::hash_map<int, primer_pair*>::iterator it;
+  std::unordered_map<int, primer_pair*>::iterator it;
   primer_pair *pp, *best_pp = NULL;
   int pair_found = 0;
 
   pairs =
-    (std::hash_map<int, primer_pair*>**) 
+    (std::unordered_map<int, primer_pair*>**) 
     calloc (retval->rev.num_elem, 
-	    sizeof(std::hash_map<int, primer_pair*>*));
+	    sizeof(std::unordered_map<int, primer_pair*>*));
   if (!pairs) longjmp(_jmp_buf, 1);
   
   memset(&the_best_pair, 0, sizeof(the_best_pair));
@@ -1593,7 +1584,7 @@ choose_pair_or_triple(p3retval *retval,
           }
         } else {
           /* Create this hashmap */
-          hmap = new std::hash_map<int, primer_pair*>;
+          hmap = new std::unordered_map<int, primer_pair*>;
           if (!hmap)
             longjmp(_jmp_buf, 1);
           pairs[i] = hmap;

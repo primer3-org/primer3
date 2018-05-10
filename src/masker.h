@@ -274,7 +274,7 @@ void write_char_to_output (output_sequence *output_seq, char c, char c_other, co
 /*
  * 
  */
-masking_buffer *create_masking_buffer (unsigned int word_length);
+masking_buffer *create_masking_buffer (unsigned int word_length, pr_append_str *parse_err);
 void initialize_masking_buffer (masking_buffer *mbuffer, unsigned int word_length);
 void delete_masking_buffer (masking_buffer *mbuffer);
 void add_char_to_buffer (char c, masking_buffer *mbuffer, int char_type);
