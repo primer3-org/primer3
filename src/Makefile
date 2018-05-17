@@ -60,6 +60,7 @@ CC_OPTS    = -g -Wall
 P_DEFINES  =
 
 CFLAGS  = $(CC_OPTS) $(O_OPTS)
+CXXFLAGS = $(CFLAGS) -std=c++11
 LDFLAGS = -g
 # Note, for profiling, use
 # make O_OPTS='-pg -O0' LDFLAGS='-g -pg'
@@ -162,10 +163,10 @@ $(LIBMASKER_DYN): masker.o
 	$(CC) -shared -W1,-soname,libmasker.so.1 -o $(LIBMASKER_DYN) masker.o
 
 $(PRIMER_EXE): $(PRIMER_OBJECTS)
-	$(CXX) -lstdc++ $(LDFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
+	$(CXX) $(CXXFLAGS) -lstdc++ $(LDFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
 
 libprimer3.o: libprimer3.cc libprimer3.h p3_seq_lib.h dpal.h thal.h oligotm.h
-	$(CXX) -c $(CFLAGS) $(P_DEFINES) -o $@ libprimer3.cc
+	$(CXX) -c $(CXXFLAGS) $(P_DEFINES) -o $@ libprimer3.cc
 
 $(NTDPAL_EXE): ntdpal_main.o dpal.o
 	$(CC) $(LDFLAGS) -o $@ ntdpal_main.o dpal.o
@@ -180,7 +181,7 @@ $(LONG_SEQ_EXE): long_seq_tm_test_main.c oligotm.o
 	$(CC) $(CFLAGS) -o $@ long_seq_tm_test_main.c oligotm.o $(LIBOPTS) $(LDLIBS)
 
 $(MASKER_EXE): masker_main.c $(LIBRARIES)
-	$(CXX) -lstdc++ $(CFLAGS) -o $@ masker_main.c $(LIBRARIES) $(LIBOPTS) $(LDLIBS)
+	$(CXX) $(CXXFLAGS) -lstdc++ -o $@ masker_main.c $(LIBRARIES) $(LIBOPTS) $(LDLIBS)
 
 read_boulder.o: read_boulder.c read_boulder.h libprimer3.h dpal.h thal.h p3_seq_lib.h 
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ read_boulder.c
