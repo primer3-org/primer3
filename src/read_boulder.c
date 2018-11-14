@@ -610,8 +610,11 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_PAIR_WT_TEMPLATE_MISPRIMING_TH",
 		    pa->pr_pair_weights.template_mispriming_th);
       if (COMPARE("PRIMER_MASK_TEMPLATE")) {
-                    parse_int("PRIMER_MASK_TEMPLATE", datum, &pa->mask_template, parse_err);  
-                    pa->lowercase_masking = pa->mask_template;
+                    parse_int("PRIMER_MASK_TEMPLATE", datum, &pa->mask_template, parse_err);
+		    /* Check in case: PRIMER_LOWERCASE_MASKING=1 and PRIMER_MASK_TEMPLATE=0 */
+		    if (pa->mask_template) {
+                        pa->lowercase_masking = pa->mask_template;
+		    }
                     pa->masking_parameters_changed = pa->mask_template;
                     continue;
       }
