@@ -75,7 +75,7 @@
 extern const double _INFINITY;
 extern const double ABSOLUTE_ZERO;
 extern const int MAX_LOOP; /* the maximum size of loop that can be calculated;
-			    for larger loops formula must be implemented */
+                              for larger loops formula must be implemented */
 extern const int MIN_LOOP;
 
 /*** END CONSTANTS ***/
@@ -93,10 +93,10 @@ typedef enum thal_alignment_type {
 typedef struct {
    int debug; /* if non zero, print debugging info to stderr */
    thal_alignment_type type; /* one of the
-	      1 THAL_ANY, (by default)
-	      2 THAL_END1,
-	      3 THAL_END2,
-	      4 THAL_HAIRPIN */
+              1 THAL_ANY, (by default)
+              2 THAL_END1,
+              3 THAL_END2,
+              4 THAL_HAIRPIN */
    int maxLoop;  /* maximum size of loop to consider; longer than 30 bp are not allowed */
    double mv; /* concentration of monovalent cations */
    double dv; /* concentration of divalent cations */
@@ -143,8 +143,8 @@ void destroy_thal_structures();
 */
 
 void thal(const unsigned char *oligo1, 
-	  const unsigned char *oligo2, 
-	  const thal_args* a, 
-	  thal_results* o);
+          const unsigned char *oligo2, 
+          const thal_args* a, 
+          thal_results* o);
 
 #endif

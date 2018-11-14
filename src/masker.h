@@ -46,23 +46,23 @@
 
 /* macros for moving forward and backward in masking buffer */
 #define TAKE_STEP_BACK(i) \
-	(i == 0) ? (MAX_BUFFER_SIZE - 1) : (i - 1)
-	
+  (i == 0) ? (MAX_BUFFER_SIZE - 1) : (i - 1)
+  
 #define TAKE_STEP_FORWARD(i) \
-	(i == MAX_BUFFER_SIZE - 1) ? 0 : (i + 1)
+  (i == MAX_BUFFER_SIZE - 1) ? 0 : (i + 1)
 
 struct pr_append_str;
-	
+  
 /*
  * masking_direction: One can mask the forward, reverse or both strands.
  * both_on_same outputs one sequence that contains masked nucleotides according to both strands.
  * both_separately outputs two masked sequences separately.
  */
 typedef enum masking_direction {
-	both_on_same = 0,
-	both_separately = 1,
-	fwd = 2,
-	rev = 3
+  both_on_same = 0,
+  both_separately = 1,
+  fwd = 2,
+  rev = 3
 } masking_direction;
 
 /*
@@ -70,10 +70,10 @@ typedef enum masking_direction {
  * string variable 
  */
 typedef struct input_sequence {
-	FILE *sequence_file;
-	const char *sequence_string;
-	size_t input_size;
-	size_t current_pos;
+  FILE *sequence_file;
+  const char *sequence_string;
+  size_t input_size;
+  size_t current_pos;
 } input_sequence;
 
 /*
@@ -81,55 +81,55 @@ typedef struct input_sequence {
  * string variable
  */
 typedef struct output_sequence {
-	char *sequence;
-	unsigned int pos;
-	
-	/* These will be used instead of char *sequence
-	 * in case of both_separately masking direction */
-	char *sequence_fwd;
-	char *sequence_rev;
+  char *sequence;
+  unsigned int pos;
+  
+  /* These will be used instead of char *sequence
+   * in case of both_separately masking direction */
+  char *sequence_fwd;
+  char *sequence_rev;
 } output_sequence;
 
 /*
  * formula_parameters: All parameters concerning one input k-mer list 
  */
 typedef struct formula_parameters {
-	/* If the list is created with GenomeTester4, 
-	 * 210 char should be enough to contain the full list name */
-	char list_file_name[210];
-	unsigned int oligo_length;
-	
-	/* binary mask is used for cutting the k-mer into the size of oligo_length */
-	unsigned long long binary_mask;
-	
-	/* number of unique k-mers in the given k-mer list */
-	unsigned long long words_in_list;
-	
-	/* pointer to k-mer list */
-	const char *word_list;
-	const char *pointer;
-	size_t size;
-	
-	/* coefficients for all possible masking formula variables (and their squares) 
-	 * concerning this k-mer list. 
-	 * If certain variables are not used, their coefficiest are equal to 0 */
-	double mm0;
-	double mm1;
-	double mm2;
-	double mm0_2;
-	double mm1_2;
-	double mm2_2;
+  /* If the list is created with GenomeTester4, 
+   * 210 char should be enough to contain the full list name */
+  char list_file_name[210];
+  unsigned int oligo_length;
+  
+  /* binary mask is used for cutting the k-mer into the size of oligo_length */
+  unsigned long long binary_mask;
+  
+  /* number of unique k-mers in the given k-mer list */
+  unsigned long long words_in_list;
+  
+  /* pointer to k-mer list */
+  const char *word_list;
+  const char *pointer;
+  size_t size;
+  
+  /* coefficients for all possible masking formula variables (and their squares) 
+   * concerning this k-mer list. 
+   * If certain variables are not used, their coefficiest are equal to 0 */
+  double mm0;
+  double mm1;
+  double mm2;
+  double mm0_2;
+  double mm1_2;
+  double mm2_2;
 } formula_parameters;
 
 /*
  * parameters_builder: Helping structure for reading the formula parameters
  */
 typedef struct parameters_builder {
-	formula_parameters **fp_array;
-	double intercept;
-	char **used_lists;
-	unsigned int nslots;
-	unsigned int nfp;
+  formula_parameters **fp_array;
+  double intercept;
+  char **used_lists;
+  unsigned int nslots;
+  unsigned int nfp;
 } parameters_builder;
 
 /*
@@ -137,44 +137,44 @@ typedef struct parameters_builder {
  * (otherwise default) parameter values 
  */
 typedef struct masker_parameters {
-	/* strand to mask */
-	masking_direction mdir;
-	
-	/* primer failure rate cutoff used in primer design, 
-	 * potential locations in a sequence for primers with PCR 
-	 * failure rate over the given cutoff are masked
-	 *(see function calculate_scores() from masker.c) */
-	double failure_rate;
-	
-	/* absolute value cutoff, this can be used for masking all the k-mers in a sequence
-	 * that have the frequency over abs_cutoff in a k-mer list */
-	unsigned int abs_cutoff;
-	
-	/* number of nucleotides masked in 5' and 3' direction with respect
-	 * to the 3' end of a primer */
-	int nucl_masked_in_5p_direction;
-	int nucl_masked_in_3p_direction;
-	
-	/* If masker is used as a separate application then always print_sequence=1, 
-	 * i.e the output is sent to stdout.
-	 * If print_sequence=0 the output is written in a string variable and can be forwarded
-	 * to the next function */
-	int print_sequence;
-	
-	/* if do_soft_masking=1, masked nucleotides and converted to lower-case, else 
-	 * masked nucleotide are converted to masking_char ('N' by default) */
-	int do_soft_masking;
-	char masking_char;
-	
-	/* size of the masking window */
-	int window_size;
-	
-	/* number of k-mer lists used in the masking formula */
-	unsigned int nlists;
-	/* k-mer lists and all their parameters which are used in the masking formula */
-	char *list_prefix;
-	formula_parameters **fp;
-	double formula_intercept;
+  /* strand to mask */
+  masking_direction mdir;
+  
+  /* primer failure rate cutoff used in primer design, 
+   * potential locations in a sequence for primers with PCR 
+   * failure rate over the given cutoff are masked
+   *(see function calculate_scores() from masker.c) */
+  double failure_rate;
+  
+  /* absolute value cutoff, this can be used for masking all the k-mers in a sequence
+   * that have the frequency over abs_cutoff in a k-mer list */
+  unsigned int abs_cutoff;
+  
+  /* number of nucleotides masked in 5' and 3' direction with respect
+   * to the 3' end of a primer */
+  int nucl_masked_in_5p_direction;
+  int nucl_masked_in_3p_direction;
+  
+  /* If masker is used as a separate application then always print_sequence=1, 
+   * i.e the output is sent to stdout.
+   * If print_sequence=0 the output is written in a string variable and can be forwarded
+   * to the next function */
+  int print_sequence;
+  
+  /* if do_soft_masking=1, masked nucleotides and converted to lower-case, else 
+   * masked nucleotide are converted to masking_char ('N' by default) */
+  int do_soft_masking;
+  char masking_char;
+  
+  /* size of the masking window */
+  int window_size;
+  
+  /* number of k-mer lists used in the masking formula */
+  unsigned int nlists;
+  /* k-mer lists and all their parameters which are used in the masking formula */
+  char *list_prefix;
+  formula_parameters **fp;
+  double formula_intercept;
 } masker_parameters;
 
 /* 
@@ -182,50 +182,50 @@ typedef struct masker_parameters {
  * as well as the masking and output information 
  */
 typedef struct masking_buffer {
-	/* the main array containing the characters that are read
-	 * from the sequence input */
-	char buffer[MAX_BUFFER_SIZE];
-	
-	/* indicates the positions in the buffer that do not contain a
-	 * nucleotide character */
-	int non_nucleotide_positions[MAX_BUFFER_SIZE];
-	
-	/* indicates the nucleotide positions in the buffer that
-	 * will be masked in he output */
-	int mask_positions_fwd[MAX_BUFFER_SIZE];
-	int mask_positions_rev[MAX_BUFFER_SIZE];
-	
-	/* indices for reading from the buffer and 
-	 writing to the buffer */
-	unsigned int ri;
-	unsigned int wi;
-	
-	/* index of the 5' end of the k-mer last entered plus the 
-	 * number of nucleotides masked in 3' direction. This index is used
-	 * to determine the first positions which can still be altered and therefore cannot be 
-	 * flushed out of the buffer yet */
-	unsigned int ei;
-	
-	/* mi indicates the number of nucleotides that are
-	 * yet to be masked in 3' direction */
-	unsigned int mi;
+  /* the main array containing the characters that are read
+   * from the sequence input */
+  char buffer[MAX_BUFFER_SIZE];
+  
+  /* indicates the positions in the buffer that do not contain a
+   * nucleotide character */
+  int non_nucleotide_positions[MAX_BUFFER_SIZE];
+  
+  /* indicates the nucleotide positions in the buffer that
+   * will be masked in he output */
+  int mask_positions_fwd[MAX_BUFFER_SIZE];
+  int mask_positions_rev[MAX_BUFFER_SIZE];
+  
+  /* indices for reading from the buffer and 
+   writing to the buffer */
+  unsigned int ri;
+  unsigned int wi;
+  
+  /* index of the 5' end of the k-mer last entered plus the 
+   * number of nucleotides masked in 3' direction. This index is used
+   * to determine the first positions which can still be altered and therefore cannot be 
+   * flushed out of the buffer yet */
+  unsigned int ei;
+  
+  /* mi indicates the number of nucleotides that are
+   * yet to be masked in 3' direction */
+  unsigned int mi;
 } masking_buffer;
 
 /*
  * oligo_pair: contains k-mer pairs and their calculated scores
  */
 typedef struct oligo_pair {
-	/* fwd and rev k-mers */
-	unsigned long long fwd;
-	unsigned long long rev;
-	
-	/* a k-mer score is a failure rate of such a primer that 
-	 *contains a given k-mer in its 3' end */
-	double score_fwd;
-	double score_rev;
-	
-	/* abs_score is a number of given k-mers in a k-mer list */
-	unsigned int abs_score;
+  /* fwd and rev k-mers */
+  unsigned long long fwd;
+  unsigned long long rev;
+  
+  /* a k-mer score is a failure rate of such a primer that 
+   *contains a given k-mer in its 3' end */
+  double score_fwd;
+  double score_rev;
+  
+  /* abs_score is a number of given k-mers in a k-mer list */
+  unsigned int abs_score;
 } oligo_pair;
 
 /*
@@ -233,13 +233,13 @@ typedef struct oligo_pair {
  * retrieved from the k-mer lists 
  */
 typedef struct oligo_counts {
-	unsigned int oligo_length;
-	unsigned int count_mm0_fwd;
-	unsigned int count_mm1_fwd;
-	unsigned int count_mm2_fwd;
-	unsigned int count_mm0_rev;
-	unsigned int count_mm1_rev;
-	unsigned int count_mm2_rev;
+  unsigned int oligo_length;
+  unsigned int count_mm0_fwd;
+  unsigned int count_mm1_fwd;
+  unsigned int count_mm2_fwd;
+  unsigned int count_mm0_rev;
+  unsigned int count_mm1_rev;
+  unsigned int count_mm2_rev;
 } oligo_counts;
 
 /*

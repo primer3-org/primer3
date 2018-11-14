@@ -51,7 +51,7 @@ main(int argc, const char**argv)
     int print_align_end = 0; /* 
                               * Print align_end_1 and align_end_2 from
                               * dpal_results.
-			      */
+                              */
     int use_ambiguity_codes = 0;
     int use_h_matrix = 0;
     char mode;
@@ -92,64 +92,64 @@ main(int argc, const char**argv)
     }
     dpal_set_default_nt_args(&a);
     for (i=1; i < argc; ++i) {
-	if (!strncmp("-p", argv[i], 2)) {
-	    a.debug = 1;
-	} else if (!strncmp("-l", argv[i], 2)) {
-	  if (i+1 >= argc) {
-	    /* Missing value */
-	    fprintf(stderr, msg, argv[0]);
-	    exit(-1);
-	  }
-	  a.gapl = (int) (strtod(argv[i+1],(char **)NULL) * -100);
-	  i++;
+        if (!strncmp("-p", argv[i], 2)) {
+            a.debug = 1;
+        } else if (!strncmp("-l", argv[i], 2)) {
+          if (i+1 >= argc) {
+            /* Missing value */
+            fprintf(stderr, msg, argv[0]);
+            exit(-1);
+          }
+          a.gapl = (int) (strtod(argv[i+1],(char **)NULL) * -100);
+          i++;
         } else if (!strncmp("-e", argv[i], 2)) {
-	  print_align_end = 1;
-	} else if (!strncmp("-a", argv[i], 2)) {
-	  use_ambiguity_codes = 1;
-	} else if (!strncmp("-h", argv[i], 2)) {
-	  use_h_matrix = 1;
-	} else if (!strncmp("-g", argv[i], 2)) {
-	  if (i+1 >= argc) {
-	    /* Missing value */
-	    fprintf(stderr, msg, argv[0]);
-	    exit(-1);
-	  }
-	  a.gap = (int) (strtod(argv[i+1],(char **)NULL) * -100);
-	  i++;
-	} else if (!strncmp("-m", argv[i], 2)) {
-	  if (i+1 >= argc) {
-	    /* Missing value */
-	    fprintf(stderr, msg, argv[0]);
-	    exit(-1);
-	  }
-	  a.max_gap = strtol(argv[i+1], &endptr, 10);
-	  if ('\0' != *endptr) {
-	    fprintf(stderr, msg, argv[0]);
-	    exit(-1);
-	  }
-	  i++;
-	} else if (!strncmp("-s", argv[i], 2)) {
-	  a.score_only = 1;
-	} else if (!strncmp("-e", argv[i], 2)) {
-	  print_align_end = 1;
-	} else if (!strncmp("-f1", argv[i], 3)) {
-	  a.force_generic = 1;
-	} else if (!strncmp("-f2", argv[i], 3)) {
-	  a.force_long_generic = 1;
-	} else if (!strncmp("-f3", argv[i], 3)) {
-	  a.force_long_maxgap1 = 1;
-	} else if (!strncmp("-", argv[i], 1)) {
-	  /* Unknown option. */
-	  fprintf(stderr, msg, argv[0]);
-	  exit(-1);
-	} else
-	  break;		/* all args processed. go on to sequences. */
+          print_align_end = 1;
+        } else if (!strncmp("-a", argv[i], 2)) {
+          use_ambiguity_codes = 1;
+        } else if (!strncmp("-h", argv[i], 2)) {
+          use_h_matrix = 1;
+        } else if (!strncmp("-g", argv[i], 2)) {
+          if (i+1 >= argc) {
+            /* Missing value */
+            fprintf(stderr, msg, argv[0]);
+            exit(-1);
+          }
+          a.gap = (int) (strtod(argv[i+1],(char **)NULL) * -100);
+          i++;
+        } else if (!strncmp("-m", argv[i], 2)) {
+          if (i+1 >= argc) {
+            /* Missing value */
+            fprintf(stderr, msg, argv[0]);
+            exit(-1);
+          }
+          a.max_gap = strtol(argv[i+1], &endptr, 10);
+          if ('\0' != *endptr) {
+            fprintf(stderr, msg, argv[0]);
+            exit(-1);
+          }
+          i++;
+        } else if (!strncmp("-s", argv[i], 2)) {
+          a.score_only = 1;
+        } else if (!strncmp("-e", argv[i], 2)) {
+          print_align_end = 1;
+        } else if (!strncmp("-f1", argv[i], 3)) {
+          a.force_generic = 1;
+        } else if (!strncmp("-f2", argv[i], 3)) {
+          a.force_long_generic = 1;
+        } else if (!strncmp("-f3", argv[i], 3)) {
+          a.force_long_maxgap1 = 1;
+        } else if (!strncmp("-", argv[i], 1)) {
+          /* Unknown option. */
+          fprintf(stderr, msg, argv[0]);
+          exit(-1);
+        } else
+          break;                /* all args processed. go on to sequences. */
     }
     if (use_h_matrix) dpal_set_h_nt_matrix(&a);
     if (use_ambiguity_codes) dpal_set_ambiguity_code_matrix(&a);
     if (a.score_only && a.debug) {
-	fprintf(stderr, msg, argv[0]);
-	exit(-1);
+        fprintf(stderr, msg, argv[0]);
+        exit(-1);
     }
     a.flag = -1;
     
@@ -162,16 +162,16 @@ main(int argc, const char**argv)
     s2 = (unsigned char *) argv[i+1];
     mode = *argv[i+2];
     if ('l' == mode)
-	a.flag = DPAL_LOCAL;
+        a.flag = DPAL_LOCAL;
     else if ('e' == mode || 'G' == mode)
-	a.flag = DPAL_GLOBAL_END;
+        a.flag = DPAL_GLOBAL_END;
     else if ('g' == mode)
-	a.flag = DPAL_GLOBAL;
+        a.flag = DPAL_GLOBAL;
     else if ('L' == mode)
-	a.flag = DPAL_LOCAL_END;
+        a.flag = DPAL_LOCAL_END;
     else {
-	fprintf(stderr, msg, argv[0]);
-	exit(-1);
+        fprintf(stderr, msg, argv[0]);
+        exit(-1);
     }
     if(print_align_end == 1) a.force_long_generic = 1;
 
@@ -184,18 +184,18 @@ main(int argc, const char**argv)
     if (a.score_only) {
       printf("%.2f\n", 0.01 * r.score);
       if (print_align_end) {
-	if(r.align_end_1 >= 0) printf("align_end_1=%d ",r.align_end_1);
-	if(r.align_end_2 >= 0) printf("align_end_2=%d\n ",r.align_end_2);
+        if(r.align_end_1 >= 0) printf("align_end_1=%d ",r.align_end_1);
+        if(r.align_end_2 >= 0) printf("align_end_2=%d\n ",r.align_end_2);
       }
     } else {
       printf("|%s|  |%s| %c ", s1, s2, mode); 
       printf("score=%.2f len=%d ", (0.01 * r.score), r.path_length);
       if (print_align_end) {
-	if(r.align_end_1 >= 0) printf("align_end_1=%d ",r.align_end_1);
-	if(r.align_end_2 >= 0) printf("align_end_2=%d ",r.align_end_2);
+        if(r.align_end_1 >= 0) printf("align_end_1=%d ",r.align_end_1);
+        if(r.align_end_2 >= 0) printf("align_end_2=%d ",r.align_end_2);
       }
       for (i=0; i<r.path_length; i++)
-	printf("|%d,%d", r.path[i][0],r.path[i][1]);
+        printf("|%d,%d", r.path[i][0],r.path[i][1]);
       printf("|\n");
     }
     return 0;

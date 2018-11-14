@@ -46,9 +46,9 @@ typedef struct seq_lib {
   char **names;         /* An array of sequence names. */
   char **seqs;          /* An array of sequences. */
   char **rev_compl_seqs;/* An array of reversed-complemented sequences.
-			   x->rev_compl_seqs[i] is the reverse complement
-			   of x->seqs[i], which lets us keep track of pairwise
-			   mispriming.  See reverse_complement_seq_lib(). */
+                           x->rev_compl_seqs[i] is the reverse complement
+                           of x->seqs[i], which lets us keep track of pairwise
+                           mispriming.  See reverse_complement_seq_lib(). */
   double *weight;       /* An array of weights. */
   char   *repeat_file;  /* The path of the file containing the library. */
   pr_append_str error;  /* Global error message if any.  */
@@ -84,9 +84,9 @@ char *
 seq_lib_warning_data(const seq_lib *lib);
 
 int add_seq_and_rev_comp_to_seq_lib(seq_lib *sl,
-				    char *seq, 
-				    char *seq_id_plus, 
-				    const char *errfrag);
+                                    char *seq, 
+                                    char *seq_id_plus, 
+                                    const char *errfrag);
 
 
 #endif

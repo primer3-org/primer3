@@ -124,74 +124,74 @@ main(int argc, char **argv)
    for (i=1; i < argc; ++i) {
      if (!strncmp("-mv", argv[i], 3)) { /* conc of monovalent cations */
        if (i+1 >= argc) {
-	 /* Missing value */
-	 fprintf(stderr, msg, argv[0]);
-	 exit(-1);
+         /* Missing value */
+         fprintf(stderr, msg, argv[0]);
+         exit(-1);
        }
        mv = strtod(argv[i+1], &endptr);
        if ('\0' != *endptr) {
-	 fprintf(stderr, msg, argv[0]);
-	 exit(-1);
+         fprintf(stderr, msg, argv[0]);
+         exit(-1);
        }
        i++;
      } else if (!strncmp("-dv", argv[i], 3)) { /* conc of divalent cations; added by T.Koressaar */
        if (i+1 >= argc) {
-	 /* Missing value */
-	 fprintf(stderr, msg, argv[0]);
-	 exit(-1);
+         /* Missing value */
+         fprintf(stderr, msg, argv[0]);
+         exit(-1);
        }
        dv = strtod(argv[i+1], &endptr);
        if('\0' != *endptr) {
-	 fprintf(stderr, msg, argv[0]);
-	 exit(-1);
+         fprintf(stderr, msg, argv[0]);
+         exit(-1);
        }
        i++;
      } else if (!strncmp("-n", argv[i], 2)) { /* conc of dNTP; added by T.Koressaar */
        if (i+1 >= argc) {
-	 /* Missing value */
-	 fprintf(stderr, msg, argv[0]);
-	 exit(-1);
+         /* Missing value */
+         fprintf(stderr, msg, argv[0]);
+         exit(-1);
        }
        n = strtod(argv[i+1], &endptr);
        if('\0' != *endptr) {
-	 fprintf(stderr, msg, argv[0]);
-	 exit(-1);
+         fprintf(stderr, msg, argv[0]);
+         exit(-1);
        }
        i++;
      } else if (!strncmp("-d", argv[i], 2)) {
        if (i+1 >= argc) {
-	 /* Missing value */
-	 fprintf(stderr, msg, argv[0]);
-	 exit(-1);
+         /* Missing value */
+         fprintf(stderr, msg, argv[0]);
+         exit(-1);
        }
        d = strtod(argv[i+1], &endptr);
        if ('\0' != *endptr) {
-	 fprintf(stderr, msg, argv[0]);
-	 exit(-1);
+         fprintf(stderr, msg, argv[0]);
+         exit(-1);
        }
        i++;
      } else if (!strncmp("-tp", argv[i], 3)) { /* added by T.Koressaar */
        if (i+1 >= argc) {
-	 /* Missing value */
-	 fprintf(stderr, msg, argv[0]);
-	 exit(-1);
+         /* Missing value */
+         fprintf(stderr, msg, argv[0]);
+         exit(-1);
        }
        tm_santalucia = (int)strtol(argv[i+1], &endptr, 10);
-       if ('\0' != *endptr || tm_santalucia<0 || tm_santalucia>1) {	  
-	 fprintf(stderr, msg, argv[0]);
-	 exit(-1);
+       if ('\0' != *endptr || tm_santalucia<0 || tm_santalucia>1) {          
+         fprintf(stderr, msg, argv[0]);
+         exit(-1);
        }
        i++;
      } else if (!strncmp("-sc", argv[i], 3)) { /* added by T.Koressaar */
        if (i+1 >= argc) {
-	 /* Missing value */
-	 fprintf(stderr, msg, argv[0]);
-	 exit(-1);
+         /* Missing value */
+         fprintf(stderr, msg, argv[0]);
+         exit(-1);
        }
        salt_corrections = (int)strtol(argv[i+1], &endptr, 10);
        if ('\0' != *endptr || salt_corrections<0 || salt_corrections>2) {
-	 fprintf(stderr, msg, argv[0]);
-	 exit(-1);
+         fprintf(stderr, msg, argv[0]);
+         exit(-1);
        }
        i++;
      } else if (!strncmp("-", argv[i], 1)) {
@@ -199,7 +199,7 @@ main(int argc, char **argv)
        fprintf(stderr, msg, argv[0]);
        exit(-1);
      } else
-       break;		/* all args processed. go on to sequences. */
+       break;                /* all args processed. go on to sequences. */
    }
    
   if(!argv[i]) { /* if no oligonucleotide sequence is specified */
@@ -214,11 +214,11 @@ main(int argc, char **argv)
   tm = oligotm(seq, d, mv, dv, n, (tm_method_type) tm_santalucia, (salt_correction_type) salt_corrections);
   if (OLIGOTM_ERROR == tm) {
     fprintf(stderr,
-	    "%s ERROR: length of sequence %s is less than 2 or\n"
-	    "             the sequence contains an illegal character or\n" 
-	    "             you have specified incorrect value for concentration of divalent cations or\n"
-	    "             you have specified incorrect value for concentration of dNTPs\n",
-	    argv[0], argv[i]);
+            "%s ERROR: length of sequence %s is less than 2 or\n"
+            "             the sequence contains an illegal character or\n" 
+            "             you have specified incorrect value for concentration of divalent cations or\n"
+            "             you have specified incorrect value for concentration of dNTPs\n",
+            argv[0], argv[i]);
     return -1;
   }
   fprintf(stdout, "%f\n", tm);
