@@ -516,8 +516,8 @@ read_boulder_record(FILE *file_input,
           thermodynamic_params_path = (char*) _rb_safe_malloc(datum_len + 2);
           strcpy(thermodynamic_params_path, datum);
           if (thermodynamic_params_path[datum_len - 1] != '/') {
-            thermodynamic_params_path[datum_len] = thermodynamic_params_path[datum_len - 1];
-            thermodynamic_params_path[datum_len - 1] = '/';
+            thermodynamic_params_path[datum_len + 1] = thermodynamic_params_path[datum_len];
+            thermodynamic_params_path[datum_len] = '/';
           }
           thermodynamic_path_changed = 1;
         }
