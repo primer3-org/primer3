@@ -513,8 +513,12 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT", pa->thermodynamic_template_alignment);
       if (COMPARE("PRIMER_THERMODYNAMIC_PARAMETERS_PATH")) {
         if (thermodynamic_params_path == NULL) {
-          thermodynamic_params_path = (char*) _rb_safe_malloc(datum_len + 1);
+          thermodynamic_params_path = (char*) _rb_safe_malloc(datum_len + 2);
           strcpy(thermodynamic_params_path, datum);
+          if (thermodynamic_params_path[datum_len - 1] != '/') {
+            thermodynamic_params_path[datum_len] = thermodynamic_params_path[datum_len - 1];
+            thermodynamic_params_path[datum_len - 1] = '/';
+          }
           thermodynamic_path_changed = 1;
         }
         /* check if path changes */
