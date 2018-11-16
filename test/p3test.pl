@@ -314,6 +314,8 @@ sub main() {
 			'primer_new_tasks',
 			'primer_new_tasks_formatted',
 
+			'primer_windows_newlines',
+
 			'primer_must_overlap_point',
 			'primer_overlap_junction',
 

@@ -7207,6 +7207,10 @@ p3_read_line(FILE *file)
 
     if ((n = strchr(p, '\n')) != NULL) {
       *n = '\0';
+      n--;
+      if (*n == '\r') {
+        *n = '\0';
+      }
       return s;
     }
 
