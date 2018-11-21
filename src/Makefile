@@ -65,6 +65,9 @@ LDFLAGS = -g
 # Note, for profiling, use
 # make O_OPTS='-pg -O0' LDFLAGS='-g -pg'
 
+# Target installation directory
+PREFIX     = /usr/local
+
 # ======================================================================
 # If you have trouble with library skew when moving primer3 executables
 # between systems, you might want to set LIBOPTS to -static
@@ -245,6 +248,10 @@ ifeq ($(TESTOPTS),--windows)
 else
 	cd ../test; make test
 endif
+
+install: $(EXES) $(LIBRARIES)
+	install -d "$(PREFIX)/bin"
+	install -m 755 $(EXES) "$(PREFIX)/bin"
 
 # ======================================================================
 # 

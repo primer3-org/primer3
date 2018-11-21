@@ -47,10 +47,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ctype.h> /* toupper */
 #include <unordered_map>
 
+#ifdef __GLIBCXX__
 namespace std
 {
   using namespace __gnu_cxx;
 }
+#endif
 
 #include "libprimer3.h"
 
