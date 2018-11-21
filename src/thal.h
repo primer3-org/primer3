@@ -1,6 +1,5 @@
-/* Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009,2010
-                 2011,2012
- Whitehead Institute for Biomedical Research, Steve Rozen
+/* Copyright (c) 1996 - 2018
+ Whitehead Institute for Biomedical Research, Steve Rozen, Andreas Untergasser
  (http://purl.com/STEVEROZEN/), and Helen Skaletsky
  All rights reserved.
 
@@ -115,6 +114,26 @@ typedef struct {
    int align_end_2;
 } thal_results;
 
+/* The files from the directory primer3_config loaded as strings */
+typedef struct thal_parameters {
+  char *dangle_dh;
+  char *dangle_ds;
+  char *loops_dh;
+  char *loops_ds;
+  char *stack_dh;
+  char *stack_ds;
+  char *stackmm_dh;
+  char *stackmm_ds;
+  char *tetraloop_dh;
+  char *tetraloop_ds;
+  char *triloop_dh;
+  char *triloop_ds;
+  char *tstack_tm_inf_ds;
+  char *tstack_dh;
+  char *tstack2_dh;
+  char *tstack2_ds;
+} thal_parameters;
+
 /*** END OF TYPEDEFS ***/
 
 void set_thal_default_args(thal_args *a);
@@ -132,7 +151,13 @@ void set_thal_oligo_default_args(thal_args *a);
     exit(-1);
   }
 #endif
-int  get_thermodynamic_values(const char* path, thal_results *o);
+int  thal_set_null_parameters(thal_parameters *a);
+
+int  thal_load_parameters(const char *path, thal_parameters *a, thal_results* o);
+
+int  thal_free_parameters(thal_parameters *a);
+
+int  get_thermodynamic_values(const thal_parameters *tp, thal_results *o);
 
 void destroy_thal_structures();
 

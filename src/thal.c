@@ -167,34 +167,34 @@ static unsigned char str2int(char c); /* converts DNA sequence to int; 0-A, 1-C,
 
 static double saltCorrectS (double mv, double dv, double dntp); /* part of calculating salt correction
                                                                    for Tm by SantaLucia et al */
-static FILE* openParamFile(const char* name, thal_results* o); /* file of thermodynamic params */
+static char* readParamFile(const char* dirname, const char* fname, thal_results* o); /* file of thermodynamic params */
 
 /* get thermodynamic tables */
-static double readDouble(FILE *file, thal_results* o);
+static double readDouble(char **str, thal_results* o);
 
-static void readLoop(FILE *file, double *v1, double *v2, double *v3, thal_results *o);
+static void readLoop(char **str, double *v1, double *v2, double *v3, thal_results *o);
 
-static int readTLoop(FILE *file, char *s, double *v, int triloop, thal_results *o);
+static int readTLoop(char **str, char *s, double *v, int triloop, thal_results *o);
 
-static void getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5], thal_results* o);
+static void getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5], const thal_parameters *tp, thal_results* o);
 
 /*static void verifyStackTable(double stack[5][5][5][5], char* type);*/ /* just for debugging; the method is turned off by default */
 
-static void getStackint2(double stackEntropiesint2[5][5][5][5], double stackint2Enthalpies[5][5][5][5], thal_results* o);
+static void getStackint2(double stackEntropiesint2[5][5][5][5], double stackint2Enthalpies[5][5][5][5], const thal_parameters *tp, thal_results* o);
 
 static void getDangle(double dangleEntropies3[5][5][5], double dangleEnthalpies3[5][5][5], double dangleEntropies5[5][5][5],
-                      double dangleEnthalpies5[5][5][5], thal_results* o);
+                      double dangleEnthalpies5[5][5][5], const thal_parameters *tp, thal_results* o);
 
-static void getTstack(double tstackEntropies[5][5][5][5], double tstackEnthalpies[5][5][5][5], thal_results* o);
+static void getTstack(double tstackEntropies[5][5][5][5], double tstackEnthalpies[5][5][5][5], const thal_parameters *tp, thal_results* o);
 
-static void getTstack2(double tstack2Entropies[5][5][5][5], double tstack2Enthalpies[5][5][5][5], thal_results* o);
+static void getTstack2(double tstack2Entropies[5][5][5][5], double tstack2Enthalpies[5][5][5][5], const thal_parameters *tp, thal_results* o);
 
-static void getTriloop(struct triloop**, struct triloop**, int* num, thal_results* o);
+static void getTriloop(struct triloop**, struct triloop**, int* num, const thal_parameters *tp, thal_results* o);
 
-static void getTetraloop(struct tetraloop**, struct tetraloop**, int* num, thal_results* o);
+static void getTetraloop(struct tetraloop**, struct tetraloop**, int* num, const thal_parameters *tp, thal_results* o);
 
 static void getLoop(double hairpinLoopEnntropies[30], double interiorLoopEntropies[30], double bulgeLoopEntropiess[30],
-             double hairpinLoopEnthalpies[30], double interiorLoopEnthalpies[30], double bulgeLoopEnthalpies[30], thal_results* o);
+             double hairpinLoopEnthalpies[30], double interiorLoopEnthalpies[30], double bulgeLoopEnthalpies[30], const thal_parameters *tp, thal_results* o);
 
 static void tableStartATS(double atp_value, double atp[5][5]); /* creates table of entropy values for nucleotides
                                                                   to which AT-penlty must be applied */
@@ -283,7 +283,6 @@ static void* safe_malloc(size_t, thal_results* o);
 static void* safe_realloc(void*, size_t, thal_results* o);
 static double* safe_recalloc(double* ptr, int m, int n, thal_results* o);
 
-static char* parampath = NULL; /* path to parameter files */
 static int numTriloops; /* hairpin triloop penalties */
 static int numTetraloops; /* hairpin tetraloop penalties */
 static double atpS[5][5]; /* AT penalty */
@@ -325,32 +324,117 @@ static struct tetraloop* tetraloopEntropies = NULL; /* ther penalties for given 
 static struct tetraloop* tetraloopEnthalpies = NULL; /* ther penalties for given tetraloop seq-s */
 static jmp_buf _jmp_buf;
 
+/* Initialize the thermodynamic values (parameters) */
+int  thal_set_null_parameters(thal_parameters *a) {
+  a->dangle_dh = NULL;
+  a->dangle_ds = NULL;
+  a->loops_dh = NULL;
+  a->loops_ds = NULL;
+  a->stack_dh = NULL;
+  a->stack_ds = NULL;
+  a->stackmm_dh = NULL;
+  a->stackmm_ds = NULL;
+  a->tetraloop_dh = NULL;
+  a->tetraloop_ds = NULL;
+  a->triloop_dh = NULL;
+  a->triloop_ds = NULL;
+  a->tstack_tm_inf_ds = NULL;
+  a->tstack_dh = NULL;
+  a->tstack2_dh = NULL;
+  a->tstack2_ds = NULL;
+  return 0;
+}
+
+/* Free the thermodynamic values (parameters) */
+int  thal_free_parameters(thal_parameters *a) {
+  if (NULL != a->dangle_dh) {
+    free(a->dangle_dh);
+    a->dangle_dh = NULL;
+  }
+  if (NULL != a->dangle_ds) {
+    free(a->dangle_ds);
+    a->dangle_ds = NULL;
+  }
+  if (NULL != a->loops_dh) {
+    free(a->loops_dh);
+    a->loops_dh = NULL;
+  }
+  if (NULL != a->loops_ds) {
+    free(a->loops_ds);
+    a->loops_ds = NULL;
+  }
+  if (NULL != a->stack_dh) {
+    free(a->stack_dh);
+    a->stack_dh = NULL;
+  }
+  if (NULL != a->stack_ds) {
+    free(a->stack_ds);
+    a->stack_ds = NULL;
+  }
+  if (NULL != a->stackmm_dh) {
+    free(a->stackmm_dh);
+    a->stackmm_dh = NULL;
+  }
+  if (NULL != a->stackmm_ds) {
+    free(a->stackmm_ds);
+    a->stackmm_ds = NULL;
+  }
+  if (NULL != a->tetraloop_dh) {
+    free(a->tetraloop_dh);
+    a->tetraloop_dh = NULL;
+  }
+  if (NULL != a->tetraloop_ds) {
+    free(a->tetraloop_ds);
+    a->tetraloop_ds = NULL;
+  }
+  if (NULL != a->triloop_dh) {
+    free(a->triloop_dh);
+    a->triloop_dh = NULL;
+  }
+  if (NULL != a->triloop_ds) {
+    free(a->triloop_ds);
+    a->triloop_ds = NULL;
+  }
+  if (NULL != a->tstack_tm_inf_ds) {
+    free(a->tstack_tm_inf_ds);
+    a->tstack_tm_inf_ds = NULL;
+  }
+  if (NULL != a->tstack_dh) {
+    free(a->tstack_dh);
+    a->tstack_dh = NULL;
+  }
+  if (NULL != a->tstack2_dh) {
+    free(a->tstack2_dh);
+    a->tstack2_dh = NULL;
+  }
+  if (NULL != a->tstack2_ds) {
+    free(a->tstack2_ds);
+    a->tstack2_ds = NULL;
+  }
+  return 0;
+}
+
 /* Read the thermodynamic values (parameters) from the parameter files
    in the directory specified by 'path'.  Return 0 on success and -1
    on error. The thermodynamic values are stored in multiple static
    variables. */
 int 
-get_thermodynamic_values(const char* path, thal_results *o)
+get_thermodynamic_values(const thal_parameters *tp, thal_results *o)
 {
-
   if (setjmp(_jmp_buf) != 0) {
      return -1;
   }
-
-  parampath = (char*) safe_malloc((strlen(path) + 1) * sizeof(char), o);
-  strcpy(parampath, path);
-
-  getStack(stackEntropies, stackEnthalpies, o);
+  getStack(stackEntropies, stackEnthalpies, tp, o);
   /* verifyStackTable(stackEntropies, "entropy");
      verifyStackTable(stackEnthalpies, "enthalpy"); */ /* this is for code debugging */
-  getStackint2(stackint2Entropies, stackint2Enthalpies, o);
-  getDangle(dangleEntropies3, dangleEnthalpies3, dangleEntropies5, dangleEnthalpies5, o);
+  getStackint2(stackint2Entropies, stackint2Enthalpies, tp, o);
+  getDangle(dangleEntropies3, dangleEnthalpies3, dangleEntropies5, dangleEnthalpies5, tp, o);
   getLoop(hairpinLoopEntropies, interiorLoopEntropies, bulgeLoopEntropies, hairpinLoopEnthalpies,
-          interiorLoopEnthalpies, bulgeLoopEnthalpies, o);
-  getTstack(tstackEntropies, tstackEnthalpies, o);
-  getTstack2(tstack2Entropies, tstack2Enthalpies, o);
-  getTriloop(&triloopEntropies, &triloopEnthalpies, &numTriloops, o);
-  getTetraloop(&tetraloopEntropies, &tetraloopEnthalpies, &numTetraloops, o);
+          interiorLoopEnthalpies, bulgeLoopEnthalpies, tp, o);
+  getTstack(tstackEntropies, tstackEnthalpies, tp, o);
+  getTstack2(tstack2Entropies, tstack2Enthalpies, tp, o);
+  getTriloop(&triloopEntropies, &triloopEnthalpies, &numTriloops, tp, o);
+  getTetraloop(&tetraloopEntropies, &tetraloopEnthalpies, &numTetraloops, tp, o);
   /* getting the AT-penalties */
   tableStartATS(AT_S, atpS);
   tableStartATH(AT_H, atpH);
@@ -361,7 +445,6 @@ get_thermodynamic_values(const char* path, thal_results *o)
 void 
 destroy_thal_structures()
 {
-  free(parampath);
   free(triloopEntropies);
   free(triloopEnthalpies);
   free(tetraloopEntropies);
@@ -757,26 +840,95 @@ reverse(unsigned char *s)
    }
 }
 
-static FILE* 
-openParamFile(const char* fname, thal_results* o)
+#define INIT_BUF_SIZE 1024
+
+static char* 
+readParamFile(const char* dirname, const char* fname, thal_results* o)
 {
-   FILE* file;
-   char* paramdir;
-   file = fopen(fname, "rt");
-   if (!file) {
-      paramdir = (char*) safe_malloc(strlen(parampath) + strlen(fname) + 1, o);
-      strcpy(paramdir, parampath);
-      strcat(paramdir, fname);
-      if (!(file = fopen(paramdir, "rt"))) {
-#ifdef DEBUG
-         perror(paramdir);
+  FILE* file;
+  char* ret = NULL;
+  char* paramdir = NULL;
+  paramdir = (char*) safe_malloc(strlen(dirname) + strlen(fname) + 2, o);
+  strcpy(paramdir, dirname);
+#ifdef OS_WIN
+  if (paramdir[strlen(paramdir) - 1] != '\\') {
+    strcat(paramdir, "\\\0");
+  }
+#else
+  if (paramdir[strlen(paramdir) - 1] != '/') {
+    strcat(paramdir, "/\0");
+  }
 #endif
-         THAL_IO_ERROR(paramdir);
-         free(paramdir);
-      }
+  strcat(paramdir, fname);
+  if (!(file = fopen(paramdir, "r"))) {
+    sprintf(o->msg, "Unable to open file %s", paramdir);
+    if (paramdir != NULL) {
       free(paramdir);
-   }
-   return file;
+      paramdir = NULL;
+    }
+    longjmp(_jmp_buf, 1);
+    return NULL;
+  }
+  if (paramdir != NULL) {
+    free(paramdir);
+    paramdir = NULL;
+  }
+  char c;
+  int i = 0;
+  size_t ssz = INIT_BUF_SIZE;
+  size_t remaining_size;
+  remaining_size = ssz;
+  ret = (char*) safe_malloc(ssz, o);
+  while (1) {
+    if (feof(file)) {
+      ret[i] = '\0';
+      fclose(file);
+      return ret;
+    }
+    c = fgetc(file);
+    remaining_size -= sizeof(char);
+    if (remaining_size <= 0) {
+      if (ssz >= INT_MAX / 2) {
+        strcpy(o->msg, "Out of memory");
+	free(ret);
+	longjmp(_jmp_buf, 1);
+	return NULL;
+      } else {
+        ssz += INIT_BUF_SIZE;
+	remaining_size += INIT_BUF_SIZE;
+      }
+      ret = (char *) safe_realloc(ret, ssz, o);
+    }
+    ret[i] = c;
+    i++;
+  }
+}
+
+int
+thal_load_parameters(const char *path, thal_parameters *a, thal_results* o)
+{
+  thal_free_parameters(a);
+  if (setjmp(_jmp_buf) != 0) {
+	 printf("longjump\n");
+    return -1;
+  }
+  a->dangle_dh = readParamFile(path, "dangle.dh", o);
+  a->dangle_ds = readParamFile(path, "dangle.ds", o);
+  a->loops_dh = readParamFile(path, "loops.dh", o);
+  a->loops_ds = readParamFile(path, "loops.ds", o);
+  a->stack_dh = readParamFile(path, "stack.dh", o);
+  a->stack_ds = readParamFile(path, "stack.ds", o);
+  a->stackmm_dh = readParamFile(path, "stackmm.dh", o);
+  a->stackmm_ds = readParamFile(path, "stackmm.ds", o);
+  a->tetraloop_dh = readParamFile(path, "tetraloop.dh", o);
+  a->tetraloop_ds = readParamFile(path, "tetraloop.ds", o);
+  a->triloop_dh = readParamFile(path, "triloop.dh", o);
+  a->triloop_ds = readParamFile(path, "triloop.ds", o);
+  a->tstack_tm_inf_ds = readParamFile(path, "tstack_tm_inf.ds", o);
+  a->tstack_dh = readParamFile(path, "tstack.dh", o);
+  a->tstack2_dh = readParamFile(path, "tstack2.dh", o);
+  a->tstack2_ds = readParamFile(path, "tstack2.ds", o);
+  return 0;
 }
 
 static double 
@@ -786,66 +938,74 @@ saltCorrectS (double mv, double dv, double dntp)
    return 0.368*((log((mv+120*(sqrt(fmax(0.0, dv-dntp))))/1000)));
 }
 
-
-#define INIT_BUF_SIZE 1024
-
 static char*
-p3_read_line(FILE *file, thal_results* o)
+th_read_str_line(char **str, thal_results* o)
 {
-  static size_t ssz;
-  static char *s = NULL;
-
-  size_t remaining_size;
-  char *p, *n;
-
-  if (NULL == s) {
-    ssz = INIT_BUF_SIZE;
-    s = (char *) safe_malloc(ssz, o);
+  if (*str == NULL) {
+    return NULL;
   }
-  p = s;
-  remaining_size = ssz;
-  while (1) {
-    if (fgets(p, remaining_size, file) == NULL) /* End of file. */
-      return p == s ? NULL : s;
+  char *ptr = *str;
+  char *ini = *str;
+  while(1) {
+    if ((*ptr == '\n') || (*ptr == '\0')) {
+      char *ret = NULL;
+      if (!(ret = malloc(sizeof(char) * (ptr - ini + 1)))) {
+#ifdef DEBUG
+        fputs("Error in malloc()\n", stderr);
+#endif
+        THAL_OOM_ERROR;
+      }
+      /* copy line */
+      strncpy(ret, ini, (ptr - ini + 1));
+      ret[ptr - ini] = '\0';
 
-    if ((n = strchr(p, '\n')) != NULL) {
-      *n = '\0';
-      return s;
+      if (*ptr == '\0') { /* End of String */
+        *str = NULL;
+      } else {
+        ptr++;
+        if (*ptr == '\0') { /* End of String */
+          *str = NULL;
+        } else {
+          *str = ptr;
+        }
+      }
+      if (ptr == ini) {
+        if (ret != NULL) {
+          free(ret);
+	}
+        return NULL;
+      } else {  
+        return ret;
+      }
     }
-
-    /* We did not get the whole line. */
-
-    if (ssz >= INT_MAX / 2)
-      ssz = INT_MAX;
-    else {
-      ssz *= 2;
-    }
-    s = (char *) safe_realloc(s, ssz, o);
-    p = strchr(s, '\0');
-    remaining_size = ssz - (p - s);
+    ptr++;
   }
 }
 
-
 /* These functions are needed as "inf" cannot be read on Windows directly */
 static double 
-readDouble(FILE *file, thal_results* o)
+readDouble(char **str, thal_results* o)
 {
   double result;
-  char *line = p3_read_line(file, o);
+  char *line = th_read_str_line(str, o);
   /* skip any spaces at beginning of the line */
   while (isspace(*line)) line++;
-  if (!strncmp(line, "inf", 3))
+  if (!strncmp(line, "inf", 3)) {
+    free(line);
     return _INFINITY;
+  }
   sscanf(line, "%lf", &result);
+  if (line != NULL) {
+    free(line);
+  }
   return result;
 }
 
 /* Reads a line containing 4 doubles, which can be specified as "inf". */
 static void
-readLoop(FILE *file, double *v1, double *v2, double *v3, thal_results *o)
+readLoop(char **str, double *v1, double *v2, double *v3, thal_results *o)
 {
-  char *line = p3_read_line(file, o);
+  char *line = th_read_str_line(str, o);
   char *p = line, *q;
   /* skip first number on the line */
   while (isspace(*p)) p++;
@@ -871,13 +1031,16 @@ readLoop(FILE *file, double *v1, double *v2, double *v3, thal_results *o)
   *q = '\0';
   if (!strcmp(p, "inf")) *v3 = _INFINITY;
   else sscanf(p, "%lf", v3);
+  if (line != NULL) {
+    free(line);
+  }
 }
 
 /* Reads a line containing a short string and a double, used for reading a triloop or tetraloop. */
 static int
-readTLoop(FILE *file, char *s, double *v, int triloop, thal_results *o)
+readTLoop(char **str, char *s, double *v, int triloop, thal_results *o)
 {
-  char *line = p3_read_line(file, o);
+  char *line = th_read_str_line(str, o);
   if (!line) return -1;
   char *p = line, *q;
   /* skip first spaces */
@@ -900,16 +1063,18 @@ readTLoop(FILE *file, char *s, double *v, int triloop, thal_results *o)
   *p = '\0';
   if (!strcmp(q, "inf")) *v = _INFINITY;
   else sscanf(q, "%lg", v);
+  if (line != NULL) {
+    free(line);
+  }
   return 0;
 } 
 
 static void 
-getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5], thal_results* o)
+getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5], const thal_parameters *tp, thal_results* o)
 {
    int i, j, ii, jj;
-   FILE *sFile, *hFile;
-   sFile = openParamFile("stack.ds", o);
-   hFile = openParamFile("stack.dh", o);
+   char *pt_ds = tp->stack_ds;
+   char *pt_dh = tp->stack_dh;
    for (i = 0; i < 5; ++i) {
       for (ii = 0; ii < 5; ++ii) {
          for (j = 0; j < 5; ++j) {
@@ -918,8 +1083,8 @@ getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5], 
                   stackEntropies[i][ii][j][jj] = -1.0;
                   stackEnthalpies[i][ii][j][jj] = _INFINITY;
                } else {
-                  stackEntropies[i][ii][j][jj] = readDouble(sFile, o);
-                  stackEnthalpies[i][ii][j][jj] = readDouble(hFile, o);
+                  stackEntropies[i][ii][j][jj] = readDouble(&pt_ds, o);
+                  stackEnthalpies[i][ii][j][jj] = readDouble(&pt_dh, o);
                   if (!isFinite(stackEntropies[i][ii][j][jj]) || !isFinite(stackEnthalpies[i][ii][j][jj])) {
                      stackEntropies[i][ii][j][jj] = -1.0;
                      stackEnthalpies[i][ii][j][jj] = _INFINITY;
@@ -929,17 +1094,14 @@ getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5], 
          }
       }
    }
-   fclose(sFile);
-   fclose(hFile);
 }
 
 static void 
-getStackint2(double stackint2Entropies[5][5][5][5], double stackint2Enthalpies[5][5][5][5], thal_results* o)
+getStackint2(double stackint2Entropies[5][5][5][5], double stackint2Enthalpies[5][5][5][5], const thal_parameters *tp, thal_results* o)
 {
    int i, j, ii, jj;
-   FILE *sFile, *hFile;
-   sFile = openParamFile("stackmm.ds", o);
-   hFile = openParamFile("stackmm.dh", o);
+   char *pt_ds = tp->stackmm_ds;
+   char *pt_dh = tp->stackmm_dh;
    for (i = 0; i < 5; ++i) {
       for (ii = 0; ii < 5; ++ii) {
          for (j = 0; j < 5; ++j) {
@@ -948,8 +1110,8 @@ getStackint2(double stackint2Entropies[5][5][5][5], double stackint2Enthalpies[5
                   stackint2Entropies[i][ii][j][jj] = -1.0;
                   stackint2Enthalpies[i][ii][j][jj] = _INFINITY;
                } else {
-                  stackint2Entropies[i][ii][j][jj] = readDouble(sFile, o);
-                  stackint2Enthalpies[i][ii][j][jj] = readDouble(hFile, o);
+                  stackint2Entropies[i][ii][j][jj] = readDouble(&pt_ds, o);
+                  stackint2Enthalpies[i][ii][j][jj] = readDouble(&pt_dh, o);
                   if (!isFinite(stackint2Entropies[i][ii][j][jj]) || !isFinite(stackint2Enthalpies[i][ii][j][jj])) {
                      stackint2Entropies[i][ii][j][jj] = -1.0;
                      stackint2Enthalpies[i][ii][j][jj] = _INFINITY;
@@ -959,8 +1121,6 @@ getStackint2(double stackint2Entropies[5][5][5][5], double stackint2Enthalpies[5
          }
       }
    }
-   fclose(sFile);
-   fclose(hFile);
 }
 
 /*
@@ -984,12 +1144,11 @@ verifyStackTable(double stack[5][5][5][5], char* type)
 
 static void 
 getDangle(double dangleEntropies3[5][5][5], double dangleEnthalpies3[5][5][5], double dangleEntropies5[5][5][5],
-          double dangleEnthalpies5[5][5][5], thal_results* o)
+          double dangleEnthalpies5[5][5][5], const thal_parameters *tp, thal_results* o)
 {
    int i, j, k;
-   FILE *sFile, *hFile;
-   sFile = openParamFile("dangle.ds", o);
-   hFile = openParamFile("dangle.dh", o);
+   char *pt_ds = tp->dangle_ds;
+   char *pt_dh = tp->dangle_dh;
    for (i = 0; i < 5; ++i)
      for (j = 0; j < 5; ++j)
        for (k = 0; k < 5; ++k) {
@@ -1000,8 +1159,8 @@ getDangle(double dangleEntropies3[5][5][5], double dangleEnthalpies3[5][5][5], d
              dangleEntropies3[i][k][j] = -1.0;
              dangleEnthalpies3[i][k][j] = _INFINITY;
           } else {
-             dangleEntropies3[i][k][j] = readDouble(sFile, o);
-             dangleEnthalpies3[i][k][j] = readDouble(hFile, o);
+             dangleEntropies3[i][k][j] = readDouble(&pt_ds, o);
+             dangleEnthalpies3[i][k][j] = readDouble(&pt_dh, o);
              if(!isFinite(dangleEntropies3[i][k][j]) || !isFinite(dangleEnthalpies3[i][k][j])) {
                 dangleEntropies3[i][k][j] = -1.0;
                 dangleEnthalpies3[i][k][j] = _INFINITY;             
@@ -1019,41 +1178,36 @@ getDangle(double dangleEntropies3[5][5][5], double dangleEnthalpies3[5][5][5], d
              dangleEntropies5[i][j][k] = -1.0;
              dangleEnthalpies5[i][j][k] = _INFINITY;
           } else {
-             dangleEntropies5[i][j][k] = readDouble(sFile, o);
-             dangleEnthalpies5[i][j][k] = readDouble(hFile, o);
+             dangleEntropies5[i][j][k] = readDouble(&pt_ds, o);
+             dangleEnthalpies5[i][j][k] = readDouble(&pt_dh, o);
              if(!isFinite(dangleEntropies5[i][j][k]) || !isFinite(dangleEnthalpies5[i][j][k])) {
                 dangleEntropies5[i][j][k] = -1.0;
                 dangleEnthalpies5[i][j][k] = _INFINITY;
              }
           }
        }
-   fclose(sFile);
-   fclose(hFile);
 }
 
 static void 
 getLoop(double hairpinLoopEntropies[30], double interiorLoopEntropies[30], double bulgeLoopEntropies[30],
-        double hairpinLoopEnthalpies[30], double interiorLoopEnthalpies[30], double bulgeLoopEnthalpies[30], thal_results* o)
+        double hairpinLoopEnthalpies[30], double interiorLoopEnthalpies[30], double bulgeLoopEnthalpies[30], 
+        const thal_parameters *tp, thal_results* o)
 {
    int k;
-   FILE *sFile, *hFile;
-   sFile = openParamFile("loops.ds", o);
-   hFile = openParamFile("loops.dh", o);
+   char *pt_ds = tp->loops_ds;
+   char *pt_dh = tp->loops_dh;
    for (k = 0; k < 30; ++k) {
-      readLoop(sFile, &interiorLoopEntropies[k], &bulgeLoopEntropies[k], &hairpinLoopEntropies[k], o);
-      readLoop(hFile, &interiorLoopEnthalpies[k], &bulgeLoopEnthalpies[k], &hairpinLoopEnthalpies[k], o);
+      readLoop(&pt_ds, &interiorLoopEntropies[k], &bulgeLoopEntropies[k], &hairpinLoopEntropies[k], o);
+      readLoop(&pt_dh, &interiorLoopEnthalpies[k], &bulgeLoopEnthalpies[k], &hairpinLoopEnthalpies[k], o);
    }
-   fclose(sFile);
-   fclose(hFile);
 }
 
 static void 
-getTstack(double tstackEntropies[5][5][5][5], double tstackEnthalpies[5][5][5][5], thal_results* o)
+getTstack(double tstackEntropies[5][5][5][5], double tstackEnthalpies[5][5][5][5], const thal_parameters *tp, thal_results* o)
 {
    int i1, j1, i2, j2;
-   FILE *sFile, *hFile;
-   sFile = openParamFile("tstack_tm_inf.ds", o);
-   hFile = openParamFile("tstack.dh", o);
+   char *pt_ds = tp->tstack_tm_inf_ds;
+   char *pt_dh = tp->tstack_dh;
    for (i1 = 0; i1 < 5; ++i1)
      for (i2 = 0; i2 < 5; ++i2)
        for (j1 = 0; j1 < 5; ++j1)
@@ -1065,25 +1219,22 @@ getTstack(double tstackEntropies[5][5][5][5], double tstackEnthalpies[5][5][5][5
               tstackEntropies[i1][i2][j1][j2] = 0.00000000001;
               tstackEnthalpies[i1][i2][j1][j2] = 0.0;
            } else {
-              tstackEntropies[i1][i2][j1][j2] = readDouble(sFile, o);
-              tstackEnthalpies[i1][i2][j1][j2] = readDouble(hFile, o);
+              tstackEntropies[i1][i2][j1][j2] = readDouble(&pt_ds, o);
+              tstackEnthalpies[i1][i2][j1][j2] = readDouble(&pt_dh, o);
               if (!isFinite(tstackEntropies[i1][i2][j1][j2]) || !isFinite(tstackEnthalpies[i1][i2][j1][j2])) {
                  tstackEntropies[i1][i2][j1][j2] = -1.0;
                  tstackEnthalpies[i1][i2][j1][j2] = _INFINITY;
               }
            }
-   fclose(sFile);
-   fclose(hFile);
 }
 
 static void 
-getTstack2(double tstack2Entropies[5][5][5][5], double tstack2Enthalpies[5][5][5][5], thal_results* o)
+getTstack2(double tstack2Entropies[5][5][5][5], double tstack2Enthalpies[5][5][5][5], const thal_parameters *tp, thal_results* o)
 {
 
    int i1, j1, i2, j2;
-   FILE *sFile, *hFile;
-   sFile = openParamFile("tstack2.ds", o);
-   hFile = openParamFile("tstack2.dh", o);
+   char *pt_ds = tp->tstack2_ds;
+   char *pt_dh = tp->tstack2_dh;
    for (i1 = 0; i1 < 5; ++i1)
      for (i2 = 0; i2 < 5; ++i2)
        for (j1 = 0; j1 < 5; ++j1)
@@ -1095,28 +1246,29 @@ getTstack2(double tstack2Entropies[5][5][5][5], double tstack2Enthalpies[5][5][5
               tstack2Entropies[i1][i2][j1][j2] = 0.00000000001;
               tstack2Enthalpies[i1][i2][j1][j2] = 0.0;
            } else {
-              tstack2Entropies[i1][i2][j1][j2] = readDouble(sFile, o);
-              tstack2Enthalpies[i1][i2][j1][j2] = readDouble(hFile, o);
+              tstack2Entropies[i1][i2][j1][j2] = readDouble(&pt_ds, o);
+              tstack2Enthalpies[i1][i2][j1][j2] = readDouble(&pt_dh, o);
               if (!isFinite(tstack2Entropies[i1][i2][j1][j2]) || !isFinite(tstack2Enthalpies[i1][i2][j1][j2])) {
                  tstack2Entropies[i1][i2][j1][j2] = -1.0;
                  tstack2Enthalpies[i1][i2][j1][j2] = _INFINITY;
               }
            }
-   fclose(sFile);
-   fclose(hFile);
 }
 
 static void 
-getTriloop(struct triloop** triloopEntropies, struct triloop** triloopEnthalpies, int* num, thal_results* o)
+getTriloop(struct triloop** triloopEntropies, struct triloop** triloopEnthalpies, int* num, const thal_parameters *tp, thal_results* o)
 {
-   FILE *sFile, *hFile;
    int i, size;
    double value;
-   sFile = openParamFile("triloop.ds", o);
+   char *pt_ds = tp->triloop_ds;
    *num = 0;
    size = 16;
+   if (*triloopEntropies != NULL) {
+     free(*triloopEntropies);
+     *triloopEntropies = NULL;
+   }
    *triloopEntropies = (struct triloop*) safe_calloc(16, sizeof(struct triloop), o);
-   while (readTLoop(sFile, (*triloopEntropies)[*num].loop, &value, 1, o) != -1) {
+   while (readTLoop(&pt_ds, (*triloopEntropies)[*num].loop, &value, 1, o) != -1) {
       for (i = 0; i < 5; ++i)
         (*triloopEntropies)[*num].loop[i] = str2int((*triloopEntropies)[*num].loop[i]);
       (*triloopEntropies)[*num].value = value;
@@ -1128,13 +1280,16 @@ getTriloop(struct triloop** triloopEntropies, struct triloop** triloopEnthalpies
    }
    *triloopEntropies = (struct triloop*) safe_realloc(*triloopEntropies, *num * sizeof(struct triloop), o);
 
-   fclose(sFile);
-
-   hFile = openParamFile("triloop.dh", o);
+   char *pt_dh = tp->triloop_dh;
    *num = 0;
    size = 16;
+
+   if (*triloopEnthalpies != NULL) {
+     free(*triloopEnthalpies);
+     *triloopEnthalpies = NULL;
+   }
    *triloopEnthalpies = (struct triloop*) safe_calloc(16, sizeof(struct triloop), o);
-   while (readTLoop(hFile, (*triloopEnthalpies)[*num].loop, &value, 1, o) != -1) {
+   while (readTLoop(&pt_dh, (*triloopEnthalpies)[*num].loop, &value, 1, o) != -1) {
       for (i = 0; i < 5; ++i)
         (*triloopEnthalpies)[*num].loop[i] = str2int((*triloopEnthalpies)[*num].loop[i]);
       (*triloopEnthalpies)[*num].value = value;
@@ -1145,22 +1300,22 @@ getTriloop(struct triloop** triloopEntropies, struct triloop** triloopEnthalpies
       }
    }
    *triloopEnthalpies = (struct triloop*) safe_realloc(*triloopEnthalpies, *num * sizeof(struct triloop), o);
-
-   fclose(hFile);
 }
 
 static void 
-getTetraloop(struct tetraloop** tetraloopEntropies, struct tetraloop** tetraloopEnthalpies, int* num, thal_results* o)
+getTetraloop(struct tetraloop** tetraloopEntropies, struct tetraloop** tetraloopEnthalpies, int* num, const thal_parameters *tp, thal_results* o)
 {
-
-   FILE *sFile, *hFile;
    int i, size;
    double value;
-   sFile = openParamFile("tetraloop.ds", o);
+   char *pt_ds = tp->tetraloop_ds;
    *num = 0;
    size = 16;
+   if (*tetraloopEntropies != NULL) {
+     free(*tetraloopEntropies);
+     *tetraloopEntropies = NULL;
+   }
    *tetraloopEntropies = (struct tetraloop*) safe_calloc(16, sizeof(struct tetraloop), o);
-   while (readTLoop(sFile, (*tetraloopEntropies)[*num].loop, &value, 0, o) != -1) {
+   while (readTLoop(&pt_ds, (*tetraloopEntropies)[*num].loop, &value, 0, o) != -1) {
       for (i = 0; i < 6; ++i)
         (*tetraloopEntropies)[*num].loop[i] = str2int((*tetraloopEntropies)[*num].loop[i]);
       (*tetraloopEntropies)[*num].value = value;
@@ -1171,13 +1326,16 @@ getTetraloop(struct tetraloop** tetraloopEntropies, struct tetraloop** tetraloop
       }
    }
    *tetraloopEntropies = (struct tetraloop*) safe_realloc(*tetraloopEntropies, *num * sizeof(struct tetraloop), o);
-   fclose(sFile);
 
-   hFile = openParamFile("tetraloop.dh", o);
+   char *pt_dh = tp->tetraloop_dh;
    *num = 0;
    size = 16;
+   if (*tetraloopEnthalpies != NULL) {
+     free(*tetraloopEnthalpies);
+     *tetraloopEnthalpies = NULL;
+   }
    *tetraloopEnthalpies = (struct tetraloop*) safe_calloc(16, sizeof(struct tetraloop), o);
-   while (readTLoop(hFile, (*tetraloopEnthalpies)[*num].loop, &value, 0, o) != -1) {
+   while (readTLoop(&pt_dh, (*tetraloopEnthalpies)[*num].loop, &value, 0, o) != -1) {
       for (i = 0; i < 6; ++i)
         (*tetraloopEnthalpies)[*num].loop[i] = str2int((*tetraloopEnthalpies)[*num].loop[i]);
       (*tetraloopEnthalpies)[*num].value = value;
@@ -1188,8 +1346,6 @@ getTetraloop(struct tetraloop** tetraloopEntropies, struct tetraloop** tetraloop
       }
    }
    *tetraloopEnthalpies = (struct tetraloop*) safe_realloc(*tetraloopEnthalpies, *num * sizeof(struct tetraloop), o);
-
-   fclose(hFile);
 }
 
 static void 

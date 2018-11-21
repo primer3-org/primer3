@@ -543,19 +543,20 @@ p3_destroy_global_settings(p3_global_settings *a)
 {
   if (NULL != a) {
     if (NULL != a->p_args.must_match_five_prime) {
-            free(a->p_args.must_match_five_prime);
+      free(a->p_args.must_match_five_prime);
     }
     if (NULL != a->p_args.must_match_three_prime) {
-            free(a->p_args.must_match_three_prime);
+      free(a->p_args.must_match_three_prime);
     }
     if (NULL != a->o_args.must_match_five_prime) {
-            free(a->o_args.must_match_five_prime);
+      free(a->o_args.must_match_five_prime);
     }
     if (NULL != a->o_args.must_match_three_prime) {
-            free(a->o_args.must_match_three_prime);
+      free(a->o_args.must_match_three_prime);
     }
+    thal_free_parameters(&a->thermodynamic_parameters);
     if (NULL != a->mp.list_prefix) {
-            free(a->mp.list_prefix);
+      free(a->mp.list_prefix);
     }
     destroy_seq_lib(a->p_args.repeat_lib);
     destroy_seq_lib(a->o_args.repeat_lib);
@@ -655,6 +656,8 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->pair_compl_end_th   = 47.0;
   a->thermodynamic_oligo_alignment = 0;
   a->thermodynamic_template_alignment = 0;
+  thal_set_null_parameters(&a->thermodynamic_parameters);
+  set_default_thal_parameters(&a->thermodynamic_parameters);
   a->liberal_base        = 0;
   a->primer_task         = generic;
   a->pick_left_primer    = 1;
@@ -5615,7 +5618,7 @@ p3_get_pair_array_explain_string(const pair_array_t *pair_array)
 const char *
 libprimer3_release(void) 
 {
-  return "libprimer3 release 2.4.0";
+  return "libprimer3 release 2.5.0";
 }
 
 const char *
@@ -7208,7 +7211,7 @@ p3_read_line(FILE *file)
     if ((n = strchr(p, '\n')) != NULL) {
       *n = '\0';
       n--;
-      if (*n == '\r') {
+      if ((n >= p) && (*n == '\r')) {
         *n = '\0';
       }
       return s;

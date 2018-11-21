@@ -57,7 +57,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* Some function prototypes */
 static void   print_usage();
 static void   sig_handler(int);
-static void   read_thermodynamic_parameters();
 static void   validate_kmer_lists_path();
 
 /* Other global variables. */
@@ -237,7 +236,13 @@ main(int argc, char *argv[])
     print_usage();
     exit(-1);
   }
-    
+  /* Load default thal parameters */
+  thal_results o;
+  if (get_thermodynamic_values(&global_pa->thermodynamic_parameters, &o)) {
+    fprintf(stderr, "%s\n", o.msg);
+    exit(-1);
+  }
+
   if (!global_pa) {
     exit(-2); /* Out of memory. */
   }
@@ -259,10 +264,6 @@ main(int argc, char *argv[])
                  global_pa, sarg, &fatal_parse_err,
                  &nonfatal_parse_err, &warnings, &read_boulder_record_res);
     destroy_pr_append_str_data(&p3_settings_path);
-    /* Check if any thermodynamical alignment flag was given */
-    if ((global_pa->thermodynamic_oligo_alignment == 1) || 
-        (global_pa->thermodynamic_template_alignment == 1))
-      read_thermodynamic_parameters();
     /* Check if masking template flag was given */
     if (global_pa->mask_template == 1)
        validate_kmer_lists_path();
@@ -330,25 +331,11 @@ main(int argc, char *argv[])
      if(global_pa->mask_template){
            global_pa->lowercase_masking=global_pa->mask_template;
      }        
-    /* Check if any thermodynamical alignment flag was given and the
-       path to the parameter files changed - we need to reread them */
-    if (((global_pa->thermodynamic_oligo_alignment == 1) ||
-         (global_pa->thermodynamic_template_alignment == 1))
-        && (thermodynamic_path_changed == 1))
-      read_thermodynamic_parameters();
 
      /* Check if template masking flag was given */
      if (global_pa->mask_template == 1)
         validate_kmer_lists_path();
 
-    /* Check that we found the thermodynamic parameters in case any thermodynamic flag was set to 1. */
-    if (((global_pa->thermodynamic_oligo_alignment == 1) ||
-         (global_pa->thermodynamic_template_alignment == 1))
-        && (thermodynamic_params_path == NULL)) {
-      /* no parameter directory found, error */
-      printf("PRIMER_ERROR=thermodynamic approach chosen, but path to thermodynamic parameters not specified\n=\n");
-      exit(-1);
-    }
     /* Check that we found the kmer lists in case masking flag was set to 1. */
     if (global_pa->mask_template == 1 && kmer_lists_path == NULL){
         printf("PRIMER_ERROR=masking template chosen, but path to kmer lists not specified\n=\n");
@@ -503,7 +490,6 @@ main(int argc, char *argv[])
   destroy_pr_append_str_data(&fatal_parse_err);
   destroy_pr_append_str_data(&warnings);
   destroy_dpal_thal_arg_holder();
-  free(thermodynamic_params_path);
   free(kmer_lists_path);
   /* If it could not read input, then complain and die */
   if (0 == input_found) {
@@ -511,59 +497,6 @@ main(int argc, char *argv[])
     exit(-3);
   }
   return 0;
-}
-
-/* Reads the thermodynamic parameters if the thermodynamic alignment
-   tag was set to 1 */
-static void
-read_thermodynamic_parameters()
-{
-  thal_results o;
-  /* if the path to the parameter files did not change,
-     we do not want to read again */
-  if (thermodynamic_path_changed == 0) return;
-  /* check that the path to the parameters folder was given */
-  if (thermodynamic_params_path == NULL) {
-
-#ifdef OS_WIN
-    /* in windows check for .\\primer3_config */
-    struct stat st;
-    if ((stat(".\\primer3_config", &st) == 0) && S_ISDIR(st.st_mode)) {
-      thermodynamic_params_path =
-        (char*) malloc(strlen(".\\primer3_config\\") * sizeof(char) + 1);
-      if (NULL == thermodynamic_params_path) exit (-2); /* Out of memory */
-      strcpy(thermodynamic_params_path, ".\\primer3_config\\");
-    } else {
-      /* no default directory found */
-      return;
-    }
-#else
-    /* in linux, check for ./primer3_config and /opt/primer3_config */
-    struct stat st;
-    if ((stat("./primer3_config", &st) == 0) && S_ISDIR(st.st_mode)) {
-      thermodynamic_params_path =
-        (char*) malloc(strlen("./primer3_config/") * sizeof(char) + 1);
-      if (NULL == thermodynamic_params_path) exit (-2); /* Out of memory */
-      strcpy(thermodynamic_params_path, "./primer3_config/");
-    } else if ((stat("/opt/primer3_config", &st) == 0)  && S_ISDIR(st.st_mode)) {
-      thermodynamic_params_path =
-        (char*) malloc(strlen("/opt/primer3_config/") * sizeof(char) + 1);
-      if (NULL == thermodynamic_params_path) exit (-2); /* Out of memory */
-      strcpy(thermodynamic_params_path, "/opt/primer3_config/");
-    } else {
-      /* no default directory found */
-      return;
-    }
-#endif
-
-  }
-  /* read in the thermodynamic parameters */
-  if (get_thermodynamic_values(thermodynamic_params_path, &o)) {
-    fprintf(stderr, "%s\n", o.msg);
-    exit(-1);
-  }
-  /* mark that the last given path was used for reading the parameters */
-  thermodynamic_path_changed = 0;
 }
 
 static void validate_kmer_lists_path(){

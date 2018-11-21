@@ -117,6 +117,7 @@ typedef struct pr_append_str {
 #include "oligotm.h"
 #include "masker.h"
 #include "thal.h"
+#include "thal_parameters.h"
 #include "dpal.h"
 
 /* 
@@ -473,6 +474,13 @@ typedef struct p3_global_settings {
      mispriming calculations.
      0 = Use alignment *not* based on thermodynamics.
      1 = Use alignment based on thermodynamics.
+  */
+
+  thal_parameters thermodynamic_parameters;
+  /*
+     The parameters for thermodynamic calculation. Default parameters
+     are loaded by the thermodynamic_parameters.h function and
+     can be overwitten by read_boulder.h functions.
   */
 
   double max_diff_tm; 

@@ -48,6 +48,7 @@
 #include <sys/stat.h>
 
 #include "thal.h"
+#include "thal_parameters.h"
 
 /* Check on which OS we compile */
 #if defined(_WIN32) || defined(WIN32) || defined (__WIN32__) || defined(__CYGWIN__) || defined(__MINGW32__)
@@ -65,7 +66,7 @@ char *path = NULL; /* path to the parameter files */
 int main(int argc, char** argv) 
 {   
    const char* usage;
-   int tmp_ret;
+   int tmp_ret = 0;
    thal_args a;
    thal_results o;
    set_thal_default_args(&a);
@@ -287,14 +288,25 @@ if(a.debug == 0) {
       fprintf(stderr, usage, argv[0]);
       exit(-1);
    }
-   
+   /* read default thermodynamic parameters */
+   thal_parameters thermodynamic_parameters;
+   thal_set_null_parameters(&thermodynamic_parameters);
+
+   if (path != NULL) {
+      thal_load_parameters(path, &thermodynamic_parameters, &o);
+   } else {
+      set_default_thal_parameters(&thermodynamic_parameters);
+   }
+   get_thermodynamic_values(&thermodynamic_parameters, &o);
+
+if (0) {   
    /* read thermodynamic parameters */
    if (path == NULL) {
      /* check for the default paths */
      struct stat st;
 #ifdef OS_WIN
      if ((stat(".\\primer3_config", &st) == 0) && S_ISDIR(st.st_mode)) {
-       tmp_ret = get_thermodynamic_values(".\\primer3_config\\", &o);
+//       tmp_ret = get_thermodynamic_values(".\\primer3_config\\", &o);
      } else {
        /* no default directory found, error */
        fprintf(stderr, "Error: thermodynamic approach chosen, but path to thermodynamic parameters not specified\n");
@@ -302,17 +314,17 @@ if(a.debug == 0) {
      }
 #else 
      if ((stat("./primer3_config", &st) == 0) && S_ISDIR(st.st_mode)) {
-       tmp_ret = get_thermodynamic_values("./primer3_config/", &o);
+  //     tmp_ret = get_thermodynamic_values("./primer3_config/", &o);
      } else if ((stat("/opt/primer3_config", &st) == 0)  && S_ISDIR(st.st_mode)) {
-       tmp_ret = get_thermodynamic_values("/opt/primer3_config/", &o);
+  //     tmp_ret = get_thermodynamic_values("/opt/primer3_config/", &o);
      } else {
        /* no default directory found, error */
        fprintf(stderr, "Error: thermodynamic approach chosen, but path to thermodynamic parameters not specified\n");
        exit(-1);
      }
 #endif
-   } else tmp_ret = get_thermodynamic_values(path, &o);
-
+   } //else tmp_ret = get_thermodynamic_values(path, &o);
+}
    if (tmp_ret) {
      fprintf(stderr, "%s\n", o.msg);
      exit(-1);
@@ -335,5 +347,6 @@ if(a.debug == 0) {
      printf("%f\n",o.temp);
    /* cleanup */
    destroy_thal_structures();
+   thal_free_parameters(&thermodynamic_parameters);
    return EXIT_SUCCESS;
 }
