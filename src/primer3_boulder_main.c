@@ -460,11 +460,13 @@ main(int argc, char *argv[])
       /* Check for errors and print them */
       if (NULL != retval->glob_err.data) {
         fprintf(stderr, "%s: %s\n", pr_program_name, retval->glob_err.data);
+        destroy_secundary_structures(global_pa, retval);
         destroy_p3retval(retval);
         destroy_seq_args(sarg);
         exit(-4);
       }
     }
+    destroy_secundary_structures(global_pa, retval); /* This works even if retval is NULL */
     destroy_p3retval(retval); /* This works even if retval is NULL */
     retval = NULL;
     destroy_seq_args(sarg);

@@ -196,6 +196,31 @@ static double align(const char *, const char*, const dpal_args *a);
 
 static double align_thermod(const char *, const char *, const thal_args *a);
 
+void destroy_primer_sec_struct(primer_rec *p_rec);
+
+void destroy_pair_sec_struct(primer_pair *ppair);
+
+void save_overwrite_sec_struct(char **base, char *inp);
+
+void recalc_secundary_structures(const p3_global_settings *pa,
+                                 const seq_args *sa,
+                                 const dpal_arg_holder *dpal_arg_to_use,
+                                 const thal_arg_holder *thal_arg_to_use,
+                                 const thal_arg_holder *thal_oligo_arg_to_use,
+                                 p3retval *retval);
+
+void recalc_primer_sec_struct(primer_rec *p_rec,
+                              const int rev,
+                              const p3_global_settings *pa,
+                              const seq_args *sa,
+                              const dpal_arg_holder *dpal_arg_to_use,
+                              const thal_arg_holder *thal_arg_to_use);
+void recalc_pair_sec_struct(primer_pair *ppair,
+                            const p3_global_settings *pa,
+                            const seq_args *sa,
+                            const dpal_arg_holder *dpal_arg_to_use,
+                            const thal_arg_holder *thal_arg_to_use);
+
 static int    characterize_pair(p3retval *p,
                                 const p3_global_settings *,
                                 const seq_args *,
@@ -660,6 +685,7 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->thermodynamic_template_alignment = 0;
   thal_set_null_parameters(&a->thermodynamic_parameters);
   set_default_thal_parameters(&a->thermodynamic_parameters);
+  a->show_secondary_structure_alignment = 0;
   a->liberal_base        = 0;
   a->primer_task         = generic;
   a->pick_left_primer    = 1;
@@ -1297,6 +1323,12 @@ choose_primers(const p3_global_settings *pa,
   if (retval->output_type == primer_pairs) {
     choose_pair_or_triple(retval, pa, sa, dpal_arg_to_use, thal_arg_to_use,
        thal_oligo_arg_to_use, &retval->best_pairs);
+  }
+
+  /* Calculate secondary structures only for the selected primers */
+  if (pa->show_secondary_structure_alignment == 1) {
+    recalc_secundary_structures(pa, sa, dpal_arg_to_use, thal_arg_to_use, 
+                                thal_oligo_arg_to_use, retval);
   }
 
   if (pa->dump) {
@@ -3008,6 +3040,13 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
      struct is not initialized. */
   h->repeat_sim.score = NULL;
 
+  /* Set all struct to NULL, will be calculated later */
+  h->self_any_struct = NULL;
+  h->self_end_struct = NULL;
+  h->hairpin_struct = NULL;
+  h->template_mispriming_struct = NULL;
+  h->template_mispriming_r_struct = NULL;
+
   h->gc_content = h->num_ns = 0;
   h->overlaps_overlap_position = 0;
   h->template_mispriming = h->template_mispriming_r = ALIGN_SCORE_UNDEF;
@@ -3816,7 +3855,14 @@ oligo_max_template_mispriming_thermod(const primer_rec *h) {
    return h->template_mispriming > h->template_mispriming_r ?
      h->template_mispriming : h->template_mispriming_r;
 }
-   
+  
+char *
+oligo_max_template_mispriming_struct(const primer_rec *h) {
+   return h->template_mispriming > h->template_mispriming_r ?
+     h->template_mispriming_struct : h->template_mispriming_r_struct;
+}
+
+
 /* Sort a given primer array by penalty */
 static void
 sort_primer_array(oligo_array *oligo)
@@ -3922,6 +3968,11 @@ characterize_pair(p3retval *retval,
 
   ppair->target = 0;
   ppair->compl_any = ppair->compl_end = 0;
+
+  ppair->compl_any_struct = NULL;
+  ppair->compl_end_struct = NULL;
+  ppair->template_mispriming_struct = NULL;
+
   if (update_stats) { 
     pair_expl->considered++;
   }
@@ -4244,7 +4295,7 @@ characterize_pair(p3retval *retval,
          }
          if (!must_use) return PAIR_FAILED;
       }
-      ppair->compl_end = compl_end;
+      ppair->compl_end = compl_end; /* Is this correct? even if end1 is bigger we write end2?? */
    }
    
   /* ============================================================= */
@@ -4480,7 +4531,7 @@ align(const char *s1,
       return strlen(s2);
     }
   }
-  dpal((const unsigned char *) s1, (const unsigned char *) s2, a, &r);
+  dpal((const unsigned char *) s1, (const unsigned char *) s2, a, DPM_FAST, &r);
   PR_ASSERT(r.score <= SHRT_MAX);
   if (r.score == DPAL_ERROR_SCORE) {
     /* There was an error. */
@@ -4517,13 +4568,13 @@ align_thermod(const char *s1,
 {  
    int thal_trace=0;
    thal_results r;
-   thal((const unsigned char *) s1, (const unsigned char *) s2, a, &r);
+   thal((const unsigned char *) s1, (const unsigned char *) s2, a, THL_FAST, &r);
    if (thal_trace) {
      fprintf(stdout, 
              "thal, thal_args, type=%d maxLoop=%d mv=%f dv=%f "
-             "dntp=%f dna_conc=%f, temp=%f, temponly=%d dimer=%d\n",
+             "dntp=%f dna_conc=%f, temp=%f, mode=%d dimer=%d\n",
              a->type, a->maxLoop, a->mv, a->dv, a->dntp, a->dna_conc, 
-             a->temp, a->temponly, a->dimer);
+             a->temp, DPM_FAST, a->dimer);
      fprintf(stdout, 
              "thal: s1=%s s2=%s temp=%f msg=%s end1=%d end2=%d\n", 
              s1, s2, r.temp, r.msg, r.align_end_1, r.align_end_2);
@@ -4547,6 +4598,290 @@ align_thermod(const char *s1,
      }
    return ((r.temp < 0.0) ? 0.0 : (double) (r.temp));
 }
+
+/* Free the secondary structure strings for selected primers */
+void
+destroy_secundary_structures(const p3_global_settings *pa,
+                             p3retval *retval) {
+  /* Pointers for the primer set just printing */
+  int num_print;
+  if (pa == NULL || retval == NULL) {
+    return;
+  }
+
+  /* Do we have a list of primers or pairs? */
+  if (retval->output_type == primer_list) {
+    /* For Primer Lists: Figure out how many primers are in
+     * the array that can be printed. If more than needed,
+     * set it to the number requested. */
+
+    /* Get how may primers should be max. printed */
+    num_print = pa->num_return;
+    if (num_print > retval->fwd.num_elem) {
+      num_print = retval->fwd.num_elem;
+    }
+    for (int i = 0 ; i < num_print ; i++) {
+      destroy_primer_sec_struct(&retval->fwd.oligo[i]);
+    }
+    num_print = pa->num_return;
+    if (num_print > retval->rev.num_elem) {
+      num_print = retval->rev.num_elem;
+    }
+    for (int i = 0 ; i < num_print ; i++) {
+      destroy_primer_sec_struct(&retval->rev.oligo[i]);
+    }
+    num_print = pa->num_return;
+    if (num_print > retval->intl.num_elem) {
+      num_print = retval->intl.num_elem;
+    }
+    for (int i = 0 ; i < num_print ; i++) {
+      destroy_primer_sec_struct(&retval->intl.oligo[i]);
+    }
+  } else {
+    /* Get how may primers should be max. printed */
+    num_print = retval->best_pairs.num_pairs;
+    for (int i = 0 ; i < num_print ; i++) {
+      destroy_primer_sec_struct(retval->best_pairs.pairs[i].left);
+      destroy_primer_sec_struct(retval->best_pairs.pairs[i].right);
+      destroy_pair_sec_struct(&retval->best_pairs.pairs[i]);
+      if (retval->intl.num_elem > 0) {
+        destroy_primer_sec_struct(retval->best_pairs.pairs[i].intl);
+      }
+    }
+  }
+}
+
+void
+destroy_primer_sec_struct(primer_rec *p_rec) {
+  if (p_rec->self_any_struct != NULL) {
+    free(p_rec->self_any_struct);
+    p_rec->self_any_struct = NULL;
+  }
+  if (p_rec->self_end_struct != NULL) {
+    free(p_rec->self_end_struct);
+    p_rec->self_end_struct = NULL;
+  }
+  if (p_rec->hairpin_struct != NULL) {
+    free(p_rec->hairpin_struct);
+    p_rec->hairpin_struct = NULL;
+  }
+}
+
+void
+destroy_pair_sec_struct(primer_pair *ppair) {
+  if (ppair->compl_any_struct != NULL) {
+    free(ppair->compl_any_struct);
+    ppair->compl_any_struct = NULL;
+  }
+  if (ppair->compl_end_struct != NULL) {
+    free(ppair->compl_end_struct);
+    ppair->compl_end_struct = NULL;
+  }
+}
+
+void
+save_overwrite_sec_struct(char **base, char *inp) {
+  if (*base != NULL) {
+    free(*base);
+  }
+  *base = inp;
+}
+
+/* Calculate the secondary structures for selected primers */
+void
+recalc_secundary_structures(const p3_global_settings *pa,
+                            const seq_args *sa,
+                            const dpal_arg_holder *dpal_arg_to_use,
+                            const thal_arg_holder *thal_arg_to_use,
+                            const thal_arg_holder *thal_oligo_arg_to_use,
+                            p3retval *retval) {
+  /* Pointers for the primer set just printing */
+  int num_print;
+
+  /* Do we have a list of primers or pairs? */
+  if (retval->output_type == primer_list) {
+    /* For Primer Lists: Figure out how many primers are in
+     * the array that can be printed. If more than needed,
+     * set it to the number requested. */
+
+    /* Get how may primers should be max. printed */
+    num_print = pa->num_return;
+    if (num_print > retval->fwd.num_elem) {
+      num_print = retval->fwd.num_elem;
+    }
+    for (int i = 0 ; i < num_print ; i++) {
+      recalc_primer_sec_struct(&retval->fwd.oligo[i],0,pa,sa,dpal_arg_to_use,thal_arg_to_use);
+    }
+    num_print = pa->num_return;
+    if (num_print > retval->rev.num_elem) {
+      num_print = retval->rev.num_elem;
+    }
+    for (int i = 0 ; i < num_print ; i++) {
+      recalc_primer_sec_struct(&retval->rev.oligo[i],1,pa,sa,dpal_arg_to_use,thal_arg_to_use);
+    }
+    num_print = pa->num_return;
+    if (num_print > retval->intl.num_elem) {
+      num_print = retval->intl.num_elem;
+    }
+    for (int i = 0 ; i < num_print ; i++) {
+      recalc_primer_sec_struct(&retval->intl.oligo[i],0,pa,sa,dpal_arg_to_use,thal_oligo_arg_to_use);
+    }
+  } else {
+    /* Get how may primers should be max. printed */
+    num_print = retval->best_pairs.num_pairs;
+    for (int i = 0 ; i < num_print ; i++) {
+      recalc_primer_sec_struct(retval->best_pairs.pairs[i].left,0,pa,sa,dpal_arg_to_use,thal_arg_to_use);
+      recalc_primer_sec_struct(retval->best_pairs.pairs[i].right,1,pa,sa,dpal_arg_to_use,thal_arg_to_use);
+      recalc_pair_sec_struct(&retval->best_pairs.pairs[i],pa,sa,dpal_arg_to_use,thal_arg_to_use);
+      if (retval->intl.num_elem > 0) {
+        recalc_primer_sec_struct(retval->best_pairs.pairs[i].intl,0,pa,sa,dpal_arg_to_use,thal_oligo_arg_to_use);
+      }
+    }
+  }
+}
+
+/* This functions overwrite the any/end values to report discrepancies for debugging.*/
+void
+recalc_primer_sec_struct(primer_rec *p_rec,
+                         const int rev,
+                         const p3_global_settings *pa,
+                         const seq_args *sa,
+                         const dpal_arg_holder *dpal_arg_to_use,
+                         const thal_arg_holder *thal_arg_to_use) {
+  char s1[MAX_PRIMER_LENGTH+1], s1_rev[MAX_PRIMER_LENGTH+1];
+  /* s1 is the forward oligo. */
+  if (rev == 0) {
+    _pr_substr(sa->trimmed_seq, p_rec->start, p_rec->length, s1);
+               p3_reverse_complement(s1, s1_rev);
+  } else {
+    _pr_substr(sa->trimmed_seq, p_rec->start - p_rec->length + 1,
+               p_rec->length, s1_rev);
+    p3_reverse_complement(s1_rev, s1);
+  }
+  
+  if (pa->thermodynamic_oligo_alignment==0) {
+    dpal_results any, end;
+    if (p_rec->self_any > 0.0) {
+      dpal((const unsigned char *) s1, (const unsigned char *) s1_rev, 
+           dpal_arg_to_use->local, DPM_STRUCT, &any);
+      p_rec->self_any = any.score / PR_ALIGN_SCORE_PRECISION;
+      save_overwrite_sec_struct(&p_rec->self_any_struct, any.sec_struct);
+    }
+    if (p_rec->self_end > 0.0) {
+      dpal((const unsigned char *) s1, (const unsigned char *) s1_rev, 
+           dpal_arg_to_use->end, DPM_STRUCT, &end);
+      p_rec->self_end = end.score / PR_ALIGN_SCORE_PRECISION;
+      save_overwrite_sec_struct(&p_rec->self_end_struct, end.sec_struct);
+    }
+  }
+  /* Thermodynamic approach, fwd-primer */
+  if (pa->thermodynamic_oligo_alignment==1) {
+    thal_results any, end, hair;
+    if (p_rec->self_any > 0.0 ) {
+      thal((const unsigned char *) s1, (const unsigned char *) s1, 
+           thal_arg_to_use->any, THL_STRUCT, &any);
+      p_rec->self_any = any.temp;
+      save_overwrite_sec_struct(&p_rec->self_any_struct, any.sec_struct);
+    }
+    if (p_rec->self_end > 0.0) {
+      thal((const unsigned char *) s1, (const unsigned char *) s1, 
+           thal_arg_to_use->end1, THL_STRUCT, &end);
+      p_rec->self_end = end.temp;
+      save_overwrite_sec_struct(&p_rec->self_end_struct, end.sec_struct);
+    }
+    if (p_rec->hairpin_th > 0.0 ) {
+      thal((const unsigned char *) s1, (const unsigned char *) s1, 
+            thal_arg_to_use->hairpin_th, THL_STRUCT, &hair);
+      p_rec->hairpin_th = hair.temp;
+      save_overwrite_sec_struct(&p_rec->hairpin_struct, hair.sec_struct);
+    }
+  }
+}
+
+void
+recalc_pair_sec_struct(primer_pair *ppair,
+                       const p3_global_settings *pa,
+                       const seq_args *sa,
+                       const dpal_arg_holder *dpal_arg_to_use,
+                       const thal_arg_holder *thal_arg_to_use) {
+  char s1[MAX_PRIMER_LENGTH+1], s1_rev[MAX_PRIMER_LENGTH+1];
+  char s2[MAX_PRIMER_LENGTH+1], s2_rev[MAX_PRIMER_LENGTH+1];
+  /* s1 is the forward oligo. */
+  _pr_substr(sa->trimmed_seq,
+             ppair->left->start,
+             ppair->left->length,
+             s1);
+  /* s2 is the reverse oligo. */
+  _pr_substr(sa->trimmed_seq,
+             ppair->right->start - ppair->right->length + 1,
+             ppair->right->length,
+             s2);
+  p3_reverse_complement(s1, s1_rev);
+  p3_reverse_complement(s2, s2_rev);
+  if(pa->thermodynamic_oligo_alignment==0) {
+    dpal_results any, end, end2;
+    if (ppair->compl_any > 0.0) {
+      dpal((const unsigned char *) s1, (const unsigned char *) s2, dpal_arg_to_use->local, DPM_STRUCT, &any);
+      ppair->compl_any = any.score / PR_ALIGN_SCORE_PRECISION;
+      save_overwrite_sec_struct(&ppair->compl_any_struct, any.sec_struct);
+    }
+    if (ppair->compl_end > 0.0) {
+      dpal((const unsigned char *) s1, (const unsigned char *) s2, dpal_arg_to_use->end, DPM_STRUCT, &end);
+      ppair->compl_end = end.score / PR_ALIGN_SCORE_PRECISION;
+      save_overwrite_sec_struct(&ppair->compl_end_struct, end.sec_struct);
+      dpal((const unsigned char *) s2_rev, (const unsigned char *) s1_rev, dpal_arg_to_use->end, DPM_STRUCT, &end2);
+      if (end2.score / PR_ALIGN_SCORE_PRECISION > ppair->compl_end){
+        ppair->compl_end = end2.score / PR_ALIGN_SCORE_PRECISION;
+        save_overwrite_sec_struct(&ppair->compl_end_struct, end2.sec_struct);
+      } else {
+        if (end2.sec_struct != NULL) {
+          free(end2.sec_struct);
+          end2.sec_struct = NULL;
+        }
+      }
+    }
+  } else {
+    /* thermodynamical approach */
+    thal_results any, end1, end2, end3, end4;
+    if (ppair->compl_any > 0.0) {
+      thal((const unsigned char *) s1, (const unsigned char *) s2_rev, thal_arg_to_use->any, THL_STRUCT, &any);
+      ppair->compl_any = any.temp;
+      save_overwrite_sec_struct(&ppair->compl_any_struct, any.sec_struct);
+    }
+    if (ppair->compl_end > 0.0) {
+      thal((const unsigned char *) s1, (const unsigned char *) s2_rev, thal_arg_to_use->end1, THL_STRUCT, &end1);
+      ppair->compl_end = end1.temp;
+      save_overwrite_sec_struct(&ppair->compl_end_struct, end1.sec_struct);
+      thal((const unsigned char *) s1, (const unsigned char *) s2_rev, thal_arg_to_use->end2, THL_STRUCT, &end2); /* Triinu Please check */
+      if (ppair->compl_end < end2.temp) {
+        ppair->compl_end = end2.temp;
+        save_overwrite_sec_struct(&ppair->compl_end_struct, end2.sec_struct);
+      } else {
+        if (end2.sec_struct != NULL) {
+          free(end2.sec_struct);
+          end2.sec_struct = NULL;
+        }
+      }
+      thal((const unsigned char *) s2, (const unsigned char *) s1_rev, thal_arg_to_use->end1, THL_STRUCT, &end3);
+      if (ppair->compl_end < end3.temp) {
+        ppair->compl_end = end3.temp;
+        save_overwrite_sec_struct(&ppair->compl_end_struct, end3.sec_struct);
+      } else { /* most likely wrong - should not be an else */
+        thal((const unsigned char *) s2, (const unsigned char *) s1_rev, thal_arg_to_use->end2, THL_STRUCT, &end4); /* Triinu Please check */
+        if (ppair->compl_end < end4.temp) {
+          ppair->compl_end = end4.temp;
+          save_overwrite_sec_struct(&ppair->compl_end_struct, end4.sec_struct);
+        } else {
+          if (end4.sec_struct != NULL) {
+            free(end4.sec_struct);
+            end4.sec_struct = NULL;
+          }
+        }
+      }
+    }
+  }
+}
+
 
 /* Return the sequence of oligo in
    a ****static***** buffer.  The

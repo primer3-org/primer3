@@ -70,9 +70,11 @@ int main(int argc, char** argv)
    thal_args a;
    thal_results o;
    set_thal_default_args(&a);
-   a.temponly=0; /* by default print only melting temperature, 
-                  do not draw structure or print any additional parameters */
-if(a.debug == 0) {
+   thal_mode mode = THL_GENERAL; /* by default print only melting temperature, 
+                                    do not draw structure or print any additional parameters */
+   int thal_debug = 0;
+   int thal_only = 0;
+   if((mode == THL_DEBUG) || (mode == THL_DEBUG_F)) {
 #undef DEBUG
    } else {
 #define DEBUG
@@ -207,7 +209,7 @@ if(a.debug == 0) {
          }
          i++;
       } else if (!strncmp("-r", argv[i], 2)) { /* only temp is calculated */
-         a.temponly = 1;
+         thal_only = 1;
       } else if (!strncmp("-t", argv[i], 2)) { /* temperature at which sec str are calculated */
          if(argv[i+1]==NULL) {
 #ifdef DEBUG
@@ -330,20 +332,35 @@ if (0) {
      exit(-1);
    }
 
+   /* Set the correct mode */
+   if (thal_only) {
+     if (thal_debug) {
+       mode = THL_DEBUG_F;
+     } else {
+       mode = THL_FAST;
+     }
+   } else {
+     if (thal_debug) {
+       mode = THL_DEBUG;
+     } else {
+       mode = THL_GENERAL;
+     }
+   }
+
    /* execute thermodynamical alignemnt */
    if(a.dimer==0 && oligo1!=NULL){
-      thal(oligo1,oligo1,&a,&o);   
+      thal(oligo1,oligo1,&a,mode,&o);   
    } else if(a.dimer==0 && oligo1==NULL && oligo2!=NULL) {
-      thal(oligo2,oligo2,&a,&o);
+      thal(oligo2,oligo2,&a,mode,&o);
    } else {
-      thal(oligo1,oligo2,&a,&o);   
+      thal(oligo1,oligo2,&a,mode,&o);   
    }
    /* encountered error during thermodynamical calc */
    if (o.temp == THAL_ERROR_SCORE) {
       tmp_ret = fprintf(stderr, "Error: %s\n", o.msg);
       exit(-1);
    }
-   if(a.temponly==1)
+   if((mode == THL_FAST) || (mode == THL_DEBUG_F))
      printf("%f\n",o.temp);
    /* cleanup */
    destroy_thal_structures();

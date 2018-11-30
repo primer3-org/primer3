@@ -55,6 +55,9 @@ main(int argc, const char**argv)
     int use_ambiguity_codes = 0;
     int use_h_matrix = 0;
     char mode;
+    dpal_mode dp_mode = DPM_GENERAL;
+    int dpal_debug = 0;
+    int dpal_only = 0;
     char *endptr;
     const char *msg = 
       "\nUsage: %s [-g <gval>] [-l <lval>] [-m <mval>]\n"
@@ -93,7 +96,7 @@ main(int argc, const char**argv)
     dpal_set_default_nt_args(&a);
     for (i=1; i < argc; ++i) {
         if (!strncmp("-p", argv[i], 2)) {
-            a.debug = 1;
+            dpal_debug = 1;
         } else if (!strncmp("-l", argv[i], 2)) {
           if (i+1 >= argc) {
             /* Missing value */
@@ -129,7 +132,7 @@ main(int argc, const char**argv)
           }
           i++;
         } else if (!strncmp("-s", argv[i], 2)) {
-          a.score_only = 1;
+           dpal_only = 1;
         } else if (!strncmp("-e", argv[i], 2)) {
           print_align_end = 1;
         } else if (!strncmp("-f1", argv[i], 3)) {
@@ -147,9 +150,17 @@ main(int argc, const char**argv)
     }
     if (use_h_matrix) dpal_set_h_nt_matrix(&a);
     if (use_ambiguity_codes) dpal_set_ambiguity_code_matrix(&a);
-    if (a.score_only && a.debug) {
+    if (dpal_debug && dpal_only) {
         fprintf(stderr, msg, argv[0]);
         exit(-1);
+    } else {
+      if (dpal_debug) {
+        dp_mode = DPM_DEBUG;
+      } else if (dpal_only) {
+        dp_mode = DPM_FAST;
+      } else {
+        dp_mode = DPM_GENERAL;
+      } 
     }
     a.flag = -1;
     
@@ -175,13 +186,13 @@ main(int argc, const char**argv)
     }
     if(print_align_end == 1) a.force_long_generic = 1;
 
-    dpal(s1, s2, &a, &r);
+    dpal(s1, s2, &a, dp_mode, &r);
     if (r.score == DPAL_ERROR_SCORE) {
       tmp_ret = fprintf(stderr, "Error: %s\n", r.msg);
       exit(-1);
       return tmp_ret;
     }
-    if (a.score_only) {
+    if (dp_mode == DPM_FAST) {
       printf("%.2f\n", 0.01 * r.score);
       if (print_align_end) {
         if(r.align_end_1 >= 0) printf("align_end_1=%d ",r.align_end_1);

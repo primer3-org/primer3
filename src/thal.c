@@ -250,10 +250,14 @@ static void traceback(int i, int j, double RT, int* ps1, int* ps2, int maxLoop, 
 static void tracebacku(int*, int, thal_results*);
 
 /* prints ascii output of dimer structure */
-static void drawDimer(int*, int*, double, double, double, int, double, thal_results *);
+char *drawDimer(int*, int*, double, double, double, const thal_mode mode, double, thal_results *);
 
 /* prints ascii output of hairpin structure */
-static void drawHairpin(int*, double, double, int, double, thal_results *);
+char *drawHairpin(int*, double, double, const thal_mode mode, double, thal_results *);
+
+static void save_append_string(char** ret, int *space, thal_results *o, const char *str);
+
+static void save_append_char(char** ret, int *space, thal_results *o, const char str);
 
 static int equal(double a, double b);
 
@@ -456,7 +460,8 @@ destroy_thal_structures()
 void 
 thal(const unsigned char *oligo_f, 
      const unsigned char *oligo_r, 
-     const thal_args *a, 
+     const thal_args *a,
+     const thal_mode mode,
      thal_results *o)
 {
    double* SH;
@@ -607,11 +612,11 @@ thal(const unsigned char *oligo_f,
       bp = (int*) safe_calloc(len1, sizeof(int), o);
       for (k = 0; k < len1; ++k) bp[k] = 0;
       if(isFinite(mh)) {
-         tracebacku(bp, a->maxLoop, o);
-         /* traceback for unimolecular structure */
-         drawHairpin(bp, mh, ms, a->temponly,a->temp, o); /* if temponly=1 then return after printing basic therm data */
-      } else if(a->temponly==0) {
-            fputs("No secondary structure could be calculated\n",stderr);
+        tracebacku(bp, a->maxLoop, o);
+        /* traceback for unimolecular structure */
+        o->sec_struct=drawHairpin(bp, mh, ms, mode,a->temp, o); /* if mode=THL_FAST or THL_DEBUG_F then return after printing basic therm data */
+      } else if((mode != THL_FAST) && (mode != THL_DEBUG_F) && (mode != THL_STRUCT)) {
+        fputs("No secondary structure could be calculated\n",stderr);
       }
 
       if(o->temp==-_INFINITY && (!strcmp(o->msg, ""))) o->temp=0.0;
@@ -686,7 +691,7 @@ thal(const unsigned char *oligo_f,
         ps2[j] = 0;
       if(isFinite(EnthalpyDPT(bestI, bestJ))){
          traceback(bestI, bestJ, RC, ps1, ps2, a->maxLoop, o);
-         drawDimer(ps1, ps2, SHleft, dH, dS, a->temponly,a->temp, o);
+         o->sec_struct=drawDimer(ps1, ps2, SHleft, dH, dS, mode, a->temp, o);
          o->align_end_1=bestI;
          o->align_end_2=bestJ;
       } else  {
@@ -713,7 +718,6 @@ void
 set_thal_default_args(thal_args *a)
 {
    memset(a, 0, sizeof(*a));
-   a->debug = 0;
    a->type = thal_any; /* thal_alignment_type THAL_ANY */
    a->maxLoop = MAX_LOOP;
    a->mv = 50; /* mM */
@@ -721,7 +725,6 @@ set_thal_default_args(thal_args *a)
    a->dntp = 0.8; /* mM */
    a->dna_conc = 50; /* nM */
    a->temp = TEMP_KELVIN; /* Kelvin */
-   a->temponly = 1; /* return only melting temperature of predicted structure */
    a->dimer = 1; /* by default dimer structure is calculated */
 }
 
@@ -730,7 +733,6 @@ void
 set_thal_oligo_default_args(thal_args *a)    
 {
    memset(a, 0, sizeof(*a));
-   a->debug = 0;
    a->type = thal_any; /* thal_alignment_type THAL_ANY */
    a->maxLoop = MAX_LOOP;
    a->mv = 50; /* mM */
@@ -738,7 +740,6 @@ set_thal_oligo_default_args(thal_args *a)
    a->dntp = 0.0; /* mM */
    a->dna_conc = 50; /* nM */
    a->temp = TEMP_KELVIN; /* Kelvin */
-   a->temponly = 1; /* return only melting temperature of predicted structure */
    a->dimer = 1; /* by default dimer structure is calculated */
 }
 
@@ -2805,20 +2806,25 @@ traceback(int i, int j, double RT, int* ps1, int* ps2, int maxLoop, thal_results
    free(SH);
 }
 
-static void 
-drawDimer(int* ps1, int* ps2, double temp, double H, double S, int temponly, double t37, thal_results *o)
+char * 
+drawDimer(int* ps1, int* ps2, double temp, double H, double S, const thal_mode mode, double t37, thal_results *o)
 {
+   int  ret_space = 0;
+   char *ret_ptr = NULL;
+   int ret_nr, ret_pr_once;
+   char ret_para[400];
+   char* ret_str[4];
    int i, j, k, numSS1, numSS2, N;
    char* duplex[4];
    double G, t;
    t = G = 0;
    if (!isFinite(temp)){
-      if(temponly==0) {
+      if((mode != THL_FAST) && (mode != THL_DEBUG_F) && (mode != THL_STRUCT)) {
          printf("No predicted secondary structures for given sequences\n");
       }
       o->temp = 0.0; /* lets use generalization here; this should rather be very negative value */
       strcpy(o->msg, "No predicted sec struc for given seq");
-      return;
+      return NULL;
    } else {
       N=0;
       for(i=0;i<len1;i++){
@@ -2829,18 +2835,23 @@ drawDimer(int* ps1, int* ps2, double temp, double H, double S, int temponly, dou
       }
       N = (N/2) -1;
       t = ((H) / (S + (N * saltCorrection) + RC)) - ABSOLUTE_ZERO;
-      if(temponly==0) {
+      if((mode != THL_FAST) && (mode != THL_DEBUG_F)) {
          G = (H) - (t37 * (S + (N * saltCorrection)));
          S = S + (N * saltCorrection);
          o->temp = (double) t;
          /* maybe user does not need as precise as that */
          /* printf("Thermodynamical values:\t%d\tdS = %g\tdH = %g\tdG = %g\tt = %g\tN = %d, SaltC=%f, RC=%f\n",
                 len1, (double) S, (double) H, (double) G, (double) t, (int) N, saltCorrection, RC); */
-         printf("Calculated thermodynamical parameters for dimer:\tdS = %g\tdH = %g\tdG = %g\tt = %g\n",
-                (double) S, (double) H, (double) G, (double) t);
+         if (mode != THL_STRUCT) {
+           printf("Calculated thermodynamical parameters for dimer:\tdS = %g\tdH = %g\tdG = %g\tt = %g\n",
+                  (double) S, (double) H, (double) G, (double) t);
+         } else {
+           sprintf(ret_para, "t: %.1f  dG: %.0f  dH: %.0f  dS: %.0f\\n",
+                   (double) t, (double) G, (double) H, (double) S);
+         }
       } else {
          o->temp = (double) t;
-         return;
+         return NULL;
       }
    }
 
@@ -2913,42 +2924,172 @@ drawDimer(int* ps1, int* ps2, double temp, double H, double S, int temponly, dou
            strcatc(duplex[3], '-');
         }
    }
-   printf("SEQ\t");
-   printf("%s\n", duplex[0]);
-   printf("SEQ\t");
-   printf("%s\n", duplex[1]);
-   printf("STR\t");
-   printf("%s\n", duplex[2]);
-   printf("STR\t");
-   printf("%s\n", duplex[3]);
+   if ((mode == THL_GENERAL) || (mode == THL_DEBUG)) {
+     printf("SEQ\t");
+     printf("%s\n", duplex[0]);
+     printf("SEQ\t");
+     printf("%s\n", duplex[1]);
+     printf("STR\t");
+     printf("%s\n", duplex[2]);
+     printf("STR\t");
+     printf("%s\n", duplex[3]);
+   }
+   if (mode == THL_STRUCT) {
+     ret_str[3] = NULL;
+     ret_str[0] = (char*) safe_malloc(len1 + len2 + 10, o);
+     ret_str[1] = (char*) safe_malloc(len1 + len2 + 10, o);
+     ret_str[2] = (char*) safe_malloc(len1 + len2 + 10, o);
+     ret_str[0][0] = ret_str[1][0] = ret_str[2][0] = '\0';
 
+     /* Join top primer */
+     strcpy(ret_str[0], "   ");
+     strcat(ret_str[0], duplex[0]);
+     ret_nr = 0;
+     while (duplex[1][ret_nr] != '\0') {
+       if (duplex[1][ret_nr] == 'A' || duplex[1][ret_nr] == 'T' || 
+           duplex[1][ret_nr] == 'C' || duplex[1][ret_nr] == 'G' || 
+           duplex[1][ret_nr] == '-') {
+         ret_str[0][ret_nr + 3] = duplex[1][ret_nr];
+       }
+       ret_nr++;
+     }
+     if (strlen(duplex[1]) > strlen(duplex[0])) {
+       ret_str[0][strlen(duplex[1]) + 3] = '\0';
+     }
+     /* Clean Ends */
+     ret_nr = strlen(ret_str[0]) - 1;
+     while (ret_nr > 0 && (ret_str[0][ret_nr] == ' ' || ret_str[0][ret_nr] == '-')) {
+       ret_str[0][ret_nr--] = '\0';
+     }
+     /* Write the 5' */
+     ret_nr = 3;
+     ret_pr_once = 1;
+     while (ret_str[0][ret_nr] != '\0' && ret_pr_once == 1) {
+       if (ret_str[0][ret_nr] == 'A' || ret_str[0][ret_nr] == 'T' ||
+           ret_str[0][ret_nr] == 'C' || ret_str[0][ret_nr] == 'G' ||
+           ret_str[0][ret_nr] == '-') {
+         ret_str[0][ret_nr - 3] = '5';
+	 ret_str[0][ret_nr - 2] = '\'';
+	 ret_pr_once = 0;
+       }
+       ret_nr++;
+     }
+
+     /* Create the align tics */
+     strcpy(ret_str[1], "     ");
+     for (int i = 0 ; i < strlen(duplex[1]) ; i++) {
+       if (duplex[1][i] == 'A' || duplex[1][i] == 'T' || 
+           duplex[1][i] == 'C' || duplex[1][i] == 'G' ) {
+	 ret_str[1][i + 3] = '|';
+       } else {
+         ret_str[1][i + 3] = ' ';
+       }
+       ret_str[1][i + 4] = '\0';
+     }
+     /* Clean Ends */
+     ret_nr = strlen(ret_str[1]) - 1;
+     while (ret_nr > 0 && ret_str[1][ret_nr] == ' ') {
+       ret_str[1][ret_nr--] = '\0';
+     }
+     /* Join bottom primer */
+     strcpy(ret_str[2], "   ");
+     strcat(ret_str[2], duplex[2]);
+     ret_nr = 0;
+     while (duplex[3][ret_nr] != '\0') {
+       if (duplex[3][ret_nr] == 'A' || duplex[3][ret_nr] == 'T' ||
+           duplex[3][ret_nr] == 'C' || duplex[3][ret_nr] == 'G' ||
+           duplex[3][ret_nr] == '-') {
+         ret_str[2][ret_nr + 3] = duplex[3][ret_nr];
+       }
+       ret_nr++;
+     }
+     if (strlen(duplex[3]) > strlen(duplex[2])) {
+       ret_str[2][strlen(duplex[3]) + 3] = '\0';
+     }
+     /* Clean Ends */
+     ret_nr = strlen(ret_str[2]) - 1;
+     while (ret_nr > 0 && (ret_str[2][ret_nr] == ' ' || ret_str[2][ret_nr] == '-')) {
+       ret_str[2][ret_nr--] = '\0';
+     }
+     /* Write the 5' */
+     ret_nr = 3;
+     ret_pr_once = 1;
+     while (ret_str[2][ret_nr] != '\0' && ret_pr_once == 1) {
+       if (ret_str[2][ret_nr] == 'A' || ret_str[2][ret_nr] == 'T' ||
+           ret_str[2][ret_nr] == 'C' || ret_str[2][ret_nr] == 'G' ||
+           ret_str[2][ret_nr] == '-') {
+         ret_str[2][ret_nr - 3] = '3';
+         ret_str[2][ret_nr - 2] = '\'';
+         ret_pr_once = 0;
+       }
+       ret_nr++;
+     }
+
+     save_append_string(&ret_str[3], &ret_space, o, ret_para);
+     save_append_string(&ret_str[3], &ret_space, o, ret_str[0]);
+     save_append_string(&ret_str[3], &ret_space, o, " 3\'\\n");
+     save_append_string(&ret_str[3], &ret_space, o, ret_str[1]);
+     save_append_string(&ret_str[3], &ret_space, o, "\\n");
+     save_append_string(&ret_str[3], &ret_space, o, ret_str[2]);
+     save_append_string(&ret_str[3], &ret_space, o, " 5\'\\n");
+
+
+/*
+     save_append_string(&ret_str, &ret_space, o, "SEQ ");
+     save_append_string(&ret_str, &ret_space, o, duplex[0]);
+     save_append_string(&ret_str, &ret_space, o, "\\nSEQ ");
+     save_append_string(&ret_str, &ret_space, o, duplex[1]);
+     save_append_string(&ret_str, &ret_space, o, "\\nSTR ");
+     save_append_string(&ret_str, &ret_space, o, duplex[2]);
+     save_append_string(&ret_str, &ret_space, o, "\\nSTR ");
+     save_append_string(&ret_str, &ret_space, o, duplex[3]);
+     save_append_string(&ret_str, &ret_space, o, "\\n");
+*/
+     ret_ptr = (char *) safe_malloc(strlen(ret_str[3]) + 1, o);
+     strcpy(ret_ptr, ret_str[3]);
+     if (ret_str[3]) {
+       free(ret_str[3]);
+     }
+     free(ret_str[0]);
+     free(ret_str[1]);
+     free(ret_str[2]);
+   }
    free(duplex[0]);
    free(duplex[1]);
    free(duplex[2]);
    free(duplex[3]);
 
-   return;
+   return ret_ptr;
 }
 
-static void 
-drawHairpin(int* bp, double mh, double ms, int temponly, double temp, thal_results *o)
+char * 
+drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, thal_results *o)
 {
+   int  ret_space = 0;
+   char *ret_ptr = NULL;
+   int ret_last_l, ret_first_r, ret_center, ret_left_end, ret_right_start, ret_left_len, ret_right_len;
+   int ret_add_sp, ret_add_sp_l, ret_add_sp_r;
+   char ret_center_char;
+   char ret_para[400];
+   char* ret_str;
    /* Plain text */
    int i, N;
    N = 0;
    double mg, t;
    if (!isFinite(ms) || !isFinite(mh)) {
-      if(temponly == 0) {
-         printf("0\tdS = %g\tdH = %g\tinf\tinf\n", (double) ms,(double) mh);
+      if((mode != THL_FAST) && (mode != THL_DEBUG_F)) {
+        if (mode != THL_STRUCT) {
+          printf("0\tdS = %g\tdH = %g\tinf\tinf\n", (double) ms,(double) mh);
 #ifdef DEBUG
-         fputs("No temperature could be calculated\n",stderr);
+          fputs("No temperature could be calculated\n",stderr);
 #endif
+        }
       } else {
          o->temp = 0.0; /* lets use generalization here */
          strcpy(o->msg, "No predicted sec struc for given seq\n");
       }
    } else {
-      if(temponly == 0) {
+      if((mode != THL_FAST) && (mode != THL_DEBUG_F)) {
          for (i = 1; i < len1; ++i) {
             if(bp[i-1] > 0) N++;
          }
@@ -2958,15 +3099,20 @@ drawHairpin(int* bp, double mh, double ms, int temponly, double temp, thal_resul
          }
       }
       t = (mh / (ms + (((N/2)-1) * saltCorrection))) - ABSOLUTE_ZERO;
-      if(temponly == 0) {
+      if((mode != THL_FAST) && (mode != THL_DEBUG_F)) {
          mg = mh - (temp * (ms + (((N/2)-1) * saltCorrection)));
          ms = ms + (((N/2)-1) * saltCorrection);
          o->temp = (double) t;
-         printf("Calculated thermodynamical parameters for dimer:\t%d\tdS = %g\tdH = %g\tdG = %g\tt = %g\n",
-                len1, (double) ms, (double) mh, (double) mg, (double) t);
+         if (mode != THL_STRUCT) {
+           printf("Calculated thermodynamical parameters for dimer:\t%d\tdS = %g\tdH = %g\tdG = %g\tt = %g\n",
+                  len1, (double) ms, (double) mh, (double) mg, (double) t);
+         } else {
+           sprintf(ret_para, "t: %.1f  dG: %.0f  dH: %.0f  dS: %.0f\\n",
+                   (double) t, (double) mg, (double) mh, (double) ms);
+         }
       } else {
          o->temp = (double) t;
-         return;
+         return NULL;
       }
    }
    /* plain-text output */
@@ -2984,11 +3130,129 @@ drawHairpin(int* bp, double mh, double ms, int temponly, double temp, thal_resul
          }
       }
    }
-   printf("SEQ\t");
-   for(i = 0; i < len1; ++i) printf("%c",asciiRow[i]);
-   printf("\nSTR\t%s\n", oligo1);
+   if ((mode == THL_GENERAL) || (mode == THL_DEBUG)) {
+     printf("SEQ\t");
+     for(i = 0; i < len1; ++i) printf("%c",asciiRow[i]);
+     printf("\nSTR\t%s\n", oligo1);
+   }
+   if (mode == THL_STRUCT) {
+     ret_str = NULL;
+
+     save_append_string(&ret_str, &ret_space, o, ret_para);
+
+     ret_last_l = -1;
+     ret_first_r = -1;
+     ret_center_char = '|';
+     for(i = 0; i < len1; ++i) {
+       if (asciiRow[i] == '/') {
+         ret_last_l = i;
+       }
+       if ((ret_first_r == -1) && (asciiRow[i] == '\\')) {
+         ret_first_r = i;
+       }
+     }
+     ret_center = ret_first_r - ret_last_l;
+     ret_add_sp = 0;
+     if (ret_center % 2 == 0) { 
+       /* ret_center is odd */
+       ret_left_end = ret_last_l + (ret_first_r - ret_last_l) / 2 - 1;
+       ret_center_char = (char) oligo1[ret_left_end + 1]; 
+       ret_right_start = ret_left_end + 2;
+     } else {
+       /* ret_center is even */
+       ret_left_end = ret_last_l + (ret_first_r - ret_last_l - 1) / 2;
+       ret_right_start = ret_left_end + 1;
+       ret_add_sp = 1;
+     }
+     ret_left_len = ret_left_end + 1;
+     ret_right_len = len1 - ret_right_start;
+     ret_add_sp_l = 0;
+     ret_add_sp_r = 0;
+     if (ret_left_len > ret_right_len) {
+       ret_add_sp_r = ret_left_len - ret_right_len + ret_add_sp;
+     }
+     if (ret_right_len > ret_left_len) {
+       ret_add_sp_l = ret_right_len - ret_left_len;
+     }
+     for (int i = 0 ; i < ret_add_sp_l ; i++) {
+       save_append_char(&ret_str, &ret_space, o, ' ');
+     }
+     save_append_string(&ret_str, &ret_space, o, "5' ");
+     for (int i = 0 ; i < ret_left_len ; i++) {
+       save_append_char(&ret_str, &ret_space, o, (char) oligo1[i]);
+     }
+     save_append_string(&ret_str, &ret_space, o, "U+2510\\n   ");
+     for (int i = 0 ; i < ret_add_sp_l ; i++) {
+       save_append_char(&ret_str, &ret_space, o, ' ');
+     }
+     for (int i = 0 ; i < ret_left_len ; i++) {
+       if (asciiRow[i] == '/') {	     
+         save_append_char(&ret_str, &ret_space, o, '|');
+       } else {
+         save_append_char(&ret_str, &ret_space, o, ' ');
+       }
+     }
+     if (ret_center_char == '|' ) {
+       save_append_string(&ret_str, &ret_space, o, "U+2502");
+     } else {
+       save_append_char(&ret_str, &ret_space, o, ret_center_char);
+     }
+     save_append_string(&ret_str, &ret_space, o, "\\n");
+     for (int i = 0 ; i < ret_add_sp_r - 1 ; i++) {
+       save_append_char(&ret_str, &ret_space, o, ' ');
+     }
+     save_append_string(&ret_str, &ret_space, o, "3' ");
+     for (int i = len1 ; i > ret_right_start - 1; i--) {
+       save_append_char(&ret_str, &ret_space, o, (char) oligo1[i]);
+     }
+     save_append_string(&ret_str, &ret_space, o, "U+2518\\n");
+
+/*
+     save_append_string(&ret_str, &ret_space, o, "SEQ ");
+     for(i = 0; i < len1; ++i) {
+       save_append_char(&ret_str, &ret_space, o, asciiRow[i]);
+     }
+     save_append_string(&ret_str, &ret_space, o, "\\nSTR ");
+     save_append_string(&ret_str, &ret_space, o, (const char*) oligo1);
+     save_append_string(&ret_str, &ret_space, o, "\\n");
+*/
+     ret_ptr = (char *) safe_malloc(strlen(ret_str) + 1, o);
+     strcpy(ret_ptr, ret_str);
+     if (ret_str != NULL) {
+       free(ret_str);
+     }
+   }
    free(asciiRow);
-   return;
+   return ret_ptr;
+}
+
+static void
+save_append_string(char** ret, int *space, thal_results *o, const char *str) {
+  int xlen, slen;
+  if (str == NULL) {
+    return;
+  }
+  if (*ret == NULL) {
+    *ret = (char *) safe_malloc(sizeof(char)*500, o);
+    *ret[0] = '\0';
+    *space = 500;
+  }
+  xlen = strlen(*ret);
+  slen = strlen(str);
+  if (xlen + slen + 1 > *space) {
+    *space += 4 * (slen + 1);
+    *ret = (char *) safe_realloc(*ret, *space, o);
+  }
+  strcpy(*ret + xlen, str);
+  return;
+}
+
+static void
+save_append_char(char** ret, int *space, thal_results *o, const char str) {
+  char fix[3];
+  fix[0] = str;
+  fix[1] = '\0';
+  save_append_string(ret, space, o, fix);
 }
 
 

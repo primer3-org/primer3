@@ -505,8 +505,7 @@ read_boulder_record(FILE *file_input,
       }
       if (COMPARE("P3_COMMENT")) continue;
       COMPARE_FLOAT("PRIMER_MAX_END_STABILITY", pa->max_end_stability);
-      COMPARE_INT("PRIMER_LOWERCASE_MASKING",
-                  pa->lowercase_masking);
+      COMPARE_INT("PRIMER_LOWERCASE_MASKING", pa->lowercase_masking);
 
       /* added by T. Koressaar */
       COMPARE_INT("PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT", pa->thermodynamic_oligo_alignment);
@@ -528,35 +527,15 @@ read_boulder_record(FILE *file_input,
 	free(thermodynamic_params_path);
 	continue;
       }
-
-
-/*      if (COMPARE("PRIMER_THERMODYNAMIC_PARAMETERS_PATH")) {
-        if (thermodynamic_params_path == NULL) {
-          thermodynamic_params_path = (char*) _rb_safe_malloc(datum_len + 2);
-          strcpy(thermodynamic_params_path, datum);
-          if (thermodynamic_params_path[datum_len - 1] != '/') {
-            thermodynamic_params_path[datum_len + 1] = thermodynamic_params_path[datum_len];
-            thermodynamic_params_path[datum_len] = '/';
-          }
-          thermodynamic_path_changed = 1;
-        }*/
-        /* check if path changes */
- /*       else if (strcmp(thermodynamic_params_path, datum)) {
-          free(thermodynamic_params_path);
-          thermodynamic_params_path = (char*) _rb_safe_malloc(datum_len + 1); 
-          strcpy(thermodynamic_params_path, datum);
-          thermodynamic_path_changed = 1;
+      if (COMPARE("PRIMER_MASK_KMERLIST_PATH")) {
+        if (kmer_lists_path == NULL) {
+          kmer_lists_path = (char*) _rb_safe_malloc(datum_len + 1);
+          strcpy(kmer_lists_path, datum);
         }
-        continue;
-      }  */
-        if (COMPARE("PRIMER_MASK_KMERLIST_PATH")) {
-           if (kmer_lists_path == NULL) {
-               kmer_lists_path = (char*) _rb_safe_malloc(datum_len + 1);
-               strcpy(kmer_lists_path, datum);
-           }
         continue;
       }
       /* added by A. Untergasser */
+      COMPARE_INT("PRIMER_SECONDARY_STRUCTURE_ALIGNMENT", pa->show_secondary_structure_alignment);
       OVERWRITE_COMPARE_AND_MALLOC("PRIMER_MUST_MATCH_FIVE_PRIME", pa->p_args.must_match_five_prime);
       OVERWRITE_COMPARE_AND_MALLOC("PRIMER_MUST_MATCH_THREE_PRIME", pa->p_args.must_match_three_prime);
       OVERWRITE_COMPARE_AND_MALLOC("PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME", pa->o_args.must_match_five_prime);

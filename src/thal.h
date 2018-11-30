@@ -90,7 +90,6 @@ typedef enum thal_alignment_type {
 
 /* Structure for passing arguments to THermodynamic ALignment calculation */
 typedef struct {
-   int debug; /* if non zero, print debugging info to stderr */
    thal_alignment_type type; /* one of the
               1 THAL_ANY, (by default)
               2 THAL_END1,
@@ -102,7 +101,6 @@ typedef struct {
    double dntp; /* concentration of dNTP-s */
    double dna_conc; /* concentration of oligonucleotides */
    double temp; /* temperature from which hairpin structures will be calculated */
-   int temponly; /* if non zero, print only temperature to stderr */
    int dimer; /* if non zero, dimer structure is calculated */
 } thal_args;
 
@@ -112,6 +110,7 @@ typedef struct {
    double temp;
    int align_end_1;
    int align_end_2;
+   char *sec_struct;
 } thal_results;
 
 /* The files from the directory primer3_config loaded as strings */
@@ -133,6 +132,22 @@ typedef struct thal_parameters {
   char *tstack2_dh;
   char *tstack2_ds;
 } thal_parameters;
+
+/* 
+ * THL_FAST    = 0 - score only with optimized functions (fast)
+ * THL_GENERAL = 1 - use general function without debug (slow)
+ * THL_DEBUG_F = 2 - debug mode with fast, print alignments on STDERR
+ * THL_DEBUG   = 3 - debug mode print alignments on STDERR
+ * THL_STRUCT  = 4 - calculate secondary structures as string
+ */
+typedef enum thal_mode { 
+  THL_FAST    = 0,
+  THL_GENERAL = 1,
+  THL_DEBUG_F = 2,
+  THL_DEBUG   = 3, 
+  THL_STRUCT  = 4
+} thal_mode;
+
 
 /*** END OF TYPEDEFS ***/
 
@@ -169,7 +184,8 @@ void destroy_thal_structures();
 
 void thal(const unsigned char *oligo1, 
           const unsigned char *oligo2, 
-          const thal_args* a, 
+          const thal_args* a,
+          const thal_mode mode, 
           thal_results* o);
 
 #endif

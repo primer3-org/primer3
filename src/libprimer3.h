@@ -483,6 +483,13 @@ typedef struct p3_global_settings {
      can be overwitten by read_boulder.h functions.
   */
 
+  int show_secondary_structure_alignment;
+  /* 
+     String representations of the secondary structures are calculated.
+     0 = Do not calculate and show secondary structure strings.
+     1 = Calculate and show secondary structure strings.
+  */
+
   double max_diff_tm; 
   /* Maximum allowed difference between temperature of primer and
      temperature of product.  Cannot be calculated until product is
@@ -598,6 +605,17 @@ typedef struct primer_rec {
   /* Max 3' complementarity to any ectopic site in the
      template on the reverse complement of the given template
      strand. */
+
+  char *self_any_struct; /* Secondary structure of self_any */
+
+  char *self_end_struct; /* Secondary structure of self_end */
+
+  char *hairpin_struct; /* Secondary structure of hairpin_th */
+
+  char *template_mispriming_struct; /* Secondary structure of template_mispriming */
+
+  char *template_mispriming_r_struct; /* Secondary structure of template_mispriming_r */
+
   char   length;   /* Length of the oligo. */
   char   num_ns;   /* Number of Ns in the oligo. */
         
@@ -651,6 +669,12 @@ typedef struct primer_pair {
                         /* Maximum total mispriming score of both primers
                            to ectopic sites in the template, on "same"
                            strand (* 100). */
+
+  char *compl_any_struct; /* Secondary structure of compl_any */
+
+  char *compl_end_struct; /* Secondary structure of compl_end */
+
+  char *template_mispriming_struct; /* Secondary structure of template_mispriming */
 
   double repeat_sim;    /* Maximum total similarity of both primers to the
                          * sequence from given file in fasta format.
@@ -893,6 +917,7 @@ typedef struct p3retval {
 } p3retval;
 
 /* Deallocate a primer3 state */
+void destroy_secundary_structures(const p3_global_settings *pa, p3retval *retval);
 void destroy_p3retval(p3retval *);
 
 void destroy_dpal_thal_arg_holder();
@@ -1227,13 +1252,14 @@ const char *  pr_append_str_chars(const pr_append_str *x);
 const char *p3_get_pair_array_explain_string(const pair_array_t *);
 const char *p3_get_oligo_array_explain_string(const oligo_array *);
 
-const char  *libprimer3_release(void);
+const char *libprimer3_release(void);
 const char *primer3_copyright(void);
 
 /* An accessor function for a primer_rec *. */
 double oligo_max_template_mispriming(const primer_rec *);
 double oligo_max_template_mispriming_thermod(const primer_rec *);
-     
+char * oligo_max_template_mispriming_struct(const primer_rec *h);
+
 int   strcmp_nocase(const char *, const char *);
 
 void
