@@ -1,10 +1,10 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-        "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  <meta name="viewport" content="width=1034, initial-scale=1.0">
   <title>Primer3 Release 2.4.0 Manual</title>
-  <style type="text/css">
+  <style>
   body {
   background-color:white;
   color:black;
@@ -30,6 +30,11 @@
   text-align:left;
   width:850px;
   }
+  .p3_prop {
+    font-family: monospace;
+    white-space: pre;
+    margin: 1em 0;
+  }
   </style>
 </head>
 <body>
@@ -40,32 +45,33 @@
 <a href="#introduction">2. INTRODUCTION</a><br>
 <a href="#citationRequest">3. CITING PRIMER3</a><br>
 <a href="#licenseExplain">4. FAIR USE OF PRIMER3</a><br>
-<a href="#changesFrom2.2.3">5. CHANGES FROM VERSION 2.2.3</a><br>
-<a href="#installLinux">6. INSTALLATION INSTRUCTIONS - UNIX/LINUX</a><br>
-<a href="#installMac">7. INSTALLATION INSTRUCTIONS - Mac OSX</a><br>
-<a href="#installWindows">8. INSTALLATION INSTRUCTIONS - WINDOWS</a><br>
-<a href="#systemRequirements">9. SYSTEM REQUIREMENTS</a><br>
-<a href="#invokingPrimer3">10. INVOKING primer3_core</a><br>
-<a href="#commandLineTags">11. COMMAND LINE ARGUMENTS</a><br>
-<a href="#inputOutputConventions">12. INPUT AND OUTPUT CONVENTIONS</a><br>
-<a href="#example">13. AN EXAMPLE</a><br>
-<a href="#migrateTags">14. HOW TO MIGRATE TAGS TO IO VERSION 4</a><br>
-<a href="#sequenceTags">15. "SEQUENCE" INPUT TAGS</a><br>
-<a href="#globalTags">16. "GLOBAL" INPUT TAGS</a><br>
-<a href="#programTags">17. "PROGRAM" INPUT TAGS</a><br>
-<a href="#calculatePenalties">18. HOW PRIMER3 CALCULATES THE PENALTY VALUE</a><br>
-<a href="#fileFormat">19. PRIMER3 SETTINGS FILE FORMAT</a><br>
-<a href="#outputTags">20. OUTPUT TAGS</a><br>
-<a href="#exampleOutput">21. EXAMPLE OUTPUT</a><br>
-<a href="#pickAdvice">22. ADVICE FOR PICKING PRIMERS</a><br>
-<a href="#cautions">23. CAUTIONS</a><br>
-<a href="#findNoPrimers">24. WHAT TO DO IF PRIMER3 CANNOT FIND ANY PRIMERS?</a><br>
-<a href="#earlierVersions">25. DIFFERENCES FROM EARLIER VERSIONS</a><br>
-<a href="#exitStatusCodes">26. EXIT STATUS CODES</a><br>
-<a href="#webInterface">27. PRIMER3 WWW INTERFACES</a><br>
-<a href="#acknowledgments">28. ACKNOWLEDGMENTS</a><br>
+<a href="#differencePrimer3vsPrimer3Plus">5. DIFFERENCE BETWEEN PRIMER3 AND PRIMER3PLUS</a><br>
+<a href="#changesFrom2.2.3">6. CHANGES FROM VERSION 2.2.3</a><br>
+<a href="#installLinux">7. INSTALLATION INSTRUCTIONS - UNIX/LINUX</a><br>
+<a href="#installMac">8. INSTALLATION INSTRUCTIONS - Mac OSX</a><br>
+<a href="#installWindows">9. INSTALLATION INSTRUCTIONS - WINDOWS</a><br>
+<a href="#systemRequirements">10. SYSTEM REQUIREMENTS</a><br>
+<a href="#invokingPrimer3">11. INVOKING primer3_core</a><br>
+<a href="#commandLineTags">12. COMMAND LINE ARGUMENTS</a><br>
+<a href="#inputOutputConventions">13. INPUT AND OUTPUT CONVENTIONS</a><br>
+<a href="#example">14. AN EXAMPLE</a><br>
+<a href="#migrateTags">15. HOW TO MIGRATE TAGS TO IO VERSION 4</a><br>
+<a href="#sequenceTags">16. "SEQUENCE" INPUT TAGS</a><br>
+<a href="#globalTags">17. "GLOBAL" INPUT TAGS</a><br>
+<a href="#programTags">18. "PROGRAM" INPUT TAGS</a><br>
+<a href="#calculatePenalties">19. HOW PRIMER3 CALCULATES THE PENALTY VALUE</a><br>
+<a href="#fileFormat">20. PRIMER3 SETTINGS FILE FORMAT</a><br>
+<a href="#outputTags">21. OUTPUT TAGS</a><br>
+<a href="#exampleOutput">22. EXAMPLE OUTPUT</a><br>
+<a href="#pickAdvice">23. ADVICE FOR PICKING PRIMERS</a><br>
+<a href="#cautions">24. CAUTIONS</a><br>
+<a href="#findNoPrimers">25. WHAT TO DO IF PRIMER3 CANNOT FIND ANY PRIMERS?</a><br>
+<a href="#earlierVersions">26. DIFFERENCES FROM EARLIER VERSIONS</a><br>
+<a href="#exitStatusCodes">27. EXIT STATUS CODES</a><br>
+<a href="#webInterface">28. PRIMER3 WWW INTERFACES</a><br>
+<a href="#acknowledgments">29. ACKNOWLEDGMENTS</a><br>
 </p>
-<h2><a name="copyrightLicense">1. COPYRIGHT AND LICENSE</a></h2>
+<h2><a id="copyrightLicense">1. COPYRIGHT AND LICENSE</a></h2>
 <pre>Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009,2010
               2011,2012,2013,2016,2017
 Whitehead Institute for Biomedical Research, Steve Rozen
@@ -97,7 +103,7 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </pre>
-<h2><a name="introduction">2. INTRODUCTION</a></h2>
+<h2><a id="introduction">2. INTRODUCTION</a></h2>
 <p>Primer3 picks primers for PCR reactions, considering as criteria:
 <br>
 o oligonucleotide melting temperature, size, GC content,
@@ -114,7 +120,7 @@ o many other constraints.<br>
 All of these criteria are user-specifiable as constraints, and
 some are specifiable as terms in an objective function that
 characterizes an optimal primer pair.<br>
-<h2><a name="citationRequest">3. CITING PRIMER3</a></h2>
+<h2><a id="citationRequest">3. CITING PRIMER3</a></h2>
 <p>We request but do not require that use of this software be cited in
 publications as<br>
 <br>
@@ -135,7 +141,7 @@ The papers is available at<br>
 <a href="https://www.ncbi.nlm.nih.gov/pubmed/17379693">https://www.ncbi.nlm.nih.gov/pubmed/17379693</a><br>
 <br>
 Source code available at <a href="https://github.com/primer3-org/primer3">https://github.com/primer3-org/primer3</a>.</p>
-<h2><a name="licenseExplain">4. FAIR USE OF PRIMER3</a></h2>
+<h2><a id="licenseExplain">4. FAIR USE OF PRIMER3</a></h2>
 <p>
 The development of Primer3 is promoted by a small group of
 enthusiastic scientists mainly in their free time.They do not gain
@@ -176,7 +182,54 @@ especially if you do not want to maintain it in the future.
 <br>
 There is no need to ask us for permission to include Primer3
 in your tools.
-<h2><a name="changesFrom2.2.3">5. CHANGES FROM VERSION 2.2.3</a></h2>
+<h2><a id="differencePrimer3vsPrimer3Plus">5. DIFFERENCE BETWEEN PRIMER3 AND PRIMER3PLUS</a></h2>
+<p>Primer3Plus is a web interface to Primer3, so if you pick
+primers with Primer3Plus, it will collect and reformat your input, run
+the command line tool Primer3, collet and reformats it's output and
+display it to you.<br>
+In principle, both tools would give you the same output. In practice,
+the default settings ob both tools differ. While Primer3 default
+settings are usually kept for backward compatibility, the Primer3Plus
+default settings are adapted for regular wetlab use.</p>
+<h4>Primer3 Values:</h4>
+<pre>
+  PRIMER_PRODUCT_SIZE_RANGE=100-300
+  PRIMER_SECONDARY_STRUCTURE_ALIGNMENT=0
+  PRIMER_NUM_RETURN=5
+  PRIMER_MAX_HAIRPIN_TH=47.0
+  PRIMER_INTERNAL_MAX_HAIRPIN_TH=47.0
+  PRIMER_MAX_END_STABILITY=100.0
+  PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE=-1
+  PRIMER_MIN_RIGHT_THREE_PRIME_DISTANCE=-1
+  PRIMER_EXPLAIN_FLAG=0
+  PRIMER_LIBERAL_BASE=0
+  PRIMER_FIRST_BASE_INDEX=0
+  PRIMER_MAX_TEMPLATE_MISPRIMING=-1.00
+  PRIMER_MAX_TEMPLATE_MISPRIMING_TH=-1.00
+  PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING=-1.00
+  PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING_TH=-1.00
+</pre>
+<h4>Primer3Plus Values:</h4>
+<pre>
+  PRIMER_PRODUCT_SIZE_RANGE=501-600 601-700 401-500 701-850 851-1000 1001-1500
+                            1501-3000 3001-5000 401-500 301-400 201-300
+                            101-200 5001-7000 7001-10000 10001-20000
+  PRIMER_SECONDARY_STRUCTURE_ALIGNMENT=1
+  PRIMER_NUM_RETURN=10
+  PRIMER_MAX_HAIRPIN_TH=47.00
+  PRIMER_INTERNAL_MAX_HAIRPIN_TH=47.00
+  PRIMER_MAX_END_STABILITY=9.0
+  PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE=3
+  PRIMER_MIN_RIGHT_THREE_PRIME_DISTANCE=3
+  PRIMER_EXPLAIN_FLAG=1
+  PRIMER_LIBERAL_BASE=1
+  PRIMER_FIRST_BASE_INDEX=1
+  PRIMER_MAX_TEMPLATE_MISPRIMING=12.00
+  PRIMER_MAX_TEMPLATE_MISPRIMING_TH=47.00
+  PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING=24.00
+  PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING_TH=47.00
+</pre>
+<h2><a id="changesFrom2.2.3">6. CHANGES FROM VERSION 2.2.3</a></h2>
 <p>
 1. The tag PRIMER_THERMODYNAMIC_ALIGNMENT was replaced by two new tags:
 <br><br>
@@ -256,10 +309,10 @@ set the following:<br>
 <a href="#PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS">PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS</a>=0<br>
 <br>
 3. We changed the NULL value for SEQUENCE_FORCE_{LEFT,RIGHT}_START_END to
--1000000, and made it an error to select <a href="#PRIMER_FIRST_BASE_INDEX">PRIMER_FIRST_BASE_INDEX</a> <=
+-1000000, and made it an error to select <a href="#PRIMER_FIRST_BASE_INDEX">PRIMER_FIRST_BASE_INDEX</a> &lt;=
 this value.  This is to correct an error when
 SEQUENCE_FORCE_{LEFT,RIGHT}_START_END was -1 (value previously used to
-indicate a NULL) but <a href="#PRIMER_FIRST_BASE_INDEX">PRIMER_FIRST_BASE_INDEX</a> was < 0, which caused the
+indicate a NULL) but <a href="#PRIMER_FIRST_BASE_INDEX">PRIMER_FIRST_BASE_INDEX</a> was &lt; 0, which caused the
 intended NULL value (-1) to be treated as a constraint on primer
 location (a constraint that was not possible to satisfy).<br>
 <br>
@@ -311,7 +364,7 @@ their 'val' arguments by 100.<br>
 primers (<a href="#SEQUENCE_PRIMER">SEQUENCE_PRIMER</a> and <a href="#SEQUENCE_PRIMER_REVCOMP">SEQUENCE_PRIMER_REVCOMP</a>) have the left
 primer to the right of the right primer.  Also issue a warning if
 user-supplied primers occur in more than one location in the template.<br></p>
-<h2><a name="installLinux">6. INSTALLATION INSTRUCTIONS - UNIX/LINUX</a></h2>
+<h2><a id="installLinux">7. INSTALLATION INSTRUCTIONS - UNIX/LINUX</a></h2>
 <p>Unzip and untar the distribution.
 DO NOT do this on a PC if you are going to
 compile and/or test on a different operation system.
@@ -347,7 +400,7 @@ stand-alone program that provides Primer3's alignment
 functionality (local, a.k.a. Smith-Waterman, global,
 a.k.a. Needleman-Wunsch, plus "half global").  It is provided
 strictly as is; for further documentation please see the code.</p>
-<h2><a name="installMac">7. INSTALLATION INSTRUCTIONS - Mac OSX</a></h2>
+<h2><a id="installMac">8. INSTALLATION INSTRUCTIONS - Mac OSX</a></h2>
 <p>How to install this software<br>
 ============================<br>
 <br>
@@ -444,10 +497,10 @@ run the binaries.  Let's assume you put the files in
 following:<br>
 <br>
 	1. ~/bin/primer3_core &lt; yourInputFile<br>
-	2. /Users/&lt;your username&gt;/bin/primer3_core < yourInputFile<br>
+	2. /Users/&lt;your username&gt;/bin/primer3_core &lt; yourInputFile<br>
 <br>
 The first option is just a shortcut to the second.</p>
-<h2><a name="installWindows">8. INSTALLATION INSTRUCTIONS - WINDOWS</a></h2>
+<h2><a id="installWindows">9. INSTALLATION INSTRUCTIONS - WINDOWS</a></h2>
 <p>How to install this software<br>
 ============================<br>
 <br>
@@ -455,7 +508,7 @@ The first option is just a shortcut to the second.</p>
 2. You will create a primer3-&lt;release&gt; folder in the location
    where the file was unzipped<br>
 3. You may copy the files from the 'bin' directory of the
-   primer3-&lt;release&gt folder to a location of your choice.
+   primer3-&lt;release&gt; folder to a location of your choice.
    The exact same files are located within the 'src' folder
    so that the tests may be run (windows does not allow
    relative paths in shortcuts).<br>
@@ -476,12 +529,12 @@ known to work.<br>
 4. Navigate to the location of the tests:<br>
 <br>
     A. if you put it in <br>
-    C:/Documents and Settings/YourName/primer3-&lt;release&gt/test/,<br>
+    C:/Documents and Settings/YourName/primer3-&lt;release&gt;/test/,<br>
     you would type <br>
-    'cd c:/Documents and Settings/YourName/primer3-&lt;release&gt/test/'<br>
+    'cd c:/Documents and Settings/YourName/primer3-&lt;release&gt;/test/'<br>
     <br>
     B. you can also type 'cd ' (don't forget the space
-    after cd) and drag the primer3-&lt;release&gt folder onto the
+    after cd) and drag the primer3-&lt;release&gt; folder onto the
     command-line window from windows explorer, this will
     fill in the location for you<br>
 <br>
@@ -515,33 +568,33 @@ information, if needed.  Here is a quick summary:<br>
 <br>
 5. Run the example file by typing:<br>
 <br>
-    primer3_core.exe < example<br>
+    primer3_core.exe &lt; example<br>
 <br>
 Other files may be run in a similar fashion.  If your input
 filename is 'MyData.txt' you can run Primer3 using this
 file (in the correct format; see README) with:<br>
 <br>
-    primer3_core.exe < MyData.txt<br>
+    primer3_core.exe &lt; MyData.txt<br>
 <br>
 If your file is not in the folder containing
 primer3_core.exe, you could run the program from the
 primer3_core folder using:<br>
 <br>
-    primer3_core.exe < c:/someOtherFolder/someOtherFolder/MyData.txt<br>
+    primer3_core.exe &lt; c:/someOtherFolder/someOtherFolder/MyData.txt<br>
 <br>
 Finally, if you want to run the program without going to
 its folder, assuming primer3_core.exe is in c:/Temp, you
 could run:<br>
 <br>
-    c:/Temp/primer3_core.exe < c:/someOtherFolder/someOtherFolder/MyData.txt</p>
-<h2><a name="systemRequirements">9. SYSTEM REQUIREMENTS</a></h2>
+    c:/Temp/primer3_core.exe &lt; c:/someOtherFolder/someOtherFolder/MyData.txt</p>
+<h2><a id="systemRequirements">10. SYSTEM REQUIREMENTS</a></h2>
 <p>Please see <a href="https://github.com/primer3-org/primer3">https://github.com/primer3-org/primer3</a> for up-to-date
 information.  Primer3 should compile on any system using with an
 ANSI C compiler like Linux/Unix, MacOS 10 or MS Windows.  The
 Makefile will probably need to be modified for compilation with
 C compilers other than gcc.
 </p>
-<h2><a name="invokingPrimer3">10. INVOKING primer3_core</a></h2>
+<h2><a id="invokingPrimer3">11. INVOKING primer3_core</a></h2>
 <p>By default, the executable program produced by the Makefile is
 called primer3_core.  This is the C program that does the heavy
 lifting of primer picking.   There are also two, more user-friendly,
@@ -556,7 +609,7 @@ COMMAND LINE ARGUMENTS below.<br>
 <br>
 If no input file is specified, primer3_core will read its input
 from stdin.</p>
-<h2><a name="commandLineTags">11. COMMAND LINE ARGUMENTS</a></h2>
+<h2><a id="commandLineTags">12. COMMAND LINE ARGUMENTS</a></h2>
 <p>This section presents the list of arguments that may given in
 the command line. Any unique abbreviation of the arguments is allowed
 (e.g. -ab instead of -about) and each argument can be preceded by
@@ -603,18 +656,15 @@ provided or if the --format_output option is given,
 this argument will have no effect.</p>
 <h3>--io_version=n</h3>
 <p>This argument is provided for backward compatibility.
---io_version=4 <strong>is the only legal value and the default</strong>.
-	</description>
-</tag>
-<tag>
-        <tagName>--output=<i>file_path</i></tagName>
-        <description>
-<![CDATA[<p>This argument specifies the file where the output
+--io_version=4 <strong>is the only legal value and the default
+</strong>.</p>
+<h3>--output=file_path</h3>
+<p>This argument specifies the file where the output
 should be written. If omitted, stdout is used. </p>
 <h3>--error=file_path</h3>
 <p>This argument specifies the file where the error
 messages should be written. If omitted, stderr is used.</p>
-<h2><a name="inputOutputConventions">12. INPUT AND OUTPUT CONVENTIONS</a></h2>
+<h2><a id="inputOutputConventions">13. INPUT AND OUTPUT CONVENTIONS</a></h2>
 <p>By default, Primer3 accepts input in Boulder-IO format, a
 pre-XML, pre-RDF, text-based input/output format for
 program-to-program data interchange.  By default, Primer3 also
@@ -681,7 +731,7 @@ appear ONCE in any given input record.  This restriction is not
 systematically checked, and if a tag appears more than once, the
 new value silently over-writes the previous value.
 </p>
-<h2><a name="example">13. AN EXAMPLE</a></h2>
+<h2><a id="example">14. AN EXAMPLE</a></h2>
 <p>One might be interested in performing PCR on an STS with a CA
 repeat in the middle of it. Primers need to be chosen based on
 the criteria of the experiment.<br>
@@ -816,7 +866,7 @@ functionality requested by the those tags will be absent.
 Also, please note
 that it is not the case that we need to surround a simple sequence
 repeat every time we want to pick primers!</p>
-<h2><a name="migrateTags">14. HOW TO MIGRATE TAGS TO IO VERSION 4</a></h2>
+<h2><a id="migrateTags">15. HOW TO MIGRATE TAGS TO IO VERSION 4</a></h2>
 <p>With Primer3 release 2.0, many Boulder-IO tags were
 modified and new tags were introduced. The new Primer3 tags are
 designed with the idea in mind that computer scripts and other
@@ -956,13 +1006,13 @@ PRIMER_INTERNAL_4_LIBRARY_MISHYB                   - PRIMER_INTERNAL_OLIGO_4_MIS
 PRIMER_RIGHT_4_LIBRARY_MISPRIMING                  - PRIMER_RIGHT_4_MISPRIMING_SCORE
 PRIMER_PAIR_4_LIBRARY_MISPRIMING                   - PRIMER_PAIR_4_MISPRIMING_SCORE
 </pre>
-<h2><a name="sequenceTags">15. "SEQUENCE" INPUT TAGS</a></h2>
+<h2><a id="sequenceTags">16. "SEQUENCE" INPUT TAGS</a></h2>
 <p>"Sequence" input tags start with SEQUENCE_... and describe a
 particular input sequence to Primer3. They are reset after every
 Boulder record. Errors in "Sequence" input tags invalidate the
 current record, but Primer3 will continue to process additional
 records.</p>
-<table style="text-align: left; width: 800px;" border="1">
+<table class="p3p_tab_help_table" style="text-align: left; width: 800px; border: 1px;">
 	  <tr>
 	    <td><a href="#SEQUENCE_EXCLUDED_REGION">SEQUENCE_EXCLUDED_REGION</a></td>
 	    <td><a href="#SEQUENCE_INCLUDED_REGION">SEQUENCE_INCLUDED_REGION</a></td>
@@ -994,13 +1044,13 @@ records.</p>
 	    <td>&nbsp;</td>
 	  </tr>
 </table>
-<h3><a name="SEQUENCE_ID">SEQUENCE_ID (string; default empty)</a></h3>
+<h3><a id="SEQUENCE_ID">SEQUENCE_ID (string; default empty)</a></h3>
 <p>Short description of the sequence. It is used as an identifier
 that is reproduced in the output to enable users to identify the
 source of the chosen primers.<br>
 <br>
 This tag must be present if <a href="#P3_FILE_FLAG">P3_FILE_FLAG</a> is non-zero.</p>
-<h3><a name="SEQUENCE_TEMPLATE">SEQUENCE_TEMPLATE (nucleotide sequence; default empty)</a></h3>
+<h3><a id="SEQUENCE_TEMPLATE">SEQUENCE_TEMPLATE (nucleotide sequence; default empty)</a></h3>
 <p>The sequence from which to choose primers.  The sequence
 must be presented 5' -> 3' (i.e, in the normal way).
 In general, the bases may be upper or lower case, but
@@ -1009,58 +1059,58 @@ specially if <a href="#PRIMER_LOWERCASE_MASKING">PRIMER_LOWERCASE_MASKING</a> is
 The entire sequence MUST be all on a single line.
 (In other words, the sequence cannot span several lines.)
 </p>
-<h3><a name="SEQUENCE_INCLUDED_REGION">SEQUENCE_INCLUDED_REGION (interval list; default empty)</a></h3>
+<h3><a id="SEQUENCE_INCLUDED_REGION">SEQUENCE_INCLUDED_REGION (interval list; default empty)</a></h3>
 <p>A sub-region of the given sequence in which to pick primers.  For
 example, often the first dozen or so bases of a sequence are
 vector, and should be excluded from consideration. The value for
 this parameter has the form</p>
 <pre>
-<tt><i>&lt;start&gt;</i></tt>,<tt><i>&lt;length&gt;</i></tt>
+<i>&lt;start&gt;</i>,<i>&lt;length&gt;</i>
 </pre>
-<p>where <tt><i>&lt;start&gt;</i></tt> is the index of the first base to consider,
-and <tt><i>&lt;length&gt;</i></tt> is the number of subsequent bases in the
+<p>where <a class="p3_prop"><i>&lt;start&gt;</i></a> is the index of the first base to consider,
+and <a class="p3_prop"><i>&lt;length&gt;</i></a> is the number of subsequent bases in the
 primer-picking region.</p>
-<h3><a name="SEQUENCE_TARGET">SEQUENCE_TARGET (interval list; default empty)</a></h3>
+<h3><a id="SEQUENCE_TARGET">SEQUENCE_TARGET (interval list; default empty)</a></h3>
 <p>If one or more targets is specified then a legal primer pair must
 flank at least one of them.  A target might be a simple sequence
 repeat site (for example a CA repeat) or a single-base-pair
 polymorphism, or an exon for resequencing.  The value should be a space-separated list of</p>
 <pre>
-<tt><i>&lt;start&gt;</i></tt>,<tt><i>&lt;length&gt;</i></tt>
+<i>&lt;start&gt;</i>,<i>&lt;length&gt;</i>
 </pre>
-<p>pairs where <tt><i>&lt;start&gt;</i></tt> is the index of the first base of a
-target, and <tt><i>&lt;length&gt;</i></tt> is its length.</p>
+<p>pairs where <a class="p3_prop"><i>&lt;start&gt;</i></a> is the index of the first base of a
+target, and <a class="p3_prop"><i>&lt;length&gt;</i></a> is its length.</p>
 See also PRIMER_INSIDE_PENALTY, PRIMER_OUTSIDE_PENALTY.
 Has a different meaning when PRIMER_TASK=pick_sequencing_primers.
 See PRIMER_TASK for more information.
-<h3><a name="SEQUENCE_EXCLUDED_REGION">SEQUENCE_EXCLUDED_REGION (interval list; default empty)</a></h3>
+<h3><a id="SEQUENCE_EXCLUDED_REGION">SEQUENCE_EXCLUDED_REGION (interval list; default empty)</a></h3>
 <p>Primers and oligos may not overlap any region specified in this tag.
 The associated value must be a space-separated list of</p>
 <pre>
-<tt><i>&lt;start&gt;</i></tt>,<tt><i>&lt;length&gt;</i></tt>
+<i>&lt;start&gt;</i>,<i>&lt;length&gt;</i>
 </pre>
-<p>pairs where <tt><i>&lt;start&gt;</i></tt> is the index of the first base of
-the excluded region, and <tt><i>&lt;length&gt;</i></tt> is its length.  This tag is
+<p>pairs where <a class="p3_prop"><i>&lt;start&gt;</i></a> is the index of the first base of
+the excluded region, and <a class="p3_prop"><i>&lt;length&gt;</i></a> is its length.  This tag is
 useful for tasks such as excluding regions of low sequence
 quality or for excluding regions containing repetitive elements
 such as ALUs or LINEs.</p>
-<h3><a name="SEQUENCE_PRIMER_PAIR_OK_REGION_LIST">SEQUENCE_PRIMER_PAIR_OK_REGION_LIST (semicolon separated list of integer "quadruples"; default empty)</a></h3>
+<h3><a id="SEQUENCE_PRIMER_PAIR_OK_REGION_LIST">SEQUENCE_PRIMER_PAIR_OK_REGION_LIST (semicolon separated list of integer quadruples; default empty)</a></h3>
 <p>
 This tag allows detailed specification of possible
 locations of left and right primers in primer pairs.
 <br><br>
 The associated value must be a semicolon-separated list of</p>
 <pre>
-<tt><i>&lt;left_start&gt;</i></tt>,<tt><i>&lt;left_length&gt;</i></tt>,<tt><i>&lt;right_start&gt;</i></tt>,<tt><i>&lt;right_length&gt;</i></tt>
+<i>&lt;left_start&gt;</i>,<i>&lt;left_length&gt;</i>,<i>&lt;right_start&gt;</i>,<i>&lt;right_length&gt;</i>
 </pre>
 <p>quadruples.
 The left primer must be in the region specified by
-<tt><i>&lt;left_start&gt;</i></tt>,<tt><i>&lt;left_length&gt;</i></tt> and
+<a class="p3_prop"><i>&lt;left_start&gt;</i></a>,<a class="p3_prop"><i>&lt;left_length&gt;</i></a> and
 the right primer must be in the region specified by
-<tt><i>&lt;right_start&gt;</i></tt>,<tt><i>&lt;right_length&gt;</i></tt>.
-<tt><i>&lt;left_start&gt;</i></tt> and <tt><i>&lt;left_length&gt;</i></tt> specify the location of the left primer in terms of the index of
+<a class="p3_prop"><i>&lt;right_start&gt;</i></a>,<a class="p3_prop"><i>&lt;right_length&gt;</i></a>.
+<a class="p3_prop"><i>&lt;left_start&gt;</i></a> and <a class="p3_prop"><i>&lt;left_length&gt;</i></a> specify the location of the left primer in terms of the index of
 the first base in the region and the length of the region.
-<tt><i>&lt;right_start&gt;</i></tt> and <tt><i>&lt;right_length&gt;</i></tt> specify the location of the right primer in analogous fashion.
+<a class="p3_prop"><i>&lt;right_start&gt;</i></a> and <a class="p3_prop"><i>&lt;right_length&gt;</i></a> specify the location of the right primer in analogous fashion.
 As seen in the example below, if no integers are specified for a region then the location of the
 corresponding primer is not constrained.
 <br><br>
@@ -1084,7 +1134,7 @@ OR
 Right primer in the 100 bp region starting at position 930 (and left
 primer anywhere)
 </p>
-<h3><a name="SEQUENCE_OVERLAP_JUNCTION_LIST">SEQUENCE_OVERLAP_JUNCTION_LIST (space separated integers; default empty)</a></h3>
+<h3><a id="SEQUENCE_OVERLAP_JUNCTION_LIST">SEQUENCE_OVERLAP_JUNCTION_LIST (space separated integers; default empty)</a></h3>
 <p>If this list is not empty, then
 the forward OR the reverse primer must overlap one of
 these junction points by at least <a href="#PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION">PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION</a>
@@ -1112,28 +1162,28 @@ PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION=5
          not ok       ...tgagc^gcta-5'  (right primer)
 </code>
 </pre>
-<h3><a name="SEQUENCE_INTERNAL_EXCLUDED_REGION">SEQUENCE_INTERNAL_EXCLUDED_REGION (interval list; default empty)</a></h3>
+<h3><a id="SEQUENCE_INTERNAL_EXCLUDED_REGION">SEQUENCE_INTERNAL_EXCLUDED_REGION (interval list; default empty)</a></h3>
 <p>Middle oligos may not overlap any region specified by this tag.
 The associated value must be a space-separated list of</p>
 <pre>
-<tt><i>&lt;start&gt;</i></tt>,<tt><i>&lt;length&gt;</i></tt>
+<i>&lt;start&gt;</i>,<i>&lt;length&gt;</i>
 </pre>
 <p>pairs, where &lt;start&gt; is the index of the first base of
 an excluded region, and &lt;length&gt; is its length.  Often one would
 make Target regions excluded regions for internal oligos.</p>
-<h3><a name="SEQUENCE_PRIMER">SEQUENCE_PRIMER (nucleotide sequence; default empty)</a></h3>
+<h3><a id="SEQUENCE_PRIMER">SEQUENCE_PRIMER (nucleotide sequence; default empty)</a></h3>
 <p>The sequence of a left primer to check and around which to design
 right primers and optional internal oligos.  Must be a substring
 of <a href="#SEQUENCE_TEMPLATE">SEQUENCE_TEMPLATE</a>.</p>
-<h3><a name="SEQUENCE_INTERNAL_OLIGO">SEQUENCE_INTERNAL_OLIGO (nucleotide sequence; default empty)</a></h3>
+<h3><a id="SEQUENCE_INTERNAL_OLIGO">SEQUENCE_INTERNAL_OLIGO (nucleotide sequence; default empty)</a></h3>
 <p>The sequence of an internal oligo to check and around which to
 design left and right primers.  Must be a substring of
 <a href="#SEQUENCE_TEMPLATE">SEQUENCE_TEMPLATE</a>.</p>
-<h3><a name="SEQUENCE_PRIMER_REVCOMP">SEQUENCE_PRIMER_REVCOMP (nucleotide sequence; default empty)</a></h3>
+<h3><a id="SEQUENCE_PRIMER_REVCOMP">SEQUENCE_PRIMER_REVCOMP (nucleotide sequence; default empty)</a></h3>
 <p>The sequence of a right primer to check and around which to
 design left primers and optional internal oligos.  Must be a
 substring of the reverse strand of <a href="#SEQUENCE_TEMPLATE">SEQUENCE_TEMPLATE</a>.</p>
-<h3><a name="SEQUENCE_START_CODON_POSITION">SEQUENCE_START_CODON_POSITION (int; default -2000000)</a></h3>
+<h3><a id="SEQUENCE_START_CODON_POSITION">SEQUENCE_START_CODON_POSITION (int; default -2000000)</a></h3>
 <p>This parameter should be considered EXPERIMENTAL at this point.
 Please check the output carefully; some erroneous inputs might
 cause an error in Primer3.<br>
@@ -1153,7 +1203,7 @@ parameter.<br>
 Primer3 selects the position of the right primer by scanning
 right from the left primer for a stop codon.  Ideally the right
 primer will end at or after the stop codon.</p>
-<h3><a name="SEQUENCE_QUALITY">SEQUENCE_QUALITY (space separated integers; default empty)</a></h3>
+<h3><a id="SEQUENCE_QUALITY">SEQUENCE_QUALITY (space separated integers; default empty)</a></h3>
 <p>A list of space separated integers. There must be exactly
 one integer for each base in <a href="#SEQUENCE_TEMPLATE">SEQUENCE_TEMPLATE</a> if this argument is
 non-empty.  For example, for the sequence ANNTTCA...
@@ -1163,27 +1213,27 @@ that position and low numbers indicate low confidence in the
 base call at that position.  This parameter is only relevant
 if you are using a base calling program that provides
 quality information (for example phred).</p>
-<h3><a name="SEQUENCE_FORCE_LEFT_START">SEQUENCE_FORCE_LEFT_START (int; default -1000000)</a></h3>
+<h3><a id="SEQUENCE_FORCE_LEFT_START">SEQUENCE_FORCE_LEFT_START (int; default -1000000)</a></h3>
 <p>Forces the 5' end of the left primer to be at the indicated
 position. Primers are also picked if they violate certain
 constraints. The default value indicates that the start of the left primer
 can be anywhere.</p>
-<h3><a name="SEQUENCE_FORCE_LEFT_END">SEQUENCE_FORCE_LEFT_END (int; default -1000000)</a></h3>
+<h3><a id="SEQUENCE_FORCE_LEFT_END">SEQUENCE_FORCE_LEFT_END (int; default -1000000)</a></h3>
 <p>Forces the 3' end of the left primer to be at the indicated
 position. Primers are also picked if they violate certain
 constraints. The default value indicates that the end of the left primer
 can be anywhere.</p>
-<h3><a name="SEQUENCE_FORCE_RIGHT_START">SEQUENCE_FORCE_RIGHT_START (int; default -1000000)</a></h3>
+<h3><a id="SEQUENCE_FORCE_RIGHT_START">SEQUENCE_FORCE_RIGHT_START (int; default -1000000)</a></h3>
 <p>Forces the 5' end of the right primer to be at the indicated
 position. Primers are also picked if they violate certain
 constraints. The default value indicates that the start of the right primer
 can be anywhere.</p>
-<h3><a name="SEQUENCE_FORCE_RIGHT_END">SEQUENCE_FORCE_RIGHT_END (int; default -1000000)</a></h3>
+<h3><a id="SEQUENCE_FORCE_RIGHT_END">SEQUENCE_FORCE_RIGHT_END (int; default -1000000)</a></h3>
 <p>Forces the 3' end of the right primer to be at the indicated
 position. Primers are also picked if they violate certain
 constraints. The default value indicates that the end of the right primer
 can be anywhere.</p>
-<h2><a name="globalTags">16. "GLOBAL" INPUT TAGS</a></h2>
+<h2><a id="globalTags">17. "GLOBAL" INPUT TAGS</a></h2>
 <p>"Global" input tags start with PRIMER_... and describe the
 general parameters that Primer3 should use in its searches.
 The values of these tags persist between input Boulder
@@ -1198,268 +1248,273 @@ govern the selection of PCR primers. For example, the melting
 temperature of an oligo used for hybridization might be
 considerably lower than that used as a PCR primer.
 <br></p>
-<table style="text-align: left; width: 800px;" border="1">
+<table class="p3p_tab_help_table" style="text-align: left; width: 800px; border: 1px;">
 	  <tr>
 	    <td><a href="#PRIMER_DNA_CONC">PRIMER_DNA_CONC</a></td>
-	    <td><a href="#PRIMER_MASK_FAILURE_RATE">PRIMER_MASK_FAILURE_RATE</a></td>
-	    <td><a href="#PRIMER_PAIR_WT_LIBRARY_MISPRIMING">PRIMER_PAIR_WT_LIBRARY_MISPRIMING</a></td>
-	  </tr>
-	  <tr>
-	    <td><a href="#PRIMER_DNTP_CONC">PRIMER_DNTP_CONC</a></td>
 	    <td><a href="#PRIMER_MASK_KMERLIST_PATH">PRIMER_MASK_KMERLIST_PATH</a></td>
-	    <td><a href="#PRIMER_PAIR_WT_PRODUCT_SIZE_GT">PRIMER_PAIR_WT_PRODUCT_SIZE_GT</a></td>
-	  </tr>
-	  <tr>
-	    <td><a href="#PRIMER_EXPLAIN_FLAG">PRIMER_EXPLAIN_FLAG</a></td>
-	    <td><a href="#PRIMER_MASK_KMERLIST_PREFIX">PRIMER_MASK_KMERLIST_PREFIX</a></td>
 	    <td><a href="#PRIMER_PAIR_WT_PRODUCT_SIZE_LT">PRIMER_PAIR_WT_PRODUCT_SIZE_LT</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_FIRST_BASE_INDEX">PRIMER_FIRST_BASE_INDEX</a></td>
-	    <td><a href="#PRIMER_MASK_TEMPLATE">PRIMER_MASK_TEMPLATE</a></td>
+	    <td><a href="#PRIMER_DNTP_CONC">PRIMER_DNTP_CONC</a></td>
+	    <td><a href="#PRIMER_MASK_KMERLIST_PREFIX">PRIMER_MASK_KMERLIST_PREFIX</a></td>
 	    <td><a href="#PRIMER_PAIR_WT_PRODUCT_TM_GT">PRIMER_PAIR_WT_PRODUCT_TM_GT</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_GC_CLAMP">PRIMER_GC_CLAMP</a></td>
-	    <td><a href="#PRIMER_MAX_END_GC">PRIMER_MAX_END_GC</a></td>
+	    <td><a href="#PRIMER_EXPLAIN_FLAG">PRIMER_EXPLAIN_FLAG</a></td>
+	    <td><a href="#PRIMER_MASK_TEMPLATE">PRIMER_MASK_TEMPLATE</a></td>
 	    <td><a href="#PRIMER_PAIR_WT_PRODUCT_TM_LT">PRIMER_PAIR_WT_PRODUCT_TM_LT</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INSIDE_PENALTY">PRIMER_INSIDE_PENALTY</a></td>
-	    <td><a href="#PRIMER_MAX_END_STABILITY">PRIMER_MAX_END_STABILITY</a></td>
+	    <td><a href="#PRIMER_FIRST_BASE_INDEX">PRIMER_FIRST_BASE_INDEX</a></td>
+	    <td><a href="#PRIMER_MAX_END_GC">PRIMER_MAX_END_GC</a></td>
 	    <td><a href="#PRIMER_PAIR_WT_PR_PENALTY">PRIMER_PAIR_WT_PR_PENALTY</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_DNA_CONC">PRIMER_INTERNAL_DNA_CONC</a></td>
-	    <td><a href="#PRIMER_MAX_GC">PRIMER_MAX_GC</a></td>
+	    <td><a href="#PRIMER_GC_CLAMP">PRIMER_GC_CLAMP</a></td>
+	    <td><a href="#PRIMER_MAX_END_STABILITY">PRIMER_MAX_END_STABILITY</a></td>
 	    <td><a href="#PRIMER_PAIR_WT_TEMPLATE_MISPRIMING">PRIMER_PAIR_WT_TEMPLATE_MISPRIMING</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_DNTP_CONC">PRIMER_INTERNAL_DNTP_CONC</a></td>
-	    <td><a href="#PRIMER_MAX_HAIRPIN_TH">PRIMER_MAX_HAIRPIN_TH</a></td>
+	    <td><a href="#PRIMER_INSIDE_PENALTY">PRIMER_INSIDE_PENALTY</a></td>
+	    <td><a href="#PRIMER_MAX_GC">PRIMER_MAX_GC</a></td>
 	    <td><a href="#PRIMER_PAIR_WT_TEMPLATE_MISPRIMING_TH">PRIMER_PAIR_WT_TEMPLATE_MISPRIMING_TH</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_MAX_GC">PRIMER_INTERNAL_MAX_GC</a></td>
-	    <td><a href="#PRIMER_MAX_LIBRARY_MISPRIMING">PRIMER_MAX_LIBRARY_MISPRIMING</a></td>
+	    <td><a href="#PRIMER_INTERNAL_DNA_CONC">PRIMER_INTERNAL_DNA_CONC</a></td>
+	    <td><a href="#PRIMER_MAX_HAIRPIN_TH">PRIMER_MAX_HAIRPIN_TH</a></td>
 	    <td><a href="#PRIMER_PICK_ANYWAY">PRIMER_PICK_ANYWAY</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_MAX_HAIRPIN_TH">PRIMER_INTERNAL_MAX_HAIRPIN_TH</a></td>
-	    <td><a href="#PRIMER_MAX_NS_ACCEPTED">PRIMER_MAX_NS_ACCEPTED</a></td>
+	    <td><a href="#PRIMER_INTERNAL_DNTP_CONC">PRIMER_INTERNAL_DNTP_CONC</a></td>
+	    <td><a href="#PRIMER_MAX_LIBRARY_MISPRIMING">PRIMER_MAX_LIBRARY_MISPRIMING</a></td>
 	    <td><a href="#PRIMER_PICK_INTERNAL_OLIGO">PRIMER_PICK_INTERNAL_OLIGO</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_MAX_LIBRARY_MISHYB">PRIMER_INTERNAL_MAX_LIBRARY_MISHYB</a></td>
-	    <td><a href="#PRIMER_MAX_POLY_X">PRIMER_MAX_POLY_X</a></td>
+	    <td><a href="#PRIMER_INTERNAL_MAX_GC">PRIMER_INTERNAL_MAX_GC</a></td>
+	    <td><a href="#PRIMER_MAX_NS_ACCEPTED">PRIMER_MAX_NS_ACCEPTED</a></td>
 	    <td><a href="#PRIMER_PICK_LEFT_PRIMER">PRIMER_PICK_LEFT_PRIMER</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_MAX_NS_ACCEPTED">PRIMER_INTERNAL_MAX_NS_ACCEPTED</a></td>
-	    <td><a href="#PRIMER_MAX_SELF_ANY">PRIMER_MAX_SELF_ANY</a></td>
+	    <td><a href="#PRIMER_INTERNAL_MAX_HAIRPIN_TH">PRIMER_INTERNAL_MAX_HAIRPIN_TH</a></td>
+	    <td><a href="#PRIMER_MAX_POLY_X">PRIMER_MAX_POLY_X</a></td>
 	    <td><a href="#PRIMER_PICK_RIGHT_PRIMER">PRIMER_PICK_RIGHT_PRIMER</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_MAX_POLY_X">PRIMER_INTERNAL_MAX_POLY_X</a></td>
-	    <td><a href="#PRIMER_MAX_SELF_ANY_TH">PRIMER_MAX_SELF_ANY_TH</a></td>
+	    <td><a href="#PRIMER_INTERNAL_MAX_LIBRARY_MISHYB">PRIMER_INTERNAL_MAX_LIBRARY_MISHYB</a></td>
+	    <td><a href="#PRIMER_MAX_SELF_ANY">PRIMER_MAX_SELF_ANY</a></td>
 	    <td><a href="#PRIMER_PRODUCT_MAX_TM">PRIMER_PRODUCT_MAX_TM</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_MAX_SELF_ANY">PRIMER_INTERNAL_MAX_SELF_ANY</a></td>
-	    <td><a href="#PRIMER_MAX_SELF_END">PRIMER_MAX_SELF_END</a></td>
+	    <td><a href="#PRIMER_INTERNAL_MAX_NS_ACCEPTED">PRIMER_INTERNAL_MAX_NS_ACCEPTED</a></td>
+	    <td><a href="#PRIMER_MAX_SELF_ANY_TH">PRIMER_MAX_SELF_ANY_TH</a></td>
 	    <td><a href="#PRIMER_PRODUCT_MIN_TM">PRIMER_PRODUCT_MIN_TM</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_MAX_SELF_ANY_TH">PRIMER_INTERNAL_MAX_SELF_ANY_TH</a></td>
-	    <td><a href="#PRIMER_MAX_SELF_END_TH">PRIMER_MAX_SELF_END_TH</a></td>
+	    <td><a href="#PRIMER_INTERNAL_MAX_POLY_X">PRIMER_INTERNAL_MAX_POLY_X</a></td>
+	    <td><a href="#PRIMER_MAX_SELF_END">PRIMER_MAX_SELF_END</a></td>
 	    <td><a href="#PRIMER_PRODUCT_OPT_SIZE">PRIMER_PRODUCT_OPT_SIZE</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_MAX_SELF_END">PRIMER_INTERNAL_MAX_SELF_END</a></td>
-	    <td><a href="#PRIMER_MAX_SIZE">PRIMER_MAX_SIZE</a></td>
+	    <td><a href="#PRIMER_INTERNAL_MAX_SELF_ANY">PRIMER_INTERNAL_MAX_SELF_ANY</a></td>
+	    <td><a href="#PRIMER_MAX_SELF_END_TH">PRIMER_MAX_SELF_END_TH</a></td>
 	    <td><a href="#PRIMER_PRODUCT_OPT_TM">PRIMER_PRODUCT_OPT_TM</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_MAX_SELF_END_TH">PRIMER_INTERNAL_MAX_SELF_END_TH</a></td>
-	    <td><a href="#PRIMER_MAX_TEMPLATE_MISPRIMING">PRIMER_MAX_TEMPLATE_MISPRIMING</a></td>
+	    <td><a href="#PRIMER_INTERNAL_MAX_SELF_ANY_TH">PRIMER_INTERNAL_MAX_SELF_ANY_TH</a></td>
+	    <td><a href="#PRIMER_MAX_SIZE">PRIMER_MAX_SIZE</a></td>
 	    <td><a href="#PRIMER_PRODUCT_SIZE_RANGE">PRIMER_PRODUCT_SIZE_RANGE</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_MAX_SIZE">PRIMER_INTERNAL_MAX_SIZE</a></td>
-	    <td><a href="#PRIMER_MAX_TEMPLATE_MISPRIMING_TH">PRIMER_MAX_TEMPLATE_MISPRIMING_TH</a></td>
+	    <td><a href="#PRIMER_INTERNAL_MAX_SELF_END">PRIMER_INTERNAL_MAX_SELF_END</a></td>
+	    <td><a href="#PRIMER_MAX_TEMPLATE_MISPRIMING">PRIMER_MAX_TEMPLATE_MISPRIMING</a></td>
 	    <td><a href="#PRIMER_QUALITY_RANGE_MAX">PRIMER_QUALITY_RANGE_MAX</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_MAX_TM">PRIMER_INTERNAL_MAX_TM</a></td>
-	    <td><a href="#PRIMER_MAX_TM">PRIMER_MAX_TM</a></td>
+	    <td><a href="#PRIMER_INTERNAL_MAX_SELF_END_TH">PRIMER_INTERNAL_MAX_SELF_END_TH</a></td>
+	    <td><a href="#PRIMER_MAX_TEMPLATE_MISPRIMING_TH">PRIMER_MAX_TEMPLATE_MISPRIMING_TH</a></td>
 	    <td><a href="#PRIMER_QUALITY_RANGE_MIN">PRIMER_QUALITY_RANGE_MIN</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_MIN_GC">PRIMER_INTERNAL_MIN_GC</a></td>
-	    <td><a href="#PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION">PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION</a></td>
+	    <td><a href="#PRIMER_INTERNAL_MAX_SIZE">PRIMER_INTERNAL_MAX_SIZE</a></td>
+	    <td><a href="#PRIMER_MAX_TM">PRIMER_MAX_TM</a></td>
 	    <td><a href="#PRIMER_SALT_CORRECTIONS">PRIMER_SALT_CORRECTIONS</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_MIN_QUALITY">PRIMER_INTERNAL_MIN_QUALITY</a></td>
-	    <td><a href="#PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION">PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION</a></td>
+	    <td><a href="#PRIMER_INTERNAL_MAX_TM">PRIMER_INTERNAL_MAX_TM</a></td>
+	    <td><a href="#PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION">PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION</a></td>
 	    <td><a href="#PRIMER_SALT_DIVALENT">PRIMER_SALT_DIVALENT</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_MIN_SIZE">PRIMER_INTERNAL_MIN_SIZE</a></td>
-	    <td><a href="#PRIMER_MIN_END_QUALITY">PRIMER_MIN_END_QUALITY</a></td>
+	    <td><a href="#PRIMER_INTERNAL_MIN_GC">PRIMER_INTERNAL_MIN_GC</a></td>
+	    <td><a href="#PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION">PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION</a></td>
 	    <td><a href="#PRIMER_SALT_MONOVALENT">PRIMER_SALT_MONOVALENT</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_MIN_TM">PRIMER_INTERNAL_MIN_TM</a></td>
+	    <td><a href="#PRIMER_INTERNAL_MIN_QUALITY">PRIMER_INTERNAL_MIN_QUALITY</a></td>
+	    <td><a href="#PRIMER_MIN_END_QUALITY">PRIMER_MIN_END_QUALITY</a></td>
+	    <td><a href="#PRIMER_SECONDARY_STRUCTURE_ALIGNMENT">PRIMER_SECONDARY_STRUCTURE_ALIGNMENT</a></td>
+	  </tr>
+	  <tr>
+	    <td><a href="#PRIMER_INTERNAL_MIN_SIZE">PRIMER_INTERNAL_MIN_SIZE</a></td>
 	    <td><a href="#PRIMER_MIN_GC">PRIMER_MIN_GC</a></td>
 	    <td><a href="#PRIMER_SEQUENCING_ACCURACY">PRIMER_SEQUENCING_ACCURACY</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_MISHYB_LIBRARY">PRIMER_INTERNAL_MISHYB_LIBRARY</a></td>
+	    <td><a href="#PRIMER_INTERNAL_MIN_TM">PRIMER_INTERNAL_MIN_TM</a></td>
 	    <td><a href="#PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE">PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE</a></td>
 	    <td><a href="#PRIMER_SEQUENCING_INTERVAL">PRIMER_SEQUENCING_INTERVAL</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME">PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME</a></td>
+	    <td><a href="#PRIMER_INTERNAL_MISHYB_LIBRARY">PRIMER_INTERNAL_MISHYB_LIBRARY</a></td>
 	    <td><a href="#PRIMER_MIN_QUALITY">PRIMER_MIN_QUALITY</a></td>
 	    <td><a href="#PRIMER_SEQUENCING_LEAD">PRIMER_SEQUENCING_LEAD</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME">PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME</a></td>
+	    <td><a href="#PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME">PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME</a></td>
 	    <td><a href="#PRIMER_MIN_RIGHT_THREE_PRIME_DISTANCE">PRIMER_MIN_RIGHT_THREE_PRIME_DISTANCE</a></td>
 	    <td><a href="#PRIMER_SEQUENCING_SPACING">PRIMER_SEQUENCING_SPACING</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_OPT_GC_PERCENT">PRIMER_INTERNAL_OPT_GC_PERCENT</a></td>
+	    <td><a href="#PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME">PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME</a></td>
 	    <td><a href="#PRIMER_MIN_SIZE">PRIMER_MIN_SIZE</a></td>
 	    <td><a href="#PRIMER_TASK">PRIMER_TASK</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_OPT_SIZE">PRIMER_INTERNAL_OPT_SIZE</a></td>
+	    <td><a href="#PRIMER_INTERNAL_OPT_GC_PERCENT">PRIMER_INTERNAL_OPT_GC_PERCENT</a></td>
 	    <td><a href="#PRIMER_MIN_THREE_PRIME_DISTANCE">PRIMER_MIN_THREE_PRIME_DISTANCE</a></td>
 	    <td><a href="#PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT">PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_OPT_TM">PRIMER_INTERNAL_OPT_TM</a></td>
+	    <td><a href="#PRIMER_INTERNAL_OPT_SIZE">PRIMER_INTERNAL_OPT_SIZE</a></td>
 	    <td><a href="#PRIMER_MIN_TM">PRIMER_MIN_TM</a></td>
 	    <td><a href="#PRIMER_THERMODYNAMIC_PARAMETERS_PATH">PRIMER_THERMODYNAMIC_PARAMETERS_PATH</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_SALT_DIVALENT">PRIMER_INTERNAL_SALT_DIVALENT</a></td>
+	    <td><a href="#PRIMER_INTERNAL_OPT_TM">PRIMER_INTERNAL_OPT_TM</a></td>
 	    <td><a href="#PRIMER_MISPRIMING_LIBRARY">PRIMER_MISPRIMING_LIBRARY</a></td>
 	    <td><a href="#PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT">PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_SALT_MONOVALENT">PRIMER_INTERNAL_SALT_MONOVALENT</a></td>
+	    <td><a href="#PRIMER_INTERNAL_SALT_DIVALENT">PRIMER_INTERNAL_SALT_DIVALENT</a></td>
 	    <td><a href="#PRIMER_MUST_MATCH_FIVE_PRIME">PRIMER_MUST_MATCH_FIVE_PRIME</a></td>
 	    <td><a href="#PRIMER_TM_FORMULA">PRIMER_TM_FORMULA</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_WT_END_QUAL">PRIMER_INTERNAL_WT_END_QUAL</a></td>
+	    <td><a href="#PRIMER_INTERNAL_SALT_MONOVALENT">PRIMER_INTERNAL_SALT_MONOVALENT</a></td>
 	    <td><a href="#PRIMER_MUST_MATCH_THREE_PRIME">PRIMER_MUST_MATCH_THREE_PRIME</a></td>
 	    <td><a href="#PRIMER_WT_END_QUAL">PRIMER_WT_END_QUAL</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_WT_GC_PERCENT_GT">PRIMER_INTERNAL_WT_GC_PERCENT_GT</a></td>
+	    <td><a href="#PRIMER_INTERNAL_WT_END_QUAL">PRIMER_INTERNAL_WT_END_QUAL</a></td>
 	    <td><a href="#PRIMER_NUM_RETURN">PRIMER_NUM_RETURN</a></td>
 	    <td><a href="#PRIMER_WT_END_STABILITY">PRIMER_WT_END_STABILITY</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_WT_GC_PERCENT_LT">PRIMER_INTERNAL_WT_GC_PERCENT_LT</a></td>
+	    <td><a href="#PRIMER_INTERNAL_WT_GC_PERCENT_GT">PRIMER_INTERNAL_WT_GC_PERCENT_GT</a></td>
 	    <td><a href="#PRIMER_OPT_GC_PERCENT">PRIMER_OPT_GC_PERCENT</a></td>
 	    <td><a href="#PRIMER_WT_GC_PERCENT_GT">PRIMER_WT_GC_PERCENT_GT</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_WT_HAIRPIN_TH">PRIMER_INTERNAL_WT_HAIRPIN_TH</a></td>
+	    <td><a href="#PRIMER_INTERNAL_WT_GC_PERCENT_LT">PRIMER_INTERNAL_WT_GC_PERCENT_LT</a></td>
 	    <td><a href="#PRIMER_OPT_SIZE">PRIMER_OPT_SIZE</a></td>
 	    <td><a href="#PRIMER_WT_GC_PERCENT_LT">PRIMER_WT_GC_PERCENT_LT</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_WT_LIBRARY_MISHYB">PRIMER_INTERNAL_WT_LIBRARY_MISHYB</a></td>
+	    <td><a href="#PRIMER_INTERNAL_WT_HAIRPIN_TH">PRIMER_INTERNAL_WT_HAIRPIN_TH</a></td>
 	    <td><a href="#PRIMER_OPT_TM">PRIMER_OPT_TM</a></td>
 	    <td><a href="#PRIMER_WT_HAIRPIN_TH">PRIMER_WT_HAIRPIN_TH</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_WT_NUM_NS">PRIMER_INTERNAL_WT_NUM_NS</a></td>
+	    <td><a href="#PRIMER_INTERNAL_WT_LIBRARY_MISHYB">PRIMER_INTERNAL_WT_LIBRARY_MISHYB</a></td>
 	    <td><a href="#PRIMER_OUTSIDE_PENALTY">PRIMER_OUTSIDE_PENALTY</a></td>
 	    <td><a href="#PRIMER_WT_LIBRARY_MISPRIMING">PRIMER_WT_LIBRARY_MISPRIMING</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_WT_SELF_ANY">PRIMER_INTERNAL_WT_SELF_ANY</a></td>
+	    <td><a href="#PRIMER_INTERNAL_WT_NUM_NS">PRIMER_INTERNAL_WT_NUM_NS</a></td>
 	    <td><a href="#PRIMER_PAIR_MAX_COMPL_ANY">PRIMER_PAIR_MAX_COMPL_ANY</a></td>
 	    <td><a href="#PRIMER_WT_MASK_FAILURE_RATE">PRIMER_WT_MASK_FAILURE_RATE</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_WT_SELF_ANY_TH">PRIMER_INTERNAL_WT_SELF_ANY_TH</a></td>
+	    <td><a href="#PRIMER_INTERNAL_WT_SELF_ANY">PRIMER_INTERNAL_WT_SELF_ANY</a></td>
 	    <td><a href="#PRIMER_PAIR_MAX_COMPL_ANY_TH">PRIMER_PAIR_MAX_COMPL_ANY_TH</a></td>
 	    <td><a href="#PRIMER_WT_NUM_NS">PRIMER_WT_NUM_NS</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_WT_SELF_END">PRIMER_INTERNAL_WT_SELF_END</a></td>
+	    <td><a href="#PRIMER_INTERNAL_WT_SELF_ANY_TH">PRIMER_INTERNAL_WT_SELF_ANY_TH</a></td>
 	    <td><a href="#PRIMER_PAIR_MAX_COMPL_END">PRIMER_PAIR_MAX_COMPL_END</a></td>
 	    <td><a href="#PRIMER_WT_POS_PENALTY">PRIMER_WT_POS_PENALTY</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_WT_SELF_END_TH">PRIMER_INTERNAL_WT_SELF_END_TH</a></td>
+	    <td><a href="#PRIMER_INTERNAL_WT_SELF_END">PRIMER_INTERNAL_WT_SELF_END</a></td>
 	    <td><a href="#PRIMER_PAIR_MAX_COMPL_END_TH">PRIMER_PAIR_MAX_COMPL_END_TH</a></td>
 	    <td><a href="#PRIMER_WT_SELF_ANY">PRIMER_WT_SELF_ANY</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_WT_SEQ_QUAL">PRIMER_INTERNAL_WT_SEQ_QUAL</a></td>
+	    <td><a href="#PRIMER_INTERNAL_WT_SELF_END_TH">PRIMER_INTERNAL_WT_SELF_END_TH</a></td>
 	    <td><a href="#PRIMER_PAIR_MAX_DIFF_TM">PRIMER_PAIR_MAX_DIFF_TM</a></td>
 	    <td><a href="#PRIMER_WT_SELF_ANY_TH">PRIMER_WT_SELF_ANY_TH</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_WT_SIZE_GT">PRIMER_INTERNAL_WT_SIZE_GT</a></td>
+	    <td><a href="#PRIMER_INTERNAL_WT_SEQ_QUAL">PRIMER_INTERNAL_WT_SEQ_QUAL</a></td>
 	    <td><a href="#PRIMER_PAIR_MAX_LIBRARY_MISPRIMING">PRIMER_PAIR_MAX_LIBRARY_MISPRIMING</a></td>
 	    <td><a href="#PRIMER_WT_SELF_END">PRIMER_WT_SELF_END</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_WT_SIZE_LT">PRIMER_INTERNAL_WT_SIZE_LT</a></td>
+	    <td><a href="#PRIMER_INTERNAL_WT_SIZE_GT">PRIMER_INTERNAL_WT_SIZE_GT</a></td>
 	    <td><a href="#PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING">PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING</a></td>
 	    <td><a href="#PRIMER_WT_SELF_END_TH">PRIMER_WT_SELF_END_TH</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_WT_TM_GT">PRIMER_INTERNAL_WT_TM_GT</a></td>
+	    <td><a href="#PRIMER_INTERNAL_WT_SIZE_LT">PRIMER_INTERNAL_WT_SIZE_LT</a></td>
 	    <td><a href="#PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING_TH">PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING_TH</a></td>
 	    <td><a href="#PRIMER_WT_SEQ_QUAL">PRIMER_WT_SEQ_QUAL</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_INTERNAL_WT_TM_LT">PRIMER_INTERNAL_WT_TM_LT</a></td>
+	    <td><a href="#PRIMER_INTERNAL_WT_TM_GT">PRIMER_INTERNAL_WT_TM_GT</a></td>
 	    <td><a href="#PRIMER_PAIR_WT_COMPL_ANY">PRIMER_PAIR_WT_COMPL_ANY</a></td>
 	    <td><a href="#PRIMER_WT_SIZE_GT">PRIMER_WT_SIZE_GT</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_LIBERAL_BASE">PRIMER_LIBERAL_BASE</a></td>
+	    <td><a href="#PRIMER_INTERNAL_WT_TM_LT">PRIMER_INTERNAL_WT_TM_LT</a></td>
 	    <td><a href="#PRIMER_PAIR_WT_COMPL_ANY_TH">PRIMER_PAIR_WT_COMPL_ANY_TH</a></td>
 	    <td><a href="#PRIMER_WT_SIZE_LT">PRIMER_WT_SIZE_LT</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS">PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS</a></td>
+	    <td><a href="#PRIMER_LIBERAL_BASE">PRIMER_LIBERAL_BASE</a></td>
 	    <td><a href="#PRIMER_PAIR_WT_COMPL_END">PRIMER_PAIR_WT_COMPL_END</a></td>
 	    <td><a href="#PRIMER_WT_TEMPLATE_MISPRIMING">PRIMER_WT_TEMPLATE_MISPRIMING</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_LOWERCASE_MASKING">PRIMER_LOWERCASE_MASKING</a></td>
+	    <td><a href="#PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS">PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS</a></td>
 	    <td><a href="#PRIMER_PAIR_WT_COMPL_END_TH">PRIMER_PAIR_WT_COMPL_END_TH</a></td>
 	    <td><a href="#PRIMER_WT_TEMPLATE_MISPRIMING_TH">PRIMER_WT_TEMPLATE_MISPRIMING_TH</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_MASK_3P_DIRECTION">PRIMER_MASK_3P_DIRECTION</a></td>
+	    <td><a href="#PRIMER_LOWERCASE_MASKING">PRIMER_LOWERCASE_MASKING</a></td>
 	    <td><a href="#PRIMER_PAIR_WT_DIFF_TM">PRIMER_PAIR_WT_DIFF_TM</a></td>
 	    <td><a href="#PRIMER_WT_TM_GT">PRIMER_WT_TM_GT</a></td>
 	  </tr>
 	  <tr>
-	    <td><a href="#PRIMER_MASK_5P_DIRECTION">PRIMER_MASK_5P_DIRECTION</a></td>
+	    <td><a href="#PRIMER_MASK_3P_DIRECTION">PRIMER_MASK_3P_DIRECTION</a></td>
 	    <td><a href="#PRIMER_PAIR_WT_IO_PENALTY">PRIMER_PAIR_WT_IO_PENALTY</a></td>
 	    <td><a href="#PRIMER_WT_TM_LT">PRIMER_WT_TM_LT</a></td>
 	  </tr>
+	  <tr>
+	    <td><a href="#PRIMER_MASK_5P_DIRECTION">PRIMER_MASK_5P_DIRECTION</a></td>
+	    <td><a href="#PRIMER_PAIR_WT_LIBRARY_MISPRIMING">PRIMER_PAIR_WT_LIBRARY_MISPRIMING</a></td>
+	    <td>&nbsp;</td>
+	  </tr>
+	  <tr>
+	    <td><a href="#PRIMER_MASK_FAILURE_RATE">PRIMER_MASK_FAILURE_RATE</a></td>
+	    <td><a href="#PRIMER_PAIR_WT_PRODUCT_SIZE_GT">PRIMER_PAIR_WT_PRODUCT_SIZE_GT</a></td>
+	    <td>&nbsp;</td>
+	  </tr>
 </table>
-<h3><a name="PRIMER_TASK">PRIMER_TASK (string; default generic)</a></h3>
+<h3><a id="PRIMER_TASK">PRIMER_TASK (string; default generic)</a></h3>
 <p>This tag tells Primer3 what task to perform.
 Legal values are:<br>
 <br>
-   <tt><i>generic</i></tt><br>
+   <a class="p3_prop"><i>generic</i></a><br>
 <br>
    Design a primer pair (the classic Primer3 task) if
    the <a href="#PRIMER_PICK_LEFT_PRIMER">PRIMER_PICK_LEFT_PRIMER</a>=1, and
@@ -1475,11 +1530,11 @@ Legal values are:<br>
    <a href="#PRIMER_TASK">PRIMER_TASK</a>=pick_primer_list.
 <br>
 <br>
-   <tt><i>pick_detection_primers</i></tt><br>
+   <a class="p3_prop"><i>pick_detection_primers</i></a><br>
 <br>
    Deprecated alias for <a href="#PRIMER_TASK">PRIMER_TASK</a>=generic<br>
 <br>
-   <tt><i>check_primers</i></tt><br>
+   <a class="p3_prop"><i>check_primers</i></a><br>
 <br>
    Primer3 only checks the primers
    provided in <a href="#SEQUENCE_PRIMER">SEQUENCE_PRIMER</a>, <a href="#SEQUENCE_INTERNAL_OLIGO">SEQUENCE_INTERNAL_OLIGO</a> and
@@ -1487,7 +1542,7 @@ Legal values are:<br>
    require a sequence. However, if <a href="#SEQUENCE_TEMPLATE">SEQUENCE_TEMPLATE</a> is provided, it is used.
    <br>
 <br>
-   <tt><i>pick_primer_list</i></tt><br>
+   <a class="p3_prop"><i>pick_primer_list</i></a><br>
 <br>
    Pick all primers in <a href="#SEQUENCE_TEMPLATE">SEQUENCE_TEMPLATE</a> (possibly
    limited by <a href="#SEQUENCE_INCLUDED_REGION">SEQUENCE_INCLUDED_REGION</a>,
@@ -1499,13 +1554,13 @@ Legal values are:<br>
    primer pairs but generates independent lists of left primers, right primers,
    and, if requested, internal oligos.<br>
 <br>
-   <tt><i>pick_sequencing_primers</i></tt><br>
+   <a class="p3_prop"><i>pick_sequencing_primers</i></a><br>
 <br>
    Pick primers suited to sequence a region. <a href="#SEQUENCE_TARGET">SEQUENCE_TARGET</a> can be
    used to indicate several targets. The position of each primer is
    calculated for optimal sequencing results.<br>
 <br>
-   <tt><i>pick_cloning_primers</i></tt><br>
+   <a class="p3_prop"><i>pick_cloning_primers</i></a><br>
 <br>
    Pick primers suited to clone a gene were the start nucleotide and
    the end nucleotide of the PCR fragment must be fixed, for example
@@ -1515,7 +1570,7 @@ Legal values are:<br>
    <a href="#PRIMER_PICK_ANYWAY">PRIMER_PICK_ANYWAY</a>=1 to obtain primers even if they violate
    specific constraints.<br>
 <br>
-   <tt><i>pick_discriminative_primers</i></tt><br>
+   <a class="p3_prop"><i>pick_discriminative_primers</i></a><br>
 <br>
    Pick primers suited to select primers which bind with their end at
    a specific position. This can be used to force the end of a primer
@@ -1529,7 +1584,7 @@ Legal values are:<br>
    <a href="#PRIMER_PICK_ANYWAY">PRIMER_PICK_ANYWAY</a>=1 to obtain
    primers even if they violate specific constraints.<br>
 <br>
-   <tt><i>pick_pcr_primers</i></tt><br>
+   <a class="p3_prop"><i>pick_pcr_primers</i></a><br>
 <br>
    Deprecated shortcut for the following settings:<br>
    <a href="#PRIMER_TASK">PRIMER_TASK</a>=generic<br>
@@ -1541,7 +1596,7 @@ Legal values are:<br>
    <a href="#PRIMER_PICK_INTERNAL_OLIGO">PRIMER_PICK_INTERNAL_OLIGO</a>, and <a href="#PRIMER_PICK_RIGHT_PRIMER">PRIMER_PICK_RIGHT_PRIMER</a>
    in a way that is not obvious by looking at the input.<br>
 <br>
-   <tt><i>pick_pcr_primers_and_hyb_probe</i></tt><br>
+   <a class="p3_prop"><i>pick_pcr_primers_and_hyb_probe</i></a><br>
 <br>
    Deprecated shortcut for the following settings:<br>
    <a href="#PRIMER_TASK">PRIMER_TASK</a>=generic<br>
@@ -1553,7 +1608,7 @@ Legal values are:<br>
    <a href="#PRIMER_PICK_INTERNAL_OLIGO">PRIMER_PICK_INTERNAL_OLIGO</a>, and <a href="#PRIMER_PICK_RIGHT_PRIMER">PRIMER_PICK_RIGHT_PRIMER</a>
    in a way that is not obvious by looking at the input.<br>
 <br>
-   <tt><i>pick_left_only</i></tt><br>
+   <a class="p3_prop"><i>pick_left_only</i></a><br>
 <br>
    Deprecated shortcut for the following settings:<br>
    <a href="#PRIMER_TASK">PRIMER_TASK</a>=generic<br>
@@ -1565,7 +1620,7 @@ Legal values are:<br>
    <a href="#PRIMER_PICK_INTERNAL_OLIGO">PRIMER_PICK_INTERNAL_OLIGO</a>, and <a href="#PRIMER_PICK_RIGHT_PRIMER">PRIMER_PICK_RIGHT_PRIMER</a>
    in a way that is not obvious by looking at the input.<br>
 <br>
-   <tt><i>pick_right_only</i></tt><br>
+   <a class="p3_prop"><i>pick_right_only</i></a><br>
 <br>
    Deprecated shortcut for the following settings:<br>
    <a href="#PRIMER_TASK">PRIMER_TASK</a>=generic<br>
@@ -1577,7 +1632,7 @@ Legal values are:<br>
    <a href="#PRIMER_PICK_INTERNAL_OLIGO">PRIMER_PICK_INTERNAL_OLIGO</a>, and <a href="#PRIMER_PICK_RIGHT_PRIMER">PRIMER_PICK_RIGHT_PRIMER</a>
    in a way that is not obvious by looking at the input.<br>
 <br>
-   <tt><i>pick_hyb_probe_only</i></tt><br>
+   <a class="p3_prop"><i>pick_hyb_probe_only</i></a><br>
 <br>
    Deprecated shortcut for the following settings:<br>
    <a href="#PRIMER_TASK">PRIMER_TASK</a>=generic<br>
@@ -1589,37 +1644,37 @@ Legal values are:<br>
    <a href="#PRIMER_PICK_INTERNAL_OLIGO">PRIMER_PICK_INTERNAL_OLIGO</a>, and <a href="#PRIMER_PICK_RIGHT_PRIMER">PRIMER_PICK_RIGHT_PRIMER</a>
    in a way that is not obvious by looking at the input.<br>
 </p>
-<h3><a name="PRIMER_PICK_LEFT_PRIMER">PRIMER_PICK_LEFT_PRIMER (boolean; default 1)</a></h3>
+<h3><a id="PRIMER_PICK_LEFT_PRIMER">PRIMER_PICK_LEFT_PRIMER (boolean; default 1)</a></h3>
 <p>If the associated value = 1 (non-0), then Primer3 will attempt to
 pick left primers.</p>
-<h3><a name="PRIMER_PICK_INTERNAL_OLIGO">PRIMER_PICK_INTERNAL_OLIGO (boolean; default 0)</a></h3>
+<h3><a id="PRIMER_PICK_INTERNAL_OLIGO">PRIMER_PICK_INTERNAL_OLIGO (boolean; default 0)</a></h3>
 <p>If the associated value = 1 (non-0), then Primer3 will attempt to
 pick an internal oligo (hybridization probe to detect the PCR
 product).</p>
-<h3><a name="PRIMER_PICK_RIGHT_PRIMER">PRIMER_PICK_RIGHT_PRIMER (boolean; default 1)</a></h3>
+<h3><a id="PRIMER_PICK_RIGHT_PRIMER">PRIMER_PICK_RIGHT_PRIMER (boolean; default 1)</a></h3>
 <p>If the associated value = 1 (non-0), then Primer3 will attempt to
 pick a right primer.</p>
-<h3><a name="PRIMER_NUM_RETURN">PRIMER_NUM_RETURN (int; default 5)</a></h3>
+<h3><a id="PRIMER_NUM_RETURN">PRIMER_NUM_RETURN (int; default 5)</a></h3>
 <p>The maximum number of primer (pairs) to return.  Primer pairs
 returned are sorted by their &quot;quality&quot;, in other words by the
 value of the objective function (where a lower number indicates a
 better primer pair).  Caution: setting this parameter to a large
 value will increase running time.</p>
-<h3><a name="PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION">PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION (int; default 4)</a></h3>
+<h3><a id="PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION">PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION (int; default 4)</a></h3>
 <p>The 3' end of the left OR the right primer must
 overlap one of the junctions in <a href="#SEQUENCE_OVERLAP_JUNCTION_LIST">SEQUENCE_OVERLAP_JUNCTION_LIST</a> by this amount.
 See details in <a href="#SEQUENCE_OVERLAP_JUNCTION_LIST">SEQUENCE_OVERLAP_JUNCTION_LIST</a>.
 </p>
-<h3><a name="PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION">PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION (int; default 7)</a></h3>
+<h3><a id="PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION">PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION (int; default 7)</a></h3>
 <p>The 5' end of the left OR the right primer must
 overlap one of the junctions in <a href="#SEQUENCE_OVERLAP_JUNCTION_LIST">SEQUENCE_OVERLAP_JUNCTION_LIST</a> by this amount.
 See details in <a href="#SEQUENCE_OVERLAP_JUNCTION_LIST">SEQUENCE_OVERLAP_JUNCTION_LIST</a>.
 </p>
-<h3><a name="PRIMER_MUST_MATCH_FIVE_PRIME">PRIMER_MUST_MATCH_FIVE_PRIME (ambiguous nucleotide sequence; default empty)</a></h3>
+<h3><a id="PRIMER_MUST_MATCH_FIVE_PRIME">PRIMER_MUST_MATCH_FIVE_PRIME (ambiguous nucleotide sequence; default empty)</a></h3>
 <p>Discards all primers which do not match this match sequence at the 5' end.
 (New in v. 2.3.6, added by A. Untergasser.)<br>
 <br>
-The match sequence must be 5 nucletides long and can contain the following letters:<br>
+The match sequence must be 5 nucletides long and can contain the following letters:</p>
 <pre>
     N   Any nucleotide
     A   Adenine
@@ -1637,14 +1692,14 @@ The match sequence must be 5 nucletides long and can contain the following lette
     D   Not C (A or G or T)
     V   Not T (A or G or C)
 </pre>
-Any primer which will not match the entire match sequence at th 5' end will
+<p>Any primer which will not match the entire match sequence at th 5' end will
 be discarded and not evaluated. Setting strict requirements here will result
 in low quality primers due to the high numbers of primers discarded at this
 step.<br>
 <br>
 <strong>Example 1:</strong><br>
 PRIMER_MUST_MATCH_FIVE_PRIME=tgnnn<br><br>
-Could result in the following matching:<br>
+Could result in the following matching:</p>
 <pre>
     tgcatgattggatacgtttga
     |||||
@@ -1654,10 +1709,10 @@ Could result in the following matching:<br>
       |||
     tgnnn
  -> This primer would be discarded.
-</pre><br><br>
-<strong>Example 2:</strong><br>
+</pre><br>
+<p><strong>Example 2:</strong><br>
 PRIMER_MUST_MATCH_FIVE_PRIME=hnnnn<br><br>
-Could result in the following matching:<br>
+Could result in the following matching:</p>
 <pre>
     tgcatgattggatacgtttga
     |||||
@@ -1667,19 +1722,19 @@ Could result in the following matching:<br>
      ||||
     hnnnn
  -> This primer would be discarded.
-</pre><br><br>
-This parameter would force all primers selected by Primer3 to not have guanosine
+</pre><br>
+<p>This parameter would force all primers selected by Primer3 to not have guanosine
 at the 5' end of any primer which could be useful to avoid quenching of
 flourochromes.
 </p>
-<h3><a name="PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME">PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME (ambiguous nucleotide sequence; default empty)</a></h3>
+<h3><a id="PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME">PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME (ambiguous nucleotide sequence; default empty)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_MUST_MATCH_FIVE_PRIME">PRIMER_MUST_MATCH_FIVE_PRIME</a> for the internal oligo.</p>
-<h3><a name="PRIMER_MUST_MATCH_THREE_PRIME">PRIMER_MUST_MATCH_THREE_PRIME (ambiguous nucleotide sequence; default empty)</a></h3>
+<h3><a id="PRIMER_MUST_MATCH_THREE_PRIME">PRIMER_MUST_MATCH_THREE_PRIME (ambiguous nucleotide sequence; default empty)</a></h3>
 <p>Discards all primers which do not match this match sequence at the 3' end. Similar
 parameter to <a href="#PRIMER_MUST_MATCH_FIVE_PRIME">PRIMER_MUST_MATCH_FIVE_PRIME</a>, but limits the 3' end.
 (New in v. 2.3.6, added by A. Untergasser.)<br>
 <br>
-The match sequence must be 5 nucletides long and can contain the following letters:<br>
+The match sequence must be 5 nucletides long and can contain the following letters:</p>
 <pre>
     N   Any nucleotide
     A   Adenine
@@ -1697,14 +1752,14 @@ The match sequence must be 5 nucletides long and can contain the following lette
     D   Not C (A or G or T)
     V   Not T (A or G or C)
 </pre>
-Any primer which will not match the entire match sequence at th 3' end will
+<p>Any primer which will not match the entire match sequence at th 3' end will
 be discarded and not evaluated. Setting strict requirements here will result
 in low quality primers due to the high numbers of primers discarded at this
 step.<br>
 <br>
 <strong>Example 1:</strong><br>
 PRIMER_MUST_MATCH_FIVE_PRIME=nnnga<br><br>
-Could result in the following matching:<br>
+Could result in the following matching:</p>
 <pre>
     tgcatgattggatacgtttga
                     |||||
@@ -1715,22 +1770,21 @@ Could result in the following matching:<br>
                    nnnga
  -> This primer would be discarded.
 </pre>
-</p>
-<h3><a name="PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME">PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME (ambiguous nucleotide sequence; default empty)</a></h3>
+<h3><a id="PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME">PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME (ambiguous nucleotide sequence; default empty)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_MUST_MATCH_THREE_PRIME">PRIMER_MUST_MATCH_THREE_PRIME</a> for the internal oligo.</p>
-<h3><a name="PRIMER_PRODUCT_SIZE_RANGE">PRIMER_PRODUCT_SIZE_RANGE (size range list; default 100-300)</a></h3>
+<h3><a id="PRIMER_PRODUCT_SIZE_RANGE">PRIMER_PRODUCT_SIZE_RANGE (size range list; default 100-300)</a></h3>
 <p>The associated values specify the lengths of the product that the
 user wants the primers to create, and is a space separated list
 of elements of the form</p>
 <pre>
-<tt><i>&lt;x&gt;-&lt;y&gt;</i></tt>
+<i>&lt;x&gt;-&lt;y&gt;</i>
 </pre>
-<p>where an <tt><i>&lt;x&gt;-&lt;y&gt;</i></tt> pair is a legal range of lengths for the
+<p>where an <a class="p3_prop"><i>&lt;x&gt;-&lt;y&gt;</i></a> pair is a legal range of lengths for the
 product.  For example, if one wants PCR products to be between
 100 to 150 bases (inclusive) then one would set this parameter to
-<tt><i>100-150</i></tt>.  If one desires PCR products in either the range from
+<a class="p3_prop"><i>100-150</i></a>.  If one desires PCR products in either the range from
 100 to 150 bases or in the range from 200 to 250 bases then one
-would set this parameter to <tt><i>100-150 200-250</i></tt>.<br>
+would set this parameter to <a class="p3_prop"><i>100-150 200-250</i></a>.<br>
 <br>
 Primer3 favors product-size ranges to the left side of the parameter string.
 Primer3 will return legal primers pairs in the first range
@@ -1743,7 +1797,7 @@ the PCR product size is the size (in base pairs)
 of the DNA fragment that would be produced by the
 PCR reaction on the given sequence template.  This
 would, of course, include the primers themselves.</p>
-<h3><a name="PRIMER_PRODUCT_OPT_SIZE">PRIMER_PRODUCT_OPT_SIZE (int; default 0)</a></h3>
+<h3><a id="PRIMER_PRODUCT_OPT_SIZE">PRIMER_PRODUCT_OPT_SIZE (int; default 0)</a></h3>
 <p>The optimum size for the PCR product.  0 indicates that there is
 no optimum product size.  This parameter influences primer pair
 selection only if <a href="#PRIMER_PAIR_WT_PRODUCT_SIZE_GT">PRIMER_PAIR_WT_PRODUCT_SIZE_GT</a> or
@@ -1751,105 +1805,105 @@ selection only if <a href="#PRIMER_PAIR_WT_PRODUCT_SIZE_GT">PRIMER_PAIR_WT_PRODU
 A non-0 value for this parameter will likely increase calculation time, so set this only if
 a product size near a specific value is truly important.
 </p>
-<h3><a name="PRIMER_PAIR_WT_PRODUCT_SIZE_LT">PRIMER_PAIR_WT_PRODUCT_SIZE_LT (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_PAIR_WT_PRODUCT_SIZE_LT">PRIMER_PAIR_WT_PRODUCT_SIZE_LT (float; default 0.0)</a></h3>
 <p>Penalty weight for products shorter than <a href="#PRIMER_PRODUCT_OPT_SIZE">PRIMER_PRODUCT_OPT_SIZE</a>.</p>
-<h3><a name="PRIMER_PAIR_WT_PRODUCT_SIZE_GT">PRIMER_PAIR_WT_PRODUCT_SIZE_GT (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_PAIR_WT_PRODUCT_SIZE_GT">PRIMER_PAIR_WT_PRODUCT_SIZE_GT (float; default 0.0)</a></h3>
 <p>Penalty weight for products longer than <a href="#PRIMER_PRODUCT_OPT_SIZE">PRIMER_PRODUCT_OPT_SIZE</a>.</p>
-<h3><a name="PRIMER_MIN_SIZE">PRIMER_MIN_SIZE (int; default 18)</a></h3>
+<h3><a id="PRIMER_MIN_SIZE">PRIMER_MIN_SIZE (int; default 18)</a></h3>
 <p>Minimum acceptable length of a primer.  Must be greater than 0
 and less than or equal to <a href="#PRIMER_MAX_SIZE">PRIMER_MAX_SIZE</a>.</p>
-<h3><a name="PRIMER_INTERNAL_MIN_SIZE">PRIMER_INTERNAL_MIN_SIZE (int; default 18)</a></h3>
+<h3><a id="PRIMER_INTERNAL_MIN_SIZE">PRIMER_INTERNAL_MIN_SIZE (int; default 18)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_MIN_SIZE">PRIMER_MIN_SIZE</a> for the internal oligo.</p>
-<h3><a name="PRIMER_OPT_SIZE">PRIMER_OPT_SIZE (int; default 20)</a></h3>
+<h3><a id="PRIMER_OPT_SIZE">PRIMER_OPT_SIZE (int; default 20)</a></h3>
 <p>Optimum length (in bases) of a primer. Primer3 will attempt to
 pick primers close to this length.</p>
-<h3><a name="PRIMER_INTERNAL_OPT_SIZE">PRIMER_INTERNAL_OPT_SIZE (int; default 20)</a></h3>
+<h3><a id="PRIMER_INTERNAL_OPT_SIZE">PRIMER_INTERNAL_OPT_SIZE (int; default 20)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_OPT_SIZE">PRIMER_OPT_SIZE</a> for the internal oligo.</p>
-<h3><a name="PRIMER_MAX_SIZE">PRIMER_MAX_SIZE (int; default 27)</a></h3>
+<h3><a id="PRIMER_MAX_SIZE">PRIMER_MAX_SIZE (int; default 27)</a></h3>
 <p>Maximum acceptable length (in bases) of a primer.  Currently this
 parameter cannot be larger than 35.  This limit is governed by
 maximum oligo size for which Primer3's melting-temperature is
 valid.</p>
-<h3><a name="PRIMER_INTERNAL_MAX_SIZE">PRIMER_INTERNAL_MAX_SIZE (int; default 27)</a></h3>
+<h3><a id="PRIMER_INTERNAL_MAX_SIZE">PRIMER_INTERNAL_MAX_SIZE (int; default 27)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_MAX_SIZE">PRIMER_MAX_SIZE</a> for the internal oligo.</p>
-<h3><a name="PRIMER_WT_SIZE_LT">PRIMER_WT_SIZE_LT (float; default 1.0)</a></h3>
+<h3><a id="PRIMER_WT_SIZE_LT">PRIMER_WT_SIZE_LT (float; default 1.0)</a></h3>
 <p>Penalty weight for primers shorter than <a href="#PRIMER_OPT_SIZE">PRIMER_OPT_SIZE</a>.</p>
-<h3><a name="PRIMER_INTERNAL_WT_SIZE_LT">PRIMER_INTERNAL_WT_SIZE_LT (float; default 1.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_WT_SIZE_LT">PRIMER_INTERNAL_WT_SIZE_LT (float; default 1.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_WT_SIZE_LT">PRIMER_WT_SIZE_LT</a> for the internal oligo.</p>
-<h3><a name="PRIMER_WT_SIZE_GT">PRIMER_WT_SIZE_GT (float; default 1.0)</a></h3>
+<h3><a id="PRIMER_WT_SIZE_GT">PRIMER_WT_SIZE_GT (float; default 1.0)</a></h3>
 <p>Penalty weight for primers longer than <a href="#PRIMER_OPT_SIZE">PRIMER_OPT_SIZE</a>.</p>
-<h3><a name="PRIMER_INTERNAL_WT_SIZE_GT">PRIMER_INTERNAL_WT_SIZE_GT (float; default 1.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_WT_SIZE_GT">PRIMER_INTERNAL_WT_SIZE_GT (float; default 1.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_INTERNAL_WT_SIZE_GT">PRIMER_INTERNAL_WT_SIZE_GT</a> for the internal oligo.</p>
-<h3><a name="PRIMER_MIN_GC">PRIMER_MIN_GC (float; default 20.0)</a></h3>
+<h3><a id="PRIMER_MIN_GC">PRIMER_MIN_GC (float; default 20.0)</a></h3>
 <p>Minimum allowable percentage of Gs and Cs in any primer.</p>
-<h3><a name="PRIMER_INTERNAL_MIN_GC">PRIMER_INTERNAL_MIN_GC (float; default 20.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_MIN_GC">PRIMER_INTERNAL_MIN_GC (float; default 20.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_MIN_GC">PRIMER_MIN_GC</a> for the internal oligo.</p>
-<h3><a name="PRIMER_OPT_GC_PERCENT">PRIMER_OPT_GC_PERCENT (float; default 50.0)</a></h3>
+<h3><a id="PRIMER_OPT_GC_PERCENT">PRIMER_OPT_GC_PERCENT (float; default 50.0)</a></h3>
 <p>Optimum GC percent.  This parameter influences primer selection only if
 <a href="#PRIMER_WT_GC_PERCENT_GT">PRIMER_WT_GC_PERCENT_GT</a> or <a href="#PRIMER_WT_GC_PERCENT_LT">PRIMER_WT_GC_PERCENT_LT</a> are non-0.</p>
-<h3><a name="PRIMER_INTERNAL_OPT_GC_PERCENT">PRIMER_INTERNAL_OPT_GC_PERCENT (float; default 50.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_OPT_GC_PERCENT">PRIMER_INTERNAL_OPT_GC_PERCENT (float; default 50.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_OPT_GC_PERCENT">PRIMER_OPT_GC_PERCENT</a> for the internal oligo.</p>
-<h3><a name="PRIMER_MAX_GC">PRIMER_MAX_GC (float; default 80.0)</a></h3>
+<h3><a id="PRIMER_MAX_GC">PRIMER_MAX_GC (float; default 80.0)</a></h3>
 <p>Maximum allowable percentage of Gs and Cs in any primer generated
 by Primer.</p>
-<h3><a name="PRIMER_INTERNAL_MAX_GC">PRIMER_INTERNAL_MAX_GC (float; default 80.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_MAX_GC">PRIMER_INTERNAL_MAX_GC (float; default 80.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_MAX_GC">PRIMER_MAX_GC</a> for the internal oligo.</p>
-<h3><a name="PRIMER_WT_GC_PERCENT_LT">PRIMER_WT_GC_PERCENT_LT (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_WT_GC_PERCENT_LT">PRIMER_WT_GC_PERCENT_LT (float; default 0.0)</a></h3>
 <p>Penalty weight for primers with GC percent lower than
 <a href="#PRIMER_OPT_GC_PERCENT">PRIMER_OPT_GC_PERCENT</a>.</p>
-<h3><a name="PRIMER_INTERNAL_WT_GC_PERCENT_LT">PRIMER_INTERNAL_WT_GC_PERCENT_LT (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_WT_GC_PERCENT_LT">PRIMER_INTERNAL_WT_GC_PERCENT_LT (float; default 0.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_WT_GC_PERCENT_LT">PRIMER_WT_GC_PERCENT_LT</a> for the internal oligo.</p>
-<h3><a name="PRIMER_WT_GC_PERCENT_GT">PRIMER_WT_GC_PERCENT_GT (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_WT_GC_PERCENT_GT">PRIMER_WT_GC_PERCENT_GT (float; default 0.0)</a></h3>
 <p>Penalty weight for primers with GC percent higher than
 <a href="#PRIMER_OPT_GC_PERCENT">PRIMER_OPT_GC_PERCENT</a>.</p>
-<h3><a name="PRIMER_INTERNAL_WT_GC_PERCENT_GT">PRIMER_INTERNAL_WT_GC_PERCENT_GT (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_WT_GC_PERCENT_GT">PRIMER_INTERNAL_WT_GC_PERCENT_GT (float; default 0.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_WT_GC_PERCENT_GT">PRIMER_WT_GC_PERCENT_GT</a> for the internal oligo.</p>
-<h3><a name="PRIMER_GC_CLAMP">PRIMER_GC_CLAMP (int; default 0)</a></h3>
+<h3><a id="PRIMER_GC_CLAMP">PRIMER_GC_CLAMP (int; default 0)</a></h3>
 <p>Require the specified number of consecutive Gs and Cs at the 3'
 end of both the left and right primer.  (This parameter has no
 effect on the internal oligo if one is requested.)</p>
-<h3><a name="PRIMER_MAX_END_GC">PRIMER_MAX_END_GC (int; default 5)</a></h3>
+<h3><a id="PRIMER_MAX_END_GC">PRIMER_MAX_END_GC (int; default 5)</a></h3>
 <p>The maximum number of Gs or Cs allowed in the last five 3'
 bases of a left or right primer.</p>
-<h3><a name="PRIMER_MIN_TM">PRIMER_MIN_TM (float; default 57.0)</a></h3>
+<h3><a id="PRIMER_MIN_TM">PRIMER_MIN_TM (float; default 57.0)</a></h3>
 <p>Minimum acceptable melting temperature (Celsius) for a primer
 oligo.</p>
-<h3><a name="PRIMER_INTERNAL_MIN_TM">PRIMER_INTERNAL_MIN_TM (float; default 57.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_MIN_TM">PRIMER_INTERNAL_MIN_TM (float; default 57.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_MIN_TM">PRIMER_MIN_TM</a> for the internal oligo.</p>
-<h3><a name="PRIMER_OPT_TM">PRIMER_OPT_TM (float; default 60.0)</a></h3>
+<h3><a id="PRIMER_OPT_TM">PRIMER_OPT_TM (float; default 60.0)</a></h3>
 <p>Optimum melting temperature (Celsius) for a primer. Primer3
 will try to pick primers with melting temperatures are close to
 this temperature.  The oligo melting temperature formula used can
 be specified by user. Please see <a href="#PRIMER_TM_FORMULA">PRIMER_TM_FORMULA</a> for more
 information.</p>
-<h3><a name="PRIMER_INTERNAL_OPT_TM">PRIMER_INTERNAL_OPT_TM (float; default 60.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_OPT_TM">PRIMER_INTERNAL_OPT_TM (float; default 60.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_OPT_TM">PRIMER_OPT_TM</a> for the internal oligo.</p>
-<h3><a name="PRIMER_MAX_TM">PRIMER_MAX_TM (float; default 63.0)</a></h3>
+<h3><a id="PRIMER_MAX_TM">PRIMER_MAX_TM (float; default 63.0)</a></h3>
 <p>Maximum acceptable melting temperature (Celsius) for a primer
 oligo.</p>
-<h3><a name="PRIMER_INTERNAL_MAX_TM">PRIMER_INTERNAL_MAX_TM (float; default 63.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_MAX_TM">PRIMER_INTERNAL_MAX_TM (float; default 63.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_MAX_TM">PRIMER_MAX_TM</a> for the internal oligo.</p>
-<h3><a name="PRIMER_PAIR_MAX_DIFF_TM">PRIMER_PAIR_MAX_DIFF_TM (float; default 100.0)</a></h3>
+<h3><a id="PRIMER_PAIR_MAX_DIFF_TM">PRIMER_PAIR_MAX_DIFF_TM (float; default 100.0)</a></h3>
 <p>Maximum acceptable (unsigned) difference between the melting
 temperatures of the left and right primers.</p>
-<h3><a name="PRIMER_WT_TM_LT">PRIMER_WT_TM_LT (float; default 1.0)</a></h3>
+<h3><a id="PRIMER_WT_TM_LT">PRIMER_WT_TM_LT (float; default 1.0)</a></h3>
 <p>Penalty weight for primers with Tm lower than <a href="#PRIMER_OPT_TM">PRIMER_OPT_TM</a>.</p>
-<h3><a name="PRIMER_INTERNAL_WT_TM_LT">PRIMER_INTERNAL_WT_TM_LT (float; default 1.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_WT_TM_LT">PRIMER_INTERNAL_WT_TM_LT (float; default 1.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_WT_TM_LT">PRIMER_WT_TM_LT</a> for the internal oligo.</p>
-<h3><a name="PRIMER_WT_TM_GT">PRIMER_WT_TM_GT (float; default 1.0)</a></h3>
+<h3><a id="PRIMER_WT_TM_GT">PRIMER_WT_TM_GT (float; default 1.0)</a></h3>
 <p>Penalty weight for primers with Tm over <a href="#PRIMER_OPT_TM">PRIMER_OPT_TM</a>.</p>
-<h3><a name="PRIMER_INTERNAL_WT_TM_GT">PRIMER_INTERNAL_WT_TM_GT (float; default 1.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_WT_TM_GT">PRIMER_INTERNAL_WT_TM_GT (float; default 1.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_WT_TM_GT">PRIMER_WT_TM_GT</a> for the internal oligo.</p>
-<h3><a name="PRIMER_PAIR_WT_DIFF_TM">PRIMER_PAIR_WT_DIFF_TM (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_PAIR_WT_DIFF_TM">PRIMER_PAIR_WT_DIFF_TM (float; default 0.0)</a></h3>
 <p>Penalty weight for the TM difference between the left primer and
 the right primer.</p>
-<h3><a name="PRIMER_PRODUCT_MIN_TM">PRIMER_PRODUCT_MIN_TM (float; default -1000000.0)</a></h3>
+<h3><a id="PRIMER_PRODUCT_MIN_TM">PRIMER_PRODUCT_MIN_TM (float; default -1000000.0)</a></h3>
 <p>The minimum allowed melting temperature of the amplicon.  Please
 see the documentation on <a href="#PRIMER_PRODUCT_MAX_TM">PRIMER_PRODUCT_MAX_TM</a> for details.</p>
-<h3><a name="PRIMER_PRODUCT_OPT_TM">PRIMER_PRODUCT_OPT_TM (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_PRODUCT_OPT_TM">PRIMER_PRODUCT_OPT_TM (float; default 0.0)</a></h3>
 <p>The optimum melting temperature for the PCR product. 0 indicates
 that there is no optimum temperature.</p>
-<h3><a name="PRIMER_PRODUCT_MAX_TM">PRIMER_PRODUCT_MAX_TM (float; default 1000000.0)</a></h3>
+<h3><a id="PRIMER_PRODUCT_MAX_TM">PRIMER_PRODUCT_MAX_TM (float; default 1000000.0)</a></h3>
 <p>The maximum allowed melting temperature of the amplicon.  Primer3
 calculates product Tm calculated using the formula from Bolton
 and McCarthy, PNAS 84:1390 (1962) as presented in Sambrook,
@@ -1875,13 +1929,13 @@ calculating both the primer melting temperature and the oligo
 melting temperature.  If you are planning to use the PCR product
 for hybridization later this behavior will not give you the Tm
 under hybridization conditions.</p>
-<h3><a name="PRIMER_PAIR_WT_PRODUCT_TM_LT">PRIMER_PAIR_WT_PRODUCT_TM_LT (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_PAIR_WT_PRODUCT_TM_LT">PRIMER_PAIR_WT_PRODUCT_TM_LT (float; default 0.0)</a></h3>
 <p>Penalty weight for products with a Tm lower than
 <a href="#PRIMER_PRODUCT_OPT_TM">PRIMER_PRODUCT_OPT_TM</a>.</p>
-<h3><a name="PRIMER_PAIR_WT_PRODUCT_TM_GT">PRIMER_PAIR_WT_PRODUCT_TM_GT (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_PAIR_WT_PRODUCT_TM_GT">PRIMER_PAIR_WT_PRODUCT_TM_GT (float; default 0.0)</a></h3>
 <p>Penalty weight for products with a Tm higher than
 <a href="#PRIMER_PRODUCT_OPT_TM">PRIMER_PRODUCT_OPT_TM</a>.</p>
-<h3><a name="PRIMER_TM_FORMULA">PRIMER_TM_FORMULA (int; default 1)</a></h3>
+<h3><a id="PRIMER_TM_FORMULA">PRIMER_TM_FORMULA (int; default 1)</a></h3>
 <p>Specifies details of melting temperature calculation.  (New in
 v. 1.1.0, added by Maido Remm and Triinu Koressaar.)<br>
 <br>
@@ -1944,7 +1998,7 @@ Tm = -128.800/(-361.736+1.987*ln((5*10^(-8))/4)) =
    = 323.704 K
 Tm(C) = 323.704 - 273.15 = 50.554 C
 </pre>
-<h3><a name="PRIMER_SALT_MONOVALENT">PRIMER_SALT_MONOVALENT (float; default 50.0)</a></h3>
+<h3><a id="PRIMER_SALT_MONOVALENT">PRIMER_SALT_MONOVALENT (float; default 50.0)</a></h3>
 <p>The millimolar (mM) concentration of monovalent salt cations (usually KCl) in the PCR.
 Primer3 uses this argument to calculate oligo and primer melting
 temperatures.
@@ -1953,9 +2007,9 @@ Use tag <a href="#PRIMER_SALT_DIVALENT">PRIMER_SALT_DIVALENT</a> and
 of divalent cations (in which case you also should also set tag <a href="#PRIMER_DNTP_CONC">PRIMER_DNTP_CONC</a> to
 a reasonable value).
 </p>
-<h3><a name="PRIMER_INTERNAL_SALT_MONOVALENT">PRIMER_INTERNAL_SALT_MONOVALENT (float; default 50.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_SALT_MONOVALENT">PRIMER_INTERNAL_SALT_MONOVALENT (float; default 50.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_SALT_MONOVALENT">PRIMER_SALT_MONOVALENT</a> for the internal oligo.</p>
-<h3><a name="PRIMER_SALT_DIVALENT">PRIMER_SALT_DIVALENT (float; default 1.5)</a></h3>
+<h3><a id="PRIMER_SALT_DIVALENT">PRIMER_SALT_DIVALENT (float; default 1.5)</a></h3>
 <p>The millimolar concentration of divalent salt cations (usually MgCl^(2+)) in
 the PCR. (New in v. 1.1.0, added by Maido Remm and Triinu Koressaar)<br>
 <br>
@@ -1984,9 +2038,9 @@ and the stability of ectopic annealing of oligos to template
 If <a href="#PRIMER_SALT_DIVALENT">PRIMER_SALT_DIVALENT</a> > 0.0, be sure to
 set tag <a href="#PRIMER_DNTP_CONC">PRIMER_DNTP_CONC</a> to specify the concentration of dNTPs.
 </p>
-<h3><a name="PRIMER_INTERNAL_SALT_DIVALENT">PRIMER_INTERNAL_SALT_DIVALENT (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_SALT_DIVALENT">PRIMER_INTERNAL_SALT_DIVALENT (float; default 0.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_SALT_DIVALENT">PRIMER_SALT_DIVALENT</a> for the internal oligo.</p>
-<h3><a name="PRIMER_DNTP_CONC">PRIMER_DNTP_CONC (float; default 0.6)</a></h3>
+<h3><a id="PRIMER_DNTP_CONC">PRIMER_DNTP_CONC (float; default 0.6)</a></h3>
 <p>The millimolar concentration of the sum of all
 deoxyribonucleotide triphosphates. A reaction mix containing
 0.2 mM ATP, 0.2 mM CTP, 0.2 mM GTP and 0.2 mM TTP would have a
@@ -1997,9 +2051,9 @@ PCR product melting temperature, or for secondary
 structure calculations only if
 <a href="#PRIMER_SALT_DIVALENT">PRIMER_SALT_DIVALENT</a> is > 0.0.
 See <a href="#PRIMER_SALT_DIVALENT">PRIMER_SALT_DIVALENT</a>.</p>
-<h3><a name="PRIMER_INTERNAL_DNTP_CONC">PRIMER_INTERNAL_DNTP_CONC (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_DNTP_CONC">PRIMER_INTERNAL_DNTP_CONC (float; default 0.0)</a></h3>
 <p>Parameter for internal oligos analogous to <a href="#PRIMER_DNTP_CONC">PRIMER_DNTP_CONC</a>.</p>
-<h3><a name="PRIMER_SALT_CORRECTIONS">PRIMER_SALT_CORRECTIONS (int; default 1)</a></h3>
+<h3><a id="PRIMER_SALT_CORRECTIONS">PRIMER_SALT_CORRECTIONS (int; default 1)</a></h3>
 <p>Specifies the salt correction formula for the melting temperature
 calculation.  (New in v. 1.1.0, added by Maido Remm and Triinu
 Koressaar)<br>
@@ -2035,7 +2089,7 @@ tags <a href="#PRIMER_SALT_DIVALENT">PRIMER_SALT_DIVALENT</a>,
 <a href="#PRIMER_DNTP_CONC">PRIMER_DNTP_CONC</a>, and
 <a href="#PRIMER_INTERNAL_DNTP_CONC">PRIMER_INTERNAL_DNTP_CONC</a>.
 </p>
-<h3><a name="PRIMER_DNA_CONC">PRIMER_DNA_CONC (float; default 50.0)</a></h3>
+<h3><a id="PRIMER_DNA_CONC">PRIMER_DNA_CONC (float; default 50.0)</a></h3>
 <p>
 <p>
 A value to use as nanomolar (nM) concentration of each annealing oligo
@@ -2066,25 +2120,52 @@ fortunately PCR seems quite robust for a variety of oligo melting
 temperatures.
 <br>
 See ADVICE FOR PICKING PRIMERS.</p>
-<h3><a name="PRIMER_INTERNAL_DNA_CONC">PRIMER_INTERNAL_DNA_CONC (float; default 50.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_DNA_CONC">PRIMER_INTERNAL_DNA_CONC (float; default 50.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_DNA_CONC">PRIMER_DNA_CONC</a> for the internal oligo.</p>
-<h3><a name="PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT">PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT (boolean; default 1)</a></h3>
+<h3><a id="PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT">PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT (boolean; default 1)</a></h3>
 <p>If the associated value = 1, then Primer3 will use
 thermodynamic models to calculate the
 the propensity of oligos to form hairpins and dimers.
 </p>
-<h3><a name="PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT">PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT (boolean; default 0)</a></h3>
+<h3><a id="PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT">PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT (boolean; default 0)</a></h3>
 <p>If the associated value = 1, then Primer3 will use
 thermodynamic models to calculate the
 the propensity of oligos to anneal to undesired sites in the template sequence.
 </p>
-<h3><a name="PRIMER_THERMODYNAMIC_PARAMETERS_PATH">PRIMER_THERMODYNAMIC_PARAMETERS_PATH (string; default ./primer3_config)</a></h3>
+<h3><a id="PRIMER_SECONDARY_STRUCTURE_ALIGNMENT">PRIMER_SECONDARY_STRUCTURE_ALIGNMENT (boolean; default 0)</a></h3>
+<p>If the associated value = 1, then Primer3 will print out the
+calculated secondary structures, for example:</p>
+<h4>Dimers:</h4>
+<pre>
+t: 7.8  dG: -1724  dH: -91400  dS: -289
+  5' ACGCAAAGCACGCTCC-CGATC 3'
+      ||   |||  |||   ||
+3' CTAGCCC-TCGCACGAAACGCA 5'
+</pre>
+<h4>Hairpins:</h4>
+<pre>
+t: 36.4  dG: 42  dH: -22500  dS: -73
+5' CGCAAAGCACGCT&#x2510;
+            ||  &#x2502;
+        3' AGCCC&#x2518;
+</pre>
+<p>
+The tags <a href="#PRIMER_LEFT_4_SELF_ANY_STUCT">PRIMER_LEFT_4_SELF_ANY_STUCT</a>, <a href="#PRIMER_LEFT_4_SELF_END_STUCT">PRIMER_LEFT_4_SELF_END_STUCT</a>,
+<a href="#PRIMER_LEFT_4_HAIRPIN_STUCT">PRIMER_LEFT_4_HAIRPIN_STUCT</a> (these tags are also present for RIGHT and INTERNAL
+primers), <a href="#PRIMER_PAIR_4_COMPL_ANY_STUCT">PRIMER_PAIR_4_COMPL_ANY_STUCT</a> and <a href="#PRIMER_PAIR_4_COMPL_END_STUCT">PRIMER_PAIR_4_COMPL_END_STUCT</a>
+are only present if a secondary structure could be calculated.<br>
+<br>
+As the string has to fit on one line, the newlines are indicated by the two characters
+'\' and 'n' and have to be replaced (regex: /\\n/\n/g). Hairpins use unicode characters
+for the turn. For html they have to be replaced (regex: /U\+25(\d\d)/&amp;#x25$1;/g).
+</p>
+<h3><a id="PRIMER_THERMODYNAMIC_PARAMETERS_PATH">PRIMER_THERMODYNAMIC_PARAMETERS_PATH (string; default ./primer3_config)</a></h3>
 <p>This tag specifies the path to the directory that contains all the
 parameter files used by the thermodynamic approach. In Linux, there are two
 default locations that are tested if this tag is not defined:
 <i>./primer3_config/</i> and <i>/opt/primer3_config/</i>.
 For Windows, there is only one default location: <i>.\primer3_config\</i>.</p>
-<h3><a name="PRIMER_MAX_SELF_ANY">PRIMER_MAX_SELF_ANY (decimal, 9999.99; default 8.00)</a></h3>
+<h3><a id="PRIMER_MAX_SELF_ANY">PRIMER_MAX_SELF_ANY (decimal, 9999.99; default 8.00)</a></h3>
 <p>PRIMER_MAX_SELF_ANY describes the tendency of a primer to bind to
 itself (interfering with target sequence binding). It will score
 ANY binding occurring within the entire primer sequence.<br>
@@ -2110,7 +2191,7 @@ is allowed (and yields a score of 1.75), but the alignment
 <p>is not considered.  Scores are non-negative, and a score of 0.00
 indicates that there is no reasonable local alignment between two
 oligos.</p>
-<h3><a name="PRIMER_MAX_SELF_ANY_TH">PRIMER_MAX_SELF_ANY_TH (decimal, 9999,99; default 47.00)</a></h3>
+<h3><a id="PRIMER_MAX_SELF_ANY_TH">PRIMER_MAX_SELF_ANY_TH (decimal, 9999,99; default 47.00)</a></h3>
 <p> The same as PRIMER_MAX_SELF_ANY but all calculations are based on
 	  thermodynamical approach. The melting temperature of the most stable
 	  structure is calculated. To calculate secondary structures nearest-neighbor
@@ -2139,7 +2220,7 @@ the most stable structure are described in following papers:</p>
 <ul><li>[SantaLucia JR (1998) "A unified view of polymer, dumbbell and
 oligonucleotide DNA nearest-neighbor
 thermodynamics", Proc Natl Acad Sci 95:1460-65
-<a href=" http://dx.doi.org/10.1073/pnas.95.4.1460"> http://dx.doi.org/10.1073/pnas.95.4.1460</a>]
+<a href="http://dx.doi.org/10.1073/pnas.95.4.1460">http://dx.doi.org/10.1073/pnas.95.4.1460</a>]
 </li><li>
 [SantaLucia JR and Hicks D (2004) "The thermodynamics of DNA structural
 motifs", Annu Rev Biophys Biomol Struct 33:415-40
@@ -2179,33 +2260,33 @@ medium for use therein" World Intellectual Property Organization, WO 01/94611
 Predicting secondary structures can improve primer design by eliminating
 sequences with high possibility to form alternative secondary structures.
 	  </p>
-<h3><a name="PRIMER_INTERNAL_MAX_SELF_ANY">PRIMER_INTERNAL_MAX_SELF_ANY (decimal, 9999.99; default 12.00)</a></h3>
+<h3><a id="PRIMER_INTERNAL_MAX_SELF_ANY">PRIMER_INTERNAL_MAX_SELF_ANY (decimal, 9999.99; default 12.00)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_MAX_SELF_ANY">PRIMER_MAX_SELF_ANY</a> for the internal oligo.</p>
-<h3><a name="PRIMER_INTERNAL_MAX_SELF_ANY_TH">PRIMER_INTERNAL_MAX_SELF_ANY_TH (decimal, 9999.99; default 47.00)</a></h3>
+<h3><a id="PRIMER_INTERNAL_MAX_SELF_ANY_TH">PRIMER_INTERNAL_MAX_SELF_ANY_TH (decimal, 9999.99; default 47.00)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_MAX_SELF_ANY_TH">PRIMER_MAX_SELF_ANY_TH</a> for the internal oligo.</p>
-<h3><a name="PRIMER_PAIR_MAX_COMPL_ANY">PRIMER_PAIR_MAX_COMPL_ANY (decimal, 9999.99; default 8.00)</a></h3>
+<h3><a id="PRIMER_PAIR_MAX_COMPL_ANY">PRIMER_PAIR_MAX_COMPL_ANY (decimal, 9999.99; default 8.00)</a></h3>
 <p>PRIMER_PAIR_MAX_COMPL_ANY describes the tendency of the left primer
 to bind to the right primer. It is the maximum allowable local alignment score when testing for
 complementarity between left and right primers. It is similar to <a href="#PRIMER_MAX_SELF_ANY">PRIMER_MAX_SELF_ANY</a>.</p>
-<h3><a name="PRIMER_PAIR_MAX_COMPL_ANY_TH">PRIMER_PAIR_MAX_COMPL_ANY_TH (decimal, 9999.99; default 47.00)</a></h3>
+<h3><a id="PRIMER_PAIR_MAX_COMPL_ANY_TH">PRIMER_PAIR_MAX_COMPL_ANY_TH (decimal, 9999.99; default 47.00)</a></h3>
 <p>PRIMER_PAIR_MAX_COMPL_ANY_TH describes the tendency of the left primer
     to bind to the right primer. It is similar to <a href="#PRIMER_MAX_SELF_ANY_TH">PRIMER_MAX_SELF_ANY_TH</a>.</p>
-<h3><a name="PRIMER_WT_SELF_ANY">PRIMER_WT_SELF_ANY (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_WT_SELF_ANY">PRIMER_WT_SELF_ANY (float; default 0.0)</a></h3>
 <p>Penalty weight for the individual primer self binding value as in
 <a href="#PRIMER_MAX_SELF_ANY">PRIMER_MAX_SELF_ANY</a>.</p>
-<h3><a name="PRIMER_WT_SELF_ANY_TH">PRIMER_WT_SELF_ANY_TH (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_WT_SELF_ANY_TH">PRIMER_WT_SELF_ANY_TH (float; default 0.0)</a></h3>
 <p>Penalty weight for the individual primer self binding value as in
      <a href="#PRIMER_MAX_SELF_ANY_TH">PRIMER_MAX_SELF_ANY_TH</a>.</p>
-<h3><a name="PRIMER_INTERNAL_WT_SELF_ANY">PRIMER_INTERNAL_WT_SELF_ANY (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_WT_SELF_ANY">PRIMER_INTERNAL_WT_SELF_ANY (float; default 0.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_WT_SELF_ANY">PRIMER_WT_SELF_ANY</a> for the internal oligo.</p>
-<h3><a name="PRIMER_INTERNAL_WT_SELF_ANY_TH">PRIMER_INTERNAL_WT_SELF_ANY_TH (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_WT_SELF_ANY_TH">PRIMER_INTERNAL_WT_SELF_ANY_TH (float; default 0.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_WT_SELF_ANY_TH">PRIMER_WT_SELF_ANY_TH</a> for the internal oligo.</p>
-<h3><a name="PRIMER_PAIR_WT_COMPL_ANY">PRIMER_PAIR_WT_COMPL_ANY (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_PAIR_WT_COMPL_ANY">PRIMER_PAIR_WT_COMPL_ANY (float; default 0.0)</a></h3>
 <p>Penalty weight for the binding value of the primer pair as in
 <a href="#PRIMER_MAX_SELF_ANY">PRIMER_MAX_SELF_ANY</a>.</p>
-<h3><a name="PRIMER_PAIR_WT_COMPL_ANY_TH">PRIMER_PAIR_WT_COMPL_ANY_TH (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_PAIR_WT_COMPL_ANY_TH">PRIMER_PAIR_WT_COMPL_ANY_TH (float; default 0.0)</a></h3>
 <p>Penalty weight for the binding value of the primer pair as in <a href="#PRIMER_MAX_SELF_ANY_TH">PRIMER_MAX_SELF_ANY_TH</a>.</p>
-<h3><a name="PRIMER_MAX_SELF_END">PRIMER_MAX_SELF_END (decimal, 9999.99; default 3.00)</a></h3>
+<h3><a id="PRIMER_MAX_SELF_END">PRIMER_MAX_SELF_END (decimal, 9999.99; default 3.00)</a></h3>
 <p>
 PRIMER_MAX_SELF_END tries to bind the 3'-END to a identical primer
 and scores the best binding it can find. This is critical for
@@ -2240,44 +2321,44 @@ for this parameter than for the Maximum (local) Complementarity
 parameter (<a href="#PRIMER_MAX_SELF_ANY">PRIMER_MAX_SELF_ANY</a>) because the score of a local
 alignment will always be at least as great as the score of a
 global alignment.</p>
-<h3><a name="PRIMER_MAX_SELF_END_TH">PRIMER_MAX_SELF_END_TH (decimal 9999.99; default 47.00)</a></h3>
+<h3><a id="PRIMER_MAX_SELF_END_TH">PRIMER_MAX_SELF_END_TH (decimal 9999.99; default 47.00)</a></h3>
 <p>Same as <a href="#PRIMER_MAX_SELF_END">PRIMER_MAX_SELF_END</a> but is based on
 thermodynamical approach - the stability of structure is analyzed. The value
 of tag is expressed as melting temperature. See
 <a href="#PRIMER_MAX_SELF_ANY_TH">PRIMER_MAX_SELF_ANY_TH</a> for details.</p>
-<h3><a name="PRIMER_INTERNAL_MAX_SELF_END">PRIMER_INTERNAL_MAX_SELF_END (decimal 9999.99; default 12.00)</a></h3>
+<h3><a id="PRIMER_INTERNAL_MAX_SELF_END">PRIMER_INTERNAL_MAX_SELF_END (decimal 9999.99; default 12.00)</a></h3>
 <p><a href="#PRIMER_INTERNAL_MAX_SELF_END">PRIMER_INTERNAL_MAX_SELF_END</a> is meaningless when applied
 to internal oligos used for hybridization-based detection, since
 primer-dimer will not occur.  We recommend that
 <a href="#PRIMER_INTERNAL_MAX_SELF_END">PRIMER_INTERNAL_MAX_SELF_END</a> be set at least as high as
 <a href="#PRIMER_INTERNAL_MAX_SELF_ANY">PRIMER_INTERNAL_MAX_SELF_ANY</a>.</p>
-<h3><a name="PRIMER_INTERNAL_MAX_SELF_END_TH">PRIMER_INTERNAL_MAX_SELF_END_TH (decimal 9999.99; default 47.00)</a></h3>
+<h3><a id="PRIMER_INTERNAL_MAX_SELF_END_TH">PRIMER_INTERNAL_MAX_SELF_END_TH (decimal 9999.99; default 47.00)</a></h3>
 <p>Same as <a href="#PRIMER_INTERNAL_MAX_SELF_END">PRIMER_INTERNAL_MAX_SELF_END</a> but for
 calculating the score (melting temperature of structure) thermodynamical
 approach is used.</p>
-<h3><a name="PRIMER_PAIR_MAX_COMPL_END">PRIMER_PAIR_MAX_COMPL_END (decimal, 9999.99; default 3.00)</a></h3>
+<h3><a id="PRIMER_PAIR_MAX_COMPL_END">PRIMER_PAIR_MAX_COMPL_END (decimal, 9999.99; default 3.00)</a></h3>
 <p>PRIMER_PAIR_MAX_COMPL_END tries to bind the 3'-END of the left primer
 to the right primer and scores the best binding it can find.
 It is similar to <a href="#PRIMER_MAX_SELF_END">PRIMER_MAX_SELF_END</a>.</p>
-<h3><a name="PRIMER_PAIR_MAX_COMPL_END_TH">PRIMER_PAIR_MAX_COMPL_END_TH (decimal, 9999.99; default 47.00)</a></h3>
+<h3><a id="PRIMER_PAIR_MAX_COMPL_END_TH">PRIMER_PAIR_MAX_COMPL_END_TH (decimal, 9999.99; default 47.00)</a></h3>
 <p>Same as <a href="#PRIMER_PAIR_MAX_COMPL_END">PRIMER_PAIR_MAX_COMPL_END</a> but for calculating the
 score (melting temperature of structure) thermodynamical approach is used.</p>
-<h3><a name="PRIMER_WT_SELF_END">PRIMER_WT_SELF_END (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_WT_SELF_END">PRIMER_WT_SELF_END (float; default 0.0)</a></h3>
 <p>Penalty weight for the individual primer self binding value as in
 <a href="#PRIMER_MAX_SELF_END">PRIMER_MAX_SELF_END</a>.</p>
-<h3><a name="PRIMER_WT_SELF_END_TH">PRIMER_WT_SELF_END_TH (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_WT_SELF_END_TH">PRIMER_WT_SELF_END_TH (float; default 0.0)</a></h3>
 <p>Penalty weight for the individual primer self binding
 value as in <a href="#PRIMER_MAX_SELF_END_TH">PRIMER_MAX_SELF_END_TH</a></p>
-<h3><a name="PRIMER_INTERNAL_WT_SELF_END">PRIMER_INTERNAL_WT_SELF_END (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_WT_SELF_END">PRIMER_INTERNAL_WT_SELF_END (float; default 0.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_WT_SELF_END">PRIMER_WT_SELF_END</a> for the internal oligo.</p>
-<h3><a name="PRIMER_INTERNAL_WT_SELF_END_TH">PRIMER_INTERNAL_WT_SELF_END_TH (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_WT_SELF_END_TH">PRIMER_INTERNAL_WT_SELF_END_TH (float; default 0.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_WT_SELF_END_TH">PRIMER_WT_SELF_END_TH</a> for the internal oligo.</p>
-<h3><a name="PRIMER_PAIR_WT_COMPL_END">PRIMER_PAIR_WT_COMPL_END (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_PAIR_WT_COMPL_END">PRIMER_PAIR_WT_COMPL_END (float; default 0.0)</a></h3>
 <p>Penalty weight for the binding value of the primer pair as in
 <a href="#PRIMER_MAX_SELF_END">PRIMER_MAX_SELF_END</a>.</p>
-<h3><a name="PRIMER_PAIR_WT_COMPL_END_TH">PRIMER_PAIR_WT_COMPL_END_TH (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_PAIR_WT_COMPL_END_TH">PRIMER_PAIR_WT_COMPL_END_TH (float; default 0.0)</a></h3>
 <p>Penalty weight for the binding value of the primer pair as in <a href="#PRIMER_MAX_SELF_END_TH">PRIMER_MAX_SELF_END_TH</a>.</p>
-<h3><a name="PRIMER_MAX_HAIRPIN_TH">PRIMER_MAX_HAIRPIN_TH (float; default 47.0)</a></h3>
+<h3><a id="PRIMER_MAX_HAIRPIN_TH">PRIMER_MAX_HAIRPIN_TH (float; default 47.0)</a></h3>
 <p>This is the most stable monomer structure of internal oligo
 calculated by thermodynamic approach. The hairpin loops,
 bulge loops, internal loops, internal single mismatches, dangling ends,
@@ -2298,15 +2379,15 @@ of Primer3) and
 with melting temperature 71.0918 (calculated according to by default values
 of Primer3)
 For details about papers used for calculating hairpins see <a href="#PRIMER_MAX_SELF_ANY_TH">PRIMER_MAX_SELF_ANY_TH</a></p>
-<h3><a name="PRIMER_INTERNAL_MAX_HAIRPIN_TH">PRIMER_INTERNAL_MAX_HAIRPIN_TH (float; default 47.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_MAX_HAIRPIN_TH">PRIMER_INTERNAL_MAX_HAIRPIN_TH (float; default 47.0)</a></h3>
 <p>The most stable monomer structure of internal oligo
 calculated by thermodynamic approach. See <a href="#PRIMER_MAX_HAIRPIN_TH">PRIMER_MAX_HAIRPIN_TH</a> for details.</p>
-<h3><a name="PRIMER_WT_HAIRPIN_TH">PRIMER_WT_HAIRPIN_TH (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_WT_HAIRPIN_TH">PRIMER_WT_HAIRPIN_TH (float; default 0.0)</a></h3>
 <p>Penalty weight for the individual primer hairpin structure value as in <a href="#PRIMER_MAX_HAIRPIN_TH">PRIMER_MAX_HAIRPIN_TH</a>.</p>
-<h3><a name="PRIMER_INTERNAL_WT_HAIRPIN_TH">PRIMER_INTERNAL_WT_HAIRPIN_TH (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_WT_HAIRPIN_TH">PRIMER_INTERNAL_WT_HAIRPIN_TH (float; default 0.0)</a></h3>
 <p>Penalty weight for the most stable
 primer hairpin structure value as in <a href="#PRIMER_INTERNAL_MAX_HAIRPIN_TH">PRIMER_INTERNAL_MAX_HAIRPIN_TH</a>.</p>
-<h3><a name="PRIMER_MAX_END_STABILITY">PRIMER_MAX_END_STABILITY (float, 999.9999; default 100.0)</a></h3>
+<h3><a id="PRIMER_MAX_END_STABILITY">PRIMER_MAX_END_STABILITY (float, 999.9999; default 100.0)</a></h3>
 <p>The maximum stability for the last five 3' bases of a left or
 right primer.  Bigger numbers mean more stable 3' ends.  The
 value is the maximum delta G (kcal/mol) for duplex disruption for
@@ -2323,23 +2404,23 @@ If the table of thermodynamic parameters suggested by
 <a href="http://dx.doi.org/10.1073/pnas.83.11.3746">Breslauer et al. 1986, 10.1073/pnas.83.11.3746</a> is used the deltaG
 values for the most stable and for the most labile 5mer are
 13.4 kcal/mol (GCGCG) and 4.6 kcal/mol (TATAC) respectively.
-<h3><a name="PRIMER_WT_END_STABILITY">PRIMER_WT_END_STABILITY (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_WT_END_STABILITY">PRIMER_WT_END_STABILITY (float; default 0.0)</a></h3>
 <p>Penalty factor for the calculated maximum stability for the
 last five 3' bases of a left or right primer.</p>
-<h3><a name="PRIMER_MAX_NS_ACCEPTED">PRIMER_MAX_NS_ACCEPTED (int; default 0)</a></h3>
+<h3><a id="PRIMER_MAX_NS_ACCEPTED">PRIMER_MAX_NS_ACCEPTED (int; default 0)</a></h3>
 <p>Maximum number of unknown bases (N) allowable in any primer.</p>
-<h3><a name="PRIMER_INTERNAL_MAX_NS_ACCEPTED">PRIMER_INTERNAL_MAX_NS_ACCEPTED (int; default 0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_MAX_NS_ACCEPTED">PRIMER_INTERNAL_MAX_NS_ACCEPTED (int; default 0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_MAX_NS_ACCEPTED">PRIMER_MAX_NS_ACCEPTED</a> for the internal oligo.</p>
-<h3><a name="PRIMER_WT_NUM_NS">PRIMER_WT_NUM_NS (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_WT_NUM_NS">PRIMER_WT_NUM_NS (float; default 0.0)</a></h3>
 <p>Penalty weight for the number of Ns in the primer.</p>
-<h3><a name="PRIMER_INTERNAL_WT_NUM_NS">PRIMER_INTERNAL_WT_NUM_NS (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_WT_NUM_NS">PRIMER_INTERNAL_WT_NUM_NS (float; default 0.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_WT_NUM_NS">PRIMER_WT_NUM_NS</a> for the internal oligo.</p>
-<h3><a name="PRIMER_MAX_POLY_X">PRIMER_MAX_POLY_X (int; default 5)</a></h3>
+<h3><a id="PRIMER_MAX_POLY_X">PRIMER_MAX_POLY_X (int; default 5)</a></h3>
 <p>The maximum allowable length of a mononucleotide repeat,
 for example AAAAAA.</p>
-<h3><a name="PRIMER_INTERNAL_MAX_POLY_X">PRIMER_INTERNAL_MAX_POLY_X (int; default 5)</a></h3>
+<h3><a id="PRIMER_INTERNAL_MAX_POLY_X">PRIMER_INTERNAL_MAX_POLY_X (int; default 5)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_MAX_POLY_X">PRIMER_MAX_POLY_X</a> for the internal oligo.</p>
-<h3><a name="PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE">PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE (int; default -1)</a></h3>
+<h3><a id="PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE">PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE (int; default -1)</a></h3>
 <p>When returning multiple primer pairs,
 the minimum number of base pairs between the 3' ends of
 any two left primers.<br>
@@ -2367,10 +2448,10 @@ A left primer is acceptable if:<br>
 <br>
 NOT(3' end of left primer closer than <i>n</i> to the 3' end of a previously
 used left primer)<br></p>
-<h3><a name="PRIMER_MIN_RIGHT_THREE_PRIME_DISTANCE">PRIMER_MIN_RIGHT_THREE_PRIME_DISTANCE (int; default -1)</a></h3>
+<h3><a id="PRIMER_MIN_RIGHT_THREE_PRIME_DISTANCE">PRIMER_MIN_RIGHT_THREE_PRIME_DISTANCE (int; default -1)</a></h3>
 <p>Analogous to <a href="#PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE">PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE</a>,
 but for right primers.<br></p>
-<h3><a name="PRIMER_MIN_THREE_PRIME_DISTANCE">PRIMER_MIN_THREE_PRIME_DISTANCE (int; default -1)</a></h3>
+<h3><a id="PRIMER_MIN_THREE_PRIME_DISTANCE">PRIMER_MIN_THREE_PRIME_DISTANCE (int; default -1)</a></h3>
 <p>A "convenience" tag that simultaneously
 sets
 <a href="#PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE">PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE</a>
@@ -2393,11 +2474,11 @@ PRIMER_MIN_THREE_PRIME_DISTANCE and either
 <a href="#PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE">PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE</a> or
 <a href="#PRIMER_MIN_RIGHT_THREE_PRIME_DISTANCE">PRIMER_MIN_RIGHT_THREE_PRIME_DISTANCE</a>
 in the same input record.</p>
-<h3><a name="PRIMER_PICK_ANYWAY">PRIMER_PICK_ANYWAY (boolean; default 0)</a></h3>
+<h3><a id="PRIMER_PICK_ANYWAY">PRIMER_PICK_ANYWAY (boolean; default 0)</a></h3>
 <p>If true use primer provided in <a href="#SEQUENCE_PRIMER">SEQUENCE_PRIMER</a>, <a href="#SEQUENCE_PRIMER_REVCOMP">SEQUENCE_PRIMER_REVCOMP</a>,
 or <a href="#SEQUENCE_INTERNAL_OLIGO">SEQUENCE_INTERNAL_OLIGO</a> even if it violates specific
 constraints.</p>
-<h3><a name="PRIMER_LOWERCASE_MASKING">PRIMER_LOWERCASE_MASKING (int; default 0)</a></h3>
+<h3><a id="PRIMER_LOWERCASE_MASKING">PRIMER_LOWERCASE_MASKING (int; default 0)</a></h3>
 <p>This option allows for intelligent design of primers in sequence in
 which masked regions (for example repeat-masked regions) are
 lower-cased.  (New in v. 1.1.0, added by Maido Remm and Triinu
@@ -2412,7 +2493,7 @@ the 3'-end of the primer.  In other words, lowercase bases at
 other positions in the primer are accepted, assuming that the
 masked features do not influence the primer performance if they
 do not overlap the 3'-end of primer.</p>
-<h3><a name="PRIMER_EXPLAIN_FLAG">PRIMER_EXPLAIN_FLAG (boolean; default 0)</a></h3>
+<h3><a id="PRIMER_EXPLAIN_FLAG">PRIMER_EXPLAIN_FLAG (boolean; default 0)</a></h3>
 <p>If this flag is 1 (non-0), produce <a href="#PRIMER_LEFT_EXPLAIN">PRIMER_LEFT_EXPLAIN</a>,
 <a href="#PRIMER_RIGHT_EXPLAIN">PRIMER_RIGHT_EXPLAIN</a>, <a href="#PRIMER_INTERNAL_EXPLAIN">PRIMER_INTERNAL_EXPLAIN</a> and/or
 <a href="#PRIMER_PAIR_EXPLAIN">PRIMER_PAIR_EXPLAIN</a> output
@@ -2421,7 +2502,7 @@ These output tags are intended to provide information on the number of
 oligos and primer pairs that Primer3 examined and counts of
 the number discarded for various reasons.  If -format_output is
 set similar information is produced in the user-oriented output.</p>
-<h3><a name="PRIMER_LIBERAL_BASE">PRIMER_LIBERAL_BASE (boolean; default 0)</a></h3>
+<h3><a id="PRIMER_LIBERAL_BASE">PRIMER_LIBERAL_BASE (boolean; default 0)</a></h3>
 <p>This parameter provides a quick-and-dirty way to get Primer3 to
 accept IUB / IUPAC codes for ambiguous bases (i.e. by changing
 all unrecognized bases to N).  If you wish to include an
@@ -2431,7 +2512,7 @@ ambiguous base in an oligo, you must set <a href="#PRIMER_MAX_NS_ACCEPTED">PRIME
 Perhaps '-' and '* ' should be squeezed out rather than changed
 to 'N', but currently they simply get converted to N's.  The authors
 invite user comments.</p>
-<h3><a name="PRIMER_FIRST_BASE_INDEX">PRIMER_FIRST_BASE_INDEX (int; default 0)</a></h3>
+<h3><a id="PRIMER_FIRST_BASE_INDEX">PRIMER_FIRST_BASE_INDEX (int; default 0)</a></h3>
 <p>This parameter is the index of the first base in the input
 sequence.  For input and output using 1-based indexing (such as
 that used in GenBank and to which many users are accustomed) set
@@ -2439,13 +2520,13 @@ this parameter to 1.  For input and output using 0-based indexing
 set this parameter to 0.  (This parameter also affects the
 indexes in the contents of the files produced when the primer
 file flag is set.)</p>
-<h3><a name="PRIMER_MAX_TEMPLATE_MISPRIMING">PRIMER_MAX_TEMPLATE_MISPRIMING (decimal, 9999.99; default -1.00)</a></h3>
+<h3><a id="PRIMER_MAX_TEMPLATE_MISPRIMING">PRIMER_MAX_TEMPLATE_MISPRIMING (decimal, 9999.99; default -1.00)</a></h3>
 <p>The maximum allowed similarity to ectopic sites in the
 template.  A negative value means do not check.  The scoring
 system is the same as used for <a href="#PRIMER_MAX_LIBRARY_MISPRIMING">PRIMER_MAX_LIBRARY_MISPRIMING</a>, except
 that an ambiguity code in the template is never treated as a
 consensus (see <a href="#PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS">PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS</a>).</p>
-<h3><a name="PRIMER_MAX_TEMPLATE_MISPRIMING_TH">PRIMER_MAX_TEMPLATE_MISPRIMING_TH (decimal, 9999.99; default -1.00)</a></h3>
+<h3><a id="PRIMER_MAX_TEMPLATE_MISPRIMING_TH">PRIMER_MAX_TEMPLATE_MISPRIMING_TH (decimal, 9999.99; default -1.00)</a></h3>
 <p>Similar to <a href="#PRIMER_MAX_TEMPLATE_MISPRIMING">PRIMER_MAX_TEMPLATE_MISPRIMING</a> but
 assesses alternative binding sites in the template using thermodynamic models
 (when PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT=1).
@@ -2454,7 +2535,7 @@ melting temperature of an oligo (primer)
 at an "ectopic" site within the template sequence; 47.0 would be
 a reasonable choice if <a href="#PRIMER_MIN_TM">PRIMER_MIN_TM</a> is 57.0.
 </p>
-<h3><a name="PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING">PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING (decimal, 9999.99; default -1.00)</a></h3>
+<h3><a id="PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING">PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING (decimal, 9999.99; default -1.00)</a></h3>
 <p>The maximum allowed summed similarity of both primers to
 ectopic sites in the template. A negative value means do not
 check.  The scoring system is the same as used for
@@ -2463,31 +2544,31 @@ in the template is never treated as a consensus (see
 <a href="#PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS">PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS</a>).  Primer3 does not
 check the similarity of hybridization oligos (internal
 oligos) to locations outside of the amplicon.</p>
-<h3><a name="PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING_TH">PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING_TH (decimal, 9999.99; default -1.00)</a></h3>
+<h3><a id="PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING_TH">PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING_TH (decimal, 9999.99; default -1.00)</a></h3>
 <p>The maximum allowed summed melting temperatures
 of both primers at ectopic sites within the template (with
 the two primers in an orientation that would allow PCR
 amplification.)
 The melting temperatures are calculated
 as for <a href="#PRIMER_MAX_TEMPLATE_MISPRIMING_TH">PRIMER_MAX_TEMPLATE_MISPRIMING_TH</a>.
-<h3><a name="PRIMER_WT_TEMPLATE_MISPRIMING">PRIMER_WT_TEMPLATE_MISPRIMING (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_WT_TEMPLATE_MISPRIMING">PRIMER_WT_TEMPLATE_MISPRIMING (float; default 0.0)</a></h3>
 <p>Penalty for a single primer binding to the template sequence.<br>
 <br>
 The use of this Tag is modified from Primer3 version 2.0 on:
 The values used with the older versions have to be multiplied
 by the factor 100 to have the same effect.</p>
-<h3><a name="PRIMER_WT_TEMPLATE_MISPRIMING_TH">PRIMER_WT_TEMPLATE_MISPRIMING_TH (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_WT_TEMPLATE_MISPRIMING_TH">PRIMER_WT_TEMPLATE_MISPRIMING_TH (float; default 0.0)</a></h3>
 <p>Penalty for a single primer binding to the template sequence (thermodynamic approach, when PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT=1).</p>
-<h3><a name="PRIMER_PAIR_WT_TEMPLATE_MISPRIMING">PRIMER_PAIR_WT_TEMPLATE_MISPRIMING (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_PAIR_WT_TEMPLATE_MISPRIMING">PRIMER_PAIR_WT_TEMPLATE_MISPRIMING (float; default 0.0)</a></h3>
 <p>Penalty for a primer pair binding to the template sequence.<br>
 <br>
 The use of this Tag is modified from Primer3 version 2.0 on:
 The values used with the older versions have to be multiplied
 by the factor 100 to have the same effect.</p>
-<h3><a name="PRIMER_PAIR_WT_TEMPLATE_MISPRIMING_TH">PRIMER_PAIR_WT_TEMPLATE_MISPRIMING_TH (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_PAIR_WT_TEMPLATE_MISPRIMING_TH">PRIMER_PAIR_WT_TEMPLATE_MISPRIMING_TH (float; default 0.0)</a></h3>
 <p>Penalty for a primer pair binding to the template sequence
 (thermodynamic approach, when PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT=1).</p>
-<h3><a name="PRIMER_MISPRIMING_LIBRARY">PRIMER_MISPRIMING_LIBRARY (string; default empty)</a></h3>
+<h3><a id="PRIMER_MISPRIMING_LIBRARY">PRIMER_MISPRIMING_LIBRARY (string; default empty)</a></h3>
 <p>The name of a file containing a nucleotide sequence library of
 sequences to avoid amplifying (for example repetitive sequences, or
 possibly the sequences of genes in a gene family that should
@@ -2516,8 +2597,8 @@ the end of the file.  Whitespace and newlines are ignored.
 Characters 'A', 'T', 'G', 'C', 'a', 't', 'g', 'c' and
 IUB/IUPAC 'ambiguity' codes ('R, 'Y', 'K', 'M', 'S', 'W',
 'N', including lower case) are retained. For technical
-reasons the length of the sequence must be >= 3. Of course,
-sequences of length < 10 or so are probably useless, but
+reasons the length of the sequence must be &gt;= 3. Of course,
+sequences of length &lt; 10 or so are probably useless, but
 will be accepted without complaint.<br>
 <br>
 WARNING: always set <a href="#PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS">PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS</a>=0
@@ -2534,12 +2615,15 @@ Repbase (J. Jurka, A.F.A. Smit, C. Pethiyagoda, and
 others, 1995-1996, <a href="ftp://ftp.ncbi.nih.gov/repository/repbase/">ftp://ftp.ncbi.nih.gov/repository/repbase/</a>)
 is an excellent source of repeat sequences and pointers to the
 literature. (The Repbase files need to be converted to Fasta
-format before they can be used by Primer3.)</p>
-<h3><a name="PRIMER_INTERNAL_MISHYB_LIBRARY">PRIMER_INTERNAL_MISHYB_LIBRARY (string; default empty)</a></h3>
+format before they can be used by Primer3.)<br>
+<br>
+See <a href="#providedMisprimingLibs">providedMisprimingLibs</a> for the sequence
+libraries available on this server.</p>
+<h3><a id="PRIMER_INTERNAL_MISHYB_LIBRARY">PRIMER_INTERNAL_MISHYB_LIBRARY (string; default empty)</a></h3>
 <p>Similar to <a href="#PRIMER_MISPRIMING_LIBRARY">PRIMER_MISPRIMING_LIBRARY</a>, except that the event we
 seek to avoid is hybridization of the internal oligo to sequences
 in this library rather than priming from them.</p>
-<h3><a name="PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS">PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS (boolean; default 0)</a></h3>
+<h3><a id="PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS">PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS (boolean; default 0)</a></h3>
 <p>If set to 1, treat ambiguity codes as if they were consensus
 codes when matching oligos to mispriming or mishyb
 libraries. For example, if this flag is set, then a C in an
@@ -2551,35 +2635,35 @@ library contains strings of Ns, as no oligo will be legal
 (and it will take a long time to find this out). So unless
 you know for sure that your library does not have runs of Ns
 (or Xs), then set this flag to 0.</p>
-<h3><a name="PRIMER_MAX_LIBRARY_MISPRIMING">PRIMER_MAX_LIBRARY_MISPRIMING (decimal, 9999.99; default 12.00)</a></h3>
+<h3><a id="PRIMER_MAX_LIBRARY_MISPRIMING">PRIMER_MAX_LIBRARY_MISPRIMING (decimal, 9999.99; default 12.00)</a></h3>
 <p>The maximum allowed weighted similarity with any sequence in
 <a href="#PRIMER_MISPRIMING_LIBRARY">PRIMER_MISPRIMING_LIBRARY</a>.</p>
-<h3><a name="PRIMER_INTERNAL_MAX_LIBRARY_MISHYB">PRIMER_INTERNAL_MAX_LIBRARY_MISHYB (decimal,9999.99; default 12.00)</a></h3>
+<h3><a id="PRIMER_INTERNAL_MAX_LIBRARY_MISHYB">PRIMER_INTERNAL_MAX_LIBRARY_MISHYB (decimal,9999.99; default 12.00)</a></h3>
 <p>Similar to <a href="#PRIMER_MAX_LIBRARY_MISPRIMING">PRIMER_MAX_LIBRARY_MISPRIMING</a> except that this parameter applies
 to the similarity of candidate internal oligos to the library
 specified in <a href="#PRIMER_INTERNAL_MISHYB_LIBRARY">PRIMER_INTERNAL_MISHYB_LIBRARY</a>.</p>
-<h3><a name="PRIMER_PAIR_MAX_LIBRARY_MISPRIMING">PRIMER_PAIR_MAX_LIBRARY_MISPRIMING (decimal, 9999.99; default 24.00)</a></h3>
+<h3><a id="PRIMER_PAIR_MAX_LIBRARY_MISPRIMING">PRIMER_PAIR_MAX_LIBRARY_MISPRIMING (decimal, 9999.99; default 24.00)</a></h3>
 <p>The maximum allowed sum of similarities of a primer pair
 (one similarity for each primer) with any single sequence in
 <a href="#PRIMER_MISPRIMING_LIBRARY">PRIMER_MISPRIMING_LIBRARY</a>.
 Library sequence weights are not used in computing the sum
 of similarities.</p>
-<h3><a name="PRIMER_WT_LIBRARY_MISPRIMING">PRIMER_WT_LIBRARY_MISPRIMING (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_WT_LIBRARY_MISPRIMING">PRIMER_WT_LIBRARY_MISPRIMING (float; default 0.0)</a></h3>
 <p>Penalty for a single primer binding to any single sequence
 in <a href="#PRIMER_MISPRIMING_LIBRARY">PRIMER_MISPRIMING_LIBRARY</a>.</p>
-<h3><a name="PRIMER_INTERNAL_WT_LIBRARY_MISHYB">PRIMER_INTERNAL_WT_LIBRARY_MISHYB (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_WT_LIBRARY_MISHYB">PRIMER_INTERNAL_WT_LIBRARY_MISHYB (float; default 0.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_WT_LIBRARY_MISPRIMING">PRIMER_WT_LIBRARY_MISPRIMING</a> for the internal oligo.</p>
-<h3><a name="PRIMER_PAIR_WT_LIBRARY_MISPRIMING">PRIMER_PAIR_WT_LIBRARY_MISPRIMING (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_PAIR_WT_LIBRARY_MISPRIMING">PRIMER_PAIR_WT_LIBRARY_MISPRIMING (float; default 0.0)</a></h3>
 <p>Penalty for a primer pair binding to any single sequence
 in <a href="#PRIMER_MISPRIMING_LIBRARY">PRIMER_MISPRIMING_LIBRARY</a>.</p>
-<h3><a name="PRIMER_MASK_TEMPLATE">PRIMER_MASK_TEMPLATE (boolean; default 0)</a></h3>
+<h3><a id="PRIMER_MASK_TEMPLATE">PRIMER_MASK_TEMPLATE (boolean; default 0)</a></h3>
 <p>This feature helps to prevent designing primers to template
 regions that are repetitive. Primers with more binding
 sites tend to have higher failure rates. The masking is
 based on statistical model, which calculates the
-probability of failure P<sub>f</sub> as follows:<br>
+probability of failure P<sub>f</sub> as follows:</p>
 <pre>P<sub>f</sub>= e<sup>m</sup> / (1 + e<sup>m</sup>),</pre>
-where m = 0.1772 * K11 + 0.239 * K16 - 4.336 <br>
+<p>where m = 0.1772 * K11 + 0.239 * K16 - 4.336 <br>
 and K11 and K16 are frequencies of 11-mers and 16-mers
 in given genome. The frequencies are stored in
 species-specific k-mer list files. Users can build their
@@ -2587,46 +2671,46 @@ own k-mer lists for species of interest. GenomeTester4
 software for making properly formatted k-mer lists can be
 downloaded from GitHub:
 <a href="https://github.com/bioinfo-ut/GenomeTester4">https://github.com/bioinfo-ut/GenomeTester4</a>.</p>
-<h3><a name="PRIMER_MASK_FAILURE_RATE">PRIMER_MASK_FAILURE_RATE (float; default 0.1)</a></h3>
+<h3><a id="PRIMER_MASK_FAILURE_RATE">PRIMER_MASK_FAILURE_RATE (float; default 0.1)</a></h3>
 <p>Cutoff value of accepted failure rate for masking
 algorithm. Higher value gives lower stringency, meaning
 that fewer nucleotides in target sequence is masked.</p>
-<h3><a name="PRIMER_WT_MASK_FAILURE_RATE">PRIMER_WT_MASK_FAILURE_RATE (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_WT_MASK_FAILURE_RATE">PRIMER_WT_MASK_FAILURE_RATE (float; default 0.0)</a></h3>
 <p>Penalty weight for the primer failure rate.</p>
-<h3><a name="PRIMER_MASK_5P_DIRECTION">PRIMER_MASK_5P_DIRECTION (int; default 1)</a></h3>
+<h3><a id="PRIMER_MASK_5P_DIRECTION">PRIMER_MASK_5P_DIRECTION (int; default 1)</a></h3>
 <p>The number of nucleotides masking algorithm should mask
 from 5' direction.</p>
-<h3><a name="PRIMER_MASK_3P_DIRECTION">PRIMER_MASK_3P_DIRECTION (int; default 0)</a></h3>
+<h3><a id="PRIMER_MASK_3P_DIRECTION">PRIMER_MASK_3P_DIRECTION (int; default 0)</a></h3>
 <p>The number of nucleotides masking algorithm should mask
 from 3' direction.</p>
-<h3><a name="PRIMER_MASK_KMERLIST_PATH">PRIMER_MASK_KMERLIST_PATH (string; default ../kmer_lists/)</a></h3>
+<h3><a id="PRIMER_MASK_KMERLIST_PATH">PRIMER_MASK_KMERLIST_PATH (string; default ../kmer_lists/)</a></h3>
 <p>This tag specifies the path to the directory that
 contains k-mer list files for masking algorithm. Required
 for command-line execution. On web interface the species
 is selected from drop-down menu</p>
-<h3><a name="PRIMER_MASK_KMERLIST_PREFIX">PRIMER_MASK_KMERLIST_PREFIX (string; default homo_sapiens)</a></h3>
+<h3><a id="PRIMER_MASK_KMERLIST_PREFIX">PRIMER_MASK_KMERLIST_PREFIX (string; default homo_sapiens)</a></h3>
 <p>This tag specifies the species whose k-mer lists are used for
 pre-masking.</p>
-<h3><a name="PRIMER_MIN_QUALITY">PRIMER_MIN_QUALITY (int; default 0)</a></h3>
+<h3><a id="PRIMER_MIN_QUALITY">PRIMER_MIN_QUALITY (int; default 0)</a></h3>
 <p>The minimum sequence quality (as specified by
 <a href="#SEQUENCE_QUALITY">SEQUENCE_QUALITY</a>) allowed within a primer.</p>
-<h3><a name="PRIMER_INTERNAL_MIN_QUALITY">PRIMER_INTERNAL_MIN_QUALITY (int; default 0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_MIN_QUALITY">PRIMER_INTERNAL_MIN_QUALITY (int; default 0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_MIN_QUALITY">PRIMER_MIN_QUALITY</a> for the internal oligo.</p>
-<h3><a name="PRIMER_MIN_END_QUALITY">PRIMER_MIN_END_QUALITY (int; default 0)</a></h3>
+<h3><a id="PRIMER_MIN_END_QUALITY">PRIMER_MIN_END_QUALITY (int; default 0)</a></h3>
 <p>The minimum sequence quality (as specified by
 <a href="#SEQUENCE_QUALITY">SEQUENCE_QUALITY</a>) allowed within the 5' pentamer of a
 primer. Note that there is no PRIMER_INTERNAL_MIN_END_QUALITY.</p>
-<h3><a name="PRIMER_QUALITY_RANGE_MIN">PRIMER_QUALITY_RANGE_MIN (int; default 0)</a></h3>
+<h3><a id="PRIMER_QUALITY_RANGE_MIN">PRIMER_QUALITY_RANGE_MIN (int; default 0)</a></h3>
 <p>The minimum legal sequence quality (used for error checking
 of <a href="#PRIMER_MIN_QUALITY">PRIMER_MIN_QUALITY</a> and <a href="#PRIMER_MIN_END_QUALITY">PRIMER_MIN_END_QUALITY</a>).</p>
-<h3><a name="PRIMER_QUALITY_RANGE_MAX">PRIMER_QUALITY_RANGE_MAX (int; default 100)</a></h3>
+<h3><a id="PRIMER_QUALITY_RANGE_MAX">PRIMER_QUALITY_RANGE_MAX (int; default 100)</a></h3>
 <p>The maximum legal sequence quality (used for error checking
 of <a href="#PRIMER_MIN_QUALITY">PRIMER_MIN_QUALITY</a> and <a href="#PRIMER_MIN_END_QUALITY">PRIMER_MIN_END_QUALITY</a>).</p>
-<h3><a name="PRIMER_WT_SEQ_QUAL">PRIMER_WT_SEQ_QUAL (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_WT_SEQ_QUAL">PRIMER_WT_SEQ_QUAL (float; default 0.0)</a></h3>
 <p>Penalty weight for the sequence quality of the primer.</p>
-<h3><a name="PRIMER_INTERNAL_WT_SEQ_QUAL">PRIMER_INTERNAL_WT_SEQ_QUAL (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_WT_SEQ_QUAL">PRIMER_INTERNAL_WT_SEQ_QUAL (float; default 0.0)</a></h3>
 <p>Equivalent parameter of <a href="#PRIMER_WT_SEQ_QUAL">PRIMER_WT_SEQ_QUAL</a> for the internal oligo.</p>
-<h3><a name="PRIMER_PAIR_WT_PR_PENALTY">PRIMER_PAIR_WT_PR_PENALTY (float; default 1.0)</a></h3>
+<h3><a id="PRIMER_PAIR_WT_PR_PENALTY">PRIMER_PAIR_WT_PR_PENALTY (float; default 1.0)</a></h3>
 <p>Penalty factor for the sum of the left and the right primer added
 to the pair penalty. Setting this value below 1.0 will increase
 running time.<br>
@@ -2641,9 +2725,9 @@ reason is that the search algorithm must calculate the penalty
 for more primer pairs (as opposed to excluding them based on
 the penalties of the individual oligos).
 </p>
-<h3><a name="PRIMER_PAIR_WT_IO_PENALTY">PRIMER_PAIR_WT_IO_PENALTY (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_PAIR_WT_IO_PENALTY">PRIMER_PAIR_WT_IO_PENALTY (float; default 0.0)</a></h3>
 <p>Penalty factor for the internal oligo added to the pair penalty.</p>
-<h3><a name="PRIMER_INSIDE_PENALTY">PRIMER_INSIDE_PENALTY (float; default -1.0)</a></h3>
+<h3><a id="PRIMER_INSIDE_PENALTY">PRIMER_INSIDE_PENALTY (float; default -1.0)</a></h3>
 <p>Non-default values are valid only for sequences with 0 or 1
 target regions.  If the primer is part of a pair that spans a
 target and overlaps the target, then multiply this value times
@@ -2651,7 +2735,7 @@ the number of nucleotide positions by which the primer overlaps
 the (unique) target to get the 'position penalty'.  The effect of
 this parameter is to allow Primer3 to include overlap with the
 target as a term in the objective function.</p>
-<h3><a name="PRIMER_OUTSIDE_PENALTY">PRIMER_OUTSIDE_PENALTY (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_OUTSIDE_PENALTY">PRIMER_OUTSIDE_PENALTY (float; default 0.0)</a></h3>
 <p>Non-default values are valid only for sequences with 0 or 1
 target regions.  If the primer is part of a pair that spans a
 target and does not overlap the target, then multiply this value
@@ -2659,33 +2743,33 @@ times the number of nucleotide positions from the 3' end to the
 (unique) target to get the 'position penalty'.  The effect of
 this parameter is to allow Primer3 to include nearness to the
 target as a term in the objective function.</p>
-<h3><a name="PRIMER_WT_POS_PENALTY">PRIMER_WT_POS_PENALTY (float; default 1.0)</a></h3>
+<h3><a id="PRIMER_WT_POS_PENALTY">PRIMER_WT_POS_PENALTY (float; default 1.0)</a></h3>
 <p>Penalty for the primer which do not overlap the target.</p>
-<h3><a name="PRIMER_SEQUENCING_LEAD">PRIMER_SEQUENCING_LEAD (int; default 50)</a></h3>
+<h3><a id="PRIMER_SEQUENCING_LEAD">PRIMER_SEQUENCING_LEAD (int; default 50)</a></h3>
 <p>Defines the space from the 3'end of the primer to the point
 were the trace signals are readable. Value only used if
 <a href="#PRIMER_TASK">PRIMER_TASK</a>=pick_sequencing_primers.</p>
-<h3><a name="PRIMER_SEQUENCING_SPACING">PRIMER_SEQUENCING_SPACING (int; default 500)</a></h3>
+<h3><a id="PRIMER_SEQUENCING_SPACING">PRIMER_SEQUENCING_SPACING (int; default 500)</a></h3>
 <p>Defines the space from the 3'end of the primer to the 3'end of
 the next primer on the same strand. Value only used if
 <a href="#PRIMER_TASK">PRIMER_TASK</a>=pick_sequencing_primers.</p>
-<h3><a name="PRIMER_SEQUENCING_INTERVAL">PRIMER_SEQUENCING_INTERVAL (int; default 250)</a></h3>
+<h3><a id="PRIMER_SEQUENCING_INTERVAL">PRIMER_SEQUENCING_INTERVAL (int; default 250)</a></h3>
 <p>Defines the space from the 3'end of the primer to the 3'end of
 the next primer on the reverse strand. Value only used if
 <a href="#PRIMER_TASK">PRIMER_TASK</a>=pick_sequencing_primers.</p>
-<h3><a name="PRIMER_SEQUENCING_ACCURACY">PRIMER_SEQUENCING_ACCURACY (int; default 20)</a></h3>
+<h3><a id="PRIMER_SEQUENCING_ACCURACY">PRIMER_SEQUENCING_ACCURACY (int; default 20)</a></h3>
 <p>Defines the space from the calculated position of the 3'end to
 both sides in which Primer3Plus picks the best primer. Value only used if
 <a href="#PRIMER_TASK">PRIMER_TASK</a>=pick_sequencing_primers.</p>
-<h3><a name="PRIMER_WT_END_QUAL">PRIMER_WT_END_QUAL (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_WT_END_QUAL">PRIMER_WT_END_QUAL (float; default 0.0)</a></h3>
 <p> </p>
-<h3><a name="PRIMER_INTERNAL_WT_END_QUAL">PRIMER_INTERNAL_WT_END_QUAL (float; default 0.0)</a></h3>
+<h3><a id="PRIMER_INTERNAL_WT_END_QUAL">PRIMER_INTERNAL_WT_END_QUAL (float; default 0.0)</a></h3>
 <p> </p>
-<h2><a name="programTags">17. "PROGRAM" INPUT TAGS</a></h2>
+<h2><a id="programTags">18. "PROGRAM" INPUT TAGS</a></h2>
 <p>"Program" input tags start with P3_... describe the
 parameters that deal with the behavior of the Primer3 program
 itself.)</p>
-<h3><a name="P3_FILE_ID">P3_FILE_ID (string; default empty)</a></h3>
+<h3><a id="P3_FILE_ID">P3_FILE_ID (string; default empty)</a></h3>
 <p>
 This tag is only valid in Primer3 setting files. It should be used to
 identify the purpose of the settings files it appears in.
@@ -2694,7 +2778,14 @@ See also also the command line flag -echo_settings_file,
 which causes the entire settings file to be echoed in primer3_core's
 output.
 </p>
-<h3><a name="P3_FILE_FLAG">P3_FILE_FLAG (boolean; default 0)</a></h3>
+<h3><a id="P3_FILE_TYPE">P3_FILE_TYPE (string; default sequence)</a></h3>
+<p>
+This tag is only valid in the header of Primer3 setting files. It
+should be used in the second line to identify the type files it
+appears in. Valid options are sequence, settings or all. In
+Primer3Plus it can control which parameters are loaded.
+</p>
+<h3><a id="P3_FILE_FLAG">P3_FILE_FLAG (boolean; default 0)</a></h3>
 <p>If the associated value = 1 (non-0), then Primer3 creates
 one or more output
 files for each input <a href="#SEQUENCE_TEMPLATE">SEQUENCE_TEMPLATE</a>.  File &lt;sequence_id&gt;.for lists all
@@ -2710,9 +2801,9 @@ to be a string that will work as a file name.
 See also the <code>pick_primer_list</code>
 argument to <a href="#PRIMER_TASK">PRIMER_TASK</a>, which offers similar functionality on stdout.
 </p>
-<h3><a name="P3_COMMENT">P3_COMMENT (string; default empty)</a></h3>
+<h3><a id="P3_COMMENT">P3_COMMENT (string; default empty)</a></h3>
 <p>The value of this tag is ignored. It can be used to annotate input.</p>
-<h2><a name="calculatePenalties">18. HOW PRIMER3 CALCULATES THE PENALTY VALUE</a></h2>
+<h2><a id="calculatePenalties">19. HOW PRIMER3 CALCULATES THE PENALTY VALUE</a></h2>
 <p>
 In essense, the penalty values define what is the best primer
 pair.
@@ -2959,7 +3050,7 @@ primer, it is calculated like that:</p>
 <p>
 The primers are then sorted by penalty and Primer3 tries to pick
 the primers with the lowest penalty. For the <a href="#PRIMER_TASK">PRIMER_TASK</a>
-<tt><i>pick_primer_list</i></tt> or <tt><i>pick_sequencing_primers</i></tt> the selection ends at
+<pre><i>pick_primer_list</i></pre> or <pre><i>pick_sequencing_primers</i></pre> the selection ends at
 this point. If primer pairs have to be selected, a
 <a href="#PRIMER_PAIR_4_PENALTY">PRIMER_PAIR_4_PENALTY</a> is calculated:
 <pre>
@@ -3022,7 +3113,7 @@ this point. If primer pairs have to be selected, a
 <p>Primer3 tries to select pairs with the lowest penalty which
 still fulfill all necessary requirements like non-redundancy or
 product size limits.</p>
-<h2><a name="fileFormat">19. PRIMER3 SETTINGS FILE FORMAT</a></h2>
+<h2><a id="fileFormat">20. PRIMER3 SETTINGS FILE FORMAT</a></h2>
 <p>Primer3 can read global settings from a text file at program
 start up. This allows the user to save and exchange settings
 tailored to special applications.<br>
@@ -3051,7 +3142,7 @@ settings on the output. From the fourth line on regular
 Boulder-IO can be used as it is used in regular input. It also
 has to be terminated with a single "=". There can be only one
 input per file.</p>
-<h2><a name="outputTags">20. OUTPUT TAGS</a></h2>
+<h2><a id="outputTags">21. OUTPUT TAGS</a></h2>
 <p>For each Boulder-IO record passed into Primer3 via stdin, exactly
 one Boulder-IO record comes out of Primer3 on stdout.
 If a settings file is provided and the option to echo the settings file is given
@@ -3073,17 +3164,17 @@ number 4 is shown as for example: <a href="#PRIMER_LEFT_4_TM">PRIMER_LEFT_4_TM</
 In the descriptions below, 'i,n' represents a start/length pair,
 's' represents a string, x represents an arbitrary integer, and f
 represents a float.</p>
-<h3><a name="PRIMER_ERROR">PRIMER_ERROR=s (*)</a></h3>
+<h3><a id="PRIMER_ERROR">PRIMER_ERROR=s (*)</a></h3>
 <p>s describes user-correctable errors detected in the input
 (separated by semicolons).  This tag is absent if there are no
 errors.</p>
-<h3><a name="PRIMER_WARNING">PRIMER_WARNING=s (*)</a></h3>
+<h3><a id="PRIMER_WARNING">PRIMER_WARNING=s (*)</a></h3>
 <p>s lists warnings generated by Primer3` (separated by semicolons);
 this tag is absent if there are no warnings.</p>
-<h3><a name="PRIMER_LEFT_NUM_RETURNED">PRIMER_LEFT_NUM_RETURNED=i</a></h3>
-<h3><a name="PRIMER_RIGHT_NUM_RETURNED">PRIMER_RIGHT_NUM_RETURNED=i</a></h3>
-<h3><a name="PRIMER_INTERNAL_NUM_RETURNED">PRIMER_INTERNAL_NUM_RETURNED=i</a></h3>
-<h3><a name="PRIMER_PAIR_NUM_RETURNED">PRIMER_PAIR_NUM_RETURNED=i</a></h3>
+<h3><a id="PRIMER_LEFT_NUM_RETURNED">PRIMER_LEFT_NUM_RETURNED=i</a></h3>
+<h3><a id="PRIMER_RIGHT_NUM_RETURNED">PRIMER_RIGHT_NUM_RETURNED=i</a></h3>
+<h3><a id="PRIMER_INTERNAL_NUM_RETURNED">PRIMER_INTERNAL_NUM_RETURNED=i</a></h3>
+<h3><a id="PRIMER_PAIR_NUM_RETURNED">PRIMER_PAIR_NUM_RETURNED=i</a></h3>
 <p>i is the number of primers
 or primer pairs returned on standard output.
 These tags are always generated under
@@ -3113,14 +3204,14 @@ pick_primer_list, return left and right primers
 that are not parts of primer pairs. In this case
 PRIMER_PAIR_NUM_RETURNED will be 0.
 </p>
-<h3><a name="PRIMER_LEFT_4_PROBLEMS">PRIMER_LEFT_4_PROBLEMS=s (*)</a></h3>
-<h3><a name="PRIMER_INTERNAL_4_PROBLEMS">PRIMER_INTERNAL_4_PROBLEMS=s (*)</a></h3>
-<h3><a name="PRIMER_RIGHT_4_PROBLEMS">PRIMER_RIGHT_4_PROBLEMS=s (*)</a></h3>
+<h3><a id="PRIMER_LEFT_4_PROBLEMS">PRIMER_LEFT_4_PROBLEMS=s (*)</a></h3>
+<h3><a id="PRIMER_INTERNAL_4_PROBLEMS">PRIMER_INTERNAL_4_PROBLEMS=s (*)</a></h3>
+<h3><a id="PRIMER_RIGHT_4_PROBLEMS">PRIMER_RIGHT_4_PROBLEMS=s (*)</a></h3>
 <p>s lists the problems (constraint violations) associated
 with the corresponding primer oligo.</p>
-<h3><a name="PRIMER_LEFT_EXPLAIN">PRIMER_LEFT_EXPLAIN=s (*)</a></h3>
-<h3><a name="PRIMER_INTERNAL_EXPLAIN">PRIMER_INTERNAL_EXPLAIN=s (*)</a></h3>
-<h3><a name="PRIMER_RIGHT_EXPLAIN">PRIMER_RIGHT_EXPLAIN=s (*)</a></h3>
+<h3><a id="PRIMER_LEFT_EXPLAIN">PRIMER_LEFT_EXPLAIN=s (*)</a></h3>
+<h3><a id="PRIMER_INTERNAL_EXPLAIN">PRIMER_INTERNAL_EXPLAIN=s (*)</a></h3>
+<h3><a id="PRIMER_RIGHT_EXPLAIN">PRIMER_RIGHT_EXPLAIN=s (*)</a></h3>
 <p>s is a (more or less) self-documenting string containing
 statistics on the possibilities that Primer3 considered in
 selecting a single oligo.  For example</p>
@@ -3140,7 +3231,7 @@ this may occur.  This
 situation never results in a primer pair that contains
 an illegal primer.
 </p>
-<h3><a name="PRIMER_PAIR_EXPLAIN">PRIMER_PAIR_EXPLAIN=s (*)</a></h3>
+<h3><a id="PRIMER_PAIR_EXPLAIN">PRIMER_PAIR_EXPLAIN=s (*)</a></h3>
 <p>s is a self-documenting string containing statistics on picking a
 primer pair (plus internal oligo if requested).  For example</p>
 <pre>
@@ -3184,42 +3275,42 @@ number 'considered', even though one or more of
 <a href="#PRIMER_INTERNAL_EXPLAIN">PRIMER_INTERNAL_EXPLAIN</a> has 'ok 0'.
 </li>
 </ul>
-<h3><a name="PRIMER_LEFT_4">PRIMER_LEFT_4=i,n</a></h3>
+<h3><a id="PRIMER_LEFT_4">PRIMER_LEFT_4=i,n</a></h3>
 <p>The selected left primer (the primer to the left in the input
 sequence).  i is the 0-based index of the start base of the
 primer, and n is t its length.</p>
-<h3><a name="PRIMER_INTERNAL_4">PRIMER_INTERNAL_4=i,n</a></h3>
+<h3><a id="PRIMER_INTERNAL_4">PRIMER_INTERNAL_4=i,n</a></h3>
 <p>The selected internal oligo. Primer3 outputs this tag if
 <a href="#PRIMER_PICK_INTERNAL_OLIGO">PRIMER_PICK_INTERNAL_OLIGO</a> was non-0.  If Primer3 fails to pick a
 middle oligo upon request, this tag will not be output.  i is the
 0-based index of start base of the internal oligo, and n is its
 length.</p>
-<h3><a name="PRIMER_RIGHT_4">PRIMER_RIGHT_4=i,n</a></h3>
+<h3><a id="PRIMER_RIGHT_4">PRIMER_RIGHT_4=i,n</a></h3>
 <p>The selected right primer (the primer to the right in the input
 sequence).  i is the 0-based index of the last base of the
 primer, and n is its length.</p>
-<h3><a name="PRIMER_LEFT_4_SEQUENCE">PRIMER_LEFT_4_SEQUENCE=s</a></h3>
-<h3><a name="PRIMER_INTERNAL_4_SEQUENCE">PRIMER_INTERNAL_4_SEQUENCE=s</a></h3>
-<h3><a name="PRIMER_RIGHT_4_SEQUENCE">PRIMER_RIGHT_4_SEQUENCE=s</a></h3>
+<h3><a id="PRIMER_LEFT_4_SEQUENCE">PRIMER_LEFT_4_SEQUENCE=s</a></h3>
+<h3><a id="PRIMER_INTERNAL_4_SEQUENCE">PRIMER_INTERNAL_4_SEQUENCE=s</a></h3>
+<h3><a id="PRIMER_RIGHT_4_SEQUENCE">PRIMER_RIGHT_4_SEQUENCE=s</a></h3>
 <p>The actual sequence of the oligo. The sequence of left primer and
 internal oligo is presented 5' -> 3' on the same strand as the
 input <a href="#SEQUENCE_TEMPLATE">SEQUENCE_TEMPLATE</a> (which must be presented 5' -> 3').  The
 sequence of the right primer is presented 5' -> 3' on the
 opposite strand from the input <a href="#SEQUENCE_TEMPLATE">SEQUENCE_TEMPLATE</a>.</p>
-<h3><a name="PRIMER_PAIR_4_PRODUCT_SIZE">PRIMER_PAIR_4_PRODUCT_SIZE=x</a></h3>
+<h3><a id="PRIMER_PAIR_4_PRODUCT_SIZE">PRIMER_PAIR_4_PRODUCT_SIZE=x</a></h3>
 <p>x is the product size of the PCR product.</p>
-<h3><a name="PRIMER_LEFT_4_PENALTY">PRIMER_LEFT_4_PENALTY=f</a></h3>
-<h3><a name="PRIMER_INTERNAL_4_PENALTY">PRIMER_INTERNAL_4_PENALTY=f</a></h3>
-<h3><a name="PRIMER_RIGHT_4_PENALTY">PRIMER_RIGHT_4_PENALTY=f</a></h3>
+<h3><a id="PRIMER_LEFT_4_PENALTY">PRIMER_LEFT_4_PENALTY=f</a></h3>
+<h3><a id="PRIMER_INTERNAL_4_PENALTY">PRIMER_INTERNAL_4_PENALTY=f</a></h3>
+<h3><a id="PRIMER_RIGHT_4_PENALTY">PRIMER_RIGHT_4_PENALTY=f</a></h3>
 <p>The contribution of this individual primer or oligo to the
 objective function.</p>
-<h3><a name="PRIMER_PAIR_4_PENALTY">PRIMER_PAIR_4_PENALTY=f</a></h3>
+<h3><a id="PRIMER_PAIR_4_PENALTY">PRIMER_PAIR_4_PENALTY=f</a></h3>
 <p>The value of the objective function for this pair (lower is better).</p>
-<h3><a name="PRIMER_LEFT_4_TM">PRIMER_LEFT_4_TM=f</a></h3>
-<h3><a name="PRIMER_INTERNAL_4_TM">PRIMER_INTERNAL_4_TM=f</a></h3>
-<h3><a name="PRIMER_RIGHT_4_TM">PRIMER_RIGHT_4_TM=f</a></h3>
+<h3><a id="PRIMER_LEFT_4_TM">PRIMER_LEFT_4_TM=f</a></h3>
+<h3><a id="PRIMER_INTERNAL_4_TM">PRIMER_INTERNAL_4_TM=f</a></h3>
+<h3><a id="PRIMER_RIGHT_4_TM">PRIMER_RIGHT_4_TM=f</a></h3>
 <p>The melting TM for the selected oligo.</p>
-<h3><a name="PRIMER_PAIR_4_PRODUCT_TM">PRIMER_PAIR_4_PRODUCT_TM=f</a></h3>
+<h3><a id="PRIMER_PAIR_4_PRODUCT_TM">PRIMER_PAIR_4_PRODUCT_TM=f</a></h3>
 <p>f is the melting temperature of the product. Calculated using
 equation (iii) from the paper [Rychlik W, Spencer WJ and Rhoads
 RE (1990) "Optimization of the annealing temperature for DNA
@@ -3227,82 +3318,111 @@ amplification in vitro", Nucleic Acids Res 18:6409-12
 <a href="http://dx.doi.org/10.1093/nar/18.21.6409">http://dx.doi.org/10.1093/nar/18.21.6409</a>].
 Printed only if a non-default value of <a href="#PRIMER_PRODUCT_MAX_TM">PRIMER_PRODUCT_MAX_TM</a> or
 <a href="#PRIMER_PRODUCT_MIN_TM">PRIMER_PRODUCT_MIN_TM</a> is specified.</p>
-<h3><a name="PRIMER_PAIR_4_PRODUCT_TM_OLIGO_TM_DIFF">PRIMER_PAIR_4_PRODUCT_TM_OLIGO_TM_DIFF=f</a></h3>
+<h3><a id="PRIMER_PAIR_4_PRODUCT_TM_OLIGO_TM_DIFF">PRIMER_PAIR_4_PRODUCT_TM_OLIGO_TM_DIFF=f</a></h3>
 <p>f is the difference between the melting temperature of the
 product and the melting temperature of the less stable primer.
 Printed only if <a href="#PRIMER_PRODUCT_MAX_TM">PRIMER_PRODUCT_MAX_TM</a> or <a href="#PRIMER_PRODUCT_MIN_TM">PRIMER_PRODUCT_MIN_TM</a> is
 specified.</p>
-<h3><a name="PRIMER_PAIR_4_T_OPT_A">PRIMER_PAIR_4_T_OPT_A=f</a></h3>
+<h3><a id="PRIMER_PAIR_4_T_OPT_A">PRIMER_PAIR_4_T_OPT_A=f</a></h3>
 <p>f is T sub a super OPT from equation (i) in [Rychlik W, Spencer
 WJ and Rhoads RE (1990) "Optimization of the annealing
 temperature for DNA amplification in vitro", Nucleic Acids Res
 18:6409-12. <a href="http://dx.doi.org/10.1093/nar/18.21.6409">http://dx.doi.org/10.1093/nar/18.21.6409</a>].
 Printed only if <a href="#PRIMER_PRODUCT_MAX_TM">PRIMER_PRODUCT_MAX_TM</a> or <a href="#PRIMER_PRODUCT_MIN_TM">PRIMER_PRODUCT_MIN_TM</a> is
 specified.</p>
-<h3><a name="PRIMER_LEFT_4_GC_PERCENT">PRIMER_LEFT_4_GC_PERCENT=f</a></h3>
-<h3><a name="PRIMER_INTERNAL_4_GC_PERCENT">PRIMER_INTERNAL_4_GC_PERCENT=f</a></h3>
-<h3><a name="PRIMER_RIGHT_4_GC_PERCENT">PRIMER_RIGHT_4_GC_PERCENT=f</a></h3>
+<h3><a id="PRIMER_LEFT_4_GC_PERCENT">PRIMER_LEFT_4_GC_PERCENT=f</a></h3>
+<h3><a id="PRIMER_INTERNAL_4_GC_PERCENT">PRIMER_INTERNAL_4_GC_PERCENT=f</a></h3>
+<h3><a id="PRIMER_RIGHT_4_GC_PERCENT">PRIMER_RIGHT_4_GC_PERCENT=f</a></h3>
 <p>The percent GC for the selected oligo (denominator is the number
 of non-ambiguous bases).</p>
-<h3><a name="PRIMER_LEFT_4_SELF_ANY">PRIMER_LEFT_4_SELF_ANY=f</a></h3>
-<h3><a name="PRIMER_INTERNAL_4_SELF_ANY">PRIMER_INTERNAL_4_SELF_ANY=f</a></h3>
-<h3><a name="PRIMER_RIGHT_4_SELF_ANY">PRIMER_RIGHT_4_SELF_ANY=f</a></h3>
+<h3><a id="PRIMER_LEFT_4_SELF_ANY">PRIMER_LEFT_4_SELF_ANY=f</a></h3>
+<h3><a id="PRIMER_INTERNAL_4_SELF_ANY">PRIMER_INTERNAL_4_SELF_ANY=f</a></h3>
+<h3><a id="PRIMER_RIGHT_4_SELF_ANY">PRIMER_RIGHT_4_SELF_ANY=f</a></h3>
 <p>The calculated value for the tendency of a primer to bind to
 itself (interfering with target sequence binding). It will score
 ANY binding occurring within the entire primer sequence. For
 details see <a href="#PRIMER_MAX_SELF_ANY">PRIMER_MAX_SELF_ANY</a>.<br>
 The self-complementarity measures for the selected oligo.</p>
-<h3><a name="PRIMER_LEFT_4_SELF_ANY_TH">PRIMER_LEFT_4_SELF_ANY_TH=f</a></h3>
-<h3><a name="PRIMER_INTERNAL_4_SELF_ANY_TH">PRIMER_INTERNAL_4_SELF_ANY_TH=f</a></h3>
-<h3><a name="PRIMER_RIGHT_4_SELF_ANY_TH">PRIMER_RIGHT_4_SELF_ANY_TH=f</a></h3>
+<h3><a id="PRIMER_LEFT_4_SELF_ANY_TH">PRIMER_LEFT_4_SELF_ANY_TH=f</a></h3>
+<h3><a id="PRIMER_INTERNAL_4_SELF_ANY_TH">PRIMER_INTERNAL_4_SELF_ANY_TH=f</a></h3>
+<h3><a id="PRIMER_RIGHT_4_SELF_ANY_TH">PRIMER_RIGHT_4_SELF_ANY_TH=f</a></h3>
 <p>The calculated value for the tendency of a primer to bind to
 itself (interfering with target sequence binding). It will calculate the
 melting temperature for ANY binding occurring within the entire primer
 sequence. For details see <a href="#PRIMER_MAX_SELF_ANY_TH">PRIMER_MAX_SELF_ANY_TH</a>.
 The self-complementarity measures for the selected oligo.</p>
-<h3><a name="PRIMER_RIGHT_4_HAIRPIN_TH">PRIMER_RIGHT_4_HAIRPIN_TH=f</a></h3>
-<p>The calculated value of melting temperature of hairpin structure of primer.
-   For details see <a href="#PRIMER_MAX_HAIRPIN_TH">PRIMER_MAX_HAIRPIN_TH</a></p>
-<h3><a name="PRIMER_PAIR_4_COMPL_ANY">PRIMER_PAIR_4_COMPL_ANY=f</a></h3>
-<p>The calculated value for the tendency of a primer pair to bind to
-each other (interfering with target sequence binding). It will
-score ANY binding occurring within the entire primer sequence.
-For details see <a href="#PRIMER_MAX_SELF_ANY">PRIMER_MAX_SELF_ANY</a>.<br>
-The inter-pair complementarity measures over the complete primer
-for selected left and right primer.</p>
-<h3><a name="PRIMER_PAIR_4_COMPL_ANY_TH">PRIMER_PAIR_4_COMPL_ANY_TH=f</a></h3>
-<p>The calculated value for the tendency of a primer pair to
-bind to each other (interfering with target sequence binding). It will
-calculate the melting temperature of ANY binding occurring within the entire
-primer sequence. For details see <a href="#PRIMER_MAX_SELF_ANY_TH">PRIMER_MAX_SELF_ANY_TH</a>.
-The inter-pair complementarity measures over the complete primer for
-selected left and right primer.</p>
-<h3><a name="PRIMER_LEFT_4_SELF_END">PRIMER_LEFT_4_SELF_END=f</a></h3>
-<h3><a name="PRIMER_INTERNAL_4_SELF_END">PRIMER_INTERNAL_4_SELF_END=f</a></h3>
-<h3><a name="PRIMER_RIGHT_4_SELF_END">PRIMER_RIGHT_4_SELF_END=f</a></h3>
+<h3><a id="PRIMER_LEFT_4_SELF_ANY_STUCT">PRIMER_LEFT_4_SELF_ANY_STUCT=s</a></h3>
+<h3><a id="PRIMER_INTERNAL_4_SELF_ANY_STUCT">PRIMER_INTERNAL_4_SELF_ANY_STUCT=s</a></h3>
+<h3><a id="PRIMER_RIGHT_4_SELF_ANY_STUCT">PRIMER_RIGHT_4_SELF_ANY_STUCT=s</a></h3>
+<p>A string representation of the calculated secondary
+structure. The tag is only present if a secondary structure could
+be calculated and <a href="#PRIMER_SECONDARY_STRUCTURE_ALIGNMENT">PRIMER_SECONDARY_STRUCTURE_ALIGNMENT</a>=1.<br>
+See <a href="#PRIMER_SECONDARY_STRUCTURE_ALIGNMENT">PRIMER_SECONDARY_STRUCTURE_ALIGNMENT</a> for examples and
+notes on the necessary reformating of the string.
+</p>
+<h3><a id="PRIMER_LEFT_4_SELF_END">PRIMER_LEFT_4_SELF_END=f</a></h3>
+<h3><a id="PRIMER_INTERNAL_4_SELF_END">PRIMER_INTERNAL_4_SELF_END=f</a></h3>
+<h3><a id="PRIMER_RIGHT_4_SELF_END">PRIMER_RIGHT_4_SELF_END=f</a></h3>
 <p>The calculated value for the tendency of the 3'-END to bind to a
 identical primer. This is critical for primer quality because it
 allows primers use itself as a target and amplify a short piece
 (forming a primer-dimer). These primer are then unable to bind
 and amplify the target sequence. For details see <a href="#PRIMER_MAX_SELF_END">PRIMER_MAX_SELF_END</a>.<br>
 The self-complementarity measures for the ends of selected oligo.</p>
-<h3><a name="PRIMER_LEFT_4_SELF_END_TH">PRIMER_LEFT_4_SELF_END_TH=f</a></h3>
-<h3><a name="PRIMER_INTERNAL_4_SELF_END_TH">PRIMER_INTERNAL_4_SELF_END_TH=f</a></h3>
-<h3><a name="PRIMER_RIGHT_4_SELF_END_TH">PRIMER_RIGHT_4_SELF_END_TH=f</a></h3>
+<h3><a id="PRIMER_LEFT_4_SELF_END_TH">PRIMER_LEFT_4_SELF_END_TH=f</a></h3>
+<h3><a id="PRIMER_INTERNAL_4_SELF_END_TH">PRIMER_INTERNAL_4_SELF_END_TH=f</a></h3>
+<h3><a id="PRIMER_RIGHT_4_SELF_END_TH">PRIMER_RIGHT_4_SELF_END_TH=f</a></h3>
 <p>The calculated value for the tendency of the 3'-END to bind
 to a identical primer. This is critical for primer quality because it allows
 primers use itself as a target and amplify a short piece (forming a
 primer-dimer). These primer are then unable to bind and amplify the target
 sequence. For details see <a href="#PRIMER_MAX_SELF_END_TH">PRIMER_MAX_SELF_END_TH</a>.
 The self-complementarity measures for the ends of selected oligo.</p>
-<h3><a name="PRIMER_LEFT_4_HAIRPIN_TH">PRIMER_LEFT_4_HAIRPIN_TH=f</a></h3>
+<h3><a id="PRIMER_LEFT_4_SELF_END_STUCT">PRIMER_LEFT_4_SELF_END_STUCT=s</a></h3>
+<h3><a id="PRIMER_INTERNAL_4_SELF_END_STUCT">PRIMER_INTERNAL_4_SELF_END_STUCT=s</a></h3>
+<h3><a id="PRIMER_RIGHT_4_SELF_END_STUCT">PRIMER_RIGHT_4_SELF_END_STUCT=s</a></h3>
+<p>A string representation of the calculated secondary
+structure. The tag is only present if a secondary structure could
+be calculated and <a href="#PRIMER_SECONDARY_STRUCTURE_ALIGNMENT">PRIMER_SECONDARY_STRUCTURE_ALIGNMENT</a>=1.<br>
+See <a href="#PRIMER_SECONDARY_STRUCTURE_ALIGNMENT">PRIMER_SECONDARY_STRUCTURE_ALIGNMENT</a> for examples and
+notes on the necessary reformating of the string.
+</p>
+<h3><a id="PRIMER_LEFT_4_HAIRPIN_TH">PRIMER_LEFT_4_HAIRPIN_TH=f</a></h3>
+<h3><a id="PRIMER_INTERNAL_4_HAIRPIN_TH">PRIMER_INTERNAL_4_HAIRPIN_TH=f</a></h3>
+<h3><a id="PRIMER_RIGHT_4_HAIRPIN_TH">PRIMER_RIGHT_4_HAIRPIN_TH=f</a></h3>
 <p>The calculated value of melting temperature of hairpin
 structure of primer. For details see <a href="#PRIMER_MAX_HAIRPIN_TH">PRIMER_MAX_HAIRPIN_TH</a></p>
-<h3><a name="PRIMER_INTERNAL_4_HAIRPIN_TH">PRIMER_INTERNAL_4_HAIRPIN_TH=f</a></h3>
-<p>The calculated value of melting temperature of hairpin
-structure of primer. For details see <a href="#PRIMER_MAX_HAIRPIN_TH">PRIMER_MAX_HAIRPIN_TH</a>
-     </p>
-<h3><a name="PRIMER_PAIR_4_COMPL_END">PRIMER_PAIR_4_COMPL_END=f</a></h3>
+<h3><a id="PRIMER_LEFT_4_HAIRPIN_STUCT">PRIMER_LEFT_4_HAIRPIN_STUCT=s</a></h3>
+<h3><a id="PRIMER_INTERNAL_4_HAIRPIN_STUCT">PRIMER_INTERNAL_4_HAIRPIN_STUCT=s</a></h3>
+<h3><a id="PRIMER_RIGHT_4_HAIRPIN_STUCT">PRIMER_RIGHT_4_HAIRPIN_STUCT=s</a></h3>
+<p>A string representation of the calculated secondary
+structure. The tag is only present if a secondary structure could
+be calculated and <a href="#PRIMER_SECONDARY_STRUCTURE_ALIGNMENT">PRIMER_SECONDARY_STRUCTURE_ALIGNMENT</a>=1.<br>
+See <a href="#PRIMER_SECONDARY_STRUCTURE_ALIGNMENT">PRIMER_SECONDARY_STRUCTURE_ALIGNMENT</a> for examples and
+notes on the necessary reformating of the string.
+</p>
+<h3><a id="PRIMER_PAIR_4_COMPL_ANY">PRIMER_PAIR_4_COMPL_ANY=f</a></h3>
+<p>The calculated value for the tendency of a primer pair to bind to
+each other (interfering with target sequence binding). It will
+score ANY binding occurring within the entire primer sequence.
+For details see <a href="#PRIMER_MAX_SELF_ANY">PRIMER_MAX_SELF_ANY</a>.<br>
+The inter-pair complementarity measures over the complete primer
+for selected left and right primer.</p>
+<h3><a id="PRIMER_PAIR_4_COMPL_ANY_TH">PRIMER_PAIR_4_COMPL_ANY_TH=f</a></h3>
+<p>The calculated value for the tendency of a primer pair to
+bind to each other (interfering with target sequence binding). It will
+calculate the melting temperature of ANY binding occurring within the entire
+primer sequence. For details see <a href="#PRIMER_MAX_SELF_ANY_TH">PRIMER_MAX_SELF_ANY_TH</a>.
+The inter-pair complementarity measures over the complete primer for
+selected left and right primer.</p>
+<h3><a id="PRIMER_PAIR_4_COMPL_ANY_STUCT">PRIMER_PAIR_4_COMPL_ANY_STUCT=s</a></h3>
+<p>A string representation of the calculated secondary
+structure. The tag is only present if a secondary structure could
+be calculated and <a href="#PRIMER_SECONDARY_STRUCTURE_ALIGNMENT">PRIMER_SECONDARY_STRUCTURE_ALIGNMENT</a>=1.<br>
+See <a href="#PRIMER_SECONDARY_STRUCTURE_ALIGNMENT">PRIMER_SECONDARY_STRUCTURE_ALIGNMENT</a> for examples and
+notes on the necessary reformating of the string.
+</p>
+<h3><a id="PRIMER_PAIR_4_COMPL_END">PRIMER_PAIR_4_COMPL_END=f</a></h3>
 <p>The calculated value for the tendency of the 3'-ENDs of a primer pair to bind to
 each other. This is critical for primer quality because it
 allows primers use itself as a target and amplify a short piece
@@ -3311,7 +3431,7 @@ and amplify the target sequence. For details see
 <a href="#PRIMER_MAX_SELF_END">PRIMER_MAX_SELF_END</a>.<br>
 The inter-pair complementarity measures for the ends of selected
 left and right primer.</p>
-<h3><a name="PRIMER_PAIR_4_COMPL_END_TH">PRIMER_PAIR_4_COMPL_END_TH=f</a></h3>
+<h3><a id="PRIMER_PAIR_4_COMPL_END_TH">PRIMER_PAIR_4_COMPL_END_TH=f</a></h3>
 <p>The calculated value for the tendency of the 3'-ENDs of a
 primer pair to bind to each other. This is critical for primer quality
 because it allows primers use itself as a target and amplify a short piece
@@ -3319,64 +3439,71 @@ because it allows primers use itself as a target and amplify a short piece
 the target sequence. For details see <a href="#PRIMER_MAX_SELF_END_TH">PRIMER_MAX_SELF_END_TH</a>.
 The inter-pair complementarity measures for the ends of selected left and
 right primer.</p>
-<h3><a name="PRIMER_LEFT_4_END_STABILITY">PRIMER_LEFT_4_END_STABILITY=f</a></h3>
-<h3><a name="PRIMER_RIGHT_4_END_STABILITY">PRIMER_RIGHT_4_END_STABILITY=f</a></h3>
+<h3><a id="PRIMER_PAIR_4_COMPL_END_STUCT">PRIMER_PAIR_4_COMPL_END_STUCT=s</a></h3>
+<p>A string representation of the calculated secondary
+structure. The tag is only present if a secondary structure could
+be calculated and <a href="#PRIMER_SECONDARY_STRUCTURE_ALIGNMENT">PRIMER_SECONDARY_STRUCTURE_ALIGNMENT</a>=1.<br>
+See <a href="#PRIMER_SECONDARY_STRUCTURE_ALIGNMENT">PRIMER_SECONDARY_STRUCTURE_ALIGNMENT</a> for examples and
+notes on the necessary reformating of the string.
+</p>
+<h3><a id="PRIMER_LEFT_4_END_STABILITY">PRIMER_LEFT_4_END_STABILITY=f</a></h3>
+<h3><a id="PRIMER_RIGHT_4_END_STABILITY">PRIMER_RIGHT_4_END_STABILITY=f</a></h3>
 <p>f is the delta G of disruption of the five 3' bases of the
 primer.</p>
-<h3><a name="PRIMER_LEFT_4_TEMPLATE_MISPRIMING">PRIMER_LEFT_4_TEMPLATE_MISPRIMING=f</a></h3>
-<h3><a name="PRIMER_RIGHT_4_TEMPLATE_MISPRIMING">PRIMER_RIGHT_4_TEMPLATE_MISPRIMING=f</a></h3>
-<h3><a name="PRIMER_PAIR_4_TEMPLATE_MISPRIMING">PRIMER_PAIR_4_TEMPLATE_MISPRIMING=f</a></h3>
+<h3><a id="PRIMER_LEFT_4_TEMPLATE_MISPRIMING">PRIMER_LEFT_4_TEMPLATE_MISPRIMING=f</a></h3>
+<h3><a id="PRIMER_RIGHT_4_TEMPLATE_MISPRIMING">PRIMER_RIGHT_4_TEMPLATE_MISPRIMING=f</a></h3>
+<h3><a id="PRIMER_PAIR_4_TEMPLATE_MISPRIMING">PRIMER_PAIR_4_TEMPLATE_MISPRIMING=f</a></h3>
 <p>Analogous to PRIMER_{LEFT,RIGHT,PAIR}_LIBRARY_MISPRIMING, except that
 these output tags apply to mispriming within the template sequence.
 This often arises, for example, in genes with repeated exons. For
 backward compatibility, these tags only appear if the corresponding
 input tags have defined values.</p>
-<h3><a name="PRIMER_LEFT_4_TEMPLATE_MISPRIMING_TH">PRIMER_LEFT_4_TEMPLATE_MISPRIMING_TH=f</a></h3>
-<h3><a name="PRIMER_RIGHT_4_TEMPLATE_MISPRIMING_TH">PRIMER_RIGHT_4_TEMPLATE_MISPRIMING_TH=f</a></h3>
-<h3><a name="PRIMER_PAIR_4_TEMPLATE_MISPRIMING_TH">PRIMER_PAIR_4_TEMPLATE_MISPRIMING_TH=f</a></h3>
+<h3><a id="PRIMER_LEFT_4_TEMPLATE_MISPRIMING_TH">PRIMER_LEFT_4_TEMPLATE_MISPRIMING_TH=f</a></h3>
+<h3><a id="PRIMER_RIGHT_4_TEMPLATE_MISPRIMING_TH">PRIMER_RIGHT_4_TEMPLATE_MISPRIMING_TH=f</a></h3>
+<h3><a id="PRIMER_PAIR_4_TEMPLATE_MISPRIMING_TH">PRIMER_PAIR_4_TEMPLATE_MISPRIMING_TH=f</a></h3>
 <p>These output tags apply to mispriming within the template sequence and the calculation
 method is based on thermodynamical approach. This often arises, for example,
 in genes with repeated exons.</p>
-<h3><a name="PRIMER_LEFT_4_LIBRARY_MISPRIMING">PRIMER_LEFT_4_LIBRARY_MISPRIMING=f, s</a></h3>
-<h3><a name="PRIMER_RIGHT_4_LIBRARY_MISPRIMING">PRIMER_RIGHT_4_LIBRARY_MISPRIMING=f, s</a></h3>
-<h3><a name="PRIMER_PAIR_4_LIBRARY_MISPRIMING">PRIMER_PAIR_4_LIBRARY_MISPRIMING=f, s</a></h3>
+<h3><a id="PRIMER_LEFT_4_LIBRARY_MISPRIMING">PRIMER_LEFT_4_LIBRARY_MISPRIMING=f, s</a></h3>
+<h3><a id="PRIMER_RIGHT_4_LIBRARY_MISPRIMING">PRIMER_RIGHT_4_LIBRARY_MISPRIMING=f, s</a></h3>
+<h3><a id="PRIMER_PAIR_4_LIBRARY_MISPRIMING">PRIMER_PAIR_4_LIBRARY_MISPRIMING=f, s</a></h3>
 <p>f is the maximum mispriming score for the right primer
 against any sequence in the given <a href="#PRIMER_MISPRIMING_LIBRARY">PRIMER_MISPRIMING_LIBRARY</a>;
 s is the id of corresponding library sequence.
 <a href="#PRIMER_PAIR_MAX_LIBRARY_MISPRIMING">PRIMER_PAIR_MAX_LIBRARY_MISPRIMING</a> is the maximum sum of
 mispriming scores in any single library sequence (perhaps a
 more reasonable estimator of the likelihood of mispriming).</p>
-<h3><a name="PRIMER_INTERNAL_4_LIBRARY_MISHYB">PRIMER_INTERNAL_4_LIBRARY_MISHYB=f, s</a></h3>
+<h3><a id="PRIMER_INTERNAL_4_LIBRARY_MISHYB">PRIMER_INTERNAL_4_LIBRARY_MISHYB=f, s</a></h3>
 <p>f is the maximum mishybridization score for the right primer
 against any sequence in the given
 <a href="#PRIMER_INTERNAL_MISHYB_LIBRARY">PRIMER_INTERNAL_MISHYB_LIBRARY</a>; s is the id of
 corresponding library sequence.</p>
-<h3><a name="PRIMER_LEFT_4_MIN_SEQ_QUALITY">PRIMER_LEFT_4_MIN_SEQ_QUALITY=i</a></h3>
-<h3><a name="PRIMER_INTERNAL_4_MIN_SEQ_QUALITY">PRIMER_INTERNAL_4_MIN_SEQ_QUALITY=i</a></h3>
-<h3><a name="PRIMER_RIGHT_4_MIN_SEQ_QUALITY">PRIMER_RIGHT_4_MIN_SEQ_QUALITY=i</a></h3>
+<h3><a id="PRIMER_LEFT_4_MIN_SEQ_QUALITY">PRIMER_LEFT_4_MIN_SEQ_QUALITY=i</a></h3>
+<h3><a id="PRIMER_INTERNAL_4_MIN_SEQ_QUALITY">PRIMER_INTERNAL_4_MIN_SEQ_QUALITY=i</a></h3>
+<h3><a id="PRIMER_RIGHT_4_MIN_SEQ_QUALITY">PRIMER_RIGHT_4_MIN_SEQ_QUALITY=i</a></h3>
 <p>i is the minimum _sequence_ quality within the primer
 or oligo (not to be confused with the <a href="#PRIMER_PAIR_4_PENALTY">PRIMER_PAIR_4_PENALTY</a>
 output tag, which is really the value of the objective
 function.)</p>
-<h3><a name="PRIMER_STOP_CODON_POSITION">PRIMER_STOP_CODON_POSITION=i</a></h3>
+<h3><a id="PRIMER_STOP_CODON_POSITION">PRIMER_STOP_CODON_POSITION=i</a></h3>
 <p>i is the position of the first base of the stop codon,
 if Primer3 found one, or -1 if Primer3 did not.  Printed
 only if the input tag <a href="#SEQUENCE_START_CODON_POSITION">SEQUENCE_START_CODON_POSITION</a> with a
 non-default value is supplied.</p>
-<h3><a name="PRIMER_LEFT_4_POSITION_PENALTY">PRIMER_LEFT_4_POSITION_PENALTY=i</a></h3>
-<h3><a name="PRIMER_RIGHT_4_POSITION_PENALTY">PRIMER_RIGHT_4_POSITION_PENALTY=i</a></h3>
+<h3><a id="PRIMER_LEFT_4_POSITION_PENALTY">PRIMER_LEFT_4_POSITION_PENALTY=i</a></h3>
+<h3><a id="PRIMER_RIGHT_4_POSITION_PENALTY">PRIMER_RIGHT_4_POSITION_PENALTY=i</a></h3>
 <p>i is the penalty of the primer by its
 position.</p>
-<h2><a name="exampleOutput">21. EXAMPLE OUTPUT</a></h2>
+<h2><a id="exampleOutput">22. EXAMPLE OUTPUT</a></h2>
 <p>You should run it yourself.  Use the file 'example'
 that came with this distribution
 directory as input.</p>
-<h2><a name="pickAdvice">22. ADVICE FOR PICKING PRIMERS</a></h2>
+<h2><a id="pickAdvice">23. ADVICE FOR PICKING PRIMERS</a></h2>
 <p>We suggest consulting: Wojciech Rychlik (1993) "Selection of
 Primers for Polymerase Chain Reaction" in BA White, Ed., "Methods
 in Molecular Biology, Vol. 15: PCR Protocols: Current Methods and
 Applications", pp 31-40, Humana Press, Totowa NJ.</p>
-<h2><a name="cautions">23. CAUTIONS</a></h2>
+<h2><a id="cautions">24. CAUTIONS</a></h2>
 <p>Some of the most important issues in primer picking can be
 addressed only before using Primer3. These are sequence quality
 (including making sure the sequence is not vector and not chimeric)
@@ -3408,7 +3535,7 @@ of the read.<br>
 In addition, Primer3 takes as input a <a href="#SEQUENCE_QUALITY">SEQUENCE_QUALITY</a> list for
 use with those base calling programs (e.g. Phred)
 that output this information.</p>
-<h2><a name="findNoPrimers">24. WHAT TO DO IF PRIMER3 CANNOT FIND ANY PRIMERS?</a></h2>
+<h2><a id="findNoPrimers">25. WHAT TO DO IF PRIMER3 CANNOT FIND ANY PRIMERS?</a></h2>
 <p>Try relaxing various parameters, including the
 self-complementarity parameters and max and min oligo melting
 temperatures.  For example, for very A-T-rich regions you might
@@ -3422,12 +3549,12 @@ in your primer and use an oligo mixture containing all four bases
 at that position.<br>
 <br>
 Try setting the <a href="#PRIMER_EXPLAIN_FLAG">PRIMER_EXPLAIN_FLAG</a> input tag.</p>
-<h2><a name="earlierVersions">25. DIFFERENCES FROM EARLIER VERSIONS</a></h2>
+<h2><a id="earlierVersions">26. DIFFERENCES FROM EARLIER VERSIONS</a></h2>
 <p>The section HOW TO MIGRATE TAGS TO
 IO VERSION 4 describes th modified tags in detail.
 See also the file release_notes.txt in this directory.
 </p>
-<h2><a name="exitStatusCodes">26. EXIT STATUS CODES</a></h2>
+<h2><a id="exitStatusCodes">27. EXIT STATUS CODES</a></h2>
 <pre> 0 on normal operation
 -1 under the following conditions:
    illegal command-line arguments.
@@ -3446,7 +3573,7 @@ the signal received is returned as the exit status and printed to
 stderr.<br>
 <br>
 In all of the error cases above Primer3 prints a message to stderr.</p>
-<h2><a name="webInterface">27. PRIMER3 WWW INTERFACES</a></h2>
+<h2><a id="webInterface">28. PRIMER3 WWW INTERFACES</a></h2>
 <p>There are two web interfaces available :<br>
 The Bioinformatics workgroup at University of Tartu provides a basic
 web-based interface to Primer3 named Primer3Web at
@@ -3458,7 +3585,7 @@ A Primer3Plus web services is at
 <br>
 Web interface code is available
 on GitHub: <a href="https://github.com/primer3-org">https://github.com/primer3-org</a>.</p>
-<h2><a name="acknowledgments">28. ACKNOWLEDGMENTS</a></h2>
+<h2><a id="acknowledgments">29. ACKNOWLEDGMENTS</a></h2>
 <p>Initial development of Primer3 was funded by Howard Hughes Medical
 Institute and by the National Institutes of Health, National Human
 Genome Research Institute under grants R01-HG00257 (to David C. Page)

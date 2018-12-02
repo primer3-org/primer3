@@ -476,9 +476,7 @@ main(int argc, char *argv[])
          End of the primary working loop */
 
   /* To avoid being distracted when looking for leaks: */
-  if ((global_pa->thermodynamic_oligo_alignment == 1) ||
-      (global_pa->thermodynamic_template_alignment == 1))
-    destroy_thal_structures();
+  destroy_thal_structures();
     
   if(global_pa->mask_template == 1){
     delete_formula_parameters (global_pa->mp.fp, global_pa->mp.nlists);

@@ -301,32 +301,6 @@ int main(int argc, char** argv)
    }
    get_thermodynamic_values(&thermodynamic_parameters, &o);
 
-if (0) {   
-   /* read thermodynamic parameters */
-   if (path == NULL) {
-     /* check for the default paths */
-     struct stat st;
-#ifdef OS_WIN
-     if ((stat(".\\primer3_config", &st) == 0) && S_ISDIR(st.st_mode)) {
-//       tmp_ret = get_thermodynamic_values(".\\primer3_config\\", &o);
-     } else {
-       /* no default directory found, error */
-       fprintf(stderr, "Error: thermodynamic approach chosen, but path to thermodynamic parameters not specified\n");
-       exit(-1);
-     }
-#else 
-     if ((stat("./primer3_config", &st) == 0) && S_ISDIR(st.st_mode)) {
-  //     tmp_ret = get_thermodynamic_values("./primer3_config/", &o);
-     } else if ((stat("/opt/primer3_config", &st) == 0)  && S_ISDIR(st.st_mode)) {
-  //     tmp_ret = get_thermodynamic_values("/opt/primer3_config/", &o);
-     } else {
-       /* no default directory found, error */
-       fprintf(stderr, "Error: thermodynamic approach chosen, but path to thermodynamic parameters not specified\n");
-       exit(-1);
-     }
-#endif
-   } //else tmp_ret = get_thermodynamic_values(path, &o);
-}
    if (tmp_ret) {
      fprintf(stderr, "%s\n", o.msg);
      exit(-1);

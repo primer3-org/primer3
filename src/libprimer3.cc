@@ -4866,7 +4866,12 @@ recalc_pair_sec_struct(primer_pair *ppair,
       if (ppair->compl_end < end3.temp) {
         ppair->compl_end = end3.temp;
         save_overwrite_sec_struct(&ppair->compl_end_struct, end3.sec_struct);
-      } else { /* most likely wrong - should not be an else */
+      } else { 
+        if (end3.sec_struct != NULL) {
+          free(end3.sec_struct);
+          end3.sec_struct = NULL;
+        }
+        /* most likely wrong - should not be within this else */
         thal((const unsigned char *) s2, (const unsigned char *) s1_rev, thal_arg_to_use->end2, THL_STRUCT, &end4); /* Triinu Please check */
         if (ppair->compl_end < end4.temp) {
           ppair->compl_end = end4.temp;
@@ -7542,9 +7547,18 @@ p3_read_line(FILE *file)
   p = s;
   remaining_size = ssz;
   while (1) {
-    if (fgets(p, remaining_size, file) == NULL) /* End of file. */
-      return p == s ? NULL : s;
-
+    if (fgets(p, remaining_size, file) == NULL) { /* End of file. */
+      if (p == s) {
+        ssz = 0;
+        if (s != NULL) {
+          free(s);
+        }
+        s = NULL;
+        return NULL;
+      } else {
+        return s;
+      }
+    }
     if ((n = strchr(p, '\n')) != NULL) {
       *n = '\0';
       n--;

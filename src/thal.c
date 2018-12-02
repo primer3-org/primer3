@@ -449,10 +449,22 @@ get_thermodynamic_values(const thal_parameters *tp, thal_results *o)
 void 
 destroy_thal_structures()
 {
-  free(triloopEntropies);
-  free(triloopEnthalpies);
-  free(tetraloopEntropies);
-  free(tetraloopEnthalpies);
+  if (triloopEntropies != NULL) {
+    free(triloopEntropies);
+    triloopEntropies = NULL;
+  }
+  if (triloopEnthalpies != NULL) {
+    free(triloopEnthalpies);
+    triloopEnthalpies = NULL;
+  }
+  if (tetraloopEntropies != NULL) {
+    free(tetraloopEntropies);
+    tetraloopEntropies = NULL;
+  }
+  if (tetraloopEnthalpies != NULL) {
+    free(tetraloopEnthalpies);
+    tetraloopEnthalpies = NULL;
+  }
 }
 
 /* central method: execute all sub-methods for calculating secondary
@@ -3068,7 +3080,7 @@ drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, th
    int  ret_space = 0;
    char *ret_ptr = NULL;
    int ret_last_l, ret_first_r, ret_center, ret_left_end, ret_right_start, ret_left_len, ret_right_len;
-   int ret_add_sp, ret_add_sp_l, ret_add_sp_r;
+   int ret_add_sp_l, ret_add_sp_r;
    char ret_center_char;
    char ret_para[400];
    char* ret_str;
@@ -3152,7 +3164,6 @@ drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, th
        }
      }
      ret_center = ret_first_r - ret_last_l;
-     ret_add_sp = 0;
      if (ret_center % 2 == 0) { 
        /* ret_center is odd */
        ret_left_end = ret_last_l + (ret_first_r - ret_last_l) / 2 - 1;
@@ -3162,14 +3173,13 @@ drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, th
        /* ret_center is even */
        ret_left_end = ret_last_l + (ret_first_r - ret_last_l - 1) / 2;
        ret_right_start = ret_left_end + 1;
-       ret_add_sp = 1;
      }
      ret_left_len = ret_left_end + 1;
      ret_right_len = len1 - ret_right_start;
      ret_add_sp_l = 0;
      ret_add_sp_r = 0;
      if (ret_left_len > ret_right_len) {
-       ret_add_sp_r = ret_left_len - ret_right_len + ret_add_sp;
+       ret_add_sp_r = ret_left_len - ret_right_len + 1;
      }
      if (ret_right_len > ret_left_len) {
        ret_add_sp_l = ret_right_len - ret_left_len;
