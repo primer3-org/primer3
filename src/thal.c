@@ -2989,7 +2989,7 @@ drawDimer(int* ps1, int* ps2, double temp, double H, double S, const thal_mode m
 
      /* Create the align tics */
      strcpy(ret_str[1], "     ");
-     for (int i = 0 ; i < strlen(duplex[1]) ; i++) {
+     for (i = 0 ; i < strlen(duplex[1]) ; i++) {
        if (duplex[1][i] == 'A' || duplex[1][i] == 'T' || 
            duplex[1][i] == 'C' || duplex[1][i] == 'G' ) {
 	 ret_str[1][i + 3] = '|';
@@ -3184,18 +3184,18 @@ drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, th
      if (ret_right_len > ret_left_len) {
        ret_add_sp_l = ret_right_len - ret_left_len;
      }
-     for (int i = 0 ; i < ret_add_sp_l ; i++) {
+     for (i = 0 ; i < ret_add_sp_l ; i++) {
        save_append_char(&ret_str, &ret_space, o, ' ');
      }
      save_append_string(&ret_str, &ret_space, o, "5' ");
-     for (int i = 0 ; i < ret_left_len ; i++) {
+     for (i = 0 ; i < ret_left_len ; i++) {
        save_append_char(&ret_str, &ret_space, o, (char) oligo1[i]);
      }
      save_append_string(&ret_str, &ret_space, o, "U+2510\\n   ");
-     for (int i = 0 ; i < ret_add_sp_l ; i++) {
+     for (i = 0 ; i < ret_add_sp_l ; i++) {
        save_append_char(&ret_str, &ret_space, o, ' ');
      }
-     for (int i = 0 ; i < ret_left_len ; i++) {
+     for (i = 0 ; i < ret_left_len ; i++) {
        if (asciiRow[i] == '/') {	     
          save_append_char(&ret_str, &ret_space, o, '|');
        } else {
@@ -3208,11 +3208,11 @@ drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, th
        save_append_char(&ret_str, &ret_space, o, ret_center_char);
      }
      save_append_string(&ret_str, &ret_space, o, "\\n");
-     for (int i = 0 ; i < ret_add_sp_r - 1 ; i++) {
+     for (i = 0 ; i < ret_add_sp_r - 1 ; i++) {
        save_append_char(&ret_str, &ret_space, o, ' ');
      }
      save_append_string(&ret_str, &ret_space, o, "3' ");
-     for (int i = len1 ; i > ret_right_start - 1; i--) {
+     for (i = len1 ; i > ret_right_start - 1; i--) {
        save_append_char(&ret_str, &ret_space, o, (char) oligo1[i]);
      }
      save_append_string(&ret_str, &ret_space, o, "U+2518\\n");
