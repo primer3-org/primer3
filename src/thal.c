@@ -2858,7 +2858,7 @@ drawDimer(int* ps1, int* ps2, double temp, double H, double S, const thal_mode m
            printf("Calculated thermodynamical parameters for dimer:\tdS = %g\tdH = %g\tdG = %g\tt = %g\n",
                   (double) S, (double) H, (double) G, (double) t);
          } else {
-           sprintf(ret_para, "t: %.1f  dG: %.0f  dH: %.0f  dS: %.0f\\n",
+           sprintf(ret_para, "Tm: %.1f&deg;C  dG: %.0f cal/mol  dH: %.0f cal/mol  dS: %.0f cal/mol*K\\n",
                    (double) t, (double) G, (double) H, (double) S);
          }
       } else {
@@ -3119,7 +3119,7 @@ drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, th
            printf("Calculated thermodynamical parameters for dimer:\t%d\tdS = %g\tdH = %g\tdG = %g\tt = %g\n",
                   len1, (double) ms, (double) mh, (double) mg, (double) t);
          } else {
-           sprintf(ret_para, "t: %.1f  dG: %.0f  dH: %.0f  dS: %.0f\\n",
+           sprintf(ret_para, "Tm: %.1f&deg;C  dG: %.0f cal/mol  dH: %.0f cal/mol  dS: %.0f cal/mol*K\\n",
                    (double) t, (double) mg, (double) mh, (double) ms);
          }
       } else {
