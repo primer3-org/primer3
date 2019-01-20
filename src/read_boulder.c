@@ -36,6 +36,11 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+/* Check on which OS we compile */
+#if defined(_WIN32) || defined(WIN32) || defined (__WIN32__) || defined(__CYGWIN__) || defined(__MINGW32__)
+#define OS_WIN
+#endif
+
 #include <limits.h>
 #include <stdlib.h>  /* strtod, strtol,... */
 #include <ctype.h> /* toupper, isspace */
@@ -614,7 +619,7 @@ read_boulder_record(FILE *file_input,
       if (COMPARE("PRIMER_MASK_TEMPLATE")) {
                     parse_int("PRIMER_MASK_TEMPLATE", datum, &pa->mask_template, parse_err);
                     /* Check in case: PRIMER_LOWERCASE_MASKING=1 and PRIMER_MASK_TEMPLATE=0 */
-#if defined(OS_WIN)
+#if !defined(OS_WIN)
                     if (pa->mask_template) {
                         pa->lowercase_masking = pa->mask_template;
                     }
