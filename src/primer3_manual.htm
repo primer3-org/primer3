@@ -504,14 +504,27 @@ The first option is just a shortcut to the second.</p>
 <p>How to install this software<br>
 ============================<br>
 <br>
-1. Unzip the '.zip' file downloaded from SourceForge.net<br>
-2. You will create a primer3-&lt;release&gt; folder in the location
-   where the file was unzipped<br>
-3. You may copy the files from the 'bin' directory of the
-   primer3-&lt;release&gt; folder to a location of your choice.
-   The exact same files are located within the 'src' folder
-   so that the tests may be run (windows does not allow
-   relative paths in shortcuts).<br>
+Get your copy of the source code<br>
+--------------------------------<br>
+1. Install Git for Windows from<br>
+   https://git-scm.com/download/win<br>
+2. Open Git for Windows and run<br>
+   git clone https://github.com/primer3-org/primer3.git<br>
+   cd primer3<br>
+3. Use git commands to obtain tagged version<br>
+   git tag<br>
+   git checkout tags/v2.3.7<br>
+or
+1. Download and unpack latest from<br>
+   https://github.com/primer3-org/primer3/releases<br>
+Compile Primer3<br>
+---------------<br>
+<br>
+1. Download and install MinGW64 from<br>
+   https://sourceforge.net/projects/mingw-w64/files/latest/download
+2. Open the windows command line and change to the src folder in
+   Primer3<br>
+3. Run: mingw32-make TESTOPTS=--windows<br>
 <br>
 Running the tests<br>
 =================<br>
@@ -541,7 +554,9 @@ known to work.<br>
 5. On the command line, run 'mingw32-make TESTOPTS=--windows' in this
    directory. You can also run the tests individually,
    for example 'perl p3test.pl --windows'.<br>
-6. You should see [OK] for all of the tests.<br>
+6. You should see [OK] for the majority of the tests. The masker
+   functionality is not supported on Windows and coresponding tests
+   will fail.<br>
 <br>
 Running the software<br>
 ====================<br>

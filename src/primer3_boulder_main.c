@@ -57,7 +57,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* Some function prototypes */
 static void   print_usage();
 static void   sig_handler(int);
+#if !defined(OS_WIN)
 static void   validate_kmer_lists_path();
+#endif
 
 /* Other global variables. */
 static const char *pr_release;
@@ -265,9 +267,11 @@ main(int argc, char *argv[])
                  &nonfatal_parse_err, &warnings, &read_boulder_record_res);
     destroy_pr_append_str_data(&p3_settings_path);
     /* Check if masking template flag was given */
+#if !defined(OS_WIN)
     if (global_pa->mask_template == 1)
        validate_kmer_lists_path();
-  }     
+#endif
+   }     
   /* We also need to print out errors here because the loop erases all
      errors at start. If there are fatal errors, write the proper
      message and exit */
@@ -328,7 +332,9 @@ main(int argc, char *argv[])
                              &read_boulder_record_res)) {
       break; /* There were no more boulder records */
     }
-     if(global_pa->mask_template){
+    
+#if !defined(OS_WIN)
+    if(global_pa->mask_template){
            global_pa->lowercase_masking=global_pa->mask_template;
      }        
 
@@ -355,6 +361,7 @@ main(int argc, char *argv[])
         global_pa->masking_parameters_changed = 0;
       }
     }
+#endif
     input_found = 1;
     if ((global_pa->primer_task == generic)
         && (global_pa->pick_internal_oligo == 1)){
@@ -477,11 +484,13 @@ main(int argc, char *argv[])
 
   /* To avoid being distracted when looking for leaks: */
   destroy_thal_structures();
-    
+
+#if !defined(OS_WIN)  
   if(global_pa->mask_template == 1){
     delete_formula_parameters (global_pa->mp.fp, global_pa->mp.nlists);
     /* free(global_pa->mp.list_prefix); */
   }
+#endif
      
   p3_destroy_global_settings(global_pa);
   global_pa = NULL;
@@ -490,7 +499,9 @@ main(int argc, char *argv[])
   destroy_pr_append_str_data(&fatal_parse_err);
   destroy_pr_append_str_data(&warnings);
   destroy_dpal_thal_arg_holder();
+#if !defined(OS_WIN)  
   free(kmer_lists_path);
+#endif
   /* If it could not read input, then complain and die */
   if (0 == input_found) {
     print_usage();
@@ -499,11 +510,10 @@ main(int argc, char *argv[])
   return 0;
 }
 
+#if 0
+/* in windows check for ..\\kmer_lists */
 static void validate_kmer_lists_path(){
    if (kmer_lists_path == NULL) {
-      
-#ifdef OS_WIN
-      /* in windows check for ..\\kmer_lists */
       struct stat st;
       if ((stat("..\\kmer_lists", &st) == 0) && S_ISDIR(st.st_mode)) {
          kmer_lists_path =
@@ -514,8 +524,14 @@ static void validate_kmer_lists_path(){
          /* no default directory found */
          return;
       }
-#else
-      /* in linux, check for ../kmer_lists and /opt/kmer_lists */
+   } 
+}
+#endif
+
+#if !defined(OS_WIN)
+/* in linux, check for ../kmer_lists and /opt/kmer_lists */
+static void validate_kmer_lists_path(){
+   if (kmer_lists_path == NULL) {
       struct stat st;
       if ((stat("../kmer_lists", &st) == 0) && S_ISDIR(st.st_mode)) {
          kmer_lists_path =
@@ -531,11 +547,10 @@ static void validate_kmer_lists_path(){
          /* no default directory found */
          return;
       }
+   }
+}
 #endif
       
-   }
-   
-}
    
 /* Print out copyright and a short usage message*/
 static void

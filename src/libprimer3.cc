@@ -54,6 +54,10 @@ namespace std
 }
 #endif
 
+#if defined(_WIN32) || defined(WIN32) || defined (__WIN32__) || defined(__CYGWIN__) || defined(__MINGW32__)
+#define OS_WIN
+#endif
+
 #include "libprimer3.h"
 
 /* #define's */
@@ -3030,7 +3034,9 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   const char *revc_oligo_seq;
 
   const args_for_one_oligo_or_primer *po_args;
+#if !defined(OS_WIN)
   oligo_pair op = {0};
+#endif
    
   /* Initialize slots in h */
   initialize_op(h);
@@ -3514,12 +3520,14 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   /* Calculate failure rate */
   /* Added by M. Lepamets */
    h->failure_rate = 0.0;
+#if !defined(OS_WIN) 
    if (pa->mask_template && h->length >= pa->mp.window_size) {
      op.fwd = string_to_word (oligo_seq, h->length, pa->mp.window_size);
      op.rev = op.fwd; /* not used in this calculation */
      calculate_scores (&op, &pa->mp, pa->mp.window_size);
      h->failure_rate = op.score_fwd;
    }
+#endif
   /* FIX ME FIXME Steve, is this really needed? */
   op_set_completely_written(h);
 
@@ -6236,7 +6244,8 @@ _adjust_seq_args(const p3_global_settings *pa,
     /* edited by T. Koressaar for lowercase masking */
     sa->trimmed_orig_seq = (char *) pr_safe_malloc(sa->incl_l + 1);
     _pr_substr(sa->sequence, sa->incl_s, sa->incl_l, sa->trimmed_orig_seq);
-    
+
+#if !defined(OS_WIN)    
     /* Masks original trimmed sequence */
     /* edited by M. Lepamets */
     if (pa->mask_template && (pa->pick_left_primer == 1 && pa->pick_right_primer == 1)) {
@@ -6264,6 +6273,7 @@ _adjust_seq_args(const p3_global_settings *pa,
        delete_input_sequence (input_seq);
        delete_output_sequence (output_seq);
     }
+#endif
                                                                                                            
     /* Copies the whole sequence into upcased_seq */
     sa->upcased_seq = (char *) pr_safe_malloc(strlen(sa->sequence) + 1);

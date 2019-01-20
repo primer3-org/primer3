@@ -614,11 +614,18 @@ read_boulder_record(FILE *file_input,
       if (COMPARE("PRIMER_MASK_TEMPLATE")) {
                     parse_int("PRIMER_MASK_TEMPLATE", datum, &pa->mask_template, parse_err);
                     /* Check in case: PRIMER_LOWERCASE_MASKING=1 and PRIMER_MASK_TEMPLATE=0 */
+#if defined(OS_WIN)
                     if (pa->mask_template) {
                         pa->lowercase_masking = pa->mask_template;
                     }
                     pa->masking_parameters_changed = pa->mask_template;
                     continue;
+#else
+                    if (pa->mask_template) {    
+                        pr_append_new_chunk(glob_err, "PRIMER_MASK_TEMPLATE not supported on Windows");
+                    }
+                    continue;
+#endif
       }
       COMPARE_FLOAT("PRIMER_MASK_FAILURE_RATE", pa->mp.failure_rate);
       COMPARE_INT("PRIMER_MASK_5P_DIRECTION", pa->mp.nucl_masked_in_5p_direction);
