@@ -71,17 +71,15 @@ main(int argc, char **argv)
     "                the method of melting temperature calculation:\n"
     "                 0  Breslauer et al., 1986 and Rychlik et al., 1990\n"
     "                    (used by primer3 up to and including release 1.1.0).\n"
-    "                    This is the default, but _not_ the recommended value.\n"
     "                 1  Use nearest neighbor parameters from SantaLucia 1998\n"
-    "                    *THIS IS THE RECOMMENDED VALUE*\n"
+    "                    *This is the default and recommended value*\n"
     "\n"
     "-sc [0..2]    - Specifies salt correction formula for the melting \n"
     "                 temperature calculation\n"
     "                  0  Schildkraut and Lifson 1965, used by primer3 up to \n"
     "                     and including release 1.1.0.\n"
-    "                     This is the default but _not_ the recommended value.\n"
     "                  1  SantaLucia 1998\n"
-    "                     *THIS IS THE RECOMMENDED VAULE*\n"
+    "                     *This is the default and recommended value*\n"
     "                  2  Owczarzy et al., 2004\n\n"
     "\n\n"
     "Prints oligo's melting temperature on stdout.\n";
@@ -113,7 +111,7 @@ main(int argc, char **argv)
    char *endptr, *seq;
    double mv = 50, d = 50;
    double dv = 0, n = 0;
-   int tm_santalucia=0, salt_corrections=0;
+   int tm_santalucia=1, salt_corrections=1;
    int i, j, len;
    if (argc < 2 || argc > 14) {
      fprintf(stderr, msg, argv[0]);       
