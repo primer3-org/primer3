@@ -109,8 +109,8 @@ main(int argc, char **argv)
 "    51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA\n";
 
    char *endptr, *seq;
-   double mv = 50, d = 50;
-   double dv = 0, n = 0;
+   double mv = 0.6, d = 50;
+   double dv = 1.5, n = 0;
    int tm_santalucia=1, salt_corrections=1;
    int i, j, len;
    if (argc < 2 || argc > 14) {
