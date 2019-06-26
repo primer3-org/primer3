@@ -24,6 +24,6 @@ Run Primer3
 
 Read the complete Primer3 manual
 --------------------------------
-[Primer3 Manual](http://primer3.org/manual.htm)
+[Primer3 Manual](http://primer3.org/manual.html)
 
 or see /src/primer3_manual.htm
