@@ -6413,7 +6413,7 @@ fake_a_sequence(seq_args *sa, const p3_global_settings *pa)
   int ns_to_fill_first, ns_to_fill_second;
 
   /* Determine the product size */
-  if ( pa->product_opt_size == PR_UNDEFINED_INT_OPT){
+  if ((pa->product_opt_size < 1) || (pa->product_opt_size == PR_UNDEFINED_INT_OPT)){
     product_size = pa->pr_max[0] - pa->pr_min[0];
   } else {
     product_size = pa->product_opt_size;
