@@ -3958,7 +3958,7 @@ characterize_pair(p3retval *retval,
                   int update_stats) {
   char s1[MAX_PRIMER_LENGTH+1], s2[MAX_PRIMER_LENGTH+1],
     s1_rev[MAX_PRIMER_LENGTH+1], s2_rev[MAX_PRIMER_LENGTH+1];
-  double compl_end;
+  double compl_end, compl_end2;
   pair_stats *pair_expl = &retval->best_pairs.expl;
   int must_use = 0;
   double min_oligo_tm;
@@ -4294,16 +4294,21 @@ characterize_pair(p3retval *retval,
     if (!must_use) return PAIR_FAILED;
   }
    /* thermodynamic approach */
-   if (pa->thermodynamic_oligo_alignment==1 && 
-       ((compl_end = align_thermod(s2, s1_rev, thal_arg_to_use->end1)) > ppair->compl_end || 
-        (compl_end = align_thermod(s2, s1_rev, thal_arg_to_use->end2)) > ppair->compl_end)) {
-      if (compl_end > pa->p_args.max_self_end_th) {
+   if (pa->thermodynamic_oligo_alignment==1) {
+     compl_end = align_thermod(s2, s1_rev, thal_arg_to_use->end1);
+     compl_end2 = align_thermod(s2, s1_rev, thal_arg_to_use->end2);
+     if (compl_end2 > compl_end) {
+       compl_end = compl_end2;
+     }
+     if (compl_end > ppair->compl_end) {
+       if (compl_end > pa->p_args.max_self_end_th) {
          if (update_stats) {
             pair_expl->compl_end++; 
          }
          if (!must_use) return PAIR_FAILED;
-      }
-      ppair->compl_end = compl_end; /* Is this correct? even if end1 is bigger we write end2?? */
+       }
+       ppair->compl_end = compl_end;
+     }
    }
    
   /* ============================================================= */
@@ -4879,16 +4884,15 @@ recalc_pair_sec_struct(primer_pair *ppair,
           free(end3.sec_struct);
           end3.sec_struct = NULL;
         }
-        /* most likely wrong - should not be within this else */
-        thal((const unsigned char *) s2, (const unsigned char *) s1_rev, thal_arg_to_use->end2, THL_STRUCT, &end4); /* Triinu Please check */
-        if (ppair->compl_end < end4.temp) {
-          ppair->compl_end = end4.temp;
-          save_overwrite_sec_struct(&ppair->compl_end_struct, end4.sec_struct);
-        } else {
-          if (end4.sec_struct != NULL) {
-            free(end4.sec_struct);
-            end4.sec_struct = NULL;
-          }
+      }
+      thal((const unsigned char *) s2, (const unsigned char *) s1_rev, thal_arg_to_use->end2, THL_STRUCT, &end4); /* Triinu Please check */
+      if (ppair->compl_end < end4.temp) {
+        ppair->compl_end = end4.temp;
+        save_overwrite_sec_struct(&ppair->compl_end_struct, end4.sec_struct);
+      } else {
+        if (end4.sec_struct != NULL) {
+          free(end4.sec_struct);
+          end4.sec_struct = NULL;
         }
       }
     }

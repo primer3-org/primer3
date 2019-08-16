@@ -127,7 +127,6 @@ publications as<br>
 * Untergasser A, Cutcutache I, Koressaar T, Ye J, Faircloth BC, Remm M and Rozen SG.<br>
 Primer3--new capabilities and interfaces.<br>
 Nucleic Acids Res. 2012 Aug 1;40(15):e115.<br>
-<br>
 The paper is available at
 <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3424584/">http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3424584/</a><br>
 <br>
@@ -135,10 +134,16 @@ and <br>
 <br>
 * Koressaar T and Remm M.<br>
 Enhancements and modifications of primer design program Primer3.<br>
-Bioinformatics 2007;23(10):1289-91.<br>
-<br>
-The papers is available at<br>
+Bioinformatics 2007;23(10):1289-1291.<br>
+The paper is available at
 <a href="https://www.ncbi.nlm.nih.gov/pubmed/17379693">https://www.ncbi.nlm.nih.gov/pubmed/17379693</a><br>
+<br>
+If you use masker function, please cite:<br>
+* Koressaar T, Lepamets M, Kaplinski L, Raime K, Andreson R and Remm M.<br>
+Primer3_masker: integrating masking of template sequence with primer design software.<br>
+Bioinformatics 2018;34(11):1937-1938.<br>
+The paper is available at
+<a href="https://www.ncbi.nlm.nih.gov/pubmed/29360956">https://www.ncbi.nlm.nih.gov/pubmed/29360956</a><br>
 <br>
 Source code available at <a href="https://github.com/primer3-org/primer3">https://github.com/primer3-org/primer3</a>.</p>
 <h2><a id="licenseExplain">4. FAIR USE OF PRIMER3</a></h2>
@@ -501,6 +506,11 @@ following:<br>
 <br>
 The first option is just a shortcut to the second.</p>
 <h2><a id="installWindows">9. INSTALLATION INSTRUCTIONS - WINDOWS</a></h2>
+<p>Functionality warning<br>
+=====================<br>
+<br>
+The windows version does not support the masker functionality.
+</p>
 <p>How to install this software<br>
 ============================<br>
 <br>
@@ -520,8 +530,8 @@ or
 Compile Primer3<br>
 ---------------<br>
 <br>
-1. Download and install MinGW64 from<br>
-   https://sourceforge.net/projects/mingw-w64/files/latest/download
+1. Download and install TDM-GCC MinGW Compiler from<br>
+   https://sourceforge.net/projects/tdm-gcc/
 2. Open the windows command line and change to the src folder in
    Primer3<br>
 3. Run: mingw32-make TESTOPTS=--windows<br>
