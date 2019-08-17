@@ -1,3 +1,27 @@
+release 2.5.0 2019-08-17  ===============================================
+This release adds new features to primer3_core and related C code.
+
+The primer3_config files for thermodynamic calculations are embedded in the
+code and the primer3_config/ folder is not required any more for default
+settings.
+
+If PRIMER_SECONDARY_STRUCTURE_ALIGNMENT=1 is set, the secondary structure 
+will be displayed as string representation (for example):
+PRIMER_LEFT_0_SELF_ANY_STUCT=5' ATTCGATTCTCCCCGGTATC 3'\n               ||||\n        3' CTATGGCCCCTCTTAGCTTA 5'\n
+for the structure:
+5' ATTCGATTCTCCCCGGTATC 3'
+               ||||
+        3' CTATGGCCCCTCTTAGCTTA 5'
+
+
+Minor fixes:
+1. Primer3 can handle windows newlines on input files.
+
+2. A bug in the compl_end calculations was fixed.
+
+3. The primer3_config/ folder is not required any more.
+
+
 release 2.4.0 2017-11-03  ===============================================
 This release adds a new feature to primer3_core and related C code.
 
