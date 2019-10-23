@@ -13,16 +13,24 @@ if ! env | grep -q '^PRIMER3_PATH='; then
 	export PRIMER3_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 fi
 
+DEFAULT_SETTINGS=$PRIMER3_PATH/share/primer3/settings/primer3web_v4_0_0_default_settings.txt
 PRIMER3=$PRIMER3_PATH/bin/primer3_core
 
-# global settings
-read -r -d '' settings <<- EOT || true
-Primer3 File - $PRIMER3_URL
-P3_FILE_TYPE=settings
+# Global settings
 
+# copy default settings but omit the last terminating line
+settings1=$(sed '$d' $DEFAULT_SETTINGS)
+
+# specify path to thermodynamic parameters
+read -r -d '' settings2 <<- EOT || true
 PRIMER_THERMODYNAMIC_PARAMETERS_PATH=$PRIMER3_PATH/share/primer3/config/
 =
 EOT
+
+# concatentate settings together
+settings="$settings1
+$settings2"
+
 
 help() {
 
