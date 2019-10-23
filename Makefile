@@ -1,6 +1,6 @@
 DESTDIR ?= build
 
-targets = ntdpal ntthal oligotm primer3_core
+targets = ntdpal ntthal oligotm primer3_core primer3_masker
 
 base:
 	cd src && make
