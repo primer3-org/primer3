@@ -5,6 +5,9 @@ targets = ntdpal ntthal oligotm primer3_core
 base:
 	cd src && make
 
+test: base
+	cd src && make test
+
 install: base
 	mkdir -p $(DESTDIR)/bin
 	cp $(addprefix src/, $(targets)) $(DESTDIR)/bin
