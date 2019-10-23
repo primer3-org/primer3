@@ -1,0 +1,100 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+
+PRIMER3_URL=http://primer3.org/manual.html
+
+# Set PRIMER3_PATH to parent directory if undefined and export
+
+if ! env | grep -q '^PRIMER3_PATH='; then 
+	export PRIMER3_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+fi
+
+PRIMER3=$PRIMER3_PATH/bin/primer3_core
+
+# global settings
+read -r -d '' settings <<- EOT || true
+Primer3 File - $PRIMER3_URL
+P3_FILE_TYPE=settings
+
+PRIMER_THERMODYNAMIC_PARAMETERS_PATH=$PRIMER3_PATH/share/primer3/config/
+=
+EOT
+
+help() {
+
+	echo "usage: primer3 command [args]"
+	echo
+	echo "commands:"
+	echo "  run <task_file> [args]   Run primer3 on task file"
+	echo "  check <sequence>         Check primer sequence"
+	echo "  help                     Display this help"
+	echo
+	echo "See $PRIMER3_URL for additional help."
+
+}
+
+# Check oligonucleotide properties with primer3_core
+primer3_check() {
+
+	# input file
+	read -r -d '' input <<- EOT || true
+	PRIMER_TASK=check_primers
+	PRIMER_PICK_ANYWAY=1
+	SEQUENCE_PRIMER=$1
+	=
+	EOT
+
+	# discard $1
+	shift;
+
+	# feed sequence into primer3_core and remove all lines until and including the relevant line
+	$PRIMER3 --p3_settings_file <(echo "$settings") <(echo "$input") $@ | \
+		sed -n '/PRIMER_LEFT_0_SEQUENCE/,$p'
+
+}
+
+
+# Process commands
+
+if (( $# == 0 )); then
+
+	help
+
+elif [[ $1 == "help" ]]; then
+
+	help
+
+elif [[ $1 == "run" ]]; then
+
+	if (( $# >= 2 )); then
+		shift;
+		$PRIMER3 --p3_settings_file <(echo "$settings") $@
+	else
+		help
+		echo "Error: no input file specified"
+		exit 1
+	fi
+
+elif [[ $1 == "check" ]]; then
+
+	if (( $# >= 2 )); then
+		shift;
+		primer3_check $@
+	else
+		help
+		echo "Error: no sequence specified"
+		exit 1
+	fi
+
+else
+
+	help
+	echo "Error: invalid command specified"
+	exit 1
+
+fi
+
