@@ -74,6 +74,7 @@ int main(int argc, char** argv)
                                     do not draw structure or print any additional parameters */
    int thal_debug = 0;
    int thal_only = 0;
+   int batch_mode = 0;
    if((mode == THL_DEBUG) || (mode == THL_DEBUG_F)) {
 #undef DEBUG
    } else {
@@ -99,6 +100,9 @@ int main(int argc, char** argv)
      "                       Default is 30 (this is maximum allowed length, currently).\n"
      "\n"
      "-path <path>         - the path to the thermodynamic parameter files\n"
+     "\n"
+     "-b                   - batch mode, read primers from stdin\n"
+     "                       Input format is: oligo1 [oligo2]\n"
      "\n"
      "-s1 DNA_oligomer\n"
      "\n"
@@ -210,6 +214,8 @@ int main(int argc, char** argv)
          i++;
       } else if (!strncmp("-r", argv[i], 2)) { /* only temp is calculated */
          thal_only = 1;
+      } else if (!strncmp("-b", argv[i], 2)) { /* batch mode */
+         batch_mode = 1;
       } else if (!strncmp("-t", argv[i], 2)) { /* temperature at which sec str are calculated */
          if(argv[i+1]==NULL) {
 #ifdef DEBUG
@@ -279,16 +285,18 @@ int main(int argc, char** argv)
    }
    /* END reading INPUT */
    
-   /* check the input correctness */
-   if(a.dimer!=0 && (oligo2==NULL || oligo1==NULL)) { /* if user wants to calculate structure 
-                                                       of dimer then two sequences must be defined*/
-      fprintf(stderr, usage, argv[0]);
-      exit(-1);
-   }
-   if(a.dimer==0 && (oligo2==NULL && oligo1==NULL)) { /* if user wants to calculate structure
-                                                       of monomer then only one sequence must be defined */
-      fprintf(stderr, usage, argv[0]);
-      exit(-1);
+   if (!batch_mode) {
+      /* check the input correctness */
+      if(a.dimer!=0 && (oligo2==NULL || oligo1==NULL)) { /* if user wants to calculate structure 
+                                                          of dimer then two sequences must be defined*/
+         fprintf(stderr, usage, argv[0]);
+         exit(-1);
+      }
+      if(a.dimer==0 && (oligo2==NULL && oligo1==NULL)) { /* if user wants to calculate structure
+                                                          of monomer then only one sequence must be defined */
+         fprintf(stderr, usage, argv[0]);
+         exit(-1);
+      }
    }
    /* read default thermodynamic parameters */
    thal_parameters thermodynamic_parameters;
@@ -321,21 +329,36 @@ int main(int argc, char** argv)
      }
    }
 
-   /* execute thermodynamical alignemnt */
-   if(a.dimer==0 && oligo1!=NULL){
-      thal(oligo1,oligo1,&a,mode,&o);   
-   } else if(a.dimer==0 && oligo1==NULL && oligo2!=NULL) {
-      thal(oligo2,oligo2,&a,mode,&o);
-   } else {
-      thal(oligo1,oligo2,&a,mode,&o);   
-   }
-   /* encountered error during thermodynamical calc */
-   if (o.temp == THAL_ERROR_SCORE) {
-      tmp_ret = fprintf(stderr, "Error: %s\n", o.msg);
-      exit(-1);
-   }
-   if((mode == THL_FAST) || (mode == THL_DEBUG_F))
-     printf("%f\n",o.temp);
+   do {
+      static char line[200], primer1[100], primer2[100];
+      if (batch_mode) {
+         oligo1 = oligo2 = NULL;
+         char *result = fgets(line, 200, stdin);
+         if (result == NULL) break;
+         line[strcspn(line, "\n")] = 0;
+         int num = sscanf(line, "%s%s", primer1, primer2);
+         if (num >= 1) oligo1 = (unsigned char *) primer1;
+         if (num >= 2) oligo2 = (unsigned char *) primer2;
+         if (num < 1) break;
+         printf("BEGIN %s\n", line);
+      }
+      /* execute thermodynamical alignment */
+      if(a.dimer==0 && oligo1!=NULL){
+         thal(oligo1,oligo1,&a,mode,&o);
+      } else if(a.dimer==0 && oligo1==NULL && oligo2!=NULL) {
+         thal(oligo2,oligo2,&a,mode,&o);
+      } else {
+         thal(oligo1,oligo2,&a,mode,&o);
+      }
+      /* encountered error during thermodynamical calc */
+      if (o.temp == THAL_ERROR_SCORE) {
+         tmp_ret = fprintf(stderr, "Error: %s\n", o.msg);
+         exit(-1);
+      }
+      if((mode == THL_FAST) || (mode == THL_DEBUG_F))
+        printf("%f\n",o.temp);
+      if (batch_mode) printf("END %s\n", line);
+   } while (batch_mode);
    /* cleanup */
    destroy_thal_structures();
    thal_free_parameters(&thermodynamic_parameters);
