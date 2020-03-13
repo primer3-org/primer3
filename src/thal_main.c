@@ -357,7 +357,10 @@ int main(int argc, char** argv)
       }
       if((mode == THL_FAST) || (mode == THL_DEBUG_F))
         printf("%f\n",o.temp);
-      if (batch_mode) printf("END %s\n", line);
+      if (batch_mode) {
+         printf("END %s\n", line);
+         fflush(stdout);
+      }
    } while (batch_mode);
    /* cleanup */
    destroy_thal_structures();
