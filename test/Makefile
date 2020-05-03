@@ -47,6 +47,13 @@ TESTOPTS =
 test: makeexes testcmdline testtm testdpal testthal testmasker testcore
 	echo; echo; echo "Testing completed. You must check the test output for the string FAILED"; echo; echo;
 
+valgrnda: makeexes testcmdline testtm testdpal testthal testmasker testcorea
+	echo; echo; echo "Testing completed. You must check the test output for the string FAILED"; echo; echo;
+
+valgrndb: testcoreb
+	echo; echo; echo "Testing completed. You must check the test output for the string FAILED"; echo; echo;
+
+
 testcmdline:
 ifeq ($(TESTOPTS),--windows)
 	perl cmdline_test.pl $(TESTOPTS)
@@ -60,6 +67,12 @@ ifeq ($(TESTOPTS),--windows)
 else
 	echo; echo; echo 'TESTING primer3_core'; echo; perl p3test.pl $(TESTOPTS)
 endif
+
+testcorea:
+	echo; echo; echo 'TESTING primer3_core'; echo; perl p3test.pl --valgrinda
+
+testcoreb:
+	echo; echo; echo 'TESTING primer3_core'; echo; perl p3test.pl --valgrindb
 
 testdpal:
 ifeq ($(TESTOPTS),--windows)
@@ -91,7 +104,7 @@ endif
 
 makeexes:
 ifeq ($(TESTOPTS),--windows)
-	cd ..\src & $(WINMAKE)
+	cd ../src & $(WINMAKE)
 else
 	cd ../src; make
 endif
@@ -99,13 +112,13 @@ endif
 clean:
 ifeq ($(TESTOPTS),--windows)
 	echo 'CLEAN UP TEST DIRECTORIES'
-	del /Q /F primer1_list_tmp\*
-	del /Q /F primer1_th_list_tmp\*
-	del /Q /F primer_list_tmp\*
-	del /Q /F th-w-other-tasks_list_tmp\*
-	del /Q /F primer_global_err\*.tmp primer_global_err\*.tmp2 primer_global_err\*.bak
+	del /Q /F primer1_list_tmp/*
+	del /Q /F primer1_th_list_tmp/*
+	del /Q /F primer_list_tmp/*
+	del /Q /F th-w-other-tasks_list_tmp/*
+	del /Q /F primer_global_err/*.tmp primer_global_err/*.tmp2 primer_global_err/*.bak
 	del /Q /F *.tmp *.bak *.tmp.err *~
-	del /Q /F hyb_probe_only.for hyb_probe_only.int 
+	del /Q /F hyb_probe_only.for hyb_probe_only.int
 	del /Q /F right_only.for right_only.rev left_only.for
 	del /Q /F pcr_primers_and_io.int pcr_primers_and_io.rev pcr_primers_and_io.for
 	del /Q /F pcr_primers.rev pcr_primers.for

@@ -132,14 +132,14 @@ all: $(EXES) $(LIBRARIES)
 
 clean_src:
 ifeq ($(TESTOPTS),--windows)
-	del /Q /F *.o $(EXES) *~ $(LIBRARIES) $(example_files) core ..\*~
+	del /Q /F *.o $(EXES) *~ $(LIBRARIES) $(example_files) core ../*~
 else
 	-rm -f *.o $(EXES) *~ $(LIBRARIES) $(DYNLIBS) $(example_files) core ../*~
 endif
 
 clean: clean_src
 ifeq ($(TESTOPTS),--windows)
-	cd ..\test & $(WINMAKE) clean TESTOPTS=$(TESTOPTS)
+	cd ../test & $(WINMAKE) clean TESTOPTS=$(TESTOPTS)
 else
 	cd ../test/; make clean
 endif
@@ -182,7 +182,7 @@ $(LIBPRIMER3_DYN): libprimer3.o p3_seq_lib.o
 $(LIBMASKER): masker.o
 	$(AR) rv $@ masker.o
 	$(RANLIB) $@
-               
+
 $(LIBMASKER_DYN): masker.o
 	$(CC) -shared -W1,-soname,libmasker.so.1 -o $(LIBMASKER_DYN) masker.o
 
@@ -256,7 +256,7 @@ primer_test: test
 
 test: $(PRIMER_EXE) $(NTDPAL_EXE) $(NTTHAL_EXE)
 ifeq ($(TESTOPTS),--windows)
-	cd ..\test & $(WINMAKE) TESTOPTS=$(TESTOPTS)
+	cd ../test & $(WINMAKE) TESTOPTS=$(TESTOPTS)
 else
 	cd ../test; make test
 endif

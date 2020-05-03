@@ -1,0 +1,50 @@
+name: make test ubuntu-latest
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build-ubuntu:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: make
+      run: make
+      working-directory: ./src
+    - name: perl cmdline_test.pl
+      run: perl cmdline_test.pl
+      working-directory: ./test
+    - name: perl oligotm_test.pl
+      run: perl oligotm_test.pl
+      working-directory: ./test
+    - name: perl dpal_test.pl
+      run: perl dpal_test.pl
+      working-directory: ./test
+    - name: perl thal_test.pl
+      run: perl thal_test.pl
+      working-directory: ./test
+    - name: perl masker_test.pl
+      run: perl masker_test.pl
+      working-directory: ./test
+    - name: perl p3test.pl
+      run: perl p3test.pl
+      working-directory: ./test
+    - name: mkdir results
+      run: mkdir results
+    - name: tar -zcvf results/build-ubuntu-src.tar.gz ./src
+      run: tar -zcvf results/build-ubuntu-src.tar.gz ./src
+    - name: tar -zcvf results/build-ubuntu-test.tar.gz ./test
+      run: tar -zcvf results/build-ubuntu-test.tar.gz ./test
+    - name: Upload math result for job 1
+      uses: actions/upload-artifact@v1
+      with:
+        name: build-ubuntu-src.tar.gz
+        path: results/build-ubuntu-src.tar.gz
+    - name: Upload math result for job 1
+      uses: actions/upload-artifact@v1
+      with:
+        name: build-ubuntu-test.tar.gz
+        path: results/build-ubuntu-test.tar.gz

@@ -1,0 +1,140 @@
+name: make paranoid test
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build-paranoid-regular:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: make
+      run: make
+      working-directory: ./src
+    - name: make test
+      run: make test
+      working-directory: ./src
+    - name: make clean
+      run: make clean
+      working-directory: ./src
+    - name: make test
+      run: make test
+      working-directory: ./src
+    - name: mkdir results
+      run: mkdir results
+    - name: tar -zcvf results/build-paranoid-regular-a-src.tar.gz ./src
+      run: tar -zcvf results/build-paranoid-regular-a-src.tar.gz ./src
+    - name: tar -zcvf results/build-paranoid-regular-a-test.tar.gz ./test
+      run: tar -zcvf results/build-paranoid-regular-a-test.tar.gz ./test
+    - name: Upload math result for job 1
+      uses: actions/upload-artifact@v1
+      with:
+        name: build-paranoid-regular-a-src.tar.gz
+        path: results/build-paranoid-regular-a-src.tar.gz
+    - name: Upload math result for job 1
+      uses: actions/upload-artifact@v1
+      with:
+        name: build-paranoid-regular-a-test.tar.gz
+        path: results/build-paranoid-regular-a-test.tar.gz
+    - name: make clean
+      run: make clean
+      working-directory: ./src
+    - name: make O_OPTS=-O3
+      run: make O_OPTS=-O3
+      working-directory: ./src
+    - name: make test
+      run: make test
+      working-directory: ./src
+    - name: tar -zcvf results/build-paranoid-regular-b-src.tar.gz ./src
+      run: tar -zcvf results/build-paranoid-regular-b-src.tar.gz ./src
+    - name: tar -zcvf results/build-paranoid-regular-b-test.tar.gz ./test
+      run: tar -zcvf results/build-paranoid-regular-b-test.tar.gz ./test
+    - name: Upload math result for job 1
+      uses: actions/upload-artifact@v1
+      with:
+        name: build-paranoid-regular-b-src.tar.gz
+        path: results/build-paranoid-regular-b-src.tar.gz
+    - name: Upload math result for job 1
+      uses: actions/upload-artifact@v1
+      with:
+        name: build-paranoid-regular-b-test.tar.gz
+        path: results/build-paranoid-regular-b-test.tar.gz
+
+
+  build-paranoid-valgrind-a:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: sudo apt install -y valgrind
+      run: sudo apt install -y valgrind
+    - name: export PATH=/usr/bin:$PATH
+      run: export PATH=/usr/bin:$PATH
+      working-directory: ./src
+    - name: make clean
+      run: make clean
+      working-directory: ./src
+    - name: make O_OPTS=-O0
+      run: make O_OPTS=-O0
+      working-directory: ./src
+    - name: make valgrnda
+      run: make valgrnda
+      working-directory: ./test
+    - name: mkdir results
+      run: mkdir results
+    - name: tar -zcvf results/build-paranoid-valgrind-a-src.tar.gz ./src
+      run: tar -zcvf results/build-paranoid-valgrind-a-src.tar.gz ./src
+    - name: tar -zcvf results/build-paranoid-valgrind-a-test.tar.gz ./test
+      run: tar -zcvf results/build-paranoid-valgrind-a-test.tar.gz ./test
+    - name: Upload math result for job 1
+      uses: actions/upload-artifact@v1
+      with:
+        name: build-paranoid-valgrind-a-src.tar.gz
+        path: results/build-paranoid-valgrind-a-src.tar.gz
+    - name: Upload math result for job 1
+      uses: actions/upload-artifact@v1
+      with:
+        name: build-paranoid-valgrind-a-test.tar.gz
+        path: results/build-paranoid-valgrind-a-test.tar.gz
+
+
+  build-paranoid-valgrind-b:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: sudo apt install -y valgrind
+      run: sudo apt install -y valgrind
+    - name: export PATH=/usr/bin:$PATH
+      run: export PATH=/usr/bin:$PATH
+      working-directory: ./src
+    - name: make clean
+      run: make clean
+      working-directory: ./src
+    - name: make O_OPTS=-O0
+      run: make O_OPTS=-O0
+      working-directory: ./src
+    - name: make valgrndb
+      run: make valgrndb
+      working-directory: ./test
+    - name: mkdir results
+      run: mkdir results
+    - name: tar -zcvf results/build-paranoid-valgrind-b-src.tar.gz ./src
+      run: tar -zcvf results/build-paranoid-valgrind-b-src.tar.gz ./src
+    - name: tar -zcvf results/build-paranoid-valgrind-b-test.tar.gz ./test
+      run: tar -zcvf results/build-paranoid-valgrind-b-test.tar.gz ./test
+    - name: Upload math result for job 1
+      uses: actions/upload-artifact@v1
+      with:
+        name: build-paranoid-valgrind-b-src.tar.gz
+        path: results/build-paranoid-valgrind-b-src.tar.gz
+    - name: Upload math result for job 1
+      uses: actions/upload-artifact@v1
+      with:
+        name: build-paranoid-valgrind-b-test.tar.gz
+        path: results/build-paranoid-valgrind-b-test.tar.gz

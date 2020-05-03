@@ -1,0 +1,47 @@
+name: make test windows-latest
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build-windows:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: make TESTOPTS=--windows
+      run: make TESTOPTS=--windows
+      working-directory: ./src
+    - name: perl cmdline_test.pl --windows
+      run: perl cmdline_test.pl --windows
+      working-directory: ./test
+    - name: perl oligotm_test.pl --windows
+      run: perl oligotm_test.pl --windows
+      working-directory: ./test
+    - name: perl dpal_test.pl --windows
+      run: perl dpal_test.pl --windows
+      working-directory: ./test
+    - name: perl thal_test.pl --windows
+      run: perl thal_test.pl --windows
+      working-directory: ./test
+    - name: perl p3test.pl --windows
+      run: perl p3test.pl --windows
+      working-directory: ./test
+    - name: mkdir results
+      run: mkdir results
+    - name: powershell Compress-Archive src results/build-windows-src.zip
+      run: powershell Compress-Archive src results/build-windows-src.zip
+    - name: powershell Compress-Archive test results/build-windows-test.zip
+      run: powershell Compress-Archive test results/build-windows-test.zip
+    - name: Upload math result for job 1
+      uses: actions/upload-artifact@v1
+      with:
+        name: build-windows-src.zip
+        path: results/build-windows-src.zip
+    - name: Upload math result for job 1
+      uses: actions/upload-artifact@v1
+      with:
+        name: build-windows-test.zip
+        path: results/build-windows-test.zip
