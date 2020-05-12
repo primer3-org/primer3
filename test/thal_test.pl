@@ -65,8 +65,8 @@ sub _nowarn_system($);
 
 main();
 
-sub runtest($$$$$) {
-    my ($desc, $ntthal_args, $infile, $benchfile, $outfile) = @_;
+sub runtest($$$$$$) {
+    my ($desc, $ntthal_args, $infile, $benchfile, $outfile, $interactive) = @_;
     print $desc, '...';
     open Q, $infile or confess "open $infile: $!";
     my $errfile = "$outfile.err";
@@ -80,8 +80,32 @@ sub runtest($$$$$) {
         $test_count++;
         my $valgrind_prefix 
             = $do_valgrind ? sprintf($valgrind_format, $test_count) : '';
-        my $cmd = "$valgrind_prefix $exe $ntthal_args $in";
-	my $r = _nowarn_system($cmd);
+        my $cmd = "";
+        if ($interactive) {
+            # extract the input sequence(s)
+            my @inputs = ();
+            if ($in =~ m/-s1 ([^\s]+)/) {
+                unshift @inputs, $1;
+                $in =~ m/-s1 ([^\s]+)\s*/;
+            }
+            if ($in =~ m/-s2 ([^\s]+)/) {
+                unshift @inputs, $1;
+                $in =~ m/-s2 ([^\s]+)\s*/;
+            }
+            # write to a temp file
+            my $tmpfile = "$outfile.tmp";
+            open INFILE, ">", $tmpfile or confess "open INFILE '>' $tmpfile $!";
+            foreach my $input (@inputs) {
+                print INFILE "$input\n"
+            }
+            close INFILE;
+
+            $cmd = "$valgrind_prefix $exe $ntthal_args $in -i < $tmpfile";
+        }
+        else {
+            $cmd = "$valgrind_prefix $exe $ntthal_args $in";
+        }
+        my $r = _nowarn_system($cmd);
     }
     close Q;
     open STDOUT, ">&OLDOUT" or confess "Cannot dup OLDOUT: $!";
@@ -89,6 +113,34 @@ sub runtest($$$$$) {
     close OLDERR;
     close OLDOUT;
     my $r = perldiff $benchfile, $outfile;
+    if ($r == 0) {
+	print "[OK]\n";
+    } else {
+	print "[FAILED]\n";
+	$exit_status = -1;
+    }
+}
+
+sub run_batch_test($$$$$) {
+    my ($desc, $ntthal_args, $infile, $benchfile, $outfile) = @_;
+    print $desc, '...';
+    my $errfile = "$outfile.err";
+
+    # Reopen STDOUT to get all ntthal output in one file
+    open OLDOUT, ">&STDOUT" or confess "Cannot dup STDOUT: $!";
+    open OLDERR, ">&" , \*STDERR or confess "Cannot dup STDERR: $!";
+    open STDOUT, '>', $outfile or confess "open STDOUT '>' $outfile: $!";
+    open STDERR, '>', $errfile or confess "open STDERR '>' $errfile $!";
+    $test_count++;
+    my $valgrind_prefix 
+    = $do_valgrind ? sprintf($valgrind_format, $test_count) : '';
+    my $cmd = "$valgrind_prefix $exe $ntthal_args -i < $infile";
+    my $r = _nowarn_system($cmd);
+    open STDOUT, ">&OLDOUT" or confess "Cannot dup OLDOUT: $!";
+    open STDERR, ">&OLDERR" or confess "Cannot dup OLDERR: $!";
+    close OLDERR;
+    close OLDOUT;
+    $r = perldiff $benchfile, $outfile;
     if ($r == 0) {
 	print "[OK]\n";
     } else {
@@ -168,17 +220,28 @@ sub main() {
     }
     # ==================================================
     # Additional tests using runtest()
-    runtest('Default implementations + alignment',
-            "",  "thal_input", 'thal_output',
-            'thal_output.tmp');
+    foreach my $interactive (0..1) {
+        my $extra_description = $interactive ? " (interactive)" : "";
+        runtest("Default implementations + alignment $extra_description",
+                "",  "thal_input", 'thal_output',
+                'thal_output.tmp', $interactive);
 
-    runtest('Default implementations + NO alignment 1',
-            "-r",  'thal_input', 'thal_temp_output',
-            'thal_temp_output.tmp');
+        runtest("Default implementations + NO alignment 1 $extra_description",
+                "-r",  'thal_input', 'thal_temp_output',
+                'thal_temp_output.tmp', $interactive);
 
-    runtest('Default implementations + NO alignment 2',
-            "-r", "thal_long_input", 'thal_long_temp_output',
-            "thal_long_temp_output.tmp");
+        runtest("Default implementations + NO alignment 2 $extra_description",
+                "-r", "thal_long_input", 'thal_long_temp_output',
+                "thal_long_temp_output.tmp", $interactive);
+    }
+    # ==================================================
+    # Additional tests using run_batch_test()
+    run_batch_test("Default implementations + alignment (interactive batch inputs)",
+        "", "thal_batch_input", "thal_batch_output",
+        "thal_batch_output.tmp");
+    run_batch_test("Default implementations + alignment + HAIRPIN (interactive batch inputs)",
+        "-a HAIRPIN", "thal_batch_hairpin_input", "thal_batch_hairpin_output",
+        "thal_batch_output.tmp");
 
 
     # ================================================== 
