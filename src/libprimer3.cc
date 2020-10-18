@@ -166,6 +166,7 @@ static int    _pr_need_template_mispriming_thermod(const p3_global_settings *);
 
 static void   _pr_substr(const char *, int, int, char *);
 
+static int    _pr_violates_poly_x(const char *oligo_seq, int max_poly_x);
 
 static int    _check_and_adjust_intervals(seq_args *sa,
                                           int seq_len,
@@ -3019,11 +3020,9 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   int i, j, k, for_i, gc_count;
   int three_prime_pos; /* position of 3' base of oligo */
   oligo_type l = otype;
-  int poly_x, max_poly_x;
   int must_use = h->must_use;
   int three_conditions 
     = (must_use || pa->file_flag || retval->output_type == primer_list);
-  const char *seq = sa->trimmed_seq;
   const thal_args *thal_args_for_template_mispriming 
     = use_end_for_th_template_mispriming 
     ? thal_arg_to_use->end1
@@ -3306,20 +3305,10 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
                               stats, po_args)
       && !must_use) return;
 
-  max_poly_x = po_args->max_poly_x;
-  if (max_poly_x > 0) {
-    poly_x = 1;
-    for(i=j+1;i<=k;i++){
-      if(seq[i] == seq[i-1]||seq[i] == 'N'){
-        poly_x++;
-        if(poly_x > max_poly_x){
-          op_set_high_poly_x(h);
-          stats->poly_x++;
-          if (!must_use) return; else break;
-        }
-      }
-      else poly_x = 1;
-    }
+  if(_pr_violates_poly_x(oligo_seq, po_args->max_poly_x)) {
+    op_set_high_poly_x(h);
+    stats->poly_x++;
+    if (!must_use) return;
   }
 
   h->temp  /* Oligo/primer melting temperature */
@@ -7178,6 +7167,62 @@ _check_and_adjust_overlap_pos(seq_args *sa,
     }
   }
 
+  return 0;
+}
+
+/*
+ * Takes an upper case oligo sequence and a maximum allows number of
+ * identical consecutive base pairs. Returns 0 if a run of more than
+ * max_poly_x base pairs is not possible for seq and 1 otherwise.
+ *
+ * N can be any base and poly_x should be the worst case possible
+ * corner cases:
+ * NNG poly_x=3
+ * ANA poly_x=3
+ * CNN poly_x=3
+ * TNNG poly_x=3
+ * GNGNG poly_x=5
+ * ANGNG poly_x=4
+ *
+ * Algorithm - scan though seq from 0 to end considering all N bp to be
+ * the last seen non-N base pair. Then scan in the reverse direction
+ * and consider all N bp to the the last seen non-N base pair. The
+ * reverse scan can be skipped if seq does not contain any Ns.
+ */
+static int
+_pr_violates_poly_x(const char *seq, int max_poly_x) {
+const int len = strlen(seq);
+  int i, poly_x;
+  int has_N = 0;
+  char last_non_N = seq[0];
+  if (max_poly_x < 1) return 0;
+  if (len <= max_poly_x) return 0;
+  poly_x = 1;
+  for (i=1; i<len; i++){
+    if(seq[i] == 'N') {
+      has_N = 1;
+      poly_x++;
+      if (poly_x > max_poly_x) return 1;
+    } else if (seq[i] == last_non_N) {
+      poly_x++;
+      if (poly_x > max_poly_x) return 1;
+    } else {
+      poly_x = 1;
+      last_non_N = seq[i];
+    }
+  }
+  if (has_N == 0) return 0;
+  last_non_N = seq[len-1];
+  poly_x = 1;
+  for (i=len-2; i>=0; i--){
+    if (seq[i] == 'N' || seq[i] == last_non_N) {
+      poly_x++;
+      if (poly_x > max_poly_x) return 1;
+    } else {
+      poly_x = 1;
+      last_non_N = seq[i];
+    }
+  }
   return 0;
 }
 
