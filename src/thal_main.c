@@ -39,7 +39,6 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
 #include <setjmp.h>
 #include <ctype.h>
@@ -62,7 +61,7 @@ char *endptr; /* reading input */
 int i; /* index */
 const unsigned char *oligo1, *oligo2; /* inserted oligo sequences */
 char *path = NULL; /* path to the parameter files */
-bool interactive = false;
+int interactive = 0;
 
 /* Beginning of main */
 int main(int argc, char** argv) 
@@ -71,6 +70,7 @@ int main(int argc, char** argv)
    int tmp_ret = 0;
    thal_args a;
    thal_results o;
+   o.sec_struct=NULL;
    set_thal_default_args(&a);
    thal_mode mode = THL_GENERAL; /* by default print only melting temperature, 
                                     do not draw structure or print any additional parameters */
@@ -106,7 +106,8 @@ int main(int argc, char** argv)
      "\n"
      "-s2 DNA_oligomer\n"
      "\n"
-     "-i                   - run in an interactive mode, each line is an oligo, where pairs of consecutive lines are pairs of oligos to test (dimer only).\n"
+     "-i                   - run in an interactive mode, each line is an oligo. Pairs oligos to test \n"
+     "                       should be provided on one line separated by a comma (dimer only).\n"
      "\n";
    if(argc < 2) {
 #ifdef DEBUG
@@ -273,7 +274,7 @@ int main(int argc, char** argv)
          }
          i++;
       } else if (!strncmp("-i", argv[i], 2)) { /* interactive mode */
-         interactive = true;
+         interactive = 1;
       } else if(!strncmp("-", argv[i], 1)) { /* Unknown option. */
 #ifdef DEBUG
          fprintf(stderr, usage, argv[0]);
@@ -284,7 +285,6 @@ int main(int argc, char** argv)
       }
    }
    /* END reading INPUT */
-   
    /* check the input correctness */
    if(interactive) {
      if(oligo1!=NULL || oligo2!=NULL) {
@@ -335,19 +335,25 @@ int main(int argc, char** argv)
    }
 
    if(interactive) {
-     size_t buffer_size = 1024;
-     char *oligo1_str = (char*)malloc(sizeof(char)*buffer_size);
-     char *oligo2_str = (char*)malloc(sizeof(char)*buffer_size);
+     size_t buffer_size = 16384;
+     char *oligo_str = (char*)malloc(sizeof(char)*buffer_size);
 
-     while(NULL != fgets(oligo1_str, buffer_size, stdin) && (a.dimer==0 || NULL != fgets(oligo2_str, buffer_size, stdin))) {
-       oligo1_str[strlen(oligo1_str)-1] = '\0';
-       oligo1 = (const unsigned char*)oligo1_str;
+     while(NULL != fgets(oligo_str, buffer_size, stdin)) {
+       oligo_str[strlen(oligo_str)-1] = '\0';
+       oligo1 = (const unsigned char*)oligo_str;
        if(a.dimer==0) {
-         thal(oligo1,oligo1,&a,mode,&o);   
+         thal(oligo1,oligo1,&a,mode,&o);
        } else {
-         oligo2 = (const unsigned char*)oligo2_str;
-         oligo2_str[strlen(oligo2_str)-1] = '\0';
-         thal(oligo1,oligo2,&a,mode,&o);   
+         char *sep = strchr(oligo_str, ',');
+         if (sep != NULL) {
+           oligo2 = (const unsigned char*)sep;
+           oligo2++;
+           *sep = '\0';
+           thal(oligo1,oligo2,&a,mode,&o);
+         } else {
+           fprintf(stderr, usage, argv[0]);
+           exit(-1);
+         }
        }
        /* encountered error during thermodynamical calc */
        if (o.temp == THAL_ERROR_SCORE) {
@@ -360,17 +366,15 @@ int main(int argc, char** argv)
        o.sec_struct=NULL;
 	   fflush(stdout);
      }
-
-     free((void*)oligo1_str);
-     free((void*)oligo2_str);
+     free((void*)oligo_str);
    } else {
      /* execute thermodynamical alignemnt */
      if(a.dimer==0 && oligo1!=NULL){
-       thal(oligo1,oligo1,&a,mode,&o);   
+       thal(oligo1,oligo1,&a,mode,&o);
      } else if(a.dimer==0 && oligo1==NULL && oligo2!=NULL) {
        thal(oligo2,oligo2,&a,mode,&o);
      } else {
-       thal(oligo1,oligo2,&a,mode,&o);   
+       thal(oligo1,oligo2,&a,mode,&o);
      }
      /* encountered error during thermodynamical calc */
      if (o.temp == THAL_ERROR_SCORE) {

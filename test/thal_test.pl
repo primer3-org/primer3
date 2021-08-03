@@ -83,21 +83,31 @@ sub runtest($$$$$$) {
         my $cmd = "";
         if ($interactive) {
             # extract the input sequence(s)
-            my @inputs = ();
-            if ($in =~ m/-s1 ([^\s]+)/) {
-                unshift @inputs, $1;
-                $in =~ m/-s1 ([^\s]+)\s*/;
+            my $input1 = "";
+            my $input2 = "";
+            my $inputs = "";
+            if ($in =~ m/-s1 ([ACTGNactgn]+)/) {
+                $input1 .= $1;
+                $inputs .= $1;
+                $in =~ s/-s1 ([ACTGNactgn]+)//;
             }
-            if ($in =~ m/-s2 ([^\s]+)/) {
-                unshift @inputs, $1;
-                $in =~ m/-s2 ([^\s]+)\s*/;
+            if ($in =~ m/-s2 ([ACTGNactgn]+)/) {
+                $input2 .= $1;
+                $inputs .= $1;
+                $in =~ s/-s2 ([ACTGNactgn]+)//;
             }
+            if (($input1 ne "") && ($input2 ne "")) {
+                $inputs = $input1 . "," . $input2;
+                if ($in =~ m/HAIRPIN/) {
+                    $inputs = $input1;
+                }
+            }
+            $in =~ s/ +/ /g;
+            $in =~ s/\n//g;
             # write to a temp file
-            my $tmpfile = "$outfile.tmp";
+            my $tmpfile = "thal_interactive_input_commandline.tmp";
             open INFILE, ">", $tmpfile or confess "open INFILE '>' $tmpfile $!";
-            foreach my $input (@inputs) {
-                print INFILE "$input\n"
-            }
+            print INFILE "$inputs\n";
             close INFILE;
 
             $cmd = "$valgrind_prefix $exe $ntthal_args $in -i < $tmpfile";
@@ -220,20 +230,30 @@ sub main() {
     }
     # ==================================================
     # Additional tests using runtest()
-    foreach my $interactive (0..1) {
-        my $extra_description = $interactive ? " (interactive)" : "";
-        runtest("Default implementations + alignment $extra_description",
-                "",  "thal_input", 'thal_output',
-                'thal_output.tmp', $interactive);
+    runtest("Default implementations + alignment",
+            "",  "thal_input", 'thal_output',
+            'thal_output.tmp', 0);
 
-        runtest("Default implementations + NO alignment 1 $extra_description",
-                "-r",  'thal_input', 'thal_temp_output',
-                'thal_temp_output.tmp', $interactive);
+    runtest("Default implementations + NO alignment 1",
+            "-r",  'thal_input', 'thal_temp_output',
+            'thal_temp_output.tmp', 0);
 
-        runtest("Default implementations + NO alignment 2 $extra_description",
-                "-r", "thal_long_input", 'thal_long_temp_output',
-                "thal_long_temp_output.tmp", $interactive);
-    }
+    runtest("Default implementations + NO alignment 2",
+            "-r", "thal_long_input", 'thal_long_temp_output',
+            "thal_long_temp_output.tmp", 0);
+
+    # Run as interactive
+    runtest("Default implementations + alignment (interactive)",
+            "",  "thal_input", 'thal_output',
+            'thal_output_i.tmp', 1);
+
+    runtest("Default implementations + NO alignment 1 (interactive)",
+            "-r",  'thal_input', 'thal_temp_output',
+            'thal_temp_output_i.tmp', 1);
+
+    runtest("Default implementations + NO alignment 2 (interactive)",
+            "-r", "thal_long_input", 'thal_long_temp_output',
+            "thal_long_temp_output_i.tmp", 1);
     # ==================================================
     # Additional tests using run_batch_test()
     run_batch_test("Default implementations + alignment (interactive batch inputs)",
@@ -241,7 +261,7 @@ sub main() {
         "thal_batch_output.tmp");
     run_batch_test("Default implementations + alignment + HAIRPIN (interactive batch inputs)",
         "-a HAIRPIN", "thal_batch_hairpin_input", "thal_batch_hairpin_output",
-        "thal_batch_output.tmp");
+        "thal_batch_hairpin_output.tmp");
 
 
     # ================================================== 
