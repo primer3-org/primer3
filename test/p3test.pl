@@ -355,6 +355,7 @@ sub main() {
 			'primer_position_penalty',
 			'primer_position_penalty_formatted',
 			'p3-tmpl-mispriming',
+			'primer_poly_x',
 
 			'primer_three_prime_distance',
 
