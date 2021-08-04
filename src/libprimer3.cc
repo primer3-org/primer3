@@ -7191,19 +7191,23 @@ _check_and_adjust_overlap_pos(seq_args *sa,
  */
 static int
 _pr_violates_poly_x(const char *seq, int max_poly_x) {
-const int len = strlen(seq);
+  if (max_poly_x < 1) return 0;
+  const int len = strlen(seq);
+  if (len <= max_poly_x) return 0;
   int i, poly_x;
   int has_N = 0;
-  char last_non_N = seq[0];
-  if (max_poly_x < 1) return 0;
-  if (len <= max_poly_x) return 0;
-  poly_x = 1;
-  for (i=1; i<len; i++){
+  char last_non_N = 'x';
+  poly_x = 0;
+  for (i=0; i<len; i++){
     if(seq[i] == 'N') {
       has_N = 1;
       poly_x++;
       if (poly_x > max_poly_x) return 1;
     } else if (seq[i] == last_non_N) {
+      poly_x++;
+      if (poly_x > max_poly_x) return 1;
+    } else if (last_non_N == 'x') {
+      last_non_N = seq[i];
       poly_x++;
       if (poly_x > max_poly_x) return 1;
     } else {
@@ -7212,10 +7216,14 @@ const int len = strlen(seq);
     }
   }
   if (has_N == 0) return 0;
-  last_non_N = seq[len-1];
-  poly_x = 1;
-  for (i=len-2; i>=0; i--){
+  last_non_N = 'x';
+  poly_x = 0;
+  for (i=len-1; i>=0; i--){
     if (seq[i] == 'N' || seq[i] == last_non_N) {
+      poly_x++;
+      if (poly_x > max_poly_x) return 1;
+    } else if (last_non_N == 'x') {
+      last_non_N = seq[i];
       poly_x++;
       if (poly_x > max_poly_x) return 1;
     } else {
