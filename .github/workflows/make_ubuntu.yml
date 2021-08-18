@@ -2,7 +2,7 @@ name: make test ubuntu-latest
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build-ubuntu:
@@ -29,8 +29,8 @@ jobs:
     - name: perl masker_test.pl
       run: perl masker_test.pl
       working-directory: ./test
-    - name: perl p3test.pl
-      run: perl p3test.pl
+    - name: perl p3test.pl --action
+      run: perl p3test.pl --action
       working-directory: ./test
     - name: mkdir results
       run: mkdir results

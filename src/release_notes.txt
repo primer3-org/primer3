@@ -20,6 +20,9 @@ be Gs).
 ntthal runs in an interactive mode, each line is an oligo, where pairs of
 consecutive lines are pairs of oligos to test (only for dimers).
 
+3. GitHub default branch was renamed to main.
+
+
 release 2.5.0 2019-08-17  ===============================================
 This release adds new features to primer3_core and related C code.
 

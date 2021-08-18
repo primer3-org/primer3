@@ -58,7 +58,8 @@ sub _nowarn_system($);
 our $def_executable = "../src/primer3_core";
 our $exe = '../src/primer3_core';
 our $set_files = '../test/';
-our ($verbose, $do_valgrind, $do_valgrinda, $do_valgrindb, $winFlag, $fastFlag, $onetest);
+our ($verbose, $do_valgrind, $do_valgrinda, $do_valgrindb, $return_action,
+     $winFlag, $fastFlag, $onetest);
 
 our %signo;
 
@@ -117,12 +118,13 @@ sub main() {
                     'windows',
                     'fast',
                     'verbose',
+                    'action',
                     'onetest=s',
                     'executable=s',
                     )) {
         print "Usage: perl p3test.pl \\\n",
-        "    [--executable <primer3 executable>] [ --onetest <test_name> ] ",
-        "[ --valgrind ] [  --verbose ] [--windows] [--fast]\n",
+        "    [ --executable <primer3 executable> ] [ --onetest <test_name> ] ",
+        "[ --valgrind ] [ --verbose ] [ --action ] [ --windows ] [ --fast ]\n",
         "\n",
         "    where <primer3 executable> defaults to ../src/primer3_core\n";
         exit -1;
@@ -135,6 +137,7 @@ sub main() {
     $do_valgrind = $args{'valgrind'};
     $do_valgrinda = $args{'valgrinda'};
     $do_valgrindb = $args{'valgrindb'};
+    $return_action = $args{'action'};
     if ($do_valgrinda || $do_valgrindb) {
         $do_valgrind = 1;
     }
@@ -221,9 +224,7 @@ sub main() {
                   'primer_thal_max_seq_error',
                   'primer_first_base_index',
                   'primer_must_match',
-                  'primer_masker',
-                  'primer_masker_formatted',
-                          
+
                   'test_compl_error',
                   'test_left_to_right_of_right',
                   'dv_conc_vs_dntp_conc',
@@ -340,7 +341,7 @@ sub main() {
             next;
         }
 
-        if ($winFlag && (($test eq 'primer_masker_formatted')
+        if ($winFlag && (($test eq 'primer_masker')
             || ($test eq 'primer_masker_formatted'))) {
             print "[PRIMER_MASK_TEMPLATE not supported on Windows]\n";
             next;
@@ -521,11 +522,13 @@ sub main() {
         }
         $r = system "grep 'definitely lost' *.vg */*.vg | grep -v ' 0 bytes'";
         if (!$r) {
+            $all_ok = 0;
             print "\nValgrind LEAKSs found [WARNING]";
             $exit_stat = -1;
         }
         $r = system "grep 'possibly lost' *.vg */*.vg   | grep -v ' 0 bytes'";
         if (!$r) {
+            $all_ok = 0;
             print "\nValgrind LEAKSs found [WARNING]";
             $exit_stat = -1;
         }
@@ -535,7 +538,15 @@ sub main() {
 
     print $all_ok ? "Passed all tests - [OK]\n\n\n" : "At least one test failed - [FAILED]\n\n\n";
 
-    exit 0 # $exit_stat; Change here, generally we want the testing to continue.
+    if ($all_ok != 1 ) {
+        $exit_stat = -1;
+    }
+
+    if ($return_action || $do_valgrinda || $do_valgrindb) {
+        exit $exit_stat;
+    } else {
+        exit 0;  #  Generally we want the testing to continue.
+    }
 }
 
 # Usage: perldiff("filename1", "filename2")

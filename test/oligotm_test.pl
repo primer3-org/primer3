@@ -133,7 +133,9 @@ if ($do_valgrind) {
 
 if(!$failure){
     print "$nr: [OK]\n\n\n";
+    exit 0;
 }
 else{
     print "\n$nr Tm tests: $failure [FAILURES]\n\n\n";
+    exit -1;
 }

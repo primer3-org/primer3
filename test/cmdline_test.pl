@@ -216,7 +216,7 @@ sub main() {
         }
     }
 
-    print $all_ok ? "Passed all tests - [OK]\n\n\n" : "At least one test failed - [FAILED]\n\n";
+    print $all_ok ? "Passed all tests - [OK]\n\n\n" : "At least one test failed - [FAILED]\n\n\n";
 
     exit $exit_stat;
 }

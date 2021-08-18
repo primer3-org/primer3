@@ -2,7 +2,7 @@ name: make test windows-latest
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build-windows:
@@ -26,8 +26,8 @@ jobs:
     - name: perl thal_test.pl --windows
       run: perl thal_test.pl --windows
       working-directory: ./test
-    - name: perl p3test.pl --windows
-      run: perl p3test.pl --windows
+    - name: perl p3test.pl --windows --action
+      run: perl p3test.pl --windows --action
       working-directory: ./test
     - name: mkdir results
       run: mkdir results
