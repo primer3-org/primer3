@@ -213,6 +213,8 @@ sub main() {
                             'primer3web_v0_4_0_default_settings',
    	                    'primer3web_v3_0_0_default_settings',
                             'primer3web_v4_0_0_default_settings',
+
+			    'overhang_th' => 1,
 			    
 			    # 'primer_internal' => 1,
 			    # 'primer_internal1' => 1,
@@ -365,7 +367,10 @@ sub main() {
 			'primer_masker',
 			'primer_masker_formatted',
 
+			'overhang',
+
 			# Put slow tests last
+			'overhang_th',
 			'primer_mispriming_th',
 			'th-w-other-tasks',
 			'primer_new_tasks_th',

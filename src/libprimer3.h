@@ -616,6 +616,8 @@ typedef struct primer_rec {
 
   char *template_mispriming_r_struct; /* Secondary structure of template_mispriming_r */
 
+  char  *overhang; /* prepend to 5' end of primer to generate full oligo */
+
   char   length;   /* Length of the oligo. */
   char   num_ns;   /* Number of Ns in the oligo. */
         
@@ -861,6 +863,9 @@ typedef struct seq_args {
   int force_left_end;     /* The 0-based forced 3' end left primer. */
   int force_right_start;  /* The 0-based forced 5' start right primer. */
   int force_right_end;    /* The 0-based forced 3' end right primer. */
+  char *overhang_left;    /* sequence added to the 3' end of the left primer */
+  char *overhang_right;   /* reverse complement of the sequence added to
+			     the 3' end of the right primer */
 
 } seq_args;
 
@@ -1227,6 +1232,10 @@ int    p3_print_one_oligo_list(const seq_args *,
 char  *pr_oligo_sequence(const seq_args *, const primer_rec *);
 
 char  *pr_oligo_rev_c_sequence(const seq_args *, const primer_rec *);
+
+char  *pr_oligo_upper_sequence(const seq_args *, const primer_rec *);
+
+char  *pr_oligo_rev_c_upper_sequence(const seq_args *, const primer_rec *);
 
 /* Return NULL on ENOMEM */
 pr_append_str *create_pr_append_str();
