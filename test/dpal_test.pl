@@ -78,17 +78,17 @@ sub runtest($$$$$) {
         my $valgrind_prefix 
             = $do_valgrind ? sprintf($valgrind_format, $test_count) : '';
         my $cmd = "$valgrind_prefix $exe $ntdpal_args $in";
-	my $r = _nowarn_system($cmd);
+        my $r = _nowarn_system($cmd);
     }
     close Q;
     open STDOUT, ">&OLDOUT" or confess "Cannot dup OLDOUT: $!";
     close OLDOUT;
     my $r = perldiff $benchfile, $outfile;
     if ($r == 0) {
-	print "[OK]\n";
+        print "[OK]\n";
     } else {
-	print "[FAILED]\n";
-	$exit_status = -1;
+        print "[FAILED]\n";
+        $exit_status = -1;
     }
 }
 
@@ -102,7 +102,7 @@ sub main() {
                     'valgrind',
                     'windows',
                     )) {
-	print "Usage: $0 [ --valgrind ] [ --windows ]\n";
+        print "Usage: $0 [ --valgrind ] [ --windows ]\n";
         exit -1;
     }
 
@@ -154,8 +154,8 @@ sub main() {
     if ($foo[0] eq "Error: Sequence 2 longer than DPAL_MAX_ALIGN and alignment is requested\n") {
         print "[OK]\n"
     } else {
-	print "[FAILED]\n";
-	$exit_status = -1;
+        print "[FAILED]\n";
+        $exit_status = -1;
     }
 
     # ==================================================

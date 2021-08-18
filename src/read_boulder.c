@@ -521,18 +521,18 @@ read_boulder_record(FILE *file_input,
         thermodynamic_params_path = (char*) _rb_safe_malloc(datum_len + 1);
         strcpy(thermodynamic_params_path, datum);
         if (thermodynamic_params_path[strlen(thermodynamic_params_path) - 1] == '\n') {
-	  thermodynamic_params_path[strlen(thermodynamic_params_path) - 1] = '\0';
+          thermodynamic_params_path[strlen(thermodynamic_params_path) - 1] = '\0';
         }
 
         thal_results o;
-	if (thal_load_parameters(thermodynamic_params_path, &pa->thermodynamic_parameters, &o) == -1) {
-	  pr_append_new_chunk(glob_err, o.msg);
-	}
+        if (thal_load_parameters(thermodynamic_params_path, &pa->thermodynamic_parameters, &o) == -1) {
+          pr_append_new_chunk(glob_err, o.msg);
+        }
         if (get_thermodynamic_values(&pa->thermodynamic_parameters, &o)) {
           pr_append_new_chunk(glob_err, o.msg);
         }
-	free(thermodynamic_params_path);
-	continue;
+        free(thermodynamic_params_path);
+        continue;
       }
       if (COMPARE("PRIMER_MASK_KMERLIST_PATH")) {
         if (kmer_lists_path == NULL) {

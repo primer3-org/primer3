@@ -151,22 +151,22 @@ sub main() {
             print "Cannot find $valgrind_exe; will try `/usr/local/bin/valgrind`\n";
             $valgrind_exe = "/usr/local/bin/valgrind";
         }
-	if (!-x $valgrind_exe) { 
-	    print "Cannot find $valgrind_exe; will try `which valgrind`\n";
-	    $valgrind_exe= `which valgrind`;
-	    chomp($valgrind_exe);
-	    if (!$valgrind_exe || ! -x $valgrind_exe) {
-		die "Cannot execute $valgrind_exe";
-	    }
-	}
-	# Need to deal with different arguments in 
-	# different version of valgrind
-	my $valgrind_version = `$valgrind_exe --version`;
-	if ($valgrind_version =~ /([0-9]+)\.([0-9]+)\./) {
-	    if (($1 > 3) || (($1 == 3) && ($2 > 2))) {
-		$log_file_arg_for_valgrind = "--log-file";
-	    }
-	}
+    if (!-x $valgrind_exe) {
+        print "Cannot find $valgrind_exe; will try `which valgrind`\n";
+        $valgrind_exe= `which valgrind`;
+        chomp($valgrind_exe);
+        if (!$valgrind_exe || ! -x $valgrind_exe) {
+        die "Cannot execute $valgrind_exe";
+        }
+    }
+    # Need to deal with different arguments in
+    # different version of valgrind
+    my $valgrind_version = `$valgrind_exe --version`;
+    if ($valgrind_version =~ /([0-9]+)\.([0-9]+)\./) {
+        if (($1 > 3) || (($1 == 3) && ($2 > 2))) {
+        $log_file_arg_for_valgrind = "--log-file";
+        }
+    }
     }
 
     $valgrind_format  = $valgrind_exe
@@ -191,202 +191,134 @@ sub main() {
     # Tests in %default_version2 use --default_version=2.
     # Others use -default_version=1.
     my %default_version2 = ('th-w-other-tasks' => 1,
-			    'primer_thermod_align' => 1,
-			    'primer_thermod_align_formatted' => 1,
-			    'primer1_th' => 1,
-			    'primer_mispriming_th' => 1,
-			    'primer_must_use_th' => 1,
-			    'primer_new_tasks_th' => 1,
-			    'primer_task_th' => 1,
-	                    'primer_thal_args' => 1,
-	
-			    # 'test_compl_error' => 1,
-			    # 'test_left_to_right_of_right' => 1,
+                            'primer_thermod_align' => 1,
+                            'primer_thermod_align_formatted' => 1,
+                            'primer1_th' => 1,
+                            'primer_mispriming_th' => 1,
+                            'primer_must_use_th' => 1,
+                            'primer_new_tasks_th' => 1,
+                            'primer_task_th' => 1,
+                            'primer_thal_args' => 1,
 
-			    'primer_boundary' => 1, # Put the quickest tests first.
+                            'primer_boundary' => 1, # Put the quickest tests first.
 
-			    # 'primer_boundary1' => 1,
-			    # 'primer_boundary_formatted' => 1,
-			    # 'primer_boundary1_formatted' => 1,
- 
                             'primer3_v1_1_4_default_settings',
                             'primer3web_v0_4_0_default_settings',
-   	                    'primer3web_v3_0_0_default_settings',
+                            'primer3web_v3_0_0_default_settings',
                             'primer3web_v4_0_0_default_settings',
 
-			    'overhang_th' => 1,
-			    
-			    # 'primer_internal' => 1,
-			    # 'primer_internal1' => 1,
-			    # 'primer_internal_formatted' => 1,
-			    # 'primer_internal1_formatted' => 1,
-			    
-			    # 'primer_ok_regions' => 1,
-			    # 'primer_ok_regions_formatted' => 1,
-			    # 'primer_ok_regions2' => 1,
-
-			    # 'primer_tm_lc_masking' => 1,
-			    # 'primer_tm_lc_masking_formatted' => 1,
-
-			    # 'primer_start_codon' => 1,
-			    
-			    # 'primer_task' => 1,
-			    # 'primer_task_formatted' => 1,
-			    # 'primer_renewed_tasks' => 1,
-			    # 'primer_new_tasks' => 1,
-			    # 'primer_new_tasks_formatted' => 1,
-			    
-			    # 'primer_must_overlap_point' => 1,
-			    # 'primer_overlap_junction' => 1,
-			    
-			    # 'primer_all_settingsfiles' => 1,
-			    # 'primer_high_tm_load_set' => 1,
-			    # 'primer_high_gc_load_set' => 1,
-
-			    # 'primer_gc_end' => 1,
-			    # 'primer_check' => 1,
-			    # 'primer_must_use' => 1,
-			    # 'primer_must_use_formatted' => 1,
-			    # 'primer_syntax' => 1,
-			    # 'primer_end_pathology' => 1,
-			    # 'primer_num_best' => 1,
-			    # 'primer_quality_boundary' => 1,
-			    # 'primer' => 1,
-			    # 'primer1' => 1,
-			    # 'primer_mispriming' => 1,
-			    # 'primer_mispriming_formatted' => 1,
-			    # 'primer_mispriming_boundary1' => 1,
-			    # 'primer_mispriming_boundary1_formatted' => 1,
-			    # 'primer_mispriming_boundary2' => 1,
-			    # 'primer_mispriming_boundary2_formatted' => 1,
-			    # 'primer_mispriming_long_lib' => 1,
-			    # 'primer_rat' => 1,
-			    # 'primer_human' => 1,
-			    # 'long_seq' => 1,
-			    # 'primer_position_penalty' => 1,
-			    # 'primer_position_penalty_formatted' => 1,
-			    # 'p3-tmpl-mispriming' => 1,
-
-			    # Put slow tests last
-
-			    # 'p3_3_prime_n' => 1,
-			    # 'primer_three_prime_distance' => 1,
-			    
-			    # 'primer_obj_fn' => 1,
-			    
-			    # 'primer_lib_amb_codes' => 1,
-			    );
+                            'primer_overhang_th' => 1,
+                           );
 
     my @TESTS = ( 
-			# New tests that use new melting temperature
-			# and thermodynamic alignments
-			# Put the quickest tests first.
-			'primer_must_use_th',
-			'primer_sec_struct_dpal',
-                        'primer_task_th',
-			'primer_thal_args',
-	                'primer_thal_max_seq_error',
-	                'primer_first_base_index',
-                        'primer_must_match',
-
-                        'primer_masker',
-                        'primer_masker_formatted',
+                  # New tests that use new melting temperature
+                  # and thermodynamic alignments
+                  # Put the quickest tests first.
+                  'primer_must_use_th',
+                  'primer_sec_struct_dpal',
+                  'primer_task_th',
+                  'primer_thal_args',
+                  'primer_thal_max_seq_error',
+                  'primer_first_base_index',
+                  'primer_must_match',
+                  'primer_masker',
+                  'primer_masker_formatted',
                           
-			'test_compl_error',
-			'test_left_to_right_of_right',
-                        'dv_conc_vs_dntp_conc',
-			'primer_boundary',
-			'primer_boundary1',
-			'primer_boundary_formatted',
-			'primer_boundary1_formatted',
+                  'test_compl_error',
+                  'test_left_to_right_of_right',
+                  'dv_conc_vs_dntp_conc',
+                  'primer_boundary',
+                  'primer_boundary1',
+                  'primer_boundary_formatted',
+                  'primer_boundary1_formatted',
 
-                        'primer3_v1_1_4_default_settings',
-                        'primer3web_v0_4_0_default_settings',
-	                'primer3web_v3_0_0_default_settings',
-                        'primer3web_v4_0_0_default_settings',
+                  'primer3_v1_1_4_default_settings',
+                  'primer3web_v0_4_0_default_settings',
+                  'primer3web_v3_0_0_default_settings',
+                  'primer3web_v4_0_0_default_settings',
 
-			'primer_internal',
-			'primer_internal1',
-			'primer_internal_formatted',
-			'primer_internal1_formatted',
+                  'primer_internal',
+                  'primer_internal1',
+                  'primer_internal_formatted',
+                  'primer_internal1_formatted',
 
-			'primer_ok_regions',
-			'primer_ok_regions_formatted',
-			'primer_ok_regions2',
+                  'primer_ok_regions',
+                  'primer_ok_regions_formatted',
+                  'primer_ok_regions2',
 
-			'primer_tm_lc_masking',
-			'primer_tm_lc_masking_formatted',
+                  'primer_tm_lc_masking',
+                  'primer_tm_lc_masking_formatted',
 
-			'primer_start_codon',
+                  'primer_start_codon',
 
-			'primer_task',
-			'primer_task_formatted',
-			'primer_renewed_tasks',
-			'primer_new_tasks',
-			'primer_new_tasks_formatted',
+                  'primer_task',
+                  'primer_task_formatted',
+                  'primer_renewed_tasks',
+                  'primer_new_tasks',
+                  'primer_new_tasks_formatted',
 
-			'primer_windows_newlines',
+                  'primer_windows_newlines',
 
-			'primer_must_overlap_point',
-			'primer_overlap_junction',
+                  'primer_must_overlap_point',
+                  'primer_overlap_junction',
 
-			'primer_all_settingsfiles',
-			'primer_high_tm_load_set',
-			'primer_high_gc_load_set',
+                  'primer_all_settingsfiles',
+                  'primer_high_tm_load_set',
+                  'primer_high_gc_load_set',
 
-			'primer_gc_end',
-			'primer_check',
-			'primer_must_use',
-			'primer_must_use_formatted',
-			'primer_syntax',
-			'primer_end_pathology',
-			'primer_num_best',
-			'primer_quality_boundary',
-			'primer',
-			'primer1',
-			'primer_mispriming',
-			'primer_mispriming_formatted',
-			'primer_mispriming_boundary1',
-			'primer_mispriming_boundary1_formatted',
-			'primer_mispriming_boundary2',
-			'primer_mispriming_boundary2_formatted',
-			'primer_mispriming_long_lib',
-			'primer_rat',
-			'primer_human',
-			'long_seq',
-			'primer_position_penalty',
-			'primer_position_penalty_formatted',
-			'p3-tmpl-mispriming',
-			'primer_poly_x',
+                  'primer_gc_end',
+                  'primer_check',
+                  'primer_must_use',
+                  'primer_must_use_formatted',
+                  'primer_syntax',
+                  'primer_end_pathology',
+                  'primer_num_best',
+                  'primer_quality_boundary',
+                  'primer',
+                  'primer1',
+                  'primer_mispriming',
+                  'primer_mispriming_formatted',
+                  'primer_mispriming_boundary1',
+                  'primer_mispriming_boundary1_formatted',
+                  'primer_mispriming_boundary2',
+                  'primer_mispriming_boundary2_formatted',
+                  'primer_mispriming_long_lib',
+                  'primer_rat',
+                  'primer_human',
+                  'long_seq',
+                  'primer_position_penalty',
+                  'primer_position_penalty_formatted',
+                  'p3-tmpl-mispriming',
+                  'primer_poly_x',
 
-			'primer_three_prime_distance',
+                  'primer_three_prime_distance',
 
-			'primer_obj_fn',
-			'p3_3_prime_n',
-			
-			'primer_masker',
-			'primer_masker_formatted',
+                  'primer_obj_fn',
+                  'p3_3_prime_n',
 
-			'overhang',
+                  'primer_masker',
+                  'primer_masker_formatted',
 
-			# Put slow tests last
-			'overhang_th',
-			'primer_mispriming_th',
-			'th-w-other-tasks',
-			'primer_new_tasks_th',
-			'primer_sec_struct_thal',
-			'primer_thermod_align',             
-			'primer_thermod_align_formatted',
-			'primer1_th',
-			'primer_lib_amb_codes',
+                  'primer_overhang',
 
-		  );
+                  # Put slow tests last
+                  'primer_overhang_th',
+                  'primer_mispriming_th',
+                  'th-w-other-tasks',
+                  'primer_new_tasks_th',
+                  'primer_sec_struct_thal',
+                  'primer_thermod_align',
+                  'primer_thermod_align_formatted',
+                  'primer1_th',
+                  'primer_lib_amb_codes',
+
+                );
 
 
     if (!$args{'onetest'}) {
-	test_fatal_errors();
+      test_fatal_errors();
     } else {
-	@TESTS = $args{'onetest'};
+      @TESTS = $args{'onetest'};
     }
 
     # The range of this for loop is a set of test names
@@ -402,8 +334,8 @@ sub main() {
             || ($test eq 'primer1_th')
             || ($test eq 'primer_mispriming_th')
             || ($test eq 'primer_new_tasks_th')
-	        || ($test eq 'primer_thermod_align')
-	        || ($test eq 'primer_thermod_align_formatted'))) {
+            || ($test eq 'primer_thermod_align')
+            || ($test eq 'primer_thermod_align_formatted'))) {
             print "[skipped in fast mode]\n";
             next;
         }
@@ -460,10 +392,10 @@ sub main() {
         my $r;                  # Return value for tests
 
         my %list_test
-	    = ('primer' => 1,
-	       'primer1' => 1,
-	       'primer1_th' => 1,
-	       'th-w-other-tasks' => 1);
+        = ('primer' => 1,
+           'primer1' => 1,
+           'primer1_th' => 1,
+           'th-w-other-tasks' => 1);
 
         if (exists($list_test{$test})) {
             # These tests generate primer lists, which
@@ -487,7 +419,7 @@ sub main() {
             # set, run command with Windows backslashes
             # in path.
             my $settings = '';
-	
+
             if ($winFlag) {
                 if ($test eq 'th-w-other-tasks') {
                     $settings = '--p3_settings ..\\th-w-other-tasks-settings.txt --echo_settings';
@@ -583,18 +515,18 @@ sub main() {
         my $r = system "grep ERROR *.vg */*.vg | grep -v 'ERROR SUMMARY: 0 errors'";
         if (!$r) { # !$r because grep returns 0 if something is found,
             # and if something is found, we have a problem.
-	    $all_ok = 0;
-	    print "\nValgrind ERRORs found [FAILED]";
+            $all_ok = 0;
+            print "\nValgrind ERRORs found [FAILED]";
             $exit_stat = -1;
         }
         $r = system "grep 'definitely lost' *.vg */*.vg | grep -v ' 0 bytes'";
         if (!$r) {
-	    print "\nValgrind LEAKSs found [WARNING]";
+            print "\nValgrind LEAKSs found [WARNING]";
             $exit_stat = -1;
         }
         $r = system "grep 'possibly lost' *.vg */*.vg   | grep -v ' 0 bytes'";
         if (!$r) {
-	    print "\nValgrind LEAKSs found [WARNING]";
+            print "\nValgrind LEAKSs found [WARNING]";
             $exit_stat = -1;
         }
     }
@@ -618,8 +550,8 @@ sub perldiff($$) {
     # If different number of lines, return FAIL.
     if (@f1 != @f2) {
         print "\n   Different number of lines;\n";
-	print "   on command line in test directory run:\n";
-	print "   diff $f1 $f2\n\n";
+        print "   on command line in test directory run:\n";
+        print "   diff $f1 $f2\n\n";
         return 1;
     }
     # check for differences on the lines, themselves
@@ -666,30 +598,30 @@ sub perldiff($$) {
 
         # Edit release number
         if ($l1 ne $l2) {
-	    if ($l1 =~ /(libprimer3|primer3) release \d+\.\d+\.\d+/
+            if ($l1 =~ /(libprimer3|primer3) release \d+\.\d+\.\d+/
                 && $l2 =~ /(libprimer3|primer3) release \d+\.\d+\.\d+/) {
                 $l1 =~ s/(libprimer3|primer3) release \d+\.\d+\.\d+//;
                 $l2 =~ s/(libprimer3|primer3) release \d+\.\d+\.\d+//;
             }
         }
 
-	# If this is the tag with the settings file path, replace \ by / to make it
-	# the same on both Linux and Windows
-	if ($l1 =~ /^P3_SETTINGS_FILE_USED/ && $l2 =~ /^P3_SETTINGS_FILE_USED/) {
-	    $l1 =~ s/\\/\//g;
-	    $l2 =~ s/\\/\//g;
-	}
-	
+        # If this is the tag with the settings file path, replace \ by / to make it
+        # the same on both Linux and Windows
+        if ($l1 =~ /^P3_SETTINGS_FILE_USED/ && $l2 =~ /^P3_SETTINGS_FILE_USED/) {
+            $l1 =~ s/\\/\//g;
+            $l2 =~ s/\\/\//g;
+        }
+
         $linenumber++;
         # Check for difference between two edited lines (line by line)
         if ($l1 ne $l2) {
             print 
                 "\n   Difference found at line $linenumber:\n",
-		"   <  $l1_orig\n",
-		"   >  $l2_orig\n";
-	    print "   There may be additional differences.\n";
-	    print "   On command line in test directory run\n\n";
-	    print "   diff $f1 $f2\n\n";
+                "   <  $l1_orig\n",
+                "   >  $l2_orig\n";
+            print "   There may be additional differences.\n";
+            print "   On command line in test directory run\n\n";
+            print "   diff $f1 $f2\n\n";
             return 1;
         }
     }
@@ -713,24 +645,24 @@ sub test_fatal_errors() {
             = $do_valgrind ? sprintf $valgrind_format, $root : '';
 
         my $cmd;
-	if ($_ =~ /bad_settings\d\.in/) {
-	    # For testing the settings files we need the
-	    # names of tests and the settings to be parallel
-	    $cmd = "$valgrind_prefix$exe --strict_tags --p3_settings_file $_ primer_global_err/input_for_settings_tests.txt  > $root.tmp 2> $root.tmp2";
-	    # print STDERR $cmd, "\n";
-	} else {
-	    if ($output_and_err_tested) {
-		$cmd = "$valgrind_prefix$exe --strict_tags <$_ > $root.tmp 2> $root.tmp2";
-	    } else {
-		# We need to test the -output and -error command line arguments plus
+        if ($_ =~ /bad_settings\d\.in/) {
+            # For testing the settings files we need the
+            # names of tests and the settings to be parallel
+            $cmd = "$valgrind_prefix$exe --strict_tags --p3_settings_file $_ primer_global_err/input_for_settings_tests.txt  > $root.tmp 2> $root.tmp2";
+            # print STDERR $cmd, "\n";
+        } else {
+            if ($output_and_err_tested) {
+                $cmd = "$valgrind_prefix$exe --strict_tags <$_ > $root.tmp 2> $root.tmp2";
+            } else {
+                # We need to test the -output and -error command line arguments plus
                 # simply taking the file name as an argument (no "<")
-		$cmd = "$valgrind_prefix$exe --strict_tags $_ --output $root.tmp --error $root.tmp2";
-		$output_and_err_tested = 1;
-		print "Testing --output and --error flags on\n$cmd\n";
-	    }
-	}
+                $cmd = "$valgrind_prefix$exe --strict_tags $_ --output $root.tmp --error $root.tmp2";
+                $output_and_err_tested = 1;
+                print "Testing --output and --error flags on\n$cmd\n";
+            }
+        }
 
-	$r = _nowarn_system($cmd);
+        $r = _nowarn_system($cmd);
 
         if ($? == 0) {
             my $r = $? >> 8;
@@ -770,9 +702,9 @@ sub _nowarn_system($) {
                 print "Presumably caused by catching SIGINT\n";
                 print "Tests halted\n\n";
                 print "\nWARNING: not all tests executed ... [FAILED]\n";
-		if (!$all_ok) {
-		    print "\n\nIn addition, at least 1 test FAILED ... [FAILED]\n\n";
-		}
+                if (!$all_ok) {
+                    print "\n\nIn addition, at least 1 test FAILED ... [FAILED]\n\n";
+                }
                 exit;
             }
         }

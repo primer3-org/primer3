@@ -124,10 +124,10 @@ sub runtest($$$$$$) {
     close OLDOUT;
     my $r = perldiff $benchfile, $outfile;
     if ($r == 0) {
-	print "[OK]\n";
+        print "[OK]\n";
     } else {
-	print "[FAILED]\n";
-	$exit_status = -1;
+        print "[FAILED]\n";
+        $exit_status = -1;
     }
 }
 
@@ -152,10 +152,10 @@ sub run_batch_test($$$$$) {
     close OLDOUT;
     $r = perldiff $benchfile, $outfile;
     if ($r == 0) {
-	print "[OK]\n";
+        print "[OK]\n";
     } else {
-	print "[FAILED]\n";
-	$exit_status = -1;
+        print "[FAILED]\n";
+        $exit_status = -1;
     }
 }
 
@@ -169,7 +169,7 @@ sub main() {
                     'valgrind',
                     'windows',
                     )) {
-	print "Usage: $0 [ --valgrind ] [ --windows ]\n";
+        print "Usage: $0 [ --valgrind ] [ --windows ]\n";
         exit -1;
     }
 
@@ -298,12 +298,12 @@ sub round_numbers($)
     chomp($line);
     my @fields = split("\t", $line);
     for $i (0..$#fields) {
-	if ($fields[$i] =~ /([a-zA-Z0-9]\s*=\s*-*)([0-9.]+)/) {
-	    $t1 = $1;
-	    $t2 = $2;
-	    $t2 = sprintf "%0.*f", 1, $t2;
-	    $fields[$i] = $t1.$t2;
-	}
+        if ($fields[$i] =~ /([a-zA-Z0-9]\s*=\s*-*)([0-9.]+)/) {
+            $t1 = $1;
+            $t2 = $2;
+            $t2 = sprintf "%0.*f", 1, $t2;
+            $fields[$i] = $t1.$t2;
+        }
     }
     $new = join("\t", @fields);
     return $new;
@@ -338,18 +338,16 @@ sub perldiff($$) {
 
         $linenumber++;
         # Check for difference between two edited lines (line by line)
-	# special case for lines with thermodynamical parameters values (round to 1 decimal)
-	if ($l1 =~ /Calculated thermodynamical parameters for dimer/) {
-	    my $new_l1 = round_numbers($l1);
-	    my $new_l2 = round_numbers($l2);
-	    if ($new_l1 ne $new_l2) {
-		print 
-		    "Difference found at line $linenumber:\n<  $l1_orig\n>  $l2_orig\n";
-		return 1;
-	    }
-	} elsif ($l1 ne $l2) {
-            print 
-                "Difference found at line $linenumber:\n<  $l1_orig\n>  $l2_orig\n";
+        # special case for lines with thermodynamical parameters values (round to 1 decimal)
+        if ($l1 =~ /Calculated thermodynamical parameters for dimer/) {
+            my $new_l1 = round_numbers($l1);
+            my $new_l2 = round_numbers($l2);
+            if ($new_l1 ne $new_l2) {
+                print "Difference found at line $linenumber:\n<  $l1_orig\n>  $l2_orig\n";
+                return 1;
+            }
+        } elsif ($l1 ne $l2) {
+            print "Difference found at line $linenumber:\n<  $l1_orig\n>  $l2_orig\n";
             return 1;
         }
     }

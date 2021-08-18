@@ -48,8 +48,8 @@ my %args;
 print "\nTESTING Tm CALCULATIONS\n\n";
 
 if (!GetOptions(\%args,
-		'valgrind',
-		'windows',
+                'valgrind',
+                'windows',
     )) {
     print "Usage: $0 [ --valgrind ] [ --windows ]\n";
     exit -1;

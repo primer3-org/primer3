@@ -122,21 +122,21 @@ sub main() {
             $valgrind_exe = "/usr/local/bin/valgrind";
         }
         if (!-x $valgrind_exe) { 
-	    warn "Cannot find $valgrind_exe; will try `which valgrind`\n";
-	    $valgrind_exe= `which valgrind`;
-	    chomp($valgrind_exe);
-	    if (!$valgrind_exe || ! -x $valgrind_exe) {
-		die "Cannot execute $valgrind_exe";
-	    }
-	}
-	# Need to deal with different arguments in 
-	# different version of valgrind
-	my $valgrind_version = `$valgrind_exe --version`;
-	if ($valgrind_version =~ /([0-9]+)\.([0-9]+)\./) {
-	    if (($1 > 3) || (($1 == 3) && ($2 > 2))) {
-		$log_file_arg_for_valgrind = "--log-file";
-	    }
-	}
+            warn "Cannot find $valgrind_exe; will try `which valgrind`\n";
+            $valgrind_exe= `which valgrind`;
+            chomp($valgrind_exe);
+            if (!$valgrind_exe || ! -x $valgrind_exe) {
+                die "Cannot execute $valgrind_exe";
+            }
+        }
+        # Need to deal with different arguments in
+        # different version of valgrind
+        my $valgrind_version = `$valgrind_exe --version`;
+        if ($valgrind_version =~ /([0-9]+)\.([0-9]+)\./) {
+            if (($1 > 3) || (($1 == 3) && ($2 > 2))) {
+                $log_file_arg_for_valgrind = "--log-file";
+            }
+        }
     }
 
     $valgrind_format  = $valgrind_exe
@@ -231,7 +231,7 @@ sub runtest($$$$) {
   
     $r = _nowarn_system($cmd);
     if ($winFlag) {
-	$r = $r >> 8;
+        $r = $r >> 8;
     }
         
     unless ($r == $exit) {
@@ -240,12 +240,12 @@ sub runtest($$$$) {
         $exit_stat = -1;
     } else {
         $r = perldiff $output, "cmd_test$i.tmp";
-    	if ($r == 0) {
-    	   print "[OK]\n";
-    	} else {
-    	   $all_ok = 0;
-    	   print "[FAILED]\n";
-    	   $exit_stat = -1;
+            if ($r == 0) {
+               print "[OK]\n";
+            } else {
+               $all_ok = 0;
+               print "[FAILED]\n";
+               $exit_stat = -1;
         }
     }
     return $exit_stat;
@@ -316,12 +316,12 @@ sub perldiff($$) {
             }
         }
 
-	# If this is the tag with the settings file path, replace \ by / to make it
-	# the same on both Linux and Windows
-	if ($l1 =~ /^P3_SETTINGS_FILE_USED/ && $l2 =~ /^P3_SETTINGS_FILE_USED/) {
-	    $l1 =~ s/\\/\//g;
-	    $l2 =~ s/\\/\//g;
-	}
+        # If this is the tag with the settings file path, replace \ by / to make it
+        # the same on both Linux and Windows
+        if ($l1 =~ /^P3_SETTINGS_FILE_USED/ && $l2 =~ /^P3_SETTINGS_FILE_USED/) {
+            $l1 =~ s/\\/\//g;
+            $l2 =~ s/\\/\//g;
+        }
 
         $linenumber++;
         # Check for difference between two edited lines (line by line)

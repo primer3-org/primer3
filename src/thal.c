@@ -903,12 +903,12 @@ readParamFile(const char* dirname, const char* fname, thal_results* o)
     if (remaining_size <= 0) {
       if (ssz >= INT_MAX / 2) {
         strcpy(o->msg, "Out of memory");
-	free(ret);
-	longjmp(_jmp_buf, 1);
-	return NULL;
+        free(ret);
+        longjmp(_jmp_buf, 1);
+        return NULL;
       } else {
         ssz += INIT_BUF_SIZE;
-	remaining_size += INIT_BUF_SIZE;
+        remaining_size += INIT_BUF_SIZE;
       }
       ret = (char *) safe_realloc(ret, ssz, o);
     }
@@ -922,7 +922,7 @@ thal_load_parameters(const char *path, thal_parameters *a, thal_results* o)
 {
   thal_free_parameters(a);
   if (setjmp(_jmp_buf) != 0) {
-	 printf("longjump\n");
+    printf("longjump\n");
     return -1;
   }
   a->dangle_dh = readParamFile(path, "dangle.dh", o);
@@ -985,7 +985,7 @@ th_read_str_line(char **str, thal_results* o)
       if (ptr == ini) {
         if (ret != NULL) {
           free(ret);
-	}
+        }
         return NULL;
       } else {  
         return ret;
@@ -2981,8 +2981,8 @@ drawDimer(int* ps1, int* ps2, double temp, double H, double S, const thal_mode m
            ret_str[0][ret_nr] == 'C' || ret_str[0][ret_nr] == 'G' ||
            ret_str[0][ret_nr] == '-') {
          ret_str[0][ret_nr - 3] = '5';
-	 ret_str[0][ret_nr - 2] = '\'';
-	 ret_pr_once = 0;
+         ret_str[0][ret_nr - 2] = '\'';
+         ret_pr_once = 0;
        }
        ret_nr++;
      }
@@ -2992,7 +2992,7 @@ drawDimer(int* ps1, int* ps2, double temp, double H, double S, const thal_mode m
      for (i = 0 ; i < strlen(duplex[1]) ; i++) {
        if (duplex[1][i] == 'A' || duplex[1][i] == 'T' || 
            duplex[1][i] == 'C' || duplex[1][i] == 'G' ) {
-	 ret_str[1][i + 3] = '|';
+         ret_str[1][i + 3] = '|';
        } else {
          ret_str[1][i + 3] = ' ';
        }
@@ -3197,7 +3197,7 @@ drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, th
        save_append_char(&ret_str, &ret_space, o, ' ');
      }
      for (i = 0 ; i < ret_left_len ; i++) {
-       if (asciiRow[i] == '/') {	     
+       if (asciiRow[i] == '/') {
          save_append_char(&ret_str, &ret_space, o, '|');
        } else {
          save_append_char(&ret_str, &ret_space, o, ' ');

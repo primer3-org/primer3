@@ -60,14 +60,14 @@ sub read_file($$)
     # skip first line
     my $line = <IN>;
     while ($line = <IN>) {
-	chomp($line);
-	# skip empty lines and comments
-	if ($line =~ /^\s*$/) { next; }
-	if ($line =~ "^#") { next; }
-	unless ($line =~ /(\S*)=(.*)/) { print STDERR "wrong line format: $line\n"; next; }
-	my $tag = $1;
-	my $value = $2;
-	$tags->{$tag} = $value;
+    chomp($line);
+    # skip empty lines and comments
+    if ($line =~ /^\s*$/) { next; }
+    if ($line =~ "^#") { next; }
+    unless ($line =~ /(\S*)=(.*)/) { print STDERR "wrong line format: $line\n"; next; }
+    my $tag = $1;
+    my $value = $2;
+    $tags->{$tag} = $value;
     }
     close IN;
 }
@@ -86,11 +86,11 @@ my @only1;
 print "Common tags with different values:\n";
 foreach my $tag (sort (keys %tags1)) {
     if (defined($tags2{$tag})) {
-	if ($tags1{$tag} ne $tags2{$tag}) {
-	    print "\t$tag:\n\t\t$file1: $tag=$tags1{$tag}\n\t\t$file2: $tag=$tags2{$tag}\n"
-	}
+    if ($tags1{$tag} ne $tags2{$tag}) {
+        print "\t$tag:\n\t\t$file1: $tag=$tags1{$tag}\n\t\t$file2: $tag=$tags2{$tag}\n"
+    }
     } else {
-	push(@only1, $tag);
+    push(@only1, $tag);
     }
 }
 
@@ -102,7 +102,7 @@ foreach my $tag (@only1) {
 print "Tags that exist only in $file2:\n";
 foreach my $tag (keys %tags2) {
     if (!defined($tags1{$tag})) {
-	print "\t$tag=$tags2{$tag}\n";
+    print "\t$tag=$tags2{$tag}\n";
     }
 }
 

@@ -364,7 +364,7 @@ int main(int argc, char** argv)
          printf("%f\n",o.temp);
        free(o.sec_struct);
        o.sec_struct=NULL;
-	   fflush(stdout);
+       fflush(stdout);
      }
      free((void*)oligo_str);
    } else {

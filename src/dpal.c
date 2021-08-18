@@ -351,7 +351,7 @@ _dpal_generic(const unsigned char *X,
               const int xlen, 
               const int ylen,
               const dpal_args *in,
-	      const dpal_mode mode,
+              const dpal_mode mode,
               dpal_results *out)
 {
 
@@ -1080,9 +1080,9 @@ print_align(const unsigned char *X,
           ret_str[ret_nr - 2] = '\'';
           ret_pr_once = 1;
         }
-	if (sy[i] == 'A') {
+        if (sy[i] == 'A') {
           ret_str[ret_nr++] = 'T';
-	} else if (sy[i] == 'T') {
+        } else if (sy[i] == 'T') {
           ret_str[ret_nr++] = 'A';
         } else if (sy[i] == 'C') {
           ret_str[ret_nr++] = 'G';
@@ -1090,7 +1090,7 @@ print_align(const unsigned char *X,
           ret_str[ret_nr++] = 'C';
         } else {
           ret_str[ret_nr++] = sy[i];
-	}
+        }
       }
       while (ret_nr > 0 && ret_str[ret_nr - 1] == ' ') {
         ret_nr--;
