@@ -170,7 +170,7 @@ sub main() {
     }
 
     $valgrind_format  = $valgrind_exe
-        . " --leak-check=yes --show-reachable=yes "
+        . " --leak-check=yes --show-reachable=yes "  # --track-origins=yes
         . "$log_file_arg_for_valgrind=%s.vg ";
 
     if ($winFlag) {

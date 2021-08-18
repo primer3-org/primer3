@@ -616,8 +616,6 @@ typedef struct primer_rec {
 
   char *template_mispriming_r_struct; /* Secondary structure of template_mispriming_r */
 
-  char  *overhang; /* prepend to 5' end of primer to generate full oligo */
-
   char   length;   /* Length of the oligo. */
   char   num_ns;   /* Number of Ns in the oligo. */
         
@@ -835,7 +833,7 @@ typedef struct seq_args {
   char *sequence;         /* The template sequence itself as input, 
                              not trimmed, not up-cased. */
   char *sequence_name;    /* An identifier for the sequence. */
-  char *sequence_file;    /* Another identifer for the sequence. */
+  char *sequence_file;    /* Another identifier for the sequence. */
   char *trimmed_seq;      /* The included region only, _UPCASED_. */
 
   /* Element add by T. Koressaar support lowercase masking: */
@@ -863,9 +861,10 @@ typedef struct seq_args {
   int force_left_end;     /* The 0-based forced 3' end left primer. */
   int force_right_start;  /* The 0-based forced 5' start right primer. */
   int force_right_end;    /* The 0-based forced 3' end right primer. */
-  char *overhang_left;    /* sequence added to the 3' end of the left primer */
-  char *overhang_right;   /* reverse complement of the sequence added to
-			     the 3' end of the right primer */
+  char *overhang_left;    /* sequence added to the 5' end of the left primer */
+  char *overhang_right;   /* sequence added to the 5' end of the right primer */
+  char *overhang_right_rv;  /* the reverse complement of *overhang_right
+                               matching the sequence */
 
 } seq_args;
 
@@ -1230,12 +1229,10 @@ int    p3_print_one_oligo_list(const seq_args *,
                                const int, FILE *,int);
 
 char  *pr_oligo_sequence(const seq_args *, const primer_rec *);
+char  *pr_oligo_overhang_sequence(const seq_args *, const primer_rec *);
 
 char  *pr_oligo_rev_c_sequence(const seq_args *, const primer_rec *);
-
-char  *pr_oligo_upper_sequence(const seq_args *, const primer_rec *);
-
-char  *pr_oligo_rev_c_upper_sequence(const seq_args *, const primer_rec *);
+char  *pr_oligo_rev_c_overhang_sequence(const seq_args *, const primer_rec *);
 
 /* Return NULL on ENOMEM */
 pr_append_str *create_pr_append_str();

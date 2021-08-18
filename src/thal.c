@@ -3078,7 +3078,7 @@ char *
 drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, thal_results *o)
 {
    int  ret_space = 0;
-   char *ret_ptr = NULL;
+   char *ret_ptr;
    int ret_last_l, ret_first_r, ret_center, ret_left_end, ret_right_start, ret_left_len, ret_right_len;
    int ret_add_sp_l, ret_add_sp_r;
    char ret_center_char;
@@ -3086,6 +3086,7 @@ drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, th
    char* ret_str;
    /* Plain text */
    int i, N;
+   ret_ptr = NULL;
    N = 0;
    double mg, t;
    if (!isFinite(ms) || !isFinite(mh)) {

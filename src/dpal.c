@@ -951,7 +951,7 @@ print_align(const unsigned char *X,
             int I,
             int J,
             const dpal_args *dargs,
-	    const dpal_mode mode,
+            const dpal_mode mode,
             dpal_results *out)
 {
   int JX[DPAL_MAX_ALIGN],JY[DPAL_MAX_ALIGN];
