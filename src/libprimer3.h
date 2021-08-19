@@ -717,6 +717,7 @@ const int *
 interval_array_t2_get_pair(const interval_array_t2 *array, int i);
 
 typedef struct oligo_stats {
+  int sequencing_location; /* Number of locations for sequencing primers    */
   int considered;          /* Total number of tested oligos of given type   */
   int ns;                  /* Number of oligos rejected because of Ns       */
   int target;              /* Overlapping targets.                          */

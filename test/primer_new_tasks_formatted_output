@@ -2290,3 +2290,11 @@ considered 0, ok 0
 libprimer3 release 2.2.3
 
 
+PRIMER PICKING RESULTS FOR rev_comp_primers
+
+INPUT PROBLEM: Specified left and right primer are reverse complementary
+
+PRIMER PICKING RESULTS FOR identical_primers
+
+INPUT PROBLEM: Specified left and right primer are identical
+

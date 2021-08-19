@@ -1279,18 +1279,18 @@ choose_primers(const p3_global_settings *pa,
      scope, has not yet been initialized. */
   if (dpal_arg_to_use == NULL)
     dpal_arg_to_use = create_dpal_arg_holder();
-   if(thal_arg_to_use == NULL) {
-      thal_arg_to_use = create_thal_arg_holder(&pa->p_args);
-   } else {
-      destroy_thal_arg_holder(thal_arg_to_use);
-      thal_arg_to_use = create_thal_arg_holder(&pa->p_args);
-   }
-   if(thal_oligo_arg_to_use == NULL) {
-      thal_oligo_arg_to_use = create_thal_arg_holder(&pa->o_args);
-   } else {
-      destroy_thal_arg_holder(thal_oligo_arg_to_use);
-      thal_oligo_arg_to_use = create_thal_arg_holder(&pa->o_args);
-   } 
+  if(thal_arg_to_use == NULL) {
+    thal_arg_to_use = create_thal_arg_holder(&pa->p_args);
+  } else {
+    destroy_thal_arg_holder(thal_arg_to_use);
+    thal_arg_to_use = create_thal_arg_holder(&pa->p_args);
+  }
+  if(thal_oligo_arg_to_use == NULL) {
+    thal_oligo_arg_to_use = create_thal_arg_holder(&pa->o_args);
+  } else {
+    destroy_thal_arg_holder(thal_oligo_arg_to_use);
+    thal_oligo_arg_to_use = create_thal_arg_holder(&pa->o_args);
+  }
   if (pa->primer_task == pick_primer_list) {
     make_complete_primer_lists(retval, pa, sa,
                                dpal_arg_to_use,thal_arg_to_use,thal_oligo_arg_to_use);
@@ -2411,6 +2411,7 @@ pick_sequencing_primer_list(p3retval *retval,
           length = n - start;
         }
         /* Pick all good in the given range */
+        retval->fwd.expl.sequencing_location++;
         pick_only_best_primer(start, length, &retval->fwd,
                               pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
       }
@@ -2427,6 +2428,7 @@ pick_sequencing_primer_list(p3retval *retval,
           length = n - start;
         }
         /* Pick all good in the given range */
+        retval->rev.expl.sequencing_location++;
         pick_only_best_primer(start, length, &retval->rev,
                               pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
       }
@@ -2434,6 +2436,8 @@ pick_sequencing_primer_list(p3retval *retval,
 
   } /* End of Target Loop */
 
+  retval->fwd.expl.ok = retval->fwd.num_elem;
+  retval->rev.expl.ok = retval->rev.num_elem;
   /* Print an error if not all primers will be printed */
   if (retval->fwd.num_elem > pa->num_return 
                   || retval->rev.num_elem > pa->num_return) {
@@ -6055,6 +6059,7 @@ p3_oligo_explain_string(const oligo_stats *stat)
   size_t bsize = 10000;
   size_t r;
 
+  IF_SP_AND_CHECK("sequencing locations %d, ", stat->sequencing_location)
   SP_AND_CHECK("considered %d", stat->considered)
   IF_SP_AND_CHECK(", would not amplify any of the ORF %d", stat->no_orf)
   IF_SP_AND_CHECK(", too many Ns %d", stat->ns)
@@ -7126,6 +7131,14 @@ _pr_data_control(const p3_global_settings *pa,
       else if (!strstr_nocase(sa->trimmed_seq, s1))
         pr_append_new_chunk(nonfatal_err,
                             "Specified right primer not in Included Region");
+      else if (sa->left_input) {
+        if (strcmp(sa->left_input, s1) == 0)
+          pr_append_new_chunk(nonfatal_err,
+                            "Specified left and right primer are reverse complementary");
+        if (strcmp(sa->left_input, sa->right_input) == 0)
+          pr_append_new_chunk(nonfatal_err,
+                            "Specified left and right primer are identical");
+      }
     }
   }
 
