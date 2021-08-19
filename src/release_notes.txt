@@ -33,6 +33,8 @@ Minor fixes:
 5. More informative primer statistics with
    PRIMER_TASK=pick_sequencing_primers.
 
+6. PRIMER_PAIR_4_PRODUCT_TM is now always provided.
+
 
 release 2.5.0 2019-08-17  ===============================================
 This release adds new features to primer3_core and related C code.

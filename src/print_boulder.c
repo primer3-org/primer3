@@ -499,6 +499,9 @@ print_boulder(int io_version,
          
          printf("PRIMER_PAIR%s_T_OPT_A=%.4f\n", suffix,
                 retval->best_pairs.pairs[i].t_opt_a);
+       } else {
+         printf("PRIMER_PAIR%s_PRODUCT_TM=%.1f\n", suffix,
+                retval->best_pairs.pairs[i].product_tm);
        }
       
       /* Print the primer pair template mispriming */
