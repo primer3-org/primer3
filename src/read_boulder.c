@@ -194,6 +194,7 @@ read_boulder_record(FILE *file_input,
   int line_len;
   int tag_len, datum_len;
   int data_found = 0;
+  int read_start_codon = 0;
   char *s, *n, *datum, *task_tmp = NULL;
   const char *p;
   pr_append_str *parse_err;
@@ -298,6 +299,23 @@ read_boulder_record(FILE *file_input,
           continue;
       }
       COMPARE_INT("SEQUENCE_START_CODON_POSITION", sa->start_codon_pos);
+      if ((!strncmp(s, "SEQUENCE_START_CODON_SEQUENCE", tag_len)
+          && ('=' == s[tag_len] || ' ' == s[tag_len])
+          && '\0' == "SEQUENCE_START_CODON_SEQUENCE"[tag_len])) {
+        if (read_start_codon) {
+           pr_append_new_chunk(parse_err, "Duplicate tag: SEQUENCE_START_CODON_SEQUENCE");
+        } else {
+           read_start_codon = 1;
+           if (datum_len == 3) {
+             sa->start_codon_seq[0] = toupper(s[tag_len + 1]);
+             sa->start_codon_seq[1] = toupper(s[tag_len + 2]);
+             sa->start_codon_seq[2] = toupper(s[tag_len + 3]);
+           } else {
+             sa->start_codon_seq[0] = 'X';
+           }
+        }
+        continue;
+       }
       COMPARE_INT("SEQUENCE_FORCE_LEFT_START", sa->force_left_start);
       COMPARE_INT("SEQUENCE_FORCE_LEFT_END", sa->force_left_end);
       COMPARE_INT("SEQUENCE_FORCE_RIGHT_START", sa->force_right_start);

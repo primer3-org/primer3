@@ -35,6 +35,9 @@ Minor fixes:
 
 6. PRIMER_PAIR_4_PRODUCT_TM is now always provided.
 
+7. SEQUENCE_START_CODON_SEQUENCE allows to specify an alternative start
+   codon to be used with SEQUENCE_START_CODON_POSITION.
+
 
 release 2.5.0 2019-08-17  ===============================================
 This release adds new features to primer3_core and related C code.

@@ -826,6 +826,7 @@ typedef struct seq_args {
                            * also the length of the trimmed_seq field.
                            */
   int  start_codon_pos;   /* Index of first base of the start codon. */
+  char start_codon_seq[4];  /* Sequence of the start codon, usually ATG\0 */
 
   int  *quality;             /* Vector of quality scores. */
   int  n_quality;            /* Number of valid elements in 'quality' */

@@ -1111,6 +1111,10 @@ create_seq_arg()
   if (NULL == r) return NULL; /* Out of memory */
   memset(r, 0, sizeof(*r));
   r->start_codon_pos = PR_DEFAULT_START_CODON_POS;
+  r->start_codon_seq[0] = 'A';
+  r->start_codon_seq[1] = 'T';
+  r->start_codon_seq[2] = 'G';
+  r->start_codon_seq[3] = '\0';
   r->incl_l = -1; /* Indicates logical NULL. */
 
   r->force_left_start = PR_NULL_FORCE_POSITION; /* Indicates logical NULL. */
@@ -6854,13 +6858,15 @@ _pr_data_control(const p3_global_settings *pa,
                           "Start codon position not contained in SEQUENCE_INCLUDED_REGION");
       return 1;
     } else {
+      if (sa->start_codon_seq[0] == 'X') {
+        pr_append_new_chunk(nonfatal_err,
+                            "No codon provided in SEQUENCE_START_CODON_SEQUENCE");
+        return 1;
+      }
       if (sa->start_codon_pos >= 0
-          && ((sa->sequence[sa->start_codon_pos] != 'A'
-               && sa->sequence[sa->start_codon_pos] != 'a')
-              || (sa->sequence[sa->start_codon_pos + 1] != 'T'
-                  && sa->sequence[sa->start_codon_pos + 1] != 't')
-              || (sa->sequence[sa->start_codon_pos + 2] != 'G'
-                  && sa->sequence[sa->start_codon_pos + 2] != 'g'))) {
+          && ((toupper(sa->sequence[sa->start_codon_pos]) != sa->start_codon_seq[0])
+              || (toupper(sa->sequence[sa->start_codon_pos + 1]) != sa->start_codon_seq[1])
+              || (toupper(sa->sequence[sa->start_codon_pos + 2]) != sa->start_codon_seq[2]))) {
         pr_append_new_chunk(nonfatal_err,
                             "No start codon at SEQUENCE_START_CODON_POSITION");
         return 1;
