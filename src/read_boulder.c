@@ -282,7 +282,15 @@ read_boulder_record(FILE *file_input,
         if (parse_intron_list(datum, sa->primer_overlap_junctions, 
                               &sa->primer_overlap_junctions_count) == 0) {
           pr_append_new_chunk(parse_err,
-                              "Error in SEQUENCE_PRIMER_OVERLAP_JUNCTION_LIST");
+                              "Error in SEQUENCE_OVERLAP_JUNCTION_LIST");
+        }
+        continue;
+      }
+      if (COMPARE("SEQUENCE_INTERNAL_OVERLAP_JUNCTION_LIST")) {
+        if (parse_intron_list(datum, sa->intl_overlap_junctions,
+                              &sa->intl_overlap_junctions_count) == 0) {
+          pr_append_new_chunk(parse_err,
+                              "Error in SEQUENCE_INTERNAL_OVERLAP_JUNCTION_LIST");
         }
         continue;
       }
@@ -387,11 +395,12 @@ read_boulder_record(FILE *file_input,
         /* check if specific tag also specified - error in this case */
         if (min_3_prime_distance_specific == 1) {
           pr_append_new_chunk(glob_err,
-                              "Both PRIMER_MIN_THREE_PRIME_DISTANCE and PRIMER_{LEFT/RIGHT}_MIN_THREE_PRIME_DISTANCE specified");
+                              "Both PRIMER_MIN_THREE_PRIME_DISTANCE and PRIMER_MIN_{LEFT/INTERNAL/RIGHT}_THREE_PRIME_DISTANCE specified");
         } else {
           min_3_prime_distance_global = 1;
           /* set up individual flags */
           pa->min_left_three_prime_distance = min_three_prime_distance;
+          pa->min_internal_three_prime_distance = min_three_prime_distance;
           pa->min_right_three_prime_distance = min_three_prime_distance;
         }
         continue;
@@ -401,7 +410,18 @@ read_boulder_record(FILE *file_input,
         /* check if global tag also specified - error in this case */
         if (min_3_prime_distance_global == 1) {
           pr_append_new_chunk(glob_err,
-                              "Both PRIMER_MIN_THREE_PRIME_DISTANCE and PRIMER_{LEFT/RIGHT}_MIN_THREE_PRIME_DISTANCE specified");
+                              "Both PRIMER_MIN_THREE_PRIME_DISTANCE and PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE specified");
+        } else {
+          min_3_prime_distance_specific = 1;
+        }
+        continue;
+      }
+      if (COMPARE("PRIMER_MIN_INTERNAL_THREE_PRIME_DISTANCE")) {
+        parse_int("PRIMER_MIN_INTERNAL_THREE_PRIME_DISTANCE", datum, &(pa->min_internal_three_prime_distance), parse_err);
+        /* check if global tag also specified - error in this case */
+        if (min_3_prime_distance_global == 1) {
+          pr_append_new_chunk(glob_err,
+                              "Both PRIMER_MIN_THREE_PRIME_DISTANCE and PRIMER_MIN_INTERNAL_THREE_PRIME_DISTANCE specified");
         } else {
           min_3_prime_distance_specific = 1;
         }
@@ -412,7 +432,7 @@ read_boulder_record(FILE *file_input,
         /* check if global tag also specified - error in this case */
         if (min_3_prime_distance_global == 1) {
           pr_append_new_chunk(glob_err,
-                              "Both PRIMER_MIN_THREE_PRIME_DISTANCE and PRIMER_{LEFT/RIGHT}_MIN_THREE_PRIME_DISTANCE specified");
+                              "Both PRIMER_MIN_THREE_PRIME_DISTANCE and PRIMER_MIN_RIGHT_THREE_PRIME_DISTANCE specified");
         } else {
           min_3_prime_distance_specific = 1;
         }
@@ -431,13 +451,23 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_SEQUENCING_INTERVAL", pa->sequencing.interval);
       COMPARE_INT("PRIMER_SEQUENCING_ACCURACY", pa->sequencing.accuracy);
       if (COMPARE("PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION")) {
-        parse_int("PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION", datum, &pa->min_5_prime_overlap_of_junction, parse_err);
-        /* min_5_prime = 1; Removed 10/20/2010 */
+        parse_int("PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION", datum,
+                  &pa->p_args.min_5_prime_overlap_of_junction, parse_err);
         continue;
       }
       if (COMPARE("PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION")) {
-        parse_int("PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION", datum, &pa->min_3_prime_overlap_of_junction, parse_err);
-        /* min_3_prime = 1; Removed 10/20/2010 */
+        parse_int("PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION", datum,
+                  &pa->p_args.min_3_prime_overlap_of_junction, parse_err);
+        continue;
+      }
+      if (COMPARE("PRIMER_INTERNAL_MIN_5_PRIME_OVERLAP_OF_JUNCTION")) {
+        parse_int("PRIMER_INTERNAL_MIN_5_PRIME_OVERLAP_OF_JUNCTION", datum,
+                  &pa->o_args.min_5_prime_overlap_of_junction, parse_err);
+        continue;
+      }
+      if (COMPARE("PRIMER_INTERNAL_MIN_3_PRIME_OVERLAP_OF_JUNCTION")) {
+        parse_int("PRIMER_INTERNAL_MIN_3_PRIME_OVERLAP_OF_JUNCTION", datum,
+                  &pa->o_args.min_3_prime_overlap_of_junction, parse_err);
         continue;
       }
       COMPARE_AND_MALLOC("PRIMER_TASK", task_tmp);

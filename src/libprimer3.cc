@@ -253,6 +253,7 @@ static int    sequence_quality_is_ok(const p3_global_settings *, primer_rec *,
 static int    choose_internal_oligo(p3retval *,
                                     const primer_rec *, const primer_rec *,
                                     int *,
+                                    int *,
                                     const seq_args *,
                                     const p3_global_settings *,
                                     const dpal_arg_holder *,
@@ -345,6 +346,10 @@ static int   pick_primers_by_position(const int, const int,
 static double obj_fn(const p3_global_settings *, primer_pair *);
 
 static int    left_oligo_in_pair_overlaps_used_oligo(const primer_rec *left,
+                                                     const primer_pair *best_pair,
+                                                     int min_dist);
+
+static int    intl_oligo_in_pair_overlaps_used_oligo(const primer_rec *left,
                                                      const primer_pair *best_pair,
                                                      int min_dist);
 
@@ -780,17 +785,20 @@ pr_set_default_global_args_1(p3_global_settings *a)
       strings of N, which then match every oligo (very bad).
   */
 
-  a->min_left_three_prime_distance   = -1;
-  a->min_right_three_prime_distance  = -1;
+  a->min_left_three_prime_distance     = -1;
+  a->min_internal_three_prime_distance = -1;
+  a->min_right_three_prime_distance    = -1;
 
   a->sequencing.lead                 = 50;
   a->sequencing.spacing              = 500;
   a->sequencing.interval             = 250;
   a->sequencing.accuracy             = 20;
   
-  a->min_5_prime_overlap_of_junction = 7;
-  a->min_3_prime_overlap_of_junction = 4;
-  
+  a->p_args.min_5_prime_overlap_of_junction = 7;
+  a->p_args.min_3_prime_overlap_of_junction = 4;
+  a->o_args.min_5_prime_overlap_of_junction = 3;
+  a->o_args.min_3_prime_overlap_of_junction = 3;
+
   a->mask_template                   = 0;
   a->masking_parameters_changed      = 0;
   a->mp.mdir                         = both_separately;
@@ -1122,6 +1130,7 @@ create_seq_arg()
   r->force_right_start = PR_NULL_FORCE_POSITION; /* Indicates logical NULL. */
   r->force_right_end = PR_NULL_FORCE_POSITION; /* Indicates logical NULL. */
   r->primer_overlap_junctions_count = 0;
+  r->intl_overlap_junctions_count = 0;
 
   r->n_quality = 0;
   r->quality = NULL;
@@ -1385,6 +1394,8 @@ choose_pair_or_triple(p3retval *retval,
                       pair_array_t *best_pairs) {
   int i,j;   /* Loop index. */
   int n_int; /* Index of the internal oligo */
+  int more_intl_oligos = 1;
+  int valid_intl;
   /*int *max_j_seen; */  /* The maximum value of j (loop index for forward primers)
                             that has been examined for every reverse primer
                             index (i) -- global variable now */
@@ -1422,7 +1433,7 @@ choose_pair_or_triple(p3retval *retval,
   max_j_seen = (int *) malloc(sizeof(int) * retval->rev.num_elem);
   for (i = 0; i < retval->rev.num_elem; i++) max_j_seen[i] = -1;
 
-  /* Pick pairs till we have enough. */     
+  /* Pick pairs till we have enough. */
   while(1) {
 
     /* FIX ME, is this memset really needed?  Apparently slow */
@@ -1469,6 +1480,10 @@ choose_pair_or_triple(p3retval *retval,
       if (pa->pr_pair_weights.primer_quality *
            (retval->rev.oligo[i].quality + retval->fwd.oligo[0].quality)
               > the_best_pair.pair_quality) {
+        break;
+      }
+
+      if (!more_intl_oligos) {
         break;
       }
 
@@ -1533,6 +1548,10 @@ choose_pair_or_triple(p3retval *retval,
         if (pa->pr_pair_weights.primer_quality *
             (retval->fwd.oligo[j].quality + retval->rev.oligo[i].quality) 
             > the_best_pair.pair_quality) {
+          break;
+        }
+
+        if (!more_intl_oligos) {
           break;
         }
 
@@ -1660,7 +1679,7 @@ choose_pair_or_triple(p3retval *retval,
             if (pa->pick_right_primer && pa->pick_left_primer
                 && pa->pick_internal_oligo) {
               if (choose_internal_oligo(retval, h.left, h.right,
-                                        &n_int, sa, pa,
+                                        &n_int, &more_intl_oligos, sa, pa,
                                         dpal_arg_to_use, thal_oligo_arg_to_use)!=0) {
 
                 /* We were UNable to choose an internal oligo. */
@@ -1724,6 +1743,11 @@ choose_pair_or_triple(p3retval *retval,
 
     } /* for (i = 0; i < retval->rev.num_elem; i++) --- outer loop */
 
+    if (!more_intl_oligos) {
+      /* No more internal oligos left */
+      break;
+    }
+
     if (the_best_pair.pair_quality == DBL_MAX){
       /* No pair was found. Try another product-size-range,
        if one exists. */
@@ -1752,7 +1776,21 @@ choose_pair_or_triple(p3retval *retval,
       if (trace_me)
         fprintf(stderr, "ADD pair i=%d, j=%d\n", the_best_i, the_best_j);
 
-      add_pair(&the_best_pair, best_pairs);
+      if (!pa->pick_internal_oligo || !(sa->intl_overlap_junctions_count > 0)) {
+        add_pair(&the_best_pair, best_pairs);
+      } else {
+        valid_intl = 1;
+        for (j = 0; j < best_pairs->num_pairs; j++) {
+          if (intl_oligo_in_pair_overlaps_used_oligo(best_pairs->pairs[j].intl,
+                                                     &the_best_pair,
+                                                     pa->min_internal_three_prime_distance)) {
+            valid_intl = 0;
+          }
+        }
+        if (valid_intl) {
+          add_pair(&the_best_pair, best_pairs);
+        }
+      }
 
       /* Mark the pair as already selected */
       delete best_pp;
@@ -1771,6 +1809,16 @@ choose_pair_or_triple(p3retval *retval,
                                                    &the_best_pair,
                                                    pa->min_left_three_prime_distance)) {
           retval->fwd.oligo[j].overlaps = 1;
+        }
+      }
+      /* Only exclude oligos if a overlap position is given */
+      if ((pa->pick_internal_oligo) && (sa->intl_overlap_junctions_count > 0)) {
+        for (j = 0; j < retval->intl.num_elem; j++) {
+          if (intl_oligo_in_pair_overlaps_used_oligo(&retval->intl.oligo[j],
+                                                     &the_best_pair,
+                                                     pa->min_internal_three_prime_distance)) {
+            retval->intl.oligo[j].overlaps = 1;
+          }
         }
       }
 
@@ -1799,6 +1847,7 @@ choose_internal_oligo(p3retval *retval,
                       const primer_rec *left,
                       const primer_rec *right,
                       int *nm,
+                      int *more_intl_oligos,
                       const seq_args *sa,
                       const p3_global_settings *pa,
                       const dpal_arg_holder *dpal_arg_to_use,
@@ -1811,10 +1860,16 @@ choose_internal_oligo(p3retval *retval,
   primer_rec *h;
   min = 1000000.;
   i = -1;
+  *more_intl_oligos = 0;
 
   for (k=0; k < retval->intl.num_elem; k++) {
     h = &retval->intl.oligo[k];  /* h is the record for the oligo currently
                                     under consideration */
+    if (h->overlaps) {
+      if (!(h)->must_use) continue;
+    } else {
+      *more_intl_oligos = 1;
+    }
 
     if ((h->start > (left->start + (left->length-1)))
         && ((h->start + (h->length-1))
@@ -1995,6 +2050,32 @@ left_oligo_in_pair_overlaps_used_oligo(const primer_rec *left,
   
   if ((best_pair->left->length == left->length)
       && (best_pair->left->start == left->start)
+      && (min_dist == 0)) {
+    return 1;
+  }
+
+  return 0;
+}
+
+static int
+intl_oligo_in_pair_overlaps_used_oligo(const primer_rec *left,
+                                       const primer_pair *best_pair,
+                                       int min_dist)
+{
+  int best_pos, pair_pos;
+
+  if (min_dist == -1)
+    return 0;
+
+  best_pos =  best_pair->intl->start + best_pair->intl->length - 1;
+
+  pair_pos = left->start + left->length -  1;
+
+  if ((abs(best_pos - pair_pos) < min_dist)
+      && (min_dist != 0)) { return 1; }
+
+  if ((best_pair->intl->length == left->length)
+      && (best_pair->intl->start == left->start)
       && (min_dist == 0)) {
     return 1;
   }
@@ -3531,22 +3612,39 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   
   for (for_i=0; for_i < sa->primer_overlap_junctions_count; for_i++) {
     if (OT_LEFT == l 
-        && ((h->start + pa->min_5_prime_overlap_of_junction - 1) 
+        && ((h->start + pa->p_args.min_5_prime_overlap_of_junction - 1)
             <= sa->primer_overlap_junctions[for_i])
-        && ((h->start + h->length - pa->min_3_prime_overlap_of_junction))
+        && ((h->start + h->length - pa->p_args.min_3_prime_overlap_of_junction))
         > sa->primer_overlap_junctions[for_i]) {
       h->overlaps_overlap_position = 1;
-      /* no need to continue checking */
+      /* no need to continue checking for more overlaps */
       break;
     }
     if (OT_RIGHT == l
-        && ((h->start - h->length + pa->min_3_prime_overlap_of_junction) 
+        && ((h->start - h->length + pa->p_args.min_3_prime_overlap_of_junction)
             <= sa->primer_overlap_junctions[for_i])
-        && ((h->start - pa->min_5_prime_overlap_of_junction + 1))
+        && ((h->start - pa->p_args.min_5_prime_overlap_of_junction + 1))
         > sa->primer_overlap_junctions[for_i]) {
       h->overlaps_overlap_position = 1;
-      /* no need to continue checking */
+      /* no need to continue checking for more overlaps */
       break;
+    }
+  }
+  if ((OT_INTL == l) && (sa->intl_overlap_junctions_count > 0)) {
+    for (for_i=0; for_i < sa->intl_overlap_junctions_count; for_i++) {
+      if (((h->start + pa->o_args.min_5_prime_overlap_of_junction - 1)
+                 <= sa->intl_overlap_junctions[for_i])
+          && ((h->start + h->length - pa->o_args.min_3_prime_overlap_of_junction))
+          > sa->intl_overlap_junctions[for_i]) {
+        h->overlaps_overlap_position = 1;
+        /* no need to continue checking for more overlaps */
+        break;
+      }
+    }
+    if ((!h->overlaps_overlap_position) && (!must_use)) {
+      stats->does_not_overlap_a_required_point ++;
+      op_set_must_match_err(h);
+      return;
     }
   }
   /* Calculate failure rate */
@@ -6088,6 +6186,8 @@ p3_oligo_explain_string(const oligo_stats *stat)
                   stat->not_in_any_left_ok_region)
   IF_SP_AND_CHECK(", not in any ok right region %d", 
                   stat->not_in_any_right_ok_region)
+  IF_SP_AND_CHECK(", no overlap of required point %d",
+                  stat->does_not_overlap_a_required_point)
   SP_AND_CHECK(", ok %d", stat->ok)
   return buf;
 }
@@ -6460,6 +6560,16 @@ _adjust_seq_args(const p3_global_settings *pa,
     return;
   }
 
+  if (_check_and_adjust_overlap_pos(sa,
+                                    sa->intl_overlap_junctions,
+                                    &sa->intl_overlap_junctions_count,
+                                    "SEQUENCE_INTERNAL_OVERLAP_JUNCTION_LIST",
+                                    seq_len,
+                                    pa->first_base_index,
+                                    nonfatal_err, warning)) {
+    return;
+  }
+
   /* Update ok regions, if non empty */
   if (sa->ok_regions.count > 0) {
     _optimize_ok_regions_list(pa, sa);
@@ -6652,6 +6762,7 @@ _pr_data_control(const p3_global_settings *pa,
                         "Error in sequence quality data");
 
   if ((pa->min_left_three_prime_distance < -1) ||
+      (pa->min_internal_three_prime_distance < -1) ||
       (pa->min_right_three_prime_distance < -1))
     pr_append_new_chunk(nonfatal_err,
                         "Minimum 3' distance must be >= -1 "
@@ -7272,32 +7383,58 @@ _pr_data_control(const p3_global_settings *pa,
     return 1;
   }
 
-  if (pa->min_5_prime_overlap_of_junction < 1) {
+  if (pa->p_args.min_5_prime_overlap_of_junction < 1) {
     pr_append_new_chunk(glob_err,
                         "Illegal value for PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION");
     return 1;
   }
 
-  if (pa->min_3_prime_overlap_of_junction < 1) {
+  if (pa->p_args.min_3_prime_overlap_of_junction < 1) {
     pr_append_new_chunk(glob_err,
                         "Illegal value for PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION");
     return 1;
   }
 
   if ((sa->primer_overlap_junctions_count > 0) &&
-      (pa->min_5_prime_overlap_of_junction > (pa->p_args.max_size / 2))) {
+      (pa->p_args.min_5_prime_overlap_of_junction > (pa->p_args.max_size / 2))) {
     pr_append_new_chunk(glob_err,
                         "PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION > PRIMER_MAX_SIZE / 2");
     return 1;
   }
 
-  if ((sa->primer_overlap_junctions_count > 0) && 
-      (pa->min_3_prime_overlap_of_junction > (pa->p_args.max_size / 2))) {
+  if ((sa->primer_overlap_junctions_count > 0) &&
+      (pa->p_args.min_3_prime_overlap_of_junction > (pa->p_args.max_size / 2))) {
     pr_append_new_chunk(glob_err,
                         "PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION > PRIMER_MAX_SIZE / 2");
     return 1;
   }
   
+  if (pa->o_args.min_5_prime_overlap_of_junction < 1) {
+    pr_append_new_chunk(glob_err,
+                        "Illegal value for PRIMER_INTERNAL_MIN_5_PRIME_OVERLAP_OF_JUNCTION");
+    return 1;
+  }
+
+  if (pa->o_args.min_3_prime_overlap_of_junction < 1) {
+    pr_append_new_chunk(glob_err,
+                        "Illegal value for PRIMER_INTERNAL_MIN_3_PRIME_OVERLAP_OF_JUNCTION");
+    return 1;
+  }
+
+  if ((sa->primer_overlap_junctions_count > 0) &&
+      (pa->o_args.min_5_prime_overlap_of_junction > (pa->p_args.max_size / 2))) {
+    pr_append_new_chunk(glob_err,
+                        "PRIMER_INTERNAL_MIN_5_PRIME_OVERLAP_OF_JUNCTION > PRIMER_MAX_SIZE / 2");
+    return 1;
+  }
+
+  if ((sa->primer_overlap_junctions_count > 0) &&
+      (pa->o_args.min_3_prime_overlap_of_junction > (pa->p_args.max_size / 2))) {
+    pr_append_new_chunk(glob_err,
+                        "PRIMER_INTERNAL_MIN_3_PRIME_OVERLAP_OF_JUNCTION > PRIMER_MAX_SIZE / 2");
+    return 1;
+  }
+
   if (pa->p_args.divalent_conc > 0.0 && pa->p_args.dntp_conc <= 0.0) {
     pr_append_new_chunk(warning,
                         "PRIMER_SALT_DIVALENT > 0.0 "
@@ -7915,6 +8052,12 @@ p3_get_sa_overlap_junctions(const seq_args *sargs)
   return sargs->primer_overlap_junctions;
 }
 
+const int*
+p3_get_sa_intl_overlap_junctions(const seq_args *sargs)
+{
+  return sargs->intl_overlap_junctions;
+}
+
 /* ============================================================ */
 /* END 'get' functions for seq_args                             */
 /* ============================================================ */
@@ -8001,6 +8144,15 @@ p3_sa_add_to_overlap_junctions_array(seq_args *sargs, int overlap)
   int c = sargs->primer_overlap_junctions_count;
   if (c >= PR_MAX_INTERVAL_ARRAY) return 1;
   sargs->primer_overlap_junctions[sargs->primer_overlap_junctions_count++] = overlap;
+  return 0;
+}
+
+int
+p3_sa_add_to_intl_overlap_junctions_array(seq_args *sargs, int overlap)
+{
+  int c = sargs->intl_overlap_junctions_count;
+  if (c >= PR_MAX_INTERVAL_ARRAY) return 1;
+  sargs->intl_overlap_junctions[sargs->intl_overlap_junctions_count++] = overlap;
   return 0;
 }
 
@@ -8842,6 +8994,12 @@ p3_set_gs_min_left_three_prime_distance(p3_global_settings *p, int min_distance)
 }
 
 void
+p3_set_gs_min_internal_three_prime_distance(p3_global_settings *p, int min_distance)
+{
+  p->min_internal_three_prime_distance = min_distance;
+}
+
+void
 p3_set_gs_min_right_three_prime_distance(p3_global_settings *p, int min_distance) 
 {
   p->min_right_three_prime_distance = min_distance;
@@ -8850,13 +9008,25 @@ p3_set_gs_min_right_three_prime_distance(p3_global_settings *p, int min_distance
 void 
 p3_set_gs_min_5_prime_overlap_of_junction(p3_global_settings *p, int min_5_prime)
 {
-  p->min_5_prime_overlap_of_junction = min_5_prime;
+  p->p_args.min_5_prime_overlap_of_junction = min_5_prime;
 }
 
 void 
 p3_set_gs_min_3_prime_overlap_of_junction(p3_global_settings *p, int min_3_prime)
 {
-  p->min_3_prime_overlap_of_junction = min_3_prime;
+  p->p_args.min_3_prime_overlap_of_junction = min_3_prime;
+}
+
+void
+p3_set_gs_min_5_internal_overlap_of_junction(p3_global_settings *p, int min_5_prime)
+{
+  p->o_args.min_5_prime_overlap_of_junction = min_5_prime;
+}
+
+void
+p3_set_gs_min_3_internal_overlap_of_junction(p3_global_settings *p, int min_3_prime)
+{
+  p->o_args.min_3_prime_overlap_of_junction = min_3_prime;
 }
 
 void
@@ -9366,9 +9536,12 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("  pair_compl_end_th %f\n", p->pair_compl_end_th) ;
      
     printf("  min_left_three_prime_distance %i\n", p->min_left_three_prime_distance) ;
+    printf("  min_internal_three_prime_distance %i\n", p->min_internal_three_prime_distance) ;
     printf("  min_right_three_prime_distance %i\n", p->min_right_three_prime_distance) ;
-    printf("  min_5_prime_overlap_of_junction %i\n", p->min_5_prime_overlap_of_junction);
-    printf("  min_3_prime_overlap_of_junction %i\n", p->min_3_prime_overlap_of_junction);
+    printf("  min_5_prime_overlap_of_junction %i\n", p->p_args.min_5_prime_overlap_of_junction);
+    printf("  min_3_prime_overlap_of_junction %i\n", p->p_args.min_3_prime_overlap_of_junction);
+    printf("  min_5_internal_overlap_of_junction %i\n", p->o_args.min_5_prime_overlap_of_junction);
+    printf("  min_3_internal_overlap_of_junction %i\n", p->o_args.min_3_prime_overlap_of_junction);
     printf("  mask_template %i\n", p->mask_template);
     printf("  failure_rate %f\n", p->mp.failure_rate);
     printf("  nucl_masked_in_5p_direction %i\n", p->mp.nucl_masked_in_5p_direction);
@@ -9517,6 +9690,16 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
       printf("primer_overlap_junctions_list [\n");
       for (i = 0; i < s->primer_overlap_junctions_count; i++) {
         printf("   %i\n", s->primer_overlap_junctions[i]);
+      }
+      printf("]\n");
+    }
+
+    if (s->intl_overlap_junctions_count > 0) {
+      printf("intl_overlap_junctions_count %i\n",
+             s->intl_overlap_junctions_count);
+      printf("intl_overlap_junctions_list [\n");
+      for (i = 0; i < s->intl_overlap_junctions_count; i++) {
+        printf("   %i\n", s->intl_overlap_junctions[i]);
       }
       printf("]\n");
     }

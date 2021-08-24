@@ -219,6 +219,12 @@ typedef struct args_for_one_oligo_or_primer {
                            * oligo.
                            */
 
+  int    min_5_prime_overlap_of_junction;   /* The number of basepairs
+                                               the primer has to
+                                               overlap an overlap
+                                               junction. */
+  int    min_3_prime_overlap_of_junction;
+
   int    min_end_quality;
   int    min_quality;       /* Minimum quality permitted for oligo sequence.*/
 
@@ -498,6 +504,7 @@ typedef struct p3_global_settings {
   pair_weights  pr_pair_weights;
 
   int    min_left_three_prime_distance;
+  int    min_internal_three_prime_distance;
   int    min_right_three_prime_distance;
   /* Minimum number of base pairs between the 3' ends of any two left
      or any two right primers when returning num_return primer pairs.
@@ -507,12 +514,6 @@ typedef struct p3_global_settings {
      PRIMER_{LEFT,RIGHT}_MIN_THREE_PRIME_DISTANCE.
   */
   
-  int    min_5_prime_overlap_of_junction;   /* The number of basepairs
-                                               the primer has to
-                                               overlap an overlap
-                                               junction. */
-  int    min_3_prime_overlap_of_junction;
-
   int    mask_template;
   int    masking_parameters_changed;
   /* Turn on masking of the trimmed_orig_seq (added by M. Lepamets)*/
@@ -751,6 +752,9 @@ typedef struct oligo_stats {
   int not_in_any_right_ok_region;/* Oligo not included in any of the
                                     right regions given in
                                     PRIMER_PAIR_OK_REGION_LIST. */
+  int does_not_overlap_a_required_point; /* Oligo does not overlap one of
+                                            the "required sites". */
+
 } oligo_stats;
 
 typedef struct pair_stats {
@@ -819,6 +823,11 @@ typedef struct seq_args {
   /* List of overlap junction positions. */
 
   int primer_overlap_junctions_count;
+
+  int intl_overlap_junctions[PR_MAX_INTERVAL_ARRAY];
+  /* List of overlap junction positions. */
+
+  int intl_overlap_junctions_count;
 
   int incl_s;             /* The 0-based start of included region. */
   int incl_l;             /* 
@@ -1207,9 +1216,12 @@ void p3_set_gs_pair_compl_any_th(p3_global_settings * p , double  pair_compl_any
 void p3_set_gs_pair_compl_end_th(p3_global_settings * p , double  pair_compl_end_th);
 
 void p3_set_gs_min_left_three_prime_distance(p3_global_settings *p, int min_distance);
+void p3_set_gs_min_internal_three_prime_distance(p3_global_settings *p, int min_distance);
 void p3_set_gs_min_right_three_prime_distance(p3_global_settings *p, int min_distance);
 void p3_set_gs_min_5_prime_overlap_of_junction(p3_global_settings *p, int min_5_prime);
 void p3_set_gs_min_3_prime_overlap_of_junction(p3_global_settings *p, int min_3_prime);
+void p3_set_gs_min_5_internal_overlap_of_junction(p3_global_settings *p, int min_5_prime);
+void p3_set_gs_min_3_internal_overlap_of_junction(p3_global_settings *p, int min_3_prime);
 
 /* 
  * Choose individual primers or oligos, or primer pairs, or primer

@@ -11,6 +11,19 @@ to the binding product size of PRIMER_PRODUCT_SIZE_RANGE or
 PRIMER_PRODUCT_OPT_SIZE. The TM anG GC_PERCENT calculations will only be
 based on the 3' portion of the oligo that binds to the template.
 
+The selection of internal/middle oligos/probes was enhanced for exact
+positioning in the light of SNP analysis. The SEQUENCE_EXCLUDED_REGION
+(were no left/right primers may bind, bud middle probes) and
+SEQUENCE_INTERNAL_EXCLUDED_REGION (were no middle probes may bind, bud
+left/right primers) was left unmodified. In addition a
+SEQUENCE_INTERNAL_OVERLAP_JUNCTION_LIST of positions a middle probes has
+to overlap may ge provided. A distance to the ends of the middle probe
+is set by PRIMER_INTERNAL_MIN_5_PRIME_OVERLAP_OF_JUNCTION and
+PRIMER_INTERNAL_MIN_3_PRIME_OVERLAP_OF_JUNCTION. The number of returned
+middle probes at one location may be limited by
+PRIMER_MIN_INTERNAL_THREE_PRIME_DISTANCE. See the test
+primer_internal_position_input for example use.
+
 Minor fixes:
 1. Handling of N in PRIMER_MAX_POLY_X was fixed. Now 'GGGNNN' violates
    MAX_POLY_X=5. It is now based on the worst possible case (all 3 Ns

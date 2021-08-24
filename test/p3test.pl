@@ -257,6 +257,7 @@ sub main() {
                   'primer_renewed_tasks',
                   'primer_new_tasks',
                   'primer_new_tasks_formatted',
+                  'primer_internal_position',
 
                   'primer_windows_newlines',
 
