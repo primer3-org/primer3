@@ -119,7 +119,7 @@ typedef enum salt_correction_type {
    amplification in vitro", Nucleic Acids Res 18:6409-12
    http://www.pubmedcentral.nih.gov/articlerender.fcgi?tool=pubmed&pubmedid=2243783].
    and the thermodynamic parameters in the paper [Breslauer KJ, Frank
-   R, Bl�cker H and Marky LA (1986) "Predicting DNA duplex stability
+   R, Blöcker H and Marky LA (1986) "Predicting DNA duplex stability
    from the base sequence" Proc Natl Acad Sci 83:4746-50
    http://dx.doi.org/10.1073/pnas.83.11.3746], are is used.  This is
    the method and the table that primer3 used up to and including

@@ -96,7 +96,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 /* Table 1 (old parameters):
- * See table 2 in the paper [Breslauer KJ, Frank R, Bl�cker H and
+ * See table 2 in the paper [Breslauer KJ, Frank R, Blöcker H and
  * Marky LA (1986) "Predicting DNA duplex stability from the base
  * sequence" Proc Natl Acad Sci 83:4746-50
  * http://dx.doi.org/10.1073/pnas.83.11.3746]
