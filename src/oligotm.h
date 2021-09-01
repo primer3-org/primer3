@@ -47,7 +47,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* Return the delta G of the last len bases of oligo if oligo is at least len
    bases long; otherwise return the delta G of oligo. */
-double end_oligodg(const char *oligo, int len, int tm_method);
+double end_oligodg(const char *oligo, size_t len, int tm_method);
 
 /* Calculate the melting temperature of substr(seq, start, length) using the
    formula from Bolton and McCarthy, PNAS 84:1390 (1962) as presented in
@@ -119,7 +119,7 @@ typedef enum salt_correction_type {
    amplification in vitro", Nucleic Acids Res 18:6409-12
    http://www.pubmedcentral.nih.gov/articlerender.fcgi?tool=pubmed&pubmedid=2243783].
    and the thermodynamic parameters in the paper [Breslauer KJ, Frank
-   R, Blöcker H and Marky LA (1986) "Predicting DNA duplex stability
+   R, Blï¿½cker H and Marky LA (1986) "Predicting DNA duplex stability
    from the base sequence" Proc Natl Acad Sci 83:4746-50
    http://dx.doi.org/10.1073/pnas.83.11.3746], are is used.  This is
    the method and the table that primer3 used up to and including

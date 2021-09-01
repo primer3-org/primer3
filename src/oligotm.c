@@ -96,7 +96,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 /* Table 1 (old parameters):
- * See table 2 in the paper [Breslauer KJ, Frank R, Blöcker H and
+ * See table 2 in the paper [Breslauer KJ, Frank R, Blï¿½cker H and
  * Marky LA (1986) "Predicting DNA duplex stability from the base
  * sequence" Proc Natl Acad Sci 83:4746-50
  * http://dx.doi.org/10.1073/pnas.83.11.3746]
@@ -583,7 +583,7 @@ DONE:  /* dg is now computed for the given sequence. */
 }
 
 double end_oligodg(const char *s,  
-  int len, /* The number of characters to return. */
+  size_t len, /* The number of characters to return. */
   int tm_method)
 {
   int x = strlen(s);
