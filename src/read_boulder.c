@@ -575,9 +575,10 @@ read_boulder_record(FILE *file_input,
         thal_results o;
         if (thal_load_parameters(thermodynamic_params_path, &pa->thermodynamic_parameters, &o) == -1) {
           pr_append_new_chunk(glob_err, o.msg);
-        }
-        if (get_thermodynamic_values(&pa->thermodynamic_parameters, &o)) {
-          pr_append_new_chunk(glob_err, o.msg);
+        } else {
+          if (get_thermodynamic_values(&pa->thermodynamic_parameters, &o)) {
+            pr_append_new_chunk(glob_err, o.msg);
+          }
         }
         free(thermodynamic_params_path);
         continue;
