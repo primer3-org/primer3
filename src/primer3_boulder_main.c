@@ -406,11 +406,20 @@ main(int argc, char *argv[])
 
     if (read_boulder_record_res.file_flag && sarg->sequence_name == NULL) {
       /* We will not have a base name for the files */
-      if (format_output) {
-        format_error(stdout, NULL,
-                     "Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG is not 0");
+      if (default_version == 2) {
+        if (format_output) {
+          format_error(stdout, NULL,
+                       "Need SEQUENCE_ID if P3_FILE_FLAG is not 0");
+        } else {
+          print_boulder_error("Need SEQUENCE_ID if P3_FILE_FLAG is not 0");
+        }
       } else {
-        print_boulder_error("Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG is not 0");
+        if (format_output) {
+          format_error(stdout, NULL,
+                       "Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG is not 0");
+        } else {
+          print_boulder_error("Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG is not 0");
+        }
       }
       goto loop_wrap_up;
     }
