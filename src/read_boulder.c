@@ -344,6 +344,9 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_OPT_GC_PERCENT", pa->p_args.opt_gc_content);
       COMPARE_FLOAT("PRIMER_MIN_TM", pa->p_args.min_tm);
       COMPARE_FLOAT("PRIMER_MAX_TM", pa->p_args.max_tm);
+      COMPARE_FLOAT("PRIMER_OPT_BOUND", pa->p_args.opt_bound);
+      COMPARE_FLOAT("PRIMER_MIN_BOUND", pa->p_args.min_bound);
+      COMPARE_FLOAT("PRIMER_MAX_BOUND", pa->p_args.max_bound);
       COMPARE_FLOAT("PRIMER_PAIR_MAX_DIFF_TM", pa->max_diff_tm);
       if (COMPARE("PRIMER_TM_FORMULA")) {
           parse_int("PRIMER_TM_FORMULA", datum, &tmp_int, parse_err);
@@ -355,6 +358,7 @@ read_boulder_record(FILE *file_input,
         pa->salt_corrections = (salt_correction_type) tmp_int; /* added by T.Koressaar */
         continue;
       }
+      COMPARE_FLOAT("PRIMER_ANNEALING_TEMP", pa->annealing_temp);
       COMPARE_FLOAT("PRIMER_MIN_GC", pa->p_args.min_gc);
       COMPARE_FLOAT("PRIMER_MAX_GC", pa->p_args.max_gc);
       COMPARE_FLOAT("PRIMER_SALT_MONOVALENT", pa->p_args.salt_conc);
@@ -483,6 +487,9 @@ read_boulder_record(FILE *file_input,
                     pa->o_args.opt_gc_content);
       COMPARE_FLOAT("PRIMER_INTERNAL_MAX_TM", pa->o_args.max_tm);
       COMPARE_FLOAT("PRIMER_INTERNAL_MIN_TM", pa->o_args.min_tm);
+      COMPARE_FLOAT("PRIMER_INTERNAL_OPT_BOUND", pa->o_args.opt_bound);
+      COMPARE_FLOAT("PRIMER_INTERNAL_MAX_BOUND", pa->o_args.max_bound);
+      COMPARE_FLOAT("PRIMER_INTERNAL_MIN_BOUND", pa->o_args.min_bound);
       COMPARE_FLOAT("PRIMER_INTERNAL_MIN_GC", pa->o_args.min_gc);
       COMPARE_FLOAT("PRIMER_INTERNAL_MAX_GC", pa->o_args.max_gc);
       COMPARE_FLOAT("PRIMER_INTERNAL_SALT_MONOVALENT",
@@ -600,6 +607,8 @@ read_boulder_record(FILE *file_input,
       /* CHANGE TEMP/temp -> TM/tm */
       COMPARE_FLOAT("PRIMER_WT_TM_GT", pa->p_args.weights.temp_gt);
       COMPARE_FLOAT("PRIMER_WT_TM_LT", pa->p_args.weights.temp_lt);
+      COMPARE_FLOAT("PRIMER_WT_BOUND_GT", pa->p_args.weights.bound_gt);
+      COMPARE_FLOAT("PRIMER_WT_BOUND_LT", pa->p_args.weights.bound_lt);
       COMPARE_FLOAT("PRIMER_WT_GC_PERCENT_GT", pa->p_args.weights.gc_content_gt);
       COMPARE_FLOAT("PRIMER_WT_GC_PERCENT_LT", pa->p_args.weights.gc_content_lt);
       COMPARE_FLOAT("PRIMER_WT_SIZE_LT", pa->p_args.weights.length_lt);
@@ -624,6 +633,8 @@ read_boulder_record(FILE *file_input,
                                               pa->p_args.weights.failure_rate);                        
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_TM_GT", pa->o_args.weights.temp_gt);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_TM_LT", pa->o_args.weights.temp_lt);
+      COMPARE_FLOAT("PRIMER_INTERNAL_WT_BOUND_GT", pa->o_args.weights.bound_gt);
+      COMPARE_FLOAT("PRIMER_INTERNAL_WT_BOUND_LT", pa->o_args.weights.bound_lt);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_GC_PERCENT_GT", pa->o_args.weights.gc_content_gt);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_GC_PERCENT_LT", pa->o_args.weights.gc_content_lt);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_SIZE_LT", pa->o_args.weights.length_lt);

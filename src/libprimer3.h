@@ -145,6 +145,8 @@ typedef struct oligo_weights {
   double temp_cutoff;
   double temp_gt;
   double temp_lt;
+  double bound_gt;
+  double bound_lt;
   double template_mispriming;
   double template_mispriming_th;
   double failure_rate;
@@ -184,6 +186,9 @@ typedef struct args_for_one_oligo_or_primer {
   double opt_tm;
   double min_tm;
   double max_tm;
+  double opt_bound;
+  double min_bound;
+  double max_bound;
   double opt_gc_content;
   double max_gc;
   double min_gc;
@@ -386,6 +391,9 @@ typedef struct p3_global_settings {
   /* Start of arguments applicable to primers but not
      oligos */
 
+  double annealing_temp;
+  /* The actual annealing temperature of the PCR reaction. */
+
   double max_end_stability;
   /* The maximum value allowed for the delta
    * G of disruption for the 5 3' bases of
@@ -572,6 +580,9 @@ typedef struct primer_rec {
   double temp; /* The oligo melting temperature calculated for the
                 * primer. */
         
+  double bound; /* The fraction of primers bound at melting temperature
+                 * temperature. */
+
   double gc_content;
         
   double position_penalty; 
@@ -728,6 +739,8 @@ typedef struct oligo_stats {
   int gc_end_high;         /* Too many G+Cs at the 3' end.                  */
   int temp_min;            /* Melting temperature below t_min.              */
   int temp_max;            /* Melting temperature more than t_max.          */
+  int bound_min;           /* Fraction bound below min.                     */
+  int bound_max;           /* Fraction bound above max.                     */
   int size_min;            /* Primer shorter than minimal size.             */
   int size_max;            /* Primer longer than minimal size.              */
   int compl_any;           /* Self-complementarity too high.                */
@@ -1052,11 +1065,16 @@ void p3_set_gs_primer_opt_tm(p3_global_settings * p , double product_opt_tm);
 void p3_set_gs_primer_opt_gc_percent(p3_global_settings * p , double val);
 void p3_set_gs_primer_min_tm(p3_global_settings * p , double product_min_tm);
 void p3_set_gs_primer_max_tm(p3_global_settings * p , double product_max_tm);
+void p3_set_gs_primer_opt_bound(p3_global_settings * p , double product_opt_tm);
+void p3_set_gs_primer_min_bound(p3_global_settings * p , double product_min_tm);
+void p3_set_gs_primer_max_bound(p3_global_settings * p , double product_max_tm);
 void p3_set_gs_primer_max_diff_tm(p3_global_settings * p , double val);
 void p3_set_gs_primer_tm_santalucia(p3_global_settings * p,
                                     tm_method_type val);
 void p3_set_gs_primer_salt_corrections(p3_global_settings * p,
                                        salt_correction_type salt_corrections);
+void p3_set_gs_primer_annealing_temp(p3_global_settings * p,
+                                     salt_correction_type salt_corrections);
 void p3_set_gs_primer_min_gc(p3_global_settings * p , double val);
 void p3_set_gs_primer_max_gc(p3_global_settings * p , double val);
 void p3_set_gs_primer_salt_conc(p3_global_settings * p , double val);
@@ -1095,6 +1113,9 @@ void p3_set_gs_primer_internal_oligo_max_poly_x(p3_global_settings * p , int val
 void p3_set_gs_primer_internal_oligo_opt_tm(p3_global_settings * p , double val);
 void p3_set_gs_primer_internal_oligo_max_tm(p3_global_settings * p , double val);
 void p3_set_gs_primer_internal_oligo_min_tm(p3_global_settings * p , double val);
+void p3_set_gs_primer_internal_oligo_opt_bound(p3_global_settings * p , double val);
+void p3_set_gs_primer_internal_oligo_max_bound(p3_global_settings * p , double val);
+void p3_set_gs_primer_internal_oligo_min_bound(p3_global_settings * p , double val);
 void p3_set_gs_primer_internal_oligo_min_gc(p3_global_settings * p , double val);
 void p3_set_gs_primer_internal_oligo_max_gc(p3_global_settings * p , double val);
 void p3_set_gs_primer_internal_oligo_salt_conc(p3_global_settings * p , double val);
@@ -1125,6 +1146,8 @@ void p3_set_gs_primer_thermodynamic_oligo_alignment(p3_global_settings * p , int
 void p3_set_gs_primer_thermodynamic_template_alignment(p3_global_settings * p , int val);
 void p3_set_gs_primer_wt_tm_gt(p3_global_settings * p , double val);
 void p3_set_gs_primer_wt_tm_lt(p3_global_settings * p , double val);
+void p3_set_gs_primer_wt_bound_gt(p3_global_settings * p , double val);
+void p3_set_gs_primer_wt_bound_lt(p3_global_settings * p , double val);
 void p3_set_gs_primer_wt_gc_percent_gt(p3_global_settings * p , double val);
 void p3_set_gs_primer_wt_gc_percent_lt(p3_global_settings * p , double val);
 void p3_set_gs_primer_wt_size_lt(p3_global_settings * p , double val);
@@ -1144,6 +1167,8 @@ void p3_set_gs_primer_wt_template_mispriming(p3_global_settings * p , double val
 void p3_set_gs_primer_wt_template_mispriming_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_tm_gt(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_tm_lt(p3_global_settings * p , double val);
+void p3_set_gs_primer_io_wt_bound_gt(p3_global_settings * p , double val);
+void p3_set_gs_primer_io_wt_bound_lt(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_gc_percent_gt(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_gc_percent_lt(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_size_lt(p3_global_settings * p , double val);

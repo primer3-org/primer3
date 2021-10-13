@@ -471,6 +471,8 @@ static void op_set_high_gc_content(primer_rec *);
 static void op_set_low_gc_content(primer_rec *);
 static void op_set_high_tm(primer_rec *);
 static void op_set_low_tm(primer_rec *);
+static void op_set_high_bound(primer_rec *);
+static void op_set_low_bound(primer_rec *);
 static void op_set_overlaps_excluded_region(primer_rec *);
 static void op_set_not_in_any_ok_region(primer_rec *);
 static void op_set_high_self_any(primer_rec *oligo);
@@ -629,9 +631,13 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->p_args.min_size          = 18;
   a->p_args.max_size          = 27;
 
-  a->p_args.opt_tm            = 60;
-  a->p_args.min_tm            = 57;
-  a->p_args.max_tm            = 63;
+  a->p_args.opt_tm            = 60.0;
+  a->p_args.min_tm            = 57.0;
+  a->p_args.max_tm            = 63.0;
+
+  a->p_args.opt_bound         = 97.0;
+  a->p_args.min_bound         = -10.0;
+  a->p_args.max_bound         = 110.0;
 
   a->p_args.min_gc            = 20.0;
   a->p_args.opt_gc_content    = DEFAULT_OPT_GC_PERCENT;
@@ -677,6 +683,8 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->p_args.weights.temp_cutoff   = 5;
   a->p_args.weights.temp_gt       = 1;
   a->p_args.weights.temp_lt       = 1;
+  a->p_args.weights.bound_gt      = 0;
+  a->p_args.weights.bound_lt      = 0;
   a->p_args.weights.template_mispriming = 0.0;
   a->p_args.weights.template_mispriming_th = 0.0;
   a->p_args.must_match_five_prime  = NULL;
@@ -688,6 +696,7 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->max_diff_tm         = 100.0;
   a->tm_santalucia       = breslauer_auto;
   a->salt_corrections    = schildkraut;
+  a->annealing_temp      = -10.0;
   a->pair_compl_any      = 8.0;
   a->pair_compl_end      = 3.0;
   a->pair_compl_any_th   = 47.0;
@@ -726,6 +735,9 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->o_args.opt_tm          = 60.0;
   a->o_args.min_tm          = 57.0;
   a->o_args.max_tm          = 63.0;
+  a->o_args.opt_bound       = 97.0;
+  a->o_args.min_bound       = -10.0;
+  a->o_args.max_bound       = 110.0;
   a->o_args.min_gc          = 20.0;
   a->o_args.max_gc          = 80.0;
   a->o_args.opt_gc_content  = DEFAULT_OPT_GC_PERCENT;
@@ -748,6 +760,8 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->o_args.max_template_mispriming_th = PR_UNDEFINED_ALIGN_OPT;
   a->o_args.weights.temp_gt       = 1;
   a->o_args.weights.temp_lt       = 1;
+  a->o_args.weights.bound_gt      = 0;
+  a->o_args.weights.bound_lt      = 0;
   a->o_args.weights.length_gt     = 1;
   a->o_args.weights.length_lt     = 1;
   a->o_args.weights.gc_content_gt = 0;
@@ -1952,6 +1966,8 @@ add_must_use_warnings(pr_append_str *warning,
   if (stats->gc_clamp) pr_append_w_sep(&s, sep, "No GC clamp");
   if (stats->temp_min) pr_append_w_sep(&s, sep, "Tm too low");
   if (stats->temp_max) pr_append_w_sep(&s, sep, "Tm too high");
+  if (stats->bound_min) pr_append_w_sep(&s, sep, "Fraction bound too low");
+  if (stats->bound_max) pr_append_w_sep(&s, sep, "Fraction bound too high");
   if (stats->compl_any) pr_append_w_sep(&s, sep, "High self complementarity");
   if (stats->compl_end)
     pr_append_w_sep(&s, sep, "High end self complementarity");
@@ -3116,6 +3132,7 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
                               )
 {
   int i, j, k, for_i, gc_count, overhang_len;
+  tm_ret tm_calc;  /* structure with Tm and bound (primer fraction) */
   int three_prime_pos; /* position of 3' base of oligo */
   oligo_type l = otype;
   int must_use = h->must_use;
@@ -3413,14 +3430,17 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
     if (!must_use) return;
   }
 
-  h->temp  /* Oligo/primer melting temperature */
+  tm_calc  /* Oligo/primer melting temperature */
     = seqtm(oligo_seq, po_args->dna_conc,
             po_args->salt_conc,
             po_args->divalent_conc,
             po_args->dntp_conc,
             MAX_NN_TM_LENGTH,
             pa->tm_santalucia,
-            pa->salt_corrections);
+            pa->salt_corrections,
+            pa->annealing_temp);
+  h->temp = tm_calc.Tm;
+  h->bound = tm_calc.bound;
 
   if (h->temp < po_args->min_tm) {
     op_set_low_tm(h);
@@ -3432,6 +3452,20 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
     op_set_high_tm(h);
     stats->temp_max++;
     if (!must_use) return;
+  }
+
+  if (pa->annealing_temp > 0.0) {
+    if (h->bound < po_args->min_bound) {
+      op_set_low_bound(h);
+      stats->bound_min++;
+      if (!must_use) return;
+    }
+
+    if (h->bound > po_args->max_bound) {
+      op_set_high_bound(h);
+      stats->bound_max++;
+      if (!must_use) return;
+    }
   }
 
   /* End stability is applicable only to primers
@@ -3807,6 +3841,13 @@ p_obj_fn(const p3_global_settings *pa,
       if (pa->p_args.weights.temp_lt && h->temp < pa->p_args.opt_tm)
            sum += pa->p_args.weights.temp_lt * (pa->p_args.opt_tm - h->temp);
 
+      if (pa->annealing_temp > 0.0) {
+        if(pa->p_args.weights.bound_gt && h->bound > pa->p_args.opt_bound)
+             sum += pa->p_args.weights.bound_gt * (h->bound - pa->p_args.opt_bound);
+        if (pa->p_args.weights.bound_lt && h->bound < pa->p_args.opt_bound)
+             sum += pa->p_args.weights.bound_lt * (pa->p_args.opt_bound - h->bound);
+      }
+
       if (pa->p_args.weights.gc_content_gt && h->gc_content > pa->p_args.opt_gc_content)
            sum += pa->p_args.weights.gc_content_gt
              * (h->gc_content - pa->p_args.opt_gc_content);
@@ -3912,6 +3953,11 @@ p_obj_fn(const p3_global_settings *pa,
          sum += pa->o_args.weights.temp_gt * (h->temp - pa->o_args.opt_tm);
       if(pa->o_args.weights.temp_lt && h->temp < pa->o_args.opt_tm)
          sum += pa->o_args.weights.temp_lt * (pa->o_args.opt_tm - h->temp);
+
+      if(pa->o_args.weights.bound_gt && h->bound > pa->o_args.opt_bound)
+         sum += pa->o_args.weights.bound_gt * (h->bound - pa->o_args.opt_bound);
+      if(pa->o_args.weights.bound_lt && h->bound < pa->o_args.opt_bound)
+         sum += pa->o_args.weights.bound_lt * (pa->o_args.opt_bound - h->bound);
 
       if(pa->o_args.weights.gc_content_gt && h->gc_content > pa->o_args.opt_gc_content)
            sum += pa->o_args.weights.gc_content_gt
@@ -4093,7 +4139,8 @@ characterize_pair(p3retval *retval,
   int must_use = 0;
   double min_oligo_tm;
   int i, overhang_len;
-  const thal_args *thal_args_for_template_mispriming 
+  tm_ret tm_calc;  /* structure with Tm and bound (primer fraction) */
+  const thal_args *thal_args_for_template_mispriming
     = use_end_for_th_template_mispriming 
     ? thal_arg_to_use->end1
     : thal_arg_to_use->any;
@@ -4193,13 +4240,14 @@ characterize_pair(p3retval *retval,
     fprintf(stderr, "temporary");
   }
   PR_ASSERT(ppair->right->start - ppair->left->start + 1 > 0)
-  ppair->product_tm
+  tm_calc
     = long_seq_tm(sa->trimmed_seq, ppair->left->start,
                   ppair->right->start - ppair->left->start + 1,
                   /* TO DO -- skewed, it would be better to not use p_args elements here */
                   pa->p_args.salt_conc,
                   pa->p_args.divalent_conc,
                   pa->p_args.dntp_conc);
+  ppair->product_tm = tm_calc.Tm;
 
   PR_ASSERT(ppair->product_tm != OLIGOTM_ERROR);
 
@@ -6171,6 +6219,8 @@ p3_oligo_explain_string(const oligo_stats *stat)
   IF_SP_AND_CHECK(", GC clamp failed %d", stat->gc_clamp)
   IF_SP_AND_CHECK(", low tm %d", stat->temp_min)
   IF_SP_AND_CHECK(", high tm %d", stat->temp_max)
+  IF_SP_AND_CHECK(", low faction bound %d", stat->bound_min)
+  IF_SP_AND_CHECK(", high fraction bound %d", stat->bound_max)
   IF_SP_AND_CHECK(", high any compl %d", stat->compl_any)
   IF_SP_AND_CHECK(", high end compl %d", stat->compl_end)
   IF_SP_AND_CHECK(", high hairpin stability %d", stat->hairpin_th)
@@ -7072,6 +7122,33 @@ _pr_data_control(const p3_global_settings *pa,
     pr_append_new_chunk(glob_err,
                         "Optimum internal oligo Tm lower than minimum or higher than maximum");
     return 1;
+  }
+
+  if (pa->p_args.opt_bound < pa->p_args.min_bound
+      || pa->p_args.opt_bound > pa->p_args.max_bound) {
+    pr_append_new_chunk(glob_err,
+                        "Optimum primer fraction binding lower than minimum or higher than maximum");
+    return 1;
+  }
+
+  if (pa->o_args.opt_bound < pa->o_args.min_bound
+      || pa->o_args.opt_bound > pa->o_args.max_bound) {
+    pr_append_new_chunk(glob_err,
+                        "Optimum internal oligo fraction binding lower than minimum or higher than maximum");
+    return 1;
+  }
+
+  if (pa->annealing_temp > 0.0) {
+    if (pa->annealing_temp > 100.0) {
+      pr_append_new_chunk(glob_err,
+                          "Annealing temperature higher than 100 C");
+      return 1;
+    }
+    if (pa->salt_corrections == 2) {
+      pr_append_new_chunk(glob_err,
+       "Primer binding does not work with Owczarzy salt correction (PRIMER_SALT_CORRECTIONS=2)");
+      return 1;
+    }
   }
 
   if (pa->p_args.min_gc > pa->p_args.max_gc
@@ -8260,6 +8337,20 @@ p3_set_gs_primer_max_tm(p3_global_settings * p , double d) {
 }
 
 void
+p3_set_gs_primer_opt_bound(p3_global_settings * p , double d) {
+  p->p_args.opt_bound = d ;
+}
+
+void
+p3_set_gs_primer_min_bound(p3_global_settings * p , double d) {
+  p->p_args.min_bound = d ;
+}
+void
+p3_set_gs_primer_max_bound(p3_global_settings * p , double d) {
+  p->p_args.max_bound = d;
+}
+
+void
 p3_set_gs_primer_max_diff_tm(p3_global_settings * p , double val) {
   p->max_diff_tm = val;
 }
@@ -8274,6 +8365,12 @@ void
 p3_set_gs_primer_salt_corrections(p3_global_settings * p,
                                   salt_correction_type val) {
   p->salt_corrections = val;
+}
+
+void
+p3_set_gs_primer_annealing_temp(p3_global_settings * p,
+                                double val) {
+  p->annealing_temp = val;
 }
 
 void
@@ -8522,6 +8619,21 @@ p3_set_gs_primer_internal_oligo_min_tm(p3_global_settings * p , double val) {
 }
 
 void
+p3_set_gs_primer_internal_oligo_opt_bound(p3_global_settings * p , double val) {
+  p->o_args.opt_bound = val ;
+}
+
+void
+p3_set_gs_primer_internal_oligo_max_bound(p3_global_settings * p , double val) {
+  p->o_args.max_bound = val ;
+}
+
+void
+p3_set_gs_primer_internal_oligo_min_bound(p3_global_settings * p , double val) {
+  p->o_args.min_bound = val ;
+}
+
+void
 p3_set_gs_primer_internal_oligo_min_gc(p3_global_settings * p , double val) {
   p->o_args.min_gc = val ;
 }
@@ -8670,6 +8782,16 @@ p3_set_gs_primer_wt_tm_lt(p3_global_settings * p , double val) {
 }
 
 void
+p3_set_gs_primer_wt_bound_gt(p3_global_settings * p , double val) {
+  p->p_args.weights.bound_gt = val ;
+}
+
+void
+p3_set_gs_primer_wt_bound_lt(p3_global_settings * p , double val) {
+  p->p_args.weights.bound_lt = val ;
+}
+
+void
 p3_set_gs_primer_wt_gc_percent_gt(p3_global_settings * p , double val) {
   p->p_args.weights.gc_content_gt = val ;
 }
@@ -8762,6 +8884,16 @@ p3_set_gs_primer_io_wt_tm_gt(p3_global_settings * p , double val) {
 void
 p3_set_gs_primer_io_wt_tm_lt(p3_global_settings * p , double val){
   p->o_args.weights.temp_lt = val ;
+}
+
+void
+p3_set_gs_primer_io_wt_bound_gt(p3_global_settings * p , double val) {
+  p->o_args.weights.bound_gt = val ;
+}
+
+void
+p3_set_gs_primer_io_wt_bound_lt(p3_global_settings * p , double val){
+  p->o_args.weights.bound_lt = val ;
 }
 
 void
@@ -9088,7 +9220,8 @@ initialize_op(primer_rec *oligo) {
 #define BF_OVERLAPS_EXCL_REGION                (1UL <<  3)
 #define BF_INFINITE_POSITION_PENALTY           (1UL <<  4)
 /* Space for more bitfields */
-
+#define OP_HIGH_BOUND                          (1UL <<  5)
+#define OP_LOW_BOUND                           (1UL <<  6)
 #define OP_NOT_IN_ANY_OK_REGION                (1UL <<  7)
 #define OP_TOO_MANY_NS                         (1UL <<  8) /* 3prime problem*/
 #define OP_OVERLAPS_TARGET                     (1UL <<  9) /* 3prime problem*/
@@ -9120,8 +9253,8 @@ initialize_op(primer_rec *oligo) {
    between decimal and binary numbers */
 
 /* all bits 1 except bits 0 to 6 */
-/* (~0UL) ^ 127UL = 1111 1111  1111 1111  1111 1111  1000 0000 */
-static unsigned long int any_problem = (~0UL) ^ 127UL;
+/* (~0UL) ^ 31UL = 1111 1111  1111 1111  1111 1111  1110 0000 */
+static unsigned long int any_problem = (~0UL) ^ 31UL;
 /* 310297344UL = 0001 0010  0111 1110  1100 0011  0000 0000 */
 static unsigned long int five_prime_problem = 310297344UL;
 
@@ -9188,6 +9321,10 @@ p3_get_ol_problem_string(const primer_rec *oligo) {
                " Temperature too high;")
     ADD_OP_STR(OP_LOW_TM,
                " Temperature too low;")
+    ADD_OP_STR(OP_HIGH_BOUND,
+               " Fraction bound too high;")
+    ADD_OP_STR(OP_LOW_BOUND,
+               " Fraction bound too low;")
     ADD_OP_STR(OP_OVERLAPS_EXCL_REGION,
                " Overlaps an excluded region;")
     ADD_OP_STR(OP_NOT_IN_ANY_OK_REGION,
@@ -9324,6 +9461,18 @@ op_set_high_tm(primer_rec *oligo) {
 static void
 op_set_low_tm(primer_rec *oligo) {
   oligo->problems.prob |= OP_LOW_TM;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
+}
+
+static void
+op_set_high_bound(primer_rec *oligo) {
+  oligo->problems.prob |= OP_HIGH_BOUND;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
+}
+
+static void
+op_set_low_bound(primer_rec *oligo) {
+  oligo->problems.prob |= OP_LOW_BOUND;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 
@@ -9510,6 +9659,7 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
 
     printf("  tm_santalucia %i\n", p->tm_santalucia) ;
     printf("  salt_corrections %i\n", p->salt_corrections) ;
+    printf("  annealing_temp %f\n", p->annealing_temp) ;
     printf("  max_end_stability %f\n", p->max_end_stability) ;
     printf("  gc_clamp %i\n", p->gc_clamp) ;
     printf("  max_end_gc %i\n", p->max_end_gc);
@@ -9571,9 +9721,10 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("=============\n");
     printf("BEGIN primer_args\n");
     printf("begin oligo_weights\n");
-    printf("temp_gt %f\n", p->p_args.weights.temp_gt ) ;
     printf("temp_gt %f\n", p->p_args.weights.temp_gt) ;
     printf("temp_lt %f\n", p->p_args.weights.temp_lt) ;
+    printf("bound_gt %f\n", p->p_args.weights.bound_gt) ;
+    printf("bound_lt %f\n", p->p_args.weights.bound_lt) ;
     printf("gc_content_gt %f\n", p->p_args.weights.gc_content_gt) ;
     printf("gc_content_lt %f\n", p->p_args.weights.gc_content_lt) ;
     printf("compl_any %f\n", p->p_args.weights.compl_any) ;
@@ -9597,6 +9748,9 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("opt_tm %f\n", p->p_args.opt_tm) ;
     printf("min_tm %f\n", p->p_args.min_tm) ;
     printf("max_tm %f\n", p->p_args.max_tm) ;
+    printf("opt_bound %f\n", p->p_args.opt_bound) ;
+    printf("min_bound %f\n", p->p_args.min_bound) ;
+    printf("max_bound %f\n", p->p_args.max_bound) ;
     printf("opt_gc_content %f\n", p->p_args.opt_gc_content) ;
     printf("max_gc %f\n", p->p_args.max_gc) ;
     printf("min_gc %f\n", p->p_args.min_gc) ;
@@ -9625,6 +9779,8 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("  begin internal oligo_weights (p->o_args.weights.)\n") ;
     printf("    temp_gt %f\n", p->o_args.weights.temp_gt) ;
     printf("    temp_lt %f\n", p->o_args.weights.temp_lt) ;
+    printf("    bound_gt %f\n", p->o_args.weights.bound_gt) ;
+    printf("    bound_lt %f\n", p->o_args.weights.bound_lt) ;
     printf("    gc_content_gt %f\n", p->o_args.weights.gc_content_gt) ;
     printf("    gc_content_lt %f\n", p->o_args.weights.gc_content_lt) ;
     printf("    compl_any %f\n", p->o_args.weights.compl_any) ;
@@ -9645,6 +9801,9 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("  opt_tm %f\n", p->o_args.opt_tm) ;
     printf("  min_tm %f\n", p->o_args.min_tm) ;
     printf("  max_tm %f\n", p->o_args.max_tm) ;
+    printf("  opt_bound %f\n", p->o_args.opt_bound) ;
+    printf("  min_bound %f\n", p->o_args.min_bound) ;
+    printf("  max_bound %f\n", p->o_args.max_bound) ;
     printf("  opt_gc_content %f\n", p->o_args.opt_gc_content) ;
     printf("  max_gc %f\n", p->o_args.max_gc) ;
     printf("  min_gc %f\n", p->o_args.min_gc) ;

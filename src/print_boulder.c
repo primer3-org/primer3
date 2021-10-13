@@ -290,6 +290,16 @@ print_boulder(int io_version,
     if (go_int == 1)
       printf("PRIMER_%s%s_TM=%.3f\n", int_oligo, suffix, intl->temp);
 
+    /* Print fraction bound at melting temperature */
+    if ((pa->annealing_temp > 0.0) && (pa->salt_corrections != 2)) {
+      if ((go_fwd == 1) && (fwd->bound > 0.0))
+        printf("PRIMER_LEFT%s_BOUND=%.3f\n", suffix, fwd->bound);
+      if ((go_rev == 1) && (rev->bound > 0.0))
+        printf("PRIMER_RIGHT%s_BOUND=%.3f\n", suffix, rev->bound);
+      if ((go_int == 1) && (intl->bound > 0.0))
+        printf("PRIMER_%s%s_BOUND=%.3f\n", int_oligo, suffix, intl->bound);
+    }
+
     /* Print primer GC content */
     if (go_fwd == 1)
       printf("PRIMER_LEFT%s_GC_PERCENT=%.3f\n", suffix, fwd->gc_content);

@@ -45,6 +45,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define OLIGOTM_ERROR -999999.9999
 
+typedef struct tm_ret {
+  double Tm;
+  double bound;
+} tm_ret;
+
 /* Return the delta G of the last len bases of oligo if oligo is at least len
    bases long; otherwise return the delta G of oligo. */
 double end_oligodg(const char *oligo, int len, int tm_method);
@@ -72,7 +77,7 @@ double end_oligodg(const char *oligo, int len, int tm_method);
    since mM is the usual units in PCR applications.
 
  */
-double long_seq_tm(const char *seq, 
+tm_ret long_seq_tm(const char *seq,
                    int start, 
                    int length, 
                    double salt_conc, 
@@ -104,7 +109,7 @@ typedef enum salt_correction_type {
         owczarzy       = 2,
 } salt_correction_type;
 
-/* 
+/*
    If tm_method==santalucia_auto, then the table of
    nearest-neighbor thermodynamic parameters and method for Tm
    calculation in the paper [SantaLucia JR (1998) "A unified view of
@@ -119,7 +124,7 @@ typedef enum salt_correction_type {
    amplification in vitro", Nucleic Acids Res 18:6409-12
    http://www.pubmedcentral.nih.gov/articlerender.fcgi?tool=pubmed&pubmedid=2243783].
    and the thermodynamic parameters in the paper [Breslauer KJ, Frank
-   R, Blöcker H and Marky LA (1986) "Predicting DNA duplex stability
+   R, Blï¿½cker H and Marky LA (1986) "Predicting DNA duplex stability
    from the base sequence" Proc Natl Acad Sci 83:4746-50
    http://dx.doi.org/10.1073/pnas.83.11.3746], are is used.  This is
    the method and the table that primer3 used up to and including
@@ -148,19 +153,20 @@ typedef enum salt_correction_type {
  
  */
 
-double oligotm(const  char *seq,     /* The sequence. */
+tm_ret oligotm(const  char *seq,     /* The sequence. */
                double dna_conc,      /* DNA concentration (nanomolar). */
                double salt_conc,     /* Salt concentration (millimolar). */
                double divalent_conc, /* Concentration of divalent cations (millimolar) */
                double dntp_conc,     /* Concentration of dNTPs (millimolar) */
                tm_method_type tm_method,    /* See description above. */
-               salt_correction_type salt_corrections  /* See description above. */
+               salt_correction_type salt_corrections, /* See description above. */
+               double annealing_temp /* Actual annealing temperature of the PCR reaction */
                );
 
 /* Return the melting temperature of a given sequence, 'seq', of any
    length.
 */
-double seqtm(const  char *seq,  /* The sequence. */
+tm_ret seqtm(const  char *seq,  /* The sequence. */
              double dna_conc,   /* DNA concentration (nanomolar). */
              double salt_conc,  /* Concentration of divalent cations (millimolar). */
              double divalent_conc, /* Concentration of divalent cations (millimolar) */
@@ -174,7 +180,8 @@ double seqtm(const  char *seq,  /* The sequence. */
                                  */
 
              tm_method_type  tm_method,       /* See description above. */
-             salt_correction_type salt_corrections /* See description above. */
+             salt_correction_type salt_corrections, /* See description above. */
+             double annealing_temp /* Actual annealing temperature of the PCR reaction */
              );
 
      

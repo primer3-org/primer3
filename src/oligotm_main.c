@@ -109,6 +109,7 @@ main(int argc, char **argv)
 "    51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA\n";
 
    char *endptr, *seq;
+   tm_ret tm_calc;  /* structure with Tm and bound (primer fraction) */
    double mv = 50, d = 50;
    double dv = 1.5, n = 0.6;
    int tm_santalucia=1, salt_corrections=1;
@@ -209,7 +210,9 @@ main(int argc, char **argv)
   len=strlen(seq);
   for(j=0;j<len;j++) seq[j]=toupper(seq[j]);
    
-  tm = oligotm(seq, d, mv, dv, n, (tm_method_type) tm_santalucia, (salt_correction_type) salt_corrections);
+  tm_calc = oligotm(seq, d, mv, dv, n, (tm_method_type) tm_santalucia, (salt_correction_type) salt_corrections, -10.0);
+  tm = tm_calc.Tm;
+
   if (OLIGOTM_ERROR == tm) {
     fprintf(stderr,
             "%s ERROR: length of sequence %s is less than 2 or\n"

@@ -259,6 +259,8 @@ sub main() {
                   'primer_new_tasks_formatted',
                   'primer_internal_position',
 
+                  'primer_annealing_temp',
+
                   'primer_windows_newlines',
 
                   'primer_must_overlap_point',

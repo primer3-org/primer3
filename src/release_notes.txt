@@ -1,5 +1,12 @@
-release 2.6.0 2021-0?-??  ===============================================
+release 2.6.0 2021-??-??  ===============================================
 This release adds new features to primer3_core and related C code.
+
+The actual annealing temperature of the PCR reaction may be specified by
+PRIMER_ANNEALING_TEMP. The Primer3 calculates the fraction of primer
+bound and provides PRIMER_[LEFT/INTERNAL/RIGHT]_4_BOUND as percent
+value in the output. Primers may also be selected on a given fraction
+range please see "GENERAL THOUGHTS ON PRIMER BINDING" in
+primer3_manual.htm for details.
 
 SEQUENCE_OVERHANG_LEFT and SEQUENCE_OVERHANG_RIGHT may specify a sequence
 which is added to the 5' end of the respective primer. The overhang
@@ -8,7 +15,7 @@ COMPL_ANY, COMPL_END, plus the _TH and _STRUCT versions of those outputs,
 as well as PRODUCT_SIZE. Internal oligos may not have an overhang. The
 length of SEQUENCE_OVERHANG_LEFT and SEQUENCE_OVERHANG_RIGHT do not add
 to the binding product size of PRIMER_PRODUCT_SIZE_RANGE or
-PRIMER_PRODUCT_OPT_SIZE. The TM anG GC_PERCENT calculations will only be
+PRIMER_PRODUCT_OPT_SIZE. The TM and GC_PERCENT calculations will only be
 based on the 3' portion of the oligo that binds to the template.
 
 The selection of internal/middle oligos/probes was enhanced for exact
@@ -17,7 +24,7 @@ positioning in the light of SNP analysis. The SEQUENCE_EXCLUDED_REGION
 SEQUENCE_INTERNAL_EXCLUDED_REGION (were no middle probes may bind, bud
 left/right primers) was left unmodified. In addition a
 SEQUENCE_INTERNAL_OVERLAP_JUNCTION_LIST of positions a middle probes has
-to overlap may ge provided. A distance to the ends of the middle probe
+to overlap may be provided. A distance to the ends of the middle probe
 is set by PRIMER_INTERNAL_MIN_5_PRIME_OVERLAP_OF_JUNCTION and
 PRIMER_INTERNAL_MIN_3_PRIME_OVERLAP_OF_JUNCTION. The number of returned
 middle probes at one location may be limited by

@@ -68,7 +68,7 @@ main(int argc, const char**argv)
   double salt_conc = 50;
   double divalent_conc = 0;
   double dntp_conc = 0;
-  double tm;
+  tm_ret tm_calc;  /* structure with Tm and bound (primer fraction) */
   int start, len;
   char *endptr;
 
@@ -82,7 +82,7 @@ main(int argc, const char**argv)
   len = strtol(argv[3], &endptr, 10);
   printf("s=%s, start=%d, length=%d\n", s, start, len);
   
-  tm = long_seq_tm(s, start, len, salt_conc, divalent_conc, dntp_conc);
-  printf("tm = %f\n", tm);
+  tm_calc = long_seq_tm(s, start, len, salt_conc, divalent_conc, dntp_conc);
+  printf("tm = %f\n", tm_calc.Tm);
   return 0;
 }
