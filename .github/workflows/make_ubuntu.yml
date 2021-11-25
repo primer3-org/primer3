@@ -29,6 +29,9 @@ jobs:
     - name: perl masker_test.pl
       run: perl masker_test.pl
       working-directory: ./test
+    - name: perl a3test.pl --action
+      run: perl a3test.pl --action
+      working-directory: ./test
     - name: perl p3test.pl --action
       run: perl p3test.pl --action
       working-directory: ./test

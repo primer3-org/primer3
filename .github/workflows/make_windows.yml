@@ -26,6 +26,9 @@ jobs:
     - name: perl thal_test.pl --windows
       run: perl thal_test.pl --windows
       working-directory: ./test
+    - name: perl a3test.pl --action
+      run: perl a3test.pl --action
+      working-directory: ./test
     - name: perl p3test.pl --windows --action
       run: perl p3test.pl --windows --action
       working-directory: ./test

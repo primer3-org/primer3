@@ -58,7 +58,7 @@ our $def_executable = "../src/amplicon3_core";
 our $exe = '../src/amplicon3_core';
 our $set_files = '../test/amplicon3/';
 our ($verbose, $do_valgrind, $do_valgrinda, $do_valgrindb, $return_action,
-     $winFlag, $fastFlag, $onetest);
+     $winFlag, $onetest);
 
 our %signo;
 
@@ -93,6 +93,10 @@ sub main() {
     # --exe=.../src/amplicon3_core
     if (!GetOptions(\%args,
                     'valgrind',
+                    'valgrinda',
+                    'valgrindb',
+                    'action',
+                    'verbose',
                     'windows',
                     'executable=s',
                     )) {
@@ -106,7 +110,6 @@ sub main() {
     $exe = $args{'executable'} if defined$ args{'executable'};
     $winFlag = defined $args{'windows'};
     $verbose = defined $args{'verbose'};
-    $fastFlag = defined $args{'fast'};
     $do_valgrind = $args{'valgrind'};
     $do_valgrinda = $args{'valgrinda'};
     $do_valgrindb = $args{'valgrindb'};
