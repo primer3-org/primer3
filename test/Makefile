@@ -44,10 +44,10 @@ WINMAKE=mingw32-make
 TESTOPTS =
 
 
-test: makeexes testcmdline testtm testdpal testthal testmasker testcore
+test: makeexes testcmdline testtm testdpal testthal testmasker testamp testcore
 	echo; echo; echo "Testing completed. You must check the test output for the string FAILED"; echo; echo;
 
-valgrnda: makeexes testcmdline testtm testdpal testthal testmasker testcorea
+valgrnda: makeexes testcmdline testtm testdpal testthal testmasker testamp testcorea
 	echo; echo; echo "Testing completed. You must check the test output for the string FAILED"; echo; echo;
 
 valgrndb: testcoreb
@@ -66,6 +66,13 @@ ifeq ($(TESTOPTS),--windows)
 	echo 'TESTING primer3_core' & perl p3test.pl $(TESTOPTS)
 else
 	echo; echo; echo 'TESTING primer3_core'; echo; perl p3test.pl $(TESTOPTS)
+endif
+
+testamp:
+ifeq ($(TESTOPTS),--windows)
+	echo 'TESTING amplicon3_core' & perl a3test.pl $(TESTOPTS)
+else
+	echo; echo; echo 'TESTING amplicon3_core'; echo; perl a3test.pl $(TESTOPTS)
 endif
 
 testcorea:
@@ -117,6 +124,7 @@ ifeq ($(TESTOPTS),--windows)
 	del /Q /F primer_list_tmp/*
 	del /Q /F th-w-other-tasks_list_tmp/*
 	del /Q /F primer_global_err/*.tmp primer_global_err/*.tmp2 primer_global_err/*.bak
+	del /Q /F amplicon3/*.tm pamplicon3/*.jpg amplicon3/decipher*
 	del /Q /F *.tmp *.bak *.tmp.err *~
 	del /Q /F hyb_probe_only.for hyb_probe_only.int
 	del /Q /F right_only.for right_only.rev left_only.for
@@ -132,6 +140,7 @@ else
 	-rm -rf primer1_th_list_tmp/*
 	-rm -rf th-w-other-tasks_list_tmp/*
 	-rm -f primer_global_err/*.tmp primer_global_err/*.tmp2 primer_global_err/*.bak
+	-rm -f amplicon3/*.tmp amplicon3/*.jpg amplicon3/decipher*
 	-rm -f *.tmp *.bak *.tmp.err *~
 	-rm -f hyb_probe_only.for hyb_probe_only.int 
 	-rm -f right_only.for right_only.rev left_only.for

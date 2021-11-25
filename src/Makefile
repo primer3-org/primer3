@@ -78,17 +78,21 @@ ifeq ($(TESTOPTS),--windows)
 	NTDPAL_EXE      = ntdpal.exe
 	NTTHAL_EXE      = ntthal.exe
 	OLIGOTM_EXE     = oligotm.exe
+	AMPLICONTM_EXE  = amplicon3_core.exe
 	LONG_SEQ_EXE	= long_seq_tm_test.exe
 else
 	PRIMER_EXE      = primer3_core
 	NTDPAL_EXE      = ntdpal
 	NTTHAL_EXE      = ntthal
 	OLIGOTM_EXE     = oligotm
+	AMPLICONTM_EXE  = amplicon3_core
 	LONG_SEQ_EXE	= long_seq_tm_test
 	MASKER_EXE      = primer3_masker
 endif
 LIBOLIGOTM      = liboligotm.a
 LIBOLIGOTM_DYN  = liboligotm.so.1.2.0
+LIBAMPTM        = libamplicontm.a
+LIBAMPTM_DYN    = libamplicontm.so.1.0.0
 LIBDPAL         = libdpal.a
 LIBDPAL_DYN     = libdpal.a.so.1.0.0
 LIBTHAL         = libthal.a
@@ -100,14 +104,14 @@ LIBPRIMER3_DYN  = libprimer3.so.1.0.0
 
 ifeq ($(TESTOPTS),--windows)
     $(info windows)
-    LIBRARIES       = $(LIBPRIMER3) $(LIBDPAL) $(LIBTHAL) $(LIBTHALPARA) $(LIBOLIGOTM)
-    DYNLIBS         = $(LIBPRIMER3_DYN) $(LIBDPAL_DYN) $(LIBTHAL_DYN) $(LIBTHALPARA_DYN) $(LIBOLIGOTM_DYN)
+    LIBRARIES       = $(LIBPRIMER3) $(LIBDPAL) $(LIBTHAL) $(LIBTHALPARA) $(LIBAMPTM) $(LIBOLIGOTM)
+    DYNLIBS         = $(LIBPRIMER3_DYN) $(LIBDPAL_DYN) $(LIBTHAL_DYN) $(LIBTHALPARA_DYN) $(LIBAMPTM_DYN) $(LIBOLIGOTM_DYN)
 else
     $(info no windows)
     LIBMASKER       = libmasker.a
     LIBMASKER_DYN   = libmasker.a.so.1.0.0
-    LIBRARIES       = $(LIBPRIMER3) $(LIBDPAL) $(LIBTHAL) $(LIBTHALPARA) $(LIBOLIGOTM) $(LIBMASKER)
-    DYNLIBS         = $(LIBPRIMER3_DYN) $(LIBDPAL_DYN) $(LIBTHAL_DYN) $(LIBTHALPARA_DYN) $(LIBOLIGOTM_DYN) $(LIBMASKER_DYN)
+    LIBRARIES       = $(LIBPRIMER3) $(LIBDPAL) $(LIBTHAL) $(LIBTHALPARA) $(LIBOLIGOTM) $(LIBAMPTM) $(LIBMASKER)
+    DYNLIBS         = $(LIBPRIMER3_DYN) $(LIBDPAL_DYN) $(LIBTHAL_DYN) $(LIBTHALPARA_DYN) $(LIBAMPTM_DYN) $(LIBOLIGOTM_DYN) $(LIBMASKER_DYN)
 endif
 
 RANLIB          = ranlib
@@ -123,9 +127,9 @@ PRIMER_DYN_OBJECTS=$(PRIMER_OBJECTS1) $(DYNLIBS)
 example_files=example.for example.rev example.int
 
 ifeq ($(TESTOPTS),--windows)
-    EXES=$(PRIMER_EXE) $(NTDPAL_EXE) $(NTTHAL_EXE) $(OLIGOTM_EXE) $(LONG_SEQ_EXE)
+    EXES=$(PRIMER_EXE) $(NTDPAL_EXE) $(NTTHAL_EXE) $(AMPLICONTM_EXE) $(OLIGOTM_EXE) $(LONG_SEQ_EXE)
 else
-    EXES=$(PRIMER_EXE) $(NTDPAL_EXE) $(NTTHAL_EXE) $(OLIGOTM_EXE) $(LONG_SEQ_EXE) $(MASKER_EXE)
+    EXES=$(PRIMER_EXE) $(NTDPAL_EXE) $(NTTHAL_EXE) $(AMPLICONTM_EXE) $(OLIGOTM_EXE) $(LONG_SEQ_EXE) $(MASKER_EXE)
 endif
 
 all: $(EXES) $(LIBRARIES)
@@ -150,6 +154,13 @@ $(LIBOLIGOTM): oligotm.o
 
 $(LIBOLIGOTM_LIB): oligotm.o
 	$(CC) -shared -W1,-soname,liboligotm.so.1 -o $(LIBOLIGOTM_DYN) oligotm.o
+
+$(LIBAMPTM): amplicontm.o
+	$(AR) rv $@ amplicontm.o
+	$(RANLIB) $@
+
+$(LIBAMPTM_LIB): amplicontm.o
+	$(CC) -shared -W1,-soname,libamplicontm.so.1 -o $(LIBAMPTM_DYN) amplicontm.o
 
 $(LIBDPAL): dpal_primer.o
 	$(AR) rv $@ dpal_primer.o
@@ -201,6 +212,9 @@ $(NTTHAL_EXE): thal_main.o thal.o thal_parameters.o
 $(OLIGOTM_EXE): oligotm_main.c oligotm.h $(LIBOLIGOTM)
 	$(CC) $(CFLAGS) -o $@ oligotm_main.c $(LIBOLIGOTM) $(LIBOPTS) $(LDLIBS)
 
+$(AMPLICONTM_EXE): amplicontm_main.c amplicontm.h $(LIBAMPTM)
+	$(CC) $(CFLAGS) -o $@ amplicontm_main.c $(LIBAMPTM) $(LIBOPTS) $(LDLIBS)
+
 $(LONG_SEQ_EXE): long_seq_tm_test_main.c oligotm.o
 	$(CC) $(CFLAGS) -o $@ long_seq_tm_test_main.c oligotm.o $(LIBOPTS) $(LDLIBS)
 
@@ -243,6 +257,8 @@ thal_main.o: thal_main.c thal.h thal_parameters.h
 	$(CC) -c $(CFLAGS) -o $@ thal_main.c
 # We use CC_OPTS above rather than CFLAGS because
 # gcc 2.7.2 crashes while compiling ntdpal_main.c with -O2
+
+amplicontm.o: amplicontm.c amplicontm.h
 
 oligotm.o: oligotm.c oligotm.h
 

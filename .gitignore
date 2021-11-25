@@ -11,6 +11,7 @@ src/ntthal
 src/oligotm
 src/primer3_core
 src/primer3_masker
+src/amplicon3_core
 src/*.exe
 
 # Temporary Test Files
@@ -27,6 +28,9 @@ test/primer_global_err/*.tmp
 test/primer_global_err/*.tmp2
 test/primer_global_err/*.valg
 test/primer_global_err/*.vg
+test/amplicon3/*.tmp
+test/amplicon3/*.vg
+test/amplicon3/*.valg
 
 # Individual Test Files
 test/hyb_probe_only.for

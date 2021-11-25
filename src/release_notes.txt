@@ -31,6 +31,12 @@ middle probes at one location may be limited by
 PRIMER_MIN_INTERNAL_THREE_PRIME_DISTANCE. See the test
 primer_internal_position_input for example use.
 
+Amplicon3 was included as a new tool in the Primer3 package and
+calculates melting curves of PCR products. Amplicon3 is based on
+MeltPolymer.c from the DECIPHER package created by Erik Wright and is
+licensed under GPL-3. Currently it only supports SantaLucia thermodynamic
+parameters and salt correction. Please consider Amplicon3 experimental.
+
 Minor fixes:
 1. Handling of N in PRIMER_MAX_POLY_X was fixed. Now 'GGGNNN' violates
    MAX_POLY_X=5. It is now based on the worst possible case (all 3 Ns
