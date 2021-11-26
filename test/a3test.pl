@@ -114,8 +114,12 @@ sub main() {
     $do_valgrinda = $args{'valgrinda'};
     $do_valgrindb = $args{'valgrindb'};
     $return_action = $args{'action'};
-    if ($do_valgrinda || $do_valgrindb) {
+    if ($do_valgrinda) {
         $do_valgrind = 1;
+    }
+
+    if ($do_valgrindb) {
+        exit 0;
     }
 
     if ($winFlag && $do_valgrind) {
@@ -274,7 +278,7 @@ sub main() {
         $exit_stat = -1;
     }
 
-    if ($return_action || $do_valgrinda || $do_valgrindb) {
+    if ($return_action || $do_valgrinda) {
         exit $exit_stat;
     } else {
         exit 0;  #  Generally we want the testing to continue.

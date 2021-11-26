@@ -47,7 +47,7 @@ TESTOPTS =
 test: makeexes testcmdline testtm testdpal testthal testmasker testamp testcore
 	echo; echo; echo "Testing completed. You must check the test output for the string FAILED"; echo; echo;
 
-valgrnda: makeexes testcmdline testtm testdpal testthal testmasker testamp testcorea
+valgrnda: makeexes testcmdline testtm testdpal testthal testmasker testampa testcorea
 	echo; echo; echo "Testing completed. You must check the test output for the string FAILED"; echo; echo;
 
 valgrndb: testcoreb
@@ -74,6 +74,9 @@ ifeq ($(TESTOPTS),--windows)
 else
 	echo; echo; echo 'TESTING amplicon3_core'; echo; perl a3test.pl $(TESTOPTS)
 endif
+
+testampa:
+	echo; echo; echo 'TESTING primer3_core'; echo; perl a3test.pl --valgrinda
 
 testcorea:
 	echo; echo; echo 'TESTING primer3_core'; echo; perl p3test.pl --valgrinda
