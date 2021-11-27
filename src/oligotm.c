@@ -305,6 +305,9 @@ oligotm(const  char *s,
      double K_mM,
      double divalent_conc,
      double dntp_conc,
+     double dmso_conc,
+     double dmso_fact,
+     double formamide_conc,
      tm_method_type  tm_method,
      salt_correction_type salt_corrections,
      double annealing_temp)
@@ -316,7 +319,8 @@ oligotm(const  char *s,
   tm_ret ret;
   ret.bound = OLIGOTM_ERROR;
   double correction;
-  int len, sym;
+  int len, sym, i;
+  int GC_count = 0;
   const char* d = s;
   if(divalent_to_monovalent(divalent_conc, dntp_conc) == OLIGOTM_ERROR) {
      ret.Tm = OLIGOTM_ERROR;
@@ -335,6 +339,13 @@ oligotm(const  char *s,
      return ret;
   }
   len = (strlen(s)-1);
+  if(formamide_conc != 0.0) {
+    for (i = 0; i < len + 1; i++) {
+      if ((strncmp("G", s + i, 1) == 0) || (strncmp("C", s + i, 1) == 0)) {
+        GC_count++;
+      }
+    }
+  }
 
   sym = symmetry(s); /*Add symmetry correction if seq is symmetrical*/
   if( tm_method == breslauer_auto ) {
@@ -414,6 +425,8 @@ oligotm(const  char *s,
      K_mM = K_mM + divalent_to_monovalent(divalent_conc, dntp_conc);
      correction = 16.6 * log10(K_mM/1000.0);
      ret.Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/4000000000.0)) + correction - T_KELVIN;
+     ret.Tm -= dmso_conc * dmso_fact;
+     ret.Tm += (0.453 * ((double) GC_count) / len - 2.88) * formamide_conc;
      if (annealing_temp > 0.0) {
         ddG = delta_H - (annealing_temp - correction + T_KELVIN) * delta_S;
         ka = exp(-ddG / (1.987 * (annealing_temp - correction + T_KELVIN)));
@@ -425,6 +438,8 @@ oligotm(const  char *s,
      if(sym == 1) { /* primer is symmetrical */
         /* Equation A */
         ret.Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/1000000000.0)) - T_KELVIN;
+        ret.Tm -= dmso_conc * dmso_fact;
+        ret.Tm += (0.453 * ((double) GC_count) / len - 2.88) * formamide_conc;
         if (annealing_temp > 0.0) {
            ddG = delta_H - (annealing_temp + T_KELVIN) * delta_S;
            ka = exp(-ddG / (1.987 * (annealing_temp + T_KELVIN)));
@@ -433,6 +448,8 @@ oligotm(const  char *s,
      } else {
         /* Equation B */
         ret.Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/4000000000.0)) - T_KELVIN;
+        ret.Tm -= dmso_conc * dmso_fact;
+        ret.Tm += (0.453 * ((double) GC_count) / len - 2.88) * formamide_conc;
         if (annealing_temp > 0.0) {
            ddG = delta_H - (annealing_temp + T_KELVIN) * delta_S;
            ka = exp(-ddG / (1.987 * (annealing_temp + T_KELVIN)));
@@ -513,7 +530,9 @@ oligotm(const  char *s,
         ret.Tm = 1/((1/(delta_H
                         /
                         (delta_S + 1.9872 * log(DNA_nM/4000000000.0)))) + correction) - T_KELVIN;
-     } 
+     }
+     ret.Tm -= dmso_conc * dmso_fact;
+     ret.Tm += (0.453 * ((double) GC_count) / len - 2.88) * formamide_conc;
   } /* END else if (salt_corrections == owczarzy) { */
    
    
@@ -627,6 +646,9 @@ tm_ret seqtm(const  char *seq,
              double salt_conc,
              double divalent_conc,
              double dntp_conc,
+             double dmso_conc,
+             double dmso_fact,
+             double formamide_conc,
              int    nn_max_len,
              tm_method_type tm_method,
              salt_correction_type salt_corrections,
@@ -645,10 +667,11 @@ tm_ret seqtm(const  char *seq,
     return ret;
 
   if (len > nn_max_len) {
-          return long_seq_tm(seq, 0, len, salt_conc, divalent_conc, dntp_conc);
+    return long_seq_tm(seq, 0, len, salt_conc, divalent_conc, dntp_conc,
+                       dmso_conc, dmso_fact, formamide_conc);
   } else {
-          return oligotm(seq, dna_conc, salt_conc, 
-                      divalent_conc, dntp_conc, tm_method, salt_corrections, annealing_temp);
+    return oligotm(seq, dna_conc, salt_conc, divalent_conc, dntp_conc, dmso_conc,
+                   dmso_fact, formamide_conc, tm_method, salt_corrections, annealing_temp);
   }
 }
 
@@ -660,7 +683,10 @@ long_seq_tm(const char *s,
             int len,
             double salt_conc,
             double divalent_conc,
-            double dntp_conc)
+            double dntp_conc,
+            double dmso_conc,
+            double dmso_fact,
+            double formamide_conc)
 {
   int GC_count = 0;
   const char *p, *end;
@@ -682,10 +708,12 @@ long_seq_tm(const char *s,
       GC_count++;
   }
 
-  ret.Tm = 81.5 + (16.6 * log10(salt_conc / 1000.0))
+  ret.Tm = 81.5 - dmso_conc * dmso_fact
+                + (0.453 * ((double) GC_count) / len - 2.88) * formamide_conc
+                + (16.6 * log10(salt_conc / 1000.0))
                 + (41.0 * (((double) GC_count) / len))
                 - (600.0 / len);
-  
+
   return ret;
 }
 

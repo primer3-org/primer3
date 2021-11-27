@@ -647,6 +647,9 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->p_args.dntp_conc         = 0.0;
 
   a->p_args.dna_conc          = 50.0;
+  a->p_args.dmso_conc         = 0.0;
+  a->p_args.dmso_fact         = 0.6;
+  a->p_args.formamide_conc     = 0.0;
   a->p_args.num_ns_accepted   = 0;
   a->p_args.max_self_any      = 8.0;
   a->p_args.max_self_end      = 3.0;
@@ -746,6 +749,9 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->o_args.divalent_conc   = 0.0;
   a->o_args.dntp_conc       = 0.0;
   a->o_args.dna_conc        = 50.0;
+  a->o_args.dmso_conc       = 0.0;
+  a->o_args.dmso_fact       = 0.6;
+  a->o_args.formamide_conc   = 0.0;
   a->o_args.num_ns_accepted = 0;
   a->o_args.max_self_any    = 12.0;
   a->o_args.max_self_end    = 12.0;
@@ -3431,10 +3437,14 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   }
 
   tm_calc  /* Oligo/primer melting temperature */
-    = seqtm(oligo_seq, po_args->dna_conc,
+    = seqtm(oligo_seq,
+            po_args->dna_conc,
             po_args->salt_conc,
             po_args->divalent_conc,
             po_args->dntp_conc,
+            po_args->dmso_conc,
+            po_args->dmso_fact,
+            po_args->formamide_conc,
             MAX_NN_TM_LENGTH,
             pa->tm_santalucia,
             pa->salt_corrections,
@@ -4246,7 +4256,10 @@ characterize_pair(p3retval *retval,
                   /* TO DO -- skewed, it would be better to not use p_args elements here */
                   pa->p_args.salt_conc,
                   pa->p_args.divalent_conc,
-                  pa->p_args.dntp_conc);
+                  pa->p_args.dntp_conc,
+                  pa->p_args.dmso_conc,
+                  pa->p_args.dmso_fact,
+                  pa->p_args.formamide_conc);
   ppair->product_tm = tm_calc.Tm;
 
   PR_ASSERT(ppair->product_tm != OLIGOTM_ERROR);
@@ -8407,6 +8420,24 @@ p3_set_gs_primer_dna_conc(p3_global_settings * p , double val)
 }
 
 void
+p3_set_gs_primer_dmso_conc(p3_global_settings * p , double val)
+{
+  p->p_args.dmso_conc = val ;
+}
+
+void
+p3_set_gs_primer_dmso_fact(p3_global_settings * p , double val)
+{
+  p->p_args.dmso_fact = val ;
+}
+
+void
+p3_set_gs_primer_formamide_conc(p3_global_settings * p , double val)
+{
+  p->p_args.formamide_conc = val ;
+}
+
+void
 p3_set_gs_primer_num_ns_accepted(p3_global_settings * p , int val)
 {
   p->p_args.num_ns_accepted = val ;
@@ -8661,6 +8692,21 @@ p3_set_gs_primer_internal_oligo_dntp_conc(p3_global_settings * p , double val) {
 void
 p3_set_gs_primer_internal_oligo_dna_conc(p3_global_settings * p , double val) {
   p->o_args.dna_conc = val ;
+}
+
+void
+p3_set_gs_primer_internal_oligo_dmso_conc(p3_global_settings * p , double val) {
+  p->o_args.dmso_conc = val ;
+}
+
+void
+p3_set_gs_primer_internal_oligo_dmso_fact(p3_global_settings * p , double val) {
+  p->o_args.dmso_fact = val ;
+}
+
+void
+p3_set_gs_primer_internal_oligo_formamide_conc(p3_global_settings * p , double val) {
+  p->o_args.formamide_conc = val ;
 }
 
 void
@@ -9757,6 +9803,9 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("divalent_conc %f\n", p->p_args.divalent_conc) ;
     printf("dntp_conc %f\n", p->p_args.dntp_conc) ;
     printf("dna_conc %f\n", p->p_args.dna_conc) ;
+    printf("dmso_conc %f\n", p->p_args.dmso_conc) ;
+    printf("dmso_fact %f\n", p->p_args.dmso_fact) ;
+    printf("formamide_conc %f\n", p->p_args.formamide_conc) ;
     printf("num_ns_accepted %i\n", p->p_args.num_ns_accepted) ;
     printf("opt_size %i\n", p->p_args.opt_size) ;
     printf("min_size %i\n", p->p_args.min_size) ;
@@ -9810,6 +9859,9 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("  divalent_conc %f\n", p->o_args.divalent_conc) ;
     printf("  dntp_conc %f\n", p->o_args.dntp_conc) ;
     printf("  dna_conc %f\n", p->o_args.dna_conc) ;
+    printf("  dmso_conc %f\n", p->o_args.dmso_conc) ;
+    printf("  dmso_fact %f\n", p->o_args.dmso_fact) ;
+    printf("  formamide_conc %f\n", p->o_args.formamide_conc) ;
     printf("  num_ns_accepted %i\n", p->o_args.num_ns_accepted) ;
     printf("  opt_size %i\n", p->o_args.opt_size) ;
     printf("  min_size %i\n", p->o_args.min_size) ;

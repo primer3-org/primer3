@@ -255,6 +255,7 @@ sub main() {
                   'primer_task',
                   'primer_task_formatted',
                   'primer_renewed_tasks',
+                  'primer_dmso_formamide',
                   'primer_new_tasks',
                   'primer_new_tasks_formatted',
                   'primer_internal_position',

@@ -60,9 +60,16 @@ double end_oligodg(const char *oligo, int len, int tm_method);
    Press).
 
    Tm = 81.5 + 16.6(log10([Na+])) + .41*(%GC) - 600/length
+             - [DMSO] * dmso_fact
+             + (0.453 * (GC_fract - 2.88) * [formamide]
 
    Where [Na+] is the molar sodium concentration, (%GC) is the percent of Gs
    and Cs in the sequence, and length is the length of the sequence.
+
+   [DMSO] is the percent concentration of DMSO and dmso_fact the correction
+   factor, by default 0.6. GC_fract is the fraction of C and G in the *oligo
+   and [formamide] the concentration of formamide in mol/l. See
+   primer3_manual.htm for details and citations.
 
    A similar formula is used by the prime primer selection program in GCG
    (http://www.gcg.com), which instead uses 675.0 / length in the last term
@@ -82,7 +89,10 @@ tm_ret long_seq_tm(const char *seq,
                    int length, 
                    double salt_conc, 
                    double divalent_conc, 
-                   double dntp_conc);
+                   double dntp_conc,
+                   double dmso_conc,
+                   double dmso_fact,
+                   double formamide_conc);
 
 /* 
    For olgigotm() and seqtm()
@@ -158,6 +168,9 @@ tm_ret oligotm(const  char *seq,     /* The sequence. */
                double salt_conc,     /* Salt concentration (millimolar). */
                double divalent_conc, /* Concentration of divalent cations (millimolar) */
                double dntp_conc,     /* Concentration of dNTPs (millimolar) */
+               double dmso_conc,     /* Concentration of DMSO (%) */
+               double dmso_fact,     /* DMSO correction factor, default 0.6 */
+               double formamide_conc, /* Concentration of formamide (mol/l) */
                tm_method_type tm_method,    /* See description above. */
                salt_correction_type salt_corrections, /* See description above. */
                double annealing_temp /* Actual annealing temperature of the PCR reaction */
@@ -171,6 +184,9 @@ tm_ret seqtm(const  char *seq,  /* The sequence. */
              double salt_conc,  /* Concentration of divalent cations (millimolar). */
              double divalent_conc, /* Concentration of divalent cations (millimolar) */
              double dntp_conc,     /* Concentration of dNTPs (millimolar) */
+             double dmso_conc,     /* Concentration of DMSO (%) */
+             double dmso_fact,     /* DMSO correction factor, default 0.6 */
+             double formamide_conc, /* Concentration of formamide (mol/l) */
              int    nn_max_len,  /* The maximum sequence length for
                                     using the nearest neighbor model
                                     (as implemented in oligotm.  For

@@ -365,6 +365,9 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_SALT_DIVALENT", pa->p_args.divalent_conc);
       COMPARE_FLOAT("PRIMER_DNTP_CONC", pa->p_args.dntp_conc);
       COMPARE_FLOAT("PRIMER_DNA_CONC", pa->p_args.dna_conc);
+      COMPARE_FLOAT("PRIMER_DMSO_CONC", pa->p_args.dmso_conc);
+      COMPARE_FLOAT("PRIMER_DMSO_FACTOR", pa->p_args.dmso_fact);
+      COMPARE_FLOAT("PRIMER_FORMAMIDE_CONC", pa->p_args.formamide_conc);
       COMPARE_INT("PRIMER_MAX_NS_ACCEPTED", pa->p_args.num_ns_accepted);
       COMPARE_INT("PRIMER_PRODUCT_OPT_SIZE", pa->product_opt_size);
       COMPARE_FLOAT("PRIMER_MAX_SELF_ANY", pa->p_args.max_self_any);
@@ -499,6 +502,9 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_INTERNAL_DNTP_CONC",
                     pa->o_args.dntp_conc);
       COMPARE_FLOAT("PRIMER_INTERNAL_DNA_CONC", pa->o_args.dna_conc);
+      COMPARE_FLOAT("PRIMER_INTERNAL_DMSO_CONC", pa->o_args.dmso_conc);
+      COMPARE_FLOAT("PRIMER_INTERNAL_DMSO_FACTOR", pa->o_args.dmso_fact);
+      COMPARE_FLOAT("PRIMER_INTERNAL_FORMAMIDE_CONC", pa->o_args.formamide_conc);
       COMPARE_INT("PRIMER_INTERNAL_MAX_NS_ACCEPTED", pa->o_args.num_ns_accepted);
       COMPARE_INT("PRIMER_INTERNAL_MIN_QUALITY", pa->o_args.min_quality);
       COMPARE_FLOAT("PRIMER_INTERNAL_MAX_SELF_ANY",

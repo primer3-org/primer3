@@ -66,6 +66,12 @@ main(int argc, char **argv)
      "\n"
      "-d  dna_conc        - concentration of DNA strands in nM, by default 50nM\n"
      "\n"
+     "-dm dmso_conc       - concentration of DMSO in %, by default 0\n"
+     "\n"
+     "-df dmso_factor     - correction factor for DMSO, by default 0.6\n"
+     "\n"
+     "-fo formamide_conc  - concentration of formamide in mol/l, by default 0 mol/l\n"
+     "\n"
 
     "-tp [0|1]     - Specifies the table of thermodynamic parameters and\n"
     "                the method of melting temperature calculation:\n"
@@ -112,6 +118,7 @@ main(int argc, char **argv)
    tm_ret tm_calc;  /* structure with Tm and bound (primer fraction) */
    double mv = 50, d = 50;
    double dv = 1.5, n = 0.6;
+   double dmso = 0.0, dmso_fact = 0.6, formamide = 0.0;
    int tm_santalucia=1, salt_corrections=1;
    int i, j, len;
    if (argc < 2 || argc > 14) {
@@ -169,6 +176,42 @@ main(int argc, char **argv)
          exit(-1);
        }
        i++;
+     } else if (!strncmp("-dm", argv[i], 2)) {
+       if (i+1 >= argc) {
+         /* Missing value */
+         fprintf(stderr, msg, argv[0]);
+         exit(-1);
+       }
+       dmso = strtod(argv[i+1], &endptr);
+       if ('\0' != *endptr) {
+         fprintf(stderr, msg, argv[0]);
+         exit(-1);
+       }
+       i++;
+     } else if (!strncmp("-df", argv[i], 2)) {
+       if (i+1 >= argc) {
+         /* Missing value */
+         fprintf(stderr, msg, argv[0]);
+         exit(-1);
+       }
+       dmso_fact = strtod(argv[i+1], &endptr);
+       if ('\0' != *endptr) {
+         fprintf(stderr, msg, argv[0]);
+         exit(-1);
+       }
+       i++;
+     } else if (!strncmp("-fo", argv[i], 2)) {
+       if (i+1 >= argc) {
+         /* Missing value */
+         fprintf(stderr, msg, argv[0]);
+         exit(-1);
+       }
+       formamide = strtod(argv[i+1], &endptr);
+       if ('\0' != *endptr) {
+         fprintf(stderr, msg, argv[0]);
+         exit(-1);
+       }
+       i++;
      } else if (!strncmp("-tp", argv[i], 3)) { /* added by T.Koressaar */
        if (i+1 >= argc) {
          /* Missing value */
@@ -210,7 +253,8 @@ main(int argc, char **argv)
   len=strlen(seq);
   for(j=0;j<len;j++) seq[j]=toupper(seq[j]);
    
-  tm_calc = oligotm(seq, d, mv, dv, n, (tm_method_type) tm_santalucia, (salt_correction_type) salt_corrections, -10.0);
+  tm_calc = oligotm(seq, d, mv, dv, n, dmso, dmso_fact, formamide,
+                    (tm_method_type) tm_santalucia, (salt_correction_type) salt_corrections, -10.0);
   tm = tm_calc.Tm;
 
   if (OLIGOTM_ERROR == tm) {

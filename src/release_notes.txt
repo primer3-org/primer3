@@ -31,6 +31,10 @@ middle probes at one location may be limited by
 PRIMER_MIN_INTERNAL_THREE_PRIME_DISTANCE. See the test
 primer_internal_position_input for example use.
 
+Primer3 includes corrections for DMSO using PRIMER_DMSO_CONC and
+formamide using PRIMER_FORMAMIDE_CONC. Only he calculated Tm of primers,
+oligos and the product Tm will be corrected.
+
 Amplicon3 was included as a new tool in the Primer3 package and
 calculates melting curves of PCR products. Amplicon3 is based on
 MeltPolymer.c from the DECIPHER package created by Erik Wright and is

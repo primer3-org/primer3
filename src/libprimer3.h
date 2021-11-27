@@ -215,6 +215,11 @@ typedef struct args_for_one_oligo_or_primer {
   double dntp_conc;
 
   double dna_conc;
+
+  double dmso_conc;
+  double dmso_fact;
+  double formamide_conc;
+
   int    num_ns_accepted;
   int    opt_size;
   int    min_size;
@@ -1081,6 +1086,9 @@ void p3_set_gs_primer_salt_conc(p3_global_settings * p , double val);
 void p3_set_gs_primer_divalent_conc(p3_global_settings * p , double val);
 void p3_set_gs_primer_dntp_conc(p3_global_settings * p , double val);
 void p3_set_gs_primer_dna_conc(p3_global_settings * p , double val);
+void p3_set_gs_primer_dmso_conc(p3_global_settings * p , double val);
+void p3_set_gs_primer_dmso_fact(p3_global_settings * p , double val);
+void p3_set_gs_primer_formamide_conc(p3_global_settings * p , double val);
 void p3_set_gs_primer_num_ns_accepted(p3_global_settings * p , int val);
 void p3_set_gs_primer_product_opt_size(p3_global_settings * p , int val);
 void p3_set_gs_primer_self_any(p3_global_settings * p , double val);
@@ -1122,6 +1130,9 @@ void p3_set_gs_primer_internal_oligo_salt_conc(p3_global_settings * p , double v
 void p3_set_gs_primer_internal_oligo_divalent_conc(p3_global_settings * p , double val);
 void p3_set_gs_primer_internal_oligo_dntp_conc(p3_global_settings * p , double val);
 void p3_set_gs_primer_internal_oligo_dna_conc(p3_global_settings * p , double val);
+void p3_set_gs_primer_internal_oligo_dmso_conc(p3_global_settings * p , double val);
+void p3_set_gs_primer_internal_oligo_dmso_fact(p3_global_settings * p , double val);
+void p3_set_gs_primer_internal_oligo_formamide_conc(p3_global_settings * p , double val);
 void p3_set_gs_primer_internal_oligo_num_ns(p3_global_settings * p , int val);
 void p3_set_gs_primer_internal_oligo_min_quality(p3_global_settings * p , int val);
 void p3_set_gs_primer_internal_oligo_self_any(p3_global_settings * p , double val);
