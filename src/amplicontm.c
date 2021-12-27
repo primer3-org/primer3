@@ -220,9 +220,9 @@ amplicon_result amplicontm(const  char *inseq,
     }
     double *t = ret.temp;
 
-	double *rans = NULL;
-	if (output == 0) {
-		// list element for each temperature * sequence position
+    double *rans = NULL;
+    if (output == 0) {
+        // list element for each temperature * sequence position
         ret.pos_prob = (double *) malloc(sizeof(double) * ret.temp_len * ret.seq_len);
         if (ret.pos_prob == NULL) {
             ret.error = 1;
@@ -231,8 +231,8 @@ amplicon_result amplicontm(const  char *inseq,
         }
         amp_zero_double(ret.pos_prob, ret.temp_len * ret.seq_len);
         rans = ret.pos_prob;
-	} else {
-		// list element for each temperature
+    } else {
+        // list element for each temperature
         ret.melt = (double *) malloc(sizeof(double) * ret.temp_len);
         ret.deriv = (double *) malloc(sizeof(double) * ret.temp_len);
         if ((ret.melt == NULL) || (ret.deriv == NULL)) {
@@ -243,15 +243,15 @@ amplicon_result amplicontm(const  char *inseq,
         amp_zero_double(ret.melt, ret.temp_len);
         amp_zero_double(ret.deriv, ret.temp_len);
         rans = ret.melt;
-	}
+    }
 
-	// constants
-	double alpha = 2.15; // Blossey & Carlon, 2003
-	double sigma = 1.26e-4; // Blossey & Carlon, 2003
-	double Beta = 1e-7; // between 10^-6 and 10^-8
-	double rescale_G = 1e1; // rescaling threshold
-	double rescale_F = 1e-1; // rescaling factor
-	double rF1 = 1e1;
+    // constants
+    double alpha = 2.15; // Blossey & Carlon, 2003
+    double sigma = 1.26e-4; // Blossey & Carlon, 2003
+    double Beta = 1e-7; // between 10^-6 and 10^-8
+    double rescale_G = 1e1; // rescaling threshold
+    double rescale_F = 1e-1; // rescaling factor
+    double rF1 = 1e1;
 
     // [A C G T]
     // [0 1 2 3]
@@ -380,15 +380,15 @@ amplicon_result amplicontm(const  char *inseq,
         }
     }
 
-	double RT, s_11[4][4], s_end[4], s_010[4], Q_tot;
-	double avg;
-	double LEP = pow(5, -alpha);
-	double ratio = pow(7, -alpha)/LEP;
-	int rescale_i, seq_length, exp1;
-	seq_length = ret.seq_len;
+    double RT, s_11[4][4], s_end[4], s_010[4], Q_tot;
+    double avg;
+    double LEP = pow(5, -alpha);
+    double ratio = pow(7, -alpha)/LEP;
+    int rescale_i, seq_length, exp1;
+    seq_length = ret.seq_len;
 
-	// variables for interpolating plateaus when output!=0
-	double slope;
+    // variables for interpolating plateaus when output!=0
+    double slope;
 
     int *stack = (int *) amp_malloc(alloc_box, &alloc_count, sizeof(int) * ret.temp_len);
     amp_zero_int(stack, ret.temp_len);

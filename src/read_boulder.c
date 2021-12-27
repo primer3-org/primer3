@@ -423,12 +423,12 @@ read_boulder_record(FILE *file_input,
         }
         continue;
       }
-      if (COMPARE("PRIMER_MIN_INTERNAL_THREE_PRIME_DISTANCE")) {
-        parse_int("PRIMER_MIN_INTERNAL_THREE_PRIME_DISTANCE", datum, &(pa->min_internal_three_prime_distance), parse_err);
+      if (COMPARE("PRIMER_INTERNAL_MIN_THREE_PRIME_DISTANCE")) {
+        parse_int("PRIMER_INTERNAL_MIN_THREE_PRIME_DISTANCE", datum, &(pa->min_internal_three_prime_distance), parse_err);
         /* check if global tag also specified - error in this case */
         if (min_3_prime_distance_global == 1) {
           pr_append_new_chunk(glob_err,
-                              "Both PRIMER_MIN_THREE_PRIME_DISTANCE and PRIMER_MIN_INTERNAL_THREE_PRIME_DISTANCE specified");
+                              "Both PRIMER_MIN_THREE_PRIME_DISTANCE and PRIMER_INTERNAL_MIN_THREE_PRIME_DISTANCE specified");
         } else {
           min_3_prime_distance_specific = 1;
         }

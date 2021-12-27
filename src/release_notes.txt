@@ -28,7 +28,7 @@ to overlap may be provided. A distance to the ends of the middle probe
 is set by PRIMER_INTERNAL_MIN_5_PRIME_OVERLAP_OF_JUNCTION and
 PRIMER_INTERNAL_MIN_3_PRIME_OVERLAP_OF_JUNCTION. The number of returned
 middle probes at one location may be limited by
-PRIMER_MIN_INTERNAL_THREE_PRIME_DISTANCE. See the test
+PRIMER_INTERNAL_MIN_THREE_PRIME_DISTANCE. See the test
 primer_internal_position_input for example use.
 
 Primer3 includes corrections for DMSO using PRIMER_DMSO_CONC and
