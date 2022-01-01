@@ -292,7 +292,8 @@ main(int argc, char **argv)
                            formamid,
                            (amp_tm_parameters_type) tm_parameters,
                            (amp_salt_correction_type) salt_corrections,
-                           (amp_tm_method_type) tm_formula);
+                           (amp_tm_method_type) tm_formula,
+                           output);
   }
 
   if (ret.error == 1) {

@@ -160,7 +160,7 @@ amplicon_result amplicontm(const  char *inseq,     /* The sequence. */
                            amp_tm_parameters_type tm_parameters,       /* See description above. */
                            amp_salt_correction_type salt_corrections,  /* See description above. */
                            amp_tm_method_type tm_formula,              /* See description above. */
-                           int output    /* 1 calc positional probabilities, 0 calc everything else */
+                           int output    /* 0 calc positional probabilities, 1 calc values, 2 calc 1 + curves */
                            );
 
 amplicon_result ampliconfindsalt(const  char *inseq,  /* The sequence. */
@@ -170,7 +170,8 @@ amplicon_result ampliconfindsalt(const  char *inseq,  /* The sequence. */
                                  double formamid,     /* Concentration of formamid (millimolar) */
                                  amp_tm_parameters_type tm_parameters,       /* See description above. */
                                  amp_salt_correction_type salt_corrections,  /* See description above. */
-                                 amp_tm_method_type tm_formula               /* See description above. */
+                                 amp_tm_method_type tm_formula,              /* See description above. */
+                                 int output    /* See description above. */
                                  );
 
 #ifdef __cplusplus

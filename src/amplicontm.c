@@ -703,8 +703,8 @@ amplicon_result ampliconfindsalt(const  char *inseq,
                                  double formamid,
                                  amp_tm_parameters_type tm_parameters,
                                  amp_salt_correction_type salt_corrections,
-                                 amp_tm_method_type tm_formula
-                                 ) {
+                                 amp_tm_method_type tm_formula,
+                                 int output) {
     int i = 0;
     int cont = 1;
     double mv = 10.0;
@@ -718,12 +718,12 @@ amplicon_result ampliconfindsalt(const  char *inseq,
     while ((cont == 1) && (i < 100)) {
         i++;
         ret = amplicontm(inseq, mv, 0.0, 0.0, dmso, dmso_fact, formamid,
-                         tm_parameters, salt_corrections, tm_formula, 0);
+                         tm_parameters, salt_corrections, tm_formula, 1);
         if (ret.error > 0) {
             free_amplicon_result(&ret);
             return ret;
         }
-        if (ret.melt_len == 0) {
+       if (ret.melt_len == 0) {
             ret.error = 3;
             free_amplicon_result(&ret);
             return ret;
@@ -748,7 +748,7 @@ amplicon_result ampliconfindsalt(const  char *inseq,
     while (mv_min > 10) {
         mv_min -= 1.0;
         ret = amplicontm(inseq, mv_min, 0.0, 0.0, dmso, dmso_fact, formamid,
-                         tm_parameters, salt_corrections, tm_formula, 0);
+                         tm_parameters, salt_corrections, tm_formula, 1);
         if (ret.error > 0) {
             free_amplicon_result(&ret);
             return ret;
@@ -769,7 +769,7 @@ amplicon_result ampliconfindsalt(const  char *inseq,
     while (mv_max < 1000) {
         mv_max += 1.0;
         ret = amplicontm(inseq, mv_max, 0.0, 0.0, dmso, dmso_fact, formamid,
-                         tm_parameters, salt_corrections, tm_formula, 0);
+                         tm_parameters, salt_corrections, tm_formula, 1);
         if (ret.error > 0) {
             free_amplicon_result(&ret);
             return ret;
@@ -788,5 +788,5 @@ amplicon_result ampliconfindsalt(const  char *inseq,
     }
     mv = (mv_max + mv_min) / 2.0;
     return amplicontm(inseq, mv, 0.0, 0.0, dmso, dmso_fact, formamid,
-                      tm_parameters, salt_corrections, tm_formula, 0);
+                      tm_parameters, salt_corrections, tm_formula, output);
 }
