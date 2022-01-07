@@ -5073,6 +5073,7 @@ recalc_pair_sec_struct(primer_pair *ppair,
 
   if(pa->thermodynamic_oligo_alignment==0) {
     dpal_results any, end, end2;
+    end2.sec_struct = NULL;
     if (ppair->compl_any > 0.0) {
       dpal((const unsigned char *) s1, (const unsigned char *) s2, dpal_arg_to_use->local, DPM_STRUCT, &any);
       ppair->compl_any = any.score / PR_ALIGN_SCORE_PRECISION;
@@ -5096,6 +5097,9 @@ recalc_pair_sec_struct(primer_pair *ppair,
   } else {
     /* thermodynamical approach */
     thal_results any, end1, end2, end3, end4;
+    end2.sec_struct = NULL;
+    end3.sec_struct = NULL;
+    end4.sec_struct = NULL;
     if (ppair->compl_any > 0.0) {
       thal((const unsigned char *) s1, (const unsigned char *) s2_rev, thal_arg_to_use->any, THL_STRUCT, &any);
       ppair->compl_any = any.temp;
