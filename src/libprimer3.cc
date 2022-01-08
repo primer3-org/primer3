@@ -494,7 +494,7 @@ static void op_set_does_not_amplify_orf(primer_rec *);
 
 /* Global static variables. */
 static const char *primer3_copyright_char_star = "\n"
-"Copyright (c) 1996-2019\n"
+"Copyright (c) 1996-2022\n"
 "Whitehead Institute for Biomedical Research, Steve Rozen\n"
 "(http://purl.com/STEVEROZEN/), Andreas Untergasser and Helen Skaletsky\n"
 "All rights reserved.\n"
@@ -6277,7 +6277,7 @@ p3_get_pair_array_explain_string(const pair_array_t *pair_array)
 const char *
 libprimer3_release(void) 
 {
-  return "libprimer3 release 2.5.0";
+  return "libprimer3 release 2.6.0";
 }
 
 const char *

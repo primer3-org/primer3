@@ -1,4 +1,4 @@
-release 2.6.0 2021-??-??  ===============================================
+release 2.6.0 2022-01-08  ===============================================
 This release adds new features to primer3_core and related C code.
 
 The actual annealing temperature of the PCR reaction may be specified by
