@@ -5097,6 +5097,8 @@ recalc_pair_sec_struct(primer_pair *ppair,
   } else {
     /* thermodynamical approach */
     thal_results any, end1, end2, end3, end4;
+    any.sec_struct = NULL;
+    end1.sec_struct = NULL;
     end2.sec_struct = NULL;
     end3.sec_struct = NULL;
     end4.sec_struct = NULL;
