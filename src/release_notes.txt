@@ -1,3 +1,7 @@
+release 2.6.1 2022-01-26  ===============================================
+This release fixes a small memory bug.
+
+
 release 2.6.0 2022-01-08  ===============================================
 This release adds new features to primer3_core and related C code.
 
