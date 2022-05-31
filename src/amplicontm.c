@@ -159,6 +159,11 @@ amplicon_result amplicontm(const  char *inseq,
     int orilen = strlen(inseq);
     int gc_count = 0;
     ret.seq = (char *) malloc(sizeof(char) * (orilen + 1));
+    if ((ret.seq == NULL)) {
+        ret.error = 1;
+        amp_free_all(alloc_box, alloc_count);
+        return ret;
+    }
     for (i = 0 ; i < orilen ; i++) {
         ret.seq[ret.seq_len]=toupper(inseq[i]);
         switch(ret.seq[ret.seq_len]) {
