@@ -1164,29 +1164,33 @@ create_seq_arg()
 
 /* Free a seq_arg data structure */
 void
-destroy_seq_args(seq_args *sa) 
+destroy_seq_args(seq_args *sa)
 {
   if (NULL == sa) return;
-  free(sa->internal_input);
+
+  free(sa->quality);
+  free(sa->sequence);
+  free(sa->sequence_name);
+  free(sa->sequence_file);
+  free(sa->trimmed_seq);
+
+  /* edited by T. Koressaar for lowercase masking */
+  free(sa->trimmed_orig_seq);
+
+  free(sa->trimmed_masked_seq_r);
+  free(sa->trimmed_masked_seq);
+
+  free(sa->upcased_seq);
+  free(sa->upcased_seq_r);
+
   free(sa->left_input);
   free(sa->right_input);
-  free(sa->sequence);
-  free(sa->quality);
-  free(sa->trimmed_seq);
+  free(sa->internal_input);
 
   free(sa->overhang_left);
   free(sa->overhang_right);
   free(sa->overhang_right_rv);
 
-  /* edited by T. Koressaar for lowercase masking */
-  free(sa->trimmed_orig_seq);
-  
-  free(sa->trimmed_masked_seq_r);
-  free(sa->trimmed_masked_seq);
-  
-  free(sa->upcased_seq);
-  free(sa->upcased_seq_r);
-  free(sa->sequence_name);
   free(sa);
 }
 
@@ -4767,10 +4771,11 @@ align(const char *s1,
 /* Helper function */
 static int
 _set_string(char **loc, const char *new_string) {
-  if (*loc) {
-    free(*loc);
+  if (loc == NULL || *loc == NULL || new_string == NULL) {
+    return 1;
   }
-  if (!(*loc = (char *) malloc(strlen(new_string) + 1)))
+
+  if (!(*loc = (char *) realloc(*loc, strlen(new_string) + 1)))
     return 1; /* ENOMEM */
   strcpy(*loc, new_string);
   return 0;

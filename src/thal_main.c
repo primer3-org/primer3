@@ -337,6 +337,7 @@ int main(int argc, char** argv)
    if(interactive) {
      size_t buffer_size = 16384;
      char *oligo_str = (char*)malloc(sizeof(char)*buffer_size);
+     if (oligo_str == NULL) exit(-2);
 
      while(NULL != fgets(oligo_str, buffer_size, stdin)) {
        oligo_str[strlen(oligo_str)-1] = '\0';
