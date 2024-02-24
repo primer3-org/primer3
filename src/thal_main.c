@@ -309,10 +309,8 @@ int main(int argc, char** argv)
 
    if (path != NULL) {
       thal_load_parameters(path, &thermodynamic_parameters, &o);
-   } else {
-      set_default_thal_parameters(&thermodynamic_parameters);
+      get_thermodynamic_values(&thermodynamic_parameters, &o);
    }
-   get_thermodynamic_values(&thermodynamic_parameters, &o);
 
    if (tmp_ret) {
      fprintf(stderr, "%s\n", o.msg);
@@ -386,7 +384,8 @@ int main(int argc, char** argv)
      free(o.sec_struct);
    }
    /* cleanup */
-   destroy_thal_structures();
+   if(!thal_default_params_used)
+      destroy_thal_structures();
    thal_free_parameters(&thermodynamic_parameters);
    return EXIT_SUCCESS;
 }

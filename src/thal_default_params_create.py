@@ -2,14 +2,13 @@ import numpy as np
 
 
 """TODO:
-static struct triloop* triloopEntropies = NULL; /* ther penalties for given triloop seq-s */
-static struct triloop* triloopEnthalpies = NULL; /* ther penalties for given triloop seq-s */
-static struct tetraloop* tetraloopEntropies = NULL; /* ther penalties for given tetraloop seq-s */
-static struct tetraloop* tetraloopEnthalpies = NULL; /* ther penalties for given tetraloop seq-s */
+static double atpS[5][5]; /* AT penalty */
+static double atpH[5][5]; /* AT penalty */
 """
 
 outstr = "#include <math.h>\n"
-outstr += "#include <stdio.h>\n\n"
+outstr += "#include <stdio.h>\n"
+outstr += "#include \"thal.h\"\n\n"
 
 infile = open("./primer3_config/stack.ds", "r")
 stack_ds_values = infile.read().splitlines()
@@ -47,6 +46,19 @@ infile.close()
 infile = open("./primer3_config/dangle.ds", "r")
 dangle_ds_values = infile.read().splitlines()
 infile.close()
+infile = open("./primer3_config/triloop.ds", "r")
+triloop_ds_values = infile.read().splitlines()
+infile.close()
+infile = open("./primer3_config/triloop.dh", "r")
+triloop_dh_values = infile.read().splitlines()
+infile.close()
+infile = open("./primer3_config/tetraloop.ds", "r")
+tetraloop_ds_values = infile.read().splitlines()
+infile.close()
+infile = open("./primer3_config/tetraloop.dh", "r")
+tetraloop_dh_values = infile.read().splitlines()
+infile.close()
+
 
 stack_ds = np.zeros((5,5,5,5), dtype=float)
 stack_dh = np.zeros((5,5,5,5), dtype=float)
@@ -137,174 +149,338 @@ dangle3_dh = dangle3_dh.flatten()
 dangle5_ds = dangle5_ds.flatten()
 dangle5_dh = dangle5_dh.flatten()
 
-
-
-outstr += "static double stackEntropies[5][5][5][5] = {"
-for i in range(len(stack_ds)):
-    if i % 5 == 0:
-        outstr += "\n\t"
-    if i % 25 == 0:
-        outstr += "\n\t"
-    if stack_ds[i] == float('inf'):
-        outstr += "INFINITY"
-    else:
-        outstr += str(stack_ds[i])
-    if i != len(stack_ds) - 1:
-        outstr += ", "
+outstr += "static double atpS[5][5] = {"
+for i in range(5):
+    outstr += "\n\t{"
+    for j in range(5):
+        if ((i == 0) and (j == 3)) or ((i == 3) and (j == 0)):
+            outstr += "6.9"
+        else:
+            outstr += "0.00000000001"
+        if j != 4:
+            outstr += ", "
+    outstr += "}"
+    if i != 4:
+        outstr += ","
 outstr += "};\n\n"
 
-outstr += "static double stackEnthalpies[5][5][5][5] = {"
-for i in range(len(stack_dh)):
-    if i % 5 == 0:
-        outstr += "\n\t"
-    if i % 25 == 0:
-        outstr += "\n\t"
-    if stack_dh[i] == float('inf'):
-        outstr += "INFINITY"
-    else:
-        outstr += str(stack_dh[i])
-    if i != len(stack_dh) - 1:
-        outstr += ", "
+outstr += "static double atpH[5][5] = {"
+for i in range(5):
+    outstr += "\n\t{"
+    for j in range(5):
+        if ((i == 0) and (j == 3)) or ((i == 3) and (j == 0)):
+            outstr += "2200.0"
+        else:
+            outstr += "0.0"
+        if j != 4:
+            outstr += ", "
+    outstr += "}"
+    if i != 4:
+        outstr += ","
 outstr += "};\n\n"
 
-outstr += "static double tstackEntropies[5][5][5][5] = {"
-for i in range(len(tstack_ds)):
-    if i % 5 == 0:
-        outstr += "\n\t"
-    if i % 25 == 0:
-        outstr += "\n\t"
-    if tstack_ds[i] == float('inf'):
-        outstr += "INFINITY"
-    else:
-        outstr += str(tstack_ds[i])
-    if i != len(tstack_ds) - 1:
-        outstr += ", "
+outstr += "static double stackEntropies[5][5][5][5] = {\n\t"
+idx = 0
+for i in range(5):
+    outstr += "{"
+    for j in range(5):
+        outstr += "{"
+        for k in range(5):
+            outstr += "{"
+            for l in range(5):
+                if stack_ds[idx] == float('inf'):
+                    outstr += "INFINITY"
+                else:
+                    outstr += str(stack_ds[idx])
+                idx += 1
+                if l != 4:
+                    outstr += ", "
+            outstr += "}"
+            if k != 4:
+                outstr += ",\n\t"
+        outstr += "}"
+        if j != 4:
+            outstr += ",\n\n\t"
+    outstr += "}"
+    if i != 4:
+        outstr += ",\n\n\t"
 outstr += "};\n\n"
 
-outstr += "static double tstackEnthalpies[5][5][5][5] = {"
-for i in range(len(tstack_dh)):
-    if i % 5 == 0:
-        outstr += "\n\t"
-    if i % 25 == 0:
-        outstr += "\n\t"
-    if tstack_dh[i] == float('inf'):
-        outstr += "INFINITY"
-    else:
-        outstr += str(tstack_dh[i])
-    if i != len(tstack_dh) - 1:
-        outstr += ", "
+outstr += "static double stackEnthalpies[5][5][5][5] = {\n\t"
+idx = 0
+for i in range(5):
+    outstr += "{"
+    for j in range(5):
+        outstr += "{"
+        for k in range(5):
+            outstr += "{"
+            for l in range(5):
+                if stack_dh[idx] == float('inf'):
+                    outstr += "INFINITY"
+                else:
+                    outstr += str(stack_dh[idx])
+                idx += 1
+                if l != 4:
+                    outstr += ", "
+            outstr += "}"
+            if k != 4:
+                outstr += ",\n\t"
+        outstr += "}"
+        if j != 4:
+            outstr += ",\n\n\t"
+    outstr += "}"
+    if i != 4:
+        outstr += ",\n\n\t"
+outstr += "};\n\n"
+
+outstr += "static double tstackEntropies[5][5][5][5] = {\n\t"
+idx = 0
+for i in range(5):
+    outstr += "{"
+    for j in range(5):
+        outstr += "{"
+        for k in range(5):
+            outstr += "{"
+            for l in range(5):
+                if tstack_ds[idx] == float('inf'):
+                    outstr += "INFINITY"
+                else:
+                    outstr += str(tstack_ds[idx])
+                idx += 1
+                if l != 4:
+                    outstr += ", "
+            outstr += "}"
+            if k != 4:
+                outstr += ",\n\t"
+        outstr += "}"
+        if j != 4:
+            outstr += ",\n\n\t"
+    outstr += "}"
+    if i != 4:
+        outstr += ",\n\n\t"
+outstr += "};\n\n"
+
+outstr += "static double tstackEnthalpies[5][5][5][5] = {\n\t"
+idx = 0
+for i in range(5):
+    outstr += "{"
+    for j in range(5):
+        outstr += "{"
+        for k in range(5):
+            outstr += "{"
+            for l in range(5):
+                if tstack_dh[idx] == float('inf'):
+                    outstr += "INFINITY"
+                else:
+                    outstr += str(tstack_dh[idx])
+                idx += 1
+                if l != 4:
+                    outstr += ", "
+            outstr += "}"
+            if k != 4:
+                outstr += ",\n\t"
+        outstr += "}"
+        if j != 4:
+            outstr += ",\n\n\t"
+    outstr += "}"
+    if i != 4:
+        outstr += ",\n\n\t"
 outstr += "};\n\n"
 
 outstr += "static double tstack2Entropies[5][5][5][5] = {"
-for i in range(len(tstack2_ds)):
-    if i % 5 == 0:
-        outstr += "\n\t"
-    if i % 25 == 0:
-        outstr += "\n\t"
-    if tstack2_ds[i] == float('inf'):
-        outstr += "INFINITY"
-    else:
-        outstr += str(tstack2_ds[i])
-    if i != len(tstack2_ds) - 1:
-        outstr += ", "
+idx = 0
+for i in range(5):
+    outstr += "{"
+    for j in range(5):
+        outstr += "{"
+        for k in range(5):
+            outstr += "{"
+            for l in range(5):
+                if tstack2_ds[idx] == float('inf'):
+                    outstr += "INFINITY"
+                else:
+                    outstr += str(tstack2_ds[idx])
+                idx += 1
+                if l != 4:
+                    outstr += ", "
+            outstr += "}"
+            if k != 4:
+                outstr += ",\n\t"
+        outstr += "}"
+        if j != 4:
+            outstr += ",\n\n\t"
+    outstr += "}"
+    if i != 4:
+        outstr += ",\n\n\t"
 outstr += "};\n\n"
 
-outstr += "static double tstack2Enthalpies[5][5][5][5] = {"
-for i in range(len(tstack2_dh)):
-    if i % 5 == 0:
-        outstr += "\n\t"
-    if i % 25 == 0:
-        outstr += "\n\t"
-    if tstack2_dh[i] == float('inf'):
-        outstr += "INFINITY"
-    else:
-        outstr += str(tstack2_dh[i])
-    if i != len(tstack2_dh) - 1:
-        outstr += ", "
+outstr += "static double tstack2Enthalpies[5][5][5][5] = {\n\t"
+idx = 0
+for i in range(5):
+    outstr += "{"
+    for j in range(5):
+        outstr += "{"
+        for k in range(5):
+            outstr += "{"
+            for l in range(5):
+                if tstack2_dh[idx] == float('inf'):
+                    outstr += "INFINITY"
+                else:
+                    outstr += str(tstack2_dh[idx])
+                idx += 1
+                if l != 4:
+                    outstr += ", "
+            outstr += "}"
+            if k != 4:
+                outstr += ",\n\t"
+        outstr += "}"
+        if j != 4:
+            outstr += ",\n\n\t"
+    outstr += "}"
+    if i != 4:
+        outstr += ",\n\n\t"
 outstr += "};\n\n"
 
-outstr += "static double stackint2Entropies[5][5][5][5] = {"
-for i in range(len(stackmm_ds)):
-    if i % 5 == 0:
-        outstr += "\n\t"
-    if i % 25 == 0:
-        outstr += "\n\t"
-    if stackmm_ds[i] == float('inf'):
-        outstr += "INFINITY"
-    else:
-        outstr += str(stackmm_ds[i])
-    if i != len(stackmm_ds) - 1:
-        outstr += ", "
+outstr += "static double stackint2Entropies[5][5][5][5] = {\n\t"
+idx = 0
+for i in range(5):
+    outstr += "{"
+    for j in range(5):
+        outstr += "{"
+        for k in range(5):
+            outstr += "{"
+            for l in range(5):
+                if stackmm_ds[idx] == float('inf'):
+                    outstr += "INFINITY"
+                else:
+                    outstr += str(stackmm_ds[idx])
+                idx += 1
+                if l != 4:
+                    outstr += ", "
+            outstr += "}"
+            if k != 4:
+                outstr += ",\n\t"
+        outstr += "}"
+        if j != 4:
+            outstr += ",\n\n\t"
+    outstr += "}"
+    if i != 4:
+        outstr += ",\n\n\t"
 outstr += "};\n\n"
 
-outstr += "static double stackint2Enthalpies[5][5][5][5] = {"
-for i in range(len(stackmm_dh)):
-    if i % 5 == 0:
-        outstr += "\n\t"
-    if i % 25 == 0:
-        outstr += "\n\t"
-    if stackmm_dh[i] == float('inf'):
-        outstr += "INFINITY"
-    else:
-        outstr += str(stackmm_dh[i])
-    if i != len(stackmm_dh) - 1:
-        outstr += ", "
+outstr += "static double stackint2Enthalpies[5][5][5][5] = {\n\t"
+idx = 0
+for i in range(5):
+    outstr += "{"
+    for j in range(5):
+        outstr += "{"
+        for k in range(5):
+            outstr += "{"
+            for l in range(5):
+                if stackmm_dh[idx] == float('inf'):
+                    outstr += "INFINITY"
+                else:
+                    outstr += str(stackmm_dh[idx])
+                idx += 1
+                if l != 4:
+                    outstr += ", "
+            outstr += "}"
+            if k != 4:
+                outstr += ",\n\t"
+        outstr += "}"
+        if j != 4:
+            outstr += ",\n\n\t"
+    outstr += "}"
+    if i != 4:
+        outstr += ",\n\n\t"
 outstr += "};\n\n"
 
-outstr += "static double dangle3Entropies[5][5][5] = {"
-for i in range(len(dangle3_ds)):
-    if i % 5 == 0:
-        outstr += "\n\t"
-    if i % 25 == 0:
-        outstr += "\n\t"
-    if dangle3_ds[i] == float('inf'):
-        outstr += "INFINITY"
-    else:
-        outstr += str(dangle3_ds[i])
-    if i != len(dangle3_ds) - 1:
-        outstr += ", "
+outstr += "static double dangleEntropies3[5][5][5] = {\n\t"
+idx = 0
+for i in range(5):
+    outstr += "{"
+    for j in range(5):
+        outstr += "{"
+        for k in range(5):
+            if dangle3_ds[idx] == float('inf'):
+                outstr += "INFINITY"
+            else:
+                outstr += str(dangle3_ds[idx])
+            idx += 1
+            if k != 4:
+                outstr += ", "
+        outstr += "}"
+        if j != 4:
+            outstr += ",\n\t"
+    outstr += "}"
+    if i != 4:
+        outstr += ",\n\n\t"
 outstr += "};\n\n"
 
-outstr += "static double dangle3Enthalpies[5][5][5] = {"
-for i in range(len(dangle3_dh)):
-    if i % 5 == 0:
-        outstr += "\n\t"
-    if i % 25 == 0:
-        outstr += "\n\t"
-    if dangle3_dh[i] == float('inf'):
-        outstr += "INFINITY"
-    else:
-        outstr += str(dangle3_dh[i])
-    if i != len(dangle3_dh) - 1:
-        outstr += ", "
+outstr += "static double dangleEnthalpies3[5][5][5] = {\n\t"
+idx = 0
+for i in range(5):
+    outstr += "{"
+    for j in range(5):
+        outstr += "{"
+        for k in range(5):
+            if dangle3_dh[idx] == float('inf'):
+                outstr += "INFINITY"
+            else:
+                outstr += str(dangle3_dh[idx])
+            idx += 1
+            if k != 4:
+                outstr += ", "
+        outstr += "}"
+        if j != 4:
+            outstr += ",\n\t"
+    outstr += "}"
+    if i != 4:
+        outstr += ",\n\n\t"
 outstr += "};\n\n"
 
-outstr += "static double dangle5Entropies[5][5][5] = {"
-for i in range(len(dangle5_ds)):
-    if i % 5 == 0:
-        outstr += "\n\t"
-    if i % 25 == 0:
-        outstr += "\n\t"
-    if dangle5_ds[i] == float('inf'):
-        outstr += "INFINITY"
-    else:
-        outstr += str(dangle5_ds[i])
-    if i != len(dangle5_ds) - 1:
-        outstr += ", "
+outstr += "static double dangleEntropies5[5][5][5] = {\n\t"
+idx = 0
+for i in range(5):
+    outstr += "{"
+    for j in range(5):
+        outstr += "{"
+        for k in range(5):
+            if dangle5_ds[idx] == float('inf'):
+                outstr += "INFINITY"
+            else:
+                outstr += str(dangle5_ds[idx])
+            idx += 1
+            if k != 4:
+                outstr += ", "
+        outstr += "}"
+        if j != 4:
+            outstr += ",\n\t"
+    outstr += "}"
+    if i != 4:
+        outstr += ",\n\n\t"
 outstr += "};\n\n"
 
-outstr += "static double dangle5Enthalpies[5][5][5] = {"
-for i in range(len(dangle5_dh)):
-    if i % 5 == 0:
-        outstr += "\n\t"
-    if i % 25 == 0:
-        outstr += "\n\t"
-    if dangle5_dh[i] == float('inf'):
-        outstr += "INFINITY"
-    else:
-        outstr += str(dangle5_dh[i])
-    if i != len(dangle5_dh) - 1:
-        outstr += ", "
+outstr += "static double dangleEnthalpies5[5][5][5] = {\n\t"
+idx = 0
+for i in range(5):
+    outstr += "{"
+    for j in range(5):
+        outstr += "{"
+        for k in range(5):
+            if dangle5_dh[idx] == float('inf'):
+                outstr += "INFINITY"
+            else:
+                outstr += str(dangle5_dh[idx])
+            idx += 1
+            if k != 4:
+                outstr += ", "
+        outstr += "}"
+        if j != 4:
+            outstr += ",\n\t"
+    outstr += "}"
+    if i != 4:
+        outstr += ",\n\n\t"
 outstr += "};\n\n"
 
 bulge_loop_ds = np.zeros(30, dtype=float)
@@ -400,7 +576,104 @@ for i in range(len(hairpin_loop_dh)):
         outstr += ", "
 outstr += "};\n\n"
 
+outstr += f"static int numTriloops = {len(triloop_dh_values)};\n"
+outstr += f"static int numTetraloops = {len(tetraloop_dh_values)};\n"
+
+outstr += "static struct triloop defaultTriloopEntropies[] = {\n"
+for i in range(len(triloop_ds_values)):
+    line = triloop_ds_values[i].split("\t")
+    outstr += "\t{{"
+    for j in range(len(line[0])):
+        outstr += f"\'{line[0][j]}\'"
+        if j != len(line[0]) - 1:
+            outstr += ","
+    outstr += "}, " + line[1] + "}"
+    if i != len(triloop_ds_values) - 1:
+        outstr += ","
+    else:
+        outstr += "};\n"
+    outstr += "\n"
+
+outstr += "static struct triloop defaultTriloopEnthalpies[] = {\n"
+for i in range(len(triloop_dh_values)):
+    line = triloop_dh_values[i].split("\t")
+    outstr += "\t{{"
+    for j in range(len(line[0])):
+        outstr += f"\'{line[0][j]}\'"
+        if j != len(line[0]) - 1:
+            outstr += ","
+    outstr += "}, " + line[1] + "}"
+    if i != len(triloop_dh_values) - 1:
+        outstr += ","
+    else:
+        outstr += "};\n"
+    outstr += "\n"
+
+outstr += "static struct tetraloop defaultTetraloopEntropies[] = {\n"
+for i in range(len(tetraloop_ds_values)):
+    line = tetraloop_ds_values[i].split("\t")
+    outstr += "\t{{"
+    for j in range(len(line[0])):
+        outstr += f"\'{line[0][j]}\'"
+        if j != len(line[0]) - 1:
+            outstr += ","
+    outstr += "}, " + line[1] + "}"
+    if i != len(tetraloop_ds_values) - 1:
+        outstr += ","
+    else:
+        outstr += "};\n"
+    outstr += "\n"
+
+outstr += "static struct tetraloop defaultTetraloopEnthalpies[] = {\n"
+for i in range(len(tetraloop_dh_values)):
+    line = tetraloop_dh_values[i].split("\t")
+    outstr += "\t{{"
+    for j in range(len(line[0])):
+        outstr += f"\'{line[0][j]}\'"
+        if j != len(line[0]) - 1:
+            outstr += ","
+    outstr += "}, " + line[1] + "}"
+    if i != len(tetraloop_dh_values) - 1:
+        outstr += ","
+    else:
+        outstr += "};\n"
+    outstr += "\n"
+
+outstr += "static struct triloop *triloopEntropies = defaultTriloopEntropies;\n"
+outstr += "static struct triloop *triloopEnthalpies = defaultTriloopEnthalpies;\n"
+outstr += "static struct tetraloop *tetraloopEntropies = defaultTetraloopEntropies;\n"
+outstr += "static struct tetraloop *tetraloopEnthalpies = defaultTetraloopEnthalpies;\n"
+
+comment_str = """/*
+static double atpS[5][5]; AT penalty 
+static double atpH[5][5];  AT penalty 
+static int numTriloops;  hairpin triloop penalties 
+static int numTetraloops;  hairpin tetraloop penalties 
+static double dangleEntropies3[5][5][5]; thermodynamic paramteres for 3' dangling ends 
+static double dangleEnthalpies3[5][5][5];  ther params for 3' dangling ends 
+static double dangleEntropies5[5][5][5];   ther params for 5' dangling ends 
+static double dangleEnthalpies5[5][5][5];  ther params for 5' dangling ends 
+static double stackEntropies[5][5][5][5];  ther params for perfect match pairs 
+static double stackEnthalpies[5][5][5][5];  ther params for perfect match pairs 
+static double stackint2Entropies[5][5][5][5]; ther params for perfect match and internal mm 
+static double stackint2Enthalpies[5][5][5][5];  ther params for perfect match and internal mm
+static double interiorLoopEntropies[30];  interior loop params according to length of the loop 
+static double bulgeLoopEntropies[30];  bulge loop params according to length of the loop 
+static double hairpinLoopEntropies[30];  hairpin loop params accordint to length of the loop 
+static double interiorLoopEnthalpies[30];  same as interiorLoopEntropies but values of entropy 
+static double bulgeLoopEnthalpies[30];  same as bulgeLoopEntropies but values of entropy 
+static double hairpinLoopEnthalpies[30];  same as hairpinLoopEntropies but values of entropy 
+static double tstackEntropies[5][5][5][5];  ther params for terminal mismatches 
+static double tstackEnthalpies[5][5][5][5];  ther params for terminal mismatches 
+static double tstack2Entropies[5][5][5][5];  ther params for internal terminal mismatches 
+static double tstack2Enthalpies[5][5][5][5];  ther params for internal terminal mismatches 
+static struct triloop* triloopEntropies;  ther penalties for given triloop seq-s 
+static struct triloop* triloopEnthalpies;  ther penalties for given triloop seq-s 
+static struct tetraloop* tetraloopEntropies;  ther penalties for given tetraloop seq-s 
+static struct tetraloop* tetraloopEnthalpies;  ther penalties for given tetraloop seq-s 
+*/\n\n"""
 
 outfile = open("thal_default_params.h", "w+")
+outfile.write(comment_str)
 outfile.write(outstr)
 outfile.close()

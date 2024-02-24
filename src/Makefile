@@ -200,7 +200,7 @@ $(LIBMASKER_DYN): masker.o
 $(PRIMER_EXE): $(PRIMER_OBJECTS)
 	$(CXX) $(CXXFLAGS) -lstdc++ $(LDFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
 
-libprimer3.o: libprimer3.cc libprimer3.h p3_seq_lib.h dpal.h thal.h thal_parameters.h oligotm.h
+libprimer3.o: libprimer3.cc libprimer3.h p3_seq_lib.h dpal.h thal.h thal_parameters.h oligotm.h thal_default_params.h
 	$(CXX) -c $(CXXFLAGS) $(P_DEFINES) -o $@ libprimer3.cc
 
 $(NTDPAL_EXE): ntdpal_main.o dpal.o
@@ -221,7 +221,7 @@ $(LONG_SEQ_EXE): long_seq_tm_test_main.c oligotm.o
 $(MASKER_EXE): masker_main.c $(LIBRARIES)
 	$(CXX) $(CXXFLAGS) -lstdc++ -o $@ masker_main.c $(LIBRARIES) $(LIBOPTS) $(LDLIBS)
 
-read_boulder.o: read_boulder.c read_boulder.h libprimer3.h dpal.h thal.h thal_parameters.h p3_seq_lib.h 
+read_boulder.o: read_boulder.c read_boulder.h libprimer3.h dpal.h thal.h thal_parameters.h p3_seq_lib.h thal_default_params.h 
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ read_boulder.c
 
 print_boulder.o: print_boulder.c print_boulder.h libprimer3.h p3_seq_lib.h 
@@ -232,10 +232,10 @@ dpal.o: dpal.c dpal.h
 
 # We use '-ffloat-store' on windows to prevent undesirable
 # precision which may lead to differences in floating point results.
-thal.o: thal.c thal.h thal_parameters.h
+thal.o: thal.c thal.h thal_parameters.h thal_default_params.h
 	$(CC) -c $(CFLAGS) -ffloat-store -o $@ thal.c
 
-thal_parameters.o: thal_parameters.c thal_parameters.h thal.h
+thal_parameters.o: thal_parameters.c thal_parameters.h thal.h thal_default_params.h 
 	$(CC) -c $(CFLAGS) -ffloat-store $(P_DEFINES) -o $@ thal_parameters.c
 
 p3_seq_lib.o: p3_seq_lib.c p3_seq_lib.h libprimer3.h
@@ -244,16 +244,16 @@ p3_seq_lib.o: p3_seq_lib.c p3_seq_lib.h libprimer3.h
 dpal_primer.o: dpal.c dpal.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ dpal.c
 
-thal_primer.o: thal.c thal.h thal_parameters.h
+thal_primer.o: thal.c thal.h thal_parameters.h thal_default_params.h
 	$(CC) -c $(CFLAGS) -ffloat-store $(P_DEFINES) -o $@ thal.c
 
-format_output.o: format_output.c format_output.h libprimer3.h dpal.h thal.h p3_seq_lib.h 
+format_output.o: format_output.c format_output.h libprimer3.h dpal.h thal.h p3_seq_lib.h thal_default_params.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ format_output.c
 
 ntdpal_main.o: ntdpal_main.c dpal.h
 	$(CC) -c $(CC_OPTS) -o $@ ntdpal_main.c
 
-thal_main.o: thal_main.c thal.h thal_parameters.h
+thal_main.o: thal_main.c thal.h thal_parameters.h thal_default_params.h
 	$(CC) -c $(CFLAGS) -o $@ thal_main.c
 # We use CC_OPTS above rather than CFLAGS because
 # gcc 2.7.2 crashes while compiling ntdpal_main.c with -O2
@@ -262,7 +262,7 @@ amplicontm.o: amplicontm.c amplicontm.h
 
 oligotm.o: oligotm.c oligotm.h
 
-primer3_boulder_main.o: primer3_boulder_main.c libprimer3.h dpal.h thal.h thal_parameters.h oligotm.h format_output.h print_boulder.h read_boulder.h
+primer3_boulder_main.o: primer3_boulder_main.c libprimer3.h dpal.h thal.h thal_parameters.h oligotm.h format_output.h print_boulder.h read_boulder.h thal_default_params.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) primer3_boulder_main.c
 
 masker.o: masker.c masker.h libprimer3.h
