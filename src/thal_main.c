@@ -48,7 +48,6 @@
 #include <sys/stat.h>
 
 #include "thal.h"
-#include "thal_parameters.h"
 
 /* Check on which OS we compile */
 #if defined(_WIN32) || defined(WIN32) || defined (__WIN32__) || defined(__CYGWIN__) || defined(__MINGW32__)
