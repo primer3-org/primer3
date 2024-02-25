@@ -1055,10 +1055,8 @@ readTLoop(char **str, char *s, double *v, int triloop, thal_results *o)
   *q = '\0'; q++;
   if (triloop) {
     strncpy(s, p, 5);   /*triloop string has 5 characters*/
-    s[5] = '\0';
   } else {
     strncpy(s, p, 6);   /*tetraloop string has 6 characters*/
-    s[6] = '\0';
   }
   /* skip all spaces */
   while (isspace(*q)) q++;
