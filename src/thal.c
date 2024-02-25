@@ -108,16 +108,7 @@
 #define isPositive(x) ((x) > 0 ? (1) : (0))
 
 /*** BEGIN CONSTANTS ***/
-# ifdef INTEGER
-const double _INFINITY = 999999.0;
-# else
-# ifdef INFINITY
-const double _INFINITY = INFINITY;
-# else
-const double _INFINITY = 1.0 / 0.0;
-# endif
-# endif
-
+// static const double _INFINITY is defined in thal_default_params.h
 static const double R = 1.9872; /* cal/Kmol */
 static const double ILAS = (-300 / 310.15); /* Internal Loop Entropy ASymmetry correction -0.3kcal/mol*/
 static const double ILAH = 0.0; /* Internal Loop EntHalpy Asymmetry correction */

@@ -10,6 +10,20 @@ outstr = "#include <math.h>\n"
 outstr += "#include <stdio.h>\n"
 outstr += "#include \"thal.h\"\n\n"
 
+
+outstr += """
+# ifdef INTEGER
+const double _INFINITY = 999999.0;
+# else
+# ifdef INFINITY
+const double _INFINITY = INFINITY;
+# else
+const double _INFINITY = 1.0 / 0.0;
+# endif
+# endif
+
+"""
+
 infile = open("./primer3_config/stack.ds", "r")
 stack_ds_values = infile.read().splitlines()
 infile.close()
@@ -79,22 +93,36 @@ for i in range(5):
     for j in range(5):
         for k in range(5):
             for l in range(5):
-                if 4 in [i, j, k, l]:
-                    stack_ds[i][j][k][l] = -1.0
-                    stack_dh[i][j][k][l] = float('inf')
+                if 4 in [i, k]:
                     tstack_ds[i][j][k][l] = -1.0
                     tstack_dh[i][j][k][l] = float('inf')
                     tstack2_ds[i][j][k][l] = -1.0
                     tstack2_dh[i][j][k][l] = float('inf')
+                elif 4 in [j, l]:
+                    tstack_ds[i][j][k][l] = 0.00000000001
+                    tstack_dh[i][j][k][l] = 0.0
+                    tstack2_ds[i][j][k][l] = 0.00000000001
+                    tstack2_dh[i][j][k][l] = 0.0
+                else:
+                    tstack_ds[i][j][k][l] = float(tstack_ds_values[idx])
+                    tstack_dh[i][j][k][l] = float(tstack_dh_values[idx])
+                    tstack2_ds[i][j][k][l] = float(tstack2_ds_values[idx])
+                    tstack2_dh[i][j][k][l] = float(tstack2_dh_values[idx])
+                    if float('inf') in [tstack_ds[i][j][k][l], tstack_dh[i][j][k][l]]:
+                        tstack_ds[i][j][k][l] = -1.0
+                        tstack_dh[i][j][k][l] = float('inf')
+                    if float('inf') in [tstack2_ds[i][j][k][l], tstack2_dh[i][j][k][l]]:
+                        tstack2_ds[i][j][k][l] = -1.0
+                        tstack2_dh[i][j][k][l] = float('inf')
+
+                if 4 in [i, j, k, l]:
+                    stack_ds[i][j][k][l] = -1.0
+                    stack_dh[i][j][k][l] = float('inf')
                     stackmm_ds[i][j][k][l] = -1.0
                     stackmm_dh[i][j][k][l] = float('inf')
                 else:
                     stack_ds[i][j][k][l] = float(stack_ds_values[idx])
                     stack_dh[i][j][k][l] = float(stack_dh_values[idx])
-                    tstack_ds[i][j][k][l] = float(tstack_ds_values[idx])
-                    tstack_dh[i][j][k][l] = float(tstack_dh_values[idx])
-                    tstack2_ds[i][j][k][l] = float(tstack2_ds_values[idx])
-                    tstack2_dh[i][j][k][l] = float(tstack2_dh_values[idx])
                     stackmm_ds[i][j][k][l] = float(stackmm_ds_values[idx])
                     stackmm_dh[i][j][k][l] = float(stackmm_dh_values[idx])
                     idx += 1
@@ -104,12 +132,6 @@ for i in range(5):
                     if float('inf') in [stackmm_ds[i][j][k][l], stackmm_dh[i][j][k][l]]:
                         stackmm_ds[i][j][k][l] = -1.0
                         stackmm_dh[i][j][k][l] = float('inf')
-                    if float('inf') in [tstack_ds[i][j][k][l], tstack_dh[i][j][k][l]]:
-                        tstack_ds[i][j][k][l] = -1.0
-                        tstack_dh[i][j][k][l] = float('inf')
-                    if float('inf') in [tstack2_ds[i][j][k][l], tstack2_dh[i][j][k][l]]:
-                        tstack2_ds[i][j][k][l] = -1.0
-                        tstack2_dh[i][j][k][l] = float('inf')
 
 idx = 0
 for i in range(5):
@@ -189,7 +211,7 @@ for i in range(5):
             outstr += "{"
             for l in range(5):
                 if stack_ds[idx] == float('inf'):
-                    outstr += "INFINITY"
+                    outstr += "_INFINITY"
                 else:
                     outstr += str(stack_ds[idx])
                 idx += 1
@@ -216,7 +238,7 @@ for i in range(5):
             outstr += "{"
             for l in range(5):
                 if stack_dh[idx] == float('inf'):
-                    outstr += "INFINITY"
+                    outstr += "_INFINITY"
                 else:
                     outstr += str(stack_dh[idx])
                 idx += 1
@@ -243,7 +265,7 @@ for i in range(5):
             outstr += "{"
             for l in range(5):
                 if tstack_ds[idx] == float('inf'):
-                    outstr += "INFINITY"
+                    outstr += "_INFINITY"
                 else:
                     outstr += str(tstack_ds[idx])
                 idx += 1
@@ -270,7 +292,7 @@ for i in range(5):
             outstr += "{"
             for l in range(5):
                 if tstack_dh[idx] == float('inf'):
-                    outstr += "INFINITY"
+                    outstr += "_INFINITY"
                 else:
                     outstr += str(tstack_dh[idx])
                 idx += 1
@@ -297,7 +319,7 @@ for i in range(5):
             outstr += "{"
             for l in range(5):
                 if tstack2_ds[idx] == float('inf'):
-                    outstr += "INFINITY"
+                    outstr += "_INFINITY"
                 else:
                     outstr += str(tstack2_ds[idx])
                 idx += 1
@@ -324,7 +346,7 @@ for i in range(5):
             outstr += "{"
             for l in range(5):
                 if tstack2_dh[idx] == float('inf'):
-                    outstr += "INFINITY"
+                    outstr += "_INFINITY"
                 else:
                     outstr += str(tstack2_dh[idx])
                 idx += 1
@@ -351,7 +373,7 @@ for i in range(5):
             outstr += "{"
             for l in range(5):
                 if stackmm_ds[idx] == float('inf'):
-                    outstr += "INFINITY"
+                    outstr += "_INFINITY"
                 else:
                     outstr += str(stackmm_ds[idx])
                 idx += 1
@@ -378,7 +400,7 @@ for i in range(5):
             outstr += "{"
             for l in range(5):
                 if stackmm_dh[idx] == float('inf'):
-                    outstr += "INFINITY"
+                    outstr += "_INFINITY"
                 else:
                     outstr += str(stackmm_dh[idx])
                 idx += 1
@@ -403,7 +425,7 @@ for i in range(5):
         outstr += "{"
         for k in range(5):
             if dangle3_ds[idx] == float('inf'):
-                outstr += "INFINITY"
+                outstr += "_INFINITY"
             else:
                 outstr += str(dangle3_ds[idx])
             idx += 1
@@ -425,7 +447,7 @@ for i in range(5):
         outstr += "{"
         for k in range(5):
             if dangle3_dh[idx] == float('inf'):
-                outstr += "INFINITY"
+                outstr += "_INFINITY"
             else:
                 outstr += str(dangle3_dh[idx])
             idx += 1
@@ -447,7 +469,7 @@ for i in range(5):
         outstr += "{"
         for k in range(5):
             if dangle5_ds[idx] == float('inf'):
-                outstr += "INFINITY"
+                outstr += "_INFINITY"
             else:
                 outstr += str(dangle5_ds[idx])
             idx += 1
@@ -469,7 +491,7 @@ for i in range(5):
         outstr += "{"
         for k in range(5):
             if dangle5_dh[idx] == float('inf'):
-                outstr += "INFINITY"
+                outstr += "_INFINITY"
             else:
                 outstr += str(dangle5_dh[idx])
             idx += 1
@@ -509,7 +531,7 @@ for i in range(len(interior_loop_ds)):
     if i % 5 == 0:
         outstr += "\n\t"
     if interior_loop_ds[i] == float('inf'):
-        outstr += "INFINITY"
+        outstr += "_INFINITY"
     else:
         outstr += str(interior_loop_ds[i])
     if i != len(interior_loop_ds) - 1:
@@ -521,7 +543,7 @@ for i in range(len(bulge_loop_ds)):
     if i % 5 == 0:
         outstr += "\n\t"
     if bulge_loop_ds[i] == float('inf'):
-        outstr += "INFINITY"
+        outstr += "_INFINITY"
     else:
         outstr += str(bulge_loop_ds[i])
     if i != len(bulge_loop_ds) - 1:
@@ -533,7 +555,7 @@ for i in range(len(hairpin_loop_ds)):
     if i % 5 == 0:
         outstr += "\n\t"
     if hairpin_loop_ds[i] == float('inf'):
-        outstr += "INFINITY"
+        outstr += "_INFINITY"
     else:
         outstr += str(hairpin_loop_ds[i])
     if i != len(hairpin_loop_ds) - 1:
@@ -545,7 +567,7 @@ for i in range(len(interior_loop_dh)):
     if i % 5 == 0:
         outstr += "\n\t"
     if interior_loop_dh[i] == float('inf'):
-        outstr += "INFINITY"
+        outstr += "_INFINITY"
     else:
         outstr += str(interior_loop_dh[i])
     if i != len(interior_loop_dh) - 1:
@@ -557,7 +579,7 @@ for i in range(len(bulge_loop_dh)):
     if i % 5 == 0:
         outstr += "\n\t"
     if bulge_loop_dh[i] == float('inf'):
-        outstr += "INFINITY"
+        outstr += "_INFINITY"
     else:
         outstr += str(bulge_loop_dh[i])
     if i != len(bulge_loop_dh) - 1:
@@ -569,7 +591,7 @@ for i in range(len(hairpin_loop_dh)):
     if i % 5 == 0:
         outstr += "\n\t"
     if hairpin_loop_dh[i] == float('inf'):
-        outstr += "INFINITY"
+        outstr += "_INFINITY"
     else:
         outstr += str(hairpin_loop_dh[i])
     if i != len(hairpin_loop_dh) - 1:
@@ -579,12 +601,14 @@ outstr += "};\n\n"
 outstr += f"static int numTriloops = {len(triloop_dh_values)};\n"
 outstr += f"static int numTetraloops = {len(tetraloop_dh_values)};\n"
 
+bases = ['A', 'C', 'G', 'T']
+
 outstr += "static struct triloop defaultTriloopEntropies[] = {\n"
 for i in range(len(triloop_ds_values)):
     line = triloop_ds_values[i].split("\t")
     outstr += "\t{{"
     for j in range(len(line[0])):
-        outstr += f"\'{line[0][j]}\'"
+        outstr += f"{bases.index(line[0][j])}"
         if j != len(line[0]) - 1:
             outstr += ","
     outstr += "}, " + line[1] + "}"
@@ -599,7 +623,7 @@ for i in range(len(triloop_dh_values)):
     line = triloop_dh_values[i].split("\t")
     outstr += "\t{{"
     for j in range(len(line[0])):
-        outstr += f"\'{line[0][j]}\'"
+        outstr += f"{bases.index(line[0][j])}"
         if j != len(line[0]) - 1:
             outstr += ","
     outstr += "}, " + line[1] + "}"
@@ -614,7 +638,7 @@ for i in range(len(tetraloop_ds_values)):
     line = tetraloop_ds_values[i].split("\t")
     outstr += "\t{{"
     for j in range(len(line[0])):
-        outstr += f"\'{line[0][j]}\'"
+        outstr += f"{bases.index(line[0][j])}"
         if j != len(line[0]) - 1:
             outstr += ","
     outstr += "}, " + line[1] + "}"
@@ -629,7 +653,7 @@ for i in range(len(tetraloop_dh_values)):
     line = tetraloop_dh_values[i].split("\t")
     outstr += "\t{{"
     for j in range(len(line[0])):
-        outstr += f"\'{line[0][j]}\'"
+        outstr += f"{bases.index(line[0][j])}"
         if j != len(line[0]) - 1:
             outstr += ","
     outstr += "}, " + line[1] + "}"
@@ -645,6 +669,12 @@ outstr += "static struct tetraloop *tetraloopEntropies = defaultTetraloopEntropi
 outstr += "static struct tetraloop *tetraloopEnthalpies = defaultTetraloopEnthalpies;\n"
 
 comment_str = """/*
+This file is created by thal_default_params_create.py. Modify that script, not this file.
+requires python3, python3-numpy
+run "python3 thal_default_params_create.py" to regenerate this file.
+
+Globals initialize in this file:
+const double _INFINITY;
 static double atpS[5][5]; AT penalty 
 static double atpH[5][5];  AT penalty 
 static int numTriloops;  hairpin triloop penalties 

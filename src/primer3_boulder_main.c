@@ -240,9 +240,11 @@ main(int argc, char *argv[])
   }
   /* Load default thal parameters */
   thal_results o;
-  if (get_thermodynamic_values(&global_pa->thermodynamic_parameters, &o)) {
-    fprintf(stderr, "%s\n", o.msg);
-    exit(-1);
+  if(!thal_default_params_used){
+    if (get_thermodynamic_values(&global_pa->thermodynamic_parameters, &o)) {
+      fprintf(stderr, "%s\n", o.msg);
+      exit(-1);
+    }
   }
 
   if (!global_pa) {
@@ -492,7 +494,8 @@ main(int argc, char *argv[])
          End of the primary working loop */
 
   /* To avoid being distracted when looking for leaks: */
-  destroy_thal_structures();
+  if (!thal_default_params_used)
+    destroy_thal_structures();
 
 #if !defined(OS_WIN)  
   if(global_pa->mask_template == 1){
