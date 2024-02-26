@@ -239,7 +239,7 @@ static void traceback(int i, int j, double RT, int* ps1, int* ps2, int maxLoop, 
 static void tracebacku(int*, int, thal_results*);
 
 /* prints ascii output of dimer structure */
-char *drawDimer(int*, int*, double, double, double, const thal_mode mode, double, thal_results *);
+char *drawDimer(int*, int*, double, double, const thal_mode mode, double, thal_results *);
 
 /* prints ascii output of hairpin structure */
 char *drawHairpin(int*, double, double, const thal_mode mode, double, thal_results *);
@@ -313,7 +313,6 @@ static double dplx_init_H; /* initiation enthalpy; for duplex 200, for unimolecu
 static double dplx_init_S; /* initiation entropy; for duplex -5.7, for unimoleculat structure 0 */
 static double saltCorrection; /* value calculated by saltCorrectS, includes correction for monovalent and divalent cations */
 static double RC; /* universal gas constant multiplied w DNA conc - for melting temperature */
-static double SHleft; /* var that helps to find str w highest melting temperature */
 static int bestI, bestJ; /* starting position of most stable str */
 static double* enthalpyDPT; /* matrix for values of enthalpy */
 static double* entropyDPT; /* matrix for values of entropy */
@@ -698,7 +697,7 @@ thal(const unsigned char *oligo_f,
         ps2[j] = 0;
       if(isFinite(EnthalpyDPT(bestI, bestJ))){
          traceback(bestI, bestJ, RC, ps1, ps2, a->maxLoop, o);
-         o->sec_struct=drawDimer(ps1, ps2, SHleft, dH, dS, mode, a->temp, o);
+         o->sec_struct=drawDimer(ps1, ps2, dH, dS, mode, a->temp, o);
          o->align_end_1=bestI;
          o->align_end_2=bestJ;
       } else  {
@@ -2812,7 +2811,7 @@ traceback(int i, int j, double RT, int* ps1, int* ps2, int maxLoop, thal_results
 }
 
 char * 
-drawDimer(int* ps1, int* ps2, double temp, double H, double S, const thal_mode mode, double t37, thal_results *o)
+drawDimer(int* ps1, int* ps2, double H, double S, const thal_mode mode, double t37, thal_results *o)
 {
    int  ret_space = 0;
    char *ret_ptr = NULL;
@@ -2823,41 +2822,32 @@ drawDimer(int* ps1, int* ps2, double temp, double H, double S, const thal_mode m
    char* duplex[4];
    double G, t;
    t = G = 0;
-   if (!isFinite(temp)){
-      if((mode != THL_FAST) && (mode != THL_DEBUG_F) && (mode != THL_STRUCT)) {
-         printf("No predicted secondary structures for given sequences\n");
-      }
-      o->temp = 0.0; /* lets use generalization here; this should rather be very negative value */
-      strcpy(o->msg, "No predicted sec struc for given seq");
-      return NULL;
-   } else {
-      N=0;
-      for(i=0;i<len1;i++){
-         if(ps1[i]>0) ++N;
-      }
-      for(i=0;i<len2;i++) {
-         if(ps2[i]>0) ++N;
-      }
-      N = (N/2) -1;
-      t = ((H) / (S + (N * saltCorrection) + RC)) - ABSOLUTE_ZERO;
-      if((mode != THL_FAST) && (mode != THL_DEBUG_F)) {
-         G = (H) - (t37 * (S + (N * saltCorrection)));
-         S = S + (N * saltCorrection);
-         o->temp = (double) t;
-         /* maybe user does not need as precise as that */
-         /* printf("Thermodynamical values:\t%d\tdS = %g\tdH = %g\tdG = %g\tt = %g\tN = %d, SaltC=%f, RC=%f\n",
-                len1, (double) S, (double) H, (double) G, (double) t, (int) N, saltCorrection, RC); */
-         if (mode != THL_STRUCT) {
-           printf("Calculated thermodynamical parameters for dimer:\tdS = %g\tdH = %g\tdG = %g\tt = %g\n",
-                  (double) S, (double) H, (double) G, (double) t);
-         } else {
-           sprintf(ret_para, "Tm: %.1f&deg;C  dG: %.0f cal/mol  dH: %.0f cal/mol  dS: %.0f cal/mol*K\\n",
-                   (double) t, (double) G, (double) H, (double) S);
-         }
+   N=0;
+   for(i=0;i<len1;i++){
+      if(ps1[i]>0) ++N;
+   }
+   for(i=0;i<len2;i++) {
+      if(ps2[i]>0) ++N;
+   }
+   N = (N/2) -1;
+   t = ((H) / (S + (N * saltCorrection) + RC)) - ABSOLUTE_ZERO;
+   if((mode != THL_FAST) && (mode != THL_DEBUG_F)) {
+      G = (H) - (t37 * (S + (N * saltCorrection)));
+      S = S + (N * saltCorrection);
+      o->temp = (double) t;
+      /* maybe user does not need as precise as that */
+      /* printf("Thermodynamical values:\t%d\tdS = %g\tdH = %g\tdG = %g\tt = %g\tN = %d, SaltC=%f, RC=%f\n",
+               len1, (double) S, (double) H, (double) G, (double) t, (int) N, saltCorrection, RC); */
+      if (mode != THL_STRUCT) {
+         printf("Calculated thermodynamical parameters for dimer:\tdS = %g\tdH = %g\tdG = %g\tt = %g\n",
+               (double) S, (double) H, (double) G, (double) t);
       } else {
-         o->temp = (double) t;
-         return NULL;
+         sprintf(ret_para, "Tm: %.1f&deg;C  dG: %.0f cal/mol  dH: %.0f cal/mol  dS: %.0f cal/mol*K\\n",
+                  (double) t, (double) G, (double) H, (double) S);
       }
+   } else {
+      o->temp = (double) t;
+      return NULL;
    }
 
    duplex[0] = (char*) safe_malloc(len1 + len2 + 1, o);
