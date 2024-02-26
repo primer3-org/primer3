@@ -97,7 +97,6 @@
 #define XSTR(X) STR(X)
 
 #define SMALL_NON_ZERO 0.000001
-#define DBL_EQ(X,Y) (((X) - (Y)) < (SMALL_NON_ZERO) ? (1) : (2)) /* 1 when numbers are equal */
 
 #ifdef INTEGER
 # define isFinite(x) (x < _INFINITY / 2)
@@ -2255,11 +2254,9 @@ calc_bulge_internal2(int i, int j, int ii, int jj, double* EntropyEnthalpy, int 
     
       T1 = (H + dplx_init_H) / ((S + dplx_init_S) + RC);
       T2 = (EnthalpyDPT(i, j) + dplx_init_H) / (EntropyDPT(i, j) + dplx_init_S + RC);
-      if((DBL_EQ(T1,T2) == 2) || traceback) {
-         if((T1 > T2) || ((traceback && T1 >= T2) || traceback==1)) {
-            EntropyEnthalpy[0] = S;
-            EntropyEnthalpy[1] = H;
-         }
+      if((T1 > T2) || ((traceback && T1 >= T2) || traceback==1)) {
+         EntropyEnthalpy[0] = S;
+         EntropyEnthalpy[1] = H;
       }
       return;
    } else { /* only internal loops */
