@@ -238,14 +238,6 @@ main(int argc, char *argv[])
     print_usage();
     exit(-1);
   }
-  /* Load default thal parameters */
-  thal_results o;
-  if(!thal_default_params_used){
-    if (get_thermodynamic_values(&global_pa->thermodynamic_parameters, &o)) {
-      fprintf(stderr, "%s\n", o.msg);
-      exit(-1);
-    }
-  }
 
   if (!global_pa) {
     exit(-2); /* Out of memory. */
