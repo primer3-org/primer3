@@ -135,7 +135,11 @@ static const int BPI[5][5] =  {
 /*** END OF CONSTANTS ***/
 
 /*** BEGIN STRUCTs ***/
-
+/*
+Defined in thal_default_params.h:
+struct triloop
+struct tetraloop
+*/
 
 struct tracer /* structure for tracebacku - unimolecular str */ {
   int i;
