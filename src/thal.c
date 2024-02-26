@@ -96,8 +96,6 @@
 #define LONG_SEQ_ERR_STR(MAX_LEN) "Target sequence length > maximum allowed (" STR(MAX_LEN) ") in thermodynamic alignment"
 #define XSTR(X) STR(X)
 
-#define SMALL_NON_ZERO 0.000001
-
 #ifdef INTEGER
 # define isFinite(x) (x < _INFINITY / 2)
 #else
@@ -648,8 +646,6 @@ thal(const unsigned char *oligo_f,
         for (i = 1; i <= len1; i++) {
            for (j = 1; j <= len2; j++) {
               RSH(i, j, SH);
-              SH[0] = SH[0]+SMALL_NON_ZERO; /* this adding is done for compiler, optimization -O2 vs -O0 */
-              SH[1] = SH[1]+SMALL_NON_ZERO;
               G1 = (EnthalpyDPT(i, j)+ SH[1] + dplx_init_H) - TEMP_KELVIN*(EntropyDPT(i, j) + SH[0] + dplx_init_S);  
               if(G1<bestG){
                  bestG = G1;
@@ -673,9 +669,6 @@ thal(const unsigned char *oligo_f,
          G1 = bestG = _INFINITY;
          for (j = 1; j <= len2; ++j) {
             RSH(i, j, SH);
-            SH[0] = SH[0]+SMALL_NON_ZERO; /* this adding is done for compiler, optimization -O2 vs -O0,
-                                             that compiler could understand that SH is changed in this cycle */
-            SH[1] = SH[1]+SMALL_NON_ZERO;
             G1 = (EnthalpyDPT(i, j)+ SH[1] + dplx_init_H) - TEMP_KELVIN*(EntropyDPT(i, j) + SH[0] + dplx_init_S);  
                 if(G1<bestG){
                    bestG = G1;
