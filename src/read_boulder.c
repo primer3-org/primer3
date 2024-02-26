@@ -584,15 +584,13 @@ read_boulder_record(FILE *file_input,
         if (thermodynamic_params_path[strlen(thermodynamic_params_path) - 1] == '\n') {
           thermodynamic_params_path[strlen(thermodynamic_params_path) - 1] = '\0';
         }
-        thal_default_params_used = 0;
+
         thal_results o;
         if (thal_load_parameters(thermodynamic_params_path, &pa->thermodynamic_parameters, &o) == -1) {
           pr_append_new_chunk(glob_err, o.msg);
         } else {
-          if(!thal_default_params_used){
-            if (get_thermodynamic_values(&pa->thermodynamic_parameters, &o)) {
-              pr_append_new_chunk(glob_err, o.msg);
-            }
+          if (get_thermodynamic_values(&pa->thermodynamic_parameters, &o)) {
+            pr_append_new_chunk(glob_err, o.msg);
           }
         }
         free(thermodynamic_params_path);
