@@ -1,15 +1,8 @@
 import numpy as np
 
-
-"""TODO:
-static double atpS[5][5]; /* AT penalty */
-static double atpH[5][5]; /* AT penalty */
-"""
-
 outstr = "#include <math.h>\n"
 outstr += "#include <stdio.h>\n"
 outstr += "#include \"thal.h\"\n\n"
-
 
 outstr += """
 # ifdef INTEGER
