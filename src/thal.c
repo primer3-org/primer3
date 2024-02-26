@@ -470,7 +470,7 @@ thal(const unsigned char *oligo_f,
      const thal_mode mode,
      thal_results *o)
 {
-   double* SH;
+   double SH[2];
    int i, j;
    int len_f, len_r;
    int k;
@@ -642,7 +642,6 @@ thal(const unsigned char *oligo_f,
       entropyDPT = safe_recalloc(entropyDPT, len1, len2, o); /* enthalpyDPT is 3D array represented as 1D array */
       initMatrix();
       fillMatrix(a->maxLoop, o);
-      SH = (double*) safe_malloc(2 * sizeof(double), o);
       /* calculate terminal basepairs */
       bestI = bestJ = 0; 
       G1 = bestG = _INFINITY;
@@ -706,7 +705,6 @@ thal(const unsigned char *oligo_f,
       }
       free(ps1);
       free(ps2);
-      free(SH);
       free(oligo2_rev);
       free(enthalpyDPT);
       free(entropyDPT);
@@ -1448,9 +1446,8 @@ static void
 fillMatrix(int maxLoop, thal_results *o)
 {
    int d, i, j, ii, jj;
-   double* SH;
+   double SH[2];
 
-   SH = (double*) safe_malloc(2 * sizeof(double), o);
    for (i = 1; i <= len1; ++i) {
       for (j = 1; j <= len2; ++j) {
          if(isFinite(EnthalpyDPT(i, j))) { /* if finite */
@@ -1491,15 +1488,13 @@ fillMatrix(int maxLoop, thal_results *o)
          }
       } /* for */
    } /* for */
-   free(SH);
 }
 
 static void 
 fillMatrix2(int maxLoop, thal_results* o)
 {
    int i, j;
-   double* SH;
-   SH = (double*) safe_malloc(2 * sizeof(double), o);
+   double SH[2];
    for (j = 2; j <= len2; ++j)
      for (i = j - MIN_HRPN_LOOP - 1; i >= 1; --i) {
         if (isFinite(EnthalpyDPT(i, j))) {
@@ -1520,7 +1515,6 @@ fillMatrix2(int maxLoop, thal_results* o)
            }
         }
      }
-   free(SH);
 }
 
 
@@ -1530,8 +1524,7 @@ maxTM(int i, int j)
    double T0, T1;
    double S0, S1;
    double H0, H1;
-   double* SH;
-   SH = (double*) safe_malloc(2 * sizeof(double), 0);
+   double SH[2];
    T0 = T1 = -_INFINITY;
    S0 = EntropyDPT(i, j);
    H0 = EnthalpyDPT(i, j);
@@ -1564,7 +1557,6 @@ maxTM(int i, int j)
       EntropyDPT(i, j) = S0;
       EnthalpyDPT(i, j) = H0;
    }
-   free(SH);
 }
 
 static void 
@@ -1910,8 +1902,7 @@ calc_hairpin(int i, int j, double* EntropyEnthalpy, int traceback)
    int loopSize = j - i - 1;
    double G1, G2;
    G1 = G2 = -_INFINITY;
-   double* SH;
-   SH = (double*) safe_malloc(2 * sizeof(double), 0);
+   double SH[2];
    SH[0] = -1.0;
    SH[1] = _INFINITY;
    if(loopSize < MIN_HRPN_LOOP) {
@@ -1977,7 +1968,6 @@ calc_hairpin(int i, int j, double* EntropyEnthalpy, int traceback)
       EntropyEnthalpy[0] = EntropyDPT(i, j);
       EntropyEnthalpy[1] = EnthalpyDPT(i, j);
    }
-   free(SH);
    return;
 }
 
@@ -1988,8 +1978,7 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
    int loopSize1, loopSize2, loopSize;
    double S,H,G1,G2;
    int N, N_loop;
-   double* SH;
-   SH = (double*) safe_malloc(2 * sizeof(double), 0);
+   double SH[2];
    SH[0] = -1.0;
    SH[1] = _INFINITY;
    S = -1.0;
@@ -2019,14 +2008,12 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
 #ifdef DEBUG
    if (loopSize1 + loopSize2 > maxLoop) {
       fputs("Error: calc_bulge_internal() called with loopSize1 + loopSize2 > maxLoop\n", stderr);
-      free(SH);
       return;
    }
 #endif
 #ifdef DEBUG
    if (loopSize1 == 0 && loopSize2 == 0) {
       fputs("Error: calc_bulge_internal() called with nonsense\n", stderr);
-      free(SH);
       return;
    }
 #endif
@@ -2106,7 +2093,6 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
             EntropyEnthalpy[0] = S;
             EntropyEnthalpy[1] = H;
          }
-      free(SH);
       return;
    } else { /* only internal loops */
       H = interiorLoopEnthalpies[loopSize] + tstackEnthalpies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j+1]] +
@@ -2133,7 +2119,6 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
              EntropyEnthalpy[1] = H;
       }
    }
-   free(SH);
    return;
 }
 
@@ -2648,12 +2633,9 @@ tracebacku(int* bp, int maxLoop,thal_results* o) /* traceback for unimolecular s
    i = j = 0;
    int ii, jj, k;
    struct tracer *top, *stack = NULL;
-   double* SH1;
-   double* SH2;
-   double* EntropyEnthalpy;
-   SH1 = (double*) safe_malloc(2 * sizeof(double), o);
-   SH2 = (double*) safe_malloc(2 * sizeof(double), o);
-   EntropyEnthalpy = (double*) safe_malloc(2 * sizeof(double), o);
+   double SH1[2];
+   double SH2[2];
+   double EntropyEnthalpy[2];
    push(&stack,len1, 0, 1, o);
    while(stack) {
       top = stack;
@@ -2756,9 +2738,6 @@ tracebacku(int* bp, int maxLoop,thal_results* o) /* traceback for unimolecular s
       }
       free(top);
    }
-   free(SH1);
-   free(SH2);
-   free(EntropyEnthalpy);
 }
 
 
@@ -2766,8 +2745,7 @@ static void
 traceback(int i, int j, double RT, int* ps1, int* ps2, int maxLoop, thal_results* o)
 {
    int d, ii, jj, done;
-   double* SH;
-   SH = (double*) safe_malloc(2 * sizeof(double), o);
+   double SH[2];
    ps1[i - 1] = j;
    ps2[j - 1] = i;
    while(1) {
@@ -2807,7 +2785,6 @@ traceback(int i, int j, double RT, int* ps1, int* ps2, int maxLoop, thal_results
          }
       }
    }
-   free(SH);
 }
 
 char * 
