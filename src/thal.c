@@ -66,13 +66,13 @@
 #ifdef EnthalpyDPT
 # undef EnthalpyDPT
 #endif
-#define EnthalpyDPT(i, j) enthalpyDPT[(j) + ((i-1)*oligo2_len) - (1)]
+#define EnthalpyDPT(i, j) enthalpyDPT[i][j]
 
 /* table where bp-s entropies, that retrieve to the most stable Tm, are saved */
 #ifdef EntropyDPT
 # undef EntropyDPT
 #endif
-#define EntropyDPT(i, j) entropyDPT[(j) + ((i-1)*oligo2_len) - (1)]
+#define EntropyDPT(i, j) entropyDPT[i][j]
 
 /* entropies of most stable hairpin terminal bp */
 #ifndef SEND5
@@ -267,7 +267,6 @@ static double Htstack(int,int); /* returns enthalpy value for terminal stack */
 static void* safe_calloc(size_t, size_t, thal_results* o);
 static void* safe_malloc(size_t, thal_results* o);
 static void* safe_realloc(void*, size_t, thal_results* o);
-static double* safe_recalloc(double* ptr, int m, int n, thal_results* o);
 
 /*
 Thermodynamic parameters from thal_default_params.h:
@@ -307,8 +306,8 @@ static double dplx_init_S; /* initiation entropy; for duplex -5.7, for unimolecu
 static double saltCorrection; /* value calculated by saltCorrectS, includes correction for monovalent and divalent cations */
 static double RC; /* universal gas constant multiplied w DNA conc - for melting temperature */
 static int bestI, bestJ; /* starting position of most stable str */
-static double* enthalpyDPT; /* matrix for values of enthalpy */
-static double* entropyDPT; /* matrix for values of entropy */
+static double** enthalpyDPT; /* matrix for values of enthalpy */
+static double** entropyDPT; /* matrix for values of entropy */
 static unsigned char *oligo1, *oligo2; /* inserted oligo sequenced */
 static unsigned char *numSeq1, *numSeq2; /* same as oligo1 and oligo2 but converted to numbers */
 static int oligo1_len, oligo2_len; /* length of sequense 1 and 2 *//* 17.02.2009 int temponly;*/ /* print only temperature of the predicted structure */
@@ -454,6 +453,22 @@ destroy_thal_structures()
   }
 }
 
+double **allocate_DPT(int oligo1_len, int oligo2_len, thal_results *o){
+   //Add one to each dimension due to the way the DPT is indexed
+   //Row i=0 and column j=0 are never used, but the wasted memory is negligible
+   double *dpt = safe_malloc(sizeof(double) * (oligo1_len + 1) * (oligo2_len +1), o);
+   double **rows = safe_malloc(sizeof(double *) * (oligo1_len + 1), o);
+   for(int i = 0; i < oligo1_len+1; i++){
+      rows[i] = &dpt[i * (oligo2_len +1)];
+   }
+   return rows;
+}
+
+void free_DPT(double **dpt){
+   free(dpt[0]);
+   free(dpt);
+}
+
 /* central method: execute all sub-methods for calculating secondary
    structure for dimer or for monomer */
 void 
@@ -544,6 +559,8 @@ thal(const unsigned char *oligo_f,
    }
    oligo1_len = length_unsig_char(oligo1);
    oligo2_len = length_unsig_char(oligo2);
+   enthalpyDPT = allocate_DPT(oligo1_len, oligo2_len, o);
+   entropyDPT = allocate_DPT(oligo1_len, oligo2_len, o);
    /*** INIT values for unimolecular and bimolecular structures ***/
    if (a->type==4) { /* unimolecular folding */
       dplx_init_H = 0.0;
@@ -597,8 +614,6 @@ thal(const unsigned char *oligo_f,
    for(i = 1; i <= oligo2_len; ++i) numSeq2[i] = str2int(oligo2[i - 1]);
    numSeq1[0] = numSeq1[oligo1_len + 1] = numSeq2[0] = numSeq2[oligo2_len + 1] = 4; /* mark as N-s */
    if (a->type==4) { /* calculate structure of monomer */
-      enthalpyDPT = safe_recalloc(enthalpyDPT, oligo1_len, oligo2_len, o);
-      entropyDPT = safe_recalloc(entropyDPT, oligo1_len, oligo2_len, o);
       initMatrix2();
       fillMatrix2(a->maxLoop, o);
       calc_terminal_bp(a->temp);
@@ -628,8 +643,6 @@ thal(const unsigned char *oligo_f,
       free(oligo2);
       return;
    } else if(a->type!=4) { /* Hybridization of two moleculs */
-      enthalpyDPT = safe_recalloc(enthalpyDPT, oligo1_len, oligo2_len, o); /* dyn. programming table for dS and dH */
-      entropyDPT = safe_recalloc(entropyDPT, oligo1_len, oligo2_len, o); /* enthalpyDPT is 3D array represented as 1D array */
       initMatrix();
       fillMatrix(a->maxLoop, o);
       /* calculate terminal basepairs */
@@ -691,8 +704,8 @@ thal(const unsigned char *oligo_f,
       free(ps1);
       free(ps2);
       free(oligo2_rev);
-      free(enthalpyDPT);
-      free(entropyDPT);
+      free_DPT(enthalpyDPT);
+      free_DPT(entropyDPT);
       free(numSeq1);
       free(numSeq2);
       free(oligo1);
@@ -750,12 +763,6 @@ str2int(char c)
 }
 
 /* memory stuff */
-
-static double* 
-safe_recalloc(double* ptr, int m, int n, thal_results* o)
-{
-   return (double*) safe_realloc(ptr, m * n * sizeof(double), o);
-}
 
 static void* 
 safe_calloc(size_t m, size_t n, thal_results *o)
