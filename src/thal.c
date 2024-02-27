@@ -199,10 +199,6 @@ static void fillMatrix(int maxLoop, thal_results* o); /* calc-s thermod values i
 
 static void fillMatrix2(int maxLoop, thal_results* o); /* calc-s thermod values into dynamic progr table (monomer) */
 
-static void maxTM(int i, int j); /* finds max Tm while filling the dyn progr table using stacking S and stacking H (dimer) */
-
-static void maxTM2(int i, int j); /* finds max Tm while filling the dyn progr table using stacking S and stacking H (monomer) */
-
 /* calculates bulges and internal loops for dimer structures */
 static void calc_bulge_internal(int ii, int jj, int i, int j, double* EntropyEnthalpy, int traceback, int maxLoop);
 
@@ -1439,6 +1435,9 @@ fillMatrix(int maxLoop, thal_results *o)
 {
    int d, i, j, ii, jj;
    double SH[2];
+   double T0, T1;
+   double S0, S1;
+   double H0, H1;
 
    for (i = 1; i <= len1; ++i) {
       for (j = 1; j <= len2; ++j) {
@@ -1451,7 +1450,39 @@ fillMatrix(int maxLoop, thal_results *o)
                EnthalpyDPT(i,j) = SH[1];
             }
             if (i > 1 && j > 1) {
-               maxTM(i, j); /* stack: sets EntropyDPT(i, j) and EnthalpyDPT(i, j) */
+               T0 = T1 = -_INFINITY;
+               S0 = EntropyDPT(i, j);
+               H0 = EnthalpyDPT(i, j);
+               RSH(i,j,SH);
+               T0 = (H0 + dplx_init_H + SH[1]) /(S0 + dplx_init_S + SH[0] + RC); /* at current position */
+               if(isFinite(EnthalpyDPT(i - 1, j - 1)) && isFinite(Hs(i - 1, j - 1, 1))) {
+                  S1 = (EntropyDPT(i - 1, j - 1) + Ss(i - 1, j - 1, 1));
+                  H1 = (EnthalpyDPT(i - 1, j - 1) + Hs(i - 1, j - 1, 1));
+                  T1 = (H1 + dplx_init_H + SH[1]) /(S1 + dplx_init_S + SH[0] + RC);
+               } else {
+                  S1 = -1.0;
+                  H1 = _INFINITY;
+                  T1 = (H1 + dplx_init_H) /(S1 + dplx_init_S + RC);
+               }
+               
+               if(S1 < MinEntropyCutoff) {
+                  /* to not give dH any value if dS is unreasonable */
+                  S1 = MinEntropy;
+                  H1 = 0.0;
+               }
+               if(S0 < MinEntropyCutoff) {
+                  /* to not give dH any value if dS is unreasonable */
+                  S0 = MinEntropy;
+                  H0 = 0.0;
+               }
+               if(T1 > T0) { 
+                  EntropyDPT(i, j) = S1;
+                  EnthalpyDPT(i, j) = H1;
+               } else if(T0 >= T1) {
+                  EntropyDPT(i, j) = S0;
+                  EnthalpyDPT(i, j) = H0;
+               }
+
                for(d = 3; d <= maxLoop + 2; d++) { /* max=30, length over 30 is not allowed */
                   ii = i - 1;
                   jj = - ii - d + (j + i);
@@ -1487,12 +1518,44 @@ fillMatrix2(int maxLoop, thal_results* o)
 {
    int i, j;
    double SH[2];
+   double T0, T1;
+   double S0, S1;
+   double H0, H1;
+
    for (j = 2; j <= len2; ++j)
-     for (i = j - MIN_HRPN_LOOP - 1; i >= 1; --i) {
-        if (isFinite(EnthalpyDPT(i, j))) {
-           SH[0] = -1.0;
-           SH[1] = _INFINITY;
-           maxTM2(i,j); /* calculate stack */
+      for (i = j - MIN_HRPN_LOOP - 1; i >= 1; --i) {
+         if (isFinite(EnthalpyDPT(i, j))) {
+            SH[0] = -1.0;
+            SH[1] = _INFINITY;
+            T0 = T1 = -_INFINITY;
+            S0 = EntropyDPT(i, j);
+            H0 = EnthalpyDPT(i, j);
+            T0 = (H0 + dplx_init_H) /(S0 + dplx_init_S + RC);
+            if(isFinite(EnthalpyDPT(i, j))) {
+               S1 = (EntropyDPT(i + 1, j - 1) + Ss(i, j, 2));
+               H1 = (EnthalpyDPT(i + 1, j - 1) + Hs(i, j, 2));
+            } else {
+               S1 = -1.0;
+               H1 = _INFINITY;
+            }
+            T1 = (H1 + dplx_init_H) /(S1 + dplx_init_S + RC);
+            if(S1 < MinEntropyCutoff) {
+               S1 = MinEntropy;
+               H1 = 0.0;
+            }
+            if(S0 < MinEntropyCutoff) {
+               S0 = MinEntropy;
+               H0 = 0.0;
+            }
+
+            if(T1 > T0) {
+               EntropyDPT(i, j) = S1;
+               EnthalpyDPT(i, j) = H1;
+            } else {
+               EntropyDPT(i, j) = S0;
+               EnthalpyDPT(i, j) = H0;
+            }
+
            CBI(i, j, SH, 0,maxLoop); /* calculate Bulge and Internal loop and stack */
            SH[0] = -1.0;
            SH[1] = _INFINITY;
@@ -1508,85 +1571,6 @@ fillMatrix2(int maxLoop, thal_results* o)
         }
      }
 }
-
-
-static void 
-maxTM(int i, int j)
-{
-   double T0, T1;
-   double S0, S1;
-   double H0, H1;
-   double SH[2];
-   T0 = T1 = -_INFINITY;
-   S0 = EntropyDPT(i, j);
-   H0 = EnthalpyDPT(i, j);
-   RSH(i,j,SH);
-   T0 = (H0 + dplx_init_H + SH[1]) /(S0 + dplx_init_S + SH[0] + RC); /* at current position */
-   if(isFinite(EnthalpyDPT(i - 1, j - 1)) && isFinite(Hs(i - 1, j - 1, 1))) {
-      S1 = (EntropyDPT(i - 1, j - 1) + Ss(i - 1, j - 1, 1));
-      H1 = (EnthalpyDPT(i - 1, j - 1) + Hs(i - 1, j - 1, 1));
-      T1 = (H1 + dplx_init_H + SH[1]) /(S1 + dplx_init_S + SH[0] + RC);
-   } else {
-      S1 = -1.0;
-      H1 = _INFINITY;
-      T1 = (H1 + dplx_init_H) /(S1 + dplx_init_S + RC);
-   }
-   
-   if(S1 < MinEntropyCutoff) {
-      /* to not give dH any value if dS is unreasonable */
-      S1 = MinEntropy;
-      H1 = 0.0;
-   }
-   if(S0 < MinEntropyCutoff) {
-      /* to not give dH any value if dS is unreasonable */
-      S0 = MinEntropy;
-      H0 = 0.0;
-   }
-   if(T1 > T0) { 
-      EntropyDPT(i, j) = S1;
-      EnthalpyDPT(i, j) = H1;
-   } else if(T0 >= T1) {
-      EntropyDPT(i, j) = S0;
-      EnthalpyDPT(i, j) = H0;
-   }
-}
-
-static void 
-maxTM2(int i, int j)
-{
-   double T0, T1;
-   double S0, S1;
-   double H0, H1;
-   T0 = T1 = -_INFINITY;
-   S0 = EntropyDPT(i, j);
-   H0 = EnthalpyDPT(i, j);
-   T0 = (H0 + dplx_init_H) /(S0 + dplx_init_S + RC);
-   if(isFinite(EnthalpyDPT(i, j))) {
-      S1 = (EntropyDPT(i + 1, j - 1) + Ss(i, j, 2));
-      H1 = (EnthalpyDPT(i + 1, j - 1) + Hs(i, j, 2));
-   } else {
-      S1 = -1.0;
-      H1 = _INFINITY;
-   }
-   T1 = (H1 + dplx_init_H) /(S1 + dplx_init_S + RC);
-   if(S1 < MinEntropyCutoff) {
-      S1 = MinEntropy;
-      H1 = 0.0;
-   }
-   if(S0 < MinEntropyCutoff) {
-      S0 = MinEntropy;
-      H0 = 0.0;
-   }
-
-   if(T1 > T0) {
-      EntropyDPT(i, j) = S1;
-      EnthalpyDPT(i, j) = H1;
-   } else {
-      EntropyDPT(i, j) = S0;
-      EnthalpyDPT(i, j) = H0;
-   }
-}
-
 
 static void 
 LSH(int i, int j, double* EntropyEnthalpy)
