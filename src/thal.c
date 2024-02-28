@@ -79,8 +79,6 @@
 # define isFinite(x) isfinite(x)
 #endif
 
-#define isPositive(x) ((x) > 0 ? (1) : (0))
-
 /*** BEGIN CONSTANTS ***/
 // static const double _INFINITY is defined in thal_default_params.h
 static const double R = 1.9872; /* cal/Kmol */
@@ -1911,7 +1909,7 @@ calc_hairpin(int i, int j, double* EntropyEnthalpy, int traceback, double **entr
       EntropyEnthalpy[1] = _INFINITY;
       EntropyEnthalpy[0] = -1.0;
    }
-   if(isPositive(EntropyEnthalpy[1]) && isPositive(EntropyEnthalpy[0]) && (!isPositive(enthalpyDPT[i][j]) || !isPositive(entropyDPT[i][j]))) { /* if both, S and H are positive */
+   if((EntropyEnthalpy[1] > 0) && (EntropyEnthalpy[0] > 0) && ((enthalpyDPT[i][j] <= 0) || (entropyDPT[i][j] <= 0))) { /* if both, S and H are positive */
       EntropyEnthalpy[1] = _INFINITY;
       EntropyEnthalpy[0] = -1.0;
    }
@@ -1982,7 +1980,7 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
             S = bulgeLoopEntropies[loopSize] +
               stackEntropies[numSeq1[i]][numSeq1[ii]][numSeq2[j]][numSeq2[jj]];
          }
-         if(isPositive(H) || isPositive(S)){
+         if((H > 0) || (S > 0)){
             H = _INFINITY;
             S = -1.0;
          }
@@ -2010,7 +2008,7 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
             H = _INFINITY;
             S = -1.0;
          }
-         if(isPositive(H) && isPositive(S)){ 
+         if((H > 0) && (S > 0)){ 
             H = _INFINITY;
             S = -1.0;
          }
@@ -2036,7 +2034,7 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
          H = _INFINITY;
          S = -1.0;
       }
-      if(isPositive(H) && isPositive(S)){
+      if((H > 0) && (S > 0)){
          H = _INFINITY;
          S = -1.0;
       }    
@@ -2061,7 +2059,7 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
          H = _INFINITY;
          S = -1.0;
       }
-   if(isPositive(H) && isPositive(S)){ 
+   if((H > 0) && (S > 0)){ 
          H = _INFINITY;
          S = -1.0;
       }
