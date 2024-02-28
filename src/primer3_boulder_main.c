@@ -486,8 +486,7 @@ main(int argc, char *argv[])
          End of the primary working loop */
 
   /* To avoid being distracted when looking for leaks: */
-  if (!thal_default_params_used)
-    destroy_thal_structures();
+  destroy_thal_structures();
 
 #if !defined(OS_WIN)  
   if(global_pa->mask_template == 1){

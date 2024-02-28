@@ -69,9 +69,6 @@
 #define THAL_MAX_SEQ   10000
 #endif
 
-/*change to zero if not using default params*/
-extern int thal_default_params_used;
-
 /*** BEGIN CONSTANTS ***/
 
 extern const double _INFINITY;

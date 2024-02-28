@@ -383,8 +383,7 @@ int main(int argc, char** argv)
      free(o.sec_struct);
    }
    /* cleanup */
-   if(!thal_default_params_used)
-      destroy_thal_structures();
+   destroy_thal_structures();
    thal_free_parameters(&thermodynamic_parameters);
    return EXIT_SUCCESS;
 }

@@ -706,6 +706,7 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->pair_compl_end_th   = 47.0;
   a->thermodynamic_oligo_alignment = 0;
   a->thermodynamic_template_alignment = 0;
+  thal_set_null_parameters(&a->thermodynamic_parameters);
   a->show_secondary_structure_alignment = 0;
   a->liberal_base        = 0;
   a->primer_task         = generic;

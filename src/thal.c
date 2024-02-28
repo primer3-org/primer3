@@ -286,7 +286,6 @@ static struct triloop* triloopEnthalpies;  ther penalties for given triloop seq-
 static struct tetraloop* tetraloopEntropies;  ther penalties for given tetraloop seq-s 
 static struct tetraloop* tetraloopEnthalpies;  ther penalties for given tetraloop seq-s 
 */
-int thal_default_params_used = 1;
 static double *send5, *hend5; /* calc 5'  */
 /* w/o init not constant anymore, cause for unimolecular and bimolecular foldings there are different values */
 static double dplx_init_H; /* initiation enthalpy; for duplex 200, for unimolecular structure 0 */
@@ -401,7 +400,6 @@ get_thermodynamic_values(const thal_parameters *tp, thal_results *o)
   if (setjmp(_jmp_buf) != 0) {
      return -1;
   }
-  thal_default_params_used = 0;
   getStack(stackEntropies, stackEnthalpies, tp, o);
   /* verifyStackTable(stackEntropies, "entropy");
      verifyStackTable(stackEnthalpies, "enthalpy"); */ /* this is for code debugging */
@@ -423,19 +421,19 @@ get_thermodynamic_values(const thal_parameters *tp, thal_results *o)
 void 
 destroy_thal_structures()
 {
-  if (triloopEntropies != NULL) {
+  if ((triloopEntropies != NULL) && (triloopEntropies != defaultTriloopEntropies)){
     free(triloopEntropies);
     triloopEntropies = NULL;
   }
-  if (triloopEnthalpies != NULL) {
+  if ((triloopEnthalpies != NULL) && (triloopEnthalpies != defaultTriloopEnthalpies)){
     free(triloopEnthalpies);
     triloopEnthalpies = NULL;
   }
-  if (tetraloopEntropies != NULL) {
+  if ((tetraloopEntropies != NULL) && (tetraloopEntropies != defaultTetraloopEntropies)){
     free(tetraloopEntropies);
     tetraloopEntropies = NULL;
   }
-  if (tetraloopEnthalpies != NULL) {
+  if ((tetraloopEnthalpies != NULL) && (tetraloopEnthalpies != defaultTetraloopEnthalpies)){
     free(tetraloopEnthalpies);
     tetraloopEnthalpies = NULL;
   }
