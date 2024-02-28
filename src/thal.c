@@ -62,16 +62,6 @@
 #define THAL_EXIT_ON_ERROR 0
 #endif
 
-/* entropies of most stable hairpin terminal bp */
-#ifndef SEND5
-# define SEND5(i) send5[i]
-#endif
-
-/* enthalpies of most stable hairpin terminal bp */
-#ifndef HEND5
-# define HEND5(i) hend5[i]
-#endif
-
 #define CHECK_ERROR(COND,MSG) if (COND) { strcpy(o->msg, MSG); errno = 0; longjmp(_jmp_buf, 1); }
 #define THAL_OOM_ERROR { strcpy(o->msg, "Out of memory"); errno = ENOMEM; longjmp(_jmp_buf, 1); }
 #define THAL_IO_ERROR(f) { sprintf(o->msg, "Unable to open file %s", f); longjmp(_jmp_buf, 1); }
@@ -602,8 +592,8 @@ thal(const unsigned char *oligo_f,
       initMatrix2(entropyDPT, enthalpyDPT);
       fillMatrix2(a->maxLoop, entropyDPT, enthalpyDPT, o);
       calc_terminal_bp(a->temp, entropyDPT, enthalpyDPT);
-      mh = HEND5(oligo1_len);
-      ms = SEND5(oligo1_len);
+      mh = hend5[oligo1_len];
+      ms = send5[oligo1_len];
       o->align_end_1 = (int) mh;
       o->align_end_2 = (int) ms;
       bp = (int*) safe_calloc(oligo1_len, sizeof(int), o);
@@ -2256,11 +2246,11 @@ static void
 calc_terminal_bp(double temp, double **entropyDPT, double **enthalpyDPT) { /* compute exterior loop */
    int i;
    int max;
-   SEND5(0) = SEND5(1) = -1.0;
-   HEND5(0) = HEND5(1) = _INFINITY;
+   send5[0] = send5[1] = -1.0;
+   hend5[0] = hend5[1] = _INFINITY;
    for(i = 2; i<=(oligo1_len); i++) {
-      SEND5(i) = MinEntropy;
-      HEND5(i) = 0;
+      send5[i] = MinEntropy;
+      hend5[i] = 0;
    }
 
    double T1, T2, T3, T4, T5;
@@ -2270,7 +2260,7 @@ calc_terminal_bp(double temp, double **entropyDPT, double **enthalpyDPT) { /* co
    for(i = 2; i <= oligo1_len; ++i) {
       max = 0;
       T1 = T2 = T3 = T4 = T5 = -_INFINITY;
-      T1 = (HEND5(i - 1) + dplx_init_H) / (SEND5(i - 1) + dplx_init_S + RC);
+      T1 = (hend5[i - 1] + dplx_init_H) / (send5[i - 1] + dplx_init_S + RC);
       T2 = (END5_1(i,1, entropyDPT, enthalpyDPT) + dplx_init_H) / (END5_1(i,2, entropyDPT, enthalpyDPT) + dplx_init_S + RC);
       T3 = (END5_2(i,1, entropyDPT, enthalpyDPT) + dplx_init_H) / (END5_2(i,2, entropyDPT, enthalpyDPT) + dplx_init_S + RC);
       T4 = (END5_3(i,1, entropyDPT, enthalpyDPT) + dplx_init_H) / (END5_3(i,2, entropyDPT, enthalpyDPT) + dplx_init_S + RC);
@@ -2278,47 +2268,47 @@ calc_terminal_bp(double temp, double **entropyDPT, double **enthalpyDPT) { /* co
       max = max5(T1,T2,T3,T4,T5);
       switch (max) {
        case 1:
-         SEND5(i) = SEND5(i - 1);
-         HEND5(i) = HEND5(i - 1);
+         send5[i] = send5[i - 1];
+         hend5[i] = hend5[i - 1];
          break;
        case 2:
          G = END5_1(i,1, entropyDPT, enthalpyDPT) - (temp * (END5_1(i,2, entropyDPT, enthalpyDPT)));
          if(G < G2) {
-            SEND5(i) = END5_1(i,2, entropyDPT, enthalpyDPT);
-            HEND5(i) = END5_1(i,1, entropyDPT, enthalpyDPT);
+            send5[i] = END5_1(i,2, entropyDPT, enthalpyDPT);
+            hend5[i] = END5_1(i,1, entropyDPT, enthalpyDPT);
          } else {
-            SEND5(i) = SEND5(i - 1);
-            HEND5(i) = HEND5(i - 1);
+            send5[i] = send5[i - 1];
+            hend5[i] = hend5[i - 1];
          }
          break;
        case 3:
          G = END5_2(i,1, entropyDPT, enthalpyDPT) - (temp * (END5_2(i,2, entropyDPT, enthalpyDPT)));
          if(G < G2) {
-            SEND5(i) = END5_2(i,2, entropyDPT, enthalpyDPT);
-            HEND5(i) = END5_2(i,1, entropyDPT, enthalpyDPT);
+            send5[i] = END5_2(i,2, entropyDPT, enthalpyDPT);
+            hend5[i] = END5_2(i,1, entropyDPT, enthalpyDPT);
          } else {
-            SEND5(i) = SEND5(i - 1);
-            HEND5(i) = HEND5(i - 1);
+            send5[i] = send5[i - 1];
+            hend5[i] = hend5[i - 1];
          }
          break;
        case 4:
          G = END5_3(i,1, entropyDPT, enthalpyDPT) - (temp * (END5_3(i,2, entropyDPT, enthalpyDPT)));
          if(G < G2) {
-            SEND5(i) = END5_3(i,2, entropyDPT, enthalpyDPT);
-            HEND5(i) = END5_3(i,1, entropyDPT, enthalpyDPT);
+            send5[i] = END5_3(i,2, entropyDPT, enthalpyDPT);
+            hend5[i] = END5_3(i,1, entropyDPT, enthalpyDPT);
          } else {
-            SEND5(i) = SEND5(i - 1);
-            HEND5(i) = HEND5(i - 1);
+            send5[i] = send5[i - 1];
+            hend5[i] = hend5[i - 1];
          }
          break;
        case 5:
          G = END5_4(i,1, entropyDPT, enthalpyDPT) - (temp * (END5_4(i,2, entropyDPT, enthalpyDPT)));
          if(G < G2) {
-            SEND5(i) = END5_4(i,2, entropyDPT, enthalpyDPT);
-            HEND5(i) = END5_4(i,1, entropyDPT, enthalpyDPT);
+            send5[i] = END5_4(i,2, entropyDPT, enthalpyDPT);
+            hend5[i] = END5_4(i,1, entropyDPT, enthalpyDPT);
          } else {
-            SEND5(i) = SEND5(i - 1);
-            HEND5(i) = HEND5(i - 1);
+            send5[i] = send5[i - 1];
+            hend5[i] = hend5[i - 1];
          }
          break;
        default:
@@ -2343,11 +2333,11 @@ END5_1(int i,int hs, double **entropyDPT, double **enthalpyDPT)
    T1 = T2 = -_INFINITY;
    max_tm = -_INFINITY;
    for(k = 0; k <= i - MIN_HRPN_LOOP - 2; ++k) {
-      T1 = (HEND5(k) + dplx_init_H) /(SEND5(k) + dplx_init_S + RC);
+      T1 = (hend5[k] + dplx_init_H) /(send5[k] + dplx_init_S + RC);
       T2 = (0 + dplx_init_H) /(0 + dplx_init_S + RC);
       if(T1 >= T2) {
-         H = HEND5(k) + atPenaltyH(numSeq1[k + 1], numSeq1[i]) + enthalpyDPT[k + 1][i];
-         S = SEND5(k) + atPenaltyS(numSeq1[k + 1], numSeq1[i]) + entropyDPT[k + 1][i];
+         H = hend5[k] + atPenaltyH(numSeq1[k + 1], numSeq1[i]) + enthalpyDPT[k + 1][i];
+         S = send5[k] + atPenaltyS(numSeq1[k + 1], numSeq1[i]) + entropyDPT[k + 1][i];
          if(!isFinite(H) || H > 0 || S > 0) { /* H and S must be greater than 0 to avoid BS */
             H = _INFINITY;
             S = -1.0;
@@ -2386,11 +2376,11 @@ END5_2(int i,int hs, double **entropyDPT, double **enthalpyDPT)
    T1 = T2 = max_tm = -_INFINITY;
    S_max = S = -1.0;
    for (k = 0; k <= i - MIN_HRPN_LOOP - 3; ++k) {
-      T1 = (HEND5(k) + dplx_init_H) /(SEND5(k) + dplx_init_S + RC);
+      T1 = (hend5[k] + dplx_init_H) /(send5[k] + dplx_init_S + RC);
       T2 = (0 + dplx_init_H) /(0 + dplx_init_S + RC);
       if(T1 >= T2) {
-         H = HEND5(k) + atPenaltyH(numSeq1[k + 2], numSeq1[i]) + Hd5(i, k + 2) + enthalpyDPT[k + 2][i];
-         S = SEND5(k) + atPenaltyS(numSeq1[k + 2], numSeq1[i]) + Sd5(i, k + 2) + entropyDPT[k + 2][i];
+         H = hend5[k] + atPenaltyH(numSeq1[k + 2], numSeq1[i]) + Hd5(i, k + 2) + enthalpyDPT[k + 2][i];
+         S = send5[k] + atPenaltyS(numSeq1[k + 2], numSeq1[i]) + Sd5(i, k + 2) + entropyDPT[k + 2][i];
          if(!isFinite(H) || H > 0 || S > 0) {
             H = _INFINITY;
             S = -1.0;
@@ -2429,11 +2419,11 @@ END5_3(int i,int hs, double **entropyDPT, double **enthalpyDPT)
    T1 = T2 = max_tm = -_INFINITY;
    S_max = S = -1.0;
    for (k = 0; k <= i - MIN_HRPN_LOOP - 3; ++k) {
-      T1 = (HEND5(k) + dplx_init_H) /(SEND5(k) + dplx_init_S + RC);
+      T1 = (hend5[k] + dplx_init_H) /(send5[k] + dplx_init_S + RC);
       T2 = (0 + dplx_init_H) /(0 + dplx_init_S + RC);
       if(T1 >= T2) {
-         H = HEND5(k) + atPenaltyH(numSeq1[k + 1], numSeq1[i - 1]) + Hd3(i - 1, k + 1) + enthalpyDPT[k + 1][i - 1];
-         S = SEND5(k) + atPenaltyS(numSeq1[k + 1], numSeq1[i - 1]) + Sd3(i - 1, k + 1) + entropyDPT[k + 1][i - 1];
+         H = hend5[k] + atPenaltyH(numSeq1[k + 1], numSeq1[i - 1]) + Hd3(i - 1, k + 1) + enthalpyDPT[k + 1][i - 1];
+         S = send5[k] + atPenaltyS(numSeq1[k + 1], numSeq1[i - 1]) + Sd3(i - 1, k + 1) + entropyDPT[k + 1][i - 1];
          if(!isFinite(H) || H > 0 || S > 0) {
             H = _INFINITY;
             S = -1.0;
@@ -2472,11 +2462,11 @@ END5_4(int i,int hs, double **entropyDPT, double **enthalpyDPT)
    T1 = T2 = max_tm = -_INFINITY;
    S_max = S = -1.0;
    for(k = 0; k <= i - MIN_HRPN_LOOP - 4; ++k) {
-      T1 = (HEND5(k) + dplx_init_H) /(SEND5(k) + dplx_init_S + RC);
+      T1 = (hend5[k] + dplx_init_H) /(send5[k] + dplx_init_S + RC);
       T2 = (0 + dplx_init_H) /(0 + dplx_init_S + RC);
       if(T1 >= T2) {
-         H = HEND5(k) + atPenaltyH(numSeq1[k + 2], numSeq1[i - 1]) + Htstack(i - 1, k + 2) + enthalpyDPT[k + 2][i - 1];
-         S = SEND5(k) + atPenaltyS(numSeq1[k + 2], numSeq1[i - 1]) + Ststack(i - 1, k + 2) + entropyDPT[k + 2][i - 1];
+         H = hend5[k] + atPenaltyH(numSeq1[k + 2], numSeq1[i - 1]) + Htstack(i - 1, k + 2) + enthalpyDPT[k + 2][i - 1];
+         S = send5[k] + atPenaltyS(numSeq1[k + 2], numSeq1[i - 1]) + Ststack(i - 1, k + 2) + entropyDPT[k + 2][i - 1];
          if(!isFinite(H) || H > 0 || S > 0) {
             H = _INFINITY;
             S = -1.0;
@@ -2606,61 +2596,61 @@ tracebacku(int* bp, int maxLoop, double **entropyDPT, double **enthalpyDPT, thal
       i = top->i;
       j = top->j;
       if(top->mtrx==1) {
-         while (equal(SEND5(i), SEND5(i - 1)) && equal(HEND5(i), HEND5(i - 1))) /* if previous structure is the same as this one */
+         while (equal(send5[i], send5[i - 1]) && equal(hend5[i], hend5[i - 1])) /* if previous structure is the same as this one */
            --i;
          if (i == 0)
            continue;
-         if (equal(SEND5(i), END5_1(i,2, entropyDPT, enthalpyDPT)) && equal(HEND5(i), END5_1(i,1, entropyDPT, enthalpyDPT))) {
+         if (equal(send5[i], END5_1(i,2, entropyDPT, enthalpyDPT)) && equal(hend5[i], END5_1(i,1, entropyDPT, enthalpyDPT))) {
             for (k = 0; k <= i - MIN_HRPN_LOOP - 2; ++k)
-              if (equal(SEND5(i), atPenaltyS(numSeq1[k + 1], numSeq1[i]) + entropyDPT[k + 1][i]) &&
-                  equal(HEND5(i), atPenaltyH(numSeq1[k + 1], numSeq1[i]) + enthalpyDPT[k + 1][i])) {
+              if (equal(send5[i], atPenaltyS(numSeq1[k + 1], numSeq1[i]) + entropyDPT[k + 1][i]) &&
+                  equal(hend5[i], atPenaltyH(numSeq1[k + 1], numSeq1[i]) + enthalpyDPT[k + 1][i])) {
                  push(&stack, k + 1, i,0, o);
                  break;
               }
-            else if (equal(SEND5(i), SEND5(k) + atPenaltyS(numSeq1[k + 1], numSeq1[i]) + entropyDPT[k + 1][i]) &&
-                     equal(HEND5(i), HEND5(k) + atPenaltyH(numSeq1[k + 1], numSeq1[i]) + enthalpyDPT[k + 1][i])) {
+            else if (equal(send5[i], send5[k] + atPenaltyS(numSeq1[k + 1], numSeq1[i]) + entropyDPT[k + 1][i]) &&
+                     equal(hend5[i], hend5[k] + atPenaltyH(numSeq1[k + 1], numSeq1[i]) + enthalpyDPT[k + 1][i])) {
                push(&stack, k + 1, i, 0, o);
                push(&stack, k, 0, 1, o);
                break;
             }
          }
-         else if (equal(SEND5(i), END5_2(i,2, entropyDPT, enthalpyDPT)) && equal(HEND5(i), END5_2(i,1, entropyDPT, enthalpyDPT))) {
+         else if (equal(send5[i], END5_2(i,2, entropyDPT, enthalpyDPT)) && equal(hend5[i], END5_2(i,1, entropyDPT, enthalpyDPT))) {
             for (k = 0; k <= i - MIN_HRPN_LOOP - 3; ++k)
-              if (equal(SEND5(i), atPenaltyS(numSeq1[k + 2], numSeq1[i]) + Sd5(i, k + 2) + entropyDPT[k + 2][i]) &&
-                  equal(HEND5(i), atPenaltyH(numSeq1[k + 2], numSeq1[i]) + Hd5(i, k + 2) + enthalpyDPT[k + 2][i])) {
+              if (equal(send5[i], atPenaltyS(numSeq1[k + 2], numSeq1[i]) + Sd5(i, k + 2) + entropyDPT[k + 2][i]) &&
+                  equal(hend5[i], atPenaltyH(numSeq1[k + 2], numSeq1[i]) + Hd5(i, k + 2) + enthalpyDPT[k + 2][i])) {
                  push(&stack, k + 2, i, 0, o);
                  break;
               }
-            else if (equal(SEND5(i), SEND5(k) + atPenaltyS(numSeq1[k + 2], numSeq1[i]) + Sd5(i, k + 2) + entropyDPT[k + 2][i]) &&
-                     equal(HEND5(i), HEND5(k) + atPenaltyH(numSeq1[k + 2], numSeq1[i]) + Hd5(i, k + 2) + enthalpyDPT[k + 2][i])) {
+            else if (equal(send5[i], send5[k] + atPenaltyS(numSeq1[k + 2], numSeq1[i]) + Sd5(i, k + 2) + entropyDPT[k + 2][i]) &&
+                     equal(hend5[i], hend5[k] + atPenaltyH(numSeq1[k + 2], numSeq1[i]) + Hd5(i, k + 2) + enthalpyDPT[k + 2][i])) {
                push(&stack, k + 2, i, 0, o);
                push(&stack, k, 0, 1, o);
                break;
             }
          }
-         else if (equal(SEND5(i), END5_3(i,2, entropyDPT, enthalpyDPT)) && equal(HEND5(i), END5_3(i,1, entropyDPT, enthalpyDPT))) {
+         else if (equal(send5[i], END5_3(i,2, entropyDPT, enthalpyDPT)) && equal(hend5[i], END5_3(i,1, entropyDPT, enthalpyDPT))) {
             for (k = 0; k <= i - MIN_HRPN_LOOP - 3; ++k)
-              if (equal(SEND5(i), atPenaltyS(numSeq1[k + 1], numSeq1[i - 1]) + Sd3(i - 1, k + 1) + entropyDPT[k + 1][i - 1])
-                  && equal(HEND5(i), atPenaltyH(numSeq1[k + 1], numSeq1[i - 1]) + Hd3(i - 1, k + 1) + enthalpyDPT[k + 1][i - 1])) {
+              if (equal(send5[i], atPenaltyS(numSeq1[k + 1], numSeq1[i - 1]) + Sd3(i - 1, k + 1) + entropyDPT[k + 1][i - 1])
+                  && equal(hend5[i], atPenaltyH(numSeq1[k + 1], numSeq1[i - 1]) + Hd3(i - 1, k + 1) + enthalpyDPT[k + 1][i - 1])) {
                  push(&stack, k + 1, i - 1, 0, o);
                  break;
               }
-            else if (equal(SEND5(i), SEND5(k) + atPenaltyS(numSeq1[k + 1], numSeq1[i - 1]) + Sd3(i - 1, k + 1) + entropyDPT[k + 1][i - 1]) &&
-                     equal(HEND5(i), HEND5(k) + atPenaltyH(numSeq1[k + 1], numSeq1[i - 1]) + Hd3(i - 1, k + 1) + enthalpyDPT[k + 1][i - 1])) {
+            else if (equal(send5[i], send5[k] + atPenaltyS(numSeq1[k + 1], numSeq1[i - 1]) + Sd3(i - 1, k + 1) + entropyDPT[k + 1][i - 1]) &&
+                     equal(hend5[i], hend5[k] + atPenaltyH(numSeq1[k + 1], numSeq1[i - 1]) + Hd3(i - 1, k + 1) + enthalpyDPT[k + 1][i - 1])) {
                push(&stack, k + 1, i - 1, 0, o); /* matrix 0  */
                push(&stack, k, 0, 1, o); /* matrix 3 */
                break;
             }
          }
-         else if(equal(SEND5(i), END5_4(i,2, entropyDPT, enthalpyDPT)) && equal(HEND5(i), END5_4(i,1, entropyDPT, enthalpyDPT))) {
+         else if(equal(send5[i], END5_4(i,2, entropyDPT, enthalpyDPT)) && equal(hend5[i], END5_4(i,1, entropyDPT, enthalpyDPT))) {
             for (k = 0; k <= i - MIN_HRPN_LOOP - 4; ++k)
-              if (equal(SEND5(i), atPenaltyS(numSeq1[k + 2], numSeq1[i - 1]) + Ststack(i - 1, k + 2) + entropyDPT[k + 2][i - 1]) &&
-                  equal(HEND5(i), atPenaltyH(numSeq1[k + 2], numSeq1[i - 1]) + Htstack(i - 1, k + 2) + enthalpyDPT[k + 2][i - 1])) {
+              if (equal(send5[i], atPenaltyS(numSeq1[k + 2], numSeq1[i - 1]) + Ststack(i - 1, k + 2) + entropyDPT[k + 2][i - 1]) &&
+                  equal(hend5[i], atPenaltyH(numSeq1[k + 2], numSeq1[i - 1]) + Htstack(i - 1, k + 2) + enthalpyDPT[k + 2][i - 1])) {
                  push(&stack, k + 2, i - 1, 0, o);
                  break;
               }
-            else if (equal(SEND5(i), SEND5(k) + atPenaltyS(numSeq1[k + 2], numSeq1[i - 1]) + Ststack(i - 1, k + 2) + entropyDPT[k + 2][i - 1]) &&
-                     equal(HEND5(i), HEND5(k) + atPenaltyH(numSeq1[k + 2], numSeq1[i - 1]) + Htstack(i - 1, k + 2) + enthalpyDPT[k + 2][i - 1]) ) {
+            else if (equal(send5[i], send5[k] + atPenaltyS(numSeq1[k + 2], numSeq1[i - 1]) + Ststack(i - 1, k + 2) + entropyDPT[k + 2][i - 1]) &&
+                     equal(hend5[i], hend5[k] + atPenaltyH(numSeq1[k + 2], numSeq1[i - 1]) + Htstack(i - 1, k + 2) + enthalpyDPT[k + 2][i - 1]) ) {
                push(&stack, k + 2, i - 1, 0, o);
                push(&stack, k, 0, 1, o);
                break;
