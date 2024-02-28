@@ -48,7 +48,6 @@
 #include <sys/stat.h>
 
 #include "thal.h"
-#include "thal_parameters.h"
 
 /* Check on which OS we compile */
 #if defined(_WIN32) || defined(WIN32) || defined (__WIN32__) || defined(__CYGWIN__) || defined(__MINGW32__)
@@ -309,10 +308,8 @@ int main(int argc, char** argv)
 
    if (path != NULL) {
       thal_load_parameters(path, &thermodynamic_parameters, &o);
-   } else {
-      set_default_thal_parameters(&thermodynamic_parameters);
+      get_thermodynamic_values(&thermodynamic_parameters, &o);
    }
-   get_thermodynamic_values(&thermodynamic_parameters, &o);
 
    if (tmp_ret) {
      fprintf(stderr, "%s\n", o.msg);

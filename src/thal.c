@@ -51,6 +51,7 @@
 #endif
 
 #include "thal.h"
+#include "thal_default_params.h"
 
 /*#define DEBUG*/
 #ifndef MIN_HRPN_LOOP
@@ -107,16 +108,7 @@
 #define isPositive(x) ((x) > 0 ? (1) : (0))
 
 /*** BEGIN CONSTANTS ***/
-# ifdef INTEGER
-const double _INFINITY = 999999.0;
-# else
-# ifdef INFINITY
-const double _INFINITY = INFINITY;
-# else
-const double _INFINITY = 1.0 / 0.0;
-# endif
-# endif
-
+// static const double _INFINITY is defined in thal_default_params.h
 static const double R = 1.9872; /* cal/Kmol */
 static const double ILAS = (-300 / 310.15); /* Internal Loop Entropy ASymmetry correction -0.3kcal/mol*/
 static const double ILAH = 0.0; /* Internal Loop EntHalpy Asymmetry correction */
@@ -143,14 +135,11 @@ static const int BPI[5][5] =  {
 /*** END OF CONSTANTS ***/
 
 /*** BEGIN STRUCTs ***/
-
-struct triloop {
-  char loop[5];
-  double value; };
-
-struct tetraloop {
-  char loop[6];
-  double value; };
+/*
+Defined in thal_default_params.h:
+struct triloop
+struct tetraloop
+*/
 
 struct tracer /* structure for tracebacku - unimolecular str */ {
   int i;
@@ -287,10 +276,36 @@ static void* safe_malloc(size_t, thal_results* o);
 static void* safe_realloc(void*, size_t, thal_results* o);
 static double* safe_recalloc(double* ptr, int m, int n, thal_results* o);
 
-static int numTriloops; /* hairpin triloop penalties */
-static int numTetraloops; /* hairpin tetraloop penalties */
-static double atpS[5][5]; /* AT penalty */
-static double atpH[5][5]; /* AT penalty */
+/*
+Thermodynamic parameters from thal_default_params.h:
+
+static double atpS[5][5];  AT penalty 
+static double atpH[5][5];  AT penalty 
+static int numTriloops;  hairpin triloop penalties 
+static int numTetraloops;  hairpin tetraloop penalties 
+static double dangleEntropies3[5][5][5]; thermodynamic paramteres for 3' dangling ends 
+static double dangleEnthalpies3[5][5][5];  ther params for 3' dangling ends 
+static double dangleEntropies5[5][5][5];   ther params for 5' dangling ends 
+static double dangleEnthalpies5[5][5][5];  ther params for 5' dangling ends 
+static double stackEntropies[5][5][5][5];  ther params for perfect match pairs 
+static double stackEnthalpies[5][5][5][5];  ther params for perfect match pairs 
+static double stackint2Entropies[5][5][5][5]; ther params for perfect match and internal mm 
+static double stackint2Enthalpies[5][5][5][5];  ther params for perfect match and internal mm
+static double interiorLoopEntropies[30];  interior loop params according to length of the loop 
+static double bulgeLoopEntropies[30];  bulge loop params according to length of the loop 
+static double hairpinLoopEntropies[30];  hairpin loop params accordint to length of the loop 
+static double interiorLoopEnthalpies[30];  same as interiorLoopEntropies but values of entropy 
+static double bulgeLoopEnthalpies[30];  same as bulgeLoopEntropies but values of entropy 
+static double hairpinLoopEnthalpies[30];  same as hairpinLoopEntropies but values of entropy 
+static double tstackEntropies[5][5][5][5];  ther params for terminal mismatches 
+static double tstackEnthalpies[5][5][5][5];  ther params for terminal mismatches 
+static double tstack2Entropies[5][5][5][5];  ther params for internal terminal mismatches 
+static double tstack2Enthalpies[5][5][5][5];  ther params for internal terminal mismatches 
+static struct triloop* triloopEntropies;  ther penalties for given triloop seq-s 
+static struct triloop* triloopEnthalpies;  ther penalties for given triloop seq-s 
+static struct tetraloop* tetraloopEntropies;  ther penalties for given tetraloop seq-s 
+static struct tetraloop* tetraloopEnthalpies;  ther penalties for given tetraloop seq-s 
+*/
 static double *send5, *hend5; /* calc 5'  */
 /* w/o init not constant anymore, cause for unimolecular and bimolecular foldings there are different values */
 static double dplx_init_H; /* initiation enthalpy; for duplex 200, for unimolecular structure 0 */
@@ -304,28 +319,6 @@ static double* entropyDPT; /* matrix for values of entropy */
 static unsigned char *oligo1, *oligo2; /* inserted oligo sequenced */
 static unsigned char *numSeq1, *numSeq2; /* same as oligo1 and oligo2 but converted to numbers */
 static int len1, len2, len3; /* length of sequense 1 and 2 *//* 17.02.2009 int temponly;*/ /* print only temperature of the predicted structure */
-static double dangleEntropies3[5][5][5]; /* thermodynamic paramteres for 3' dangling ends */
-static double dangleEnthalpies3[5][5][5]; /* ther params for 3' dangling ends */
-static double dangleEntropies5[5][5][5];  /* ther params for 5' dangling ends */
-static double dangleEnthalpies5[5][5][5]; /* ther params for 5' dangling ends */
-static double stackEntropies[5][5][5][5]; /* ther params for perfect match pairs */
-static double stackEnthalpies[5][5][5][5]; /* ther params for perfect match pairs */
-static double stackint2Entropies[5][5][5][5]; /*ther params for perfect match and internal mm */
-static double stackint2Enthalpies[5][5][5][5]; /* ther params for perfect match and internal mm*/
-static double interiorLoopEntropies[30]; /* interior loop params according to length of the loop */
-static double bulgeLoopEntropies[30]; /* bulge loop params according to length of the loop */
-static double hairpinLoopEntropies[30]; /* hairpin loop params accordint to length of the loop */
-static double interiorLoopEnthalpies[30]; /* same as interiorLoopEntropies but values of entropy */
-static double bulgeLoopEnthalpies[30]; /* same as bulgeLoopEntropies but values of entropy */
-static double hairpinLoopEnthalpies[30]; /* same as hairpinLoopEntropies but values of entropy */
-static double tstackEntropies[5][5][5][5]; /* ther params for terminal mismatches */
-static double tstackEnthalpies[5][5][5][5]; /* ther params for terminal mismatches */
-static double tstack2Entropies[5][5][5][5]; /* ther params for internal terminal mismatches */
-static double tstack2Enthalpies[5][5][5][5]; /* ther params for internal terminal mismatches */
-static struct triloop* triloopEntropies = NULL; /* ther penalties for given triloop seq-s */
-static struct triloop* triloopEnthalpies = NULL; /* ther penalties for given triloop seq-s */
-static struct tetraloop* tetraloopEntropies = NULL; /* ther penalties for given tetraloop seq-s */
-static struct tetraloop* tetraloopEnthalpies = NULL; /* ther penalties for given tetraloop seq-s */
 static jmp_buf _jmp_buf;
 
 /* Initialize the thermodynamic values (parameters) */
@@ -449,19 +442,19 @@ get_thermodynamic_values(const thal_parameters *tp, thal_results *o)
 void 
 destroy_thal_structures()
 {
-  if (triloopEntropies != NULL) {
+  if ((triloopEntropies != NULL) && (triloopEntropies != defaultTriloopEntropies)){
     free(triloopEntropies);
     triloopEntropies = NULL;
   }
-  if (triloopEnthalpies != NULL) {
+  if ((triloopEnthalpies != NULL) && (triloopEnthalpies != defaultTriloopEnthalpies)){
     free(triloopEnthalpies);
     triloopEnthalpies = NULL;
   }
-  if (tetraloopEntropies != NULL) {
+  if ((tetraloopEntropies != NULL) && (tetraloopEntropies != defaultTetraloopEntropies)){
     free(tetraloopEntropies);
     tetraloopEntropies = NULL;
   }
-  if (tetraloopEnthalpies != NULL) {
+  if ((tetraloopEnthalpies != NULL) && (tetraloopEnthalpies != defaultTetraloopEnthalpies)){
     free(tetraloopEnthalpies);
     tetraloopEnthalpies = NULL;
   }
@@ -1064,10 +1057,8 @@ readTLoop(char **str, char *s, double *v, int triloop, thal_results *o)
   *q = '\0'; q++;
   if (triloop) {
     strncpy(s, p, 5);   /*triloop string has 5 characters*/
-    s[5] = '\0';
   } else {
     strncpy(s, p, 6);   /*tetraloop string has 6 characters*/
-    s[6] = '\0';
   }
   /* skip all spaces */
   while (isspace(*q)) q++;
@@ -1276,7 +1267,7 @@ getTriloop(struct triloop** triloopEntropies, struct triloop** triloopEnthalpies
    char *pt_ds = tp->triloop_ds;
    *num = 0;
    size = 16;
-   if (*triloopEntropies != NULL) {
+   if ((*triloopEntropies != NULL) && (*triloopEntropies != defaultTriloopEntropies)) {
      free(*triloopEntropies);
      *triloopEntropies = NULL;
    }
@@ -1297,7 +1288,7 @@ getTriloop(struct triloop** triloopEntropies, struct triloop** triloopEnthalpies
    *num = 0;
    size = 16;
 
-   if (*triloopEnthalpies != NULL) {
+   if ((*triloopEnthalpies != NULL) && (*triloopEnthalpies != defaultTriloopEnthalpies)) {
      free(*triloopEnthalpies);
      *triloopEnthalpies = NULL;
    }
@@ -1323,7 +1314,7 @@ getTetraloop(struct tetraloop** tetraloopEntropies, struct tetraloop** tetraloop
    char *pt_ds = tp->tetraloop_ds;
    *num = 0;
    size = 16;
-   if (*tetraloopEntropies != NULL) {
+   if ((*tetraloopEntropies != NULL) && (*tetraloopEntropies != defaultTetraloopEntropies)) {
      free(*tetraloopEntropies);
      *tetraloopEntropies = NULL;
    }
@@ -1343,7 +1334,7 @@ getTetraloop(struct tetraloop** tetraloopEntropies, struct tetraloop** tetraloop
    char *pt_dh = tp->tetraloop_dh;
    *num = 0;
    size = 16;
-   if (*tetraloopEnthalpies != NULL) {
+   if ((*tetraloopEnthalpies != NULL) && (*tetraloopEnthalpies != defaultTetraloopEnthalpies)) {
      free(*tetraloopEnthalpies);
      *tetraloopEnthalpies = NULL;
    }
