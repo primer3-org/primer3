@@ -66,7 +66,6 @@
 #define THAL_OOM_ERROR { strcpy(o->msg, "Out of memory"); errno = ENOMEM; longjmp(_jmp_buf, 1); }
 #define THAL_IO_ERROR(f) { sprintf(o->msg, "Unable to open file %s", f); longjmp(_jmp_buf, 1); }
 
-#define bpIndx(a, b) BPI[a][b] /* for traceing matrix BPI */
 #define atPenaltyS(a, b) atpS[a][b]
 #define atPenaltyH(a, b) atpH[a][b]
 
@@ -100,7 +99,7 @@ const int MIN_LOOP = 0;
 //                                                  */
 //static const char BASE_PAIRS[4][4] = {"A-T", "C-G", "G-C", "T-A" }; /* allowed basepairs */
 /* matrix for allowed; bp 0 - no bp, watson crick bp - 1 */
-static const int BPI[5][5] =  {
+static const int bpIndx[5][5] =  {
      {0, 0, 0, 1, 0}, /* A, C, G, T, N; */
      {0, 0, 1, 0, 0},
      {0, 1, 0, 0, 0},
@@ -1382,7 +1381,7 @@ initMatrix(double **entropyDPT, double** enthalpyDPT)
    int i, j;
    for (i = 1; i <= oligo1_len; ++i) {
       for (j = 1; j <= oligo2_len; ++j) {
-         if (bpIndx(numSeq1[i], numSeq2[j]) == 0)  {
+         if (bpIndx[numSeq1[i]][numSeq2[j]] == 0)  {
             enthalpyDPT[i][j] = _INFINITY;
             entropyDPT[i][j] = -1.0;
          } else {
@@ -1399,7 +1398,7 @@ initMatrix2(double **entropyDPT, double **enthalpyDPT)
    int i, j;
    for (i = 1; i <= oligo1_len; ++i)
      for (j = i; j <= oligo2_len; ++j)
-       if (j - i < MIN_HRPN_LOOP + 1 || (bpIndx(numSeq1[i], numSeq1[j]) == 0)) {
+       if (j - i < MIN_HRPN_LOOP + 1 || (bpIndx[numSeq1[i]][numSeq1[j]] == 0)) {
           enthalpyDPT[i][j] = _INFINITY;
           entropyDPT[i][j] = -1.0;
        } else {
@@ -1559,7 +1558,7 @@ LSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalp
    S1 = S2 = -1.0;
    H1 = H2 = -_INFINITY;
    T1 = T2 = -_INFINITY;
-   if (bpIndx(numSeq1[i], numSeq2[j]) == 0) {
+   if (bpIndx[numSeq1[i]][numSeq2[j]] == 0) {
       entropyDPT[i][j] = -1.0;
       enthalpyDPT[i][j] = _INFINITY;
       return;
@@ -1573,7 +1572,7 @@ LSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalp
       G1 = 1.0;
    }
    /** If there is two dangling ends at the same end of duplex **/
-   if((bpIndx(numSeq1[i-1], numSeq2[j-1]) != 1 ) && isFinite(dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]]) && isFinite(dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]])) {
+   if((bpIndx[numSeq1[i-1]][numSeq2[j-1]] != 1 ) && isFinite(dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]]) && isFinite(dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]])) {
       S2 = atPenaltyS(numSeq1[i], numSeq2[j]) + dangleEntropies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]] +
         dangleEntropies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]];
       H2 = atPenaltyH(numSeq1[i], numSeq2[j]) + dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]] +
@@ -1597,7 +1596,7 @@ LSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalp
          H1 = H2;
          T1 = T2;
       }
-   } else if ((bpIndx(numSeq1[i-1], numSeq2[j-1]) != 1) && isFinite(dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]])) {
+   } else if ((bpIndx[numSeq1[i-1]][numSeq2[j-1]] != 1) && isFinite(dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]])) {
       S2 = atPenaltyS(numSeq1[i], numSeq2[j]) + dangleEntropies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]];
       H2 = atPenaltyH(numSeq1[i], numSeq2[j]) + dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]];
       G2 = H2 - TEMP_KELVIN*S2;
@@ -1619,7 +1618,7 @@ LSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalp
          H1 = H2;
          T1 = T2;
       }
-   } else if ((bpIndx(numSeq1[i-1], numSeq2[j-1]) != 1) && isFinite(dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]])) {
+   } else if ((bpIndx[numSeq1[i-1]][numSeq2[j-1]] != 1) && isFinite(dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]])) {
       S2 = atPenaltyS(numSeq1[i], numSeq2[j]) + dangleEntropies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]];
       H2 = atPenaltyH(numSeq1[i], numSeq2[j]) + dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]];
       G2 = H2 - TEMP_KELVIN*S2;
@@ -1672,7 +1671,7 @@ RSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalp
    S1 = S2 = -1.0;
    H1 = H2 = _INFINITY;
    T1 = T2 = -_INFINITY;
-   if (bpIndx(numSeq1[i], numSeq2[j]) == 0) {
+   if (bpIndx[numSeq1[i]][numSeq2[j]] == 0) {
       EntropyEnthalpy[0] = -1.0;
       EntropyEnthalpy[1] = _INFINITY;
       return;
@@ -1686,7 +1685,7 @@ RSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalp
       G1 = 1.0;
    }
    
-   if(bpIndx(numSeq1[i+1], numSeq2[j+1]) == 0 && isFinite(dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]]) && isFinite(dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]])) {
+   if(bpIndx[numSeq1[i+1]][numSeq2[j+1]] == 0 && isFinite(dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]]) && isFinite(dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]])) {
       S2 = atPenaltyS(numSeq1[i], numSeq2[j]) + dangleEntropies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]] +
         dangleEntropies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]];
       H2 = atPenaltyH(numSeq1[i], numSeq2[j]) + dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]] +
@@ -1713,7 +1712,7 @@ RSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalp
       }
    }
 
-   else if(bpIndx(numSeq1[i+1], numSeq2[j+1]) == 0 && isFinite(dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]])) {
+   else if(bpIndx[numSeq1[i+1]][numSeq2[j+1]] == 0 && isFinite(dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]])) {
       S2 = atPenaltyS(numSeq1[i], numSeq2[j]) + dangleEntropies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]];
       H2 = atPenaltyH(numSeq1[i], numSeq2[j]) + dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]];
       G2 = H2 - TEMP_KELVIN*S2;
@@ -1737,7 +1736,7 @@ RSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalp
       }
    }
 
-   else if(bpIndx(numSeq1[i+1], numSeq2[j+1]) == 0 && isFinite(dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]])) {
+   else if(bpIndx[numSeq1[i+1]][numSeq2[j+1]] == 0 && isFinite(dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]])) {
       S2 = atPenaltyS(numSeq1[i], numSeq2[j]) + dangleEntropies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]];
       H2 = atPenaltyH(numSeq1[i], numSeq2[j]) + dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]];
       G2 = H2 - TEMP_KELVIN*S2;
