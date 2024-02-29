@@ -58,7 +58,6 @@
 #define THAL_EXIT_ON_ERROR 0
 #endif
 
-#define CHECK_ERROR(COND,MSG) if (COND) { strcpy(o->msg, MSG); errno = 0; longjmp(_jmp_buf, 1); }
 #define THAL_OOM_ERROR { strcpy(o->msg, "Out of memory"); errno = ENOMEM; longjmp(_jmp_buf, 1); }
 #define THAL_IO_ERROR(f) { sprintf(o->msg, "Unable to open file %s", f); longjmp(_jmp_buf, 1); }
 
@@ -122,34 +121,34 @@ static unsigned char str2int(char c); /* converts DNA sequence to int; 0-A, 1-C,
 
 static double saltCorrectS (double mv, double dv, double dntp); /* part of calculating salt correction
                                                                    for Tm by SantaLucia et al */
-static char* readParamFile(const char* dirname, const char* fname, thal_results* o); /* file of thermodynamic params */
+static char* readParamFile(const char* dirname, const char* fname, jmp_buf, thal_results* o); /* file of thermodynamic params */
 
 /* get thermodynamic tables */
-static double readDouble(char **str, thal_results* o);
+static double readDouble(char **str, jmp_buf, thal_results* o);
 
-static void readLoop(char **str, double *v1, double *v2, double *v3, thal_results *o);
+static void readLoop(char **str, double *v1, double *v2, double *v3, jmp_buf, thal_results *o);
 
-static int readTLoop(char **str, char *s, double *v, int triloop, thal_results *o);
+static int readTLoop(char **str, char *s, double *v, int triloop, jmp_buf, thal_results *o);
 
-static void getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5], const thal_parameters *tp, thal_results* o);
+static void getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5], const thal_parameters *tp, jmp_buf, thal_results* o);
 
 /*static void verifyStackTable(double stack[5][5][5][5], char* type);*/ /* just for debugging; the method is turned off by default */
 
-static void getStackint2(double stackEntropiesint2[5][5][5][5], double stackint2Enthalpies[5][5][5][5], const thal_parameters *tp, thal_results* o);
+static void getStackint2(double stackEntropiesint2[5][5][5][5], double stackint2Enthalpies[5][5][5][5], const thal_parameters *tp, jmp_buf, thal_results* o);
 
 static void getDangle(double dangleEntropies3[5][5][5], double dangleEnthalpies3[5][5][5], double dangleEntropies5[5][5][5],
-                      double dangleEnthalpies5[5][5][5], const thal_parameters *tp, thal_results* o);
+                      double dangleEnthalpies5[5][5][5], const thal_parameters *tp, jmp_buf, thal_results* o);
 
-static void getTstack(double tstackEntropies[5][5][5][5], double tstackEnthalpies[5][5][5][5], const thal_parameters *tp, thal_results* o);
+static void getTstack(double tstackEntropies[5][5][5][5], double tstackEnthalpies[5][5][5][5], const thal_parameters *tp, jmp_buf, thal_results* o);
 
-static void getTstack2(double tstack2Entropies[5][5][5][5], double tstack2Enthalpies[5][5][5][5], const thal_parameters *tp, thal_results* o);
+static void getTstack2(double tstack2Entropies[5][5][5][5], double tstack2Enthalpies[5][5][5][5], const thal_parameters *tp, jmp_buf, thal_results* o);
 
-static void getTriloop(struct triloop**, struct triloop**, int* num, const thal_parameters *tp, thal_results* o);
+static void getTriloop(struct triloop**, struct triloop**, int* num, const thal_parameters *tp, jmp_buf _jmp_buf, thal_results* o);
 
-static void getTetraloop(struct tetraloop**, struct tetraloop**, int* num, const thal_parameters *tp, thal_results* o);
+static void getTetraloop(struct tetraloop**, struct tetraloop**, int* num, const thal_parameters *tp, jmp_buf _jmp_buf, thal_results* o);
 
 static void getLoop(double hairpinLoopEnntropies[30], double interiorLoopEntropies[30], double bulgeLoopEntropiess[30],
-             double hairpinLoopEnthalpies[30], double interiorLoopEnthalpies[30], double bulgeLoopEnthalpies[30], const thal_parameters *tp, thal_results* o);
+             double hairpinLoopEnthalpies[30], double interiorLoopEnthalpies[30], double bulgeLoopEnthalpies[30], const thal_parameters *tp, jmp_buf, thal_results* o);
 
 static void tableStartATS(double atp_value, double atp[5][5]); /* creates table of entropy values for nucleotides
                                                                   to which AT-penlty must be applied */
@@ -198,23 +197,23 @@ static int symmetry_thermo(const unsigned char* seq);
 static void traceback(int i, int j, double RT, int* ps1, int* ps2, int maxLoop, double **entropyDPT, double **enthalpyDPT, thal_results* o);
 
 /* traceback for hairpins */
-static void tracebacku(int*, int, double **entropyDPT, double **enthalpyDPT, thal_results*);
+static void tracebacku(int*, int, double **entropyDPT, double **enthalpyDPT, jmp_buf, thal_results*);
 
 /* prints ascii output of dimer structure */
-char *drawDimer(int*, int*, double, double, const thal_mode mode, double, thal_results *);
+char *drawDimer(int*, int*, double, double, const thal_mode mode, double, jmp_buf, thal_results *);
 
 /* prints ascii output of hairpin structure */
-char *drawHairpin(int*, double, double, const thal_mode mode, double, thal_results *);
+char *drawHairpin(int*, double, double, const thal_mode mode, double, jmp_buf, thal_results *);
 
-static void save_append_string(char** ret, int *space, thal_results *o, const char *str);
+static void save_append_string(char** ret, int *space, thal_results *o, const char *str, jmp_buf);
 
-static void save_append_char(char** ret, int *space, thal_results *o, const char str);
+static void save_append_char(char** ret, int *space, thal_results *o, const char str, jmp_buf);
 
 static int equal(double a, double b);
 
 static void strcatc(char*, char);
 
-static void push(struct tracer**, int, int, int, thal_results*); /* to add elements to struct */
+static void push(struct tracer**, int, int, int, jmp_buf, thal_results*); /* to add elements to struct */
 
 /* terminal bp for monomer structure */
 static void calc_terminal_bp(double temp, double **entropyDPT, double **enthalpyDPT);
@@ -233,9 +232,9 @@ static double Ststack(int,int); /* returns entropy value for terminal stack */
 static double Htstack(int,int); /* returns enthalpy value for terminal stack */
 
 /* memory stuff */
-static void* safe_calloc(size_t, size_t, thal_results* o);
-static void* safe_malloc(size_t, thal_results* o);
-static void* safe_realloc(void*, size_t, thal_results* o);
+static void* safe_calloc(size_t, size_t, jmp_buf _jmp_buf, thal_results* o);
+static void* safe_malloc(size_t, jmp_buf, thal_results* o);
+static void* safe_realloc(void*, size_t, jmp_buf, thal_results* o);
 
 /*
 Thermodynamic parameters from thal_default_params.h:
@@ -279,7 +278,6 @@ static int bestI, bestJ; /* starting position of most stable str */
 static unsigned char *oligo1, *oligo2; /* inserted oligo sequenced */
 static unsigned char *numSeq1, *numSeq2; /* same as oligo1 and oligo2 but converted to numbers */
 static int oligo1_len, oligo2_len; /* length of sequense 1 and 2 *//* 17.02.2009 int temponly;*/ /* print only temperature of the predicted structure */
-static jmp_buf _jmp_buf;
 
 /* Initialize the thermodynamic values (parameters) */
 int  thal_set_null_parameters(thal_parameters *a) {
@@ -378,20 +376,21 @@ int  thal_free_parameters(thal_parameters *a) {
 int 
 get_thermodynamic_values(const thal_parameters *tp, thal_results *o)
 {
+   jmp_buf _jmp_buf;
   if (setjmp(_jmp_buf) != 0) {
      return -1;
   }
-  getStack(stackEntropies, stackEnthalpies, tp, o);
+  getStack(stackEntropies, stackEnthalpies, tp, _jmp_buf, o);
   /* verifyStackTable(stackEntropies, "entropy");
      verifyStackTable(stackEnthalpies, "enthalpy"); */ /* this is for code debugging */
-  getStackint2(stackint2Entropies, stackint2Enthalpies, tp, o);
-  getDangle(dangleEntropies3, dangleEnthalpies3, dangleEntropies5, dangleEnthalpies5, tp, o);
+  getStackint2(stackint2Entropies, stackint2Enthalpies, tp, _jmp_buf, o);
+  getDangle(dangleEntropies3, dangleEnthalpies3, dangleEntropies5, dangleEnthalpies5, tp, _jmp_buf, o);
   getLoop(hairpinLoopEntropies, interiorLoopEntropies, bulgeLoopEntropies, hairpinLoopEnthalpies,
-          interiorLoopEnthalpies, bulgeLoopEnthalpies, tp, o);
-  getTstack(tstackEntropies, tstackEnthalpies, tp, o);
-  getTstack2(tstack2Entropies, tstack2Enthalpies, tp, o);
-  getTriloop(&triloopEntropies, &triloopEnthalpies, &numTriloops, tp, o);
-  getTetraloop(&tetraloopEntropies, &tetraloopEnthalpies, &numTetraloops, tp, o);
+          interiorLoopEnthalpies, bulgeLoopEnthalpies, tp, _jmp_buf, o);
+  getTstack(tstackEntropies, tstackEnthalpies, tp, _jmp_buf, o);
+  getTstack2(tstack2Entropies, tstack2Enthalpies, tp, _jmp_buf, o);
+  getTriloop(&triloopEntropies, &triloopEnthalpies, &numTriloops, tp, _jmp_buf, o);
+  getTetraloop(&tetraloopEntropies, &tetraloopEnthalpies, &numTetraloops, tp, _jmp_buf, o);
   /* getting the AT-penalties */
   tableStartATS(AT_S, atpS);
   tableStartATH(AT_H, atpH);
@@ -420,11 +419,11 @@ destroy_thal_structures()
   }
 }
 
-double **allocate_DPT(int oligo1_len, int oligo2_len, thal_results *o){
+double **allocate_DPT(int oligo1_len, int oligo2_len, jmp_buf _jmp_buf, thal_results *o){
    //Add one to each dimension due to the way the DPT is indexed
    //Row i=0 and column j=0 are never used, but the wasted memory is negligible
-   double *dpt = safe_malloc(sizeof(double) * (oligo1_len + 1) * (oligo2_len +1), o);
-   double **rows = safe_malloc(sizeof(double *) * (oligo1_len + 1), o);
+   double *dpt = safe_malloc(sizeof(double) * (oligo1_len + 1) * (oligo2_len +1), _jmp_buf, o);
+   double **rows = safe_malloc(sizeof(double *) * (oligo1_len + 1), _jmp_buf, o);
    for(int i = 0; i < oligo1_len+1; i++){
       rows[i] = &dpt[i * (oligo2_len +1)];
    }
@@ -453,6 +452,7 @@ thal(const unsigned char *oligo_f,
    unsigned char *oligo2_rev = NULL;
    double mh, ms;
    double G1, bestG;
+   jmp_buf _jmp_buf;
 
    send5 = hend5 = NULL;
    numSeq1 = numSeq2 = NULL;
@@ -468,30 +468,42 @@ thal(const unsigned char *oligo_f,
                  but not necessarily. */
    }
 
-   CHECK_ERROR(NULL == oligo_f, "NULL first sequence");
-   CHECK_ERROR(NULL == oligo_r, "NULL second sequence");
+   if (oligo_f == NULL){
+      strcpy(o->msg, "NULL first sequence");
+      return;
+   }
+   if (oligo_r == NULL){
+      strcpy(o->msg, "NULL second sequence");
+      return;
+   }
    len_f = length_unsig_char(oligo_f);
    len_r = length_unsig_char(oligo_r);
 
-   /*CHECK_ERROR(1==len_f, "Length 1 first sequence");
-   CHECK_ERROR(1==len_r, "Length 1 second sequence"); */
    /* The following error messages will be seen by end users and will
       not be easy to understand. */
-   CHECK_ERROR((len_f > THAL_MAX_ALIGN) && (len_r > THAL_MAX_ALIGN),
-               "Both sequences longer than " XSTR(THAL_MAX_ALIGN)
-               " for thermodynamic alignment");
-   CHECK_ERROR((len_f > THAL_MAX_SEQ), 
-               LONG_SEQ_ERR_STR(THAL_MAX_SEQ) " (1)");
-   CHECK_ERROR((len_r > THAL_MAX_SEQ), 
-               LONG_SEQ_ERR_STR(THAL_MAX_SEQ) " (2)");
+   if((len_f > THAL_MAX_ALIGN) && (len_r > THAL_MAX_ALIGN)){
+      strcpy(o->msg, "Both sequences longer than " XSTR(THAL_MAX_ALIGN)
+         " for thermodynamic alignment");
+      return;
+   }
+   if((len_f > THAL_MAX_SEQ)){ 
+      strcpy(o->msg, LONG_SEQ_ERR_STR(THAL_MAX_SEQ) " (1)");
+      return;
+   }
+   if((len_r > THAL_MAX_SEQ)){ 
+      strcpy(o->msg, LONG_SEQ_ERR_STR(THAL_MAX_SEQ) " (2)");
+      return;
+   }
 
-   CHECK_ERROR(NULL == a,  "NULL 'in' pointer");
+   if(NULL == a){
+      strcpy(o->msg, "NULL 'in' pointer");
+      return;
+   }
    if (NULL == o) return; /* Leave it to the caller to crash */
-   CHECK_ERROR(a->type != thal_any
-               && a->type != thal_end1
-               && a->type != thal_end2
-               && a->type != thal_hairpin,
-               "Illegal type");
+   if((a->type != thal_any) && (a->type != thal_end1) && (a->type != thal_end2) && (a->type != thal_hairpin)){
+      strcpy(o->msg, "Illegal type");
+      return;
+   }
    o->align_end_1 = -1;
    o->align_end_2 = -1;
    if (oligo_f && '\0' == *oligo_f) {
@@ -513,20 +525,20 @@ thal(const unsigned char *oligo_f,
       return;
    }
    if(a->type!=3) {
-      oligo1 = (unsigned char*) safe_malloc((len_f + 1) * sizeof(unsigned char), o);
-      oligo2 = (unsigned char*) safe_malloc((len_r + 1) * sizeof(unsigned char), o);
+      oligo1 = (unsigned char*) safe_malloc((len_f + 1) * sizeof(unsigned char), _jmp_buf, o);
+      oligo2 = (unsigned char*) safe_malloc((len_r + 1) * sizeof(unsigned char), _jmp_buf, o);
       strcpy((char*)oligo1,(const char*)oligo_f);
       strcpy((char*)oligo2,(const char*)oligo_r);
    } else  {
-      oligo1 = (unsigned char*) safe_malloc((len_r + 1) * sizeof(unsigned char), o);
-      oligo2 = (unsigned char*) safe_malloc((len_f + 1) * sizeof(unsigned char), o);
+      oligo1 = (unsigned char*) safe_malloc((len_r + 1) * sizeof(unsigned char), _jmp_buf, o);
+      oligo2 = (unsigned char*) safe_malloc((len_f + 1) * sizeof(unsigned char), _jmp_buf, o);
       strcpy((char*)oligo1,(const char*)oligo_r);
       strcpy((char*)oligo2,(const char*)oligo_f);
    }
    oligo1_len = length_unsig_char(oligo1);
    oligo2_len = length_unsig_char(oligo2);
-   double **enthalpyDPT = allocate_DPT(oligo1_len, oligo2_len, o);
-   double **entropyDPT = allocate_DPT(oligo1_len, oligo2_len, o);
+   double **enthalpyDPT = allocate_DPT(oligo1_len, oligo2_len, _jmp_buf, o);
+   double **entropyDPT = allocate_DPT(oligo1_len, oligo2_len, _jmp_buf, o);
    /*** INIT values for unimolecular and bimolecular structures ***/
    if (a->type==4) { /* unimolecular folding */
       dplx_init_H = 0.0;
@@ -542,10 +554,10 @@ thal(const unsigned char *oligo_f,
          RC = R  * log(a->dna_conc/4000000000.0);
       }
       if(a->type!=3) {
-         oligo2_rev = (unsigned char*) safe_malloc((length_unsig_char(oligo_r) + 1) * sizeof(unsigned char), o);
+         oligo2_rev = (unsigned char*) safe_malloc((length_unsig_char(oligo_r) + 1) * sizeof(unsigned char), _jmp_buf, o);
          strcpy((char*)oligo2_rev,(const char*)oligo_r);
       } else {
-         oligo2_rev = (unsigned char*) safe_malloc((length_unsig_char(oligo_f) + 1) * sizeof(unsigned char), o);
+         oligo2_rev = (unsigned char*) safe_malloc((length_unsig_char(oligo_f) + 1) * sizeof(unsigned char), _jmp_buf, o);
          strcpy((char*)oligo2_rev,(const char*)oligo_f);
       }
       reverse(oligo2_rev); /* REVERSE oligo2, so it goes to dpt 3'->5' direction */
@@ -562,8 +574,8 @@ thal(const unsigned char *oligo_f,
       return;
    }
    /* convert nucleotides to numbers */
-   numSeq1 = (unsigned char*) safe_realloc(numSeq1, oligo1_len + 2, o);
-   numSeq2 = (unsigned char*) safe_realloc(numSeq2, oligo2_len + 2, o);
+   numSeq1 = (unsigned char*) safe_realloc(numSeq1, oligo1_len + 2, _jmp_buf, o);
+   numSeq2 = (unsigned char*) safe_realloc(numSeq2, oligo2_len + 2, _jmp_buf, o);
 
    /*** Calc part of the salt correction ***/
    saltCorrection=saltCorrectS(a->mv,a->dv,a->dntp); /* salt correction for entropy, must be multiplied with N, which is
@@ -571,8 +583,8 @@ thal(const unsigned char *oligo_f,
 
    if(a->type == 4){ /* monomer */
       /* terminal basepairs */
-      send5 = (double*) safe_realloc(send5, (oligo1_len + 1) * sizeof(double), o);
-      hend5 = (double*) safe_realloc(hend5, (oligo1_len + 1) * sizeof(double), o);
+      send5 = (double*) safe_realloc(send5, (oligo1_len + 1) * sizeof(double), _jmp_buf, o);
+      hend5 = (double*) safe_realloc(hend5, (oligo1_len + 1) * sizeof(double), _jmp_buf, o);
    }
    for(i = 0; i < oligo1_len; i++) oligo1[i] = toupper(oligo1[i]);
    for(i = 0; i < oligo2_len; i++) oligo2[i] = toupper(oligo2[i]);
@@ -587,12 +599,12 @@ thal(const unsigned char *oligo_f,
       ms = send5[oligo1_len];
       o->align_end_1 = (int) mh;
       o->align_end_2 = (int) ms;
-      bp = (int*) safe_calloc(oligo1_len, sizeof(int), o);
+      bp = (int*) safe_calloc(oligo1_len, sizeof(int), _jmp_buf, o);
       for (k = 0; k < oligo1_len; ++k) bp[k] = 0;
       if(isFinite(mh)) {
-        tracebacku(bp, a->maxLoop, entropyDPT, enthalpyDPT, o);
+        tracebacku(bp, a->maxLoop, entropyDPT, enthalpyDPT, _jmp_buf, o);
         /* traceback for unimolecular structure */
-        o->sec_struct=drawHairpin(bp, mh, ms, mode,a->temp, o); /* if mode=THL_FAST or THL_DEBUG_F then return after printing basic therm data */
+        o->sec_struct=drawHairpin(bp, mh, ms, mode,a->temp, _jmp_buf, o); /* if mode=THL_FAST or THL_DEBUG_F then return after printing basic therm data */
       } else if((mode != THL_FAST) && (mode != THL_DEBUG_F) && (mode != THL_STRUCT)) {
         fputs("No secondary structure could be calculated\n",stderr);
       }
@@ -627,8 +639,8 @@ thal(const unsigned char *oligo_f,
            }
         }
       int *ps1, *ps2;
-      ps1 = (int*) safe_calloc(oligo1_len, sizeof(int), o);
-      ps2 = (int*) safe_calloc(oligo2_len, sizeof(int), o);
+      ps1 = (int*) safe_calloc(oligo1_len, sizeof(int), _jmp_buf, o);
+      ps2 = (int*) safe_calloc(oligo2_len, sizeof(int), _jmp_buf, o);
       for (i = 0; i < oligo1_len; ++i)
         ps1[i] = 0;
       for (j = 0; j < oligo2_len; ++j)
@@ -660,7 +672,7 @@ thal(const unsigned char *oligo_f,
         ps2[j] = 0;
       if(isFinite(enthalpyDPT[bestI][bestJ])){
          traceback(bestI, bestJ, RC, ps1, ps2, a->maxLoop, entropyDPT, enthalpyDPT, o);
-         o->sec_struct=drawDimer(ps1, ps2, dH, dS, mode, a->temp, o);
+         o->sec_struct=drawDimer(ps1, ps2, dH, dS, mode, a->temp, _jmp_buf, o);
          o->align_end_1=bestI;
          o->align_end_2=bestJ;
       } else  {
@@ -731,7 +743,7 @@ str2int(char c)
 /* memory stuff */
 
 static void* 
-safe_calloc(size_t m, size_t n, thal_results *o)
+safe_calloc(size_t m, size_t n, jmp_buf _jmp_buf, thal_results *o)
 {
    void* ptr;
    if (!(ptr = calloc(m, n))) {
@@ -744,7 +756,7 @@ safe_calloc(size_t m, size_t n, thal_results *o)
 }
 
 static void* 
-safe_malloc(size_t n, thal_results *o)
+safe_malloc(size_t n, jmp_buf _jmp_buf, thal_results *o)
 {
    void* ptr;
    if (!(ptr = malloc(n))) {
@@ -757,7 +769,7 @@ safe_malloc(size_t n, thal_results *o)
 }
 
 static void* 
-safe_realloc(void* ptr, size_t n, thal_results *o)
+safe_realloc(void* ptr, size_t n, jmp_buf _jmp_buf, thal_results *o)
 {
    ptr = realloc(ptr, n);
    if (ptr == NULL) {
@@ -780,10 +792,10 @@ max5(double a, double b, double c, double d, double e)
 }
 
 static void 
-push(struct tracer** stack, int i, int j, int mtrx, thal_results* o)
+push(struct tracer** stack, int i, int j, int mtrx, jmp_buf _jmp_buf, thal_results* o)
 {
    struct tracer* new_top;
-   new_top = (struct tracer*) safe_malloc(sizeof(struct tracer), o);
+   new_top = (struct tracer*) safe_malloc(sizeof(struct tracer), _jmp_buf, o);
    new_top->i = i;
    new_top->j = j;
    new_top->mtrx = mtrx;
@@ -806,12 +818,12 @@ reverse(unsigned char *s)
 #define INIT_BUF_SIZE 1024
 
 static char* 
-readParamFile(const char* dirname, const char* fname, thal_results* o)
+readParamFile(const char* dirname, const char* fname, jmp_buf _jmp_buf, thal_results* o)
 {
   FILE* file;
   char* ret = NULL;
   char* paramdir = NULL;
-  paramdir = (char*) safe_malloc(strlen(dirname) + strlen(fname) + 2, o);
+  paramdir = (char*) safe_malloc(strlen(dirname) + strlen(fname) + 2, _jmp_buf, o);
   strcpy(paramdir, dirname);
 #ifdef OS_WIN
   if (paramdir[strlen(paramdir) - 1] != '\\') {
@@ -841,7 +853,7 @@ readParamFile(const char* dirname, const char* fname, thal_results* o)
   size_t ssz = INIT_BUF_SIZE;
   size_t remaining_size;
   remaining_size = ssz;
-  ret = (char*) safe_malloc(ssz, o);
+  ret = (char*) safe_malloc(ssz, _jmp_buf, o);
   while (1) {
     if (feof(file)) {
       ret[i] = '\0';
@@ -860,7 +872,7 @@ readParamFile(const char* dirname, const char* fname, thal_results* o)
         ssz += INIT_BUF_SIZE;
         remaining_size += INIT_BUF_SIZE;
       }
-      ret = (char *) safe_realloc(ret, ssz, o);
+      ret = (char *) safe_realloc(ret, ssz, _jmp_buf, o);
     }
     ret[i] = c;
     i++;
@@ -870,27 +882,28 @@ readParamFile(const char* dirname, const char* fname, thal_results* o)
 int
 thal_load_parameters(const char *path, thal_parameters *a, thal_results* o)
 {
+   jmp_buf _jmp_buf;
   thal_free_parameters(a);
   if (setjmp(_jmp_buf) != 0) {
     printf("longjump\n");
     return -1;
   }
-  a->dangle_dh = readParamFile(path, "dangle.dh", o);
-  a->dangle_ds = readParamFile(path, "dangle.ds", o);
-  a->loops_dh = readParamFile(path, "loops.dh", o);
-  a->loops_ds = readParamFile(path, "loops.ds", o);
-  a->stack_dh = readParamFile(path, "stack.dh", o);
-  a->stack_ds = readParamFile(path, "stack.ds", o);
-  a->stackmm_dh = readParamFile(path, "stackmm.dh", o);
-  a->stackmm_ds = readParamFile(path, "stackmm.ds", o);
-  a->tetraloop_dh = readParamFile(path, "tetraloop.dh", o);
-  a->tetraloop_ds = readParamFile(path, "tetraloop.ds", o);
-  a->triloop_dh = readParamFile(path, "triloop.dh", o);
-  a->triloop_ds = readParamFile(path, "triloop.ds", o);
-  a->tstack_tm_inf_ds = readParamFile(path, "tstack_tm_inf.ds", o);
-  a->tstack_dh = readParamFile(path, "tstack.dh", o);
-  a->tstack2_dh = readParamFile(path, "tstack2.dh", o);
-  a->tstack2_ds = readParamFile(path, "tstack2.ds", o);
+  a->dangle_dh = readParamFile(path, "dangle.dh", _jmp_buf, o);
+  a->dangle_ds = readParamFile(path, "dangle.ds", _jmp_buf, o);
+  a->loops_dh = readParamFile(path, "loops.dh", _jmp_buf, o);
+  a->loops_ds = readParamFile(path, "loops.ds", _jmp_buf, o);
+  a->stack_dh = readParamFile(path, "stack.dh", _jmp_buf, o);
+  a->stack_ds = readParamFile(path, "stack.ds", _jmp_buf, o);
+  a->stackmm_dh = readParamFile(path, "stackmm.dh", _jmp_buf, o);
+  a->stackmm_ds = readParamFile(path, "stackmm.ds", _jmp_buf, o);
+  a->tetraloop_dh = readParamFile(path, "tetraloop.dh", _jmp_buf, o);
+  a->tetraloop_ds = readParamFile(path, "tetraloop.ds", _jmp_buf, o);
+  a->triloop_dh = readParamFile(path, "triloop.dh", _jmp_buf, o);
+  a->triloop_ds = readParamFile(path, "triloop.ds", _jmp_buf, o);
+  a->tstack_tm_inf_ds = readParamFile(path, "tstack_tm_inf.ds", _jmp_buf, o);
+  a->tstack_dh = readParamFile(path, "tstack.dh", _jmp_buf, o);
+  a->tstack2_dh = readParamFile(path, "tstack2.dh", _jmp_buf, o);
+  a->tstack2_ds = readParamFile(path, "tstack2.ds", _jmp_buf, o);
   return 0;
 }
 
@@ -902,7 +915,7 @@ saltCorrectS (double mv, double dv, double dntp)
 }
 
 static char*
-th_read_str_line(char **str, thal_results* o)
+th_read_str_line(char **str, jmp_buf _jmp_buf, thal_results* o)
 {
   if (*str == NULL) {
     return NULL;
@@ -947,10 +960,10 @@ th_read_str_line(char **str, thal_results* o)
 
 /* These functions are needed as "inf" cannot be read on Windows directly */
 static double 
-readDouble(char **str, thal_results* o)
+readDouble(char **str, jmp_buf _jmp_buf, thal_results* o)
 {
   double result;
-  char *line = th_read_str_line(str, o);
+  char *line = th_read_str_line(str, _jmp_buf, o);
   /* skip any spaces at beginning of the line */
   while (isspace(*line)) line++;
   if (!strncmp(line, "inf", 3)) {
@@ -966,9 +979,9 @@ readDouble(char **str, thal_results* o)
 
 /* Reads a line containing 4 doubles, which can be specified as "inf". */
 static void
-readLoop(char **str, double *v1, double *v2, double *v3, thal_results *o)
+readLoop(char **str, double *v1, double *v2, double *v3, jmp_buf _jmp_buf, thal_results *o)
 {
-  char *line = th_read_str_line(str, o);
+  char *line = th_read_str_line(str, _jmp_buf, o);
   char *p = line, *q;
   /* skip first number on the line */
   while (isspace(*p)) p++;
@@ -1001,9 +1014,9 @@ readLoop(char **str, double *v1, double *v2, double *v3, thal_results *o)
 
 /* Reads a line containing a short string and a double, used for reading a triloop or tetraloop. */
 static int
-readTLoop(char **str, char *s, double *v, int triloop, thal_results *o)
+readTLoop(char **str, char *s, double *v, int triloop, jmp_buf _jmp_buf, thal_results *o)
 {
-  char *line = th_read_str_line(str, o);
+  char *line = th_read_str_line(str, _jmp_buf, o);
   if (!line) return -1;
   char *p = line, *q;
   /* skip first spaces */
@@ -1031,7 +1044,7 @@ readTLoop(char **str, char *s, double *v, int triloop, thal_results *o)
 } 
 
 static void 
-getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5], const thal_parameters *tp, thal_results* o)
+getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5], const thal_parameters *tp, jmp_buf _jmp_buf, thal_results* o)
 {
    int i, j, ii, jj;
    char *pt_ds = tp->stack_ds;
@@ -1044,8 +1057,8 @@ getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5], 
                   stackEntropies[i][ii][j][jj] = -1.0;
                   stackEnthalpies[i][ii][j][jj] = _INFINITY;
                } else {
-                  stackEntropies[i][ii][j][jj] = readDouble(&pt_ds, o);
-                  stackEnthalpies[i][ii][j][jj] = readDouble(&pt_dh, o);
+                  stackEntropies[i][ii][j][jj] = readDouble(&pt_ds, _jmp_buf, o);
+                  stackEnthalpies[i][ii][j][jj] = readDouble(&pt_dh, _jmp_buf, o);
                   if (!isFinite(stackEntropies[i][ii][j][jj]) || !isFinite(stackEnthalpies[i][ii][j][jj])) {
                      stackEntropies[i][ii][j][jj] = -1.0;
                      stackEnthalpies[i][ii][j][jj] = _INFINITY;
@@ -1058,7 +1071,7 @@ getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5], 
 }
 
 static void 
-getStackint2(double stackint2Entropies[5][5][5][5], double stackint2Enthalpies[5][5][5][5], const thal_parameters *tp, thal_results* o)
+getStackint2(double stackint2Entropies[5][5][5][5], double stackint2Enthalpies[5][5][5][5], const thal_parameters *tp, jmp_buf _jmp_buf, thal_results* o)
 {
    int i, j, ii, jj;
    char *pt_ds = tp->stackmm_ds;
@@ -1071,8 +1084,8 @@ getStackint2(double stackint2Entropies[5][5][5][5], double stackint2Enthalpies[5
                   stackint2Entropies[i][ii][j][jj] = -1.0;
                   stackint2Enthalpies[i][ii][j][jj] = _INFINITY;
                } else {
-                  stackint2Entropies[i][ii][j][jj] = readDouble(&pt_ds, o);
-                  stackint2Enthalpies[i][ii][j][jj] = readDouble(&pt_dh, o);
+                  stackint2Entropies[i][ii][j][jj] = readDouble(&pt_ds, _jmp_buf, o);
+                  stackint2Enthalpies[i][ii][j][jj] = readDouble(&pt_dh, _jmp_buf, o);
                   if (!isFinite(stackint2Entropies[i][ii][j][jj]) || !isFinite(stackint2Enthalpies[i][ii][j][jj])) {
                      stackint2Entropies[i][ii][j][jj] = -1.0;
                      stackint2Enthalpies[i][ii][j][jj] = _INFINITY;
@@ -1105,7 +1118,7 @@ verifyStackTable(double stack[5][5][5][5], char* type)
 
 static void 
 getDangle(double dangleEntropies3[5][5][5], double dangleEnthalpies3[5][5][5], double dangleEntropies5[5][5][5],
-          double dangleEnthalpies5[5][5][5], const thal_parameters *tp, thal_results* o)
+          double dangleEnthalpies5[5][5][5], const thal_parameters *tp, jmp_buf _jmp_buf, thal_results* o)
 {
    int i, j, k;
    char *pt_ds = tp->dangle_ds;
@@ -1120,8 +1133,8 @@ getDangle(double dangleEntropies3[5][5][5], double dangleEnthalpies3[5][5][5], d
              dangleEntropies3[i][k][j] = -1.0;
              dangleEnthalpies3[i][k][j] = _INFINITY;
           } else {
-             dangleEntropies3[i][k][j] = readDouble(&pt_ds, o);
-             dangleEnthalpies3[i][k][j] = readDouble(&pt_dh, o);
+             dangleEntropies3[i][k][j] = readDouble(&pt_ds, _jmp_buf, o);
+             dangleEnthalpies3[i][k][j] = readDouble(&pt_dh, _jmp_buf, o);
              if(!isFinite(dangleEntropies3[i][k][j]) || !isFinite(dangleEnthalpies3[i][k][j])) {
                 dangleEntropies3[i][k][j] = -1.0;
                 dangleEnthalpies3[i][k][j] = _INFINITY;             
@@ -1139,8 +1152,8 @@ getDangle(double dangleEntropies3[5][5][5], double dangleEnthalpies3[5][5][5], d
              dangleEntropies5[i][j][k] = -1.0;
              dangleEnthalpies5[i][j][k] = _INFINITY;
           } else {
-             dangleEntropies5[i][j][k] = readDouble(&pt_ds, o);
-             dangleEnthalpies5[i][j][k] = readDouble(&pt_dh, o);
+             dangleEntropies5[i][j][k] = readDouble(&pt_ds, _jmp_buf, o);
+             dangleEnthalpies5[i][j][k] = readDouble(&pt_dh, _jmp_buf, o);
              if(!isFinite(dangleEntropies5[i][j][k]) || !isFinite(dangleEnthalpies5[i][j][k])) {
                 dangleEntropies5[i][j][k] = -1.0;
                 dangleEnthalpies5[i][j][k] = _INFINITY;
@@ -1152,19 +1165,19 @@ getDangle(double dangleEntropies3[5][5][5], double dangleEnthalpies3[5][5][5], d
 static void 
 getLoop(double hairpinLoopEntropies[30], double interiorLoopEntropies[30], double bulgeLoopEntropies[30],
         double hairpinLoopEnthalpies[30], double interiorLoopEnthalpies[30], double bulgeLoopEnthalpies[30], 
-        const thal_parameters *tp, thal_results* o)
+        const thal_parameters *tp, jmp_buf _jmp_buf, thal_results* o)
 {
    int k;
    char *pt_ds = tp->loops_ds;
    char *pt_dh = tp->loops_dh;
    for (k = 0; k < 30; ++k) {
-      readLoop(&pt_ds, &interiorLoopEntropies[k], &bulgeLoopEntropies[k], &hairpinLoopEntropies[k], o);
-      readLoop(&pt_dh, &interiorLoopEnthalpies[k], &bulgeLoopEnthalpies[k], &hairpinLoopEnthalpies[k], o);
+      readLoop(&pt_ds, &interiorLoopEntropies[k], &bulgeLoopEntropies[k], &hairpinLoopEntropies[k], _jmp_buf, o);
+      readLoop(&pt_dh, &interiorLoopEnthalpies[k], &bulgeLoopEnthalpies[k], &hairpinLoopEnthalpies[k], _jmp_buf, o);
    }
 }
 
 static void 
-getTstack(double tstackEntropies[5][5][5][5], double tstackEnthalpies[5][5][5][5], const thal_parameters *tp, thal_results* o)
+getTstack(double tstackEntropies[5][5][5][5], double tstackEnthalpies[5][5][5][5], const thal_parameters *tp, jmp_buf _jmp_buf, thal_results* o)
 {
    int i1, j1, i2, j2;
    char *pt_ds = tp->tstack_tm_inf_ds;
@@ -1180,8 +1193,8 @@ getTstack(double tstackEntropies[5][5][5][5], double tstackEnthalpies[5][5][5][5
               tstackEntropies[i1][i2][j1][j2] = 0.00000000001;
               tstackEnthalpies[i1][i2][j1][j2] = 0.0;
            } else {
-              tstackEntropies[i1][i2][j1][j2] = readDouble(&pt_ds, o);
-              tstackEnthalpies[i1][i2][j1][j2] = readDouble(&pt_dh, o);
+              tstackEntropies[i1][i2][j1][j2] = readDouble(&pt_ds, _jmp_buf, o);
+              tstackEnthalpies[i1][i2][j1][j2] = readDouble(&pt_dh, _jmp_buf, o);
               if (!isFinite(tstackEntropies[i1][i2][j1][j2]) || !isFinite(tstackEnthalpies[i1][i2][j1][j2])) {
                  tstackEntropies[i1][i2][j1][j2] = -1.0;
                  tstackEnthalpies[i1][i2][j1][j2] = _INFINITY;
@@ -1190,7 +1203,7 @@ getTstack(double tstackEntropies[5][5][5][5], double tstackEnthalpies[5][5][5][5
 }
 
 static void 
-getTstack2(double tstack2Entropies[5][5][5][5], double tstack2Enthalpies[5][5][5][5], const thal_parameters *tp, thal_results* o)
+getTstack2(double tstack2Entropies[5][5][5][5], double tstack2Enthalpies[5][5][5][5], const thal_parameters *tp, jmp_buf _jmp_buf, thal_results* o)
 {
 
    int i1, j1, i2, j2;
@@ -1207,8 +1220,8 @@ getTstack2(double tstack2Entropies[5][5][5][5], double tstack2Enthalpies[5][5][5
               tstack2Entropies[i1][i2][j1][j2] = 0.00000000001;
               tstack2Enthalpies[i1][i2][j1][j2] = 0.0;
            } else {
-              tstack2Entropies[i1][i2][j1][j2] = readDouble(&pt_ds, o);
-              tstack2Enthalpies[i1][i2][j1][j2] = readDouble(&pt_dh, o);
+              tstack2Entropies[i1][i2][j1][j2] = readDouble(&pt_ds, _jmp_buf, o);
+              tstack2Enthalpies[i1][i2][j1][j2] = readDouble(&pt_dh, _jmp_buf, o);
               if (!isFinite(tstack2Entropies[i1][i2][j1][j2]) || !isFinite(tstack2Enthalpies[i1][i2][j1][j2])) {
                  tstack2Entropies[i1][i2][j1][j2] = -1.0;
                  tstack2Enthalpies[i1][i2][j1][j2] = _INFINITY;
@@ -1217,7 +1230,7 @@ getTstack2(double tstack2Entropies[5][5][5][5], double tstack2Enthalpies[5][5][5
 }
 
 static void 
-getTriloop(struct triloop** triloopEntropies, struct triloop** triloopEnthalpies, int* num, const thal_parameters *tp, thal_results* o)
+getTriloop(struct triloop** triloopEntropies, struct triloop** triloopEnthalpies, int* num, const thal_parameters *tp, jmp_buf _jmp_buf, thal_results* o)
 {
    int i, size;
    double value;
@@ -1228,18 +1241,18 @@ getTriloop(struct triloop** triloopEntropies, struct triloop** triloopEnthalpies
      free(*triloopEntropies);
      *triloopEntropies = NULL;
    }
-   *triloopEntropies = (struct triloop*) safe_calloc(16, sizeof(struct triloop), o);
-   while (readTLoop(&pt_ds, (*triloopEntropies)[*num].loop, &value, 1, o) != -1) {
+   *triloopEntropies = (struct triloop*) safe_calloc(16, sizeof(struct triloop), _jmp_buf, o);
+   while (readTLoop(&pt_ds, (*triloopEntropies)[*num].loop, &value, 1, _jmp_buf, o) != -1) {
       for (i = 0; i < 5; ++i)
         (*triloopEntropies)[*num].loop[i] = str2int((*triloopEntropies)[*num].loop[i]);
       (*triloopEntropies)[*num].value = value;
       ++*num;
       if (*num == size)        {
          size *= 2;
-         *triloopEntropies = (struct triloop*) safe_realloc(*triloopEntropies, size * sizeof(struct triloop), o);
+         *triloopEntropies = (struct triloop*) safe_realloc(*triloopEntropies, size * sizeof(struct triloop), _jmp_buf, o);
       }
    }
-   *triloopEntropies = (struct triloop*) safe_realloc(*triloopEntropies, *num * sizeof(struct triloop), o);
+   *triloopEntropies = (struct triloop*) safe_realloc(*triloopEntropies, *num * sizeof(struct triloop), _jmp_buf, o);
 
    char *pt_dh = tp->triloop_dh;
    *num = 0;
@@ -1249,22 +1262,22 @@ getTriloop(struct triloop** triloopEntropies, struct triloop** triloopEnthalpies
      free(*triloopEnthalpies);
      *triloopEnthalpies = NULL;
    }
-   *triloopEnthalpies = (struct triloop*) safe_calloc(16, sizeof(struct triloop), o);
-   while (readTLoop(&pt_dh, (*triloopEnthalpies)[*num].loop, &value, 1, o) != -1) {
+   *triloopEnthalpies = (struct triloop*) safe_calloc(16, sizeof(struct triloop), _jmp_buf, o);
+   while (readTLoop(&pt_dh, (*triloopEnthalpies)[*num].loop, &value, 1, _jmp_buf, o) != -1) {
       for (i = 0; i < 5; ++i)
         (*triloopEnthalpies)[*num].loop[i] = str2int((*triloopEnthalpies)[*num].loop[i]);
       (*triloopEnthalpies)[*num].value = value;
       ++*num;
       if (*num == size) {
          size *= 2;
-         *triloopEnthalpies = (struct triloop*) safe_realloc(*triloopEnthalpies, size * sizeof(struct triloop), o);
+         *triloopEnthalpies = (struct triloop*) safe_realloc(*triloopEnthalpies, size * sizeof(struct triloop), _jmp_buf, o);
       }
    }
-   *triloopEnthalpies = (struct triloop*) safe_realloc(*triloopEnthalpies, *num * sizeof(struct triloop), o);
+   *triloopEnthalpies = (struct triloop*) safe_realloc(*triloopEnthalpies, *num * sizeof(struct triloop), _jmp_buf, o);
 }
 
 static void 
-getTetraloop(struct tetraloop** tetraloopEntropies, struct tetraloop** tetraloopEnthalpies, int* num, const thal_parameters *tp, thal_results* o)
+getTetraloop(struct tetraloop** tetraloopEntropies, struct tetraloop** tetraloopEnthalpies, int* num, const thal_parameters *tp, jmp_buf _jmp_buf, thal_results* o)
 {
    int i, size;
    double value;
@@ -1275,18 +1288,18 @@ getTetraloop(struct tetraloop** tetraloopEntropies, struct tetraloop** tetraloop
      free(*tetraloopEntropies);
      *tetraloopEntropies = NULL;
    }
-   *tetraloopEntropies = (struct tetraloop*) safe_calloc(16, sizeof(struct tetraloop), o);
-   while (readTLoop(&pt_ds, (*tetraloopEntropies)[*num].loop, &value, 0, o) != -1) {
+   *tetraloopEntropies = (struct tetraloop*) safe_calloc(16, sizeof(struct tetraloop), _jmp_buf, o);
+   while (readTLoop(&pt_ds, (*tetraloopEntropies)[*num].loop, &value, 0, _jmp_buf, o) != -1) {
       for (i = 0; i < 6; ++i)
         (*tetraloopEntropies)[*num].loop[i] = str2int((*tetraloopEntropies)[*num].loop[i]);
       (*tetraloopEntropies)[*num].value = value;
       ++*num;
       if (*num == size) {
          size *= 2;
-         *tetraloopEntropies = (struct tetraloop*) safe_realloc(*tetraloopEntropies, size * sizeof(struct tetraloop), o);
+         *tetraloopEntropies = (struct tetraloop*) safe_realloc(*tetraloopEntropies, size * sizeof(struct tetraloop), _jmp_buf, o);
       }
    }
-   *tetraloopEntropies = (struct tetraloop*) safe_realloc(*tetraloopEntropies, *num * sizeof(struct tetraloop), o);
+   *tetraloopEntropies = (struct tetraloop*) safe_realloc(*tetraloopEntropies, *num * sizeof(struct tetraloop), _jmp_buf, o);
 
    char *pt_dh = tp->tetraloop_dh;
    *num = 0;
@@ -1295,18 +1308,18 @@ getTetraloop(struct tetraloop** tetraloopEntropies, struct tetraloop** tetraloop
      free(*tetraloopEnthalpies);
      *tetraloopEnthalpies = NULL;
    }
-   *tetraloopEnthalpies = (struct tetraloop*) safe_calloc(16, sizeof(struct tetraloop), o);
-   while (readTLoop(&pt_dh, (*tetraloopEnthalpies)[*num].loop, &value, 0, o) != -1) {
+   *tetraloopEnthalpies = (struct tetraloop*) safe_calloc(16, sizeof(struct tetraloop), _jmp_buf, o);
+   while (readTLoop(&pt_dh, (*tetraloopEnthalpies)[*num].loop, &value, 0, _jmp_buf, o) != -1) {
       for (i = 0; i < 6; ++i)
         (*tetraloopEnthalpies)[*num].loop[i] = str2int((*tetraloopEnthalpies)[*num].loop[i]);
       (*tetraloopEnthalpies)[*num].value = value;
       ++*num;
       if (*num == size) {
          size *= 2;
-         *tetraloopEnthalpies = (struct tetraloop*) safe_realloc(*tetraloopEnthalpies, size * sizeof(struct tetraloop), o);
+         *tetraloopEnthalpies = (struct tetraloop*) safe_realloc(*tetraloopEnthalpies, size * sizeof(struct tetraloop), _jmp_buf, o);
       }
    }
-   *tetraloopEnthalpies = (struct tetraloop*) safe_realloc(*tetraloopEnthalpies, *num * sizeof(struct tetraloop), o);
+   *tetraloopEnthalpies = (struct tetraloop*) safe_realloc(*tetraloopEnthalpies, *num * sizeof(struct tetraloop), _jmp_buf, o);
 }
 
 static void 
@@ -2571,7 +2584,7 @@ length_unsig_char(const unsigned char * str)
 }
 
 static void 
-tracebacku(int* bp, int maxLoop, double **entropyDPT, double **enthalpyDPT, thal_results* o) /* traceback for unimolecular structure */
+tracebacku(int* bp, int maxLoop, double **entropyDPT, double **enthalpyDPT, jmp_buf _jmp_buf, thal_results* o) /* traceback for unimolecular structure */
 {
    int i, j;
    i = j = 0;
@@ -2580,7 +2593,7 @@ tracebacku(int* bp, int maxLoop, double **entropyDPT, double **enthalpyDPT, thal
    double SH1[2];
    double SH2[2];
    double EntropyEnthalpy[2];
-   push(&stack,oligo1_len, 0, 1, o);
+   push(&stack,oligo1_len, 0, 1, _jmp_buf, o);
    while(stack) {
       top = stack;
       stack = stack->next;
@@ -2595,13 +2608,13 @@ tracebacku(int* bp, int maxLoop, double **entropyDPT, double **enthalpyDPT, thal
             for (k = 0; k <= i - min_hrpn_loop - 2; ++k)
               if (equal(send5[i], atpS[numSeq1[k + 1]][numSeq1[i]] + entropyDPT[k + 1][i]) &&
                   equal(hend5[i], atpH[numSeq1[k + 1]][numSeq1[i]] + enthalpyDPT[k + 1][i])) {
-                 push(&stack, k + 1, i,0, o);
+                 push(&stack, k + 1, i,0, _jmp_buf, o);
                  break;
               }
             else if (equal(send5[i], send5[k] + atpS[numSeq1[k + 1]][numSeq1[i]] + entropyDPT[k + 1][i]) &&
                      equal(hend5[i], hend5[k] + atpH[numSeq1[k + 1]][numSeq1[i]] + enthalpyDPT[k + 1][i])) {
-               push(&stack, k + 1, i, 0, o);
-               push(&stack, k, 0, 1, o);
+               push(&stack, k + 1, i, 0, _jmp_buf, o);
+               push(&stack, k, 0, 1, _jmp_buf, o);
                break;
             }
          }
@@ -2609,13 +2622,13 @@ tracebacku(int* bp, int maxLoop, double **entropyDPT, double **enthalpyDPT, thal
             for (k = 0; k <= i - min_hrpn_loop - 3; ++k)
               if (equal(send5[i], atpS[numSeq1[k + 2]][numSeq1[i]] + Sd5(i, k + 2) + entropyDPT[k + 2][i]) &&
                   equal(hend5[i], atpH[numSeq1[k + 2]][numSeq1[i]] + Hd5(i, k + 2) + enthalpyDPT[k + 2][i])) {
-                 push(&stack, k + 2, i, 0, o);
+                 push(&stack, k + 2, i, 0, _jmp_buf, o);
                  break;
               }
             else if (equal(send5[i], send5[k] + atpS[numSeq1[k + 2]][numSeq1[i]] + Sd5(i, k + 2) + entropyDPT[k + 2][i]) &&
                      equal(hend5[i], hend5[k] + atpH[numSeq1[k + 2]][numSeq1[i]] + Hd5(i, k + 2) + enthalpyDPT[k + 2][i])) {
-               push(&stack, k + 2, i, 0, o);
-               push(&stack, k, 0, 1, o);
+               push(&stack, k + 2, i, 0, _jmp_buf, o);
+               push(&stack, k, 0, 1, _jmp_buf, o);
                break;
             }
          }
@@ -2623,13 +2636,13 @@ tracebacku(int* bp, int maxLoop, double **entropyDPT, double **enthalpyDPT, thal
             for (k = 0; k <= i - min_hrpn_loop - 3; ++k)
               if (equal(send5[i], atpS[numSeq1[k + 1]][numSeq1[i - 1]] + Sd3(i - 1, k + 1) + entropyDPT[k + 1][i - 1])
                   && equal(hend5[i], atpH[numSeq1[k + 1]][numSeq1[i - 1]] + Hd3(i - 1, k + 1) + enthalpyDPT[k + 1][i - 1])) {
-                 push(&stack, k + 1, i - 1, 0, o);
+                 push(&stack, k + 1, i - 1, 0, _jmp_buf, o);
                  break;
               }
             else if (equal(send5[i], send5[k] + atpS[numSeq1[k + 1]][numSeq1[i - 1]] + Sd3(i - 1, k + 1) + entropyDPT[k + 1][i - 1]) &&
                      equal(hend5[i], hend5[k] + atpH[numSeq1[k + 1]][numSeq1[i - 1]] + Hd3(i - 1, k + 1) + enthalpyDPT[k + 1][i - 1])) {
-               push(&stack, k + 1, i - 1, 0, o); /* matrix 0  */
-               push(&stack, k, 0, 1, o); /* matrix 3 */
+               push(&stack, k + 1, i - 1, 0, _jmp_buf, o); /* matrix 0  */
+               push(&stack, k, 0, 1, _jmp_buf, o); /* matrix 3 */
                break;
             }
          }
@@ -2637,13 +2650,13 @@ tracebacku(int* bp, int maxLoop, double **entropyDPT, double **enthalpyDPT, thal
             for (k = 0; k <= i - min_hrpn_loop - 4; ++k)
               if (equal(send5[i], atpS[numSeq1[k + 2]][numSeq1[i - 1]] + Ststack(i - 1, k + 2) + entropyDPT[k + 2][i - 1]) &&
                   equal(hend5[i], atpH[numSeq1[k + 2]][numSeq1[i - 1]] + Htstack(i - 1, k + 2) + enthalpyDPT[k + 2][i - 1])) {
-                 push(&stack, k + 2, i - 1, 0, o);
+                 push(&stack, k + 2, i - 1, 0, _jmp_buf, o);
                  break;
               }
             else if (equal(send5[i], send5[k] + atpS[numSeq1[k + 2]][numSeq1[i - 1]] + Ststack(i - 1, k + 2) + entropyDPT[k + 2][i - 1]) &&
                      equal(hend5[i], hend5[k] + atpH[numSeq1[k + 2]][numSeq1[i - 1]] + Htstack(i - 1, k + 2) + enthalpyDPT[k + 2][i - 1]) ) {
-               push(&stack, k + 2, i - 1, 0, o);
-               push(&stack, k, 0, 1, o);
+               push(&stack, k + 2, i - 1, 0, _jmp_buf, o);
+               push(&stack, k, 0, 1, _jmp_buf, o);
                break;
             }
          }
@@ -2659,7 +2672,7 @@ tracebacku(int* bp, int maxLoop, double **entropyDPT, double **enthalpyDPT, thal
          CBI(i, j, SH2, 2, maxLoop, entropyDPT, enthalpyDPT);
          if (equal(entropyDPT[i][j], Ss(i, j, 2) + entropyDPT[i + 1][j - 1]) &&
              equal(enthalpyDPT[i][j], Hs(i, j, 2) + enthalpyDPT[i + 1][j - 1])) {
-            push(&stack, i + 1, j - 1, 0, o);
+            push(&stack, i + 1, j - 1, 0, _jmp_buf, o);
          }
          else if (equal(entropyDPT[i][j], SH1[0]) && equal(enthalpyDPT[i][j], SH1[1]));
          else if (equal(entropyDPT[i][j], SH2[0]) && equal(enthalpyDPT[i][j], SH2[1])) {
@@ -2672,7 +2685,7 @@ tracebacku(int* bp, int maxLoop, double **entropyDPT, double **enthalpyDPT, thal
                  calc_bulge_internal2(i, j, ii, jj, EntropyEnthalpy, 1, maxLoop, entropyDPT, enthalpyDPT);
                  if (equal(entropyDPT[i][j], EntropyEnthalpy[0] + entropyDPT[ii][jj]) &&
                      equal(enthalpyDPT[i][j], EntropyEnthalpy[1] + enthalpyDPT[ii][jj])) {
-                    push(&stack, ii, jj, 0, o);
+                    push(&stack, ii, jj, 0, _jmp_buf, o);
                     ++done;
                     break;
                  }
@@ -2732,7 +2745,7 @@ traceback(int i, int j, double RT, int* ps1, int* ps2, int maxLoop, double **ent
 }
 
 char * 
-drawDimer(int* ps1, int* ps2, double H, double S, const thal_mode mode, double t37, thal_results *o)
+drawDimer(int* ps1, int* ps2, double H, double S, const thal_mode mode, double t37, jmp_buf _jmp_buf, thal_results *o)
 {
    int  ret_space = 0;
    char *ret_ptr = NULL;
@@ -2771,10 +2784,10 @@ drawDimer(int* ps1, int* ps2, double H, double S, const thal_mode mode, double t
       return NULL;
    }
 
-   duplex[0] = (char*) safe_malloc(oligo1_len + oligo2_len + 1, o);
-   duplex[1] = (char*) safe_malloc(oligo1_len + oligo2_len + 1, o);
-   duplex[2] = (char*) safe_malloc(oligo1_len + oligo2_len + 1, o);
-   duplex[3] = (char*) safe_malloc(oligo1_len + oligo2_len + 1, o);
+   duplex[0] = (char*) safe_malloc(oligo1_len + oligo2_len + 1, _jmp_buf, o);
+   duplex[1] = (char*) safe_malloc(oligo1_len + oligo2_len + 1, _jmp_buf, o);
+   duplex[2] = (char*) safe_malloc(oligo1_len + oligo2_len + 1, _jmp_buf, o);
+   duplex[3] = (char*) safe_malloc(oligo1_len + oligo2_len + 1, _jmp_buf, o);
    duplex[0][0] = duplex[1][0] = duplex[2][0] = duplex[3][0] = 0;
 
    i = 0;
@@ -2852,9 +2865,9 @@ drawDimer(int* ps1, int* ps2, double H, double S, const thal_mode mode, double t
    }
    if (mode == THL_STRUCT) {
      ret_str[3] = NULL;
-     ret_str[0] = (char*) safe_malloc(oligo1_len + oligo2_len + 10, o);
-     ret_str[1] = (char*) safe_malloc(oligo1_len + oligo2_len + 10, o);
-     ret_str[2] = (char*) safe_malloc(oligo1_len + oligo2_len + 10, o);
+     ret_str[0] = (char*) safe_malloc(oligo1_len + oligo2_len + 10, _jmp_buf, o);
+     ret_str[1] = (char*) safe_malloc(oligo1_len + oligo2_len + 10, _jmp_buf, o);
+     ret_str[2] = (char*) safe_malloc(oligo1_len + oligo2_len + 10, _jmp_buf, o);
      ret_str[0][0] = ret_str[1][0] = ret_str[2][0] = '\0';
 
      /* Join top primer */
@@ -2941,27 +2954,15 @@ drawDimer(int* ps1, int* ps2, double H, double S, const thal_mode mode, double t
        ret_nr++;
      }
 
-     save_append_string(&ret_str[3], &ret_space, o, ret_para);
-     save_append_string(&ret_str[3], &ret_space, o, ret_str[0]);
-     save_append_string(&ret_str[3], &ret_space, o, " 3\'\\n");
-     save_append_string(&ret_str[3], &ret_space, o, ret_str[1]);
-     save_append_string(&ret_str[3], &ret_space, o, "\\n");
-     save_append_string(&ret_str[3], &ret_space, o, ret_str[2]);
-     save_append_string(&ret_str[3], &ret_space, o, " 5\'\\n");
+     save_append_string(&ret_str[3], &ret_space, o, ret_para, _jmp_buf);
+     save_append_string(&ret_str[3], &ret_space, o, ret_str[0], _jmp_buf);
+     save_append_string(&ret_str[3], &ret_space, o, " 3\'\\n", _jmp_buf);
+     save_append_string(&ret_str[3], &ret_space, o, ret_str[1], _jmp_buf);
+     save_append_string(&ret_str[3], &ret_space, o, "\\n", _jmp_buf);
+     save_append_string(&ret_str[3], &ret_space, o, ret_str[2], _jmp_buf);
+     save_append_string(&ret_str[3], &ret_space, o, " 5\'\\n", _jmp_buf);
 
-
-/*
-     save_append_string(&ret_str, &ret_space, o, "SEQ ");
-     save_append_string(&ret_str, &ret_space, o, duplex[0]);
-     save_append_string(&ret_str, &ret_space, o, "\\nSEQ ");
-     save_append_string(&ret_str, &ret_space, o, duplex[1]);
-     save_append_string(&ret_str, &ret_space, o, "\\nSTR ");
-     save_append_string(&ret_str, &ret_space, o, duplex[2]);
-     save_append_string(&ret_str, &ret_space, o, "\\nSTR ");
-     save_append_string(&ret_str, &ret_space, o, duplex[3]);
-     save_append_string(&ret_str, &ret_space, o, "\\n");
-*/
-     ret_ptr = (char *) safe_malloc(strlen(ret_str[3]) + 1, o);
+     ret_ptr = (char *) safe_malloc(strlen(ret_str[3]) + 1, _jmp_buf, o);
      strcpy(ret_ptr, ret_str[3]);
      if (ret_str[3]) {
        free(ret_str[3]);
@@ -2979,7 +2980,7 @@ drawDimer(int* ps1, int* ps2, double H, double S, const thal_mode mode, double t
 }
 
 char * 
-drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, thal_results *o)
+drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, jmp_buf _jmp_buf, thal_results *o)
 {
    int  ret_space = 0;
    char *ret_ptr;
@@ -3034,7 +3035,7 @@ drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, th
    }
    /* plain-text output */
    char* asciiRow;
-   asciiRow = (char*) safe_malloc(oligo1_len, o);
+   asciiRow = (char*) safe_malloc(oligo1_len, _jmp_buf, o);
    for(i = 0; i < oligo1_len; ++i) asciiRow[i] = '0';
    for(i = 1; i < oligo1_len+1; ++i) {
       if(bp[i-1] == 0) {
@@ -3055,7 +3056,7 @@ drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, th
    if (mode == THL_STRUCT) {
      ret_str = NULL;
 
-     save_append_string(&ret_str, &ret_space, o, ret_para);
+     save_append_string(&ret_str, &ret_space, o, ret_para, _jmp_buf);
 
      ret_last_l = -1;
      ret_first_r = -1;
@@ -3090,48 +3091,39 @@ drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, th
        ret_add_sp_l = ret_right_len - ret_left_len;
      }
      for (i = 0 ; i < ret_add_sp_l ; i++) {
-       save_append_char(&ret_str, &ret_space, o, ' ');
+       save_append_char(&ret_str, &ret_space, o, ' ', _jmp_buf);
      }
-     save_append_string(&ret_str, &ret_space, o, "5' ");
+     save_append_string(&ret_str, &ret_space, o, "5' ", _jmp_buf);
      for (i = 0 ; i < ret_left_len ; i++) {
-       save_append_char(&ret_str, &ret_space, o, (char) oligo1[i]);
+       save_append_char(&ret_str, &ret_space, o, (char) oligo1[i], _jmp_buf);
      }
-     save_append_string(&ret_str, &ret_space, o, "U+2510\\n   ");
+     save_append_string(&ret_str, &ret_space, o, "U+2510\\n   ", _jmp_buf);
      for (i = 0 ; i < ret_add_sp_l ; i++) {
-       save_append_char(&ret_str, &ret_space, o, ' ');
+       save_append_char(&ret_str, &ret_space, o, ' ', _jmp_buf);
      }
      for (i = 0 ; i < ret_left_len ; i++) {
        if (asciiRow[i] == '/') {
-         save_append_char(&ret_str, &ret_space, o, '|');
+         save_append_char(&ret_str, &ret_space, o, '|', _jmp_buf);
        } else {
-         save_append_char(&ret_str, &ret_space, o, ' ');
+         save_append_char(&ret_str, &ret_space, o, ' ', _jmp_buf);
        }
      }
      if (ret_center_char == '|' ) {
-       save_append_string(&ret_str, &ret_space, o, "U+2502");
+       save_append_string(&ret_str, &ret_space, o, "U+2502", _jmp_buf);
      } else {
-       save_append_char(&ret_str, &ret_space, o, ret_center_char);
+       save_append_char(&ret_str, &ret_space, o, ret_center_char, _jmp_buf);
      }
-     save_append_string(&ret_str, &ret_space, o, "\\n");
+     save_append_string(&ret_str, &ret_space, o, "\\n", _jmp_buf);
      for (i = 0 ; i < ret_add_sp_r - 1 ; i++) {
-       save_append_char(&ret_str, &ret_space, o, ' ');
+       save_append_char(&ret_str, &ret_space, o, ' ', _jmp_buf);
      }
-     save_append_string(&ret_str, &ret_space, o, "3' ");
+     save_append_string(&ret_str, &ret_space, o, "3' ", _jmp_buf);
      for (i = oligo1_len ; i > ret_right_start - 1; i--) {
-       save_append_char(&ret_str, &ret_space, o, (char) oligo1[i]);
+       save_append_char(&ret_str, &ret_space, o, (char) oligo1[i], _jmp_buf);
      }
-     save_append_string(&ret_str, &ret_space, o, "U+2518\\n");
+     save_append_string(&ret_str, &ret_space, o, "U+2518\\n", _jmp_buf);
 
-/*
-     save_append_string(&ret_str, &ret_space, o, "SEQ ");
-     for(i = 0; i < oligo1_len; ++i) {
-       save_append_char(&ret_str, &ret_space, o, asciiRow[i]);
-     }
-     save_append_string(&ret_str, &ret_space, o, "\\nSTR ");
-     save_append_string(&ret_str, &ret_space, o, (const char*) oligo1);
-     save_append_string(&ret_str, &ret_space, o, "\\n");
-*/
-     ret_ptr = (char *) safe_malloc(strlen(ret_str) + 1, o);
+     ret_ptr = (char *) safe_malloc(strlen(ret_str) + 1, _jmp_buf, o);
      strcpy(ret_ptr, ret_str);
      if (ret_str != NULL) {
        free(ret_str);
@@ -3142,13 +3134,13 @@ drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, th
 }
 
 static void
-save_append_string(char** ret, int *space, thal_results *o, const char *str) {
+save_append_string(char** ret, int *space, thal_results *o, const char *str, jmp_buf _jmp_buf) {
   int xlen, slen;
   if (str == NULL) {
     return;
   }
   if (*ret == NULL) {
-    *ret = (char *) safe_malloc(sizeof(char)*500, o);
+    *ret = (char *) safe_malloc(sizeof(char)*500, _jmp_buf, o);
     *ret[0] = '\0';
     *space = 500;
   }
@@ -3156,18 +3148,18 @@ save_append_string(char** ret, int *space, thal_results *o, const char *str) {
   slen = strlen(str);
   if (xlen + slen + 1 > *space) {
     *space += 4 * (slen + 1);
-    *ret = (char *) safe_realloc(*ret, *space, o);
+    *ret = (char *) safe_realloc(*ret, *space, _jmp_buf, o);
   }
   strcpy(*ret + xlen, str);
   return;
 }
 
 static void
-save_append_char(char** ret, int *space, thal_results *o, const char str) {
+save_append_char(char** ret, int *space, thal_results *o, const char str, jmp_buf _jmp_buf) {
   char fix[3];
   fix[0] = str;
   fix[1] = '\0';
-  save_append_string(ret, space, o, fix);
+  save_append_string(ret, space, o, fix, _jmp_buf);
 }
 
 
