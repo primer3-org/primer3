@@ -58,9 +58,6 @@
 #define THAL_EXIT_ON_ERROR 0
 #endif
 
-#define THAL_OOM_ERROR { strcpy(o->msg, "Out of memory"); errno = ENOMEM; longjmp(_jmp_buf, 1); }
-#define THAL_IO_ERROR(f) { sprintf(o->msg, "Unable to open file %s", f); longjmp(_jmp_buf, 1); }
-
 #define STR(X) #X
 #define LONG_SEQ_ERR_STR(MAX_LEN) "Target sequence length > maximum allowed (" STR(MAX_LEN) ") in thermodynamic alignment"
 #define XSTR(X) STR(X)
@@ -750,7 +747,9 @@ safe_calloc(size_t m, size_t n, jmp_buf _jmp_buf, thal_results *o)
 #ifdef DEBUG
       fputs("Error in calloc()\n", stderr);
 #endif
-      THAL_OOM_ERROR;
+   strcpy(o->msg, "Out of memory");
+   errno = ENOMEM;
+   longjmp(_jmp_buf, 1);
    }
    return ptr;
 }
@@ -763,7 +762,9 @@ safe_malloc(size_t n, jmp_buf _jmp_buf, thal_results *o)
 #ifdef DEBUG
       fputs("Error in malloc()\n", stderr);
 #endif
-      THAL_OOM_ERROR;
+   strcpy(o->msg, "Out of memory");
+   errno = ENOMEM;
+   longjmp(_jmp_buf, 1);
    }
    return ptr;
 }
@@ -776,7 +777,9 @@ safe_realloc(void* ptr, size_t n, jmp_buf _jmp_buf, thal_results *o)
 #ifdef DEBUG
       fputs("Error in realloc()\n", stderr);
 #endif
-      THAL_OOM_ERROR;
+   strcpy(o->msg, "Out of memory");
+   errno = ENOMEM;
+   longjmp(_jmp_buf, 1);
    }
    return ptr;
 }
@@ -929,7 +932,9 @@ th_read_str_line(char **str, jmp_buf _jmp_buf, thal_results* o)
 #ifdef DEBUG
         fputs("Error in malloc()\n", stderr);
 #endif
-        THAL_OOM_ERROR;
+         strcpy(o->msg, "Out of memory");
+         errno = ENOMEM;
+         longjmp(_jmp_buf, 1);
       }
       /* copy line */
       strncpy(ret, ini, (ptr - ini + 1));
