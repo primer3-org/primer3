@@ -192,10 +192,10 @@ static void traceback(int i, int j, double RT, int* ps1, int* ps2, int maxLoop, 
 static void tracebacku(int*, int, double **entropyDPT, double **enthalpyDPT, double *send5, double *hend5, jmp_buf, thal_results*);
 
 /* prints ascii output of dimer structure */
-char *drawDimer(int*, int*, double, double, const thal_mode mode, double, unsigned char *oligo1, unsigned char *oligo2, jmp_buf, thal_results *);
+char *drawDimer(int*, int*, double, double, const thal_mode mode, double, unsigned char *oligo1, unsigned char *oligo2, double saltCorrection, jmp_buf, thal_results *);
 
 /* prints ascii output of hairpin structure */
-char *drawHairpin(int*, double, double, const thal_mode mode, double, unsigned char *oligo1, unsigned char *oligo2, jmp_buf, thal_results *);
+char *drawHairpin(int*, double, double, const thal_mode mode, double, unsigned char *oligo1, unsigned char *oligo2, double saltCorrection, jmp_buf, thal_results *);
 
 static void save_append_string(char** ret, int *space, thal_results *o, const char *str, jmp_buf);
 
@@ -262,7 +262,7 @@ static struct tetraloop* tetraloopEnthalpies;  ther penalties for given tetraloo
 /* w/o init not constant anymore, cause for unimolecular and bimolecular foldings there are different values */
 static double dplx_init_H; /* initiation enthalpy; for duplex 200, for unimolecular structure 0 */
 static double dplx_init_S; /* initiation entropy; for duplex -5.7, for unimoleculat structure 0 */
-static double saltCorrection; /* value calculated by saltCorrectS, includes correction for monovalent and divalent cations */
+//static double saltCorrection; /* value calculated by saltCorrectS, includes correction for monovalent and divalent cations */
 static double RC; /* universal gas constant multiplied w DNA conc - for melting temperature */
 static int bestI, bestJ; /* starting position of most stable str */
 //static double** enthalpyDPT; /* matrix for values of enthalpy */
@@ -445,6 +445,7 @@ thal(const unsigned char *oligo_f,
    double mh, ms;
    double G1, bestG;
    jmp_buf _jmp_buf;
+   double saltCorrection;
 
    numSeq1 = numSeq2 = NULL;
    unsigned char *oligo1 = NULL;
@@ -596,7 +597,7 @@ thal(const unsigned char *oligo_f,
       if(isFinite(mh)) {
         tracebacku(bp, a->maxLoop, entropyDPT, enthalpyDPT, send5, hend5, _jmp_buf, o);
         /* traceback for unimolecular structure */
-        o->sec_struct=drawHairpin(bp, mh, ms, mode,a->temp, oligo1, oligo2, _jmp_buf, o); /* if mode=THL_FAST or THL_DEBUG_F then return after printing basic therm data */
+        o->sec_struct=drawHairpin(bp, mh, ms, mode,a->temp, oligo1, oligo2, saltCorrection, _jmp_buf, o); /* if mode=THL_FAST or THL_DEBUG_F then return after printing basic therm data */
       } else if((mode != THL_FAST) && (mode != THL_DEBUG_F) && (mode != THL_STRUCT)) {
         fputs("No secondary structure could be calculated\n",stderr);
       }
@@ -664,7 +665,7 @@ thal(const unsigned char *oligo_f,
         ps2[j] = 0;
       if(isFinite(enthalpyDPT[bestI][bestJ])){
          traceback(bestI, bestJ, RC, ps1, ps2, a->maxLoop, entropyDPT, enthalpyDPT, o);
-         o->sec_struct=drawDimer(ps1, ps2, dH, dS, mode, a->temp, oligo1, oligo2, _jmp_buf, o);
+         o->sec_struct=drawDimer(ps1, ps2, dH, dS, mode, a->temp, oligo1, oligo2, saltCorrection, _jmp_buf, o);
          o->align_end_1=bestI;
          o->align_end_2=bestJ;
       } else  {
@@ -2745,7 +2746,7 @@ traceback(int i, int j, double RT, int* ps1, int* ps2, int maxLoop, double **ent
 }
 
 char * 
-drawDimer(int* ps1, int* ps2, double H, double S, const thal_mode mode, double t37, unsigned char *oligo1, unsigned char *oligo2, jmp_buf _jmp_buf, thal_results *o)
+drawDimer(int* ps1, int* ps2, double H, double S, const thal_mode mode, double t37, unsigned char *oligo1, unsigned char *oligo2, double saltCorrection, jmp_buf _jmp_buf, thal_results *o)
 {
    int  ret_space = 0;
    char *ret_ptr = NULL;
@@ -2980,7 +2981,7 @@ drawDimer(int* ps1, int* ps2, double H, double S, const thal_mode mode, double t
 }
 
 char * 
-drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, unsigned char *oligo1, unsigned char *oligo2, jmp_buf _jmp_buf, thal_results *o)
+drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, unsigned char *oligo1, unsigned char *oligo2, double saltCorrection, jmp_buf _jmp_buf, thal_results *o)
 {
    int  ret_space = 0;
    char *ret_ptr;
