@@ -192,10 +192,10 @@ static void traceback(int i, int j, double RT, int* ps1, int* ps2, int maxLoop, 
 static void tracebacku(int*, int, double **entropyDPT, double **enthalpyDPT, double *send5, double *hend5, jmp_buf, thal_results*);
 
 /* prints ascii output of dimer structure */
-char *drawDimer(int*, int*, double, double, const thal_mode mode, double, jmp_buf, thal_results *);
+char *drawDimer(int*, int*, double, double, const thal_mode mode, double, unsigned char *oligo1, unsigned char *oligo2, jmp_buf, thal_results *);
 
 /* prints ascii output of hairpin structure */
-char *drawHairpin(int*, double, double, const thal_mode mode, double, jmp_buf, thal_results *);
+char *drawHairpin(int*, double, double, const thal_mode mode, double, unsigned char *oligo1, unsigned char *oligo2, jmp_buf, thal_results *);
 
 static void save_append_string(char** ret, int *space, thal_results *o, const char *str, jmp_buf);
 
@@ -267,7 +267,7 @@ static double RC; /* universal gas constant multiplied w DNA conc - for melting 
 static int bestI, bestJ; /* starting position of most stable str */
 //static double** enthalpyDPT; /* matrix for values of enthalpy */
 //static double** entropyDPT; /* matrix for values of entropy */
-static unsigned char *oligo1, *oligo2; /* inserted oligo sequenced */
+//static unsigned char *oligo1, *oligo2; /* inserted oligo sequenced */
 static unsigned char *numSeq1, *numSeq2; /* same as oligo1 and oligo2 but converted to numbers */
 static int oligo1_len, oligo2_len; /* length of sequense 1 and 2 *//* 17.02.2009 int temponly;*/ /* print only temperature of the predicted structure */
 
@@ -447,7 +447,8 @@ thal(const unsigned char *oligo_f,
    jmp_buf _jmp_buf;
 
    numSeq1 = numSeq2 = NULL;
-   oligo1 = oligo2 = NULL;
+   unsigned char *oligo1 = NULL;
+   unsigned char *oligo2 = NULL;
    strcpy(o->msg, "");
    o->temp = THAL_ERROR_SCORE;
    errno = 0; 
@@ -595,7 +596,7 @@ thal(const unsigned char *oligo_f,
       if(isFinite(mh)) {
         tracebacku(bp, a->maxLoop, entropyDPT, enthalpyDPT, send5, hend5, _jmp_buf, o);
         /* traceback for unimolecular structure */
-        o->sec_struct=drawHairpin(bp, mh, ms, mode,a->temp, _jmp_buf, o); /* if mode=THL_FAST or THL_DEBUG_F then return after printing basic therm data */
+        o->sec_struct=drawHairpin(bp, mh, ms, mode,a->temp, oligo1, oligo2, _jmp_buf, o); /* if mode=THL_FAST or THL_DEBUG_F then return after printing basic therm data */
       } else if((mode != THL_FAST) && (mode != THL_DEBUG_F) && (mode != THL_STRUCT)) {
         fputs("No secondary structure could be calculated\n",stderr);
       }
@@ -663,7 +664,7 @@ thal(const unsigned char *oligo_f,
         ps2[j] = 0;
       if(isFinite(enthalpyDPT[bestI][bestJ])){
          traceback(bestI, bestJ, RC, ps1, ps2, a->maxLoop, entropyDPT, enthalpyDPT, o);
-         o->sec_struct=drawDimer(ps1, ps2, dH, dS, mode, a->temp, _jmp_buf, o);
+         o->sec_struct=drawDimer(ps1, ps2, dH, dS, mode, a->temp, oligo1, oligo2, _jmp_buf, o);
          o->align_end_1=bestI;
          o->align_end_2=bestJ;
       } else  {
@@ -2744,7 +2745,7 @@ traceback(int i, int j, double RT, int* ps1, int* ps2, int maxLoop, double **ent
 }
 
 char * 
-drawDimer(int* ps1, int* ps2, double H, double S, const thal_mode mode, double t37, jmp_buf _jmp_buf, thal_results *o)
+drawDimer(int* ps1, int* ps2, double H, double S, const thal_mode mode, double t37, unsigned char *oligo1, unsigned char *oligo2, jmp_buf _jmp_buf, thal_results *o)
 {
    int  ret_space = 0;
    char *ret_ptr = NULL;
@@ -2979,7 +2980,7 @@ drawDimer(int* ps1, int* ps2, double H, double S, const thal_mode mode, double t
 }
 
 char * 
-drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, jmp_buf _jmp_buf, thal_results *o)
+drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, unsigned char *oligo1, unsigned char *oligo2, jmp_buf _jmp_buf, thal_results *o)
 {
    int  ret_space = 0;
    char *ret_ptr;
