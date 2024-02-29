@@ -53,11 +53,6 @@
 #include "thal.h"
 #include "thal_default_params.h"
 
-/*#define DEBUG*/
-#ifndef THAL_EXIT_ON_ERROR
-#define THAL_EXIT_ON_ERROR 0
-#endif
-
 #define STR(X) #X
 #define LONG_SEQ_ERR_STR(MAX_LEN) "Target sequence length > maximum allowed (" STR(MAX_LEN) ") in thermodynamic alignment"
 #define XSTR(X) STR(X)
