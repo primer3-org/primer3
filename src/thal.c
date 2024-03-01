@@ -427,6 +427,66 @@ void free_DPT(double **dpt){
    free(dpt);
 }
 
+int thal_check_errors(const unsigned char *oligo_f, const unsigned char *oligo_r, int *len_f, int *len_r, const thal_args *a, thal_results *o){
+   if (oligo_f == NULL){
+      strcpy(o->msg, "NULL first sequence");
+      return 1;
+   }
+   if (oligo_r == NULL){
+      strcpy(o->msg, "NULL second sequence");
+      return 1;
+   }
+   *len_f = length_unsig_char(oligo_f);
+   *len_r = length_unsig_char(oligo_r);
+
+   /* The following error messages will be seen by end users and will
+      not be easy to understand. */
+   if((*len_f > THAL_MAX_ALIGN) && (*len_r > THAL_MAX_ALIGN)){
+      strcpy(o->msg, "Both sequences longer than " XSTR(THAL_MAX_ALIGN)
+         " for thermodynamic alignment");
+      return 1;
+   }
+   if((*len_f > THAL_MAX_SEQ)){ 
+      strcpy(o->msg, LONG_SEQ_ERR_STR(THAL_MAX_SEQ) " (1)");
+      return 1;
+   }
+   if((*len_r > THAL_MAX_SEQ)){ 
+      strcpy(o->msg, LONG_SEQ_ERR_STR(THAL_MAX_SEQ) " (2)");
+      return 1;
+   }
+
+   if(NULL == a){
+      strcpy(o->msg, "NULL 'in' pointer");
+      return 1;
+   }
+   if (NULL == o) return 1; /* Leave it to the caller to crash */
+   if((a->type != thal_any) && (a->type != thal_end1) && (a->type != thal_end2) && (a->type != thal_hairpin)){
+      strcpy(o->msg, "Illegal type");
+      return 1;
+   }
+   o->align_end_1 = -1;
+   o->align_end_2 = -1;
+   if (oligo_f && '\0' == *oligo_f) {
+      strcpy(o->msg, "Empty first sequence");
+      o->temp = 0.0;
+      return 1;
+   }
+   if (oligo_r && '\0' == *oligo_r) {
+      strcpy(o->msg, "Empty second sequence");
+      o->temp = 0.0;
+      return 1;
+   }
+   if (0 == *len_f) {
+      o->temp = 0.0;
+      return 1;
+   }
+   if (0 == *len_r) {
+      o->temp = 0.0;
+      return 1;
+   }
+   return 0;
+}
+
 /* central method: execute all sub-methods for calculating secondary
    structure for dimer or for monomer */
 void 
@@ -469,62 +529,9 @@ thal(const unsigned char *oligo_f,
                  but not necessarily. */
    }
 
-   if (oligo_f == NULL){
-      strcpy(o->msg, "NULL first sequence");
+   if(thal_check_errors(oligo_f, oligo_r, &len_f, &len_r, a, o))
       return;
-   }
-   if (oligo_r == NULL){
-      strcpy(o->msg, "NULL second sequence");
-      return;
-   }
-   len_f = length_unsig_char(oligo_f);
-   len_r = length_unsig_char(oligo_r);
 
-   /* The following error messages will be seen by end users and will
-      not be easy to understand. */
-   if((len_f > THAL_MAX_ALIGN) && (len_r > THAL_MAX_ALIGN)){
-      strcpy(o->msg, "Both sequences longer than " XSTR(THAL_MAX_ALIGN)
-         " for thermodynamic alignment");
-      return;
-   }
-   if((len_f > THAL_MAX_SEQ)){ 
-      strcpy(o->msg, LONG_SEQ_ERR_STR(THAL_MAX_SEQ) " (1)");
-      return;
-   }
-   if((len_r > THAL_MAX_SEQ)){ 
-      strcpy(o->msg, LONG_SEQ_ERR_STR(THAL_MAX_SEQ) " (2)");
-      return;
-   }
-
-   if(NULL == a){
-      strcpy(o->msg, "NULL 'in' pointer");
-      return;
-   }
-   if (NULL == o) return; /* Leave it to the caller to crash */
-   if((a->type != thal_any) && (a->type != thal_end1) && (a->type != thal_end2) && (a->type != thal_hairpin)){
-      strcpy(o->msg, "Illegal type");
-      return;
-   }
-   o->align_end_1 = -1;
-   o->align_end_2 = -1;
-   if (oligo_f && '\0' == *oligo_f) {
-      strcpy(o->msg, "Empty first sequence");
-      o->temp = 0.0;
-      return;
-   }
-   if (oligo_r && '\0' == *oligo_r) {
-      strcpy(o->msg, "Empty second sequence");
-      o->temp = 0.0;
-      return;
-   }
-   if (0 == len_f) {
-      o->temp = 0.0;
-      return;
-   }
-   if (0 == len_r) {
-      o->temp = 0.0;
-      return;
-   }
    if(a->type!=3) {
       oligo1 = (unsigned char*) safe_malloc((len_f + 1) * sizeof(unsigned char), _jmp_buf, o);
       oligo2 = (unsigned char*) safe_malloc((len_r + 1) * sizeof(unsigned char), _jmp_buf, o);
