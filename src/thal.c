@@ -264,7 +264,7 @@ static struct tetraloop* tetraloopEnthalpies;  ther penalties for given tetraloo
 //static double dplx_init_S; /* initiation entropy; for duplex -5.7, for unimoleculat structure 0 */
 //static double saltCorrection; /* value calculated by saltCorrectS, includes correction for monovalent and divalent cations */
 //static double RC; /* universal gas constant multiplied w DNA conc - for melting temperature */
-static int bestI, bestJ; /* starting position of most stable str */
+//static int bestI, bestJ; /* starting position of most stable str */
 //static double** enthalpyDPT; /* matrix for values of enthalpy */
 //static double** entropyDPT; /* matrix for values of entropy */
 //static unsigned char *oligo1, *oligo2; /* inserted oligo sequenced */
@@ -449,6 +449,8 @@ thal(const unsigned char *oligo_f,
    double RC;
    double dplx_init_S;
    double dplx_init_H;
+   int bestI;
+   int bestJ;
 
    numSeq1 = numSeq2 = NULL;
    unsigned char *oligo1 = NULL;
