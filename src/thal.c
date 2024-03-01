@@ -552,7 +552,7 @@ thal(const unsigned char *oligo_f,
       dplx_init_H = 0.0;
       dplx_init_S = -0.00000000001;
       RC=0;
-   } else if(a->type!=4) {
+   } else  {
       /* hybridization of two oligos */
       dplx_init_H = 200;
       dplx_init_S = -5.7;
@@ -572,14 +572,6 @@ thal(const unsigned char *oligo_f,
       free(oligo2);
       oligo2=NULL;
       oligo2=&oligo2_rev[0];
-   } else {
-      strcpy(o->msg, "Wrong alignment type!");
-      o->temp = THAL_ERROR_SCORE;
-      errno=0;
-#ifdef DEBUG
-      fprintf(stderr, o->msg);
-#endif
-      return;
    }
    /* convert nucleotides to numbers */
    numSeq1 = (unsigned char*) safe_realloc(numSeq1, oligo1_len + 2, _jmp_buf, o);
