@@ -469,8 +469,8 @@ destroy_thal_structures()
 double **allocate_DPT(int oligo1_len, int oligo2_len, jmp_buf _jmp_buf, thal_results *o){
    //Add one to each dimension due to the way the DPT is indexed
    //Row i=0 and column j=0 are never used, but the wasted memory is negligible
-   double *dpt = safe_malloc(sizeof(double) * (oligo1_len + 1) * (oligo2_len +1), _jmp_buf, o);
-   double **rows = safe_malloc(sizeof(double *) * (oligo1_len + 1), _jmp_buf, o);
+   double *dpt = (double *) safe_malloc(sizeof(double) * (oligo1_len + 1) * (oligo2_len +1), _jmp_buf, o);
+   double **rows = (double **) safe_malloc(sizeof(double *) * (oligo1_len + 1), _jmp_buf, o);
    for(int i = 0; i < oligo1_len+1; i++){
       rows[i] = &dpt[i * (oligo2_len +1)];
    }
@@ -2607,8 +2607,8 @@ Htstack(int i, int j, unsigned char *numSeq1, unsigned char *numSeq2)
 static int 
 symmetry_thermo(const unsigned char* seq)
 {
-   register char s;
-   register char e;
+   char s;
+   char e;
    const unsigned char *seq_end=seq;
    int i = 0;
    int seq_len=length_unsig_char(seq);
