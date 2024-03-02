@@ -1999,7 +1999,6 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
 {
    int loopSize1, loopSize2, loopSize;
    double S,H,G1,G2;
-   int N, N_loop;
    double SH[2];
    SH[0] = -1.0;
    SH[1] = _INFINITY;
@@ -2007,38 +2006,6 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
    H = _INFINITY;
    loopSize1 = ii - i - 1;
    loopSize2 = jj - j - 1;
-   if(ii < jj) {
-      N = ((2 * i)/2);
-      N_loop = N;
-      if(loopSize1 > 2) N_loop -= (loopSize1 - 2);
-      if(loopSize2 > 2) N_loop -= (loopSize2 - 2);
-   } else {
-      N = ((2 * j)/2);
-      N_loop = 2 * jj;
-      if(loopSize1 > 2) N_loop -= (loopSize1 - 2);
-      if(loopSize2 > 2) N_loop -= (loopSize2 - 2);
-      N_loop = (N_loop/2) - 1;
-   }
-#ifdef DEBUG
-   if (ii <= i){
-      fputs("Error in calc_bulge_internal(): ii is not greater than i\n", stderr);
-   }
-   if (jj <= j)
-     fputs("Error in calc_bulge_internal(): jj is not greater than j\n", stderr);
-#endif
-
-#ifdef DEBUG
-   if (loopSize1 + loopSize2 > maxLoop) {
-      fputs("Error: calc_bulge_internal() called with loopSize1 + loopSize2 > maxLoop\n", stderr);
-      return;
-   }
-#endif
-#ifdef DEBUG
-   if (loopSize1 == 0 && loopSize2 == 0) {
-      fputs("Error: calc_bulge_internal() called with nonsense\n", stderr);
-      return;
-   }
-#endif
    loopSize = loopSize1 + loopSize2-1;
    if((loopSize1 == 0 && loopSize2 > 0) || (loopSize2 == 0 && loopSize1 > 0)) { /* only bulges have to be considered */
       if(loopSize2 == 1 || loopSize1 == 1) { /* bulge loop of size one is treated differently
