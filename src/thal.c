@@ -306,6 +306,7 @@ int main(void){
       thal_results o;
       thal_args a;
       set_thal_default_args(&a);
+      //a.maxLoop = 0;
       a.type = mode;
       if (mode == thal_hairpin){
          a.dimer=0;
@@ -1633,7 +1634,7 @@ LSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalp
    S1 = atpS[numSeq1[i]][numSeq2[j]] + tstack2Entropies[numSeq2[j]][numSeq2[j-1]][numSeq1[i]][numSeq1[i-1]];
    H1 = atpH[numSeq1[i]][numSeq2[j]] + tstack2Enthalpies[numSeq2[j]][numSeq2[j-1]][numSeq1[i]][numSeq1[i-1]];
    G1 = H1 - TEMP_KELVIN*S1;
-   if(!isFinite(H1) || G1>0) {
+   if(G1>0) {
       H1 = _INFINITY;
       S1 = -1.0;
       G1 = 1.0;
@@ -1645,7 +1646,7 @@ LSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalp
       H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]] +
         dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]];
       G2 = H2 - TEMP_KELVIN*S2;
-      if(!isFinite(H2) || G2>0) {
+      if(G2>0) {
          H2 = _INFINITY;
          S2 = -1.0;
      G2 = 1.0;
@@ -1667,13 +1668,13 @@ LSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalp
       S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]];
       H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]];
       G2 = H2 - TEMP_KELVIN*S2;
-      if(!isFinite(H2) || G2>0) {
+      if(G2>0) {
          H2 = _INFINITY;
          S2 = -1.0;
      G2 = 1.0;
       }
       T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
-      if(isFinite(H1) && G1<0) {
+      if(G1<0) {
          T1 = (H1 + dplx_init_H) / (S1 + dplx_init_S + RC);
          if(T1<T2 && G2<0) {
             S1 = S2;
@@ -1689,13 +1690,13 @@ LSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalp
       S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]];
       H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]];
       G2 = H2 - TEMP_KELVIN*S2;
-      if(!isFinite(H2) || G2>0) {
+      if(G2>0) {
          H2 = _INFINITY;
          S2 = -1.0;
      G2 = 1.0;     
       }
       T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
-      if(isFinite(H1) && G1<0) {
+      if(G1<0) {
          T1 = (H1 + dplx_init_H) / (S1 + dplx_init_S + RC);
          if(T1 < T2  && G2<0) {
             S1 = S2;
@@ -1746,7 +1747,7 @@ RSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalp
    S1 = atpS[numSeq1[i]][numSeq2[j]] + tstack2Entropies[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]][numSeq2[j + 1]];
    H1 = atpH[numSeq1[i]][numSeq2[j]] + tstack2Enthalpies[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]][numSeq2[j + 1]];
    G1 = H1 - TEMP_KELVIN*S1;
-   if(!isFinite(H1) || G1>0) {
+   if(G1>0) {
       H1 = _INFINITY;
       S1 = -1.0;
       G1 = 1.0;
@@ -1758,14 +1759,14 @@ RSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalp
       H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]] +
         dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]];
     G2 = H2 - TEMP_KELVIN*S2;
-      if(!isFinite(H2) || G2>0) {
+      if(G2>0) {
          H2 = _INFINITY;
          S2 = -1.0;
      G2 = 1.0;
       }
       
       T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
-      if(isFinite(H1) && G1<0) {
+      if(G1<0) {
          T1 = (H1 + dplx_init_H) / (S1 + dplx_init_S + RC);
          if(T1 < T2 && G2<0) {
             S1 = S2;
@@ -1783,13 +1784,13 @@ RSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalp
       S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]];
       H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]];
       G2 = H2 - TEMP_KELVIN*S2;
-      if(!isFinite(H2) || G2 >0) {
+      if(G2 >0) {
          H2 = _INFINITY;
          S2 = -1.0;
-     G2 = 1.0;
+         G2 = 1.0;
       }
       T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
-      if(isFinite(H1) && G1<0) {
+      if(G1<0) {
          T1 = (H1 + dplx_init_H) / (S1 + dplx_init_S + RC);
          if(T1 < T2 && G2<0) {
             S1 = S2;
@@ -1807,13 +1808,13 @@ RSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalp
       S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]];
       H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]];
       G2 = H2 - TEMP_KELVIN*S2;
-      if(!isFinite(H2) || G2>0) {
+      if(G2>0) {
          H2 = _INFINITY;
          S2 = -1.0;
      G2 = 1.0;
       }
       T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
-      if(isFinite(H1) && G1<0) {
+      if(G1<0) {
          T1 = (H1 + dplx_init_H) / (S1 + dplx_init_S + RC);
          if(T1 < T2 && G2<0) {
             S1 = S2;
