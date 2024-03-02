@@ -322,7 +322,6 @@ int main(void){
    free(seq2_data);
    free(sequences1);
    free(sequences2);
-   printf("%ld %ld %ld %ld %ld\n", count1, count2, count3, count4, count5);
    return 0;
 }
 #endif
@@ -1538,9 +1537,9 @@ fillMatrix(int maxLoop, double **entropyDPT, double **enthalpyDPT, double RC, do
                      jj = 1;
                   }
                   for (; ii > 0 && jj < j; --ii, ++jj) {
+                     SH[0] = -1.0;
+                     SH[1] = _INFINITY;
                      if (isFinite(enthalpyDPT[ii][jj])) {
-                        SH[0] = -1.0;
-                        SH[1] = _INFINITY;
                         calc_bulge_internal(ii, jj, i, j, SH, 0, maxLoop, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
                         if(SH[0] < MinEntropyCutoff) {
                            /* to not give dH any value if dS is unreasonable */
