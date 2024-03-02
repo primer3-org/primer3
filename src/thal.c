@@ -986,7 +986,7 @@ th_read_str_line(char **str, jmp_buf _jmp_buf, thal_results* o)
   while(1) {
     if ((*ptr == '\n') || (*ptr == '\0')) {
       char *ret = NULL;
-      if (!(ret = malloc(sizeof(char) * (ptr - ini + 1)))) {
+      if (!(ret = (char *) malloc(sizeof(char) * (ptr - ini + 1)))) {
 #ifdef DEBUG
         fputs("Error in malloc()\n", stderr);
 #endif
