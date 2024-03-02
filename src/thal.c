@@ -1628,6 +1628,8 @@ LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
    H1 = H2 = -_INFINITY;
    T1 = T2 = -_INFINITY;
    if (bpIndx[numSeq1[i]][numSeq2[j]] == 0) {
+      EntropyEnthalpy[0] = -1.0;
+      EntropyEnthalpy[1] = _INFINITY;
       return;
    }
    S1 = atpS[numSeq1[i]][numSeq2[j]] + tstack2Entropies[numSeq2[j]][numSeq2[j-1]][numSeq1[i]][numSeq1[i-1]];
