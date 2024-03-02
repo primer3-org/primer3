@@ -175,8 +175,8 @@ static double Ss(int i, int j, int k, unsigned char *numSeq1, unsigned char *num
 static double Hs(int i, int j, int k, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len); /* returns stack enthalpy */
 
 /* calculate terminal entropy S and terminal enthalpy H starting reading from 5'end (Left hand/3' end - Right end) */
-static void LSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalpyDPT, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2);
-static void RSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalpyDPT, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2);
+static void LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2);
+static void RSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2);
 
 static void reverse(unsigned char *s);
 
@@ -322,6 +322,7 @@ int main(void){
    free(seq2_data);
    free(sequences1);
    free(sequences2);
+   printf("%ld %ld %ld %ld %ld\n", count1, count2, count3, count4, count5);
    return 0;
 }
 #endif
@@ -684,7 +685,7 @@ thal(const unsigned char *oligo_f,
       if(a->type==1)
         for (i = 1; i <= oligo1_len; i++) {
            for (j = 1; j <= oligo2_len; j++) {
-              RSH(i, j, SH, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+              RSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
               G1 = (enthalpyDPT[i][j]+ SH[1] + dplx_init_H) - TEMP_KELVIN*(entropyDPT[i][j] + SH[0] + dplx_init_S);  
               if(G1<bestG){
                  bestG = G1;
@@ -707,7 +708,7 @@ thal(const unsigned char *oligo_f,
          i = oligo1_len;
          G1 = bestG = _INFINITY;
          for (j = 1; j <= oligo2_len; ++j) {
-            RSH(i, j, SH, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+            RSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
             G1 = (enthalpyDPT[i][j]+ SH[1] + dplx_init_H) - TEMP_KELVIN*(entropyDPT[i][j] + SH[0] + dplx_init_S);  
                 if(G1<bestG){
                    bestG = G1;
@@ -717,7 +718,7 @@ thal(const unsigned char *oligo_f,
       }
       if (!isFinite(bestG)) bestI = bestJ = 1;
       double dH, dS;
-      RSH(bestI, bestJ, SH, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+      RSH(bestI, bestJ, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
       dH = enthalpyDPT[bestI][bestJ]+ SH[1] + dplx_init_H;
       dS = (entropyDPT[bestI][bestJ] + SH[0] + dplx_init_S);
       /* tracebacking */
@@ -1490,7 +1491,7 @@ fillMatrix(int maxLoop, double **entropyDPT, double **enthalpyDPT, double RC, do
          if(isFinite(enthalpyDPT[i][j])) { /* if finite */
             SH[0] = -1.0;
             SH[1] = _INFINITY;
-            LSH(i, j, SH, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+            LSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
             if(isFinite(SH[1])) {
                entropyDPT[i][j] = SH[0];
                enthalpyDPT[i][j] = SH[1];
@@ -1499,7 +1500,7 @@ fillMatrix(int maxLoop, double **entropyDPT, double **enthalpyDPT, double RC, do
                T0 = T1 = -_INFINITY;
                S0 = entropyDPT[i][j];
                H0 = enthalpyDPT[i][j];
-               RSH(i, j, SH, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+               RSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
                T0 = (H0 + dplx_init_H + SH[1]) /(S0 + dplx_init_S + SH[0] + RC); /* at current position */
                if(isFinite(enthalpyDPT[i - 1][j - 1]) && isFinite(Hs(i - 1, j - 1, 1, numSeq1, numSeq2, oligo1_len, oligo2_len))) {
                   S1 = (entropyDPT[i - 1][j - 1] + Ss(i - 1, j - 1, 1, numSeq1, numSeq2, oligo1_len, oligo2_len));
@@ -1619,7 +1620,7 @@ fillMatrix2(int maxLoop, double **entropyDPT, double **enthalpyDPT, double RC, d
 }
 
 static void 
-LSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalpyDPT, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2)
+LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2)
 {
    double S1, H1, T1, G1;
    double S2, H2, T2, G2;
@@ -1627,8 +1628,6 @@ LSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalp
    H1 = H2 = -_INFINITY;
    T1 = T2 = -_INFINITY;
    if (bpIndx[numSeq1[i]][numSeq2[j]] == 0) {
-      entropyDPT[i][j] = -1.0;
-      enthalpyDPT[i][j] = _INFINITY;
       return;
    }
    S1 = atpS[numSeq1[i]][numSeq2[j]] + tstack2Entropies[numSeq2[j]][numSeq2[j-1]][numSeq1[i]][numSeq1[i-1]];
@@ -1730,7 +1729,7 @@ LSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalp
 }
 
 static void 
-RSH(int i, int j, double* EntropyEnthalpy, double **entropyDPT, double **enthalpyDPT, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2)
+RSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2)
 {
    double G1, G2;
    double S1, S2;
@@ -1983,7 +1982,7 @@ calc_hairpin(int i, int j, double* EntropyEnthalpy, int traceback, double **entr
       EntropyEnthalpy[1] = _INFINITY;
       EntropyEnthalpy[0] = -1.0;
    }
-   RSH(i, j, SH, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+   RSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
    G1 = EntropyEnthalpy[1]+SH[1] -TEMP_KELVIN*(EntropyEnthalpy[0]+SH[0]);
    G2 = enthalpyDPT[i][j]+SH[1] -TEMP_KELVIN*(entropyDPT[i][j]+SH[0]);
      if(G2 < G1 && traceback == 0) {
@@ -2061,7 +2060,7 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
             S = -1.0;
          } 
          if((isFinite(H)) || (traceback==1)) {
-            RSH(ii, jj, SH, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+            RSH(ii, jj, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
             G1 = H+SH[1] -TEMP_KELVIN*(S+SH[0]);
             G2 = enthalpyDPT[ii][jj]+SH[1]-TEMP_KELVIN*((entropyDPT[ii][jj]+SH[0]));
             if((G1< G2) || (traceback==1)) {
@@ -2085,7 +2084,7 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
             S = -1.0;
          }
          if((isFinite(H)) || (traceback==1)){ 
-            RSH(ii, jj, SH, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+            RSH(ii, jj, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
             G1 = H+SH[1] -TEMP_KELVIN*(S+SH[0]);
             G2 = enthalpyDPT[ii][jj]+SH[1]-TEMP_KELVIN*(entropyDPT[ii][jj]+SH[0]);
             if(G1< G2 || (traceback==1)){
@@ -2111,7 +2110,7 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
          S = -1.0;
       }    
       if((isFinite(H)) || (traceback==1)){
-         RSH(ii, jj, SH, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+         RSH(ii, jj, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
          G1 = H+SH[1] -TEMP_KELVIN*(S+SH[0]);
          G2 = enthalpyDPT[ii][jj]+SH[1]-TEMP_KELVIN*(entropyDPT[ii][jj]+SH[0]);
          if((G1< G2) || traceback==1) {
@@ -2138,7 +2137,7 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
          S = -1.0;
       }
       if((isFinite(H)) || (traceback==1)){
-         RSH(ii, jj, SH, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+         RSH(ii, jj, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
          G1 = H+SH[1] -TEMP_KELVIN*(S+SH[0]);
          G2 = enthalpyDPT[ii][jj]+SH[1]-TEMP_KELVIN*(entropyDPT[ii][jj]+SH[0]);
          if((G1< G2) || (traceback==1)){
@@ -2777,7 +2776,7 @@ traceback(int i, int j, double RC, int* ps1, int* ps2, int maxLoop, double **ent
    while(1) {
       SH[0] = -1.0;
       SH[1] = _INFINITY;
-      LSH(i,j,SH, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+      LSH(i,j,SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
       if(equal(entropyDPT[i][j],SH[0]) && equal(enthalpyDPT[i][j],SH[1])) {
          break;
       }
