@@ -271,6 +271,7 @@ static struct tetraloop* tetraloopEnthalpies;  ther penalties for given tetraloo
 //static unsigned char *numSeq1, *numSeq2; /* same as oligo1 and oligo2 but converted to numbers */
 //static int oligo1_len, oligo2_len; /* length of sequense 1 and 2 *//* 17.02.2009 int temponly;*/ /* print only temperature of the predicted structure */
 
+//#define THAL_PROFILE
 #ifdef THAL_PROFILE
 //Main function for profiling thal() with gprof
 // compile with -pg to generate profiling information
@@ -280,7 +281,7 @@ int main(void){
    const int num_tests = 10000;
    const int seq1_len = 20;
    const int seq2_len = 20;
-   thal_alignment_type mode = thal_hairpin;
+   thal_alignment_type mode = thal_any;
    srand(time(NULL));
    char bases[4] = {'A', 'C', 'G', 'T'};
    int tests_complete = 0;
@@ -309,7 +310,7 @@ int main(void){
       if (mode == thal_hairpin){
          a.dimer=0;
       }
-      thal((unsigned char *)sequences1[i], (unsigned char *)sequences2[i], &a, THL_GENERAL, &o);
+      thal((unsigned char *)sequences1[i], (unsigned char *)sequences2[i], &a, THL_FAST, &o);
       if (o.temp != THAL_ERROR_SCORE)
          tests_complete++;
       else
@@ -2057,13 +2058,15 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
          if(!isFinite(H)) {
             H = _INFINITY;
             S = -1.0;
-         }
-         RSH(ii, jj, SH, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-         G1 = H+SH[1] -TEMP_KELVIN*(S+SH[0]);
-         G2 = enthalpyDPT[ii][jj]+SH[1]-TEMP_KELVIN*((entropyDPT[ii][jj]+SH[0]));
-         if((G1< G2) || (traceback==1)) {
-            EntropyEnthalpy[0] = S;
-            EntropyEnthalpy[1] = H;
+         } 
+         if((isFinite(H)) || (traceback==1)) {
+            RSH(ii, jj, SH, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+            G1 = H+SH[1] -TEMP_KELVIN*(S+SH[0]);
+            G2 = enthalpyDPT[ii][jj]+SH[1]-TEMP_KELVIN*((entropyDPT[ii][jj]+SH[0]));
+            if((G1< G2) || (traceback==1)) {
+               EntropyEnthalpy[0] = S;
+               EntropyEnthalpy[1] = H;
+            }
          }
       } else { /* we have _not_ implemented Jacobson-Stockaymayer equation; the maximum bulgeloop size is 30 */
 
@@ -2080,15 +2083,15 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
             H = _INFINITY;
             S = -1.0;
          }
-        
-     RSH(ii, jj, SH, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-         G1 = H+SH[1] -TEMP_KELVIN*(S+SH[0]);
-         G2 = enthalpyDPT[ii][jj]+SH[1]-TEMP_KELVIN*(entropyDPT[ii][jj]+SH[0]);
-         if(G1< G2 || (traceback==1)){
-            EntropyEnthalpy[0] = S;
-            EntropyEnthalpy[1] = H;
+         if((isFinite(H)) || (traceback==1)){ 
+            RSH(ii, jj, SH, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+            G1 = H+SH[1] -TEMP_KELVIN*(S+SH[0]);
+            G2 = enthalpyDPT[ii][jj]+SH[1]-TEMP_KELVIN*(entropyDPT[ii][jj]+SH[0]);
+            if(G1< G2 || (traceback==1)){
+               EntropyEnthalpy[0] = S;
+               EntropyEnthalpy[1] = H;
+            }
          }
-         
       }
    } else if (loopSize1 == 1 && loopSize2 == 1) {
       S = stackint2Entropies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j+1]] +
@@ -2106,13 +2109,15 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
          H = _INFINITY;
          S = -1.0;
       }    
-     RSH(ii, jj, SH, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+      if((isFinite(H)) || (traceback==1)){
+         RSH(ii, jj, SH, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
          G1 = H+SH[1] -TEMP_KELVIN*(S+SH[0]);
-      G2 = enthalpyDPT[ii][jj]+SH[1]-TEMP_KELVIN*(entropyDPT[ii][jj]+SH[0]);
-           if((G1< G2) || traceback==1) {
+         G2 = enthalpyDPT[ii][jj]+SH[1]-TEMP_KELVIN*(entropyDPT[ii][jj]+SH[0]);
+         if((G1< G2) || traceback==1) {
             EntropyEnthalpy[0] = S;
             EntropyEnthalpy[1] = H;
          }
+      }
       return;
    } else { /* only internal loops */
       H = interiorLoopEnthalpies[loopSize] + tstackEnthalpies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j+1]] +
@@ -2131,13 +2136,15 @@ calc_bulge_internal(int i, int j, int ii, int jj, double* EntropyEnthalpy, int t
          H = _INFINITY;
          S = -1.0;
       }
-     RSH(ii, jj, SH, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-     G1 = H+SH[1] -TEMP_KELVIN*(S+SH[0]);
-     G2 = enthalpyDPT[ii][jj]+SH[1]-TEMP_KELVIN*(entropyDPT[ii][jj]+SH[0]);
-     if((G1< G2) || (traceback==1)){
-             EntropyEnthalpy[0] = S;
-             EntropyEnthalpy[1] = H;
-      }
+      if((isFinite(H)) || (traceback==1)){
+         RSH(ii, jj, SH, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+         G1 = H+SH[1] -TEMP_KELVIN*(S+SH[0]);
+         G2 = enthalpyDPT[ii][jj]+SH[1]-TEMP_KELVIN*(entropyDPT[ii][jj]+SH[0]);
+         if((G1< G2) || (traceback==1)){
+                  EntropyEnthalpy[0] = S;
+                  EntropyEnthalpy[1] = H;
+            }
+         }
    }
    return;
 }
