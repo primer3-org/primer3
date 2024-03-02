@@ -271,6 +271,59 @@ static struct tetraloop* tetraloopEnthalpies;  ther penalties for given tetraloo
 //static unsigned char *numSeq1, *numSeq2; /* same as oligo1 and oligo2 but converted to numbers */
 //static int oligo1_len, oligo2_len; /* length of sequense 1 and 2 *//* 17.02.2009 int temponly;*/ /* print only temperature of the predicted structure */
 
+#ifdef THAL_PROFILE
+//Main function for profiling thal() with gprof
+// compile with -pg to generate profiling information
+#include <time.h>
+int main(void){
+   clock_t start_time;
+   const int num_tests = 10000;
+   const int seq1_len = 20;
+   const int seq2_len = 20;
+   thal_alignment_type mode = thal_hairpin;
+   srand(time(NULL));
+   char bases[4] = {'A', 'C', 'G', 'T'};
+   int tests_complete = 0;
+   char *seq1_data = (char *) malloc(sizeof(char) * num_tests * (seq1_len+1));
+   char *seq2_data = (char *) malloc(sizeof(char) * num_tests * (seq2_len+1));
+   char **sequences1 = (char **) malloc(sizeof(char *) * num_tests);
+   char **sequences2 = (char **) malloc(sizeof(char *) * num_tests);
+   for(int i = 0; i < num_tests; i++){
+      sequences1[i] = &seq1_data[i * (seq1_len+1)];
+      for (int j = 0; j < seq1_len; j++){
+         sequences1[i][j] = bases[rand()%4];
+      }
+      sequences1[i][seq1_len] = 0;
+      sequences2[i] = &seq2_data[i * (seq2_len+1)];
+      for (int j = 0; j < seq2_len; j++){
+         sequences2[i][j] = bases[rand()%4];
+      }
+      sequences2[i][seq2_len] = 0;
+   }
+   start_time = clock();
+   for (int i = 0; i < num_tests; i++){
+      thal_results o;
+      thal_args a;
+      set_thal_default_args(&a);
+      a.type = mode;
+      if (mode == thal_hairpin){
+         a.dimer=0;
+      }
+      thal((unsigned char *)sequences1[i], (unsigned char *)sequences2[i], &a, THL_GENERAL, &o);
+      if (o.temp != THAL_ERROR_SCORE)
+         tests_complete++;
+      else
+         printf("%s\n", o.msg);
+   }
+   printf("Elapsed time = %lf\nTests complete = %d\n", (double) (clock() - start_time) / CLOCKS_PER_SEC, tests_complete);
+   free(seq1_data);
+   free(seq2_data);
+   free(sequences1);
+   free(sequences2);
+   return 0;
+}
+#endif
+
 /* Initialize the thermodynamic values (parameters) */
 int  thal_set_null_parameters(thal_parameters *a) {
   a->dangle_dh = NULL;
