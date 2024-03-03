@@ -170,9 +170,6 @@ static void CBI(int i, int j, double* EntropyEnthalpy, int traceback, int maxLoo
 /* finds monomer structure that has maximum Tm */
 static void calc_hairpin(int i, int j, double* EntropyEnthalpy, int traceback, double **entropyDPT, double **enthalpyDPT, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len);
 
-static double Ss(int i, int j, int k, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len); /* returns stack entropy */
-static double Hs(int i, int j, int k, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len); /* returns stack enthalpy */
-
 /* calculate terminal entropy S and terminal enthalpy H starting reading from 5'end (Left hand/3' end - Right end) */
 static void LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2);
 static void RSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2);
@@ -1849,49 +1846,6 @@ RSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
    return;
 }
 
-static double 
-Ss(int i, int j, int k, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len)
-{
-   if(k==2) {
-      if (i >= j)
-        return -1.0;
-      if (i == oligo1_len || j == oligo2_len + 1)
-        return -1.0;
-
-      if (i > oligo1_len)
-        i -= oligo1_len;
-      if (j > oligo2_len)
-        j -= oligo2_len;
-      return stackEntropies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j-1]];
-   } else {
-      return stackEntropies[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]][numSeq2[j + 1]];
-   }
-}
-
-
-static double 
-Hs(int i, int j, int k, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len)
-{
-   if(k==2) {
-      if (i >= j)
-        return _INFINITY;
-      if (i == oligo1_len || j == oligo2_len + 1)
-        return _INFINITY;
-
-      if (i > oligo1_len)
-        i -= oligo1_len;
-      if (j > oligo2_len)
-        j -= oligo2_len;
-      if(isFinite(stackEnthalpies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j-1]])) {
-         return stackEnthalpies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j-1]];
-      } else {
-         return _INFINITY;
-      }
-   } else {
-      return stackEnthalpies[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]][numSeq2[j + 1]];
-   }
-}
-
 static void 
 CBI(int i, int j, double* EntropyEnthalpy, int traceback, int maxLoop, double **entropyDPT, double **enthalpyDPT, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len)
 {
@@ -2736,8 +2690,8 @@ tracebacku(int* bp, int maxLoop, double **entropyDPT, double **enthalpyDPT, doub
          SH2[0] = -1.0;
          SH2[1] = _INFINITY;
          CBI(i, j, SH2, 2, maxLoop, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2, oligo1_len, oligo2_len);
-         if (equal(entropyDPT[i][j], Ss(i, j, 2, numSeq1, numSeq2, oligo1_len, oligo2_len) + entropyDPT[i + 1][j - 1]) &&
-             equal(enthalpyDPT[i][j], Hs(i, j, 2, numSeq1, numSeq2, oligo1_len, oligo2_len) + enthalpyDPT[i + 1][j - 1])) {
+         if (equal(entropyDPT[i][j], stackEntropies[numSeq2[i]][numSeq2[i+1]][numSeq2[j]][numSeq2[j-1]] + entropyDPT[i + 1][j - 1]) &&
+             equal(enthalpyDPT[i][j], stackEnthalpies[numSeq2[i]][numSeq2[i+1]][numSeq2[j]][numSeq2[j-1]] + enthalpyDPT[i + 1][j - 1])) {
             push(&stack, i + 1, j - 1, 0, _jmp_buf, o);
          }
          else if (equal(entropyDPT[i][j], SH1[0]) && equal(enthalpyDPT[i][j], SH1[1]));
