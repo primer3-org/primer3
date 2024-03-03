@@ -1503,9 +1503,9 @@ fillMatrix(int maxLoop, double **entropyDPT, double **enthalpyDPT, double RC, do
                saved_RSH[0] = SH[0];
                saved_RSH[1] = SH[1];
                T0 = (H0 + dplx_init_H + SH[1]) /(S0 + dplx_init_S + SH[0] + RC); /* at current position */
-               if(isFinite(enthalpyDPT[i - 1][j - 1]) && isFinite(Hs(i - 1, j - 1, 1, numSeq1, numSeq2, oligo1_len, oligo2_len))) {
-                  S1 = (entropyDPT[i - 1][j - 1] + Ss(i - 1, j - 1, 1, numSeq1, numSeq2, oligo1_len, oligo2_len));
-                  H1 = (enthalpyDPT[i - 1][j - 1] + Hs(i - 1, j - 1, 1, numSeq1, numSeq2, oligo1_len, oligo2_len));
+               if(isFinite(enthalpyDPT[i-1][j-1]) && isFinite(stackEnthalpies[numSeq1[i-1]][numSeq1[i]][numSeq2[j-1]][numSeq2[j]])) {
+                  S1 = entropyDPT[i-1][j-1] + stackEntropies[numSeq1[i-1]][numSeq1[i]][numSeq2[j-1]][numSeq2[j]];
+                  H1 = enthalpyDPT[i-1][j-1] + stackEnthalpies[numSeq1[i-1]][numSeq1[i]][numSeq2[j-1]][numSeq2[j]];
                   T1 = (H1 + dplx_init_H + SH[1]) /(S1 + dplx_init_S + SH[0] + RC);
                } else {
                   S1 = -1.0;
@@ -2779,7 +2779,8 @@ traceback(int i, int j, double RC, int* ps1, int* ps2, int maxLoop, double **ent
          break;
       }
       done = 0;
-      if (i > 1 && j > 1 && equal(entropyDPT[i][j], Ss(i - 1, j - 1, 1, numSeq1, numSeq2, oligo1_len, oligo2_len) + entropyDPT[i - 1][j - 1]) && equal(enthalpyDPT[i][j], Hs(i - 1, j - 1, 1, numSeq1, numSeq2, oligo1_len, oligo2_len) + enthalpyDPT[i - 1][j - 1])) {
+      if (i > 1 && j > 1 && equal(entropyDPT[i][j], stackEntropies[numSeq1[i-1]][numSeq1[i]][numSeq2[j-1]][numSeq2[j]] + entropyDPT[i-1][j-1]) 
+         && equal(enthalpyDPT[i][j], stackEnthalpies[numSeq1[i-1]][numSeq1[i]][numSeq2[j-1]][numSeq2[j]] + enthalpyDPT[i-1][j-1])) {
          i = i - 1;
          j = j - 1;
          ps1[i - 1] = j;
