@@ -2318,15 +2318,27 @@ calc_terminal_bp(double temp, double **entropyDPT, double **enthalpyDPT, double 
    double T1, T2, T3, T4, T5;
    T1 = T2 = T3 = T4 = T5 = -_INFINITY;
    double G;
+   double end5_1_h, end5_2_h, end5_3_h, end5_4_h;
+   double end5_1_s, end5_2_s, end5_3_s, end5_4_s;
    /* adding terminal penalties to 3' end and to 5' end */
    for(i = 2; i <= oligo1_len; ++i) {
       max = 0;
       T1 = T2 = T3 = T4 = T5 = -_INFINITY;
+      end5_1_h = END5_1(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+      end5_2_h = END5_2(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+      end5_3_h = END5_3(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+      end5_4_h = END5_4(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+      end5_1_s = END5_1(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+      end5_2_s = END5_2(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+      end5_3_s = END5_3(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+      end5_4_s = END5_4(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+
+
       T1 = (hend5[i - 1] + dplx_init_H) / (send5[i - 1] + dplx_init_S + RC);
-      T2 = (END5_1(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2) + dplx_init_H) / (END5_1(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2) + dplx_init_S + RC);
-      T3 = (END5_2(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2) + dplx_init_H) / (END5_2(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2) + dplx_init_S + RC);
-      T4 = (END5_3(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2) + dplx_init_H) / (END5_3(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2) + dplx_init_S + RC);
-      T5 = (END5_4(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2) + dplx_init_H) / (END5_4(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2) + dplx_init_S + RC);
+      T2 = (end5_1_h + dplx_init_H) / (end5_1_s + dplx_init_S + RC);
+      T3 = (end5_2_h + dplx_init_H) / (end5_2_s + dplx_init_S + RC);
+      T4 = (end5_3_h + dplx_init_H) / (end5_3_s + dplx_init_S + RC);
+      T5 = (end5_4_h + dplx_init_H) / (end5_4_s + dplx_init_S + RC);
       max = max5(T1,T2,T3,T4,T5);
       switch (max) {
        case 1:
@@ -2334,40 +2346,40 @@ calc_terminal_bp(double temp, double **entropyDPT, double **enthalpyDPT, double 
          hend5[i] = hend5[i - 1];
          break;
        case 2:
-         G = END5_1(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2) - (temp * (END5_1(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2)));
+         G = end5_1_h - (temp * end5_1_s);
          if(G < 0.0) {
-            send5[i] = END5_1(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-            hend5[i] = END5_1(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+            send5[i] = end5_1_s;
+            hend5[i] = end5_1_h;
          } else {
             send5[i] = send5[i - 1];
             hend5[i] = hend5[i - 1];
          }
          break;
        case 3:
-         G = END5_2(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2) - (temp * (END5_2(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2)));
+         G = end5_2_h - (temp * end5_2_s);
          if(G < 0.0) {
-            send5[i] = END5_2(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-            hend5[i] = END5_2(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+            send5[i] = end5_2_s;
+            hend5[i] = end5_2_h;
          } else {
             send5[i] = send5[i - 1];
             hend5[i] = hend5[i - 1];
          }
          break;
        case 4:
-         G = END5_3(i,1, entropyDPT, enthalpyDPT, send5, hend5,RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2) - (temp * (END5_3(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2)));
+         G = end5_3_h - (temp * end5_3_s);
          if(G < 0.0) {
-            send5[i] = END5_3(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-            hend5[i] = END5_3(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+            send5[i] = end5_3_s;
+            hend5[i] = end5_3_h;
          } else {
             send5[i] = send5[i - 1];
             hend5[i] = hend5[i - 1];
          }
          break;
        case 5:
-         G = END5_4(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2) - (temp * (END5_4(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2)));
+         G = end5_4_h - (temp * end5_4_s);
          if(G < 0.0) {
-            send5[i] = END5_4(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-            hend5[i] = END5_4(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+            send5[i] = end5_4_s;
+            hend5[i] = end5_4_h;
          } else {
             send5[i] = send5[i - 1];
             hend5[i] = hend5[i - 1];
