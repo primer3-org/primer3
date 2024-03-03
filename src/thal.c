@@ -1580,8 +1580,8 @@ fillMatrix2(int maxLoop, double **entropyDPT, double **enthalpyDPT, double RC, d
             H0 = enthalpyDPT[i][j];
             T0 = (H0 + dplx_init_H) /(S0 + dplx_init_S + RC);
             if(isFinite(enthalpyDPT[i][j])) {
-               S1 = (entropyDPT[i + 1][j - 1] + Ss(i, j, 2, numSeq1, numSeq2, oligo1_len, oligo2_len));
-               H1 = (enthalpyDPT[i + 1][j - 1] + Hs(i, j, 2, numSeq1, numSeq2, oligo1_len, oligo2_len));
+               S1 = (entropyDPT[i + 1][j - 1] + stackEntropies[numSeq2[i]][numSeq2[i+1]][numSeq2[j]][numSeq2[j-1]]);
+               H1 = (enthalpyDPT[i + 1][j - 1] + stackEnthalpies[numSeq2[i]][numSeq2[i+1]][numSeq2[j]][numSeq2[j-1]]);
             } else {
                S1 = -1.0;
                H1 = _INFINITY;
