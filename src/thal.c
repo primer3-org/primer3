@@ -153,8 +153,6 @@ static int comp4loop(const void*, const void*); /* checks if sequnece consists o
 static void initMatrix(double **entropyDPT, double **enthalpyDPT, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len); /* initiates thermodynamic parameter tables of entropy and enthalpy for dimer */
 
 static void initMatrix2(double **entropyDPT, double **enthalpyDPT, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len); /* initiates thermodynamic parameter tables of entropy and enthalpy for monomer */
-[OK]
-
 
 static void fillMatrix(int maxLoop, double **entropyDPT, double **enthalpyDPT, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len, thal_results* o); /* calc-s thermod values into dynamic progr table (dimer) */
 
