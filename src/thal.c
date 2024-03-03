@@ -153,6 +153,8 @@ static int comp4loop(const void*, const void*); /* checks if sequnece consists o
 static void initMatrix(double **entropyDPT, double **enthalpyDPT, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len); /* initiates thermodynamic parameter tables of entropy and enthalpy for dimer */
 
 static void initMatrix2(double **entropyDPT, double **enthalpyDPT, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len); /* initiates thermodynamic parameter tables of entropy and enthalpy for monomer */
+[OK]
+
 
 static void fillMatrix(int maxLoop, double **entropyDPT, double **enthalpyDPT, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len, thal_results* o); /* calc-s thermod values into dynamic progr table (dimer) */
 
@@ -2411,7 +2413,7 @@ END5_1(int i,int hs, double **entropyDPT, double **enthalpyDPT, double *send5, d
       if(T1 >= 0.0) {
          H = hend5[k] + atpH[numSeq1[k + 1]][numSeq1[i]] + enthalpyDPT[k + 1][i];
          S = send5[k] + atpS[numSeq1[k + 1]][numSeq1[i]] + entropyDPT[k + 1][i];
-         if(!isFinite(H) || H > 0 || S > 0) { /* H and S must be greater than 0 to avoid BS */
+         if(H > 0 || S > 0) { /* H and S must be greater than 0 to avoid BS */
             H = _INFINITY;
             S = -1.0;
          }
@@ -2419,7 +2421,7 @@ END5_1(int i,int hs, double **entropyDPT, double **enthalpyDPT, double *send5, d
       } else {
          H = 0 + atpH[numSeq1[k + 1]][numSeq1[i]] + enthalpyDPT[k + 1][i];
          S = 0 + atpS[numSeq1[k + 1]][numSeq1[i]] + entropyDPT[k + 1][i];
-         if(!isFinite(H) || H > 0 || S > 0) {
+         if(H > 0 || S > 0) {
             H = _INFINITY;
             S = -1.0;
          }
@@ -2453,7 +2455,7 @@ END5_2(int i,int hs, double **entropyDPT, double **enthalpyDPT, double *send5, d
       if(T1 >= 0.0) {
          H = hend5[k] + atpH[numSeq1[k + 2]][numSeq1[i]] + Hd5(i, k + 2, numSeq1, numSeq2) + enthalpyDPT[k + 2][i];
          S = send5[k] + atpS[numSeq1[k + 2]][numSeq1[i]] + Sd5(i, k + 2, numSeq1, numSeq2) + entropyDPT[k + 2][i];
-         if(!isFinite(H) || H > 0 || S > 0) {
+         if(H > 0 || S > 0) {
             H = _INFINITY;
             S = -1.0;
          }
@@ -2461,7 +2463,7 @@ END5_2(int i,int hs, double **entropyDPT, double **enthalpyDPT, double *send5, d
       } else {
          H = 0 + atpH[numSeq1[k + 2]][numSeq1[i]] + Hd5(i, k + 2, numSeq1, numSeq2) + enthalpyDPT[k + 2][i];
          S = 0 + atpS[numSeq1[k + 2]][numSeq1[i]] + Sd5(i, k + 2, numSeq1, numSeq2) + entropyDPT[k + 2][i];
-         if(!isFinite(H) || H > 0 || S > 0) {
+         if(H > 0 || S > 0) {
             H = _INFINITY;
             S = -1.0;
          }
@@ -2495,7 +2497,7 @@ END5_3(int i,int hs, double **entropyDPT, double **enthalpyDPT, double *send5, d
       if(T1 >= 0.0) {
          H = hend5[k] + atpH[numSeq1[k + 1]][numSeq1[i - 1]] + Hd3(i - 1, k + 1, numSeq1, numSeq2) + enthalpyDPT[k + 1][i - 1];
          S = send5[k] + atpS[numSeq1[k + 1]][numSeq1[i - 1]] + Sd3(i - 1, k + 1, numSeq1, numSeq2) + entropyDPT[k + 1][i - 1];
-         if(!isFinite(H) || H > 0 || S > 0) {
+         if(H > 0 || S > 0) {
             H = _INFINITY;
             S = -1.0;
          }
@@ -2503,7 +2505,7 @@ END5_3(int i,int hs, double **entropyDPT, double **enthalpyDPT, double *send5, d
       } else {
          H = 0 + atpH[numSeq1[k + 1]][numSeq1[i - 1]] + Hd3(i - 1, k + 1, numSeq1, numSeq2) + enthalpyDPT[k + 1][i - 1];
          S = 0 + atpS[numSeq1[k + 1]][numSeq1[i - 1]] + Sd3(i - 1, k + 1, numSeq1, numSeq2) + entropyDPT[k + 1][i - 1];
-         if(!isFinite(H) || H > 0 || S > 0) {
+         if(H > 0 || S > 0) {
             H = _INFINITY;
             S = -1.0;
          }
@@ -2537,7 +2539,7 @@ END5_4(int i,int hs, double **entropyDPT, double **enthalpyDPT, double *send5, d
       if(T1 >= 0.0) {
          H = hend5[k] + atpH[numSeq1[k + 2]][numSeq1[i - 1]] + Htstack(i - 1, k + 2, numSeq1, numSeq2) + enthalpyDPT[k + 2][i - 1];
          S = send5[k] + atpS[numSeq1[k + 2]][numSeq1[i - 1]] + Ststack(i - 1, k + 2, numSeq1, numSeq2) + entropyDPT[k + 2][i - 1];
-         if(!isFinite(H) || H > 0 || S > 0) {
+         if(H > 0 || S > 0) {
             H = _INFINITY;
             S = -1.0;
          }
@@ -2545,7 +2547,7 @@ END5_4(int i,int hs, double **entropyDPT, double **enthalpyDPT, double *send5, d
       } else {
          H = 0 + atpH[numSeq1[k + 2]][numSeq1[i - 1]] + Htstack(i - 1, k + 2, numSeq1, numSeq2) + enthalpyDPT[k + 2][i - 1];
          S = 0 + atpS[numSeq1[k + 2]][numSeq1[i - 1]] + Ststack(i - 1, k + 2, numSeq1, numSeq2) + entropyDPT[k + 2][i - 1];
-         if(!isFinite(H) || H > 0 || S > 0) {
+         if(H > 0 || S > 0) {
             H = _INFINITY;
             S = -1.0;
          }
