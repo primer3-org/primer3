@@ -2399,17 +2399,16 @@ END5_1(int i,int hs, double **entropyDPT, double **enthalpyDPT, double *send5, d
 {
    int k;
    double max_tm; /* energy min */
-   double T1, T2;
+   double T1;
    double H, S;
    double H_max, S_max;
    H_max = H = _INFINITY;
    S_max = S = -1.0;
-   T1 = T2 = -_INFINITY;
+   T1 = -_INFINITY;
    max_tm = -_INFINITY;
    for(k = 0; k <= i - min_hrpn_loop - 2; ++k) {
       T1 = (hend5[k] + dplx_init_H) /(send5[k] + dplx_init_S + RC);
-      T2 = (0 + dplx_init_H) /(0 + dplx_init_S + RC);
-      if(T1 >= T2) {
+      if(T1 >= 0.0) {
          H = hend5[k] + atpH[numSeq1[k + 1]][numSeq1[i]] + enthalpyDPT[k + 1][i];
          S = send5[k] + atpS[numSeq1[k + 1]][numSeq1[i]] + entropyDPT[k + 1][i];
          if(!isFinite(H) || H > 0 || S > 0) { /* H and S must be greater than 0 to avoid BS */
@@ -2443,16 +2442,15 @@ END5_2(int i,int hs, double **entropyDPT, double **enthalpyDPT, double *send5, d
 {
    int k;
    double max_tm;
-   double T1, T2;
+   double T1;
    double H, S;
    double H_max, S_max;
    H_max = H = _INFINITY;
-   T1 = T2 = max_tm = -_INFINITY;
+   T1 = max_tm = -_INFINITY;
    S_max = S = -1.0;
    for (k = 0; k <= i - min_hrpn_loop - 3; ++k) {
       T1 = (hend5[k] + dplx_init_H) /(send5[k] + dplx_init_S + RC);
-      T2 = (0 + dplx_init_H) /(0 + dplx_init_S + RC);
-      if(T1 >= T2) {
+      if(T1 >= 0.0) {
          H = hend5[k] + atpH[numSeq1[k + 2]][numSeq1[i]] + Hd5(i, k + 2, numSeq1, numSeq2) + enthalpyDPT[k + 2][i];
          S = send5[k] + atpS[numSeq1[k + 2]][numSeq1[i]] + Sd5(i, k + 2, numSeq1, numSeq2) + entropyDPT[k + 2][i];
          if(!isFinite(H) || H > 0 || S > 0) {
@@ -2486,16 +2484,15 @@ END5_3(int i,int hs, double **entropyDPT, double **enthalpyDPT, double *send5, d
 {
    int k;
    double max_tm;
-   double T1, T2;
+   double T1;
    double H, S;
    double H_max, S_max;
    H_max = H = _INFINITY;;
-   T1 = T2 = max_tm = -_INFINITY;
+   T1 = max_tm = -_INFINITY;
    S_max = S = -1.0;
    for (k = 0; k <= i - min_hrpn_loop - 3; ++k) {
       T1 = (hend5[k] + dplx_init_H) /(send5[k] + dplx_init_S + RC);
-      T2 = (0 + dplx_init_H) /(0 + dplx_init_S + RC);
-      if(T1 >= T2) {
+      if(T1 >= 0.0) {
          H = hend5[k] + atpH[numSeq1[k + 1]][numSeq1[i - 1]] + Hd3(i - 1, k + 1, numSeq1, numSeq2) + enthalpyDPT[k + 1][i - 1];
          S = send5[k] + atpS[numSeq1[k + 1]][numSeq1[i - 1]] + Sd3(i - 1, k + 1, numSeq1, numSeq2) + entropyDPT[k + 1][i - 1];
          if(!isFinite(H) || H > 0 || S > 0) {
@@ -2529,16 +2526,15 @@ END5_4(int i,int hs, double **entropyDPT, double **enthalpyDPT, double *send5, d
 {
    int k;
    double max_tm;
-   double T1, T2;
+   double T1;
    double H, S;
    double H_max, S_max;
    H_max = H = _INFINITY;
-   T1 = T2 = max_tm = -_INFINITY;
+   T1 = max_tm = -_INFINITY;
    S_max = S = -1.0;
    for(k = 0; k <= i - min_hrpn_loop - 4; ++k) {
       T1 = (hend5[k] + dplx_init_H) /(send5[k] + dplx_init_S + RC);
-      T2 = (0 + dplx_init_H) /(0 + dplx_init_S + RC);
-      if(T1 >= T2) {
+      if(T1 >= 0.0) {
          H = hend5[k] + atpH[numSeq1[k + 2]][numSeq1[i - 1]] + Htstack(i - 1, k + 2, numSeq1, numSeq2) + enthalpyDPT[k + 2][i - 1];
          S = send5[k] + atpS[numSeq1[k + 2]][numSeq1[i - 1]] + Ststack(i - 1, k + 2, numSeq1, numSeq2) + entropyDPT[k + 2][i - 1];
          if(!isFinite(H) || H > 0 || S > 0) {
