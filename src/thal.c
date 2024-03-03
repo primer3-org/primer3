@@ -73,7 +73,6 @@ static const double AT_H = 2200.0; /* AT penalty */
 static const double AT_S = 6.9; /* AT penalty */
 static const double MinEntropyCutoff = -2500.0; /* to filter out non-existing entropies */
 static const double MinEntropy = -3224.0; /* initiation */
-static const double G2 = 0.0; /* structures w higher G are considered to be unstabile */
 const double ABSOLUTE_ZERO = 273.15;
 const double TEMP_KELVIN = 310.15;
 const int MAX_LOOP = 30; /* the maximum size of loop that can be calculated; for larger loops formula must be implemented */
@@ -278,10 +277,10 @@ static struct tetraloop* tetraloopEnthalpies;  ther penalties for given tetraloo
 #include <time.h>
 int main(void){
    clock_t start_time;
-   const int num_tests = 10000;
+   const int num_tests = 1000000;
    const int seq1_len = 20;
    const int seq2_len = 20;
-   thal_alignment_type mode = thal_any;
+   thal_alignment_type mode = thal_hairpin;
    srand(time(NULL));
    char bases[4] = {'A', 'C', 'G', 'T'};
    int tests_complete = 0;
@@ -2336,7 +2335,7 @@ calc_terminal_bp(double temp, double **entropyDPT, double **enthalpyDPT, double 
          break;
        case 2:
          G = END5_1(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2) - (temp * (END5_1(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2)));
-         if(G < G2) {
+         if(G < 0.0) {
             send5[i] = END5_1(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
             hend5[i] = END5_1(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
          } else {
@@ -2346,7 +2345,7 @@ calc_terminal_bp(double temp, double **entropyDPT, double **enthalpyDPT, double 
          break;
        case 3:
          G = END5_2(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2) - (temp * (END5_2(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2)));
-         if(G < G2) {
+         if(G < 0.0) {
             send5[i] = END5_2(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
             hend5[i] = END5_2(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
          } else {
@@ -2356,7 +2355,7 @@ calc_terminal_bp(double temp, double **entropyDPT, double **enthalpyDPT, double 
          break;
        case 4:
          G = END5_3(i,1, entropyDPT, enthalpyDPT, send5, hend5,RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2) - (temp * (END5_3(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2)));
-         if(G < G2) {
+         if(G < 0.0) {
             send5[i] = END5_3(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
             hend5[i] = END5_3(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
          } else {
@@ -2366,7 +2365,7 @@ calc_terminal_bp(double temp, double **entropyDPT, double **enthalpyDPT, double 
          break;
        case 5:
          G = END5_4(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2) - (temp * (END5_4(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2)));
-         if(G < G2) {
+         if(G < 0.0) {
             send5[i] = END5_4(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
             hend5[i] = END5_4(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
          } else {
