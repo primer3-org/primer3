@@ -294,8 +294,10 @@ int main(void){
       a.type = mode;
       if (mode == thal_hairpin){
          a.dimer=0;
+         thal((unsigned char *)sequences1[i], (unsigned char *)sequences1[i], &a, THL_FAST, &o);
+      } else {
+         thal((unsigned char *)sequences1[i], (unsigned char *)sequences2[i], &a, THL_FAST, &o);
       }
-      thal((unsigned char *)sequences1[i], (unsigned char *)sequences2[i], &a, THL_FAST, &o);
       if (o.temp != THAL_ERROR_SCORE)
          tests_complete++;
       else
