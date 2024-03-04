@@ -204,7 +204,7 @@ static void strcatc(char*, char);
 static void push(struct tracer**, int, int, int, jmp_buf, thal_results*); /* to add elements to struct */
 
 /* terminal bp for monomer structure */
-static void calc_terminal_bp(double temp, double **entropyDPT, double **enthalpyDPT, double *send5, double *hend5, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len);
+static void calc_terminal_bp(double temp, double **entropyDPT, double **enthalpyDPT, double *send5, double *hend5, double RC, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len);
 
 /* executed in calc_terminal_bp; to find structure that corresponds to max Tm for terminal bp */
 static double END5_1(int,int, double **entropyDPT, double **enthalpyDPT, double *send5, double *hend5, double RC, unsigned char *numSeq1, unsigned char *numSeq2); /* END5_1(X,1/2, entropyDPT, enthalpyDPT) - 1=Enthalpy, 2=Entropy*/
@@ -638,7 +638,7 @@ thal(const unsigned char *oligo_f,
       hend5 = (double*) safe_realloc(hend5, (oligo1_len + 1) * sizeof(double), _jmp_buf, o);
       initMatrix2(entropyDPT, enthalpyDPT, numSeq1, numSeq2, oligo1_len, oligo2_len);
       fillMatrix2(a->maxLoop, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2, oligo1_len, oligo2_len, o);
-      calc_terminal_bp(a->temp, entropyDPT, enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2, oligo1_len, oligo2_len);
+      calc_terminal_bp(a->temp, entropyDPT, enthalpyDPT, send5, hend5, RC, numSeq1, numSeq2, oligo1_len, oligo2_len);
       mh = hend5[oligo1_len];
       ms = send5[oligo1_len];
       o->align_end_1 = (int) mh;
@@ -2252,7 +2252,7 @@ calc_bulge_internal2(int i, int j, int ii, int jj, double* EntropyEnthalpy, int 
 }
 
 static void 
-calc_terminal_bp(double temp, double **entropyDPT, double **enthalpyDPT, double *send5, double *hend5, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len) { /* compute exterior loop */
+calc_terminal_bp(double temp, double **entropyDPT, double **enthalpyDPT, double *send5, double *hend5, double RC, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len) { /* compute exterior loop */
    int i;
    int max;
    send5[0] = send5[1] = -1.0;
@@ -2281,11 +2281,11 @@ calc_terminal_bp(double temp, double **entropyDPT, double **enthalpyDPT, double 
       end5_4_s = END5_4(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, numSeq1, numSeq2);
 
 
-      T1 = (hend5[i - 1] + dplx_init_H) / (send5[i - 1] + dplx_init_S + RC);
-      T2 = (end5_1_h + dplx_init_H) / (end5_1_s + dplx_init_S + RC);
-      T3 = (end5_2_h + dplx_init_H) / (end5_2_s + dplx_init_S + RC);
-      T4 = (end5_3_h + dplx_init_H) / (end5_3_s + dplx_init_S + RC);
-      T5 = (end5_4_h + dplx_init_H) / (end5_4_s + dplx_init_S + RC);
+      T1 = (hend5[i - 1]) / (send5[i - 1] + RC);
+      T2 = (end5_1_h) / (end5_1_s + RC);
+      T3 = (end5_2_h) / (end5_2_s + RC);
+      T4 = (end5_3_h) / (end5_3_s + RC);
+      T5 = (end5_4_h) / (end5_4_s + RC);
       max = max5(T1,T2,T3,T4,T5);
       switch (max) {
        case 1:
