@@ -650,8 +650,8 @@ thal(const unsigned char *oligo_f,
 
       if(o->temp==-_INFINITY && (!strcmp(o->msg, ""))) o->temp=0.0;
       free(bp);
-      free(enthalpyDPT);
-      free(entropyDPT);
+      free_DPT(enthalpyDPT);
+      free_DPT(entropyDPT);
       free(numSeq1);
       free(numSeq2);
       free(send5);
