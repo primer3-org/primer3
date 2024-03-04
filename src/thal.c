@@ -2106,17 +2106,14 @@ calc_bulge_internal_monomer(int i, int j, int ii, int jj, double* EntropyEnthalp
             S += entropyDPT[ii][jj];
          }
 
-         if(!isFinite(H)) {
-            H = _INFINITY;
-            S = -1.0;
-         }
-        
-         T1 = (H) / (S + RC);
-         T2 = (enthalpyDPT[i][j]) / ((entropyDPT[i][j]) + RC);
+         if(isFinite(H)) {
+            T1 = (H) / (S + RC);
+            T2 = (enthalpyDPT[i][j]) / ((entropyDPT[i][j]) + RC);
 
-         if((T1 > T2) || ((traceback && T1 >= T2) || traceback==1)) {
-            EntropyEnthalpy[0] = S;
-            EntropyEnthalpy[1] = H;
+            if((T1 > T2) || ((traceback && T1 >= T2) || traceback==1)) {
+               EntropyEnthalpy[0] = S;
+               EntropyEnthalpy[1] = H;
+            }
          }
 
       } else { /* we have _not_ implemented Jacobson-Stockaymayer equation; the maximum bulgeloop size is 30 */
@@ -2128,17 +2125,13 @@ calc_bulge_internal_monomer(int i, int j, int ii, int jj, double* EntropyEnthalp
          S = bulgeLoopEntropies[loopSize] + atpS[numSeq1[i]][numSeq2[j]] + atpS[numSeq1[ii]][numSeq2[jj]];
          if(traceback!=1)
            S += entropyDPT[ii][jj];
-         if(!isFinite(H)) {
-            H = _INFINITY;
-            S = -1.0;
-         }
-          
-         T1 = (H) / (S + RC);
-         T2 = (enthalpyDPT[i][j]) / (entropyDPT[i][j] + RC);
-
-         if((T1 > T2) || ((traceback && T1 >= T2) || (traceback==1))) {
-            EntropyEnthalpy[0] = S;
-            EntropyEnthalpy[1] = H;
+         if(isFinite(H)) {
+            T1 = (H) / (S + RC);
+            T2 = (enthalpyDPT[i][j]) / (entropyDPT[i][j] + RC);
+            if((T1 > T2) || ((traceback && T1 >= T2) || (traceback==1))) {
+               EntropyEnthalpy[0] = S;
+               EntropyEnthalpy[1] = H;
+            }
          }
       }
    } /* end of calculating bulges */
@@ -2154,16 +2147,13 @@ calc_bulge_internal_monomer(int i, int j, int ii, int jj, double* EntropyEnthalp
         stackint2Enthalpies[numSeq2[jj]][numSeq2[jj+1]][numSeq1[ii]][numSeq1[ii-1]];
       if(traceback!=1)
         H += enthalpyDPT[ii][jj];
-      if(!isFinite(H)) {
-         H = _INFINITY;
-         S = -1.0;
-      }
-    
-      T1 = (H) / (S + RC);
-      T2 = (enthalpyDPT[i][j]) / (entropyDPT[i][j] + RC);
-      if((T1 > T2) || ((traceback && T1 >= T2) || traceback==1)) {
-         EntropyEnthalpy[0] = S;
-         EntropyEnthalpy[1] = H;
+      if(isFinite(H)) {
+         T1 = (H) / (S + RC);
+         T2 = (enthalpyDPT[i][j]) / (entropyDPT[i][j] + RC);
+         if((T1 > T2) || ((traceback && T1 >= T2) || traceback==1)) {
+            EntropyEnthalpy[0] = S;
+            EntropyEnthalpy[1] = H;
+         }
       }
       return;
    } else { /* only internal loops */
@@ -2178,16 +2168,13 @@ calc_bulge_internal_monomer(int i, int j, int ii, int jj, double* EntropyEnthalp
         tstackEntropies[numSeq2[jj]][numSeq2[jj+1]][numSeq1[ii]][numSeq1[ii-1]] + (ILAS * abs(loopSize1 - loopSize2));
       if(traceback!=1)
         S += entropyDPT[ii][jj];
-      if(!isFinite(H)) {
-         H = _INFINITY;
-         S = -1.0;
-      }
-    
-      T1 = (H) / (S + RC);
-      T2 = (enthalpyDPT[i][j]) / ((entropyDPT[i][j]) + RC);
-      if((T1 > T2) || ((traceback && T1 >= T2) || (traceback==1))) {
-         EntropyEnthalpy[0] = S;
-         EntropyEnthalpy[1] = H;
+      if(isFinite(H)) {
+         T1 = (H) / (S + RC);
+         T2 = (enthalpyDPT[i][j]) / ((entropyDPT[i][j]) + RC);
+         if((T1 > T2) || ((traceback && T1 >= T2) || (traceback==1))) {
+            EntropyEnthalpy[0] = S;
+            EntropyEnthalpy[1] = H;
+         }
       }
    }
    return;
