@@ -164,9 +164,6 @@ static void calc_bulge_internal_dimer(int ii, int jj, int i, int j, double* Entr
 /* calculates bulges and internal loops for monomer structures */
 static void calc_bulge_internal_monomer(int ii, int jj, int i, int j, double* EntropyEnthalpy, int traceback, int maxLoop, double **entropyDPT, double **enthalpyDPT, double RC, unsigned char *numSeq1, unsigned char *numSeq2);
 
-/* carries out Bulge and Internal loop and stack calculations to hairpin */
-static void CBI_monomer(int i, int j, double* EntropyEnthalpy, int traceback, int maxLoop, double **entropyDPT, double **enthalpyDPT, double RC, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len);
-
 /* finds monomer structure that has maximum Tm */
 static void calc_hairpin(int i, int j, double* EntropyEnthalpy, int traceback, double **entropyDPT, double **enthalpyDPT, double RC, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len);
 
@@ -1582,8 +1579,6 @@ fillMatrix_monomer(int maxLoop, double **entropyDPT, double **enthalpyDPT, doubl
                enthalpyDPT[i][j] = H0;
             }
 
-           //CBI_monomer(i, j, SH, 0,maxLoop, entropyDPT, enthalpyDPT, RC, numSeq1, numSeq2, oligo1_len, oligo2_len); /* calculate Bulge and Internal loop and stack */
-
             int d, ii, jj;
             for (d = j - i - 3; d >= min_hrpn_loop + 1 && d >= j - i - 2 - maxLoop; --d){
                for (ii = i + 1; ii < j - d && ii <= oligo1_len; ++ii) {
@@ -1844,35 +1839,6 @@ RSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
       EntropyEnthalpy[0] = S2;
       EntropyEnthalpy[1] = H2;
    }
-   return;
-}
-
-static void 
-CBI_monomer(int i, int j, double* EntropyEnthalpy, int traceback, int maxLoop, double **entropyDPT, double **enthalpyDPT, double RC, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len)
-{
-   int d, ii, jj;
-   for (d = j - i - 3; d >= min_hrpn_loop + 1 && d >= j - i - 2 - maxLoop; --d)
-     for (ii = i + 1; ii < j - d && ii <= oligo1_len; ++ii) {
-        jj = d + ii;
-        if(traceback==0) {
-           EntropyEnthalpy[0] = -1.0;
-           EntropyEnthalpy[1] = _INFINITY;
-        }
-        if (isFinite(enthalpyDPT[ii][jj]) && isFinite(enthalpyDPT[i][j])) {
-           calc_bulge_internal_monomer(i, j, ii, jj, EntropyEnthalpy, traceback, maxLoop, entropyDPT, enthalpyDPT, RC, numSeq1, numSeq2);
-
-           if(isFinite(EntropyEnthalpy[1])) {
-              if(EntropyEnthalpy[0] < MinEntropyCutoff) {
-                 EntropyEnthalpy[0] = MinEntropy;
-                 EntropyEnthalpy[1] = 0.0;
-              }
-              if(traceback==0) {
-                 enthalpyDPT[i][j] = EntropyEnthalpy[1];
-                 entropyDPT[i][j] = EntropyEnthalpy[0];
-              }
-           }
-        }
-     }
    return;
 }
 
@@ -2501,7 +2467,6 @@ tracebacku(int* bp, int maxLoop, double **entropyDPT, double **enthalpyDPT, doub
    int ii, jj, k;
    struct tracer *top, *stack = NULL;
    double SH1[2];
-   double SH2[2];
    double EntropyEnthalpy[2];
    push(&stack,oligo1_len, 0, 1, _jmp_buf, o);
    while(stack) {
@@ -2577,15 +2542,12 @@ tracebacku(int* bp, int maxLoop, double **entropyDPT, double **enthalpyDPT, doub
          SH1[0] = -1.0;
          SH1[1] = _INFINITY;
          calc_hairpin(i, j, SH1, 1, entropyDPT, enthalpyDPT, RC, numSeq1, numSeq2, oligo1_len, oligo2_len); /* 1 means that we use this method in traceback */
-         SH2[0] = -1.0;
-         SH2[1] = _INFINITY;
-         CBI_monomer(i, j, SH2, 2, maxLoop, entropyDPT, enthalpyDPT, RC, numSeq1, numSeq2, oligo1_len, oligo2_len);
          if (equal(entropyDPT[i][j], stackEntropies[numSeq2[i]][numSeq2[i+1]][numSeq2[j]][numSeq2[j-1]] + entropyDPT[i + 1][j - 1]) &&
              equal(enthalpyDPT[i][j], stackEnthalpies[numSeq2[i]][numSeq2[i+1]][numSeq2[j]][numSeq2[j-1]] + enthalpyDPT[i + 1][j - 1])) {
             push(&stack, i + 1, j - 1, 0, _jmp_buf, o);
          }
          else if (equal(entropyDPT[i][j], SH1[0]) && equal(enthalpyDPT[i][j], SH1[1]));
-         else if (equal(entropyDPT[i][j], SH2[0]) && equal(enthalpyDPT[i][j], SH2[1])) {
+         else {
             int d, done;
             for (done = 0, d = j - i - 3; d >= min_hrpn_loop + 1 && d >= j - i - 2 - maxLoop && !done; --d)
               for (ii = i + 1; ii < j - d; ++ii) {
@@ -2600,7 +2562,6 @@ tracebacku(int* bp, int maxLoop, double **entropyDPT, double **enthalpyDPT, doub
                     break;
                  }
               }
-         } else {
          }
       }
       free(top);
