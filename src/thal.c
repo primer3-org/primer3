@@ -176,8 +176,6 @@ static void RSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_in
 
 static void reverse(unsigned char *s);
 
-static int max5(double, double, double, double, double);
-
 /* Is sequence symmetrical */
 static int symmetry_thermo(const unsigned char* seq);
 
@@ -829,16 +827,6 @@ safe_realloc(void* ptr, size_t n, jmp_buf _jmp_buf, thal_results *o)
    longjmp(_jmp_buf, 1);
    }
    return ptr;
-}
-
-static int 
-max5(double a, double b, double c, double d, double e)
-{
-   if(a > b && a > c && a > d && a > e) return 1;
-   else if(b > c && b > d && b > e) return 2;
-   else if(c > d && c > e) return 3;
-   else if(d > e) return 4;
-   else return 5;
 }
 
 static void 
@@ -2253,8 +2241,7 @@ calc_bulge_internal2(int i, int j, int ii, int jj, double* EntropyEnthalpy, int 
 
 static void 
 calc_terminal_bp(double temp, double **entropyDPT, double **enthalpyDPT, double *send5, double *hend5, double RC, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len) { /* compute exterior loop */
-   int i;
-   int max;
+   int i, k;
    send5[0] = send5[1] = -1.0;
    hend5[0] = hend5[1] = _INFINITY;
    for(i = 2; i<=(oligo1_len); i++) {
@@ -2262,82 +2249,91 @@ calc_terminal_bp(double temp, double **entropyDPT, double **enthalpyDPT, double 
       hend5[i] = 0;
    }
 
-   double T1, T2, T3, T4, T5;
-   T1 = T2 = T3 = T4 = T5 = -_INFINITY;
-   double G;
-   double end5_1_h, end5_2_h, end5_3_h, end5_4_h;
-   double end5_1_s, end5_2_s, end5_3_s, end5_4_s;
-   /* adding terminal penalties to 3' end and to 5' end */
-   for(i = 2; i <= oligo1_len; ++i) {
-      max = 0;
-      T1 = T2 = T3 = T4 = T5 = -_INFINITY;
-      end5_1_h = END5_1(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, numSeq1, numSeq2);
-      end5_2_h = END5_2(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, numSeq1, numSeq2);
-      end5_3_h = END5_3(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, numSeq1, numSeq2);
-      end5_4_h = END5_4(i,1, entropyDPT, enthalpyDPT, send5, hend5, RC, numSeq1, numSeq2);
-      end5_1_s = END5_1(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, numSeq1, numSeq2);
-      end5_2_s = END5_2(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, numSeq1, numSeq2);
-      end5_3_s = END5_3(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, numSeq1, numSeq2);
-      end5_4_s = END5_4(i,2, entropyDPT, enthalpyDPT, send5, hend5, RC, numSeq1, numSeq2);
+   double max_tm, S_max, H_max, H, S, T0, T1, G;
+   for (i = 2; i <= oligo1_len; i++){
+      max_tm = (hend5[i - 1]) / (send5[i - 1] + RC);
+      S_max = send5[i-1];
+      H_max = hend5[i-1];
+      for(k = 0; k <= i - min_hrpn_loop - 2; ++k) {
+         //END5_1
+         T0 = (hend5[k]) /(send5[k] + RC);
+         H = atpH[numSeq1[k + 1]][numSeq1[i]] + enthalpyDPT[k + 1][i];
+         S = atpS[numSeq1[k + 1]][numSeq1[i]] + entropyDPT[k + 1][i];
+         if(T0 >= 0.0) {
+            H += hend5[k];
+            S += send5[k];
+         }
+         if(H <= 0 && S <= 0) {
+            T1 = (H) / (S + RC);
+            G = H - temp*S;
+            if((max_tm < T1) && (G<0.0)) {
+               if(S > MinEntropyCutoff) {
+                  H_max = H;
+                  S_max = S;
+                  max_tm = T1;
+               }
+            }
+         }
 
+         //END5_2
+         H = atpH[numSeq1[k + 2]][numSeq1[i]] + dangleEnthalpies5[numSeq1[i]][numSeq1[k+2]][numSeq1[k+1]] + enthalpyDPT[k + 2][i];
+         S = atpS[numSeq1[k + 2]][numSeq1[i]] + dangleEntropies5[numSeq1[i]][numSeq1[k+2]][numSeq1[k+1]] + entropyDPT[k + 2][i];
+         if(T0 >= 0.0) {
+            H += hend5[k];
+            S += send5[k];
+         }
+         if(H <= 0 && S <= 0) {
+            T1 = (H) / (S + RC);
+            G = H - temp*S;
+            if((max_tm < T1) && (G<0.0)) {
+               if(S > MinEntropyCutoff) {
+                  H_max = H;
+                  S_max = S;
+                  max_tm = T1;
+               }
+            }
+         }
 
-      T1 = (hend5[i - 1]) / (send5[i - 1] + RC);
-      T2 = (end5_1_h) / (end5_1_s + RC);
-      T3 = (end5_2_h) / (end5_2_s + RC);
-      T4 = (end5_3_h) / (end5_3_s + RC);
-      T5 = (end5_4_h) / (end5_4_s + RC);
-      max = max5(T1,T2,T3,T4,T5);
-      switch (max) {
-       case 1:
-         send5[i] = send5[i - 1];
-         hend5[i] = hend5[i - 1];
-         break;
-       case 2:
-         G = end5_1_h - (temp * end5_1_s);
-         if(G < 0.0) {
-            send5[i] = end5_1_s;
-            hend5[i] = end5_1_h;
-         } else {
-            send5[i] = send5[i - 1];
-            hend5[i] = hend5[i - 1];
+         //END5_3
+         H = atpH[numSeq1[k + 1]][numSeq1[i - 1]] + dangleEnthalpies3[numSeq1[i-1]][numSeq1[i]][numSeq1[k+1]] + enthalpyDPT[k + 1][i - 1];
+         S = atpS[numSeq1[k + 1]][numSeq1[i - 1]] + dangleEntropies3[numSeq1[i-1]][numSeq1[i]][numSeq1[k+1]] + entropyDPT[k + 1][i - 1];
+         if(T0 >= 0.0) {
+            H += hend5[k];
+            S += send5[k];
          }
-         break;
-       case 3:
-         G = end5_2_h - (temp * end5_2_s);
-         if(G < 0.0) {
-            send5[i] = end5_2_s;
-            hend5[i] = end5_2_h;
-         } else {
-            send5[i] = send5[i - 1];
-            hend5[i] = hend5[i - 1];
+         if(H <= 0 && S <= 0) {
+            T1 = (H) / (S + RC);
+            G = H - temp*S;
+            if((max_tm < T1) && (G<0.0)) {
+               if(S > MinEntropyCutoff) {
+                  H_max = H;
+                  S_max = S;
+                  max_tm = T1;
+               }
+            }
          }
-         break;
-       case 4:
-         G = end5_3_h - (temp * end5_3_s);
-         if(G < 0.0) {
-            send5[i] = end5_3_s;
-            hend5[i] = end5_3_h;
-         } else {
-            send5[i] = send5[i - 1];
-            hend5[i] = hend5[i - 1];
+
+         //END5_4
+         H =atpH[numSeq1[k + 2]][numSeq1[i - 1]] + tstack2Enthalpies[numSeq1[i-1]][numSeq1[i]][numSeq1[k+2]][numSeq1[k+1]] + enthalpyDPT[k + 2][i - 1];
+         S =atpS[numSeq1[k + 2]][numSeq1[i - 1]] + tstack2Entropies[numSeq1[i-1]][numSeq1[i]][numSeq1[k+2]][numSeq1[k+1]] + entropyDPT[k + 2][i - 1];
+         if(T0 >= 0.0) {
+            H += hend5[k];
+            S += send5[k];
          }
-         break;
-       case 5:
-         G = end5_4_h - (temp * end5_4_s);
-         if(G < 0.0) {
-            send5[i] = end5_4_s;
-            hend5[i] = end5_4_h;
-         } else {
-            send5[i] = send5[i - 1];
-            hend5[i] = hend5[i - 1];
+         if(H <= 0 && S <= 0) {
+            T1 = (H) / (S + RC);
+            G = H - temp*S;
+            if((max_tm < T1) && (G<0.0)) {
+               if(S > MinEntropyCutoff) {
+                  H_max = H;
+                  S_max = S;
+                  max_tm = T1;
+               }
+            }
          }
-         break;
-       default:
-#ifdef DEBUG
-         printf ("WARNING: max5 returned character code %d ??\n", max);
-#endif
-         break;
       }
+      hend5[i] = H_max;
+      send5[i] = S_max;
    }
 }
 
