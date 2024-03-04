@@ -1582,7 +1582,27 @@ fillMatrix_monomer(int maxLoop, double **entropyDPT, double **enthalpyDPT, doubl
                enthalpyDPT[i][j] = H0;
             }
 
-           CBI_monomer(i, j, SH, 0,maxLoop, entropyDPT, enthalpyDPT, RC, numSeq1, numSeq2, oligo1_len, oligo2_len); /* calculate Bulge and Internal loop and stack */
+           //CBI_monomer(i, j, SH, 0,maxLoop, entropyDPT, enthalpyDPT, RC, numSeq1, numSeq2, oligo1_len, oligo2_len); /* calculate Bulge and Internal loop and stack */
+
+            int d, ii, jj;
+            for (d = j - i - 3; d >= min_hrpn_loop + 1 && d >= j - i - 2 - maxLoop; --d){
+               for (ii = i + 1; ii < j - d && ii <= oligo1_len; ++ii) {
+                  jj = d + ii;
+                  SH[0] = -1.0;
+                  SH[1] = _INFINITY;
+                  if (isFinite(enthalpyDPT[ii][jj]) && isFinite(enthalpyDPT[i][j])) {
+                     calc_bulge_internal_monomer(i, j, ii, jj, SH, 0, maxLoop, entropyDPT, enthalpyDPT, RC, numSeq1, numSeq2);
+                     if(isFinite(SH[1])) {
+                        if(SH[0] < MinEntropyCutoff) {
+                           SH[0] = MinEntropy;
+                           SH[1] = 0.0;
+                        }
+                        enthalpyDPT[i][j] = SH[1];
+                        entropyDPT[i][j] = SH[0];
+                     }
+                  }
+               }
+            }
            SH[0] = -1.0;
            SH[1] = _INFINITY;
            calc_hairpin(i, j, SH, 0, entropyDPT, enthalpyDPT, RC, numSeq1, numSeq2, oligo1_len, oligo2_len);
@@ -1840,6 +1860,7 @@ CBI_monomer(int i, int j, double* EntropyEnthalpy, int traceback, int maxLoop, d
         }
         if (isFinite(enthalpyDPT[ii][jj]) && isFinite(enthalpyDPT[i][j])) {
            calc_bulge_internal_monomer(i, j, ii, jj, EntropyEnthalpy, traceback, maxLoop, entropyDPT, enthalpyDPT, RC, numSeq1, numSeq2);
+
            if(isFinite(EntropyEnthalpy[1])) {
               if(EntropyEnthalpy[0] < MinEntropyCutoff) {
                  EntropyEnthalpy[0] = MinEntropy;
