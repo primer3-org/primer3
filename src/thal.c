@@ -105,102 +105,62 @@ struct tracer /* structure for traceback_monomer - unimolecular str */ {
 };
 
 /*** END STRUCTs ***/
-
 static int length_unsig_char(const unsigned char * str); /* returns length of unsigned char; to avoid warnings while compiling */
-
 static unsigned char str2int(char c); /* converts DNA sequence to int; 0-A, 1-C, 2-G, 3-T, 4-whatever */
-
 static double saltCorrectS (double mv, double dv, double dntp); /* part of calculating salt correction
                                                                    for Tm by SantaLucia et al */
 static char* readParamFile(const char* dirname, const char* fname, jmp_buf, thal_results* o); /* file of thermodynamic params */
-
 /* get thermodynamic tables */
 static double readDouble(char **str, jmp_buf, thal_results* o);
-
 static void readLoop(char **str, double *v1, double *v2, double *v3, jmp_buf, thal_results *o);
-
 static int readTLoop(char **str, char *s, double *v, int triloop, jmp_buf, thal_results *o);
-
 static void getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5], const thal_parameters *tp, jmp_buf, thal_results* o);
-
 /*static void verifyStackTable(double stack[5][5][5][5], char* type);*/ /* just for debugging; the method is turned off by default */
-
 static void getStackint2(double stackEntropiesint2[5][5][5][5], double stackint2Enthalpies[5][5][5][5], const thal_parameters *tp, jmp_buf, thal_results* o);
-
 static void getDangle(double dangleEntropies3[5][5][5], double dangleEnthalpies3[5][5][5], double dangleEntropies5[5][5][5],
                       double dangleEnthalpies5[5][5][5], const thal_parameters *tp, jmp_buf, thal_results* o);
-
 static void getTstack(double tstackEntropies[5][5][5][5], double tstackEnthalpies[5][5][5][5], const thal_parameters *tp, jmp_buf, thal_results* o);
-
 static void getTstack2(double tstack2Entropies[5][5][5][5], double tstack2Enthalpies[5][5][5][5], const thal_parameters *tp, jmp_buf, thal_results* o);
-
 static void getTriloop(struct triloop**, struct triloop**, int* num, const thal_parameters *tp, jmp_buf _jmp_buf, thal_results* o);
-
 static void getTetraloop(struct tetraloop**, struct tetraloop**, int* num, const thal_parameters *tp, jmp_buf _jmp_buf, thal_results* o);
-
 static void getLoop(double hairpinLoopEnntropies[30], double interiorLoopEntropies[30], double bulgeLoopEntropiess[30],
              double hairpinLoopEnthalpies[30], double interiorLoopEnthalpies[30], double bulgeLoopEnthalpies[30], const thal_parameters *tp, jmp_buf, thal_results* o);
-
 static void tableStartATS(double atp_value, double atp[5][5]); /* creates table of entropy values for nucleotides
                                                                   to which AT-penlty must be applied */
-
 static void tableStartATH(double atp_value, double atp[5][5]);
-
 static int comp3loop(const void*, const void*); /* checks if sequnece consists of specific triloop */
-
 static int comp4loop(const void*, const void*); /* checks if sequnece consists of specific tetraloop */
-
 static void initMatrix_dimer(double **entropyDPT, double **enthalpyDPT, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len); /* initiates thermodynamic parameter tables of entropy and enthalpy for dimer */
-
 static void initMatrix_monomer(double **entropyDPT, double **enthalpyDPT, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len); /* initiates thermodynamic parameter tables of entropy and enthalpy for monomer */
-
 static void fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len, thal_results* o); /* calc-s thermod values into dynamic progr table (dimer) */
-
 static void fillMatrix_monomer(int maxLoop, double **entropyDPT, double **enthalpyDPT, double RC, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len, thal_results* o); /* calc-s thermod values into dynamic progr table (monomer) */
-
 /* calculates bulges and internal loops for dimer structures */
 static void calc_bulge_internal_dimer(int ii, int jj, int i, int j, double* EntropyEnthalpy, double *saved_RSH, int traceback, int maxLoop, double **entropyDPT, double **enthalpyDPT, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2);
-
 /* calculates bulges and internal loops for monomer structures */
 static void calc_bulge_internal_monomer(int ii, int jj, int i, int j, double* EntropyEnthalpy, int traceback, int maxLoop, double **entropyDPT, double **enthalpyDPT, double RC, unsigned char *numSeq1, unsigned char *numSeq2);
-
 /* finds monomer structure that has maximum Tm */
 static void calc_hairpin(int i, int j, double* EntropyEnthalpy, int traceback, double **entropyDPT, double **enthalpyDPT, double RC, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len);
-
 /* calculate terminal entropy S and terminal enthalpy H starting reading from 5'end (Left hand/3' end - Right end) */
 static void LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2);
 static void RSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2);
-
 static void reverse(unsigned char *s);
-
 /* Is sequence symmetrical */
 static int symmetry_thermo(const unsigned char* seq);
-
 /* traceback for dimers */
 static void traceback_dimer(int i, int j, double RC, int* ps1, int* ps2, int maxLoop, double **entropyDPT, double **enthalpyDPT, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len, thal_results* o);
-
 /* traceback for hairpins */
 static void traceback_monomer(int*, int, double **entropyDPT, double **enthalpyDPT, double *send5, double *hend5, double RC, double dplx_init_S, double dplx_init_H, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len, jmp_buf, thal_results*);
-
 /* prints ascii output of dimer structure */
 char *drawDimer(int*, int*, double, double, const thal_mode mode, double, unsigned char *oligo1, unsigned char *oligo2, double saltCorrection, double RC, int oligo1_len, int oligo2_len, jmp_buf, thal_results *);
-
 /* prints ascii output of hairpin structure */
 char *drawHairpin(int*, double, double, const thal_mode mode, double, unsigned char *oligo1, unsigned char *oligo2, double saltCorrection, int oligo1_len, int oligo2_len, jmp_buf, thal_results *);
-
 static void save_append_string(char** ret, int *space, thal_results *o, const char *str, jmp_buf);
-
 static void save_append_char(char** ret, int *space, thal_results *o, const char str, jmp_buf);
-
 static int equal(double a, double b);
-
 static void strcatc(char*, char);
-
 static void push(struct tracer**, int, int, int, jmp_buf, thal_results*); /* to add elements to struct */
-
 /* terminal bp for monomer structure */
 static void calc_terminal_bp(double temp, double **entropyDPT, double **enthalpyDPT, double *send5, double *hend5, double RC, unsigned char *numSeq1, unsigned char *numSeq2, int oligo1_len, int oligo2_len);
-
 /* memory stuff */
 static void* safe_calloc(size_t, size_t, jmp_buf _jmp_buf, thal_results* o);
 static void* safe_malloc(size_t, jmp_buf, thal_results* o);
