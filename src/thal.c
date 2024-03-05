@@ -216,7 +216,7 @@ static struct tetraloop* tetraloopEnthalpies;  ther penalties for given tetraloo
 #include <time.h>
 int main(void){
    clock_t start_time;
-   const int num_tests = 100000;
+   const int num_tests = 1000000;
    const int seq1_len = 20;
    const int seq2_len = 20;
    thal_alignment_type mode = thal_any;
@@ -2435,6 +2435,7 @@ traceback_dimer(int i, int j, double RC, int* ps1, int* ps2, int maxLoop, double
          done = 1;
       }
       for (d = 3; !done && d <= maxLoop + 2; ++d) {
+         RSH(i, j, saved_RSH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
          ii = i - 1;
          jj = -ii - d + (j + i);
          if (jj < 1) {
@@ -2444,7 +2445,6 @@ traceback_dimer(int i, int j, double RC, int* ps1, int* ps2, int maxLoop, double
          for (; !done && ii > 0 && jj < j; --ii, ++jj) {
             SH[0] = -1.0;
             SH[1] = _INFINITY;
-            RSH(i, j, saved_RSH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
             calc_bulge_internal_dimer(ii, jj, i, j, SH, saved_RSH, 1, maxLoop, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
             if (equal(entropyDPT[i][j], SH[0]) && equal(enthalpyDPT[i][j], SH[1])) {
                i = ii;
