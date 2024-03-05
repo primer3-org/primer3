@@ -2494,13 +2494,13 @@ drawDimer(int* ps1, int* ps2, double H, double S, const thal_mode mode, double t
    }
    N = (N/2) -1;
    t = ((H) / (S + (N * saltCorrection) + RC)) - ABSOLUTE_ZERO;
+   G = (H) - (t37 * (S + (N * saltCorrection)));
+   S = S + (N * saltCorrection);
+   o->dg = G;
+   o->ds = S;
+   o->dh = H;
+   o->temp = (double) t;
    if((mode != THL_FAST) && (mode != THL_DEBUG_F)) {
-      G = (H) - (t37 * (S + (N * saltCorrection)));
-      S = S + (N * saltCorrection);
-      o->dg = G;
-      o->ds = S;
-      o->dh = H;
-      o->temp = (double) t;
       /* maybe user does not need as precise as that */
       /* printf("Thermodynamical values:\t%d\tdS = %g\tdH = %g\tdG = %g\tt = %g\tN = %d, SaltC=%f, RC=%f\n",
                oligo1_len, (double) S, (double) H, (double) G, (double) t, (int) N, saltCorrection, RC); */
@@ -2512,7 +2512,6 @@ drawDimer(int* ps1, int* ps2, double H, double S, const thal_mode mode, double t
                   (double) t, (double) G, (double) H, (double) S);
       }
    } else {
-      o->temp = (double) t;
       return NULL;
    }
 
