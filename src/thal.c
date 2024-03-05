@@ -2497,6 +2497,9 @@ drawDimer(int* ps1, int* ps2, double H, double S, const thal_mode mode, double t
    if((mode != THL_FAST) && (mode != THL_DEBUG_F)) {
       G = (H) - (t37 * (S + (N * saltCorrection)));
       S = S + (N * saltCorrection);
+      o->dg = G;
+      o->ds = S;
+      o->dh = H;
       o->temp = (double) t;
       /* maybe user does not need as precise as that */
       /* printf("Thermodynamical values:\t%d\tdS = %g\tdH = %g\tdG = %g\tt = %g\tN = %d, SaltC=%f, RC=%f\n",
@@ -2746,10 +2749,13 @@ drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, un
          }
       }
       t = (mh / (ms + (((N/2)-1) * saltCorrection))) - ABSOLUTE_ZERO;
+      mg = mh - (temp * (ms + (((N/2)-1) * saltCorrection)));
+      ms = ms + (((N/2)-1) * saltCorrection);
+      o->dg = mg;
+      o->ds = ms;
+      o->dh = mh;
+      o->temp = (double) t;
       if((mode != THL_FAST) && (mode != THL_DEBUG_F)) {
-         mg = mh - (temp * (ms + (((N/2)-1) * saltCorrection)));
-         ms = ms + (((N/2)-1) * saltCorrection);
-         o->temp = (double) t;
          if (mode != THL_STRUCT) {
            printf("Calculated thermodynamical parameters for dimer:\t%d\tdS = %g\tdH = %g\tdG = %g\tt = %g\n",
                   oligo1_len, (double) ms, (double) mh, (double) mg, (double) t);
@@ -2758,7 +2764,6 @@ drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, un
                    (double) t, (double) mg, (double) mh, (double) ms);
          }
       } else {
-         o->temp = (double) t;
          return NULL;
       }
    }

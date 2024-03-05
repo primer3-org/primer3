@@ -108,6 +108,9 @@ typedef struct {
 typedef struct {
    char msg[255];
    double temp;
+   double dg;
+   double ds;
+   double dh;
    int align_end_1;
    int align_end_2;
    char *sec_struct;
