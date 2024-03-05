@@ -1908,12 +1908,8 @@ calc_bulge_internal_dimer(int i, int j, int ii, int jj, double* EntropyEnthalpy,
             S = -1.0;
          } 
          if((isFinite(H)) || (traceback==1)) {
-            if(traceback)
-               RSH(ii, jj, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-            else{
-               SH[0] = saved_RSH[0];
-               SH[1] = saved_RSH[1];
-            }
+            SH[0] = saved_RSH[0];
+            SH[1] = saved_RSH[1];
             G1 = H+SH[1] -TEMP_KELVIN*(S+SH[0]);
             G2 = enthalpyDPT[ii][jj]+SH[1]-TEMP_KELVIN*((entropyDPT[ii][jj]+SH[0]));
             if((G1< G2) || (traceback==1)) {
@@ -1937,12 +1933,8 @@ calc_bulge_internal_dimer(int i, int j, int ii, int jj, double* EntropyEnthalpy,
             S = -1.0;
          }
          if((isFinite(H)) || (traceback==1)){ 
-            if(traceback)
-               RSH(ii, jj, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-            else{
-               SH[0] = saved_RSH[0];
-               SH[1] = saved_RSH[1];
-            }
+            SH[0] = saved_RSH[0];
+            SH[1] = saved_RSH[1];
             G1 = H+SH[1] -TEMP_KELVIN*(S+SH[0]);
             G2 = enthalpyDPT[ii][jj]+SH[1]-TEMP_KELVIN*(entropyDPT[ii][jj]+SH[0]);
             if(G1< G2 || (traceback==1)){
@@ -1968,12 +1960,8 @@ calc_bulge_internal_dimer(int i, int j, int ii, int jj, double* EntropyEnthalpy,
          S = -1.0;
       }    
       if((isFinite(H)) || (traceback==1)){
-            if(traceback)
-               RSH(ii, jj, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-            else{
-               SH[0] = saved_RSH[0];
-               SH[1] = saved_RSH[1];
-            }
+         SH[0] = saved_RSH[0];
+         SH[1] = saved_RSH[1];
          G1 = H+SH[1] -TEMP_KELVIN*(S+SH[0]);
          G2 = enthalpyDPT[ii][jj]+SH[1]-TEMP_KELVIN*(entropyDPT[ii][jj]+SH[0]);
          if((G1< G2) || traceback==1) {
@@ -2000,12 +1988,8 @@ calc_bulge_internal_dimer(int i, int j, int ii, int jj, double* EntropyEnthalpy,
          S = -1.0;
       }
       if((isFinite(H)) || (traceback==1)){
-         if(traceback)
-            RSH(ii, jj, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-         else{
-            SH[0] = saved_RSH[0];
-            SH[1] = saved_RSH[1];
-         }
+         SH[0] = saved_RSH[0];
+         SH[1] = saved_RSH[1];
          G1 = H+SH[1] -TEMP_KELVIN*(S+SH[0]);
          G2 = enthalpyDPT[ii][jj]+SH[1]-TEMP_KELVIN*(entropyDPT[ii][jj]+SH[0]);
          if((G1< G2) || (traceback==1)){
@@ -2431,6 +2415,7 @@ traceback_dimer(int i, int j, double RC, int* ps1, int* ps2, int maxLoop, double
 {
    int d, ii, jj, done;
    double SH[2];
+   double saved_RSH[2];
    ps1[i - 1] = j;
    ps2[j - 1] = i;
    while(1) {
@@ -2459,7 +2444,8 @@ traceback_dimer(int i, int j, double RC, int* ps1, int* ps2, int maxLoop, double
          for (; !done && ii > 0 && jj < j; --ii, ++jj) {
             SH[0] = -1.0;
             SH[1] = _INFINITY;
-            calc_bulge_internal_dimer(ii, jj, i, j, SH, NULL, 1, maxLoop, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+            RSH(i, j, saved_RSH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+            calc_bulge_internal_dimer(ii, jj, i, j, SH, saved_RSH, 1, maxLoop, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
             if (equal(entropyDPT[i][j], SH[0]) && equal(enthalpyDPT[i][j], SH[1])) {
                i = ii;
                j = jj;
