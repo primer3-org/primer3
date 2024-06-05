@@ -87,7 +87,7 @@ int main(int argc, char** argv)
      "\n"
      "-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM\n"
      "\n"
-     "-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0 mM\n"
+     "-n  dNTP_conc        - concentration of deoxynycleotide triphosphate in mM, by default 0.8 mM\n"
      "\n"
      "-d  dna_conc         - concentration of DNA strands in nM, by default 50 nM\n"
      "\n"
