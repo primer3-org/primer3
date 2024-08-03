@@ -56,7 +56,7 @@ AR         = ar
 CC         = gcc
 CXX        = g++
 O_OPTS     = -O2
-CC_OPTS    = -g -Wall
+CC_OPTS    = -g -Wall -march=native
 P_DEFINES  =
 
 CFLAGS  = $(CC_OPTS) $(O_OPTS)
@@ -97,21 +97,19 @@ LIBDPAL         = libdpal.a
 LIBDPAL_DYN     = libdpal.a.so.1.0.0
 LIBTHAL         = libthal.a
 LIBTHAL_DYN     = libthal.a.so.1.0.0
-LIBTHALPARA     = libthalpara.a
-LIBTHALPARA_DYN = libthalpara.a.so.1.0.0
 LIBPRIMER3      = libprimer3.a
 LIBPRIMER3_DYN  = libprimer3.so.1.0.0
 
 ifeq ($(TESTOPTS),--windows)
     $(info windows)
-    LIBRARIES       = $(LIBPRIMER3) $(LIBDPAL) $(LIBTHAL) $(LIBTHALPARA) $(LIBAMPTM) $(LIBOLIGOTM)
-    DYNLIBS         = $(LIBPRIMER3_DYN) $(LIBDPAL_DYN) $(LIBTHAL_DYN) $(LIBTHALPARA_DYN) $(LIBAMPTM_DYN) $(LIBOLIGOTM_DYN)
+    LIBRARIES       = $(LIBPRIMER3) $(LIBDPAL) $(LIBTHAL) $(LIBAMPTM) $(LIBOLIGOTM)
+    DYNLIBS         = $(LIBPRIMER3_DYN) $(LIBDPAL_DYN) $(LIBTHAL_DYN) $(LIBAMPTM_DYN) $(LIBOLIGOTM_DYN)
 else
     $(info no windows)
     LIBMASKER       = libmasker.a
     LIBMASKER_DYN   = libmasker.a.so.1.0.0
-    LIBRARIES       = $(LIBPRIMER3) $(LIBDPAL) $(LIBTHAL) $(LIBTHALPARA) $(LIBOLIGOTM) $(LIBAMPTM) $(LIBMASKER)
-    DYNLIBS         = $(LIBPRIMER3_DYN) $(LIBDPAL_DYN) $(LIBTHAL_DYN) $(LIBTHALPARA_DYN) $(LIBAMPTM_DYN) $(LIBOLIGOTM_DYN) $(LIBMASKER_DYN)
+    LIBRARIES       = $(LIBPRIMER3) $(LIBDPAL) $(LIBTHAL) $(LIBOLIGOTM) $(LIBAMPTM) $(LIBMASKER)
+    DYNLIBS         = $(LIBPRIMER3_DYN) $(LIBDPAL_DYN) $(LIBTHAL_DYN) $(LIBAMPTM_DYN) $(LIBOLIGOTM_DYN) $(LIBMASKER_DYN)
 endif
 
 RANLIB          = ranlib
@@ -176,13 +174,6 @@ $(LIBTHAL): thal_primer.o
 $(LIBTHAL_DYN): thal_primer.o
 	$(CC) -shared -W1,-soname,libthal.so.1 -o $(LIBTHAL_DYN_LIB) thal_primer.o
 
-$(LIBTHALPARA): thal_parameters.o
-	$(AR) rv $@ thal_parameters.o
-	$(RANLIB) $@
-
-$(LIBTHALPARA_DYN): thal_parameters.o
-	$(CC) -shared -W1,-soname,libthalpara.so.1 -o $(LIBTHALPARA_DYN_LIB) thal_parameters.o
-
 $(LIBPRIMER3): libprimer3.o p3_seq_lib.o
 	$(AR) rv $@ libprimer3.o p3_seq_lib.o
 	$(RANLIB) $@
@@ -200,14 +191,14 @@ $(LIBMASKER_DYN): masker.o
 $(PRIMER_EXE): $(PRIMER_OBJECTS)
 	$(CXX) $(CXXFLAGS) -lstdc++ $(LDFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
 
-libprimer3.o: libprimer3.cc libprimer3.h p3_seq_lib.h dpal.h thal.h thal_parameters.h oligotm.h
+libprimer3.o: libprimer3.cc libprimer3.h p3_seq_lib.h dpal.h thal.h oligotm.h thal_default_params.h
 	$(CXX) -c $(CXXFLAGS) $(P_DEFINES) -o $@ libprimer3.cc
 
 $(NTDPAL_EXE): ntdpal_main.o dpal.o
 	$(CC) $(LDFLAGS) -o $@ ntdpal_main.o dpal.o
 
-$(NTTHAL_EXE): thal_main.o thal.o thal_parameters.o
-	$(CC) $(LDFLAGS) -o $@ thal_main.o thal.o thal_parameters.o $(LDLIBS)
+$(NTTHAL_EXE): thal_main.o thal.o 
+	$(CC) $(LDFLAGS) -o $@ thal_main.o thal.o $(LDLIBS)
 
 $(OLIGOTM_EXE): oligotm_main.c oligotm.h $(LIBOLIGOTM)
 	$(CC) $(CFLAGS) -o $@ oligotm_main.c $(LIBOLIGOTM) $(LIBOPTS) $(LDLIBS)
@@ -221,7 +212,7 @@ $(LONG_SEQ_EXE): long_seq_tm_test_main.c oligotm.o
 $(MASKER_EXE): masker_main.c $(LIBRARIES)
 	$(CXX) $(CXXFLAGS) -lstdc++ -o $@ masker_main.c $(LIBRARIES) $(LIBOPTS) $(LDLIBS)
 
-read_boulder.o: read_boulder.c read_boulder.h libprimer3.h dpal.h thal.h thal_parameters.h p3_seq_lib.h 
+read_boulder.o: read_boulder.c read_boulder.h libprimer3.h dpal.h thal.h p3_seq_lib.h thal_default_params.h 
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ read_boulder.c
 
 print_boulder.o: print_boulder.c print_boulder.h libprimer3.h p3_seq_lib.h 
@@ -232,11 +223,8 @@ dpal.o: dpal.c dpal.h
 
 # We use '-ffloat-store' on windows to prevent undesirable
 # precision which may lead to differences in floating point results.
-thal.o: thal.c thal.h thal_parameters.h
+thal.o: thal.c thal.h thal_default_params.h
 	$(CC) -c $(CFLAGS) -ffloat-store -o $@ thal.c
-
-thal_parameters.o: thal_parameters.c thal_parameters.h thal.h
-	$(CC) -c $(CFLAGS) -ffloat-store $(P_DEFINES) -o $@ thal_parameters.c
 
 p3_seq_lib.o: p3_seq_lib.c p3_seq_lib.h libprimer3.h
 	$(CC) -c $(CFLAGS) -o $@ p3_seq_lib.c
@@ -244,16 +232,16 @@ p3_seq_lib.o: p3_seq_lib.c p3_seq_lib.h libprimer3.h
 dpal_primer.o: dpal.c dpal.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ dpal.c
 
-thal_primer.o: thal.c thal.h thal_parameters.h
+thal_primer.o: thal.c thal.h thal_default_params.h
 	$(CC) -c $(CFLAGS) -ffloat-store $(P_DEFINES) -o $@ thal.c
 
-format_output.o: format_output.c format_output.h libprimer3.h dpal.h thal.h p3_seq_lib.h 
+format_output.o: format_output.c format_output.h libprimer3.h dpal.h thal.h p3_seq_lib.h thal_default_params.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ format_output.c
 
 ntdpal_main.o: ntdpal_main.c dpal.h
 	$(CC) -c $(CC_OPTS) -o $@ ntdpal_main.c
 
-thal_main.o: thal_main.c thal.h thal_parameters.h
+thal_main.o: thal_main.c thal.h thal_default_params.h
 	$(CC) -c $(CFLAGS) -o $@ thal_main.c
 # We use CC_OPTS above rather than CFLAGS because
 # gcc 2.7.2 crashes while compiling ntdpal_main.c with -O2
@@ -262,7 +250,7 @@ amplicontm.o: amplicontm.c amplicontm.h
 
 oligotm.o: oligotm.c oligotm.h
 
-primer3_boulder_main.o: primer3_boulder_main.c libprimer3.h dpal.h thal.h thal_parameters.h oligotm.h format_output.h print_boulder.h read_boulder.h
+primer3_boulder_main.o: primer3_boulder_main.c libprimer3.h dpal.h thal.h oligotm.h format_output.h print_boulder.h read_boulder.h thal_default_params.h
 	$(CC) -c $(CFLAGS) $(P_DEFINES) primer3_boulder_main.c
 
 masker.o: masker.c masker.h libprimer3.h

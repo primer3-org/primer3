@@ -108,6 +108,9 @@ typedef struct {
 typedef struct {
    char msg[255];
    double temp;
+   double dg;
+   double ds;
+   double dh;
    int align_end_1;
    int align_end_2;
    char *sec_struct;
@@ -132,6 +135,14 @@ typedef struct thal_parameters {
   char *tstack2_dh;
   char *tstack2_ds;
 } thal_parameters;
+
+struct triloop {
+  char loop[5];
+  double value; };
+
+struct tetraloop {
+  char loop[6];
+  double value; };
 
 /* 
  * THL_FAST    = 0 - score only with optimized functions (fast)
