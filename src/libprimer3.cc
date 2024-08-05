@@ -7345,7 +7345,7 @@ _pr_data_control(const p3_global_settings *pa,
                             "Specified right primer not in Included Region");
       else if (sa->left_input) {
         if (strcmp(sa->left_input, s1) == 0)
-          pr_append_new_chunk(warning,
+          pr_append_new_chunk(nonfatal_err,
                             "Specified left and right primer are reverse complementary");
         if (strcmp(sa->left_input, sa->right_input) == 0)
           pr_append_new_chunk(warning,

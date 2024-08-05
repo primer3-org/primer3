@@ -2287,7 +2287,7 @@ Left     954     0     0     0   939     0     0     0     0     0     0     0  
 Right    954     0     0     0   951     0     0     0     0     0     0     0     0     3
 Pair Stats:
 considered 0, ok 0
-libprimer3 release 2.2.3
+libprimer3 release 2.6.1
 
 
 PRIMER PICKING RESULTS FOR rev_comp_primers
@@ -2296,5 +2296,34 @@ INPUT PROBLEM: Specified left and right primer are reverse complementary
 
 PRIMER PICKING RESULTS FOR identical_primers
 
-INPUT PROBLEM: Specified left and right primer are identical
+No mispriming library specified
+Using 1-based sequence positions
+WARNING: Specified left and right primer are identical
+
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER          1   23   62.46   47.83  2.00  1.00 CACCCCCATCAAACTCTTACTCA
+RIGHT PRIMER        60   23   62.46   47.83  2.00  1.00 CACCCCCATCAAACTCTTACTCA
+SEQUENCE SIZE: 60
+INCLUDED REGION SIZE: 60
+
+PRODUCT SIZE: 60, PAIR ANY COMPL: 2.00, PAIR 3' COMPL: 1.00
+
+    1 CACCCCCATCAAACTCTTACTCANNNNNNNNNNNNNNTGAGTAAGAGTTTGATGGGGGTG
+      >>>>>>>>>>>>>>>>>>>>>>>              <<<<<<<<<<<<<<<<<<<<<<<
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+
+
+Statistics
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Pair Stats:
+considered 1, primer in pair overlaps a primer in a better pair 1, ok 1
+libprimer3 release 2.6.1
+
 
