@@ -22,6 +22,10 @@ input_sequence *
 create_input_sequence_from_file_name (const char *input_file_name, pr_append_str *parse_err) 
 {
   input_sequence *input_seq = (input_sequence *) malloc (sizeof(input_sequence));
+  if (!input_seq) {
+    pr_append_new_chunk_external (parse_err, "Memory allocation for input sequence failed!");
+    return input_seq;
+  }
   memset (input_seq, 0, sizeof(input_sequence));
   if (!input_file_name) input_seq->sequence_file = stdin;
   else input_seq->sequence_file = fopen(input_file_name, "r");
@@ -71,7 +75,6 @@ get_header_name_from_input (input_sequence *input_seq, unsigned long long header
   char *header_name = (char *) malloc (sizeof(char) * (current_pos - header_pos + 2));
   if (!header_name) {
     pr_append_new_chunk_external (parse_err, "Memory allocation for header name failed!");
-    free(header_name);
     return NULL;
   }
   if (input_seq->sequence_file) {
@@ -338,26 +341,34 @@ output_sequence *
 create_output_sequence (unsigned long long seq_len, masking_direction mdir, pr_append_str *parse_err) 
 {
   output_sequence *output_seq = (output_sequence *) malloc (sizeof (output_sequence));
-  memset (output_seq, 0, sizeof (output_sequence));
   if (!output_seq) {
     pr_append_new_chunk_external (parse_err, "Memory allocation for output sequence failed!");
-    return output_seq;
+    return NULL;
   }
+  memset (output_seq, 0, sizeof (output_sequence));
   if (mdir == both_separately) {
     output_seq->sequence_fwd = (char *) malloc (seq_len + 1);
-    memset (output_seq->sequence_fwd, 0, seq_len + 1);
     output_seq->sequence_rev = (char *) malloc (seq_len + 1);
+    if (!output_seq->sequence_fwd || !output_seq->sequence_rev) {
+      pr_append_new_chunk_external (parse_err, "Memory allocation for output sequence failed!");
+      goto error;
+    }
+    memset (output_seq->sequence_fwd, 0, seq_len + 1);
     memset (output_seq->sequence_rev, 0, seq_len + 1);
   } else {
     output_seq->sequence = (char *) malloc (seq_len + 1);
+    if (!output_seq->sequence) {
+      pr_append_new_chunk_external (parse_err, "Memory allocation for output sequence failed!");
+      goto error;
+    }
     memset (output_seq->sequence, 0, seq_len + 1);
   }
-  if (!output_seq->sequence_fwd && !output_seq->sequence_rev && !output_seq->sequence) {
-    pr_append_new_chunk_external (parse_err, "Memory allocation for output sequence failed!");
-    return NULL;    
-  }
+  
   output_seq->pos = 0;
   return output_seq;
+error:
+  delete_output_sequence(output_seq);
+  return NULL;
 }
 
 void 
@@ -367,7 +378,7 @@ delete_output_sequence (output_sequence *output_seq)
   if (output_seq->sequence) free ((void *) output_seq->sequence);
   if (output_seq->sequence_fwd) free ((void *) output_seq->sequence_fwd);
   if (output_seq->sequence_rev) free ((void *) output_seq->sequence_rev);
-  if (output_seq) free ((void* ) output_seq);
+  free ((void* ) output_seq);
   return;
 }
 
@@ -834,7 +845,7 @@ read_and_mask_sequence (input_sequence *input_seq, output_sequence *output_seq, 
   empty_buffer (output_seq, mp, mbuffer, FLUSH_ALL, parse_err);
   delete_masking_buffer (mbuffer);
   return;
-} 
+}
 
 /*==================================================================================
  * 
@@ -842,7 +853,7 @@ read_and_mask_sequence (input_sequence *input_seq, output_sequence *output_seq, 
  * 
  *==================================================================================*/
 
-const char * 
+const char *
 mmap_by_filename (const char *filename, size_t *size)
 {
   struct stat st;
