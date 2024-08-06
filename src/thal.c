@@ -790,7 +790,7 @@ drawDimer(int* ps1, int* ps2, double H, double S, const thal_mode mode, double t
          printf("Calculated thermodynamical parameters for dimer:\tdS = %g\tdH = %g\tdG = %g\tt = %g\n",
                (double) S, (double) H, (double) G, (double) t);
       } else {
-         sprintf(ret_para, "Tm: %.1f&deg;C  dG: %.0f cal/mol  dH: %.0f cal/mol  dS: %.0f cal/mol*K\\n",
+         snprintf(ret_para, 400, "Tm: %.1f&deg;C  dG: %.0f cal/mol  dH: %.0f cal/mol  dS: %.0f cal/mol*K\\n",
                   (double) t, (double) G, (double) H, (double) S);
       }
    } else {
@@ -1823,7 +1823,7 @@ drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, co
            printf("Calculated thermodynamical parameters for dimer:\t%d\tdS = %g\tdH = %g\tdG = %g\tt = %g\n",
                   oligo1_len, (double) ms, (double) mh, (double) mg, (double) t);
          } else {
-           sprintf(ret_para, "Tm: %.1f&deg;C  dG: %.0f cal/mol  dH: %.0f cal/mol  dS: %.0f cal/mol*K\\n",
+           snprintf(ret_para, 400, "Tm: %.1f&deg;C  dG: %.0f cal/mol  dH: %.0f cal/mol  dS: %.0f cal/mol*K\\n",
                    (double) t, (double) mg, (double) mh, (double) ms);
          }
       } else {
@@ -2494,7 +2494,7 @@ readParamFile(const char* dirname, const char* fname, jmp_buf _jmp_buf, thal_res
 #endif
   strcat(paramdir, fname);
   if (!(file = fopen(paramdir, "r"))) {
-    sprintf(o->msg, "Unable to open file %s", paramdir);
+    snprintf(o->msg, 255, "Unable to open file %s", paramdir);
     if (paramdir != NULL) {
       free(paramdir);
       paramdir = NULL;

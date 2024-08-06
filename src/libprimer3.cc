@@ -384,7 +384,7 @@ static int    primer_rec_comp(const void *, const void *);
 static int    print_list_header(FILE *, oligo_type, int, int, int);
 static int    print_oligo(FILE *, const seq_args *, int, const primer_rec *,
                           oligo_type, int, int,int);
-static char   *strstr_nocase(char *, char *);
+static int    strstr_nocase(char *, char *);
 
 static double p_obj_fn(const p3_global_settings *, primer_rec *, int );
 
@@ -2704,11 +2704,11 @@ pick_only_best_primer(const int start,
       pr_append_new_chunk(&retval->warnings, "No left primer found in range ");
     }
     temp_value = start + pa->first_base_index;
-    sprintf(p_number, "%d", temp_value);
+    snprintf(p_number, 20, "%d", temp_value);
     pr_append(&retval->warnings, p_number);
     pr_append(&retval->warnings, " - ");
     temp_value = start + length + pa->first_base_index;
-    sprintf(p_number, "%d", temp_value);
+    snprintf(p_number, 20, "%d", temp_value);
     pr_append(&retval->warnings, p_number);
   }
   if (oligo->num_elem == 0) return 1;
@@ -6145,14 +6145,14 @@ dna_to_upper(char * s, int ambiguity_code_ok)
   return unrecognized_base;
 }
 
-static char *
+static int
 strstr_nocase(char *s1, char *s2) {
   int  n1, n2;
   char *p, q, *tmp;
 
-  if(s1 == NULL || s2 == NULL) return NULL;
+  if(s1 == NULL || s2 == NULL) return 0;
   n1 = strlen(s1); n2 = strlen(s2);
-  if(n1 < n2) return NULL;
+  if(n1 < n2) return 0;
 
   tmp = (char *) pr_safe_malloc(n1 + 1);
   strcpy(tmp, s1);
@@ -6164,13 +6164,13 @@ strstr_nocase(char *s1, char *s2) {
     if(strcmp_nocase(p, s2)){
       *(p + n2) = q; p++; continue;
     }
-    else {free(tmp); return p;}
+    else {free(tmp); return 1;}
   }
-  free(tmp); return NULL;
+  free(tmp); return 0;
 }
 
 #define CHECK  if (r > bsize || r < 0) return "Internal error, not enough space for \"explain\" string";  bufp += r; bsize -= r
-#define SP_AND_CHECK(FMT, VAL) { r = sprintf(bufp, FMT, VAL); CHECK; }
+#define SP_AND_CHECK(FMT, VAL) { r = snprintf(bufp, bsize, FMT, VAL); CHECK; }
 #define IF_SP_AND_CHECK(FMT, VAL) { if (VAL) { SP_AND_CHECK(FMT, VAL) } }
 const char *
 p3_pair_explain_string(const pair_stats *pair_expl)
@@ -7590,13 +7590,13 @@ _check_and_adjust_overlap_pos(seq_args *sa,
     list[i] -= first_index;
 
     if (list[i] >= seq_len) {
-      sprintf(buffer, "%s beyond end of sequence", tag);
+      snprintf(buffer, 255, "%s beyond end of sequence", tag);
       pr_append_new_chunk(nonfatal_err, buffer);
       return 1;
     }
 
     if (list[i] < 0) {
-      sprintf(buffer, "Negative %s length", tag);
+      snprintf(buffer, 255, "Negative %s length", tag);
       pr_append_new_chunk(nonfatal_err, buffer);
       return 1;
     }
@@ -7608,7 +7608,7 @@ _check_and_adjust_overlap_pos(seq_args *sa,
     if (list[i] < 0 
         || list[i] > sa->incl_l) {
       if (!outside_warning_issued) {
-        sprintf(buffer, "%s outside of INCLUDED_REGION", tag);
+        snprintf(buffer, 255, "%s outside of INCLUDED_REGION", tag);
         pr_append_new_chunk(warning, buffer);
         outside_warning_issued = 1;
       }

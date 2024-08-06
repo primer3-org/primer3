@@ -231,7 +231,7 @@ print_boulder(int io_version,
     }
       
     /* Get the number for pimer counting in suffix[0] */
-    sprintf(suffix, "_%d", i);
+    snprintf(suffix, 100, "_%d", i);
     
     /* Print out the Pair Penalties */
     if (retval->output_type == primer_pairs) {
