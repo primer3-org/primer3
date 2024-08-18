@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: make
       run: make
       working-directory: ./src
@@ -29,13 +29,13 @@ jobs:
       run: tar -zcvf results/build-paranoid-regular-a-src.tar.gz ./src
     - name: tar -zcvf results/build-paranoid-regular-a-test.tar.gz ./test
       run: tar -zcvf results/build-paranoid-regular-a-test.tar.gz ./test
-    - name: Upload math result for job 1
-      uses: actions/upload-artifact@v1
+    - name: Upload src folder for job 1
+      uses: actions/upload-artifact@v4
       with:
         name: build-paranoid-regular-a-src.tar.gz
         path: results/build-paranoid-regular-a-src.tar.gz
-    - name: Upload math result for job 1
-      uses: actions/upload-artifact@v1
+    - name: Upload test folder for job 1
+      uses: actions/upload-artifact@v4
       with:
         name: build-paranoid-regular-a-test.tar.gz
         path: results/build-paranoid-regular-a-test.tar.gz
@@ -52,13 +52,13 @@ jobs:
       run: tar -zcvf results/build-paranoid-regular-b-src.tar.gz ./src
     - name: tar -zcvf results/build-paranoid-regular-b-test.tar.gz ./test
       run: tar -zcvf results/build-paranoid-regular-b-test.tar.gz ./test
-    - name: Upload math result for job 1
-      uses: actions/upload-artifact@v1
+    - name: Upload src folder for job no valgrind
+      uses: actions/upload-artifact@v4
       with:
         name: build-paranoid-regular-b-src.tar.gz
         path: results/build-paranoid-regular-b-src.tar.gz
-    - name: Upload math result for job 1
-      uses: actions/upload-artifact@v1
+    - name: Upload test folder for job no valgrind
+      uses: actions/upload-artifact@v4
       with:
         name: build-paranoid-regular-b-test.tar.gz
         path: results/build-paranoid-regular-b-test.tar.gz
@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: sudo apt install -y valgrind
       run: sudo apt install -y valgrind
     - name: export PATH=/usr/bin:$PATH
@@ -90,13 +90,13 @@ jobs:
       run: tar -zcvf results/build-paranoid-valgrind-a-src.tar.gz ./src
     - name: tar -zcvf results/build-paranoid-valgrind-a-test.tar.gz ./test
       run: tar -zcvf results/build-paranoid-valgrind-a-test.tar.gz ./test
-    - name: Upload math result for job 1
-      uses: actions/upload-artifact@v1
+    - name: Upload src folder for job valgrind A
+      uses: actions/upload-artifact@v4
       with:
         name: build-paranoid-valgrind-a-src.tar.gz
         path: results/build-paranoid-valgrind-a-src.tar.gz
-    - name: Upload math result for job 1
-      uses: actions/upload-artifact@v1
+    - name: Upload test folder for job valgrind A
+      uses: actions/upload-artifact@v4
       with:
         name: build-paranoid-valgrind-a-test.tar.gz
         path: results/build-paranoid-valgrind-a-test.tar.gz
@@ -107,7 +107,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: sudo apt install -y valgrind
       run: sudo apt install -y valgrind
     - name: export PATH=/usr/bin:$PATH
@@ -128,13 +128,13 @@ jobs:
       run: tar -zcvf results/build-paranoid-valgrind-b-src.tar.gz ./src
     - name: tar -zcvf results/build-paranoid-valgrind-b-test.tar.gz ./test
       run: tar -zcvf results/build-paranoid-valgrind-b-test.tar.gz ./test
-    - name: Upload math result for job 1
-      uses: actions/upload-artifact@v1
+    - name: Upload src folder for job valgrind B
+      uses: actions/upload-artifact@v4
       with:
         name: build-paranoid-valgrind-b-src.tar.gz
         path: results/build-paranoid-valgrind-b-src.tar.gz
-    - name: Upload math result for job 1
-      uses: actions/upload-artifact@v1
+    - name: Upload test folder for job valgrind B
+      uses: actions/upload-artifact@v4
       with:
         name: build-paranoid-valgrind-b-test.tar.gz
         path: results/build-paranoid-valgrind-b-test.tar.gz

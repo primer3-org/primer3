@@ -10,7 +10,7 @@ jobs:
     runs-on: macOS-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: make
       run: make
       working-directory: ./src
@@ -41,13 +41,13 @@ jobs:
       run: tar -zcvf results/build-macOS-src.tar.gz ./src
     - name: tar -zcvf results/build-macOS-test.tar.gz ./test
       run: tar -zcvf results/build-macOS-test.tar.gz ./test
-    - name: Upload math result for job 1
-      uses: actions/upload-artifact@v1
+    - name: Upload src result folder for job 1
+      uses: actions/upload-artifact@v4
       with:
         name: build-macOS-src.tar.gz
         path: results/build-macOS-src.tar.gz
-    - name: Upload math result for job 1
-      uses: actions/upload-artifact@v1
+    - name: Upload test folder for job 1
+      uses: actions/upload-artifact@v4
       with:
         name: build-macOS-test.tar.gz
         path: results/build-macOS-test.tar.gz
