@@ -144,7 +144,8 @@ static void _adjust_seq_args(const p3_global_settings *pa,
                              pr_append_str *warning);
 
 static void _optimize_ok_regions_list(const p3_global_settings *pa,
-                                      seq_args *sa);
+                                      seq_args *sa,
+                                      pr_append_str *warning);
 
 static int any_5_prime_ol_extension_has_problem(const primer_rec *);
 
@@ -6640,7 +6641,7 @@ _adjust_seq_args(const p3_global_settings *pa,
 
   /* Update ok regions, if non empty */
   if (sa->ok_regions.count > 0) {
-    _optimize_ok_regions_list(pa, sa);
+    _optimize_ok_regions_list(pa, sa, warning);
   }
 
 }
@@ -6652,8 +6653,10 @@ _adjust_seq_args(const p3_global_settings *pa,
  */
 static void
 _optimize_ok_regions_list(const p3_global_settings *pa,
-                          seq_args *sa)
+                          seq_args *sa,
+                          pr_append_str *warning)
 {
+  char buffer[255];
   /* We do this only if we enabled the optimization and
    * the primers were NOT specified. */
   if (!OPTIMIZE_OK_REGIONS || (sa->left_input) || (sa->right_input)) {
@@ -6696,8 +6699,8 @@ _optimize_ok_regions_list(const p3_global_settings *pa,
       new_rs = ls + pmin - omax - 1; /* -1 just to be safe */
       new_re = le - omin + pmax + 1; /* +1 just to be safe */
       /* Adjust the ranges */
-      if ((rs == -1) || (new_rs > rs)) { rs = new_rs; }
-      if ((re == -1) || (new_re < re)) { re = new_re; }
+      if (((rs == -1) || (new_rs > rs)) && ((new_rs < re - omin) || (re < omin))) { rs = new_rs; }
+      if (((re == -1) || (new_re < re)) && (rs < new_re)) { re = new_re; }
       if (rs < 0) { rs = 0; }
       if (re > (signed) strlen(sa->sequence)) { re = strlen(sa->sequence); }
     }
@@ -6707,26 +6710,40 @@ _optimize_ok_regions_list(const p3_global_settings *pa,
       new_ls = rs + omin - pmax - 1; /* -1 just to be safe */
       new_le = re - pmin + omax + 1; /* +1 just to be safe */
       /* Adjust the ranges */
-      if ((ls == -1) || (new_ls > ls)) { ls = new_ls; }
-      if ((le == -1) || (new_le < le)) { le = new_le; }
+      if (((ls == -1) || (new_ls > ls)) && ((new_ls < le - omin) || (le < omin))) { ls = new_ls; }
+      if (((le == -1) || (new_le < le)) && (ls < new_le)) { le = new_le; }
       if (ls < 0) { ls = 0; }
       if (le > (signed) strlen(sa->sequence)) { le = strlen(sa->sequence); }
     }
     /* Temporary testing fprintf: */
-    /* fprintf(stderr, "Adjusted range [%d,%d,%d,%d] to [%d,%d,%d,%d],
-            pmin is %d, pmax is %d, omin is %d, omax is %d\n",
-            sa->ok_regions.left_pairs[i][0],
-            sa->ok_regions.left_pairs[i][0] +
-            sa->ok_regions.left_pairs[i][1] - 1,
-            sa->ok_regions.right_pairs[i][0],
-            sa->ok_regions.right_pairs[i][0] +
-            sa->ok_regions.right_pairs[i][1] - 1, ls, le, rs, re,
+    /* fprintf(stderr, "Adjusted range [%d,%d,%d,%d] to [%d,%d,%d,%d], \
+            pmin is %d, pmax is %d, omin is %d, omax is %d\n", \
+            sa->ok_regions.left_pairs[i][0], \
+            sa->ok_regions.left_pairs[i][0] + \
+            sa->ok_regions.left_pairs[i][1] - 1, \
+            sa->ok_regions.right_pairs[i][0], \
+            sa->ok_regions.right_pairs[i][0] + \
+            sa->ok_regions.right_pairs[i][1] - 1, ls, le, rs, re, \
             pmin, pmax, omin, omax);
     */
-    sa->ok_regions.left_pairs[i][0] = ls;
-    sa->ok_regions.left_pairs[i][1] = le - ls + 1;
-    sa->ok_regions.right_pairs[i][0] = rs;
-    sa->ok_regions.right_pairs[i][1] = re - rs + 1;
+
+    if ((pmax > rs - le) && (pmin < re - ls + 1)) {
+      sa->ok_regions.left_pairs[i][0] = ls;
+      sa->ok_regions.left_pairs[i][1] = le - ls + 1;
+      sa->ok_regions.right_pairs[i][0] = rs;
+      sa->ok_regions.right_pairs[i][1] = re - rs + 1;
+    } else {
+      snprintf(buffer, 255, "PAIR_OK_REGIONS[%d,%d,%d,%d] does not allow products of %d-%dbp", \
+               sa->ok_regions.left_pairs[i][0], \
+               sa->ok_regions.left_pairs[i][1], \
+               sa->ok_regions.right_pairs[i][0], \
+               sa->ok_regions.right_pairs[i][1], \
+               pmin, \
+               pmax);
+      sa->ok_regions.left_pairs[i][1] = 1;
+      sa->ok_regions.right_pairs[i][1] = 1;
+      pr_append_new_chunk(warning, buffer);
+    }
   }
   /* any_left and any_right not true anymore */
   sa->ok_regions.any_left = 0;
