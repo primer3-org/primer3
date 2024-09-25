@@ -7783,9 +7783,12 @@ _check_and_adjust_1_interval(const char *tag_name,
       pr_append(err, " illegal interval");
       return 1;
     }
-    intervals[i][0] -= first_index;
+    if (intervals[i][0] - first_index > 0) {
+      intervals[i][0] -= first_index;
+    } else {
+      intervals[i][0] = 0;
+    }
   }
-
   for (i=0; i < num_intervals; i++) {
     if (empty_allowed && (intervals[i][0] == -1) && (intervals[i][1] == -1))
       continue;
