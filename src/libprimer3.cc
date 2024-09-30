@@ -271,6 +271,7 @@ static char   dna_to_upper(char *, int);
 static int    find_stop_codon(const char *, int, int);
 
 static void   gc_and_n_content(int, int, const char *, primer_rec *);
+static int    more_g_as_c_test(int start, int len, const char *sequence);
 
 static int    make_detection_primer_lists(p3retval *,
                                 const p3_global_settings *,
@@ -714,6 +715,8 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->pick_left_primer    = 1;
   a->pick_right_primer   = 1;
   a->pick_internal_oligo = 0;
+  a->rev_comp_internal_oligo_g_c = 0;
+  a->no_internal_oligo_5_G = 0;
   a->first_base_index    = 0;
   a->num_return          = 5;
   a->pr_min[0]           = 100;
@@ -2639,6 +2642,7 @@ pick_only_best_primer(const int start,
 
         /* Set the start of the primer */
         h.start = i - j + 1;
+        h.rev_comp = 0;
 
         /* Put the real primer sequence in oligo_seq */
         _pr_substr(sa->trimmed_seq, h.start, j, oligo_seq);
@@ -2649,6 +2653,7 @@ pick_only_best_primer(const int start,
 
         /* Set the start of the primer */
         h.start = i+j-1;
+        h.rev_comp = 1;
 
         /* Put the real primer sequence in s */
         _pr_substr(sa->trimmed_seq,  i, j, oligo_seq);
@@ -2730,6 +2735,7 @@ pick_primer_range(const int start, const int length, int *extreme,
   int i, j;
   int primer_size_small, primer_size_large;
   int pr_min, n;
+  char five_prime_G;
 
   /* Array to store one primer sequences in */
   char oligo_seq[MAX_PRIMER_LENGTH+1];
@@ -2778,6 +2784,7 @@ pick_primer_range(const int start, const int length, int *extreme,
 
         /* Set the start of the primer */
         h.start = i - j + 1;
+        h.rev_comp = 0;
 
         /* Put the real primer sequence in oligo_seq */
         _pr_substr(sa->trimmed_seq, h.start, j, oligo_seq);
@@ -2791,10 +2798,30 @@ pick_primer_range(const int start, const int length, int *extreme,
 
         /* Set the start of the primer */
         h.start = i+j-1;
+        h.rev_comp = 1;
 
         /* Put the real primer sequence in s */
         _pr_substr(sa->trimmed_seq,  i, j, oligo_seq);
 
+      }
+
+      /* Check that no G is 5' on probes and if reverse needed */
+      if (oligo->type == OT_INTL) {
+        five_prime_G = oligo_seq[0];
+        if (pa->rev_comp_internal_oligo_g_c > 0) {
+          h.rev_comp = more_g_as_c_test(0, j, oligo_seq);
+          if (h.rev_comp > 0) {
+            five_prime_G = oligo_seq[j-1];
+            if (oligo_seq[j-1] == 'C') {
+              five_prime_G = 'G';
+            } else {
+              five_prime_G = 'A';
+            }
+          }
+        }
+        if ((pa->no_internal_oligo_5_G > 0) && (five_prime_G == 'G')) {
+          continue;
+        }
       }
 
       /* Do not force primer3 to use this oligo */
@@ -2887,6 +2914,7 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
 
       /* Set the start of the primer */
       h.start = i - j +1;
+      h.rev_comp = 0;
 
       /* Put the real primer sequence in s */
       _pr_substr(sa->trimmed_seq, h.start, j, oligo_seq);
@@ -2898,6 +2926,7 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
 
       /* Set the start of the primer */
       h.start=i+j-1;
+      h.rev_comp = 1;
 
       /* Put the real primer sequence in s */
       _pr_substr(sa->trimmed_seq,  i, j, oligo_seq);
@@ -3004,6 +3033,7 @@ add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oli
   if (oligo->type != OT_RIGHT) {
     /* Set the start of the primer */
     h.start = start;
+    h.rev_comp = 0;
 
     /* Put the real primer sequence in s */
     _pr_substr(sa->trimmed_seq, h.start, length, oligo_seq);
@@ -3013,6 +3043,7 @@ add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oli
     i = start - length + 1;
     /* Set the start of the primer */
     h.start = start;
+    h.rev_comp = 1;
 
     /* Put the real primer sequence in s */
     _pr_substr(sa->trimmed_seq, i, length, oligo_seq);
@@ -3820,6 +3851,25 @@ gc_and_n_content(int start, int len,
   h->num_ns = num_n;
   if (0 == num_gcat) h->gc_content= 0.0;
   else h->gc_content = 100.0 * ((double)num_gc)/num_gcat;
+}
+
+/*
+ * Return 1 if more G then C are in sequence.
+ */
+static int
+more_g_as_c_test(int start, int len,
+                 const char *sequence)
+{
+  const char* p = &sequence[start];
+  const char* stop = p + len;
+  int num_g = 0, num_c = 0;
+  while (p < stop) {
+    if ('C' == *p) num_c++;
+    if ('G' == *p) num_g++;
+    p++;
+  }
+  if (num_g > num_c) return 1;
+  else return 0;
 }
 
 static int
@@ -5225,6 +5275,22 @@ pr_oligo_rev_c_sequence(const seq_args *sa,
   PR_ASSERT(start >= 0);
   PR_ASSERT(start + o->length <= seq_len);
   _pr_substr(sa->sequence, start, o->length, s);
+  p3_reverse_complement(s,s1);
+  return &s1[0];
+}
+
+char *
+pr_internal_rev_c_sequence(const seq_args *sa,
+    const primer_rec *o)
+{
+  static char s[THAL_MAX_ALIGN+1], s1[THAL_MAX_ALIGN+1];
+  int seq_len;
+  PR_ASSERT(NULL != sa);
+  PR_ASSERT(NULL != o);
+  seq_len = strlen(sa->sequence);
+  PR_ASSERT(o->start + sa->incl_s >= 0);
+  PR_ASSERT(o->start + sa->incl_s + o->length <= seq_len);
+  _pr_substr(sa->sequence, sa->incl_s + o->start, o->length, s);
   p3_reverse_complement(s,s1);
   return &s1[0];
 }

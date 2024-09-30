@@ -2327,3 +2327,1431 @@ considered 1, primer in pair overlaps a primer in a better pair 1, ok 1
 libprimer3 release 2.6.1
 
 
+PRIMER PICKING RESULTS FOR Pick 50 primers with oligos
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER       1416   20   59.96   55.00  3.00  0.00 tagggttgaagaggtgggtg
+RIGHT PRIMER      1491   20   60.00   50.00  4.00  2.00 ggaagcagaaagcaaacgtc
+INTERNAL OLIGO    1451   20   59.75   40.00  5.00  3.00 tggtgttggattggaaatca
+SEQUENCE SIZE: 1527
+INCLUDED REGION SIZE: 1527
+
+PRODUCT SIZE: 76, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+    1 atggatttgatggacatggatgccatcaatgacctccacttctctggacacagctccctc
+                                                                  
+
+   61 accaacacccctacttccgacgaggattatggttgcacctggaaccactggtctcccatc
+                                                                  
+
+  121 gtcaactgggacacctttacaggtgccccagatgactttcaccacctcatggacaccatc
+                                                                  
+
+  181 atcgaggacagaacaactgtcctcgaacagctcagtccatctatcaccacaaccaccacc
+                                                                  
+
+  241 accaccacaaccacggatgaggaagaagaagaaatggaaacaacaaccacaacaacaaca
+                                                                  
+
+  301 acggcaataaaaacgcatgaagttggtgatgattcaaaagggctaaaactagtgcaccta
+                                                                  
+
+  361 ttgatggctggcgcggaagccttaaccggttcaaccaaaaaccgtgacttagctcgagtg
+                                                                  
+
+  421 atattgatccggctcaaggaattagtctcacaacatgctaacggctccaacatggagaga
+                                                                  
+
+  481 cttgccgctcatttcaccgaagcccttcatggactactagaaggtgctgggggtgcgcat
+                                                                  
+
+  541 aataaccaccatcaccacaacaacaacaaacattacctcaccacaaatggtccccacgac
+                                                                  
+
+  601 aaccaaaacgacacacttgctgctttccaactacttcaagacatgtcaccttacgtcaaa
+                                                                  
+
+  661 ttcggccacttcacagccaatcaagccatcatcgaagccgtggcccacgaacgccgcgtc
+                                                                  
+
+  721 catgtcatcgactacgatatcatggaaggggtccaatgggcctcattaatccaatcactt
+                                                                  
+
+  781 gcttccaacaacaacggtccacatcttcggataaccgcattatcgcggacaggaaccggc
+                                                                  
+
+  841 cggaggtcaatcgccaccgtacaagaaaccggcaggcgattaacctcctttgccgcttcc
+                                                                  
+
+  901 ctcggacaaccattttcttttcatcactgcagattagactccgatgaaactttccgtcct
+                                                                  
+
+  961 tctgcattaaagcttgtacgtggagaggctttggttttcaactgcatgctgaatttacct
+                                                                  
+
+ 1021 caccttagttaccgtgcaccggaatcagttgcttcgtttttaaacggagcaaaaacgttg
+                                                                  
+
+ 1081 aatccaaagcttgtgacgttggttgaagaagaagttggttctgttattggtgggtttgtg
+                                                                  
+
+ 1141 gaaaggttcatggactcacttcatcattattcagcggtttttgattcattggaggctggt
+                                                                  
+
+ 1201 tttccgatgcagaaccgggcccggactttggtggagagggtattttttgggcctagaatt
+                                                                  
+
+ 1261 gcaggctcgttgggccggatatatagaacgggtggtgaagaggagagaaggtcatggggg
+                                                                  
+
+ 1321 gagtggttaggtgaggtagggtttaggggagttccggtgagctttgcaaatcattgtcaa
+                                                                  
+
+ 1381 gcaaagctgttgttagggctttttaatgatgggtatagggttgaagaggtgggtgtgggt
+                                         >>>>>>>>>>>>>>>>>>>>     
+
+ 1441 agtaataagttggtgttggattggaaatcaagacgtttgctttctgcttccctttggact
+                ^^^^^^^^^^^^^^^^^^^^ <<<<<<<<<<<<<<<<<<<<         
+
+ 1501 tgttcttcttcagattctgatttatag
+                                 
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+ADDITIONAL OLIGOS
+                    start  len      tm     gc%   any    3' seq
+
+ 1 LEFT PRIMER         40   20   59.99   55.00  4.00  0.00 ttctctggacacagctccct
+   RIGHT PRIMER       126   20   59.97   55.00  3.00  2.00 gttgacgatgggagaccagt
+   INTERNAL OLIGO      81   20   59.96   50.00  4.00  2.00 cgaggattatggttgcacct
+   PRODUCT SIZE: 87, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+ 2 LEFT PRIMER         39   20   59.99   60.00  4.00  0.00 cttctctggacacagctccc
+   RIGHT PRIMER       100   20   59.96   50.00  4.00  2.00 aggtgcaaccataatcctcg
+   INTERNAL OLIGO      59   20   59.82   55.00  2.00  0.00 tcaccaacacccctacttcc
+   PRODUCT SIZE: 62, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+ 3 LEFT PRIMER        786   20   59.86   50.00  3.00  0.00 caacaacaacggtccacatc
+   RIGHT PRIMER       869   20   60.00   50.00  4.00  2.00 gtttcttgtacggtggcgat
+   INTERNAL OLIGO     806   20   60.79   45.00  6.00  4.00 ttcggataaccgcattatcg
+   PRODUCT SIZE: 84, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+ 4 LEFT PRIMER        251   20   60.19   50.00  2.00  0.00 ccacggatgaggaagaagaa
+   RIGHT PRIMER       316   20   60.01   40.00  2.00  0.00 gcgtttttattgccgttgtt
+   INTERNAL OLIGO     275   21   59.89   38.10  3.00  0.00 tggaaacaacaaccacaacaa
+   PRODUCT SIZE: 66, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 3.00
+
+ 5 LEFT PRIMER        199   20   59.99   60.00  4.00  2.00 gtcctcgaacagctcagtcc
+   RIGHT PRIMER       270   20   60.19   50.00  2.00  2.00 ttcttcttcctcatccgtgg
+   INTERNAL OLIGO     222   20   60.70   50.00  2.00  0.00 tatcaccacaaccaccacca
+   PRODUCT SIZE: 72, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 2.00
+
+ 6 LEFT PRIMER        947   20   59.85   45.00  5.00  4.00 aaactttccgtccttctgca
+   RIGHT PRIMER      1041   20   60.05   55.00  6.00  3.00 cggtgcacggtaactaaggt
+   INTERNAL OLIGO     993   20   59.85   45.00  6.00  6.00 ggttttcaactgcatgctga
+   PRODUCT SIZE: 95, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 1.00
+
+ 7 LEFT PRIMER       1022   20   60.05   55.00  6.00  6.00 accttagttaccgtgcaccg
+   RIGHT PRIMER      1098   20   59.84   45.00  6.00  4.00 cgtcacaagctttggattca
+   INTERNAL OLIGO    1051   20   59.01   45.00 12.00 12.00 gcttcgtttttaaacggagc
+   PRODUCT SIZE: 77, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+ 8 LEFT PRIMER        610   20   60.03   50.00  3.00  0.00 gacacacttgctgctttcca
+   RIGHT PRIMER       698   20   60.19   45.00  4.00  1.00 gcttcgatgatggcttgatt
+   INTERNAL OLIGO     652   20   60.50   45.00  4.00  4.00 tacgtcaaattcggccactt
+   PRODUCT SIZE: 89, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+ 9 LEFT PRIMER        879   20   60.10   45.00  4.00  0.00 attaacctcctttgccgctt
+   RIGHT PRIMER       966   20   59.85   45.00  5.00  5.00 tgcagaaggacggaaagttt
+   INTERNAL OLIGO     900   20   59.03   45.00  3.00  0.00 cctcggacaaccattttctt
+   PRODUCT SIZE: 88, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 1.00
+
+10 LEFT PRIMER         22   20   59.93   50.00  5.00  0.00 gccatcaatgacctccactt
+   RIGHT PRIMER        99   20   59.82   50.00  4.00  2.00 ggtgcaaccataatcctcgt
+   INTERNAL OLIGO      59   20   59.82   55.00  2.00  0.00 tcaccaacacccctacttcc
+   PRODUCT SIZE: 78, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 0.00
+
+11 LEFT PRIMER       1185   20   60.05   45.00  3.00  0.00 ttcattggaggctggttttc
+   RIGHT PRIMER      1264   20   60.20   45.00  6.00  6.00 ctgcaattctaggcccaaaa
+   INTERNAL OLIGO    1223   20   58.99   55.00  2.00  2.00 ggactttggtggagagggta
+   PRODUCT SIZE: 80, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+12 LEFT PRIMER       1173   20   59.94   40.00  5.00  1.00 agcggtttttgattcattgg
+   RIGHT PRIMER      1252   20   59.78   50.00  2.00  0.00 gcccaaaaaataccctctcc
+   INTERNAL OLIGO    1196   20   60.64   50.00  4.00  4.00 ctggttttccgatgcagaac
+   PRODUCT SIZE: 80, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 2.00
+
+13 LEFT PRIMER        313   20   60.12   45.00  4.00  2.00 acgcatgaagttggtgatga
+   RIGHT PRIMER       399   20   59.83   45.00  8.00  4.00 tttggttgaaccggttaagg
+   INTERNAL OLIGO     351   20   58.75   50.00  6.00  4.00 agtgcacctattgatggctg
+   PRODUCT SIZE: 87, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 0.00
+
+14 LEFT PRIMER         59   20   59.82   55.00  2.00  0.00 tcaccaacacccctacttcc
+   RIGHT PRIMER       127   20   60.11   55.00  3.00  1.00 agttgacgatgggagaccag
+   INTERNAL OLIGO      81   20   59.96   50.00  4.00  2.00 cgaggattatggttgcacct
+   PRODUCT SIZE: 69, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
+
+15 LEFT PRIMER        380   20   59.83   45.00  8.00  1.00 ccttaaccggttcaaccaaa
+   RIGHT PRIMER       465   20   59.87   50.00  4.00  1.00 gccgttagcatgttgtgaga
+   INTERNAL OLIGO     415   20   60.06   50.00  4.00  4.00 cgagtgatattgatccggct
+   PRODUCT SIZE: 86, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+16 LEFT PRIMER       1245   20   60.20   45.00  6.00  4.00 ttttgggcctagaattgcag
+   RIGHT PRIMER      1303   20   60.10   55.00  2.00  2.00 cctcttcaccacccgttcta
+   INTERNAL OLIGO    1266   18   59.45   55.56  4.00  4.00 ctcgttgggccggatata
+   PRODUCT SIZE: 59, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+17 LEFT PRIMER        597   20   60.05   50.00  2.00  0.00 cgacaaccaaaacgacacac
+   RIGHT PRIMER       687   20   60.26   50.00  3.00  1.00 ggcttgattggctgtgaagt
+   INTERNAL OLIGO     647   20   60.50   50.00  4.00  4.00 caccttacgtcaaattcggc
+   PRODUCT SIZE: 91, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 3.00
+
+18 LEFT PRIMER        544   20   59.70   45.00  2.00  0.00 aaccaccatcaccacaacaa
+   RIGHT PRIMER       629   20   60.03   50.00  3.00  1.00 tggaaagcagcaagtgtgtc
+   INTERNAL OLIGO     573   21   59.70   47.62  4.00  3.00 ttacctcaccacaaatggtcc
+   PRODUCT SIZE: 86, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+19 LEFT PRIMER         16   20   60.17   45.00  9.00  4.00 atggatgccatcaatgacct
+   RIGHT PRIMER        78   20   59.82   55.00  2.00  1.00 ggaagtaggggtgttggtga
+   INTERNAL OLIGO      39   20   59.99   60.00  4.00  0.00 cttctctggacacagctccc
+   PRODUCT SIZE: 63, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
+
+20 LEFT PRIMER        758   20   59.72   45.00  6.00  2.00 gggcctcattaatccaatca
+   RIGHT PRIMER       821   20   59.92   45.00  6.00  0.00 aatgcggttatccgaagatg
+   INTERNAL OLIGO     780   19   60.14   47.37  3.00  3.00 tgcttccaacaacaacggt
+   PRODUCT SIZE: 64, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+21 LEFT PRIMER        297   20   60.01   40.00  2.00  2.00 aacaacggcaataaaaacgc
+   RIGHT PRIMER       396   20   60.35   50.00  8.00  5.00 ggttgaaccggttaaggctt
+   INTERNAL OLIGO     324   20   60.84   45.00  5.00  2.00 tggtgatgattcaaaagggc
+   PRODUCT SIZE: 100, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
+
+22 LEFT PRIMER       1126   20   59.69   45.00  3.00  0.00 attggtgggtttgtggaaag
+   RIGHT PRIMER      1204   20   60.05   45.00  3.00  3.00 gaaaaccagcctccaatgaa
+   INTERNAL OLIGO    1156   22   60.10   40.91  4.00  2.00 tcacttcatcattattcagcgg
+   PRODUCT SIZE: 79, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 1.00
+
+23 LEFT PRIMER        147   20   60.36   55.00  3.00  0.00 cccagatgactttcaccacc
+   RIGHT PRIMER       218   20   59.99   60.00  4.00  2.00 ggactgagctgttcgaggac
+   INTERNAL OLIGO     176   20   59.63   50.00  6.00  0.00 ccatcatcgaggacagaaca
+   PRODUCT SIZE: 72, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+24 LEFT PRIMER        802   20   59.92   45.00  6.00  2.00 catcttcggataaccgcatt
+   RIGHT PRIMER       892   20   59.70   50.00  8.00  6.00 caaaggaggttaatcgcctg
+   INTERNAL OLIGO     850   20   60.00   50.00  4.00  0.00 atcgccaccgtacaagaaac
+   PRODUCT SIZE: 91, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 3.00
+
+25 LEFT PRIMER        107   20   59.97   55.00  3.00  2.00 actggtctcccatcgtcaac
+   RIGHT PRIMER       166   20   60.36   55.00  3.00  0.00 ggtggtgaaagtcatctggg
+   INTERNAL OLIGO     127   20   60.95   55.00 10.00  8.00 tgggacacctttacaggtgc
+   PRODUCT SIZE: 60, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+26 LEFT PRIMER        993   20   59.85   45.00  6.00  6.00 ggttttcaactgcatgctga
+   RIGHT PRIMER      1059   20   60.25   45.00  6.00  4.00 aaacgaagcaactgattccg
+   INTERNAL OLIGO    1018   21   60.18   52.38  4.00  4.00 cctcaccttagttaccgtgca
+   PRODUCT SIZE: 67, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
+
+27 LEFT PRIMER       1284   20   60.10   55.00  2.00  0.00 tagaacgggtggtgaagagg
+   RIGHT PRIMER      1356   20   60.30   55.00  4.00  2.00 cggaactcccctaaacccta
+   INTERNAL OLIGO    1318   19   59.36   63.16  2.00  0.00 ggggagtggttaggtgagg
+   PRODUCT SIZE: 73, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
+
+28 LEFT PRIMER         81   20   59.96   50.00  4.00  2.00 cgaggattatggttgcacct
+   RIGHT PRIMER       165   20   60.36   55.00  3.00  0.00 gtggtgaaagtcatctgggg
+   INTERNAL OLIGO     107   20   59.97   55.00  3.00  2.00 actggtctcccatcgtcaac
+   PRODUCT SIZE: 85, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 1.00
+
+29 LEFT PRIMER        717   20   60.14   55.00  9.00  3.00 cgtccatgtcatcgactacg
+   RIGHT PRIMER       776   20   59.72   45.00  6.00  4.00 gattggattaatgaggccca
+   INTERNAL OLIGO     737   20   59.05   45.00  4.00  1.00 atatcatggaaggggtccaa
+   PRODUCT SIZE: 60, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 0.00
+
+30 LEFT PRIMER        448   20   59.87   50.00  4.00  0.00 tcacaacatgctaacggctc
+   RIGHT PRIMER       517   20   59.69   55.00  6.00  4.00 gtagtccatgaagggcttcg
+   INTERNAL OLIGO     478   20   60.41   50.00  3.00  0.00 agacttgccgctcatttcac
+   PRODUCT SIZE: 70, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+31 LEFT PRIMER       1271   20   59.77   50.00  6.00  2.00 tgggccggatatatagaacg
+   RIGHT PRIMER      1337   20   60.23   60.00  2.00  0.00 acctcacctaaccactcccc
+   INTERNAL OLIGO    1291   21   60.24   57.14  1.00  0.00 ggtggtgaagaggagagaagg
+   PRODUCT SIZE: 67, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+32 LEFT PRIMER        679   20   60.19   45.00  4.00  2.00 aatcaagccatcatcgaagc
+   RIGHT PRIMER       771   20   59.72   45.00  8.00  4.00 gattaatgaggcccattgga
+   INTERNAL OLIGO     717   20   60.14   55.00  9.00  3.00 cgtccatgtcatcgactacg
+   PRODUCT SIZE: 93, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+33 LEFT PRIMER        415   20   60.06   50.00  4.00  4.00 cgagtgatattgatccggct
+   RIGHT PRIMER       497   20   60.41   50.00  3.00  3.00 gtgaaatgagcggcaagtct
+   INTERNAL OLIGO     448   20   59.87   50.00  4.00  0.00 tcacaacatgctaacggctc
+   PRODUCT SIZE: 83, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+34 LEFT PRIMER       1079   20   59.84   45.00  6.00  2.00 tgaatccaaagcttgtgacg
+   RIGHT PRIMER      1145   20   59.69   45.00  3.00  2.00 ctttccacaaacccaccaat
+   INTERNAL OLIGO    1099   23   59.66   39.13  3.00  3.00 ttggttgaagaagaagttggttc
+   PRODUCT SIZE: 67, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 0.00
+
+35 LEFT PRIMER        108   20   60.11   55.00  3.00  1.00 ctggtctcccatcgtcaact
+   RIGHT PRIMER       193   20   59.63   50.00  6.00  3.00 ttctgtcctcgatgatggtg
+   INTERNAL OLIGO     147   20   60.36   55.00  3.00  0.00 cccagatgactttcaccacc
+   PRODUCT SIZE: 86, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 3.00
+
+36 LEFT PRIMER        377   20   60.35   50.00  8.00  7.00 aagccttaaccggttcaacc
+   RIGHT PRIMER       467   20   59.87   50.00  4.00  1.00 gagccgttagcatgttgtga
+   INTERNAL OLIGO     415   20   60.06   50.00  4.00  4.00 cgagtgatattgatccggct
+   PRODUCT SIZE: 91, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+37 LEFT PRIMER        939   20   59.67   50.00  7.00  5.00 ctccgatgaaactttccgtc
+   RIGHT PRIMER      1012   20   59.85   45.00  6.00  1.00 tcagcatgcagttgaaaacc
+   INTERNAL OLIGO     972   20   59.50   55.00  4.00  2.00 gcttgtacgtggagaggctt
+   PRODUCT SIZE: 74, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 0.00
+
+38 LEFT PRIMER         13   20   60.30   45.00 11.00  9.00 gacatggatgccatcaatga
+   RIGHT PRIMER       102   20   59.81   50.00  4.00  1.00 ccaggtgcaaccataatcct
+   INTERNAL OLIGO      40   20   59.99   55.00  4.00  0.00 ttctctggacacagctccct
+   PRODUCT SIZE: 90, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 2.00
+
+39 LEFT PRIMER        954   20   59.85   50.00  6.00  6.00 ccgtccttctgcattaaagc
+   RIGHT PRIMER      1045   20   60.39   50.00  8.00  2.00 attccggtgcacggtaacta
+   INTERNAL OLIGO     993   20   59.85   45.00  6.00  6.00 ggttttcaactgcatgctga
+   PRODUCT SIZE: 92, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 0.00
+
+40 LEFT PRIMER       1268   20   59.77   50.00  6.00  4.00 cgttgggccggatatataga
+   RIGHT PRIMER      1349   20   59.68   60.00  2.00  0.00 cccctaaaccctacctcacc
+   INTERNAL OLIGO    1290   20   59.23   55.00  1.00  0.00 gggtggtgaagaggagagaa
+   PRODUCT SIZE: 82, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+41 LEFT PRIMER        596   20   60.05   45.00  2.00  0.00 acgacaaccaaaacgacaca
+   RIGHT PRIMER       666   20   60.50   50.00  4.00  1.00 gccgaatttgacgtaaggtg
+   INTERNAL OLIGO     618   22   60.05   40.91  4.00  3.00 tgctgctttccaactacttcaa
+   PRODUCT SIZE: 71, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+42 LEFT PRIMER        595   20   60.05   50.00  2.00  0.00 cacgacaaccaaaacgacac
+   RIGHT PRIMER       669   20   60.50   50.00  4.00  2.00 gtggccgaatttgacgtaag
+   INTERNAL OLIGO     618   22   60.05   40.91  4.00  3.00 tgctgctttccaactacttcaa
+   PRODUCT SIZE: 75, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 1.00
+
+43 LEFT PRIMER        736   20   59.56   50.00  6.00  3.00 gatatcatggaaggggtcca
+   RIGHT PRIMER       805   20   59.86   50.00  3.00  0.00 gatgtggaccgttgttgttg
+   INTERNAL OLIGO     758   20   59.72   45.00  6.00  2.00 gggcctcattaatccaatca
+   PRODUCT SIZE: 70, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 3.00
+
+44 LEFT PRIMER        498   20   59.69   55.00  6.00  5.00 cgaagcccttcatggactac
+   RIGHT PRIMER       563   20   59.70   45.00  2.00  0.00 ttgttgtggtgatggtggtt
+   INTERNAL OLIGO     518   18   59.62   61.11  2.00  0.00 tagaaggtgctgggggtg
+   PRODUCT SIZE: 66, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 3.00
+
+45 LEFT PRIMER        752   20   59.72   45.00  8.00  4.00 tccaatgggcctcattaatc
+   RIGHT PRIMER       813   20   60.34   50.00  3.00  3.00 tatccgaagatgtggaccgt
+   INTERNAL OLIGO     772   20   57.32   40.00  4.00  4.00 caatcacttgcttccaacaa
+   PRODUCT SIZE: 62, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+46 LEFT PRIMER        937   20   59.67   50.00  7.00  3.00 gactccgatgaaactttccg
+   RIGHT PRIMER      1009   20   59.71   40.00  6.00  0.00 gcatgcagttgaaaaccaaa
+   INTERNAL OLIGO     970   20   59.50   55.00  6.00  2.00 aagcttgtacgtggagaggc
+   PRODUCT SIZE: 73, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+47 LEFT PRIMER        873   20   59.70   50.00  8.00  4.00 caggcgattaacctcctttg
+   RIGHT PRIMER       956   20   59.67   50.00  7.00  3.00 cggaaagtttcatcggagtc
+   INTERNAL OLIGO     900   20   59.03   45.00  3.00  0.00 cctcggacaaccattttctt
+   PRODUCT SIZE: 84, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 2.00
+
+48 LEFT PRIMER        647   20   60.50   50.00  4.00  4.00 caccttacgtcaaattcggc
+   RIGHT PRIMER       736   20   60.14   55.00  9.00  7.00 cgtagtcgatgacatggacg
+   INTERNAL OLIGO     679   20   60.19   45.00  4.00  2.00 aatcaagccatcatcgaagc
+   PRODUCT SIZE: 90, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 3.00
+
+49 LEFT PRIMER        535   20   59.41   45.00  4.00  1.00 gcgcataataaccaccatca
+   RIGHT PRIMER       614   20   60.05   50.00  2.00  0.00 gtgtcgttttggttgtcgtg
+   INTERNAL OLIGO     573   21   59.70   47.62  4.00  3.00 ttacctcaccacaaatggtcc
+   PRODUCT SIZE: 80, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+Statistics
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left   17856     0     0     0     0     9     0     0  8066     0     0     0     0  9781
+Right  17856     0     0     0     0     9     0     0  7973     0     0     0     0  9874
+Intl   14749     0     0     0     0     3     0  2973  7694     0     0    44     0  4035
+Pair Stats:
+considered 4406, unacceptable product size 4245, high end compl 34, no internal oligo 48, primer in pair overlaps a primer in a better pair 2557, ok 79
+libprimer3 release 2.6.1
+
+
+PRIMER PICKING RESULTS FOR Reverse complement internal oligos
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER       1416   20   59.96   55.00  3.00  0.00 tagggttgaagaggtgggtg
+RIGHT PRIMER      1491   20   60.00   50.00  4.00  2.00 ggaagcagaaagcaaacgtc
+INTERNAL OLIGO    1451   20   59.75   40.00  5.00  3.00 tgatttccaatccaacacca
+SEQUENCE SIZE: 1527
+INCLUDED REGION SIZE: 1527
+
+PRODUCT SIZE: 76, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+    1 atggatttgatggacatggatgccatcaatgacctccacttctctggacacagctccctc
+                                                                  
+
+   61 accaacacccctacttccgacgaggattatggttgcacctggaaccactggtctcccatc
+                                                                  
+
+  121 gtcaactgggacacctttacaggtgccccagatgactttcaccacctcatggacaccatc
+                                                                  
+
+  181 atcgaggacagaacaactgtcctcgaacagctcagtccatctatcaccacaaccaccacc
+                                                                  
+
+  241 accaccacaaccacggatgaggaagaagaagaaatggaaacaacaaccacaacaacaaca
+                                                                  
+
+  301 acggcaataaaaacgcatgaagttggtgatgattcaaaagggctaaaactagtgcaccta
+                                                                  
+
+  361 ttgatggctggcgcggaagccttaaccggttcaaccaaaaaccgtgacttagctcgagtg
+                                                                  
+
+  421 atattgatccggctcaaggaattagtctcacaacatgctaacggctccaacatggagaga
+                                                                  
+
+  481 cttgccgctcatttcaccgaagcccttcatggactactagaaggtgctgggggtgcgcat
+                                                                  
+
+  541 aataaccaccatcaccacaacaacaacaaacattacctcaccacaaatggtccccacgac
+                                                                  
+
+  601 aaccaaaacgacacacttgctgctttccaactacttcaagacatgtcaccttacgtcaaa
+                                                                  
+
+  661 ttcggccacttcacagccaatcaagccatcatcgaagccgtggcccacgaacgccgcgtc
+                                                                  
+
+  721 catgtcatcgactacgatatcatggaaggggtccaatgggcctcattaatccaatcactt
+                                                                  
+
+  781 gcttccaacaacaacggtccacatcttcggataaccgcattatcgcggacaggaaccggc
+                                                                  
+
+  841 cggaggtcaatcgccaccgtacaagaaaccggcaggcgattaacctcctttgccgcttcc
+                                                                  
+
+  901 ctcggacaaccattttcttttcatcactgcagattagactccgatgaaactttccgtcct
+                                                                  
+
+  961 tctgcattaaagcttgtacgtggagaggctttggttttcaactgcatgctgaatttacct
+                                                                  
+
+ 1021 caccttagttaccgtgcaccggaatcagttgcttcgtttttaaacggagcaaaaacgttg
+                                                                  
+
+ 1081 aatccaaagcttgtgacgttggttgaagaagaagttggttctgttattggtgggtttgtg
+                                                                  
+
+ 1141 gaaaggttcatggactcacttcatcattattcagcggtttttgattcattggaggctggt
+                                                                  
+
+ 1201 tttccgatgcagaaccgggcccggactttggtggagagggtattttttgggcctagaatt
+                                                                  
+
+ 1261 gcaggctcgttgggccggatatatagaacgggtggtgaagaggagagaaggtcatggggg
+                                                                  
+
+ 1321 gagtggttaggtgaggtagggtttaggggagttccggtgagctttgcaaatcattgtcaa
+                                                                  
+
+ 1381 gcaaagctgttgttagggctttttaatgatgggtatagggttgaagaggtgggtgtgggt
+                                         >>>>>>>>>>>>>>>>>>>>     
+
+ 1441 agtaataagttggtgttggattggaaatcaagacgtttgctttctgcttccctttggact
+                ^^^^^^^^^^^^^^^^^^^^ <<<<<<<<<<<<<<<<<<<<         
+
+ 1501 tgttcttcttcagattctgatttatag
+                                 
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+ADDITIONAL OLIGOS
+                    start  len      tm     gc%   any    3' seq
+
+ 1 LEFT PRIMER         40   20   59.99   55.00  4.00  0.00 ttctctggacacagctccct
+   RIGHT PRIMER       126   20   59.97   55.00  3.00  2.00 gttgacgatgggagaccagt
+   INTERNAL OLIGO      81   20   59.96   50.00  4.00  2.00 aggtgcaaccataatcctcg
+   PRODUCT SIZE: 87, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+ 2 LEFT PRIMER         39   20   59.99   60.00  4.00  0.00 cttctctggacacagctccc
+   RIGHT PRIMER       100   20   59.96   50.00  4.00  2.00 aggtgcaaccataatcctcg
+   INTERNAL OLIGO      59   20   59.82   55.00  2.00  0.00 tcaccaacacccctacttcc
+   PRODUCT SIZE: 62, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+ 3 LEFT PRIMER        786   20   59.86   50.00  3.00  0.00 caacaacaacggtccacatc
+   RIGHT PRIMER       869   20   60.00   50.00  4.00  2.00 gtttcttgtacggtggcgat
+   INTERNAL OLIGO     806   20   60.79   45.00  6.00  4.00 ttcggataaccgcattatcg
+   PRODUCT SIZE: 84, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+ 4 LEFT PRIMER        251   20   60.19   50.00  2.00  0.00 ccacggatgaggaagaagaa
+   RIGHT PRIMER       316   20   60.01   40.00  2.00  0.00 gcgtttttattgccgttgtt
+   INTERNAL OLIGO     275   21   59.89   38.10  3.00  0.00 tggaaacaacaaccacaacaa
+   PRODUCT SIZE: 66, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 3.00
+
+ 5 LEFT PRIMER        199   20   59.99   60.00  4.00  2.00 gtcctcgaacagctcagtcc
+   RIGHT PRIMER       270   20   60.19   50.00  2.00  2.00 ttcttcttcctcatccgtgg
+   INTERNAL OLIGO     222   20   60.70   50.00  2.00  0.00 tatcaccacaaccaccacca
+   PRODUCT SIZE: 72, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 2.00
+
+ 6 LEFT PRIMER        947   20   59.85   45.00  5.00  4.00 aaactttccgtccttctgca
+   RIGHT PRIMER      1041   20   60.05   55.00  6.00  3.00 cggtgcacggtaactaaggt
+   INTERNAL OLIGO     993   20   59.85   45.00  6.00  6.00 tcagcatgcagttgaaaacc
+   PRODUCT SIZE: 95, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 1.00
+
+ 7 LEFT PRIMER       1022   20   60.05   55.00  6.00  6.00 accttagttaccgtgcaccg
+   RIGHT PRIMER      1098   20   59.84   45.00  6.00  4.00 cgtcacaagctttggattca
+   INTERNAL OLIGO    1051   20   59.01   45.00 12.00 12.00 gctccgtttaaaaacgaagc
+   PRODUCT SIZE: 77, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+ 8 LEFT PRIMER        610   20   60.03   50.00  3.00  0.00 gacacacttgctgctttcca
+   RIGHT PRIMER       698   20   60.19   45.00  4.00  1.00 gcttcgatgatggcttgatt
+   INTERNAL OLIGO     652   20   60.50   45.00  4.00  4.00 tacgtcaaattcggccactt
+   PRODUCT SIZE: 89, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+ 9 LEFT PRIMER        879   20   60.10   45.00  4.00  0.00 attaacctcctttgccgctt
+   RIGHT PRIMER       966   20   59.85   45.00  5.00  5.00 tgcagaaggacggaaagttt
+   INTERNAL OLIGO     900   20   59.03   45.00  3.00  0.00 cctcggacaaccattttctt
+   PRODUCT SIZE: 88, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 1.00
+
+10 LEFT PRIMER         22   20   59.93   50.00  5.00  0.00 gccatcaatgacctccactt
+   RIGHT PRIMER        99   20   59.82   50.00  4.00  2.00 ggtgcaaccataatcctcgt
+   INTERNAL OLIGO      59   20   59.82   55.00  2.00  0.00 tcaccaacacccctacttcc
+   PRODUCT SIZE: 78, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 0.00
+
+11 LEFT PRIMER       1185   20   60.05   45.00  3.00  0.00 ttcattggaggctggttttc
+   RIGHT PRIMER      1264   20   60.20   45.00  6.00  6.00 ctgcaattctaggcccaaaa
+   INTERNAL OLIGO    1223   20   58.99   55.00  2.00  2.00 taccctctccaccaaagtcc
+   PRODUCT SIZE: 80, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+12 LEFT PRIMER       1173   20   59.94   40.00  5.00  1.00 agcggtttttgattcattgg
+   RIGHT PRIMER      1252   20   59.78   50.00  2.00  0.00 gcccaaaaaataccctctcc
+   INTERNAL OLIGO    1196   20   60.64   50.00  4.00  4.00 ctggttttccgatgcagaac
+   PRODUCT SIZE: 80, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 2.00
+
+13 LEFT PRIMER        313   20   60.12   45.00  4.00  2.00 acgcatgaagttggtgatga
+   RIGHT PRIMER       399   20   59.83   45.00  8.00  4.00 tttggttgaaccggttaagg
+   INTERNAL OLIGO     351   20   58.75   50.00  6.00  4.00 cagccatcaataggtgcact
+   PRODUCT SIZE: 87, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 0.00
+
+14 LEFT PRIMER         59   20   59.82   55.00  2.00  0.00 tcaccaacacccctacttcc
+   RIGHT PRIMER       127   20   60.11   55.00  3.00  1.00 agttgacgatgggagaccag
+   INTERNAL OLIGO      81   20   59.96   50.00  4.00  2.00 aggtgcaaccataatcctcg
+   PRODUCT SIZE: 69, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
+
+15 LEFT PRIMER        380   20   59.83   45.00  8.00  1.00 ccttaaccggttcaaccaaa
+   RIGHT PRIMER       465   20   59.87   50.00  4.00  1.00 gccgttagcatgttgtgaga
+   INTERNAL OLIGO     415   20   60.06   50.00  4.00  4.00 agccggatcaatatcactcg
+   PRODUCT SIZE: 86, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+16 LEFT PRIMER       1245   20   60.20   45.00  6.00  4.00 ttttgggcctagaattgcag
+   RIGHT PRIMER      1303   20   60.10   55.00  2.00  2.00 cctcttcaccacccgttcta
+   INTERNAL OLIGO    1266   18   59.45   55.56  4.00  4.00 tatatccggcccaacgag
+   PRODUCT SIZE: 59, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+17 LEFT PRIMER        597   20   60.05   50.00  2.00  0.00 cgacaaccaaaacgacacac
+   RIGHT PRIMER       687   20   60.26   50.00  3.00  1.00 ggcttgattggctgtgaagt
+   INTERNAL OLIGO     647   20   60.50   50.00  4.00  4.00 caccttacgtcaaattcggc
+   PRODUCT SIZE: 91, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 3.00
+
+18 LEFT PRIMER        544   20   59.70   45.00  2.00  0.00 aaccaccatcaccacaacaa
+   RIGHT PRIMER       629   20   60.03   50.00  3.00  1.00 tggaaagcagcaagtgtgtc
+   INTERNAL OLIGO     573   21   59.70   47.62  4.00  3.00 ttacctcaccacaaatggtcc
+   PRODUCT SIZE: 86, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+19 LEFT PRIMER         16   20   60.17   45.00  9.00  4.00 atggatgccatcaatgacct
+   RIGHT PRIMER        78   20   59.82   55.00  2.00  1.00 ggaagtaggggtgttggtga
+   INTERNAL OLIGO      39   20   59.99   60.00  4.00  0.00 cttctctggacacagctccc
+   PRODUCT SIZE: 63, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
+
+20 LEFT PRIMER        758   20   59.72   45.00  6.00  2.00 gggcctcattaatccaatca
+   RIGHT PRIMER       821   20   59.92   45.00  6.00  0.00 aatgcggttatccgaagatg
+   INTERNAL OLIGO     780   19   60.14   47.37  3.00  3.00 tgcttccaacaacaacggt
+   PRODUCT SIZE: 64, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+21 LEFT PRIMER        297   20   60.01   40.00  2.00  2.00 aacaacggcaataaaaacgc
+   RIGHT PRIMER       396   20   60.35   50.00  8.00  5.00 ggttgaaccggttaaggctt
+   INTERNAL OLIGO     324   20   60.84   45.00  5.00  2.00 gcccttttgaatcatcacca
+   PRODUCT SIZE: 100, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
+
+22 LEFT PRIMER       1126   20   59.69   45.00  3.00  0.00 attggtgggtttgtggaaag
+   RIGHT PRIMER      1204   20   60.05   45.00  3.00  3.00 gaaaaccagcctccaatgaa
+   INTERNAL OLIGO    1156   22   60.10   40.91  4.00  2.00 tcacttcatcattattcagcgg
+   PRODUCT SIZE: 79, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 1.00
+
+23 LEFT PRIMER        147   20   60.36   55.00  3.00  0.00 cccagatgactttcaccacc
+   RIGHT PRIMER       218   20   59.99   60.00  4.00  2.00 ggactgagctgttcgaggac
+   INTERNAL OLIGO     176   20   59.63   50.00  6.00  0.00 ccatcatcgaggacagaaca
+   PRODUCT SIZE: 72, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+24 LEFT PRIMER        802   20   59.92   45.00  6.00  2.00 catcttcggataaccgcatt
+   RIGHT PRIMER       892   20   59.70   50.00  8.00  6.00 caaaggaggttaatcgcctg
+   INTERNAL OLIGO     850   20   60.00   50.00  4.00  0.00 atcgccaccgtacaagaaac
+   PRODUCT SIZE: 91, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 3.00
+
+25 LEFT PRIMER        107   20   59.97   55.00  3.00  2.00 actggtctcccatcgtcaac
+   RIGHT PRIMER       166   20   60.36   55.00  3.00  0.00 ggtggtgaaagtcatctggg
+   INTERNAL OLIGO     127   20   60.95   55.00 10.00  8.00 gcacctgtaaaggtgtccca
+   PRODUCT SIZE: 60, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+26 LEFT PRIMER        993   20   59.85   45.00  6.00  6.00 ggttttcaactgcatgctga
+   RIGHT PRIMER      1059   20   60.25   45.00  6.00  4.00 aaacgaagcaactgattccg
+   INTERNAL OLIGO    1018   21   60.18   52.38  4.00  4.00 cctcaccttagttaccgtgca
+   PRODUCT SIZE: 67, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
+
+27 LEFT PRIMER       1284   20   60.10   55.00  2.00  0.00 tagaacgggtggtgaagagg
+   RIGHT PRIMER      1356   20   60.30   55.00  4.00  2.00 cggaactcccctaaacccta
+   INTERNAL OLIGO    1318   19   59.36   63.16  2.00  0.00 cctcacctaaccactcccc
+   PRODUCT SIZE: 73, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
+
+28 LEFT PRIMER         81   20   59.96   50.00  4.00  2.00 cgaggattatggttgcacct
+   RIGHT PRIMER       165   20   60.36   55.00  3.00  0.00 gtggtgaaagtcatctgggg
+   INTERNAL OLIGO     107   20   59.97   55.00  3.00  2.00 actggtctcccatcgtcaac
+   PRODUCT SIZE: 85, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 1.00
+
+29 LEFT PRIMER        717   20   60.14   55.00  9.00  3.00 cgtccatgtcatcgactacg
+   RIGHT PRIMER       776   20   59.72   45.00  6.00  4.00 gattggattaatgaggccca
+   INTERNAL OLIGO     737   20   59.05   45.00  4.00  1.00 ttggaccccttccatgatat
+   PRODUCT SIZE: 60, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 0.00
+
+30 LEFT PRIMER        448   20   59.87   50.00  4.00  0.00 tcacaacatgctaacggctc
+   RIGHT PRIMER       517   20   59.69   55.00  6.00  4.00 gtagtccatgaagggcttcg
+   INTERNAL OLIGO     478   20   60.41   50.00  3.00  0.00 agacttgccgctcatttcac
+   PRODUCT SIZE: 70, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+31 LEFT PRIMER       1271   20   59.77   50.00  6.00  2.00 tgggccggatatatagaacg
+   RIGHT PRIMER      1337   20   60.23   60.00  2.00  0.00 acctcacctaaccactcccc
+   INTERNAL OLIGO    1291   21   60.24   57.14  1.00  0.00 ccttctctcctcttcaccacc
+   PRODUCT SIZE: 67, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+32 LEFT PRIMER        679   20   60.19   45.00  4.00  2.00 aatcaagccatcatcgaagc
+   RIGHT PRIMER       771   20   59.72   45.00  8.00  4.00 gattaatgaggcccattgga
+   INTERNAL OLIGO     717   20   60.14   55.00  9.00  3.00 cgtccatgtcatcgactacg
+   PRODUCT SIZE: 93, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+33 LEFT PRIMER        415   20   60.06   50.00  4.00  4.00 cgagtgatattgatccggct
+   RIGHT PRIMER       497   20   60.41   50.00  3.00  3.00 gtgaaatgagcggcaagtct
+   INTERNAL OLIGO     448   20   59.87   50.00  4.00  0.00 tcacaacatgctaacggctc
+   PRODUCT SIZE: 83, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+34 LEFT PRIMER       1079   20   59.84   45.00  6.00  2.00 tgaatccaaagcttgtgacg
+   RIGHT PRIMER      1145   20   59.69   45.00  3.00  2.00 ctttccacaaacccaccaat
+   INTERNAL OLIGO    1099   23   59.66   39.13  3.00  3.00 gaaccaacttcttcttcaaccaa
+   PRODUCT SIZE: 67, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 0.00
+
+35 LEFT PRIMER        108   20   60.11   55.00  3.00  1.00 ctggtctcccatcgtcaact
+   RIGHT PRIMER       193   20   59.63   50.00  6.00  3.00 ttctgtcctcgatgatggtg
+   INTERNAL OLIGO     147   20   60.36   55.00  3.00  0.00 cccagatgactttcaccacc
+   PRODUCT SIZE: 86, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 3.00
+
+36 LEFT PRIMER        377   20   60.35   50.00  8.00  7.00 aagccttaaccggttcaacc
+   RIGHT PRIMER       467   20   59.87   50.00  4.00  1.00 gagccgttagcatgttgtga
+   INTERNAL OLIGO     415   20   60.06   50.00  4.00  4.00 agccggatcaatatcactcg
+   PRODUCT SIZE: 91, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+37 LEFT PRIMER        939   20   59.67   50.00  7.00  5.00 ctccgatgaaactttccgtc
+   RIGHT PRIMER      1012   20   59.85   45.00  6.00  1.00 tcagcatgcagttgaaaacc
+   INTERNAL OLIGO     972   20   59.50   55.00  4.00  2.00 aagcctctccacgtacaagc
+   PRODUCT SIZE: 74, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 0.00
+
+38 LEFT PRIMER         13   20   60.30   45.00 11.00  9.00 gacatggatgccatcaatga
+   RIGHT PRIMER       102   20   59.81   50.00  4.00  1.00 ccaggtgcaaccataatcct
+   INTERNAL OLIGO      40   20   59.99   55.00  4.00  0.00 ttctctggacacagctccct
+   PRODUCT SIZE: 90, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 2.00
+
+39 LEFT PRIMER        954   20   59.85   50.00  6.00  6.00 ccgtccttctgcattaaagc
+   RIGHT PRIMER      1045   20   60.39   50.00  8.00  2.00 attccggtgcacggtaacta
+   INTERNAL OLIGO     993   20   59.85   45.00  6.00  6.00 tcagcatgcagttgaaaacc
+   PRODUCT SIZE: 92, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 0.00
+
+40 LEFT PRIMER       1268   20   59.77   50.00  6.00  4.00 cgttgggccggatatataga
+   RIGHT PRIMER      1349   20   59.68   60.00  2.00  0.00 cccctaaaccctacctcacc
+   INTERNAL OLIGO    1290   20   59.23   55.00  1.00  0.00 ttctctcctcttcaccaccc
+   PRODUCT SIZE: 82, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+41 LEFT PRIMER        596   20   60.05   45.00  2.00  0.00 acgacaaccaaaacgacaca
+   RIGHT PRIMER       666   20   60.50   50.00  4.00  1.00 gccgaatttgacgtaaggtg
+   INTERNAL OLIGO     618   22   60.05   40.91  4.00  3.00 tgctgctttccaactacttcaa
+   PRODUCT SIZE: 71, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+42 LEFT PRIMER        595   20   60.05   50.00  2.00  0.00 cacgacaaccaaaacgacac
+   RIGHT PRIMER       669   20   60.50   50.00  4.00  2.00 gtggccgaatttgacgtaag
+   INTERNAL OLIGO     618   22   60.05   40.91  4.00  3.00 tgctgctttccaactacttcaa
+   PRODUCT SIZE: 75, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 1.00
+
+43 LEFT PRIMER        736   20   59.56   50.00  6.00  3.00 gatatcatggaaggggtcca
+   RIGHT PRIMER       805   20   59.86   50.00  3.00  0.00 gatgtggaccgttgttgttg
+   INTERNAL OLIGO     758   20   59.72   45.00  6.00  2.00 gggcctcattaatccaatca
+   PRODUCT SIZE: 70, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 3.00
+
+44 LEFT PRIMER        498   20   59.69   55.00  6.00  5.00 cgaagcccttcatggactac
+   RIGHT PRIMER       563   20   59.70   45.00  2.00  0.00 ttgttgtggtgatggtggtt
+   INTERNAL OLIGO     518   18   59.62   61.11  2.00  0.00 cacccccagcaccttcta
+   PRODUCT SIZE: 66, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 3.00
+
+45 LEFT PRIMER        752   20   59.72   45.00  8.00  4.00 tccaatgggcctcattaatc
+   RIGHT PRIMER       813   20   60.34   50.00  3.00  3.00 tatccgaagatgtggaccgt
+   INTERNAL OLIGO     772   20   57.32   40.00  4.00  4.00 caatcacttgcttccaacaa
+   PRODUCT SIZE: 62, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+46 LEFT PRIMER        937   20   59.67   50.00  7.00  3.00 gactccgatgaaactttccg
+   RIGHT PRIMER      1009   20   59.71   40.00  6.00  0.00 gcatgcagttgaaaaccaaa
+   INTERNAL OLIGO     970   20   59.50   55.00  6.00  2.00 gcctctccacgtacaagctt
+   PRODUCT SIZE: 73, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+47 LEFT PRIMER        873   20   59.70   50.00  8.00  4.00 caggcgattaacctcctttg
+   RIGHT PRIMER       956   20   59.67   50.00  7.00  3.00 cggaaagtttcatcggagtc
+   INTERNAL OLIGO     900   20   59.03   45.00  3.00  0.00 cctcggacaaccattttctt
+   PRODUCT SIZE: 84, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 2.00
+
+48 LEFT PRIMER        647   20   60.50   50.00  4.00  4.00 caccttacgtcaaattcggc
+   RIGHT PRIMER       736   20   60.14   55.00  9.00  7.00 cgtagtcgatgacatggacg
+   INTERNAL OLIGO     679   20   60.19   45.00  4.00  2.00 aatcaagccatcatcgaagc
+   PRODUCT SIZE: 90, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 3.00
+
+49 LEFT PRIMER        535   20   59.41   45.00  4.00  1.00 gcgcataataaccaccatca
+   RIGHT PRIMER       614   20   60.05   50.00  2.00  0.00 gtgtcgttttggttgtcgtg
+   INTERNAL OLIGO     573   21   59.70   47.62  4.00  3.00 ttacctcaccacaaatggtcc
+   PRODUCT SIZE: 80, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+Statistics
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left   17856     0     0     0     0     9     0     0  8066     0     0     0     0  9781
+Right  17856     0     0     0     0     9     0     0  7973     0     0     0     0  9874
+Intl   14749     0     0     0     0     3     0  2973  7694     0     0    44     0  4035
+Pair Stats:
+considered 4406, unacceptable product size 4245, high end compl 34, no internal oligo 48, primer in pair overlaps a primer in a better pair 2557, ok 79
+libprimer3 release 2.6.1
+
+
+PRIMER PICKING RESULTS FOR No 5 termial G
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER       1416   20   59.96   55.00  3.00  0.00 tagggttgaagaggtgggtg
+RIGHT PRIMER      1491   20   60.00   50.00  4.00  2.00 ggaagcagaaagcaaacgtc
+INTERNAL OLIGO    1451   20   59.75   40.00  5.00  3.00 tggtgttggattggaaatca
+SEQUENCE SIZE: 1527
+INCLUDED REGION SIZE: 1527
+
+PRODUCT SIZE: 76, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+    1 atggatttgatggacatggatgccatcaatgacctccacttctctggacacagctccctc
+                                                                  
+
+   61 accaacacccctacttccgacgaggattatggttgcacctggaaccactggtctcccatc
+                                                                  
+
+  121 gtcaactgggacacctttacaggtgccccagatgactttcaccacctcatggacaccatc
+                                                                  
+
+  181 atcgaggacagaacaactgtcctcgaacagctcagtccatctatcaccacaaccaccacc
+                                                                  
+
+  241 accaccacaaccacggatgaggaagaagaagaaatggaaacaacaaccacaacaacaaca
+                                                                  
+
+  301 acggcaataaaaacgcatgaagttggtgatgattcaaaagggctaaaactagtgcaccta
+                                                                  
+
+  361 ttgatggctggcgcggaagccttaaccggttcaaccaaaaaccgtgacttagctcgagtg
+                                                                  
+
+  421 atattgatccggctcaaggaattagtctcacaacatgctaacggctccaacatggagaga
+                                                                  
+
+  481 cttgccgctcatttcaccgaagcccttcatggactactagaaggtgctgggggtgcgcat
+                                                                  
+
+  541 aataaccaccatcaccacaacaacaacaaacattacctcaccacaaatggtccccacgac
+                                                                  
+
+  601 aaccaaaacgacacacttgctgctttccaactacttcaagacatgtcaccttacgtcaaa
+                                                                  
+
+  661 ttcggccacttcacagccaatcaagccatcatcgaagccgtggcccacgaacgccgcgtc
+                                                                  
+
+  721 catgtcatcgactacgatatcatggaaggggtccaatgggcctcattaatccaatcactt
+                                                                  
+
+  781 gcttccaacaacaacggtccacatcttcggataaccgcattatcgcggacaggaaccggc
+                                                                  
+
+  841 cggaggtcaatcgccaccgtacaagaaaccggcaggcgattaacctcctttgccgcttcc
+                                                                  
+
+  901 ctcggacaaccattttcttttcatcactgcagattagactccgatgaaactttccgtcct
+                                                                  
+
+  961 tctgcattaaagcttgtacgtggagaggctttggttttcaactgcatgctgaatttacct
+                                                                  
+
+ 1021 caccttagttaccgtgcaccggaatcagttgcttcgtttttaaacggagcaaaaacgttg
+                                                                  
+
+ 1081 aatccaaagcttgtgacgttggttgaagaagaagttggttctgttattggtgggtttgtg
+                                                                  
+
+ 1141 gaaaggttcatggactcacttcatcattattcagcggtttttgattcattggaggctggt
+                                                                  
+
+ 1201 tttccgatgcagaaccgggcccggactttggtggagagggtattttttgggcctagaatt
+                                                                  
+
+ 1261 gcaggctcgttgggccggatatatagaacgggtggtgaagaggagagaaggtcatggggg
+                                                                  
+
+ 1321 gagtggttaggtgaggtagggtttaggggagttccggtgagctttgcaaatcattgtcaa
+                                                                  
+
+ 1381 gcaaagctgttgttagggctttttaatgatgggtatagggttgaagaggtgggtgtgggt
+                                         >>>>>>>>>>>>>>>>>>>>     
+
+ 1441 agtaataagttggtgttggattggaaatcaagacgtttgctttctgcttccctttggact
+                ^^^^^^^^^^^^^^^^^^^^ <<<<<<<<<<<<<<<<<<<<         
+
+ 1501 tgttcttcttcagattctgatttatag
+                                 
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+ADDITIONAL OLIGOS
+                    start  len      tm     gc%   any    3' seq
+
+ 1 LEFT PRIMER         40   20   59.99   55.00  4.00  0.00 ttctctggacacagctccct
+   RIGHT PRIMER       126   20   59.97   55.00  3.00  2.00 gttgacgatgggagaccagt
+   INTERNAL OLIGO      81   20   59.96   50.00  4.00  2.00 cgaggattatggttgcacct
+   PRODUCT SIZE: 87, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+ 2 LEFT PRIMER         39   20   59.99   60.00  4.00  0.00 cttctctggacacagctccc
+   RIGHT PRIMER       100   20   59.96   50.00  4.00  2.00 aggtgcaaccataatcctcg
+   INTERNAL OLIGO      59   20   59.82   55.00  2.00  0.00 tcaccaacacccctacttcc
+   PRODUCT SIZE: 62, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+ 3 LEFT PRIMER        786   20   59.86   50.00  3.00  0.00 caacaacaacggtccacatc
+   RIGHT PRIMER       869   20   60.00   50.00  4.00  2.00 gtttcttgtacggtggcgat
+   INTERNAL OLIGO     806   20   60.79   45.00  6.00  4.00 ttcggataaccgcattatcg
+   PRODUCT SIZE: 84, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+ 4 LEFT PRIMER        251   20   60.19   50.00  2.00  0.00 ccacggatgaggaagaagaa
+   RIGHT PRIMER       316   20   60.01   40.00  2.00  0.00 gcgtttttattgccgttgtt
+   INTERNAL OLIGO     275   21   59.89   38.10  3.00  0.00 tggaaacaacaaccacaacaa
+   PRODUCT SIZE: 66, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 3.00
+
+ 5 LEFT PRIMER        199   20   59.99   60.00  4.00  2.00 gtcctcgaacagctcagtcc
+   RIGHT PRIMER       270   20   60.19   50.00  2.00  2.00 ttcttcttcctcatccgtgg
+   INTERNAL OLIGO     222   20   60.70   50.00  2.00  0.00 tatcaccacaaccaccacca
+   PRODUCT SIZE: 72, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 2.00
+
+ 6 LEFT PRIMER        947   20   59.85   45.00  5.00  4.00 aaactttccgtccttctgca
+   RIGHT PRIMER      1041   20   60.05   55.00  6.00  3.00 cggtgcacggtaactaaggt
+   INTERNAL OLIGO     977   20   59.73   50.00  4.00  0.00 tacgtggagaggctttggtt
+   PRODUCT SIZE: 95, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 1.00
+
+ 7 LEFT PRIMER       1022   20   60.05   55.00  6.00  6.00 accttagttaccgtgcaccg
+   RIGHT PRIMER      1098   20   59.84   45.00  6.00  4.00 cgtcacaagctttggattca
+   INTERNAL OLIGO    1054   21   59.76   33.33  8.00  3.00 tcgtttttaaacggagcaaaa
+   PRODUCT SIZE: 77, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+ 8 LEFT PRIMER        610   20   60.03   50.00  3.00  0.00 gacacacttgctgctttcca
+   RIGHT PRIMER       698   20   60.19   45.00  4.00  1.00 gcttcgatgatggcttgatt
+   INTERNAL OLIGO     652   20   60.50   45.00  4.00  4.00 tacgtcaaattcggccactt
+   PRODUCT SIZE: 89, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+ 9 LEFT PRIMER        879   20   60.10   45.00  4.00  0.00 attaacctcctttgccgctt
+   RIGHT PRIMER       966   20   59.85   45.00  5.00  5.00 tgcagaaggacggaaagttt
+   INTERNAL OLIGO     900   20   59.03   45.00  3.00  0.00 cctcggacaaccattttctt
+   PRODUCT SIZE: 88, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 1.00
+
+10 LEFT PRIMER         22   20   59.93   50.00  5.00  0.00 gccatcaatgacctccactt
+   RIGHT PRIMER        99   20   59.82   50.00  4.00  2.00 ggtgcaaccataatcctcgt
+   INTERNAL OLIGO      59   20   59.82   55.00  2.00  0.00 tcaccaacacccctacttcc
+   PRODUCT SIZE: 78, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 0.00
+
+11 LEFT PRIMER       1185   20   60.05   45.00  3.00  0.00 ttcattggaggctggttttc
+   RIGHT PRIMER      1264   20   60.20   45.00  6.00  6.00 ctgcaattctaggcccaaaa
+   INTERNAL OLIGO    1222   18   59.18   61.11  2.00  0.00 cggactttggtggagagg
+   PRODUCT SIZE: 80, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+12 LEFT PRIMER       1173   20   59.94   40.00  5.00  1.00 agcggtttttgattcattgg
+   RIGHT PRIMER      1252   20   59.78   50.00  2.00  0.00 gcccaaaaaataccctctcc
+   INTERNAL OLIGO    1196   20   60.64   50.00  4.00  4.00 ctggttttccgatgcagaac
+   PRODUCT SIZE: 80, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 2.00
+
+13 LEFT PRIMER        313   20   60.12   45.00  4.00  2.00 acgcatgaagttggtgatga
+   RIGHT PRIMER       399   20   59.83   45.00  8.00  4.00 tttggttgaaccggttaagg
+   INTERNAL OLIGO     351   20   58.75   50.00  6.00  4.00 agtgcacctattgatggctg
+   PRODUCT SIZE: 87, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 0.00
+
+14 LEFT PRIMER         59   20   59.82   55.00  2.00  0.00 tcaccaacacccctacttcc
+   RIGHT PRIMER       127   20   60.11   55.00  3.00  1.00 agttgacgatgggagaccag
+   INTERNAL OLIGO      81   20   59.96   50.00  4.00  2.00 cgaggattatggttgcacct
+   PRODUCT SIZE: 69, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
+
+15 LEFT PRIMER        380   20   59.83   45.00  8.00  1.00 ccttaaccggttcaaccaaa
+   RIGHT PRIMER       465   20   59.87   50.00  4.00  1.00 gccgttagcatgttgtgaga
+   INTERNAL OLIGO     415   20   60.06   50.00  4.00  4.00 cgagtgatattgatccggct
+   PRODUCT SIZE: 86, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+16 LEFT PRIMER       1245   20   60.20   45.00  6.00  4.00 ttttgggcctagaattgcag
+   RIGHT PRIMER      1303   20   60.10   55.00  2.00  2.00 cctcttcaccacccgttcta
+   INTERNAL OLIGO    1266   18   59.45   55.56  4.00  4.00 ctcgttgggccggatata
+   PRODUCT SIZE: 59, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+17 LEFT PRIMER        597   20   60.05   50.00  2.00  0.00 cgacaaccaaaacgacacac
+   RIGHT PRIMER       687   20   60.26   50.00  3.00  1.00 ggcttgattggctgtgaagt
+   INTERNAL OLIGO     647   20   60.50   50.00  4.00  4.00 caccttacgtcaaattcggc
+   PRODUCT SIZE: 91, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 3.00
+
+18 LEFT PRIMER        544   20   59.70   45.00  2.00  0.00 aaccaccatcaccacaacaa
+   RIGHT PRIMER       629   20   60.03   50.00  3.00  1.00 tggaaagcagcaagtgtgtc
+   INTERNAL OLIGO     573   21   59.70   47.62  4.00  3.00 ttacctcaccacaaatggtcc
+   PRODUCT SIZE: 86, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+19 LEFT PRIMER         16   20   60.17   45.00  9.00  4.00 atggatgccatcaatgacct
+   RIGHT PRIMER        78   20   59.82   55.00  2.00  1.00 ggaagtaggggtgttggtga
+   INTERNAL OLIGO      39   20   59.99   60.00  4.00  0.00 cttctctggacacagctccc
+   PRODUCT SIZE: 63, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
+
+20 LEFT PRIMER        758   20   59.72   45.00  6.00  2.00 gggcctcattaatccaatca
+   RIGHT PRIMER       821   20   59.92   45.00  6.00  0.00 aatgcggttatccgaagatg
+   INTERNAL OLIGO     780   19   60.14   47.37  3.00  3.00 tgcttccaacaacaacggt
+   PRODUCT SIZE: 64, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+21 LEFT PRIMER        297   20   60.01   40.00  2.00  2.00 aacaacggcaataaaaacgc
+   RIGHT PRIMER       396   20   60.35   50.00  8.00  5.00 ggttgaaccggttaaggctt
+   INTERNAL OLIGO     324   20   60.84   45.00  5.00  2.00 tggtgatgattcaaaagggc
+   PRODUCT SIZE: 100, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
+
+22 LEFT PRIMER       1126   20   59.69   45.00  3.00  0.00 attggtgggtttgtggaaag
+   RIGHT PRIMER      1204   20   60.05   45.00  3.00  3.00 gaaaaccagcctccaatgaa
+   INTERNAL OLIGO    1156   22   60.10   40.91  4.00  2.00 tcacttcatcattattcagcgg
+   PRODUCT SIZE: 79, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 1.00
+
+23 LEFT PRIMER        147   20   60.36   55.00  3.00  0.00 cccagatgactttcaccacc
+   RIGHT PRIMER       218   20   59.99   60.00  4.00  2.00 ggactgagctgttcgaggac
+   INTERNAL OLIGO     176   20   59.63   50.00  6.00  0.00 ccatcatcgaggacagaaca
+   PRODUCT SIZE: 72, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+24 LEFT PRIMER        802   20   59.92   45.00  6.00  2.00 catcttcggataaccgcatt
+   RIGHT PRIMER       892   20   59.70   50.00  8.00  6.00 caaaggaggttaatcgcctg
+   INTERNAL OLIGO     850   20   60.00   50.00  4.00  0.00 atcgccaccgtacaagaaac
+   PRODUCT SIZE: 91, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 3.00
+
+25 LEFT PRIMER        107   20   59.97   55.00  3.00  2.00 actggtctcccatcgtcaac
+   RIGHT PRIMER       166   20   60.36   55.00  3.00  0.00 ggtggtgaaagtcatctggg
+   INTERNAL OLIGO     127   20   60.95   55.00 10.00  8.00 tgggacacctttacaggtgc
+   PRODUCT SIZE: 60, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+26 LEFT PRIMER        993   20   59.85   45.00  6.00  6.00 ggttttcaactgcatgctga
+   RIGHT PRIMER      1059   20   60.25   45.00  6.00  4.00 aaacgaagcaactgattccg
+   INTERNAL OLIGO    1018   21   60.18   52.38  4.00  4.00 cctcaccttagttaccgtgca
+   PRODUCT SIZE: 67, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
+
+27 LEFT PRIMER         81   20   59.96   50.00  4.00  2.00 cgaggattatggttgcacct
+   RIGHT PRIMER       165   20   60.36   55.00  3.00  0.00 gtggtgaaagtcatctgggg
+   INTERNAL OLIGO     107   20   59.97   55.00  3.00  2.00 actggtctcccatcgtcaac
+   PRODUCT SIZE: 85, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 1.00
+
+28 LEFT PRIMER        717   20   60.14   55.00  9.00  3.00 cgtccatgtcatcgactacg
+   RIGHT PRIMER       776   20   59.72   45.00  6.00  4.00 gattggattaatgaggccca
+   INTERNAL OLIGO     737   20   59.05   45.00  4.00  1.00 atatcatggaaggggtccaa
+   PRODUCT SIZE: 60, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 0.00
+
+29 LEFT PRIMER        448   20   59.87   50.00  4.00  0.00 tcacaacatgctaacggctc
+   RIGHT PRIMER       517   20   59.69   55.00  6.00  4.00 gtagtccatgaagggcttcg
+   INTERNAL OLIGO     478   20   60.41   50.00  3.00  0.00 agacttgccgctcatttcac
+   PRODUCT SIZE: 70, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+30 LEFT PRIMER       1271   20   59.77   50.00  6.00  2.00 tgggccggatatatagaacg
+   RIGHT PRIMER      1337   20   60.23   60.00  2.00  0.00 acctcacctaaccactcccc
+   INTERNAL OLIGO    1293   21   58.45   52.38  2.00  1.00 tggtgaagaggagagaaggtc
+   PRODUCT SIZE: 67, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+31 LEFT PRIMER        679   20   60.19   45.00  4.00  2.00 aatcaagccatcatcgaagc
+   RIGHT PRIMER       771   20   59.72   45.00  8.00  4.00 gattaatgaggcccattgga
+   INTERNAL OLIGO     717   20   60.14   55.00  9.00  3.00 cgtccatgtcatcgactacg
+   PRODUCT SIZE: 93, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+32 LEFT PRIMER        415   20   60.06   50.00  4.00  4.00 cgagtgatattgatccggct
+   RIGHT PRIMER       497   20   60.41   50.00  3.00  3.00 gtgaaatgagcggcaagtct
+   INTERNAL OLIGO     448   20   59.87   50.00  4.00  0.00 tcacaacatgctaacggctc
+   PRODUCT SIZE: 83, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+33 LEFT PRIMER       1079   20   59.84   45.00  6.00  2.00 tgaatccaaagcttgtgacg
+   RIGHT PRIMER      1145   20   59.69   45.00  3.00  2.00 ctttccacaaacccaccaat
+   INTERNAL OLIGO    1099   23   59.66   39.13  3.00  3.00 ttggttgaagaagaagttggttc
+   PRODUCT SIZE: 67, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 0.00
+
+34 LEFT PRIMER        108   20   60.11   55.00  3.00  1.00 ctggtctcccatcgtcaact
+   RIGHT PRIMER       193   20   59.63   50.00  6.00  3.00 ttctgtcctcgatgatggtg
+   INTERNAL OLIGO     147   20   60.36   55.00  3.00  0.00 cccagatgactttcaccacc
+   PRODUCT SIZE: 86, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 3.00
+
+35 LEFT PRIMER        377   20   60.35   50.00  8.00  7.00 aagccttaaccggttcaacc
+   RIGHT PRIMER       467   20   59.87   50.00  4.00  1.00 gagccgttagcatgttgtga
+   INTERNAL OLIGO     415   20   60.06   50.00  4.00  4.00 cgagtgatattgatccggct
+   PRODUCT SIZE: 91, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+36 LEFT PRIMER        939   20   59.67   50.00  7.00  5.00 ctccgatgaaactttccgtc
+   RIGHT PRIMER      1012   20   59.85   45.00  6.00  1.00 tcagcatgcagttgaaaacc
+   INTERNAL OLIGO     970   20   59.50   55.00  6.00  2.00 aagcttgtacgtggagaggc
+   PRODUCT SIZE: 74, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 0.00
+
+37 LEFT PRIMER         13   20   60.30   45.00 11.00  9.00 gacatggatgccatcaatga
+   RIGHT PRIMER       102   20   59.81   50.00  4.00  1.00 ccaggtgcaaccataatcct
+   INTERNAL OLIGO      40   20   59.99   55.00  4.00  0.00 ttctctggacacagctccct
+   PRODUCT SIZE: 90, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 2.00
+
+38 LEFT PRIMER       1268   20   59.77   50.00  6.00  4.00 cgttgggccggatatataga
+   RIGHT PRIMER      1356   20   60.30   55.00  4.00  2.00 cggaactcccctaaacccta
+   INTERNAL OLIGO    1298   21   59.69   52.38  4.00  0.00 aagaggagagaaggtcatggg
+   PRODUCT SIZE: 89, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 2.00
+
+39 LEFT PRIMER        954   20   59.85   50.00  6.00  6.00 ccgtccttctgcattaaagc
+   RIGHT PRIMER      1045   20   60.39   50.00  8.00  2.00 attccggtgcacggtaacta
+   INTERNAL OLIGO     977   20   59.73   50.00  4.00  0.00 tacgtggagaggctttggtt
+   PRODUCT SIZE: 92, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 0.00
+
+40 LEFT PRIMER       1267   20   59.77   50.00  6.00  4.00 tcgttgggccggatatatag
+   RIGHT PRIMER      1349   20   59.68   60.00  2.00  0.00 cccctaaaccctacctcacc
+   INTERNAL OLIGO    1287   19   60.10   57.89  2.00  0.00 aacgggtggtgaagaggag
+   PRODUCT SIZE: 83, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
+
+41 LEFT PRIMER        596   20   60.05   45.00  2.00  0.00 acgacaaccaaaacgacaca
+   RIGHT PRIMER       666   20   60.50   50.00  4.00  1.00 gccgaatttgacgtaaggtg
+   INTERNAL OLIGO     618   22   60.05   40.91  4.00  3.00 tgctgctttccaactacttcaa
+   PRODUCT SIZE: 71, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+42 LEFT PRIMER        595   20   60.05   50.00  2.00  0.00 cacgacaaccaaaacgacac
+   RIGHT PRIMER       669   20   60.50   50.00  4.00  2.00 gtggccgaatttgacgtaag
+   INTERNAL OLIGO     618   22   60.05   40.91  4.00  3.00 tgctgctttccaactacttcaa
+   PRODUCT SIZE: 75, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 1.00
+
+43 LEFT PRIMER        736   20   59.56   50.00  6.00  3.00 gatatcatggaaggggtcca
+   RIGHT PRIMER       805   20   59.86   50.00  3.00  0.00 gatgtggaccgttgttgttg
+   INTERNAL OLIGO     757   20   59.72   45.00  6.00  0.00 tgggcctcattaatccaatc
+   PRODUCT SIZE: 70, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 3.00
+
+44 LEFT PRIMER        498   20   59.69   55.00  6.00  5.00 cgaagcccttcatggactac
+   RIGHT PRIMER       563   20   59.70   45.00  2.00  0.00 ttgttgtggtgatggtggtt
+   INTERNAL OLIGO     518   18   59.62   61.11  2.00  0.00 tagaaggtgctgggggtg
+   PRODUCT SIZE: 66, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 3.00
+
+45 LEFT PRIMER        752   20   59.72   45.00  8.00  4.00 tccaatgggcctcattaatc
+   RIGHT PRIMER       813   20   60.34   50.00  3.00  3.00 tatccgaagatgtggaccgt
+   INTERNAL OLIGO     772   20   57.32   40.00  4.00  4.00 caatcacttgcttccaacaa
+   PRODUCT SIZE: 62, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+46 LEFT PRIMER        937   20   59.67   50.00  7.00  3.00 gactccgatgaaactttccg
+   RIGHT PRIMER      1009   20   59.71   40.00  6.00  0.00 gcatgcagttgaaaaccaaa
+   INTERNAL OLIGO     970   20   59.50   55.00  6.00  2.00 aagcttgtacgtggagaggc
+   PRODUCT SIZE: 73, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+47 LEFT PRIMER        873   20   59.70   50.00  8.00  4.00 caggcgattaacctcctttg
+   RIGHT PRIMER       956   20   59.67   50.00  7.00  3.00 cggaaagtttcatcggagtc
+   INTERNAL OLIGO     900   20   59.03   45.00  3.00  0.00 cctcggacaaccattttctt
+   PRODUCT SIZE: 84, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 2.00
+
+48 LEFT PRIMER        647   20   60.50   50.00  4.00  4.00 caccttacgtcaaattcggc
+   RIGHT PRIMER       736   20   60.14   55.00  9.00  7.00 cgtagtcgatgacatggacg
+   INTERNAL OLIGO     679   20   60.19   45.00  4.00  2.00 aatcaagccatcatcgaagc
+   PRODUCT SIZE: 90, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 3.00
+
+49 LEFT PRIMER        535   20   59.41   45.00  4.00  1.00 gcgcataataaccaccatca
+   RIGHT PRIMER       614   20   60.05   50.00  2.00  0.00 gtgtcgttttggttgtcgtg
+   INTERNAL OLIGO     573   21   59.70   47.62  4.00  3.00 ttacctcaccacaaatggtcc
+   PRODUCT SIZE: 80, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+Statistics
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left   17856     0     0     0     0     9     0     0  8066     0     0     0     0  9781
+Right  17856     0     0     0     0     9     0     0  7973     0     0     0     0  9874
+Intl   11350     0     0     0     0     1     0  2251  5931     0     0    43     0  3124
+Pair Stats:
+considered 4458, unacceptable product size 4294, high end compl 35, no internal oligo 49, primer in pair overlaps a primer in a better pair 2533, ok 80
+libprimer3 release 2.6.1
+
+
+PRIMER PICKING RESULTS FOR No 5 termial G and reverse complement internal oligos
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER       1416   20   59.96   55.00  3.00  0.00 tagggttgaagaggtgggtg
+RIGHT PRIMER      1491   20   60.00   50.00  4.00  2.00 ggaagcagaaagcaaacgtc
+INTERNAL OLIGO    1451   20   59.75   40.00  5.00  3.00 tgatttccaatccaacacca
+SEQUENCE SIZE: 1527
+INCLUDED REGION SIZE: 1527
+
+PRODUCT SIZE: 76, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+    1 atggatttgatggacatggatgccatcaatgacctccacttctctggacacagctccctc
+                                                                  
+
+   61 accaacacccctacttccgacgaggattatggttgcacctggaaccactggtctcccatc
+                                                                  
+
+  121 gtcaactgggacacctttacaggtgccccagatgactttcaccacctcatggacaccatc
+                                                                  
+
+  181 atcgaggacagaacaactgtcctcgaacagctcagtccatctatcaccacaaccaccacc
+                                                                  
+
+  241 accaccacaaccacggatgaggaagaagaagaaatggaaacaacaaccacaacaacaaca
+                                                                  
+
+  301 acggcaataaaaacgcatgaagttggtgatgattcaaaagggctaaaactagtgcaccta
+                                                                  
+
+  361 ttgatggctggcgcggaagccttaaccggttcaaccaaaaaccgtgacttagctcgagtg
+                                                                  
+
+  421 atattgatccggctcaaggaattagtctcacaacatgctaacggctccaacatggagaga
+                                                                  
+
+  481 cttgccgctcatttcaccgaagcccttcatggactactagaaggtgctgggggtgcgcat
+                                                                  
+
+  541 aataaccaccatcaccacaacaacaacaaacattacctcaccacaaatggtccccacgac
+                                                                  
+
+  601 aaccaaaacgacacacttgctgctttccaactacttcaagacatgtcaccttacgtcaaa
+                                                                  
+
+  661 ttcggccacttcacagccaatcaagccatcatcgaagccgtggcccacgaacgccgcgtc
+                                                                  
+
+  721 catgtcatcgactacgatatcatggaaggggtccaatgggcctcattaatccaatcactt
+                                                                  
+
+  781 gcttccaacaacaacggtccacatcttcggataaccgcattatcgcggacaggaaccggc
+                                                                  
+
+  841 cggaggtcaatcgccaccgtacaagaaaccggcaggcgattaacctcctttgccgcttcc
+                                                                  
+
+  901 ctcggacaaccattttcttttcatcactgcagattagactccgatgaaactttccgtcct
+                                                                  
+
+  961 tctgcattaaagcttgtacgtggagaggctttggttttcaactgcatgctgaatttacct
+                                                                  
+
+ 1021 caccttagttaccgtgcaccggaatcagttgcttcgtttttaaacggagcaaaaacgttg
+                                                                  
+
+ 1081 aatccaaagcttgtgacgttggttgaagaagaagttggttctgttattggtgggtttgtg
+                                                                  
+
+ 1141 gaaaggttcatggactcacttcatcattattcagcggtttttgattcattggaggctggt
+                                                                  
+
+ 1201 tttccgatgcagaaccgggcccggactttggtggagagggtattttttgggcctagaatt
+                                                                  
+
+ 1261 gcaggctcgttgggccggatatatagaacgggtggtgaagaggagagaaggtcatggggg
+                                                                  
+
+ 1321 gagtggttaggtgaggtagggtttaggggagttccggtgagctttgcaaatcattgtcaa
+                                                                  
+
+ 1381 gcaaagctgttgttagggctttttaatgatgggtatagggttgaagaggtgggtgtgggt
+                                         >>>>>>>>>>>>>>>>>>>>     
+
+ 1441 agtaataagttggtgttggattggaaatcaagacgtttgctttctgcttccctttggact
+                ^^^^^^^^^^^^^^^^^^^^ <<<<<<<<<<<<<<<<<<<<         
+
+ 1501 tgttcttcttcagattctgatttatag
+                                 
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+ADDITIONAL OLIGOS
+                    start  len      tm     gc%   any    3' seq
+
+ 1 LEFT PRIMER         40   20   59.99   55.00  4.00  0.00 ttctctggacacagctccct
+   RIGHT PRIMER       126   20   59.97   55.00  3.00  2.00 gttgacgatgggagaccagt
+   INTERNAL OLIGO      81   20   59.96   50.00  4.00  2.00 aggtgcaaccataatcctcg
+   PRODUCT SIZE: 87, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+ 2 LEFT PRIMER         39   20   59.99   60.00  4.00  0.00 cttctctggacacagctccc
+   RIGHT PRIMER       100   20   59.96   50.00  4.00  2.00 aggtgcaaccataatcctcg
+   INTERNAL OLIGO      59   20   59.82   55.00  2.00  0.00 tcaccaacacccctacttcc
+   PRODUCT SIZE: 62, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+ 3 LEFT PRIMER        786   20   59.86   50.00  3.00  0.00 caacaacaacggtccacatc
+   RIGHT PRIMER       869   20   60.00   50.00  4.00  2.00 gtttcttgtacggtggcgat
+   INTERNAL OLIGO     806   20   60.79   45.00  6.00  4.00 ttcggataaccgcattatcg
+   PRODUCT SIZE: 84, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+ 4 LEFT PRIMER        251   20   60.19   50.00  2.00  0.00 ccacggatgaggaagaagaa
+   RIGHT PRIMER       316   20   60.01   40.00  2.00  0.00 gcgtttttattgccgttgtt
+   INTERNAL OLIGO     275   21   59.89   38.10  3.00  0.00 tggaaacaacaaccacaacaa
+   PRODUCT SIZE: 66, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 3.00
+
+ 5 LEFT PRIMER        199   20   59.99   60.00  4.00  2.00 gtcctcgaacagctcagtcc
+   RIGHT PRIMER       270   20   60.19   50.00  2.00  2.00 ttcttcttcctcatccgtgg
+   INTERNAL OLIGO     222   20   60.70   50.00  2.00  0.00 tatcaccacaaccaccacca
+   PRODUCT SIZE: 72, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 2.00
+
+ 6 LEFT PRIMER        947   20   59.85   45.00  5.00  4.00 aaactttccgtccttctgca
+   RIGHT PRIMER      1041   20   60.05   55.00  6.00  3.00 cggtgcacggtaactaaggt
+   INTERNAL OLIGO     993   20   59.85   45.00  6.00  6.00 tcagcatgcagttgaaaacc
+   PRODUCT SIZE: 95, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 1.00
+
+ 7 LEFT PRIMER       1022   20   60.05   55.00  6.00  6.00 accttagttaccgtgcaccg
+   RIGHT PRIMER      1098   20   59.84   45.00  6.00  4.00 cgtcacaagctttggattca
+   INTERNAL OLIGO    1054   21   59.76   33.33  8.00  3.00 ttttgctccgtttaaaaacga
+   PRODUCT SIZE: 77, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+ 8 LEFT PRIMER        610   20   60.03   50.00  3.00  0.00 gacacacttgctgctttcca
+   RIGHT PRIMER       698   20   60.19   45.00  4.00  1.00 gcttcgatgatggcttgatt
+   INTERNAL OLIGO     652   20   60.50   45.00  4.00  4.00 tacgtcaaattcggccactt
+   PRODUCT SIZE: 89, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+ 9 LEFT PRIMER        879   20   60.10   45.00  4.00  0.00 attaacctcctttgccgctt
+   RIGHT PRIMER       966   20   59.85   45.00  5.00  5.00 tgcagaaggacggaaagttt
+   INTERNAL OLIGO     900   20   59.03   45.00  3.00  0.00 cctcggacaaccattttctt
+   PRODUCT SIZE: 88, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 1.00
+
+10 LEFT PRIMER         22   20   59.93   50.00  5.00  0.00 gccatcaatgacctccactt
+   RIGHT PRIMER        99   20   59.82   50.00  4.00  2.00 ggtgcaaccataatcctcgt
+   INTERNAL OLIGO      59   20   59.82   55.00  2.00  0.00 tcaccaacacccctacttcc
+   PRODUCT SIZE: 78, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 0.00
+
+11 LEFT PRIMER       1185   20   60.05   45.00  3.00  0.00 ttcattggaggctggttttc
+   RIGHT PRIMER      1264   20   60.20   45.00  6.00  6.00 ctgcaattctaggcccaaaa
+   INTERNAL OLIGO    1223   20   58.99   55.00  2.00  2.00 taccctctccaccaaagtcc
+   PRODUCT SIZE: 80, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+12 LEFT PRIMER       1173   20   59.94   40.00  5.00  1.00 agcggtttttgattcattgg
+   RIGHT PRIMER      1252   20   59.78   50.00  2.00  0.00 gcccaaaaaataccctctcc
+   INTERNAL OLIGO    1196   20   60.64   50.00  4.00  4.00 ctggttttccgatgcagaac
+   PRODUCT SIZE: 80, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 2.00
+
+13 LEFT PRIMER        313   20   60.12   45.00  4.00  2.00 acgcatgaagttggtgatga
+   RIGHT PRIMER       399   20   59.83   45.00  8.00  4.00 tttggttgaaccggttaagg
+   INTERNAL OLIGO     351   20   58.75   50.00  6.00  4.00 cagccatcaataggtgcact
+   PRODUCT SIZE: 87, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 0.00
+
+14 LEFT PRIMER         59   20   59.82   55.00  2.00  0.00 tcaccaacacccctacttcc
+   RIGHT PRIMER       127   20   60.11   55.00  3.00  1.00 agttgacgatgggagaccag
+   INTERNAL OLIGO      81   20   59.96   50.00  4.00  2.00 aggtgcaaccataatcctcg
+   PRODUCT SIZE: 69, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
+
+15 LEFT PRIMER        380   20   59.83   45.00  8.00  1.00 ccttaaccggttcaaccaaa
+   RIGHT PRIMER       465   20   59.87   50.00  4.00  1.00 gccgttagcatgttgtgaga
+   INTERNAL OLIGO     415   20   60.06   50.00  4.00  4.00 agccggatcaatatcactcg
+   PRODUCT SIZE: 86, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+16 LEFT PRIMER       1245   20   60.20   45.00  6.00  4.00 ttttgggcctagaattgcag
+   RIGHT PRIMER      1303   20   60.10   55.00  2.00  2.00 cctcttcaccacccgttcta
+   INTERNAL OLIGO    1266   18   59.45   55.56  4.00  4.00 tatatccggcccaacgag
+   PRODUCT SIZE: 59, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+17 LEFT PRIMER        597   20   60.05   50.00  2.00  0.00 cgacaaccaaaacgacacac
+   RIGHT PRIMER       687   20   60.26   50.00  3.00  1.00 ggcttgattggctgtgaagt
+   INTERNAL OLIGO     647   20   60.50   50.00  4.00  4.00 caccttacgtcaaattcggc
+   PRODUCT SIZE: 91, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 3.00
+
+18 LEFT PRIMER        544   20   59.70   45.00  2.00  0.00 aaccaccatcaccacaacaa
+   RIGHT PRIMER       629   20   60.03   50.00  3.00  1.00 tggaaagcagcaagtgtgtc
+   INTERNAL OLIGO     573   21   59.70   47.62  4.00  3.00 ttacctcaccacaaatggtcc
+   PRODUCT SIZE: 86, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+19 LEFT PRIMER         16   20   60.17   45.00  9.00  4.00 atggatgccatcaatgacct
+   RIGHT PRIMER        78   20   59.82   55.00  2.00  1.00 ggaagtaggggtgttggtga
+   INTERNAL OLIGO      39   20   59.99   60.00  4.00  0.00 cttctctggacacagctccc
+   PRODUCT SIZE: 63, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
+
+20 LEFT PRIMER        758   20   59.72   45.00  6.00  2.00 gggcctcattaatccaatca
+   RIGHT PRIMER       821   20   59.92   45.00  6.00  0.00 aatgcggttatccgaagatg
+   INTERNAL OLIGO     780   19   60.14   47.37  3.00  3.00 tgcttccaacaacaacggt
+   PRODUCT SIZE: 64, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+21 LEFT PRIMER        297   20   60.01   40.00  2.00  2.00 aacaacggcaataaaaacgc
+   RIGHT PRIMER       396   20   60.35   50.00  8.00  5.00 ggttgaaccggttaaggctt
+   INTERNAL OLIGO     325   20   58.98   45.00  5.00  2.00 agcccttttgaatcatcacc
+   PRODUCT SIZE: 100, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
+
+22 LEFT PRIMER       1126   20   59.69   45.00  3.00  0.00 attggtgggtttgtggaaag
+   RIGHT PRIMER      1204   20   60.05   45.00  3.00  3.00 gaaaaccagcctccaatgaa
+   INTERNAL OLIGO    1156   22   60.10   40.91  4.00  2.00 tcacttcatcattattcagcgg
+   PRODUCT SIZE: 79, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 1.00
+
+23 LEFT PRIMER        147   20   60.36   55.00  3.00  0.00 cccagatgactttcaccacc
+   RIGHT PRIMER       218   20   59.99   60.00  4.00  2.00 ggactgagctgttcgaggac
+   INTERNAL OLIGO     176   20   59.63   50.00  6.00  0.00 ccatcatcgaggacagaaca
+   PRODUCT SIZE: 72, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+24 LEFT PRIMER        802   20   59.92   45.00  6.00  2.00 catcttcggataaccgcatt
+   RIGHT PRIMER       892   20   59.70   50.00  8.00  6.00 caaaggaggttaatcgcctg
+   INTERNAL OLIGO     850   20   60.00   50.00  4.00  0.00 atcgccaccgtacaagaaac
+   PRODUCT SIZE: 91, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 3.00
+
+25 LEFT PRIMER        993   20   59.85   45.00  6.00  6.00 ggttttcaactgcatgctga
+   RIGHT PRIMER      1059   20   60.25   45.00  6.00  4.00 aaacgaagcaactgattccg
+   INTERNAL OLIGO    1018   21   60.18   52.38  4.00  4.00 cctcaccttagttaccgtgca
+   PRODUCT SIZE: 67, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
+
+26 LEFT PRIMER       1284   20   60.10   55.00  2.00  0.00 tagaacgggtggtgaagagg
+   RIGHT PRIMER      1356   20   60.30   55.00  4.00  2.00 cggaactcccctaaacccta
+   INTERNAL OLIGO    1318   19   59.36   63.16  2.00  0.00 cctcacctaaccactcccc
+   PRODUCT SIZE: 73, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 2.00
+
+27 LEFT PRIMER         81   20   59.96   50.00  4.00  2.00 cgaggattatggttgcacct
+   RIGHT PRIMER       165   20   60.36   55.00  3.00  0.00 gtggtgaaagtcatctgggg
+   INTERNAL OLIGO     107   20   59.97   55.00  3.00  2.00 actggtctcccatcgtcaac
+   PRODUCT SIZE: 85, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 1.00
+
+28 LEFT PRIMER        717   20   60.14   55.00  9.00  3.00 cgtccatgtcatcgactacg
+   RIGHT PRIMER       776   20   59.72   45.00  6.00  4.00 gattggattaatgaggccca
+   INTERNAL OLIGO     737   20   59.05   45.00  4.00  1.00 ttggaccccttccatgatat
+   PRODUCT SIZE: 60, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 0.00
+
+29 LEFT PRIMER        448   20   59.87   50.00  4.00  0.00 tcacaacatgctaacggctc
+   RIGHT PRIMER       517   20   59.69   55.00  6.00  4.00 gtagtccatgaagggcttcg
+   INTERNAL OLIGO     478   20   60.41   50.00  3.00  0.00 agacttgccgctcatttcac
+   PRODUCT SIZE: 70, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+30 LEFT PRIMER       1271   20   59.77   50.00  6.00  2.00 tgggccggatatatagaacg
+   RIGHT PRIMER      1337   20   60.23   60.00  2.00  0.00 acctcacctaaccactcccc
+   INTERNAL OLIGO    1291   21   60.24   57.14  1.00  0.00 ccttctctcctcttcaccacc
+   PRODUCT SIZE: 67, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+31 LEFT PRIMER        679   20   60.19   45.00  4.00  2.00 aatcaagccatcatcgaagc
+   RIGHT PRIMER       771   20   59.72   45.00  8.00  4.00 gattaatgaggcccattgga
+   INTERNAL OLIGO     717   20   60.14   55.00  9.00  3.00 cgtccatgtcatcgactacg
+   PRODUCT SIZE: 93, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+32 LEFT PRIMER        415   20   60.06   50.00  4.00  4.00 cgagtgatattgatccggct
+   RIGHT PRIMER       497   20   60.41   50.00  3.00  3.00 gtgaaatgagcggcaagtct
+   INTERNAL OLIGO     448   20   59.87   50.00  4.00  0.00 tcacaacatgctaacggctc
+   PRODUCT SIZE: 83, PAIR ANY COMPL: 3.00, PAIR 3' COMPL: 1.00
+
+33 LEFT PRIMER       1079   20   59.84   45.00  6.00  2.00 tgaatccaaagcttgtgacg
+   RIGHT PRIMER      1145   20   59.69   45.00  3.00  2.00 ctttccacaaacccaccaat
+   INTERNAL OLIGO    1101   23   59.31   43.48  5.00  3.00 cagaaccaacttcttcttcaacc
+   PRODUCT SIZE: 67, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 0.00
+
+34 LEFT PRIMER        108   20   60.11   55.00  3.00  1.00 ctggtctcccatcgtcaact
+   RIGHT PRIMER       193   20   59.63   50.00  6.00  3.00 ttctgtcctcgatgatggtg
+   INTERNAL OLIGO     147   20   60.36   55.00  3.00  0.00 cccagatgactttcaccacc
+   PRODUCT SIZE: 86, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 3.00
+
+35 LEFT PRIMER        377   20   60.35   50.00  8.00  7.00 aagccttaaccggttcaacc
+   RIGHT PRIMER       467   20   59.87   50.00  4.00  1.00 gagccgttagcatgttgtga
+   INTERNAL OLIGO     415   20   60.06   50.00  4.00  4.00 agccggatcaatatcactcg
+   PRODUCT SIZE: 91, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+36 LEFT PRIMER        939   20   59.67   50.00  7.00  5.00 ctccgatgaaactttccgtc
+   RIGHT PRIMER      1012   20   59.85   45.00  6.00  1.00 tcagcatgcagttgaaaacc
+   INTERNAL OLIGO     972   20   59.50   55.00  4.00  2.00 aagcctctccacgtacaagc
+   PRODUCT SIZE: 74, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 0.00
+
+37 LEFT PRIMER         13   20   60.30   45.00 11.00  9.00 gacatggatgccatcaatga
+   RIGHT PRIMER       102   20   59.81   50.00  4.00  1.00 ccaggtgcaaccataatcct
+   INTERNAL OLIGO      40   20   59.99   55.00  4.00  0.00 ttctctggacacagctccct
+   PRODUCT SIZE: 90, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 2.00
+
+38 LEFT PRIMER        107   20   59.97   55.00  3.00  2.00 actggtctcccatcgtcaac
+   RIGHT PRIMER       172   20   59.52   50.00  4.00  3.00 ccatgaggtggtgaaagtca
+   INTERNAL OLIGO     133   19   59.97   57.89  8.00  4.00 acctttacaggtgccccag
+   PRODUCT SIZE: 66, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+39 LEFT PRIMER        954   20   59.85   50.00  6.00  6.00 ccgtccttctgcattaaagc
+   RIGHT PRIMER      1045   20   60.39   50.00  8.00  2.00 attccggtgcacggtaacta
+   INTERNAL OLIGO     993   20   59.85   45.00  6.00  6.00 tcagcatgcagttgaaaacc
+   PRODUCT SIZE: 92, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 0.00
+
+40 LEFT PRIMER       1268   20   59.77   50.00  6.00  4.00 cgttgggccggatatataga
+   RIGHT PRIMER      1349   20   59.68   60.00  2.00  0.00 cccctaaaccctacctcacc
+   INTERNAL OLIGO    1290   20   59.23   55.00  1.00  0.00 ttctctcctcttcaccaccc
+   PRODUCT SIZE: 82, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+41 LEFT PRIMER         80   20   59.82   50.00  4.00  4.00 acgaggattatggttgcacc
+   RIGHT PRIMER       166   20   60.36   55.00  3.00  0.00 ggtggtgaaagtcatctggg
+   INTERNAL OLIGO     107   20   59.97   55.00  3.00  2.00 actggtctcccatcgtcaac
+   PRODUCT SIZE: 87, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+42 LEFT PRIMER        596   20   60.05   45.00  2.00  0.00 acgacaaccaaaacgacaca
+   RIGHT PRIMER       666   20   60.50   50.00  4.00  1.00 gccgaatttgacgtaaggtg
+   INTERNAL OLIGO     618   22   60.05   40.91  4.00  3.00 tgctgctttccaactacttcaa
+   PRODUCT SIZE: 71, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 2.00
+
+43 LEFT PRIMER        595   20   60.05   50.00  2.00  0.00 cacgacaaccaaaacgacac
+   RIGHT PRIMER       669   20   60.50   50.00  4.00  2.00 gtggccgaatttgacgtaag
+   INTERNAL OLIGO     618   22   60.05   40.91  4.00  3.00 tgctgctttccaactacttcaa
+   PRODUCT SIZE: 75, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 1.00
+
+44 LEFT PRIMER        736   20   59.56   50.00  6.00  3.00 gatatcatggaaggggtcca
+   RIGHT PRIMER       805   20   59.86   50.00  3.00  0.00 gatgtggaccgttgttgttg
+   INTERNAL OLIGO     757   20   59.72   45.00  6.00  0.00 tgggcctcattaatccaatc
+   PRODUCT SIZE: 70, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 3.00
+
+45 LEFT PRIMER        498   20   59.69   55.00  6.00  5.00 cgaagcccttcatggactac
+   RIGHT PRIMER       563   20   59.70   45.00  2.00  0.00 ttgttgtggtgatggtggtt
+   INTERNAL OLIGO     518   18   59.62   61.11  2.00  0.00 cacccccagcaccttcta
+   PRODUCT SIZE: 66, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 3.00
+
+46 LEFT PRIMER        752   20   59.72   45.00  8.00  4.00 tccaatgggcctcattaatc
+   RIGHT PRIMER       813   20   60.34   50.00  3.00  3.00 tatccgaagatgtggaccgt
+   INTERNAL OLIGO     772   20   57.32   40.00  4.00  4.00 caatcacttgcttccaacaa
+   PRODUCT SIZE: 62, PAIR ANY COMPL: 5.00, PAIR 3' COMPL: 3.00
+
+47 LEFT PRIMER        937   20   59.67   50.00  7.00  3.00 gactccgatgaaactttccg
+   RIGHT PRIMER      1009   20   59.71   40.00  6.00  0.00 gcatgcagttgaaaaccaaa
+   INTERNAL OLIGO     963   21   58.90   42.86  6.00  2.00 ccacgtacaagctttaatgca
+   PRODUCT SIZE: 73, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 1.00
+
+48 LEFT PRIMER        873   20   59.70   50.00  8.00  4.00 caggcgattaacctcctttg
+   RIGHT PRIMER       956   20   59.67   50.00  7.00  3.00 cggaaagtttcatcggagtc
+   INTERNAL OLIGO     900   20   59.03   45.00  3.00  0.00 cctcggacaaccattttctt
+   PRODUCT SIZE: 84, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 2.00
+
+49 LEFT PRIMER        647   20   60.50   50.00  4.00  4.00 caccttacgtcaaattcggc
+   RIGHT PRIMER       736   20   60.14   55.00  9.00  7.00 cgtagtcgatgacatggacg
+   INTERNAL OLIGO     679   20   60.19   45.00  4.00  2.00 aatcaagccatcatcgaagc
+   PRODUCT SIZE: 90, PAIR ANY COMPL: 4.00, PAIR 3' COMPL: 3.00
+
+Statistics
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left   17856     0     0     0     0     9     0     0  8066     0     0     0     0  9781
+Right  17856     0     0     0     0     9     0     0  7973     0     0     0     0  9874
+Intl   12492     0     0     0     0     1     0  2576  6386     0     0    39     0  3490
+Pair Stats:
+considered 4394, unacceptable product size 4226, high end compl 36, no internal oligo 50, primer in pair overlaps a primer in a better pair 2474, ok 82
+libprimer3 release 2.6.1
+
+

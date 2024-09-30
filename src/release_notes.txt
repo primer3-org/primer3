@@ -1,3 +1,32 @@
+release 2.7.0 2024-XX-XX  ===============================================
+This release adds new features to primer3_core and related C code.
+
+The thal part was optimized by Doug Townsend which resulted in a huge 
+speed increase.
+
+The calculations of SEQUENCE_PRIMER_PAIR_OK_REGION_LIST whent wrong if 
+the region started at 0 and the first base was 1 or when the region was 
+bigger then the max amplicon size. This was fixed and will throw a 
+warning if the OK region does not match to any amplicon sizes.
+
+More Cs are preferred over Gs in probes. Setting 
+PRIMER_INTERNAL_REV_COMP_G_RICH=1 will reverse complement the internal 
+oligo if more Gs then Cs are in the sequence. An additional output 
+tag PRIMER_INTERNAL_0_REVERSE_COMPLEMENTED=1 will only be present with
+these internal oligos.
+
+Probes can be quenched if a G is on the 5' end. Setting
+PRIMER_INTERNAL_NO_5_PRIME_G=1 will force Primer3 to pick only internal 
+oligos with no 5' G.
+
+Minor fixes:
+1. Compiler complains were fixed.
+
+2. dNTP default 0.8 mM in thal_main was was wrongly given as 0.
+
+3. Identical primers as fow and rev give now only a warning.
+
+
 release 2.6.1 2022-01-26  ===============================================
 This release fixes a small memory bug.
 

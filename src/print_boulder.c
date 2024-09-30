@@ -264,10 +264,14 @@ print_boulder(int io_version,
     if (go_rev == 1)
       printf("PRIMER_RIGHT%s_SEQUENCE=%s\n", suffix,
              pr_oligo_rev_c_overhang_sequence(sa, rev));
-    if(go_int == 1)
-      printf("PRIMER_%s%s_SEQUENCE=%s\n", int_oligo, suffix,
-             pr_oligo_sequence(sa,intl));
-        
+    if(go_int == 1) {
+      if (intl->rev_comp > 0) {
+        printf("PRIMER_%s%s_SEQUENCE=%s\n", int_oligo, suffix, pr_internal_rev_c_sequence(sa,intl));
+        printf("PRIMER_%s%s_REVERSE_COMPLEMENTED=%d\n", int_oligo, suffix, intl->rev_comp);
+      } else {
+        printf("PRIMER_%s%s_SEQUENCE=%s\n", int_oligo, suffix, pr_oligo_sequence(sa,intl));
+      }
+    }
     /* Print primer start and length */
     if (go_fwd == 1)
       printf("PRIMER_LEFT%s=%d,%d\n", suffix,

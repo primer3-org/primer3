@@ -481,6 +481,10 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_PICK_RIGHT_PRIMER", pa->pick_right_primer);
       COMPARE_INT("PRIMER_PICK_INTERNAL_OLIGO", pa->pick_internal_oligo);
       COMPARE_INT("PRIMER_PICK_LEFT_PRIMER", pa->pick_left_primer);
+
+      COMPARE_INT("PRIMER_INTERNAL_REV_COMP_G_RICH", pa->rev_comp_internal_oligo_g_c);
+      COMPARE_INT("PRIMER_INTERNAL_NO_5_PRIME_G", pa->no_internal_oligo_5_G);
+
       COMPARE_INT("PRIMER_INTERNAL_OPT_SIZE", pa->o_args.opt_size);
       COMPARE_INT("PRIMER_INTERNAL_MAX_SIZE", pa->o_args.max_size);
       COMPARE_INT("PRIMER_INTERNAL_MIN_SIZE", pa->o_args.min_size);

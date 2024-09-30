@@ -298,6 +298,11 @@ typedef struct p3_global_settings {
   int    pick_right_primer;
   int    pick_internal_oligo;
 
+  int    rev_comp_internal_oligo_g_c; /* Reverse internal oligos with more Gs
+                                         than Cs to reduce quenching */
+  int    no_internal_oligo_5_G; /* Do not pick internal oligos with a G on
+                                   the 5' end to avoid quenching */
+
   int    file_flag;   /* TO DO, See if this can be factored out. */
 
   int    first_base_index;  /* 
@@ -637,6 +642,7 @@ typedef struct primer_rec {
         
   char   must_use; /* Non-0 if the oligo must be used even if it is illegal. */
   char   overlaps; /* Non-0 if the oligo overlaps some oligo used in one of the best pairs. */
+  int    rev_comp; /* Non-0 if the oligo is reverse complemented to the sequence. */
         
   oligo_problems problems;
   char   overlaps_overlap_position;
@@ -1281,6 +1287,7 @@ char  *pr_oligo_sequence(const seq_args *, const primer_rec *);
 char  *pr_oligo_overhang_sequence(const seq_args *, const primer_rec *);
 
 char  *pr_oligo_rev_c_sequence(const seq_args *, const primer_rec *);
+char  *pr_internal_rev_c_sequence(const seq_args *sa, const primer_rec *o);
 char  *pr_oligo_rev_c_overhang_sequence(const seq_args *, const primer_rec *);
 
 /* Return NULL on ENOMEM */

@@ -41,6 +41,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "libprimer3.h"
 
 #define FORWARD 1
+#define INTERNAL 0
 #define REVERSE -1
 
 static const char *pr_program_name = "Program name is probably primer3_core";
@@ -232,7 +233,7 @@ print_summary(FILE *f, const p3_global_settings *pa,
                     pa->p_args.repeat_lib,
                     print_lib_sim);
         if ( pa->pick_internal_oligo == 1 )
-            print_oligo(f, "INTERNAL OLIGO", sa, p->intl, FORWARD,
+            print_oligo(f, "INTERNAL OLIGO", sa, p->intl, INTERNAL,
                         pa, pa->o_args.repeat_lib,
                         print_lib_sim);
     }
@@ -275,23 +276,35 @@ print_oligo(FILE *f,
             int print_lib_sim)
 {
     const char *format1;
-    char *seq = (FORWARD == dir) 
-        ? pr_oligo_sequence(sa, o) : pr_oligo_rev_c_sequence(sa, o);
-   if(pa->thermodynamic_oligo_alignment==1) {
+    char *seq;
+    if (dir == FORWARD) {
+      seq = pr_oligo_sequence(sa, o);
+    }
+    if (dir == REVERSE) {
+      seq = pr_oligo_rev_c_sequence(sa, o);
+    }
+    if (dir == INTERNAL) {
+      if (o->rev_comp > 0) {
+        seq = pr_internal_rev_c_sequence(sa, o);
+      } else {
+        seq = pr_oligo_sequence(sa, o);
+      }
+    }
+    if(pa->thermodynamic_oligo_alignment==1) {
       format1 = "%-16s %5d %4d %7.2f %7.2f   %5.2f  %5.2f ";
       fprintf(f, format1,
               title, o->start + sa->incl_s + pa->first_base_index,
               o->length, o->temp, o->gc_content, o->self_any,
               o->self_end);
       fprintf(f, "  %5.2f ",  o->hairpin_th);
-   } else {
+    } else {
       format1  = "%-16s %5d %4d %7.2f %7.2f %5.2f %5.2f ";
       fprintf(f, format1,
               title, o->start + sa->incl_s + pa->first_base_index,
               o->length, o->temp, o->gc_content, o->self_any,
               o->self_end);
-   }
-   if (print_lib_sim) {
+    }
+    if (print_lib_sim) {
         if (seqlib != NULL) 
             fprintf(f, "%5.2f ",  o->repeat_sim.score[o->repeat_sim.max]);
         else 
@@ -597,7 +610,7 @@ print_rest(FILE *f, const p3_global_settings *pa,
         if ( pa->pick_internal_oligo == 1) {
             fprintf(f, "   ");
             print_oligo(f, "INTERNAL OLIGO", sa, best_pairs->pairs[i].intl,
-                        FORWARD, pa, pa->o_args.repeat_lib, print_lib_sim);
+                        INTERNAL, pa, pa->o_args.repeat_lib, print_lib_sim);
         }
         if (best_pairs->pairs[i].product_size > 0) {
             fprintf(f, "   ");
@@ -857,7 +870,7 @@ format_oligos(FILE *f,
     }
     if ((pa->pick_internal_oligo) && (retval != NULL )
              && (retval->intl.num_elem > 0)){
-      print_oligo(f, "INTERNAL_OLIGO", sa, retval->intl.oligo, FORWARD, 
+      print_oligo(f, "INTERNAL_OLIGO", sa, retval->intl.oligo, INTERNAL, 
                   pa, pa->p_args.repeat_lib, print_lib_sim);
       h = retval->intl.oligo;
       rest_count = 1;
@@ -916,7 +929,7 @@ format_oligos(FILE *f,
       if(i > n-1) break;
       p = h + i;
       fprintf(f, "%2d ", i + 1 - rest_count);
-      print_oligo(f, "INTERNAL_OLIGO", sa, p, FORWARD, pa,
+      print_oligo(f, "INTERNAL_OLIGO", sa, p, INTERNAL, pa,
                   pa->p_args.repeat_lib, print_lib_sim);
       }
     if (rest_count == 0) {  
