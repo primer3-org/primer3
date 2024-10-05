@@ -22,6 +22,10 @@ input_sequence *
 create_input_sequence_from_file_name (const char *input_file_name, pr_append_str *parse_err) 
 {
   input_sequence *input_seq = (input_sequence *) malloc (sizeof(input_sequence));
+  if (input_seq == NULL) {
+    pr_append_new_chunk_external (parse_err, "Memory allocation for input sequence failed!");
+    return NULL;
+  }
   memset (input_seq, 0, sizeof(input_sequence));
   if (!input_file_name) input_seq->sequence_file = stdin;
   else input_seq->sequence_file = fopen(input_file_name, "r");
@@ -37,9 +41,9 @@ input_sequence *
 create_input_sequence_from_string (char *input_string, pr_append_str *parse_err) 
 {
   input_sequence *input_seq = (input_sequence *) malloc (sizeof(input_sequence));
-  if (!input_seq) {
+  if (input_seq == NULL) {
     pr_append_new_chunk_external (parse_err, "Memory allocation for input sequence failed!");
-    return input_seq;
+    return NULL;
   }
   memset (input_seq, 0, sizeof(input_sequence));
   input_seq->sequence_string = input_string;
@@ -69,7 +73,7 @@ get_header_name_from_input (input_sequence *input_seq, unsigned long long header
 {
   void *v = NULL;
   char *header_name = (char *) malloc (sizeof(char) * (current_pos - header_pos + 2));
-  if (!header_name) {
+  if (header_name == NULL) {
     pr_append_new_chunk_external (parse_err, "Memory allocation for header name failed!");
     free(header_name);
     return NULL;
@@ -113,9 +117,9 @@ create_formula_parameters_from_list_file_name (const char *list_file_name, pr_ap
   unsigned long long header_size;
   unsigned int magic;
   formula_parameters *fp = (formula_parameters *) malloc (sizeof (formula_parameters));
-  if (!fp) {
+  if (fp == NULL) {
     pr_append_new_chunk_external (parse_err, "Memory allocation for formula parameters failed!");
-    return fp;
+    return NULL;
   }
   memset (fp, 0, sizeof(formula_parameters));
   strcpy(fp->list_file_name, list_file_name);
@@ -252,9 +256,9 @@ create_default_formula_parameters (const char *list_name_prefix, const char *kme
   formula_parameters *fp2 = create_formula_parameters_from_list_file_prefix (list_name_prefix, kmer_lists_path, DEFAULT_WORD_LEN_2, parse_err);
   if (!fp1 || !fp2) return NULL; 
   formula_parameters **fp = (formula_parameters **) malloc (2 * sizeof (formula_parameters *));
-  if (!fp) {
+  if (fp == NULL) {
     pr_append_new_chunk_external (parse_err, "Memory allocation for formula parameters failed!");
-    return fp;
+    return NULL;
   }
   
   fp[0] = fp1;
@@ -338,23 +342,34 @@ output_sequence *
 create_output_sequence (unsigned long long seq_len, masking_direction mdir, pr_append_str *parse_err) 
 {
   output_sequence *output_seq = (output_sequence *) malloc (sizeof (output_sequence));
-  memset (output_seq, 0, sizeof (output_sequence));
-  if (!output_seq) {
+  if (output_seq == NULL) {
     pr_append_new_chunk_external (parse_err, "Memory allocation for output sequence failed!");
-    return output_seq;
+    return NULL;
   }
+  memset (output_seq, 0, sizeof (output_sequence));
   if (mdir == both_separately) {
     output_seq->sequence_fwd = (char *) malloc (seq_len + 1);
+    if (output_seq->sequence_fwd == NULL) {
+      pr_append_new_chunk_external (parse_err, "Memory allocation for output sequence failed!");
+      return NULL;
+    }
     memset (output_seq->sequence_fwd, 0, seq_len + 1);
     output_seq->sequence_rev = (char *) malloc (seq_len + 1);
+    if (output_seq->sequence_rev == NULL) {
+      if (output_seq->sequence_fwd) free ((void *) output_seq->sequence_fwd);
+      pr_append_new_chunk_external (parse_err, "Memory allocation for output sequence failed!");
+      return NULL;
+    }
     memset (output_seq->sequence_rev, 0, seq_len + 1);
   } else {
     output_seq->sequence = (char *) malloc (seq_len + 1);
+    if (output_seq->sequence == NULL) {
+      if (output_seq->sequence_fwd) free ((void *) output_seq->sequence_fwd);
+      if (output_seq->sequence_rev) free ((void *) output_seq->sequence_rev);
+      pr_append_new_chunk_external (parse_err, "Memory allocation for output sequence failed!");
+      return NULL;
+    }
     memset (output_seq->sequence, 0, seq_len + 1);
-  }
-  if (!output_seq->sequence_fwd && !output_seq->sequence_rev && !output_seq->sequence) {
-    pr_append_new_chunk_external (parse_err, "Memory allocation for output sequence failed!");
-    return NULL;    
   }
   output_seq->pos = 0;
   return output_seq;
@@ -422,7 +437,7 @@ masking_buffer *
 create_masking_buffer (unsigned int word_length, pr_append_str *parse_err)
 {
   masking_buffer *mbuffer = (masking_buffer *) malloc (sizeof(masking_buffer));
-  if (!mbuffer) {
+  if (mbuffer == NULL) {
     pr_append_new_chunk_external (parse_err, "Memory allocation for masking buffer failed!");
     return mbuffer;
   }  
@@ -842,7 +857,7 @@ read_and_mask_sequence (input_sequence *input_seq, output_sequence *output_seq, 
  * 
  *==================================================================================*/
 
-const char * 
+const char *
 mmap_by_filename (const char *filename, size_t *size)
 {
   struct stat st;
@@ -928,6 +943,9 @@ char *
 word_to_string (unsigned long long word, unsigned int wordlength)
 {
   char *s = (char *) malloc (wordlength + 1);
+  if (s == NULL) {
+    return NULL;
+  }
   unsigned int i, temp;
 
   for (i = 0; i < wordlength; i++) {
@@ -943,6 +961,9 @@ char **
 split_string (char string[], char c, unsigned int *nchunks)
 {
   char **string_chunks  = (char **) malloc (MAX_SPLITS * sizeof(char *));
+  if (string_chunks == NULL) {
+    return NULL;
+  }
   char *p;
   char tmp[100];
   unsigned int i = 0, l;
@@ -956,6 +977,9 @@ split_string (char string[], char c, unsigned int *nchunks)
       memcpy (tmp, string, l);
       tmp[l] = '\0';
       string_chunks[i] = (char *) malloc ((l + 1) * sizeof(char));
+      if (string_chunks[i] == NULL) {
+        return NULL;
+      }
       strcpy (string_chunks[i], tmp);
       i += 1;
       *nchunks += 1;
@@ -971,6 +995,9 @@ split_string (char string[], char c, unsigned int *nchunks)
     tmp[l] = '\0';
     /* add last substring to output */
     string_chunks[i] = (char *) malloc ((l + 1) * sizeof(char));
+    if (string_chunks[i] == NULL) {
+      return NULL;
+    }
     strcpy (string_chunks[i], tmp);
     *nchunks += 1;
   }

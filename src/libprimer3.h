@@ -110,7 +110,7 @@ typedef enum p3_output_type {
 
 /* pr_append_str is an append-only string ADT. */
 typedef struct pr_append_str {
-  int storage_size;
+  size_t storage_size;
   char *data;
 } pr_append_str;
 
@@ -867,7 +867,6 @@ typedef struct seq_args {
   char *sequence;         /* The template sequence itself as input, 
                              not trimmed, not up-cased. */
   char *sequence_name;    /* An identifier for the sequence. */
-  char *sequence_file;    /* Another identifier for the sequence. */
   char *trimmed_seq;      /* The included region only, _UPCASED_. */
 
   /* Element add by T. Koressaar support lowercase masking: */

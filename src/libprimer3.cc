@@ -1167,29 +1167,32 @@ create_seq_arg()
 
 /* Free a seq_arg data structure */
 void
-destroy_seq_args(seq_args *sa) 
+destroy_seq_args(seq_args *sa)
 {
   if (NULL == sa) return;
-  free(sa->internal_input);
+
+  free(sa->quality);
+  free(sa->sequence);
+  free(sa->sequence_name);
+  free(sa->trimmed_seq);
+
+  /* edited by T. Koressaar for lowercase masking */
+  free(sa->trimmed_orig_seq);
+
+  free(sa->trimmed_masked_seq);
+  free(sa->trimmed_masked_seq_r);
+
+  free(sa->upcased_seq);
+  free(sa->upcased_seq_r);
+
   free(sa->left_input);
   free(sa->right_input);
-  free(sa->sequence);
-  free(sa->quality);
-  free(sa->trimmed_seq);
+  free(sa->internal_input);
 
   free(sa->overhang_left);
   free(sa->overhang_right);
   free(sa->overhang_right_rv);
 
-  /* edited by T. Koressaar for lowercase masking */
-  free(sa->trimmed_orig_seq);
-  
-  free(sa->trimmed_masked_seq_r);
-  free(sa->trimmed_masked_seq);
-  
-  free(sa->upcased_seq);
-  free(sa->upcased_seq_r);
-  free(sa->sequence_name);
   free(sa);
 }
 
@@ -6404,7 +6407,7 @@ destroy_pr_append_str(pr_append_str *str)
 int
 pr_append_external(pr_append_str *x,  const char *s) 
 {
-  int xlen, slen;
+  size_t xlen, slen;
 
   PR_ASSERT(NULL != s);
   PR_ASSERT(NULL != x);
@@ -10014,7 +10017,6 @@ p3_print_args(const p3_global_settings *p, seq_args *s)
     printf("quality_storage_size %i\n", s->quality_storage_size) ;
     printf("*sequence %s\n", s->sequence) ;
     printf("*sequence_name %s\n", s->sequence_name) ;
-    printf("*sequence_file %s\n", s->sequence_file) ;
     printf("*trimmed_seq %s\n", s->trimmed_seq) ;
     printf("*trimmed_orig_seq %s\n", s->trimmed_orig_seq) ;
     printf("*trimmed_masked_seq %s\n", s->trimmed_masked_seq) ;
