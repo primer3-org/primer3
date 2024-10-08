@@ -26,6 +26,8 @@ Minor fixes:
 
 3. Identical primers as fow and rev give now only a warning.
 
+4. oligotm was rewritten to avoid makros.
+
 
 release 2.6.1 2022-01-26  ===============================================
 This release fixes a small memory bug.

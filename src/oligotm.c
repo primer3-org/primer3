@@ -39,54 +39,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <math.h>
 #include <string.h>
 #include "oligotm.h"
+#include <stdio.h>
 
-#define T_KELVIN 273.15
-#define A_CHAR 'A'
-#define G_CHAR 'G'
-#define T_CHAR 'T'
-#define C_CHAR 'C'
-#define N_CHAR 'N'
-
-#define CATID5(A,B,C,D,E) A##B##C##D##E
-#define CATID2(A,B) A##B
-
-#define DO_PAIR(LAST,THIS)          \
-  if (CATID2(THIS,_CHAR) == c) {    \
-     dh += CATID5(H,_,LAST,_,THIS); \
-     ds += CATID5(S,_,LAST,_,THIS); \
-     goto CATID2(THIS,_STATE);      \
-  }
-
-#define STATE(LAST)     \
-   CATID2(LAST,_STATE): \
-   c = *s; s++;         \
-   DO_PAIR(LAST,A)      \
-   else DO_PAIR(LAST,T) \
-   else DO_PAIR(LAST,G) \
-   else DO_PAIR(LAST,C) \
-   else DO_PAIR(LAST,N) \
-   else if ('\0' == c)  \
-             goto DONE; \
-   else goto ERROR \
-
-#define DO_PAIR2(LAST,THIS)          \
-     if (CATID2(THIS,_CHAR) == c) { \
-      dh += CATID5(DH,_,LAST,_,THIS); \
-      ds += CATID5(DS,_,LAST,_,THIS); \
-      goto CATID2(THIS,_STATE2);      \
-   }
-#define STATE2(LAST)     \
-   CATID2(LAST,_STATE2): \
-   c = *s; s++;         \
-   DO_PAIR2(LAST,A)      \
-   else DO_PAIR2(LAST,T) \
-   else DO_PAIR2(LAST,G) \
-   else DO_PAIR2(LAST,C) \
-   else DO_PAIR2(LAST,N) \
-   else if ('\0' == c)  \
-   goto DONE; \
-   else goto ERROR \
-
+#ifndef MAX_PRIMER_LENGTH
+#define MAX_PRIMER_LENGTH 36
+#endif
+static const double t_kelvin = 273.15;
 /*
  * Two tables of nearest-neighbor parameters for di-nucleotide
  * base pairs.
@@ -102,97 +60,30 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * http://dx.doi.org/10.1073/pnas.83.11.3746]
  */
 
-#define S_A_A 240
-#define S_A_C 173
-#define S_A_G 208
-#define S_A_T 239
-#define S_A_N 215
+/* dH *-100 cal/mol */
+static const int Breslauer_1986_dH[5][5] =  {
+     {91,  65,  78, 86, 80},  /* AA, AC, AG, AT, AN; */
+     {58, 110, 119, 78, 91},  /* CA, CC, CG, CT, CN; */
+     {56, 111, 110, 65, 85},  /* GA, GC, GG, GT, GN; */
+     {60,  56,  58, 91, 66},  /* TA, TC, TG, TT, TN; */
+     {66,  85,  91, 80, 80}}; /* NA, NC, NG, NT, NN; */
 
-#define S_C_A 129
-#define S_C_C 266
-#define S_C_G 278
-#define S_C_T 208
-#define S_C_N 220
+/* dS *-0.1 cal/k*mol */
+static const int Breslauer_1986_dS[5][5] =  {
+     {240, 173, 208, 239, 215},  /* AA, AC, AG, AT, AN; */
+     {129, 266, 278, 208, 220},  /* CA, CC, CG, CT, CN; */
+     {135, 267, 266, 173, 210},  /* GA, GC, GG, GT, GN; */
+     {169, 135, 129, 240, 168},  /* TA, TC, TG, TT, TN; */
+     {168, 210, 220, 215, 203}}; /* NA, NC, NG, NT, NN; */
 
-#define S_G_A 135
-#define S_G_C 267
-#define S_G_G 266
-#define S_G_T 173
-#define S_G_N 210
+/* dG *-0.001 cal/mol */
+static const int Breslauer_1986_dG[5][5] =  {
+     {1900, 1300, 1600, 1500, 1575},  /* AA, AC, AG, AT, AN; */
+     {1900, 3100, 3600, 1600, 2550},  /* CA, CC, CG, CT, CN; */
+     {1600, 3100, 3100, 1300, 2275},  /* GA, GC, GG, GT, GN; */
+     { 900, 1600, 1900, 1900, 1575},  /* TA, TC, TG, TT, TN; */
+     {1575, 2275, 2550, 1575, 1994}}; /* NA, NC, NG, NT, NN; */
 
-#define S_T_A 169
-#define S_T_C 135
-#define S_T_G 129
-#define S_T_T 240
-#define S_T_N 168
-
-#define S_N_A 168
-#define S_N_C 210
-#define S_N_G 220
-#define S_N_T 215
-#define S_N_N 203
-
-
-#define H_A_A  91
-#define H_A_C  65
-#define H_A_G  78
-#define H_A_T  86
-#define H_A_N  80
-
-#define H_C_A  58
-#define H_C_C 110
-#define H_C_G 119
-#define H_C_T  78
-#define H_C_N  91
-
-#define H_G_A  56
-#define H_G_C 111
-#define H_G_G 110
-#define H_G_T  65
-#define H_G_N  85
-
-#define H_T_A  60
-#define H_T_C  56
-#define H_T_G  58
-#define H_T_T  91
-#define H_T_N  66
-
-#define H_N_A  66
-#define H_N_C  85
-#define H_N_G  91
-#define H_N_T  80
-#define H_N_N  80
-
-/* Delta G's of disruption * 1000. */
-#define G_A_A  1900
-#define G_A_C  1300
-#define G_A_G  1600
-#define G_A_T  1500
-#define G_A_N  1575
-
-#define G_C_A  1900
-#define G_C_C  3100
-#define G_C_G  3600
-#define G_C_T  1600
-#define G_C_N  2550
-
-#define G_G_A  1600
-#define G_G_C  3100
-#define G_G_G  3100
-#define G_G_T  1300
-#define G_G_N  2275
-
-#define G_T_A   900
-#define G_T_C  1600
-#define G_T_G  1900
-#define G_T_T  1900
-#define G_T_N  1575
-
-#define G_N_A  1575
-#define G_N_C  2275
-#define G_N_G  2550
-#define G_N_T  1575
-#define G_N_N  1994
 
 /* Table 2, new parameters:
  * Tables of nearest-neighbor thermodynamics for DNA bases, from the
@@ -201,99 +92,29 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * Acad Sci 95:1460-65 http://dx.doi.org/10.1073/pnas.95.4.1460]
  */
 
-#define DS_A_A 222
-#define DS_A_C 224
-#define DS_A_G 210
-#define DS_A_T 204
-#define DS_A_N 224
+/* dH *-100 cal/mol */
+static const int SantaLucia_1998_dH[5][5] =  {
+     {79, 84,  78, 72, 72},  /* AA, AC, AG, AT, AN; */
+     {85, 80, 106, 78, 78},  /* CA, CC, CG, CT, CN; */
+     {82, 98,  80, 84, 80},  /* GA, GC, GG, GT, GN; */
+     {72, 82,  85, 79, 72},  /* TA, TC, TG, TT, TN; */
+     {72, 80,  78, 72, 72}}; /* NA, NC, NG, NT, NN; */
 
-#define DS_C_A 227
-#define DS_C_C 199
-#define DS_C_G 272
-#define DS_C_T 210
-#define DS_C_N 272
+/* dS *-0.1 cal/k*mol */
+static const int SantaLucia_1998_dS[5][5] =  {
+     {222, 224, 210, 204, 224},  /* AA, AC, AG, AT, AN; */
+     {227, 199, 272, 210, 272},  /* CA, CC, CG, CT, CN; */
+     {222, 244, 199, 224, 244},  /* GA, GC, GG, GT, GN; */
+     {213, 222, 227, 222, 227},  /* TA, TC, TG, TT, TN; */
+     {168, 210, 220, 215, 220}}; /* NA, NC, NG, NT, NN; */
 
-#define DS_G_A 222
-#define DS_G_C 244
-#define DS_G_G 199
-#define DS_G_T 224
-#define DS_G_N 244
-
-#define DS_T_A 213
-#define DS_T_C 222
-#define DS_T_G 227
-#define DS_T_T 222
-#define DS_T_N 227
-
-#define DS_N_A 168
-#define DS_N_C 210
-#define DS_N_G 220
-#define DS_N_T 215
-#define DS_N_N 220
-
-
-#define DH_A_A  79
-#define DH_A_C  84
-#define DH_A_G  78
-#define DH_A_T  72
-#define DH_A_N  72
-
-#define DH_C_A  85
-#define DH_C_C  80
-#define DH_C_G 106
-#define DH_C_T  78
-#define DH_C_N  78
-
-#define DH_G_A  82
-#define DH_G_C  98
-#define DH_G_G  80
-#define DH_G_T  84
-#define DH_G_N  80
-
-#define DH_T_A  72
-#define DH_T_C  82
-#define DH_T_G  85
-#define DH_T_T  79
-#define DH_T_N  72
-
-#define DH_N_A  72
-#define DH_N_C  80
-#define DH_N_G  78
-#define DH_N_T  72
-#define DH_N_N  72
-
-/* Delta G's of disruption * 1000. */
-#define DG_A_A  1000
-#define DG_A_C  1440
-#define DG_A_G  1280
-#define DG_A_T  880
-#define DG_A_N  880
-
-#define DG_C_A  1450
-#define DG_C_C  1840
-#define DG_C_G  2170
-#define DG_C_T  1280
-#define DG_C_N  1450
-
-#define DG_G_A  1300
-#define DG_G_C  2240
-#define DG_G_G  1840
-#define DG_G_T  1440
-#define DG_G_N  1300
-
-#define DG_T_A   580
-#define DG_T_C  1300
-#define DG_T_G  1450
-#define DG_T_T  1000
-#define DG_T_N   580
-
-#define DG_N_A   580
-#define DG_N_C  1300
-#define DG_N_G  1280
-#define DG_N_T   880
-#define DG_N_N   580
-
-/* End of tables nearest-neighbor parameter. */
+/* dG *-0.001 cal/mol */
+static const int SantaLucia_1998_dG[5][5] =  {
+     {1000, 1440, 1280,  880,  880},  /* AA, AC, AG, AT, AN; */
+     {1450, 1840, 2170, 1280, 1450},  /* CA, CC, CG, CT, CN; */
+     {1300, 2240, 1840, 1440, 1300},  /* GA, GC, GG, GT, GN; */
+     { 580, 1300, 1450, 1000,  580},  /* TA, TC, TG, TT, TN; */
+     { 580, 1300, 1280,  880,  580}}; /* NA, NC, NG, NT, NN; */
 
 
 /* Calculate the melting temperature of oligo s.  See
@@ -301,115 +122,119 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 tm_ret
 oligotm(const  char *s,
-     double DNA_nM,
-     double K_mM,
-     double divalent_conc,
-     double dntp_conc,
-     double dmso_conc,
-     double dmso_fact,
-     double formamide_conc,
-     tm_method_type  tm_method,
-     salt_correction_type salt_corrections,
-     double annealing_temp)
+        double DNA_nM,
+        double K_mM,
+        double divalent_conc,
+        double dntp_conc,
+        double dmso_conc,
+        double dmso_fact,
+        double formamide_conc,
+        tm_method_type  tm_method,
+        salt_correction_type salt_corrections,
+        double annealing_temp)
 {
+  int oligo_int[MAX_PRIMER_LENGTH+1];
   register int dh = 0, ds = 0;
-  register char c;
-  double delta_H, delta_S;
+  double delta_H = 0.0;
+  double delta_S = 0.0;
   double ddG, ka;
   tm_ret ret;
   ret.bound = OLIGOTM_ERROR;
   double correction;
   int len, sym, i;
   int GC_count = 0;
-  const char* d = s;
+
   if(divalent_to_monovalent(divalent_conc, dntp_conc) == OLIGOTM_ERROR) {
-     ret.Tm = OLIGOTM_ERROR;
-     return ret;
+    ret.Tm = OLIGOTM_ERROR;
+    return ret;
   }
   /** K_mM = K_mM + divalent_to_monovalent(divalent_conc, dntp_conc); **/
   if (tm_method != breslauer_auto
       && tm_method != santalucia_auto) {
-     ret.Tm = OLIGOTM_ERROR;
-     return ret;
+    ret.Tm = OLIGOTM_ERROR;
+    return ret;
   }
   if (salt_corrections != schildkraut
       && salt_corrections != santalucia
       && salt_corrections != owczarzy) {
-     ret.Tm = OLIGOTM_ERROR;
-     return ret;
+    ret.Tm = OLIGOTM_ERROR;
+    return ret;
   }
+
+  /* Translate to int array */
   len = (strlen(s)-1);
-  if(formamide_conc != 0.0) {
-    for (i = 0; i < len + 1; i++) {
-      if ((strncmp("G", s + i, 1) == 0) || (strncmp("C", s + i, 1) == 0)) {
+  for (i = 0; i < len + 1; i++) {
+    switch (s[i]) {
+      case 'A':
+        oligo_int[i] = 0;
+        break;
+      case 'C':
+        oligo_int[i] = 1;
         GC_count++;
-      }
+        break;
+      case 'G':
+        oligo_int[i] = 2;
+        GC_count++;
+        break;
+      case 'T':
+        oligo_int[i] = 3;
+        break;
+      case 'N':
+        oligo_int[i] = 4;
+        break;
+      default:
+        ret.Tm = OLIGOTM_ERROR;
+        return ret;
     }
   }
 
   sym = symmetry(s); /*Add symmetry correction if seq is symmetrical*/
-  if( tm_method == breslauer_auto ) {
-    ds=108;
-  }
-  else {
+  if(tm_method == santalucia_auto) {
     if(sym == 1) {
-      ds+=14;
+      ds += 14;
     }
 
-    /** Terminal AT penalty **/
-      
-    if(strncmp("A", s, 1)==0
-       || strncmp("T", s, 1)==0)  {
-      ds += -41;
-      dh += -23;
-    } else if (strncmp("C", s, 1)==0 
-               || strncmp("G", s, 1)==0) {
-      ds += 28;
-      dh += -1;
+    /** Terminal penalty **/
+    switch (s[0]) {
+      case 'A':
+      case 'T':
+        ds += -41;
+        dh += -23;
+        break;
+      case 'C':
+      case 'G':
+        ds += 28;
+        dh += -1;
+        break;
     }
-    s+=len;
-    if(strncmp("T", s, 1)==0 
-       || strncmp("A", s, 1)==0) {
-      ds += -41;
-      dh += -23;
-    } else if (strncmp("C", s, 1)==0 
-               || strncmp("G", s, 1)==0) {
-      ds += 28;
-      dh += -1;
+    /* Sum the pairs up */
+    for (i = 0; i < len; i++) {
+      ds += SantaLucia_1998_dS[oligo_int[i]][oligo_int[i+1]];
+      dh += SantaLucia_1998_dH[oligo_int[i]][oligo_int[i+1]];
     }
-    s-=len;
-  }
-  /* Use a finite-state machine (DFA) to calucluate dh and ds for s. */
-  c = *s; s++;
-  if (tm_method == breslauer_auto) {
-    if (c == 'A') goto A_STATE;
-    else if (c == 'G') goto G_STATE;
-    else if (c == 'T') goto T_STATE;
-    else if (c == 'C') goto C_STATE;
-    else if (c == 'N') goto N_STATE;
-    else goto ERROR;
-    STATE(A);
-    STATE(T);
-    STATE(G);
-    STATE(C);
-    STATE(N);
+    /** Terminal penalty **/
+    switch (s[len]) {
+      case 'A':
+      case 'T':
+        ds += -41;
+        dh += -23;
+        break;
+      case 'C':
+      case 'G':
+        ds += 28;
+        dh += -1;
+        break;
+    }
   } else {
-    if (c == 'A') goto A_STATE2;
-    else if (c == 'G') goto G_STATE2;
-    else if (c == 'T') goto T_STATE2;
-    else if (c == 'C') goto C_STATE2;
-    else if (c == 'N') goto N_STATE2;
-    else goto ERROR;
-    STATE2(A);
-    STATE2(T);
-    STATE2(G);
-    STATE2(C);
-    STATE2(N);
+    ds = 108;
+    /* Sum the pairs up */
+    for (i = 0; i < len; i++) {
+      ds += Breslauer_1986_dS[oligo_int[i]][oligo_int[i+1]];
+      dh += Breslauer_1986_dH[oligo_int[i]][oligo_int[i+1]];
+    }
   }
-   
-   
- DONE:  /* dh and ds are now computed for the given sequence. */
-  delta_H = dh * -100.0;  /* 
+
+  delta_H = dh * -100.0;  /*
                            * Nearest-neighbor thermodynamic values for dh
                            * are given in 100 cal/mol of interaction.
                            */
@@ -422,209 +247,186 @@ oligotm(const  char *s,
 
    /**********************************************/
   if (salt_corrections == schildkraut) {
-     K_mM = K_mM + divalent_to_monovalent(divalent_conc, dntp_conc);
-     correction = 16.6 * log10(K_mM/1000.0);
-     ret.Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/4000000000.0)) + correction - T_KELVIN;
-     ret.Tm -= dmso_conc * dmso_fact;
-     ret.Tm += (0.453 * ((double) GC_count) / len - 2.88) * formamide_conc;
-     if (annealing_temp > 0.0) {
-        ddG = delta_H - (annealing_temp - correction + T_KELVIN) * delta_S;
-        ka = exp(-ddG / (1.987 * (annealing_temp - correction + T_KELVIN)));
-        ret.bound = (1 / (1 + sqrt(1/((DNA_nM/4000000000.0) * ka)))) * 100;
-     }
+    K_mM = K_mM + divalent_to_monovalent(divalent_conc, dntp_conc);
+    correction = 16.6 * log10(K_mM/1000.0);
+    ret.Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/4000000000.0)) + correction - t_kelvin;
+    ret.Tm -= dmso_conc * dmso_fact;
+    ret.Tm += (0.453 * ((double) GC_count) / len - 2.88) * formamide_conc;
+    if (annealing_temp > 0.0) {
+      ddG = delta_H - (annealing_temp - correction + t_kelvin) * delta_S;
+      ka = exp(-ddG / (1.987 * (annealing_temp - correction + t_kelvin)));
+      ret.bound = (1 / (1 + sqrt(1/((DNA_nM/4000000000.0) * ka)))) * 100;
+    }
   } else if (salt_corrections == santalucia) {
-     K_mM = K_mM + divalent_to_monovalent(divalent_conc, dntp_conc);
-     delta_S = delta_S + 0.368 * (len - 1) * log(K_mM / 1000.0 );
-     if(sym == 1) { /* primer is symmetrical */
-        /* Equation A */
-        ret.Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/1000000000.0)) - T_KELVIN;
-        ret.Tm -= dmso_conc * dmso_fact;
-        ret.Tm += (0.453 * ((double) GC_count) / len - 2.88) * formamide_conc;
-        if (annealing_temp > 0.0) {
-           ddG = delta_H - (annealing_temp + T_KELVIN) * delta_S;
-           ka = exp(-ddG / (1.987 * (annealing_temp + T_KELVIN)));
-           ret.bound = (1 / (1 + sqrt(1/((DNA_nM/1000000000.0) * ka)))) * 100;
-        }
-     } else {
-        /* Equation B */
-        ret.Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/4000000000.0)) - T_KELVIN;
-        ret.Tm -= dmso_conc * dmso_fact;
-        ret.Tm += (0.453 * ((double) GC_count) / len - 2.88) * formamide_conc;
-        if (annealing_temp > 0.0) {
-           ddG = delta_H - (annealing_temp + T_KELVIN) * delta_S;
-           ka = exp(-ddG / (1.987 * (annealing_temp + T_KELVIN)));
-           ret.bound = (1 / (1 + sqrt(1/((DNA_nM/4000000000.0) * ka)))) * 100;
-        }
-     }
-  } else if (salt_corrections == owczarzy) {
-     double gcPercent=0;
-     double free_divalent; /* conc of divalent cations minus dNTP conc */
-     int i;
-     for(i = 0; i <= len && d != NULL && *d != '\0';) {
-        if(*d == 'C' || *d == 'G') {
-           gcPercent++;
-        }  
-        d++;
-        i++;
-     }
-     gcPercent = (double)gcPercent/((double)len);
-     /**** BEGIN: UPDATED SALT BY OWCZARZY *****/
-      /* different salt corrections for monovalent (Owczarzy et al.,2004) 
-      and divalent cations (Owczarzy et al.,2008)
-      */
-     /* competition bw magnesium and monovalent cations, see Owczarzy et al., 2008 Figure 9 and Equation 16 */
-     
-     static const double crossover_point = 0.22; /* depending on the value of div_monov_ratio respect
-                                             to value of crossover_point Eq 16 (divalent corr, Owczarzy et al., 2008)
-                                             or Eq 22 (monovalent corr, Owczarzy et al., 2004) should be used */
-     double div_monov_ratio;
-     if(dntp_conc >= divalent_conc) {
-        free_divalent = 0.00000000001; /* to not to get log(0) */
-     } else {
-        free_divalent = (divalent_conc - dntp_conc)/1000.0;
-     }
-     static double a = 0,b = 0,c = 0,d = 0,e = 0,f = 0,g = 0;
-      if(K_mM==0) {
-         div_monov_ratio = 6.0;
-      } else {
-         div_monov_ratio = (sqrt(free_divalent))/(K_mM/1000); /* if conc of monov cations is provided
-                                                                    a ratio is calculated to further calculate
-                                                                    the _correct_ correction */
+    K_mM = K_mM + divalent_to_monovalent(divalent_conc, dntp_conc);
+    delta_S = delta_S + 0.368 * (len - 1) * log(K_mM / 1000.0 );
+    if(sym == 1) { /* primer is symmetrical */
+      /* Equation A */
+      ret.Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/1000000000.0)) - t_kelvin;
+      ret.Tm -= dmso_conc * dmso_fact;
+      ret.Tm += (0.453 * ((double) GC_count) / len - 2.88) * formamide_conc;
+      if (annealing_temp > 0.0) {
+        ddG = delta_H - (annealing_temp + t_kelvin) * delta_S;
+        ka = exp(-ddG / (1.987 * (annealing_temp + t_kelvin)));
+        ret.bound = (1 / (1 + sqrt(1/((DNA_nM/1000000000.0) * ka)))) * 100;
       }
-     if (div_monov_ratio < crossover_point) {
-        /* use only monovalent salt correction, Eq 22 (Owczarzy et al., 2004) */
-        correction
-          = (((4.29 * gcPercent) - 3.95) * pow(10,-5) * log(K_mM / 1000.0))
-            + (9.40 * pow(10,-6) * (pow(log(K_mM / 1000.0),2)));
-     } else {
-        /* magnesium effects are dominant, Eq 16 (Owczarzy et al., 2008) is used */
-        b =- 9.11 * pow(10,-6);
-        c = 6.26 * pow(10,-5);
-        e =- 4.82 * pow(10,-4);
-        f = 5.25 * pow(10,-4);
-        a = 3.92 * pow(10,-5);
-        d = 1.42 * pow(10,-5);
-        g = 8.31 * pow(10,-5);
-        if(div_monov_ratio < 6.0) {
-           /* in particular ratio of conc of monov and div cations
-            *             some parameters of Eq 16 must be corrected (a,d,g) */
-           a = 3.92 * pow(10,-5) * (0.843 - (0.352 * sqrt(K_mM/1000.0) * log(K_mM/1000.0)));
-           d = 1.42 * pow(10,-5) * (1.279 - 4.03 * pow(10,-3) * log(K_mM/1000.0) - 8.03 * pow(10,-3) * pow(log(K_mM/1000.0),2));
-           g = 8.31 * pow(10,-5) * (0.486 - 0.258 * log(K_mM/1000.0) + 5.25 * pow(10,-3) * pow(log(K_mM/1000.0),3));
-        }
-        
-        correction = a + (b * log(free_divalent))
-                       + gcPercent * (c + (d * log(free_divalent)))
-                       + (1/(2 * (len - 1))) * (e + (f * log(free_divalent))
-                       + g * (pow((log(free_divalent)),2)));
-     }
-     /**** END: UPDATED SALT BY OWCZARZY *****/
-     if (sym == 1) {
-           /* primer is symmetrical */
-        /* Equation A */
-        ret.Tm = 1/((1/(delta_H
-                        /
-                        (delta_S + 1.9872 * log(DNA_nM/1000000000.0)))) + correction) - T_KELVIN;
-     } else {
-        /* Equation B */
-        ret.Tm = 1/((1/(delta_H
-                        /
-                        (delta_S + 1.9872 * log(DNA_nM/4000000000.0)))) + correction) - T_KELVIN;
-     }
-     ret.Tm -= dmso_conc * dmso_fact;
-     ret.Tm += (0.453 * ((double) GC_count) / len - 2.88) * formamide_conc;
+    } else {
+      /* Equation B */
+      ret.Tm = delta_H / (delta_S + 1.987 * log(DNA_nM/4000000000.0)) - t_kelvin;
+      ret.Tm -= dmso_conc * dmso_fact;
+      ret.Tm += (0.453 * ((double) GC_count) / len - 2.88) * formamide_conc;
+      if (annealing_temp > 0.0) {
+        ddG = delta_H - (annealing_temp + t_kelvin) * delta_S;
+        ka = exp(-ddG / (1.987 * (annealing_temp + t_kelvin)));
+        ret.bound = (1 / (1 + sqrt(1/((DNA_nM/4000000000.0) * ka)))) * 100;
+      }
+    }
+  } else if (salt_corrections == owczarzy) {
+    double gcPercent;
+    double free_divalent; /* conc of divalent cations minus dNTP conc */
+    gcPercent = (double)GC_count/((double)len);
+    /**** BEGIN: UPDATED SALT BY OWCZARZY *****/
+    /* different salt corrections for monovalent (Owczarzy et al.,2004)
+       and divalent cations (Owczarzy et al.,2008)
+    */
+    /* competition bw magnesium and monovalent cations, see Owczarzy et al., 2008 Figure 9 and Equation 16 */
+
+    static const double crossover_point = 0.22; /* depending on the value of div_monov_ratio respect
+                                                   to value of crossover_point Eq 16 (divalent corr, Owczarzy et al., 2008)
+                                                   or Eq 22 (monovalent corr, Owczarzy et al., 2004) should be used */
+    double div_monov_ratio;
+    if(dntp_conc >= divalent_conc) {
+      free_divalent = 0.00000000001; /* to not to get log(0) */
+    } else {
+      free_divalent = (divalent_conc - dntp_conc)/1000.0;
+    }
+    static double a = 0,b = 0,c = 0,d = 0,e = 0,f = 0,g = 0;
+    if(K_mM==0) {
+      div_monov_ratio = 6.0;
+    } else {
+      div_monov_ratio = (sqrt(free_divalent))/(K_mM/1000); /* if conc of monov cations is provided
+                                                              a ratio is calculated to further calculate
+                                                              the _correct_ correction */
+    }
+    if (div_monov_ratio < crossover_point) {
+      /* use only monovalent salt correction, Eq 22 (Owczarzy et al., 2004) */
+      correction = (((4.29 * gcPercent) - 3.95) * pow(10,-5) * log(K_mM / 1000.0))
+                   + (9.40 * pow(10,-6) * (pow(log(K_mM / 1000.0),2)));
+    } else {
+      /* magnesium effects are dominant, Eq 16 (Owczarzy et al., 2008) is used */
+      b =- 9.11 * pow(10,-6);
+      c = 6.26 * pow(10,-5);
+      e =- 4.82 * pow(10,-4);
+      f = 5.25 * pow(10,-4);
+      a = 3.92 * pow(10,-5);
+      d = 1.42 * pow(10,-5);
+      g = 8.31 * pow(10,-5);
+      if(div_monov_ratio < 6.0) {
+        /* in particular ratio of conc of monov and div cations
+         *             some parameters of Eq 16 must be corrected (a,d,g) */
+        a = 3.92 * pow(10,-5) * (0.843 - (0.352 * sqrt(K_mM/1000.0) * log(K_mM/1000.0)));
+        d = 1.42 * pow(10,-5) * (1.279 - 4.03 * pow(10,-3) * log(K_mM/1000.0) - 8.03 * pow(10,-3) * pow(log(K_mM/1000.0),2));
+        g = 8.31 * pow(10,-5) * (0.486 - 0.258 * log(K_mM/1000.0) + 5.25 * pow(10,-3) * pow(log(K_mM/1000.0),3));
+      }
+
+      correction = a + (b * log(free_divalent))
+                     + gcPercent * (c + (d * log(free_divalent)))
+                     + (1/(2 * (len - 1))) * (e + (f * log(free_divalent))
+                     + g * (pow((log(free_divalent)),2)));
+    }
+    /**** END: UPDATED SALT BY OWCZARZY *****/
+    if (sym == 1) {
+      /* primer is symmetrical */
+      /* Equation A */
+      ret.Tm = 1/((1/(delta_H
+                    /
+                    (delta_S + 1.9872 * log(DNA_nM/1000000000.0)))) + correction) - t_kelvin;
+    } else {
+      /* Equation B */
+      ret.Tm = 1/((1/(delta_H
+                      /
+                      (delta_S + 1.9872 * log(DNA_nM/4000000000.0)))) + correction) - t_kelvin;
+    }
+    ret.Tm -= dmso_conc * dmso_fact;
+    ret.Tm += (0.453 * ((double) GC_count) / len - 2.88) * formamide_conc;
   } /* END else if (salt_corrections == owczarzy) { */
-   
-   
   /***************************************/
   return ret;
-ERROR:  /* 
-          * length of s was less than 2 or there was an illegal character in
-          * s.
-          */
-  ret.Tm = OLIGOTM_ERROR;
-  return ret;
-}
-#undef DO_PAIR
-#undef DO_PAIR2
-
-#define DO_PAIR(LAST,THIS)          \
-  if (CATID2(THIS,_CHAR) == c) {    \
-     dg += CATID5(G,_,LAST,_,THIS); \
-     goto CATID2(THIS,_STATE);      \
-  }
-
-#define DO_PAIR2(LAST,THIS)          \
-     if (CATID2(THIS,_CHAR) == c) { \
-     dg += CATID5(DG,_,LAST,_,THIS); \
-     goto CATID2(THIS,_STATE2);      \
 }
 
-double 
+double
 oligodg(const char *s,      /* The sequence. */
-    int tm_method) 
+        int tm_method)
 {
-   register int dg = 0;
-   register char c;
+  register int dg = 0;
+  int oligo_int[MAX_PRIMER_LENGTH+1];
+  int len, i, sym;
 
   if (tm_method != breslauer_auto
       && tm_method != santalucia_auto)
     return OLIGOTM_ERROR;
 
-   /* Use a finite-state machine (DFA) to calucluate dg s. */
-   c = *s; s++;
-   if(tm_method != breslauer_auto) {      
-      dg=-1960; /* Initial dG */
-      if(c == 'A' || c == 'T')  {
-         dg += -50; /* terminal AT penalty */
-      }
-      if (c == 'A') goto A_STATE2;
-      else if (c == 'G') goto G_STATE2;
-      else if (c == 'T') goto T_STATE2;
-      else if (c == 'C') goto C_STATE2;
-      else if (c == 'N') goto N_STATE2;
-      else goto ERROR;
-      STATE2(A);
-      STATE2(T);
-      STATE2(G);
-      STATE2(C);
-      STATE2(N);
-     } else {
-    if (c == 'A') goto A_STATE;
-    else if (c == 'G') goto G_STATE;
-    else if (c == 'T') goto T_STATE;
-    else if (c == 'C') goto C_STATE;
-    else if (c == 'N') goto N_STATE;
-    else goto ERROR;
-    STATE(A);
-    STATE(T);
-    STATE(G);
-    STATE(C);
-    STATE(N);
+  /* Translate to int array */
+  len = (strlen(s)-1);
+  for (i = 0; i < len + 1; i++) {
+    switch (s[i]) {
+      case 'A':
+        oligo_int[i] = 0;
+        break;
+      case 'C':
+        oligo_int[i] = 1;
+        break;
+      case 'G':
+        oligo_int[i] = 2;
+        break;
+      case 'T':
+        oligo_int[i] = 3;
+        break;
+      case 'N':
+        oligo_int[i] = 4;
+        break;
+      default:
+        return OLIGOTM_ERROR;
+    }
+  }
 
-     }
-DONE:  /* dg is now computed for the given sequence. */
-   if(tm_method != breslauer_auto) {
-      int sym;
-      --s; --s; c = *s;
-      if(c == 'A' || c == 'T')  {
-         dg += -50; /* terminal AT penalty */
-      }
-      sym = symmetry(s);
-      if(sym==1)   {
-         dg +=-430; /* symmetry correction for dG */
-      }
-   }
-   return dg / 1000.0;
+  if( tm_method == santalucia_auto ) {
+    dg  = -1960; /* Initial dG */
 
- ERROR:  /* 
-          * length of s was less than 2 or there was an illegal character in
-          * s.
-          */
-    return OLIGOTM_ERROR;
+    sym = symmetry(s);
+    if(sym == 1) {
+      dg += -430; /* symmetry correction for dG */
+    }
+
+    /** Terminal penalty **/
+    switch (s[0]) {
+      case 'A':
+      case 'T':
+        dg += -50; /* terminal AT penalty */
+        break;
+    }
+     /* Sum the pairs up */
+    for (i = 0; i < len; i++) {
+      dg += SantaLucia_1998_dG[oligo_int[i]][oligo_int[i+1]];
+    }
+    /** Terminal penalty **/
+    switch (s[len]) {
+      case 'A':
+      case 'T':
+        dg += -50; /* terminal AT penalty */
+        break;
+    }
+  } else {
+    /* Sum the pairs up */
+    for (i = 0; i < len; i++) {
+      dg += Breslauer_1986_dG[oligo_int[i]][oligo_int[i+1]];
+    }
+  }
+
+  return dg / 1000.0;
 }
 
-double end_oligodg(const char *s,  
+double end_oligodg(const char *s,
   int len, /* The number of characters to return. */
   int tm_method)
 {
@@ -634,8 +436,8 @@ double end_oligodg(const char *s,
       && tm_method != santalucia_auto)
     return OLIGOTM_ERROR;
 
-  return 
-    x < len 
+  return
+    x < len
     ? oligodg(s,tm_method) :
     oligodg(s + (x - len),tm_method);
 }
@@ -696,9 +498,9 @@ long_seq_tm(const char *s,
 
   if (divalent_to_monovalent(divalent_conc, dntp_conc) == OLIGOTM_ERROR)
     return ret;
-  
+
   salt_conc = salt_conc + divalent_to_monovalent(divalent_conc, dntp_conc);
-  
+
   if ((unsigned) (start + len) > strlen(s) || start < 0 || len <= 0)
     return ret;
   end = &s[start + len];
@@ -717,50 +519,50 @@ long_seq_tm(const char *s,
   return ret;
 }
 
- /* Return 1 if string is symmetrical, 0 otherwise. */ 
+ /* Return 1 if string is symmetrical, 0 otherwise. */
 int symmetry(const char* seq) {
-   register char s;
-   register char e;
-   const char *seq_end=seq;
-   int i = 0;
-   int seq_len=strlen(seq);
-   int mp = seq_len/2;
-   if(seq_len%2==1) {
+             register char s;
+             register char e;
+             const char *seq_end=seq;
+             int i = 0;
+             int seq_len=strlen(seq);
+             int mp = seq_len/2;
+  if(seq_len%2==1) {
+    return 0;
+  }
+  seq_end+=seq_len;
+  seq_end--;
+  while(i<mp) {
+    i++;
+    s=*seq;
+    e=*seq_end;
+    if ((s=='A' && e!='T')
+        || (s=='T' && e!='A')
+        || (e=='A' && s!='T')
+        || (e=='T' && s!='A')) {
       return 0;
-   }
-   seq_end+=seq_len;
-   seq_end--;
-   while(i<mp) {
-      i++;
-      s=*seq;
-      e=*seq_end;
-      if ((s=='A' && e!='T') 
-          || (s=='T' && e!='A') 
-          || (e=='A' && s!='T') 
-          || (e=='T' && s!='A')) {
-         return 0;
-      }
-      if ((s=='C' && e!='G')
-          || (s=='G' && e!='C')
-          || (e=='C' && s!='G')
-          || (e=='G' && s!='C')) {
-         return 0;
-      }
-      seq++;
-      seq_end--;
-   }
-   return 1;
+    }
+    if ((s=='C' && e!='G')
+        || (s=='G' && e!='C')
+        || (e=='C' && s!='G')
+        || (e=='G' && s!='C')) {
+      return 0;
+    }
+    seq++;
+    seq_end--;
+  }
+  return 1;
 }
 
 /* Convert divalent salt concentration to monovalent */
-double divalent_to_monovalent(double divalent, 
+double divalent_to_monovalent(double divalent,
                               double dntp)
 {
-   if(divalent==0) dntp=0;
-   if(divalent<0 || dntp<0) return OLIGOTM_ERROR;
-   if(divalent<dntp) 
-     /* According to theory, melting temperature does not depend on
-        divalent cations */
-     divalent=dntp;  
-   return 120*(sqrt(divalent-dntp));
+  if(divalent==0) dntp=0;
+  if(divalent<0 || dntp<0) return OLIGOTM_ERROR;
+  if(divalent<dntp)
+    /* According to theory, melting temperature does not depend on
+       divalent cations */
+    divalent=dntp;
+  return 120*(sqrt(divalent-dntp));
 }
