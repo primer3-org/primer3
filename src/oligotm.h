@@ -111,6 +111,7 @@ tm_ret long_seq_tm(const char *seq,
 typedef enum tm_method_type {
         breslauer_auto      = 0,
         santalucia_auto     = 1,
+        santalucia_2004     = 2,
 } tm_method_type;
 
 typedef enum salt_correction_type {

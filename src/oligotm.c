@@ -39,7 +39,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <math.h>
 #include <string.h>
 #include "oligotm.h"
-#include <stdio.h>
+/* #include <stdio.h> */ /* Only for testing */
 
 #ifndef MAX_PRIMER_LENGTH
 #define MAX_PRIMER_LENGTH 36
@@ -117,6 +117,32 @@ static const int SantaLucia_1998_dG[5][5] =  {
      { 580, 1300, 1280,  880,  580}}; /* NA, NC, NG, NT, NN; */
 
 
+/* Table 3, updated parameters:
+ * Tables of nearest-neighbor thermodynamics for DNA bases, from the
+ * paper [SantaLucia JR and Hicks (2004) "The thermodynamics of DNA
+ * Structuralmotifs", PAnnu. Rev. Biophys. Biomol. Struct. 2004. 33:
+ * 415–40 http://dx.doi.org/10.1146/annurev.biophys.32.110601.141800]
+ */
+
+/* dH *-100 cal/mol */
+static const int SantaLucia_2004_dH[5][5] =  {
+     {76, 84,  78, 72, 72},  /* AA, AC, AG, AT, AN; */
+     {85, 80, 106, 78, 78},  /* CA, CC, CG, CT, CN; */
+     {82, 98,  80, 84, 80},  /* GA, GC, GG, GT, GN; */
+     {72, 82,  85, 76, 72},  /* TA, TC, TG, TT, TN; */
+     {72, 80,  78, 72, 72}}; /* NA, NC, NG, NT, NN; */
+
+/* dS *-0.1 cal/k*mol */
+static const int SantaLucia_2004_dS[5][5] =  {
+     {213, 224, 210, 204, 224},  /* AA, AC, AG, AT, AN; */
+     {227, 199, 272, 210, 272},  /* CA, CC, CG, CT, CN; */
+     {222, 244, 199, 224, 244},  /* GA, GC, GG, GT, GN; */
+     {213, 222, 227, 213, 227},  /* TA, TC, TG, TT, TN; */
+     {168, 210, 220, 215, 220}}; /* NA, NC, NG, NT, NN; */
+
+/* dG *-0.001 cal/mol */
+/* unmodified to SantaLucia_1998_dG */
+
 /* Calculate the melting temperature of oligo s.  See
    oligotm.h for documentation of arguments.
 */
@@ -149,8 +175,8 @@ oligotm(const  char *s,
     return ret;
   }
   /** K_mM = K_mM + divalent_to_monovalent(divalent_conc, dntp_conc); **/
-  if (tm_method != breslauer_auto
-      && tm_method != santalucia_auto) {
+  if (tm_method != breslauer_auto && tm_method != santalucia_auto
+      && tm_method != santalucia_2004) {
     ret.Tm = OLIGOTM_ERROR;
     return ret;
   }
@@ -225,6 +251,35 @@ oligotm(const  char *s,
         dh += -1;
         break;
     }
+  } else if(tm_method == santalucia_2004) {
+    ds += 57;
+    dh += -2;
+
+    if(sym == 1) {
+      ds += 14;
+    }
+
+    /** Terminal penalty **/
+    switch (s[0]) {
+      case 'A':
+      case 'T':
+        ds += -69;
+        dh += -22;
+        break;
+    }
+    /* Sum the pairs up */
+    for (i = 0; i < len; i++) {
+      ds += SantaLucia_2004_dS[oligo_int[i]][oligo_int[i+1]];
+      dh += SantaLucia_2004_dH[oligo_int[i]][oligo_int[i+1]];
+    }
+    /** Terminal penalty **/
+    switch (s[len]) {
+      case 'A':
+      case 'T':
+        ds += -69;
+        dh += -22;
+        break;
+    }
   } else {
     ds = 108;
     /* Sum the pairs up */
@@ -244,6 +299,9 @@ oligotm(const  char *s,
                             */
   ret.Tm=0;  /* Melting temperature */
   len=len+1;
+
+  /* For testing */
+  /* printf("dH: %.2f kcal/mol\ndS: %.2f cal/k*mol\n", delta_H / 1000.0, delta_S); */
 
    /**********************************************/
   if (salt_corrections == schildkraut) {
@@ -282,9 +340,9 @@ oligotm(const  char *s,
       }
     }
   } else if (salt_corrections == owczarzy) {
-    double gcPercent;
+    double gcFract;
     double free_divalent; /* conc of divalent cations minus dNTP conc */
-    gcPercent = (double)GC_count/((double)len);
+    gcFract = (double)GC_count/((double)len);
     /**** BEGIN: UPDATED SALT BY OWCZARZY *****/
     /* different salt corrections for monovalent (Owczarzy et al.,2004)
        and divalent cations (Owczarzy et al.,2008)
@@ -310,17 +368,17 @@ oligotm(const  char *s,
     }
     if (div_monov_ratio < crossover_point) {
       /* use only monovalent salt correction, Eq 22 (Owczarzy et al., 2004) */
-      correction = (((4.29 * gcPercent) - 3.95) * pow(10,-5) * log(K_mM / 1000.0))
+      correction = (((4.29 * gcFract) - 3.95) * pow(10,-5) * log(K_mM / 1000.0))
                    + (9.40 * pow(10,-6) * (pow(log(K_mM / 1000.0),2)));
     } else {
       /* magnesium effects are dominant, Eq 16 (Owczarzy et al., 2008) is used */
-      b =- 9.11 * pow(10,-6);
-      c = 6.26 * pow(10,-5);
-      e =- 4.82 * pow(10,-4);
-      f = 5.25 * pow(10,-4);
-      a = 3.92 * pow(10,-5);
-      d = 1.42 * pow(10,-5);
-      g = 8.31 * pow(10,-5);
+      a =  3.92 * pow(10,-5);
+      b = -9.11 * pow(10,-6);
+      c =  6.26 * pow(10,-5);
+      d =  1.42 * pow(10,-5);
+      e = -4.82 * pow(10,-4);
+      f =  5.25 * pow(10,-4);
+      g =  8.31 * pow(10,-5);
       if(div_monov_ratio < 6.0) {
         /* in particular ratio of conc of monov and div cations
          *             some parameters of Eq 16 must be corrected (a,d,g) */
@@ -330,9 +388,8 @@ oligotm(const  char *s,
       }
 
       correction = a + (b * log(free_divalent))
-                     + gcPercent * (c + (d * log(free_divalent)))
-                     + (1/(2 * (len - 1))) * (e + (f * log(free_divalent))
-                     + g * (pow((log(free_divalent)),2)));
+                     + gcFract * (c + (d * log(free_divalent)))
+                     + (1/(2 * (((double) len)- 1))) * (e + (f * log(free_divalent)) + g * (pow((log(free_divalent)),2)));
     }
     /**** END: UPDATED SALT BY OWCZARZY *****/
     if (sym == 1) {
@@ -348,7 +405,7 @@ oligotm(const  char *s,
                       (delta_S + 1.9872 * log(DNA_nM/4000000000.0)))) + correction) - t_kelvin;
     }
     ret.Tm -= dmso_conc * dmso_fact;
-    ret.Tm += (0.453 * ((double) GC_count) / len - 2.88) * formamide_conc;
+    ret.Tm += (0.453 * ((double) GC_count) / ((double) len) - 2.88) * formamide_conc;
   } /* END else if (salt_corrections == owczarzy) { */
   /***************************************/
   return ret;
@@ -390,7 +447,7 @@ oligodg(const char *s,      /* The sequence. */
     }
   }
 
-  if( tm_method == santalucia_auto ) {
+  if ((tm_method == santalucia_auto) || (tm_method == santalucia_2004)) {
     dg  = -1960; /* Initial dG */
 
     sym = symmetry(s);
@@ -461,7 +518,8 @@ tm_ret seqtm(const  char *seq,
   ret.bound = OLIGOTM_ERROR;
   ret.Tm = OLIGOTM_ERROR;
   if (tm_method != breslauer_auto
-      && tm_method != santalucia_auto)
+      && tm_method != santalucia_auto
+      && tm_method != santalucia_2004)
     return ret;
   if (salt_corrections != schildkraut
       && salt_corrections != santalucia
@@ -511,10 +569,10 @@ long_seq_tm(const char *s,
   }
 
   ret.Tm = 81.5 - dmso_conc * dmso_fact
-                + (0.453 * ((double) GC_count) / len - 2.88) * formamide_conc
+                + (0.453 * ((double) GC_count) / ((double) len) - 2.88) * formamide_conc
                 + (16.6 * log10(salt_conc / 1000.0))
-                + (41.0 * (((double) GC_count) / len))
-                - (600.0 / len);
+                + (41.0 * (((double) GC_count) / ((double) len)))
+                - (600.0 / ((double) len));
 
   return ret;
 }

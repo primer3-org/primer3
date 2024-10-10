@@ -19,6 +19,12 @@ Probes can be quenched if a G is on the 5' end. Setting
 PRIMER_INTERNAL_NO_5_PRIME_G=1 will force Primer3 to pick only internal 
 oligos with no 5' G.
 
+A bug was fixed in Owczarzy salt correction which changes the Tm 
+results.
+
+The nearest-neighbor thermodynamics from SantaLucia JR and Hicks (2004)
+were added.
+
 Minor fixes:
 1. Compiler complains were fixed.
 
@@ -27,6 +33,8 @@ Minor fixes:
 3. Identical primers as fow and rev give now only a warning.
 
 4. oligotm was rewritten to avoid makros.
+
+5. A bug was fixed in Owczarzy salt correction.
 
 
 release 2.6.1 2022-01-26  ===============================================
