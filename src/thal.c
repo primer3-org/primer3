@@ -342,8 +342,8 @@ thal(const unsigned char *oligo_f,
       reverse(oligo2); /* REVERSE oligo2, so it goes to dpt 3'->5' direction */
    }
    /* convert nucleotides to numbers */
-   numSeq1 = (unsigned char*) safe_realloc(numSeq1, oligo1_len + 2, _jmp_buf, o);
-   numSeq2 = (unsigned char*) safe_realloc(numSeq2, oligo2_len + 2, _jmp_buf, o);
+   numSeq1 = (unsigned char*) safe_malloc(oligo1_len + 2, _jmp_buf, o);
+   numSeq2 = (unsigned char*) safe_malloc(oligo2_len + 2, _jmp_buf, o);
 
    /*** Calc part of the salt correction ***/
    saltCorrection=saltCorrectS(a->mv,a->dv,a->dntp); /* salt correction for entropy, must be multiplied with N, which is
@@ -356,10 +356,8 @@ thal(const unsigned char *oligo_f,
    numSeq1[0] = numSeq1[oligo1_len + 1] = numSeq2[0] = numSeq2[oligo2_len + 1] = 4; /* mark as N-s */
 
    if (a->type==4) { /* calculate structure of monomer */
-      double *hend5 = NULL;
-      double *send5 = NULL;
-      send5 = (double*) safe_realloc(send5, (oligo1_len + 1) * sizeof(double), _jmp_buf, o);
-      hend5 = (double*) safe_realloc(hend5, (oligo1_len + 1) * sizeof(double), _jmp_buf, o);
+      double *hend5 = (double*) safe_malloc((oligo1_len + 1) * sizeof(double), _jmp_buf, o);
+      double *send5 = (double*) safe_malloc((oligo1_len + 1) * sizeof(double), _jmp_buf, o);
       initMatrix_monomer(entropyDPT, enthalpyDPT, numSeq1, numSeq2, oligo1_len, oligo2_len);
       fillMatrix_monomer(a->maxLoop, entropyDPT, enthalpyDPT, RC, numSeq1, numSeq2, oligo1_len, oligo2_len, o);
       calc_terminal_bp(a->temp, (const double **)entropyDPT, (const double **)enthalpyDPT, send5, hend5, RC, numSeq1, numSeq2, oligo1_len, oligo2_len);
