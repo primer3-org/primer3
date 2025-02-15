@@ -280,7 +280,6 @@ thal(const unsigned char *oligo_f,
    int len_f, len_r;
    int k;
    int *bp;
-   unsigned char *oligo2_rev = NULL;
    double mh, ms;
    double G1, bestG;
    jmp_buf _jmp_buf;
@@ -340,17 +339,7 @@ thal(const unsigned char *oligo_f,
       } else {
          RC = R  * log(a->dna_conc/4000000000.0);
       }
-      if(a->type!=3) {
-         oligo2_rev = (unsigned char*) safe_malloc((length_unsig_char(oligo_r) + 1) * sizeof(unsigned char), _jmp_buf, o);
-         strcpy((char*)oligo2_rev,(const char*)oligo_r);
-      } else {
-         oligo2_rev = (unsigned char*) safe_malloc((length_unsig_char(oligo_f) + 1) * sizeof(unsigned char), _jmp_buf, o);
-         strcpy((char*)oligo2_rev,(const char*)oligo_f);
-      }
-      reverse(oligo2_rev); /* REVERSE oligo2, so it goes to dpt 3'->5' direction */
-      free(oligo2);
-      oligo2=NULL;
-      oligo2=&oligo2_rev[0];
+      reverse(oligo2); /* REVERSE oligo2, so it goes to dpt 3'->5' direction */
    }
    /* convert nucleotides to numbers */
    numSeq1 = (unsigned char*) safe_realloc(numSeq1, oligo1_len + 2, _jmp_buf, o);
@@ -426,7 +415,7 @@ thal(const unsigned char *oligo_f,
             }
          }
       }
-      
+
       /* tracebacking */
       if(isFinite(enthalpyDPT[bestI][bestJ])){
          double dH, dS;
@@ -443,7 +432,7 @@ thal(const unsigned char *oligo_f,
       }
       free(ps1);
       free(ps2);
-      free(oligo2_rev);
+      free(oligo2);
       free_DPT(enthalpyDPT);
       free_DPT(entropyDPT);
       free_traceback_matrix(traceback_matrix);
