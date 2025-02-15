@@ -446,10 +446,6 @@ thal(const unsigned char *oligo_f,
       dH = enthalpyDPT[bestI][bestJ]+ SH[1] + dplx_init_H;
       dS = (entropyDPT[bestI][bestJ] + SH[0] + dplx_init_S);
       /* tracebacking */
-      for (i = 0; i < oligo1_len; ++i)
-        ps1[i] = 0;
-      for (j = 0; j < oligo2_len; ++j)
-        ps2[j] = 0;
       if(isFinite(enthalpyDPT[bestI][bestJ])){
          traceback_dimer(bestI, bestJ, ps1, ps2, (const struct vec2 **)traceback_matrix);
          o->sec_struct=drawDimer(ps1, ps2, dH, dS, mode, a->temp, oligo1, oligo2, saltCorrection, RC, oligo1_len, oligo2_len, _jmp_buf, o);
