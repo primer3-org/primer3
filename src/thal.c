@@ -407,42 +407,32 @@ thal(const unsigned char *oligo_f,
       initMatrix_dimer(entropyDPT, enthalpyDPT, numSeq1, numSeq2, oligo1_len, oligo2_len);
       fillMatrix_dimer(a->maxLoop, entropyDPT, enthalpyDPT, traceback_matrix, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2, oligo1_len, oligo2_len, o);
       /* calculate terminal basepairs */
-      bestI = bestJ = 0; 
+      bestI = bestJ = 1; 
       G1 = bestG = _INFINITY;
-      if(a->type==1) {
-         for (i = 1; i <= oligo1_len; i++) {
-            for (j = 1; j <= oligo2_len; j++) {
-               RSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-               G1 = (enthalpyDPT[i][j]+ SH[1] + dplx_init_H) - TEMP_KELVIN*(entropyDPT[i][j] + SH[0] + dplx_init_S);  
-               if(G1<bestG){
-                  bestG = G1;
-                  bestI = i;
-                  bestJ = j;
-               }
-            }
-         }
-      } else {
-         /* THAL_END1 */
-         bestI = bestJ = 0;
-         bestI = oligo1_len;
-         i = oligo1_len;
-         G1 = bestG = _INFINITY;
-         for (j = 1; j <= oligo2_len; ++j) {
+
+      if(a->type==1)
+         i = 1;
+      else
+         i = oligo1_len; //THAL_END1: oligo1 3' end must be part of terminal pair
+
+      for (; i <= oligo1_len; i++) {
+         for (j = 1; j <= oligo2_len; j++) {
             RSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
             G1 = (enthalpyDPT[i][j]+ SH[1] + dplx_init_H) - TEMP_KELVIN*(entropyDPT[i][j] + SH[0] + dplx_init_S);  
-               if(G1<bestG){
+            if(G1<bestG){
                bestG = G1;
+               bestI = i;
                bestJ = j;
             }
          }
       }
-      if (!isFinite(bestG)) bestI = bestJ = 1;
-      double dH, dS;
-      RSH(bestI, bestJ, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-      dH = enthalpyDPT[bestI][bestJ]+ SH[1] + dplx_init_H;
-      dS = (entropyDPT[bestI][bestJ] + SH[0] + dplx_init_S);
+      
       /* tracebacking */
       if(isFinite(enthalpyDPT[bestI][bestJ])){
+         double dH, dS;
+         RSH(bestI, bestJ, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+         dH = enthalpyDPT[bestI][bestJ]+ SH[1] + dplx_init_H;
+         dS = (entropyDPT[bestI][bestJ] + SH[0] + dplx_init_S);
          traceback_dimer(bestI, bestJ, ps1, ps2, (const struct vec2 **)traceback_matrix);
          o->sec_struct=drawDimer(ps1, ps2, dH, dS, mode, a->temp, oligo1, oligo2, saltCorrection, RC, oligo1_len, oligo2_len, _jmp_buf, o);
          o->align_end_1=bestI;
