@@ -485,13 +485,13 @@ fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct 
                enthalpyDPT[i][j] = SH[1];
             }
             if (i > 1 && j > 1) {
-               T0 = T1 = -_INFINITY;
                S0 = entropyDPT[i][j];
                H0 = enthalpyDPT[i][j];
                RSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
                saved_RSH[0] = SH[0];
                saved_RSH[1] = SH[1];
                T0 = (H0 + dplx_init_H + SH[1]) /(S0 + dplx_init_S + SH[0] + RC); /* at current position */
+               
                if(isFinite(enthalpyDPT[i-1][j-1]) && isFinite(stackEnthalpies[numSeq1[i-1]][numSeq1[i]][numSeq2[j-1]][numSeq2[j]])) {
                   S1 = entropyDPT[i-1][j-1] + stackEntropies[numSeq1[i-1]][numSeq1[i]][numSeq2[j-1]][numSeq2[j]];
                   H1 = enthalpyDPT[i-1][j-1] + stackEnthalpies[numSeq1[i-1]][numSeq1[i]][numSeq2[j-1]][numSeq2[j]];
@@ -499,19 +499,9 @@ fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct 
                } else {
                   S1 = -1.0;
                   H1 = _INFINITY;
-                  T1 = (H1 + dplx_init_H) /(S1 + dplx_init_S + RC);
+                  T1 = -_INFINITY;
                }
-               
-               if(S1 < MinEntropyCutoff) {
-                  /* to not give dH any value if dS is unreasonable */
-                  S1 = MinEntropy;
-                  H1 = 0.0;
-               }
-               if(S0 < MinEntropyCutoff) {
-                  /* to not give dH any value if dS is unreasonable */
-                  S0 = MinEntropy;
-                  H0 = 0.0;
-               }
+
                if(T1 > T0) { 
                   entropyDPT[i][j] = S1;
                   enthalpyDPT[i][j] = H1;
