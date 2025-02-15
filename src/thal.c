@@ -400,28 +400,28 @@ thal(const unsigned char *oligo_f,
       free(oligo2);
       return;
    } else if(a->type!=4) { /* Hybridization of two moleculs */
+      int *ps1, *ps2;
+      ps1 = (int*) safe_calloc(oligo1_len, sizeof(int), _jmp_buf, o);
+      ps2 = (int*) safe_calloc(oligo2_len, sizeof(int), _jmp_buf, o);
       struct vec2 **traceback_matrix = allocate_traceback_matrix(oligo1_len, oligo2_len, _jmp_buf, o);
       initMatrix_dimer(entropyDPT, enthalpyDPT, numSeq1, numSeq2, oligo1_len, oligo2_len);
       fillMatrix_dimer(a->maxLoop, entropyDPT, enthalpyDPT, traceback_matrix, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2, oligo1_len, oligo2_len, o);
       /* calculate terminal basepairs */
       bestI = bestJ = 0; 
       G1 = bestG = _INFINITY;
-      if(a->type==1)
-        for (i = 1; i <= oligo1_len; i++) {
-           for (j = 1; j <= oligo2_len; j++) {
-              RSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-              G1 = (enthalpyDPT[i][j]+ SH[1] + dplx_init_H) - TEMP_KELVIN*(entropyDPT[i][j] + SH[0] + dplx_init_S);  
-              if(G1<bestG){
-                 bestG = G1;
-                 bestI = i;
-                 bestJ = j;
-              }
-           }
-        }
-      int *ps1, *ps2;
-      ps1 = (int*) safe_calloc(oligo1_len, sizeof(int), _jmp_buf, o);
-      ps2 = (int*) safe_calloc(oligo2_len, sizeof(int), _jmp_buf, o);
-      if(a->type == 2 || a->type == 3)        {
+      if(a->type==1) {
+         for (i = 1; i <= oligo1_len; i++) {
+            for (j = 1; j <= oligo2_len; j++) {
+               RSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+               G1 = (enthalpyDPT[i][j]+ SH[1] + dplx_init_H) - TEMP_KELVIN*(entropyDPT[i][j] + SH[0] + dplx_init_S);  
+               if(G1<bestG){
+                  bestG = G1;
+                  bestI = i;
+                  bestJ = j;
+               }
+            }
+         }
+      } else {
          /* THAL_END1 */
          bestI = bestJ = 0;
          bestI = oligo1_len;
@@ -430,9 +430,9 @@ thal(const unsigned char *oligo_f,
          for (j = 1; j <= oligo2_len; ++j) {
             RSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
             G1 = (enthalpyDPT[i][j]+ SH[1] + dplx_init_H) - TEMP_KELVIN*(entropyDPT[i][j] + SH[0] + dplx_init_S);  
-                if(G1<bestG){
-                   bestG = G1;
-                         bestJ = j;
+               if(G1<bestG){
+               bestG = G1;
+               bestJ = j;
             }
          }
       }
