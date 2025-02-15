@@ -491,7 +491,7 @@ fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct 
                saved_RSH[0] = SH[0];
                saved_RSH[1] = SH[1];
                T0 = (H0 + dplx_init_H + SH[1]) /(S0 + dplx_init_S + SH[0] + RC); /* at current position */
-               
+
                if(isFinite(enthalpyDPT[i-1][j-1]) && isFinite(stackEnthalpies[numSeq1[i-1]][numSeq1[i]][numSeq2[j-1]][numSeq2[j]])) {
                   S1 = entropyDPT[i-1][j-1] + stackEntropies[numSeq1[i-1]][numSeq1[i]][numSeq2[j-1]][numSeq2[j]];
                   H1 = enthalpyDPT[i-1][j-1] + stackEnthalpies[numSeq1[i-1]][numSeq1[i]][numSeq2[j-1]][numSeq2[j]];
@@ -521,11 +521,6 @@ fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct 
                      SH[1] = _INFINITY;
                      if (isFinite(enthalpyDPT[ii][jj])) {
                         calc_bulge_internal_dimer(ii, jj, i, j, SH, saved_RSH, (const double **)entropyDPT, (const double **)enthalpyDPT, numSeq1, numSeq2);
-                        if(SH[0] < MinEntropyCutoff) {
-                           /* to not give dH any value if dS is unreasonable */
-                           SH[0] = MinEntropy;
-                           SH[1] = 0.0;
-                        }
                         if(isFinite(SH[1])) {
                            //This condition is only here to pick the same alignment as the old traceback
                            //when there are multiple, equal alignments.
