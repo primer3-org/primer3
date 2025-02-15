@@ -106,6 +106,12 @@ struct tracer /* structure for traceback_monomer - unimolecular str */ {
   struct tracer* next;
 };
 
+//Used for traceback matrix
+struct vec2{
+   int i;
+   int j;
+};
+
 /*** END STRUCTs ***/
 
 
@@ -116,16 +122,14 @@ struct tracer /* structure for traceback_monomer - unimolecular str */ {
 static void initMatrix_dimer(double **entropyDPT, double **enthalpyDPT, const unsigned char *numSeq1, 
                                  const unsigned char *numSeq2, int oligo1_len, int oligo2_len);
  /* calc-s thermod values into dynamic progr table (dimer) */
-static void fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, double RC,
+static void fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct vec2 **traceback_matrix, double RC,
                                  double dplx_init_S, double dplx_init_H, const unsigned char *numSeq1,
                                  const unsigned char *numSeq2, int oligo1_len, int oligo2_len, thal_results* o);
 static void calc_bulge_internal_dimer(int ii, int jj, int i, int j, double* EntropyEnthalpy, const double *saved_RSH,
                                  int traceback, int maxLoop, const double *const *entropyDPT, const double *const *enthalpyDPT,
                                  double RC, double dplx_init_S, double dplx_init_H,
                                  const unsigned char *numSeq1, const unsigned char *numSeq2);
-static void traceback_dimer(int i, int j, double RC, int* ps1, int* ps2, int maxLoop, const double *const *entropyDPT,
-                                 const double *const *enthalpyDPT, double dplx_init_S, double dplx_init_H, const unsigned char *numSeq1,
-                                 const unsigned char *numSeq2, int oligo1_len, int oligo2_len, thal_results* o);
+static void traceback_dimer(int i, int j, int* ps1, int* ps2, const struct vec2 **traceback_matrix);
 char *drawDimer(int*, int*, double, double, const thal_mode mode, double, const unsigned char *oligo1, const unsigned char *oligo2,
                double saltCorrection, double RC, int oligo1_len, int oligo2_len, jmp_buf, thal_results *);
 /* calculate terminal entropy S and terminal enthalpy H starting reading from 5'end */
@@ -185,6 +189,8 @@ static void* safe_malloc(size_t, jmp_buf, thal_results* o);
 static void* safe_realloc(void*, size_t, jmp_buf, thal_results* o);
 double **allocate_DPT(int oligo1_len, int oligo2_len, jmp_buf _jmp_buf, thal_results *o);
 void free_DPT(double **dpt);
+struct vec2 **allocate_traceback_matrix(int len1, int len2, jmp_buf __jmp_buf, thal_results *o);
+void free_traceback_matrix(struct vec2 **tb_mat);
 
 //=====================================================================================
 //Functions for string manipulation
@@ -395,8 +401,9 @@ thal(const unsigned char *oligo_f,
       free(oligo2);
       return;
    } else if(a->type!=4) { /* Hybridization of two moleculs */
+      struct vec2 **traceback_matrix = allocate_traceback_matrix(oligo1_len, oligo2_len, _jmp_buf, o);
       initMatrix_dimer(entropyDPT, enthalpyDPT, numSeq1, numSeq2, oligo1_len, oligo2_len);
-      fillMatrix_dimer(a->maxLoop, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2, oligo1_len, oligo2_len, o);
+      fillMatrix_dimer(a->maxLoop, entropyDPT, enthalpyDPT, traceback_matrix, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2, oligo1_len, oligo2_len, o);
       /* calculate terminal basepairs */
       bestI = bestJ = 0; 
       G1 = bestG = _INFINITY;
@@ -445,7 +452,7 @@ thal(const unsigned char *oligo_f,
       for (j = 0; j < oligo2_len; ++j)
         ps2[j] = 0;
       if(isFinite(enthalpyDPT[bestI][bestJ])){
-         traceback_dimer(bestI, bestJ, RC, ps1, ps2, a->maxLoop, (const double **)entropyDPT, (const double **)enthalpyDPT, dplx_init_S, dplx_init_H, numSeq1, numSeq2, oligo1_len, oligo2_len, o);
+         traceback_dimer(bestI, bestJ, ps1, ps2, (const struct vec2 **)traceback_matrix);
          o->sec_struct=drawDimer(ps1, ps2, dH, dS, mode, a->temp, oligo1, oligo2, saltCorrection, RC, oligo1_len, oligo2_len, _jmp_buf, o);
          o->align_end_1=bestI;
          o->align_end_2=bestJ;
@@ -458,6 +465,7 @@ thal(const unsigned char *oligo_f,
       free(oligo2_rev);
       free_DPT(enthalpyDPT);
       free_DPT(entropyDPT);
+      free_traceback_matrix(traceback_matrix);
       free(numSeq1);
       free(numSeq2);
       free(oligo1);
@@ -489,7 +497,7 @@ initMatrix_dimer(double **entropyDPT, double** enthalpyDPT, const unsigned char 
 }
 
 static void 
-fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, double RC, double dplx_init_S, double dplx_init_H, const unsigned char *numSeq1, const unsigned char *numSeq2, int oligo1_len, int oligo2_len, thal_results *o)
+fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct vec2 **traceback_matrix, double RC, double dplx_init_S, double dplx_init_H, const unsigned char *numSeq1, const unsigned char *numSeq2, int oligo1_len, int oligo2_len, thal_results *o)
 {
    int d, i, j, ii, jj;
    double SH[2];
@@ -539,10 +547,9 @@ fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, double 
                if(T1 > T0) { 
                   entropyDPT[i][j] = S1;
                   enthalpyDPT[i][j] = H1;
-               } else if(T0 >= T1) {
-                  entropyDPT[i][j] = S0;
-                  enthalpyDPT[i][j] = H0;
-               }
+                  traceback_matrix[i][j].i = i-1;
+                  traceback_matrix[i][j].j = j-1;
+               } 
 
                for(d = 3; d <= maxLoop + 2; d++) { /* max=30, length over 30 is not allowed */
                   ii = i - 1;
@@ -562,6 +569,12 @@ fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, double 
                            SH[1] = 0.0;
                         }
                         if(isFinite(SH[1])) {
+                           //This condition is only here to pick the same alignment as the old traceback
+                           //when there are multiple, equal alignments.
+                           if(!(equal(enthalpyDPT[i][j], SH[1]) && equal(entropyDPT[i][j], SH[0]))){
+                              traceback_matrix[i][j].i = ii;
+                              traceback_matrix[i][j].j = jj;
+                           }
                            enthalpyDPT[i][j] = SH[1];
                            entropyDPT[i][j] = SH[0];
                         }
@@ -703,54 +716,26 @@ calc_bulge_internal_dimer(int i, int j, int ii, int jj, double* EntropyEnthalpy,
    return;
 }
 
+/*Each time the DPTs are modified, the traceback matrix stores the i and j values of the last
+complementary pair used in the S and H calculations. To find the alignment, just start at the
+i and j with the lowest dG and follow the tracback matrix.
+Example: if the terminal i and j are 10,10 you go to traceback_matrix[10][10] to see
+what the previous pairing is. If there is not an internal loop it would be 9,9. If it
+was 7,9 that would mean that there was a bulge loop, etc.
+After following the chain of indices, you know that i,j is the 5' terminal pair when
+traceback_matrix[i][j] == -1,-1*/
 static void 
-traceback_dimer(int i, int j, double RC, int* ps1, int* ps2, int maxLoop, const double *const *entropyDPT, const double *const *enthalpyDPT,
-               double dplx_init_S, double dplx_init_H, const unsigned char *numSeq1, const unsigned char *numSeq2, int oligo1_len,
-               int oligo2_len, thal_results* o)
+traceback_dimer(int i, int j, int* ps1, int* ps2, const struct vec2 **traceback_matrix)
 {
-   int d, ii, jj, done;
-   double SH[2];
-   double saved_RSH[2];
-   ps1[i - 1] = j;
-   ps2[j - 1] = i;
-   while(1) {
-      SH[0] = -1.0;
-      SH[1] = _INFINITY;
-      LSH(i,j,SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-      if(equal(entropyDPT[i][j],SH[0]) && equal(enthalpyDPT[i][j],SH[1])) {
-         break;
-      }
-      done = 0;
-      if (i > 1 && j > 1 && equal(entropyDPT[i][j], stackEntropies[numSeq1[i-1]][numSeq1[i]][numSeq2[j-1]][numSeq2[j]] + entropyDPT[i-1][j-1]) 
-         && equal(enthalpyDPT[i][j], stackEnthalpies[numSeq1[i-1]][numSeq1[i]][numSeq2[j-1]][numSeq2[j]] + enthalpyDPT[i-1][j-1])) {
-         i = i - 1;
-         j = j - 1;
-         ps1[i - 1] = j;
-         ps2[j - 1] = i;
-         done = 1;
-      }
-      for (d = 3; !done && d <= maxLoop + 2; ++d) {
-         RSH(i, j, saved_RSH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-         ii = i - 1;
-         jj = -ii - d + (j + i);
-         if (jj < 1) {
-            ii -= abs(jj-1);
-            jj = 1;
-         }
-         for (; !done && ii > 0 && jj < j; --ii, ++jj) {
-            SH[0] = -1.0;
-            SH[1] = _INFINITY;
-            calc_bulge_internal_dimer(ii, jj, i, j, SH, saved_RSH, 1, maxLoop, entropyDPT, enthalpyDPT, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-            if (equal(entropyDPT[i][j], SH[0]) && equal(enthalpyDPT[i][j], SH[1])) {
-               i = ii;
-               j = jj;
-               ps1[i - 1] = j;
-               ps2[j - 1] = i;
-               done = 1;
-               break;
-            }
-         }
-      }
+   int tmp_i;
+   ps1[i-1] = j;
+   ps2[j-1] = i;
+   while(traceback_matrix[i][j].i >= 0){
+      tmp_i = traceback_matrix[i][j].i;
+      j = traceback_matrix[i][j].j;
+      i = tmp_i;
+      ps1[i-1] = j;
+      ps2[j-1] = i;
    }
 }
 
@@ -2183,6 +2168,25 @@ double **allocate_DPT(int oligo1_len, int oligo2_len, jmp_buf _jmp_buf, thal_res
 void free_DPT(double **dpt){
    free(dpt[0]);
    free(dpt);
+}
+
+//Traceback matrix tracks the indices of the last complementary pair used in filling in the DPTs
+struct vec2 **allocate_traceback_matrix(int len1, int len2, jmp_buf __jmp_buf, thal_results *o){
+   struct vec2 *tb = (struct vec2 *)safe_malloc(sizeof(struct vec2) * (len1 + 1) * (len2 + 1), __jmp_buf, o);
+   struct vec2 **rows = (struct vec2 **)safe_malloc(sizeof(struct vec2 *) * (len1 + 1), __jmp_buf, o);
+   for(int i = 0; i < len1 + 1; i++){
+      rows[i] = &tb[i * (len2 + 1)];
+   }
+   for(int i = 0; i < (len1 + 1) * (len2 + 1); i++){
+      tb[i].i = -1;
+      tb[i].j = -1;
+   }
+   return rows;
+}
+
+void free_traceback_matrix(struct vec2 **tb_mat){
+   free(tb_mat[0]);
+   free(tb_mat);
 }
 
 //=====================================================================================
