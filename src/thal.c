@@ -421,10 +421,6 @@ thal(const unsigned char *oligo_f,
       int *ps1, *ps2;
       ps1 = (int*) safe_calloc(oligo1_len, sizeof(int), _jmp_buf, o);
       ps2 = (int*) safe_calloc(oligo2_len, sizeof(int), _jmp_buf, o);
-      for (i = 0; i < oligo1_len; ++i)
-        ps1[i] = 0;
-      for (j = 0; j < oligo2_len; ++j)
-        ps2[j] = 0;
       if(a->type == 2 || a->type == 3)        {
          /* THAL_END1 */
          bestI = bestJ = 0;
