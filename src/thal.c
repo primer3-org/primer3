@@ -118,9 +118,6 @@ struct vec2{
 //=====================================================================================
 //Functions for dimer calculation
 //=====================================================================================
- /* initiates thermodynamic parameter tables of entropy and enthalpy for dimer */
-static void initMatrix_dimer(double **entropyDPT, double **enthalpyDPT, const unsigned char *numSeq1, 
-                                 const unsigned char *numSeq2, int oligo1_len, int oligo2_len);
  /* calc-s thermod values into dynamic progr table (dimer) */
 static void fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct vec2 **traceback_matrix, double RC,
                                  double dplx_init_S, double dplx_init_H, const unsigned char *numSeq1,
@@ -396,7 +393,6 @@ thal(const unsigned char *oligo_f,
       ps1 = (int*) safe_calloc(oligo1_len, sizeof(int), _jmp_buf, o);
       ps2 = (int*) safe_calloc(oligo2_len, sizeof(int), _jmp_buf, o);
       struct vec2 **traceback_matrix = allocate_traceback_matrix(oligo1_len, oligo2_len, _jmp_buf, o);
-      initMatrix_dimer(entropyDPT, enthalpyDPT, numSeq1, numSeq2, oligo1_len, oligo2_len);
       fillMatrix_dimer(a->maxLoop, entropyDPT, enthalpyDPT, traceback_matrix, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2, oligo1_len, oligo2_len, o);
       /* calculate terminal basepairs */
       bestI = bestJ = 1; 
@@ -462,23 +458,6 @@ thal(const unsigned char *oligo_f,
 //=====================================================================================
 
 static void 
-initMatrix_dimer(double **entropyDPT, double** enthalpyDPT, const unsigned char *numSeq1, const unsigned char *numSeq2, int oligo1_len, int oligo2_len)
-{
-   int i, j;
-   for (i = 1; i <= oligo1_len; ++i) {
-      for (j = 1; j <= oligo2_len; ++j) {
-         if (is_complement[numSeq1[i]][numSeq2[j]] == 0)  {
-            enthalpyDPT[i][j] = _INFINITY;
-            entropyDPT[i][j] = -1.0;
-         } else {
-            enthalpyDPT[i][j] = 0.0;
-            entropyDPT[i][j] = MinEntropy;
-         }
-      }
-   }
-}
-
-static void 
 fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct vec2 **traceback_matrix, double RC, double dplx_init_S, double dplx_init_H, const unsigned char *numSeq1, const unsigned char *numSeq2, int oligo1_len, int oligo2_len, thal_results *o)
 {
    int d, i, j, ii, jj;
@@ -488,7 +467,10 @@ fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct 
 
    for (i = 1; i <= oligo1_len; ++i) {
       for (j = 1; j <= oligo2_len; ++j) {
-         if(is_complement[numSeq1[i]][numSeq2[j]]) { /* if finite */
+         if(!is_complement[numSeq1[i]][numSeq2[j]]){
+            enthalpyDPT[i][j] = _INFINITY;
+            entropyDPT[i][j] = -1.0;
+         } else {
             LSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
             entropyDPT[i][j] = SH[0];
             enthalpyDPT[i][j] = SH[1];
