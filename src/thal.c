@@ -129,8 +129,8 @@ static void calc_bulge_internal_dimer(int ii, int jj, int i, int j, double* Entr
                                  const double *const *entropyDPT, const double *const *enthalpyDPT,
                                  const unsigned char *numSeq1, const unsigned char *numSeq2);
 static void traceback_dimer(int i, int j, int* ps1, int* ps2, const struct vec2 **traceback_matrix);
-char *drawDimer(int*, int*, double, double, const thal_mode mode, double, const unsigned char *oligo1, const unsigned char *oligo2,
-               double saltCorrection, double RC, int oligo1_len, int oligo2_len, jmp_buf, thal_results *);
+char *drawDimer(int*, int*, const thal_mode mode, double, const unsigned char *oligo1, const unsigned char *oligo2,
+               int oligo1_len, int oligo2_len, jmp_buf, thal_results *);
 /* calculate terminal entropy S and terminal enthalpy H starting reading from 5'end */
 static void LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S,
                double dplx_init_H, const unsigned char *numSeq1, const unsigned char *numSeq2);
@@ -418,14 +418,25 @@ thal(const unsigned char *oligo_f,
 
       /* tracebacking */
       if(is_complement[numSeq1[bestI]][numSeq2[bestJ]]){
-         double dH, dS;
          RSH(bestI, bestJ, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-         dH = enthalpyDPT[bestI][bestJ]+ SH[1] + dplx_init_H;
-         dS = (entropyDPT[bestI][bestJ] + SH[0] + dplx_init_S);
          traceback_dimer(bestI, bestJ, ps1, ps2, (const struct vec2 **)traceback_matrix);
-         o->sec_struct=drawDimer(ps1, ps2, dH, dS, mode, a->temp, oligo1, oligo2, saltCorrection, RC, oligo1_len, oligo2_len, _jmp_buf, o);
+         int N=0;
+         for(i=0;i<oligo1_len;i++){
+            if(ps1[i]>0) ++N;
+         }
+         for(i=0;i<oligo2_len;i++) {
+            if(ps2[i]>0) ++N;
+         }
+         N = (N/2) -1;
+         o->dh = enthalpyDPT[bestI][bestJ]+ SH[1] + dplx_init_H;
+         o->ds = (entropyDPT[bestI][bestJ] + SH[0] + dplx_init_S);
+         o->ds = o->ds + (N * saltCorrection);
+         o->dg = (o->dh) - (a->temp * o->ds);
+         o->temp = ((o->dh) / (o->ds + RC)) - ABSOLUTE_ZERO;
          o->align_end_1=bestI;
          o->align_end_2=bestJ;
+         if(mode != THL_FAST)
+            o->sec_struct=drawDimer(ps1, ps2, mode, a->temp, oligo1, oligo2, oligo1_len, oligo2_len, _jmp_buf, o);
       } else  {
          o->temp = 0.0;
          /* fputs("No secondary structure could be calculated\n",stderr); */
@@ -599,46 +610,23 @@ traceback_dimer(int i, int j, int* ps1, int* ps2, const struct vec2 **traceback_
 }
 
 char * 
-drawDimer(int* ps1, int* ps2, double H, double S, const thal_mode mode, double t37, const unsigned char *oligo1, const unsigned char *oligo2,
-         double saltCorrection, double RC, int oligo1_len, int oligo2_len, jmp_buf _jmp_buf, thal_results *o)
+drawDimer(int* ps1, int* ps2, const thal_mode mode, double t37, const unsigned char *oligo1, const unsigned char *oligo2,
+         int oligo1_len, int oligo2_len, jmp_buf _jmp_buf, thal_results *o)
 {
    int  ret_space = 0;
    char *ret_ptr = NULL;
    int ret_nr, ret_pr_once;
    char ret_para[400];
    char* ret_str[4];
-   int i, j, k, numSS1, numSS2, N;
+   int i, j, k, numSS1, numSS2;
    char* duplex[4];
-   double G, t;
-   t = G = 0;
-   N=0;
-   for(i=0;i<oligo1_len;i++){
-      if(ps1[i]>0) ++N;
-   }
-   for(i=0;i<oligo2_len;i++) {
-      if(ps2[i]>0) ++N;
-   }
-   N = (N/2) -1;
-   t = ((H) / (S + (N * saltCorrection) + RC)) - ABSOLUTE_ZERO;
-   G = (H) - (t37 * (S + (N * saltCorrection)));
-   S = S + (N * saltCorrection);
-   o->dg = G;
-   o->ds = S;
-   o->dh = H;
-   o->temp = (double) t;
-   if((mode != THL_FAST) && (mode != THL_DEBUG_F)) {
-      /* maybe user does not need as precise as that */
-      /* printf("Thermodynamical values:\t%d\tdS = %g\tdH = %g\tdG = %g\tt = %g\tN = %d, SaltC=%f, RC=%f\n",
-               oligo1_len, (double) S, (double) H, (double) G, (double) t, (int) N, saltCorrection, RC); */
-      if (mode != THL_STRUCT) {
-         printf("Calculated thermodynamical parameters for dimer:\tdS = %g\tdH = %g\tdG = %g\tt = %g\n",
-               (double) S, (double) H, (double) G, (double) t);
-      } else {
-         snprintf(ret_para, 400, "Tm: %.1f&deg;C  dG: %.0f cal/mol  dH: %.0f cal/mol  dS: %.0f cal/mol*K\\n",
-                  (double) t, (double) G, (double) H, (double) S);
-      }
+
+   if (mode != THL_STRUCT) {
+      printf("Calculated thermodynamical parameters for dimer:\tdS = %g\tdH = %g\tdG = %g\tt = %g\n",
+            (double) o->ds, (double) o->dh, (double) o->dg, (double) o->temp);
    } else {
-      return NULL;
+      snprintf(ret_para, 400, "Tm: %.1f&deg;C  dG: %.0f cal/mol  dH: %.0f cal/mol  dS: %.0f cal/mol*K\\n",
+               (double) o->temp, (double) o->dg, (double) o->dh, (double) o->ds);
    }
 
    duplex[0] = (char*) safe_malloc(oligo1_len + oligo2_len + 1, _jmp_buf, o);
@@ -710,7 +698,7 @@ drawDimer(int* ps1, int* ps2, double H, double S, const thal_mode mode, double t
            strcatc(duplex[3], '-');
         }
    }
-   if ((mode == THL_GENERAL) || (mode == THL_DEBUG)) {
+   if (mode == THL_GENERAL) {
      printf("SEQ\t");
      printf("%s\n", duplex[0]);
      printf("SEQ\t");
