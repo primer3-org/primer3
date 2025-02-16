@@ -129,8 +129,6 @@ static void calc_bulge_internal_dimer(int ii, int jj, int i, int j, double* Entr
                                  const double *const *entropyDPT, const double *const *enthalpyDPT,
                                  const unsigned char *numSeq1, const unsigned char *numSeq2);
 static void traceback_dimer(int i, int j, int* ps1, int* ps2, const struct vec2 **traceback_matrix);
-char *drawDimer(int*, int*, const thal_mode mode, double, const unsigned char *oligo1, const unsigned char *oligo2,
-               int oligo1_len, int oligo2_len, jmp_buf, thal_results *);
 /* calculate terminal entropy S and terminal enthalpy H starting reading from 5'end */
 static void LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S,
                double dplx_init_H, const unsigned char *numSeq1, const unsigned char *numSeq2);
@@ -162,6 +160,13 @@ static void push(struct tracer**, int, int, int, jmp_buf, thal_results*); /* to 
 static void traceback_monomer(int*, int, const double *const *entropyDPT, const double *const *enthalpyDPT, double *send5, double *hend5, double RC,
                               double dplx_init_S, double dplx_init_H,  const unsigned char *numSeq1, const unsigned char *numSeq2,
                               int oligo1_len, int oligo2_len, jmp_buf, thal_results*);
+
+//=====================================================================================
+//Functions for drawing secondary structure
+//=====================================================================================
+char *drawDimer(int*, int*, const thal_mode mode, double, const unsigned char *oligo1, const unsigned char *oligo2,
+               int oligo1_len, int oligo2_len, jmp_buf, thal_results *);
+
 char *drawHairpin(int*, double, double, const thal_mode mode, double, const unsigned char *oligo1, const unsigned char *oligo2, double saltCorrection,
                   int oligo1_len, int oligo2_len, jmp_buf, thal_results *);
 
@@ -328,7 +333,7 @@ thal(const unsigned char *oligo_f,
    /*** INIT values for unimolecular and bimolecular structures ***/
    if (a->type==4) { /* unimolecular folding */
       dplx_init_H = 0.0;
-      dplx_init_S = -0.00000000001;
+      dplx_init_S = 0.0;
       RC=0;
    } else  {
       /* hybridization of two oligos */
@@ -603,221 +608,6 @@ traceback_dimer(int i, int j, int* ps1, int* ps2, const struct vec2 **traceback_
       ps1[i-1] = j;
       ps2[j-1] = i;
    }
-}
-
-char * 
-drawDimer(int* ps1, int* ps2, const thal_mode mode, double t37, const unsigned char *oligo1, const unsigned char *oligo2,
-         int oligo1_len, int oligo2_len, jmp_buf _jmp_buf, thal_results *o)
-{
-   int  ret_space = 0;
-   char *ret_ptr = NULL;
-   int ret_nr, ret_pr_once;
-   char ret_para[400];
-   char* ret_str[4];
-   int i, j, k, numSS1, numSS2;
-   char* duplex[4];
-
-   if (mode != THL_STRUCT) {
-      printf("Calculated thermodynamical parameters for dimer:\tdS = %g\tdH = %g\tdG = %g\tt = %g\n",
-            (double) o->ds, (double) o->dh, (double) o->dg, (double) o->temp);
-   } else {
-      snprintf(ret_para, 400, "Tm: %.1f&deg;C  dG: %.0f cal/mol  dH: %.0f cal/mol  dS: %.0f cal/mol*K\\n",
-               (double) o->temp, (double) o->dg, (double) o->dh, (double) o->ds);
-   }
-
-   duplex[0] = (char*) safe_malloc(oligo1_len + oligo2_len + 1, _jmp_buf, o);
-   duplex[1] = (char*) safe_malloc(oligo1_len + oligo2_len + 1, _jmp_buf, o);
-   duplex[2] = (char*) safe_malloc(oligo1_len + oligo2_len + 1, _jmp_buf, o);
-   duplex[3] = (char*) safe_malloc(oligo1_len + oligo2_len + 1, _jmp_buf, o);
-   duplex[0][0] = duplex[1][0] = duplex[2][0] = duplex[3][0] = 0;
-
-   i = 0;
-   numSS1 = 0;
-   while (ps1[i++] == 0) ++numSS1;
-   j = 0;
-   numSS2 = 0;
-   while (ps2[j++] == 0) ++numSS2;
-
-   if (numSS1 >= numSS2){
-      for (i = 0; i < numSS1; ++i) {
-         strcatc(duplex[0], oligo1[i]);
-         strcatc(duplex[1], ' ');
-         strcatc(duplex[2], ' ');
-      }
-      for (j = 0; j < numSS1 - numSS2; ++j) strcatc(duplex[3], ' ');
-      for (j = 0; j < numSS2; ++j) strcatc(duplex[3], oligo2[j]);
-   } else {
-      for (j = 0; j < numSS2; ++j) {
-         strcatc(duplex[3], oligo2[j]);
-         strcatc(duplex[1], ' ');
-         strcatc(duplex[2], ' ');
-      }
-      for (i = 0; i < numSS2 - numSS1; ++i)
-        strcatc(duplex[0], ' ');
-      for (i = 0; i < numSS1; ++i)
-        strcatc(duplex[0], oligo1[i]);
-   }
-   i = numSS1 + 1;
-   j = numSS2 + 1;
-
-   while (i <= oligo1_len) {
-      while (i <= oligo1_len && ps1[i - 1] != 0 && j <= oligo2_len && ps2[j - 1] != 0) {
-         strcatc(duplex[0], ' ');
-         strcatc(duplex[1], oligo1[i - 1]);
-         strcatc(duplex[2], oligo2[j - 1]);
-         strcatc(duplex[3], ' ');
-         ++i;
-         ++j;
-      }
-      numSS1 = 0;
-      while (i <= oligo1_len && ps1[i - 1] == 0) {
-         strcatc(duplex[0], oligo1[i - 1]);
-         strcatc(duplex[1], ' ');
-         ++numSS1;
-         ++i;
-      }
-      numSS2 = 0;
-      while (j <= oligo2_len && ps2[j - 1] == 0) {
-         strcatc(duplex[2], ' ');
-         strcatc(duplex[3], oligo2[j - 1]);
-         ++numSS2;
-         ++j;
-      }
-      if (numSS1 < numSS2)
-        for (k = 0; k < numSS2 - numSS1; ++k) {
-           strcatc(duplex[0], '-');
-           strcatc(duplex[1], ' ');
-        }
-      else if (numSS1 > numSS2)
-        for (k = 0; k < numSS1 - numSS2; ++k) {
-           strcatc(duplex[2], ' ');
-           strcatc(duplex[3], '-');
-        }
-   }
-   if (mode == THL_GENERAL) {
-     printf("SEQ\t");
-     printf("%s\n", duplex[0]);
-     printf("SEQ\t");
-     printf("%s\n", duplex[1]);
-     printf("STR\t");
-     printf("%s\n", duplex[2]);
-     printf("STR\t");
-     printf("%s\n", duplex[3]);
-   }
-   if (mode == THL_STRUCT) {
-     ret_str[3] = NULL;
-     ret_str[0] = (char*) safe_malloc(oligo1_len + oligo2_len + 10, _jmp_buf, o);
-     ret_str[1] = (char*) safe_malloc(oligo1_len + oligo2_len + 10, _jmp_buf, o);
-     ret_str[2] = (char*) safe_malloc(oligo1_len + oligo2_len + 10, _jmp_buf, o);
-     ret_str[0][0] = ret_str[1][0] = ret_str[2][0] = '\0';
-
-     /* Join top primer */
-     strcpy(ret_str[0], "   ");
-     strcat(ret_str[0], duplex[0]);
-     ret_nr = 0;
-     while (duplex[1][ret_nr] != '\0') {
-       if (duplex[1][ret_nr] == 'A' || duplex[1][ret_nr] == 'T' || 
-           duplex[1][ret_nr] == 'C' || duplex[1][ret_nr] == 'G' || 
-           duplex[1][ret_nr] == '-') {
-         ret_str[0][ret_nr + 3] = duplex[1][ret_nr];
-       }
-       ret_nr++;
-     }
-     if (strlen(duplex[1]) > strlen(duplex[0])) {
-       ret_str[0][strlen(duplex[1]) + 3] = '\0';
-     }
-     /* Clean Ends */
-     ret_nr = strlen(ret_str[0]) - 1;
-     while (ret_nr > 0 && (ret_str[0][ret_nr] == ' ' || ret_str[0][ret_nr] == '-')) {
-       ret_str[0][ret_nr--] = '\0';
-     }
-     /* Write the 5' */
-     ret_nr = 3;
-     ret_pr_once = 1;
-     while (ret_str[0][ret_nr] != '\0' && ret_pr_once == 1) {
-       if (ret_str[0][ret_nr] == 'A' || ret_str[0][ret_nr] == 'T' ||
-           ret_str[0][ret_nr] == 'C' || ret_str[0][ret_nr] == 'G' ||
-           ret_str[0][ret_nr] == '-') {
-         ret_str[0][ret_nr - 3] = '5';
-         ret_str[0][ret_nr - 2] = '\'';
-         ret_pr_once = 0;
-       }
-       ret_nr++;
-     }
-
-     /* Create the align tics */
-     strcpy(ret_str[1], "     ");
-     for (i = 0 ; i < strlen(duplex[1]) ; i++) {
-       if (duplex[1][i] == 'A' || duplex[1][i] == 'T' || 
-           duplex[1][i] == 'C' || duplex[1][i] == 'G' ) {
-         ret_str[1][i + 3] = '|';
-       } else {
-         ret_str[1][i + 3] = ' ';
-       }
-       ret_str[1][i + 4] = '\0';
-     }
-     /* Clean Ends */
-     ret_nr = strlen(ret_str[1]) - 1;
-     while (ret_nr > 0 && ret_str[1][ret_nr] == ' ') {
-       ret_str[1][ret_nr--] = '\0';
-     }
-     /* Join bottom primer */
-     strcpy(ret_str[2], "   ");
-     strcat(ret_str[2], duplex[2]);
-     ret_nr = 0;
-     while (duplex[3][ret_nr] != '\0') {
-       if (duplex[3][ret_nr] == 'A' || duplex[3][ret_nr] == 'T' ||
-           duplex[3][ret_nr] == 'C' || duplex[3][ret_nr] == 'G' ||
-           duplex[3][ret_nr] == '-') {
-         ret_str[2][ret_nr + 3] = duplex[3][ret_nr];
-       }
-       ret_nr++;
-     }
-     if (strlen(duplex[3]) > strlen(duplex[2])) {
-       ret_str[2][strlen(duplex[3]) + 3] = '\0';
-     }
-     /* Clean Ends */
-     ret_nr = strlen(ret_str[2]) - 1;
-     while (ret_nr > 0 && (ret_str[2][ret_nr] == ' ' || ret_str[2][ret_nr] == '-')) {
-       ret_str[2][ret_nr--] = '\0';
-     }
-     /* Write the 5' */
-     ret_nr = 3;
-     ret_pr_once = 1;
-     while (ret_str[2][ret_nr] != '\0' && ret_pr_once == 1) {
-       if (ret_str[2][ret_nr] == 'A' || ret_str[2][ret_nr] == 'T' ||
-           ret_str[2][ret_nr] == 'C' || ret_str[2][ret_nr] == 'G' ||
-           ret_str[2][ret_nr] == '-') {
-         ret_str[2][ret_nr - 3] = '3';
-         ret_str[2][ret_nr - 2] = '\'';
-         ret_pr_once = 0;
-       }
-       ret_nr++;
-     }
-
-     save_append_string(&ret_str[3], &ret_space, o, ret_para, _jmp_buf);
-     save_append_string(&ret_str[3], &ret_space, o, ret_str[0], _jmp_buf);
-     save_append_string(&ret_str[3], &ret_space, o, " 3\'\\n", _jmp_buf);
-     save_append_string(&ret_str[3], &ret_space, o, ret_str[1], _jmp_buf);
-     save_append_string(&ret_str[3], &ret_space, o, "\\n", _jmp_buf);
-     save_append_string(&ret_str[3], &ret_space, o, ret_str[2], _jmp_buf);
-     save_append_string(&ret_str[3], &ret_space, o, " 5\'\\n", _jmp_buf);
-
-     ret_ptr = (char *) safe_malloc(strlen(ret_str[3]) + 1, _jmp_buf, o);
-     strcpy(ret_ptr, ret_str[3]);
-     if (ret_str[3]) {
-       free(ret_str[3]);
-     }
-     free(ret_str[0]);
-     free(ret_str[1]);
-     free(ret_str[2]);
-   }
-   free(duplex[0]);
-   free(duplex[1]);
-   free(duplex[2]);
-   free(duplex[3]);
-
-   return ret_ptr;
 }
 
 static void 
@@ -1599,6 +1389,225 @@ traceback_monomer(int* bp, int maxLoop, const double *const *entropyDPT,  const 
       }
       free(top);
    }
+}
+
+//=====================================================================================
+//Functions for drawing secondary structure
+//=====================================================================================
+
+char * 
+drawDimer(int* ps1, int* ps2, const thal_mode mode, double t37, const unsigned char *oligo1, const unsigned char *oligo2,
+         int oligo1_len, int oligo2_len, jmp_buf _jmp_buf, thal_results *o)
+{
+   int  ret_space = 0;
+   char *ret_ptr = NULL;
+   int ret_nr, ret_pr_once;
+   char ret_para[400];
+   char* ret_str[4];
+   int i, j, k, numSS1, numSS2;
+   char* duplex[4];
+
+   if (mode != THL_STRUCT) {
+      printf("Calculated thermodynamical parameters for dimer:\tdS = %g\tdH = %g\tdG = %g\tt = %g\n",
+            (double) o->ds, (double) o->dh, (double) o->dg, (double) o->temp);
+   } else {
+      snprintf(ret_para, 400, "Tm: %.1f&deg;C  dG: %.0f cal/mol  dH: %.0f cal/mol  dS: %.0f cal/mol*K\\n",
+               (double) o->temp, (double) o->dg, (double) o->dh, (double) o->ds);
+   }
+
+   duplex[0] = (char*) safe_malloc(oligo1_len + oligo2_len + 1, _jmp_buf, o);
+   duplex[1] = (char*) safe_malloc(oligo1_len + oligo2_len + 1, _jmp_buf, o);
+   duplex[2] = (char*) safe_malloc(oligo1_len + oligo2_len + 1, _jmp_buf, o);
+   duplex[3] = (char*) safe_malloc(oligo1_len + oligo2_len + 1, _jmp_buf, o);
+   duplex[0][0] = duplex[1][0] = duplex[2][0] = duplex[3][0] = 0;
+
+   i = 0;
+   numSS1 = 0;
+   while (ps1[i++] == 0) ++numSS1;
+   j = 0;
+   numSS2 = 0;
+   while (ps2[j++] == 0) ++numSS2;
+
+   if (numSS1 >= numSS2){
+      for (i = 0; i < numSS1; ++i) {
+         strcatc(duplex[0], oligo1[i]);
+         strcatc(duplex[1], ' ');
+         strcatc(duplex[2], ' ');
+      }
+      for (j = 0; j < numSS1 - numSS2; ++j) strcatc(duplex[3], ' ');
+      for (j = 0; j < numSS2; ++j) strcatc(duplex[3], oligo2[j]);
+   } else {
+      for (j = 0; j < numSS2; ++j) {
+         strcatc(duplex[3], oligo2[j]);
+         strcatc(duplex[1], ' ');
+         strcatc(duplex[2], ' ');
+      }
+      for (i = 0; i < numSS2 - numSS1; ++i)
+        strcatc(duplex[0], ' ');
+      for (i = 0; i < numSS1; ++i)
+        strcatc(duplex[0], oligo1[i]);
+   }
+   i = numSS1 + 1;
+   j = numSS2 + 1;
+
+   while (i <= oligo1_len) {
+      while (i <= oligo1_len && ps1[i - 1] != 0 && j <= oligo2_len && ps2[j - 1] != 0) {
+         strcatc(duplex[0], ' ');
+         strcatc(duplex[1], oligo1[i - 1]);
+         strcatc(duplex[2], oligo2[j - 1]);
+         strcatc(duplex[3], ' ');
+         ++i;
+         ++j;
+      }
+      numSS1 = 0;
+      while (i <= oligo1_len && ps1[i - 1] == 0) {
+         strcatc(duplex[0], oligo1[i - 1]);
+         strcatc(duplex[1], ' ');
+         ++numSS1;
+         ++i;
+      }
+      numSS2 = 0;
+      while (j <= oligo2_len && ps2[j - 1] == 0) {
+         strcatc(duplex[2], ' ');
+         strcatc(duplex[3], oligo2[j - 1]);
+         ++numSS2;
+         ++j;
+      }
+      if (numSS1 < numSS2)
+        for (k = 0; k < numSS2 - numSS1; ++k) {
+           strcatc(duplex[0], '-');
+           strcatc(duplex[1], ' ');
+        }
+      else if (numSS1 > numSS2)
+        for (k = 0; k < numSS1 - numSS2; ++k) {
+           strcatc(duplex[2], ' ');
+           strcatc(duplex[3], '-');
+        }
+   }
+   if (mode == THL_GENERAL) {
+     printf("SEQ\t");
+     printf("%s\n", duplex[0]);
+     printf("SEQ\t");
+     printf("%s\n", duplex[1]);
+     printf("STR\t");
+     printf("%s\n", duplex[2]);
+     printf("STR\t");
+     printf("%s\n", duplex[3]);
+   }
+   if (mode == THL_STRUCT) {
+     ret_str[3] = NULL;
+     ret_str[0] = (char*) safe_malloc(oligo1_len + oligo2_len + 10, _jmp_buf, o);
+     ret_str[1] = (char*) safe_malloc(oligo1_len + oligo2_len + 10, _jmp_buf, o);
+     ret_str[2] = (char*) safe_malloc(oligo1_len + oligo2_len + 10, _jmp_buf, o);
+     ret_str[0][0] = ret_str[1][0] = ret_str[2][0] = '\0';
+
+     /* Join top primer */
+     strcpy(ret_str[0], "   ");
+     strcat(ret_str[0], duplex[0]);
+     ret_nr = 0;
+     while (duplex[1][ret_nr] != '\0') {
+       if (duplex[1][ret_nr] == 'A' || duplex[1][ret_nr] == 'T' || 
+           duplex[1][ret_nr] == 'C' || duplex[1][ret_nr] == 'G' || 
+           duplex[1][ret_nr] == '-') {
+         ret_str[0][ret_nr + 3] = duplex[1][ret_nr];
+       }
+       ret_nr++;
+     }
+     if (strlen(duplex[1]) > strlen(duplex[0])) {
+       ret_str[0][strlen(duplex[1]) + 3] = '\0';
+     }
+     /* Clean Ends */
+     ret_nr = strlen(ret_str[0]) - 1;
+     while (ret_nr > 0 && (ret_str[0][ret_nr] == ' ' || ret_str[0][ret_nr] == '-')) {
+       ret_str[0][ret_nr--] = '\0';
+     }
+     /* Write the 5' */
+     ret_nr = 3;
+     ret_pr_once = 1;
+     while (ret_str[0][ret_nr] != '\0' && ret_pr_once == 1) {
+       if (ret_str[0][ret_nr] == 'A' || ret_str[0][ret_nr] == 'T' ||
+           ret_str[0][ret_nr] == 'C' || ret_str[0][ret_nr] == 'G' ||
+           ret_str[0][ret_nr] == '-') {
+         ret_str[0][ret_nr - 3] = '5';
+         ret_str[0][ret_nr - 2] = '\'';
+         ret_pr_once = 0;
+       }
+       ret_nr++;
+     }
+
+     /* Create the align tics */
+     strcpy(ret_str[1], "     ");
+     for (i = 0 ; i < strlen(duplex[1]) ; i++) {
+       if (duplex[1][i] == 'A' || duplex[1][i] == 'T' || 
+           duplex[1][i] == 'C' || duplex[1][i] == 'G' ) {
+         ret_str[1][i + 3] = '|';
+       } else {
+         ret_str[1][i + 3] = ' ';
+       }
+       ret_str[1][i + 4] = '\0';
+     }
+     /* Clean Ends */
+     ret_nr = strlen(ret_str[1]) - 1;
+     while (ret_nr > 0 && ret_str[1][ret_nr] == ' ') {
+       ret_str[1][ret_nr--] = '\0';
+     }
+     /* Join bottom primer */
+     strcpy(ret_str[2], "   ");
+     strcat(ret_str[2], duplex[2]);
+     ret_nr = 0;
+     while (duplex[3][ret_nr] != '\0') {
+       if (duplex[3][ret_nr] == 'A' || duplex[3][ret_nr] == 'T' ||
+           duplex[3][ret_nr] == 'C' || duplex[3][ret_nr] == 'G' ||
+           duplex[3][ret_nr] == '-') {
+         ret_str[2][ret_nr + 3] = duplex[3][ret_nr];
+       }
+       ret_nr++;
+     }
+     if (strlen(duplex[3]) > strlen(duplex[2])) {
+       ret_str[2][strlen(duplex[3]) + 3] = '\0';
+     }
+     /* Clean Ends */
+     ret_nr = strlen(ret_str[2]) - 1;
+     while (ret_nr > 0 && (ret_str[2][ret_nr] == ' ' || ret_str[2][ret_nr] == '-')) {
+       ret_str[2][ret_nr--] = '\0';
+     }
+     /* Write the 5' */
+     ret_nr = 3;
+     ret_pr_once = 1;
+     while (ret_str[2][ret_nr] != '\0' && ret_pr_once == 1) {
+       if (ret_str[2][ret_nr] == 'A' || ret_str[2][ret_nr] == 'T' ||
+           ret_str[2][ret_nr] == 'C' || ret_str[2][ret_nr] == 'G' ||
+           ret_str[2][ret_nr] == '-') {
+         ret_str[2][ret_nr - 3] = '3';
+         ret_str[2][ret_nr - 2] = '\'';
+         ret_pr_once = 0;
+       }
+       ret_nr++;
+     }
+
+     save_append_string(&ret_str[3], &ret_space, o, ret_para, _jmp_buf);
+     save_append_string(&ret_str[3], &ret_space, o, ret_str[0], _jmp_buf);
+     save_append_string(&ret_str[3], &ret_space, o, " 3\'\\n", _jmp_buf);
+     save_append_string(&ret_str[3], &ret_space, o, ret_str[1], _jmp_buf);
+     save_append_string(&ret_str[3], &ret_space, o, "\\n", _jmp_buf);
+     save_append_string(&ret_str[3], &ret_space, o, ret_str[2], _jmp_buf);
+     save_append_string(&ret_str[3], &ret_space, o, " 5\'\\n", _jmp_buf);
+
+     ret_ptr = (char *) safe_malloc(strlen(ret_str[3]) + 1, _jmp_buf, o);
+     strcpy(ret_ptr, ret_str[3]);
+     if (ret_str[3]) {
+       free(ret_str[3]);
+     }
+     free(ret_str[0]);
+     free(ret_str[1]);
+     free(ret_str[2]);
+   }
+   free(duplex[0]);
+   free(duplex[1]);
+   free(duplex[2]);
+   free(duplex[3]);
+
+   return ret_ptr;
 }
 
 char * 
