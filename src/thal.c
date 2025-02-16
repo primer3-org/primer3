@@ -638,7 +638,7 @@ LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
          if(G2>0) {
             H2 = _INFINITY;
             S2 = -1.0;
-      G2 = 1.0;
+            G2 = 1.0;
          }
          T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
          if(isFinite(H1) && G1<0) {
@@ -660,7 +660,7 @@ LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
          if(G2>0) {
             H2 = _INFINITY;
             S2 = -1.0;
-      G2 = 1.0;
+            G2 = 1.0;
          }
          T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
          if(G1<0) {
@@ -682,7 +682,7 @@ LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
          if(G2>0) {
             H2 = _INFINITY;
             S2 = -1.0;
-      G2 = 1.0;     
+            G2 = 1.0;     
          }
          T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
          if(G1<0) {
@@ -753,11 +753,11 @@ RSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
          dangleEntropies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]];
          H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]] +
          dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]];
-      G2 = H2 - TEMP_KELVIN*S2;
+         G2 = H2 - TEMP_KELVIN*S2;
          if(G2>0) {
             H2 = _INFINITY;
             S2 = -1.0;
-      G2 = 1.0;
+            G2 = 1.0;
          }
          
          T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
@@ -806,7 +806,7 @@ RSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
          if(G2>0) {
             H2 = _INFINITY;
             S2 = -1.0;
-      G2 = 1.0;
+            G2 = 1.0;
          }
          T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
          if(G1<0) {
