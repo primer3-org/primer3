@@ -530,25 +530,21 @@ calc_bulge_internal_dimer(int i, int j, int ii, int jj, double* EntropyEnthalpy,
    loopSize2 = jj - j - 1;
    loopSize = loopSize1 + loopSize2-1;
    if(loopSize1 == 0 || loopSize2 == 0) { /* only bulges have to be considered */
-      if(loopSize2 == 1 || loopSize1 == 1) { /* bulge loop of size one is treated differently
-                                              the intervening nn-pair must be added */
+      //bulge loop of size one is treated differently. the intervening nn-pair must be added
+      if(loopSize2 == 1 || loopSize1 == 1) {
          H = bulgeLoopEnthalpies[loopSize] +
-            stackEnthalpies[numSeq1[i]][numSeq1[ii]][numSeq2[j]][numSeq2[jj]];
-
+             stackEnthalpies[numSeq1[i]][numSeq1[ii]][numSeq2[j]][numSeq2[jj]];
          S = bulgeLoopEntropies[loopSize] +
-            stackEntropies[numSeq1[i]][numSeq1[ii]][numSeq2[j]][numSeq2[jj]];
+             stackEntropies[numSeq1[i]][numSeq1[ii]][numSeq2[j]][numSeq2[jj]];
       } else { /* we have _not_ implemented Jacobson-Stockaymayer equation; the maximum bulgeloop size is 30 */
-
          H = bulgeLoopEnthalpies[loopSize] + atpH[numSeq1[i]][numSeq2[j]] + atpH[numSeq1[ii]][numSeq2[jj]];
-
          S = bulgeLoopEntropies[loopSize] + atpS[numSeq1[i]][numSeq2[j]] + atpS[numSeq1[ii]][numSeq2[jj]];
       }
    } else if (loopSize1 == 1 && loopSize2 == 1) {
       S = stackint2Entropies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j+1]] +
-        stackint2Entropies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]];
-
+          stackint2Entropies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]];
       H = stackint2Enthalpies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j+1]] +
-        stackint2Enthalpies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]];
+          stackint2Enthalpies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]];
    } else { /* only internal loops */
       //Only calculate H and S if there is a mismatch in both nearest neighbor stacks. 
       //This removes the need for the tstack table and improves performance.
@@ -556,14 +552,13 @@ calc_bulge_internal_dimer(int i, int j, int ii, int jj, double* EntropyEnthalpy,
       //The only difference between tstack and tstack2 tables is when both pairs are complementary
       if((!is_complement[numSeq1[ii-1]][numSeq2[jj-1]]) && (!is_complement[numSeq1[i+1]][numSeq2[j+1]])){
          H = interiorLoopEnthalpies[loopSize] + tstack2Enthalpies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j+1]] +
-         tstack2Enthalpies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]]
-         + (ILAH * abs(loopSize1 - loopSize2));
-
+             tstack2Enthalpies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]] +
+             (ILAH * abs(loopSize1 - loopSize2));
          S = interiorLoopEntropies[loopSize] + tstack2Entropies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j+1]] +
-         tstack2Entropies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]] + (ILAS * abs(loopSize1 - loopSize2));
+             tstack2Entropies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]] + 
+             (ILAS * abs(loopSize1 - loopSize2));
       }
    }
-
    EntropyEnthalpy[0] = S + entropyDPT[i][j];;
    EntropyEnthalpy[1] = H + enthalpyDPT[i][j];
    return;
