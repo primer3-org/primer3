@@ -75,6 +75,8 @@ static const double AT_H = 2200.0; /* AT penalty */
 static const double AT_S = 6.9; /* AT penalty */
 static const double MinEntropyCutoff = -2500.0; /* to filter out non-existing entropies */
 static const double MinEntropy = -3224.0; /* initiation */
+static const double dplx_init_H_dimer = 200;
+static const double dplx_init_S_dimer = -5.7;
 const double ABSOLUTE_ZERO = 273.15;
 const double TEMP_KELVIN = 310.15;
 const int MAX_LOOP = 30; /* the maximum size of loop that can be calculated; for larger loops formula must be implemented */
@@ -120,15 +122,15 @@ struct vec2{
 //=====================================================================================
  /* calc-s thermod values into dynamic progr table (dimer) */
 static void fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct vec2 **traceback_matrix, double RC,
-                                 double dplx_init_S, double dplx_init_H, const unsigned char *numSeq1,
-                                 const unsigned char *numSeq2, int oligo1_len, int oligo2_len, thal_results* o);
+                                 const unsigned char *numSeq1, const unsigned char *numSeq2, int oligo1_len,
+                                 int oligo2_len, thal_results* o);
 static void calc_bulge_internal_dimer(int ii, int jj, int i, int j, double* EntropyEnthalpy,
                                  const double *const *entropyDPT, const double *const *enthalpyDPT,
                                  const unsigned char *numSeq1, const unsigned char *numSeq2);
 static void traceback_dimer(int i, int j, int* ps1, int* ps2, const struct vec2 **traceback_matrix);
 /* calculate terminal entropy S and terminal enthalpy H starting reading from 5'end */
-static void LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S,
-               double dplx_init_H, const unsigned char *numSeq1, const unsigned char *numSeq2);
+static void LSH(int i, int j, double* EntropyEnthalpy, double RC,
+               const unsigned char *numSeq1, const unsigned char *numSeq2);
 
 //=====================================================================================
 //Functions for dimer and hairpin calculation
@@ -334,8 +336,6 @@ thal(const unsigned char *oligo_f,
       RC=0;
    } else  {
       /* hybridization of two oligos */
-      dplx_init_H = 200;
-      dplx_init_S = -5.7;
       if(symmetry_thermo(oligo1) && symmetry_thermo(oligo2)) {
          RC = R  * log(a->dna_conc/1000000000.0);
       } else {
@@ -393,7 +393,7 @@ thal(const unsigned char *oligo_f,
       ps1 = (int*) safe_calloc(oligo1_len, sizeof(int), _jmp_buf, o);
       ps2 = (int*) safe_calloc(oligo2_len, sizeof(int), _jmp_buf, o);
       struct vec2 **traceback_matrix = allocate_traceback_matrix(oligo1_len, oligo2_len, _jmp_buf, o);
-      fillMatrix_dimer(a->maxLoop, entropyDPT, enthalpyDPT, traceback_matrix, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2, oligo1_len, oligo2_len, o);
+      fillMatrix_dimer(a->maxLoop, entropyDPT, enthalpyDPT, traceback_matrix, RC, numSeq1, numSeq2, oligo1_len, oligo2_len, o);
       /* calculate terminal basepairs */
       bestI = bestJ = 1; 
       G1 = bestG = _INFINITY;
@@ -406,8 +406,8 @@ thal(const unsigned char *oligo_f,
       for (; i <= oligo1_len; i++) {
          for (j = 1; j <= oligo2_len; j++) {
             if(is_complement[numSeq1[i]][numSeq2[j]]){
-               RSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-               G1 = (enthalpyDPT[i][j]+ SH[1] + dplx_init_H) - TEMP_KELVIN*(entropyDPT[i][j] + SH[0] + dplx_init_S);  
+               RSH(i, j, SH, RC, dplx_init_S_dimer, dplx_init_H_dimer, numSeq1, numSeq2);
+               G1 = (enthalpyDPT[i][j]+ SH[1] + dplx_init_H_dimer) - TEMP_KELVIN*(entropyDPT[i][j] + SH[0] + dplx_init_S_dimer);  
                if(G1<bestG){
                   bestG = G1;
                   bestI = i;
@@ -419,14 +419,14 @@ thal(const unsigned char *oligo_f,
 
       /* tracebacking */
       if(is_complement[numSeq1[bestI]][numSeq2[bestJ]]){
-         RSH(bestI, bestJ, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+         RSH(bestI, bestJ, SH, RC, dplx_init_S_dimer, dplx_init_H_dimer, numSeq1, numSeq2);
          traceback_dimer(bestI, bestJ, ps1, ps2, (const struct vec2 **)traceback_matrix);
          int N=0;
          for(i=0;i<oligo1_len;i++)
             if(ps1[i]>0) ++N;
          N--;
-         o->dh = enthalpyDPT[bestI][bestJ]+ SH[1] + dplx_init_H;
-         o->ds = (entropyDPT[bestI][bestJ] + SH[0] + dplx_init_S);
+         o->dh = enthalpyDPT[bestI][bestJ]+ SH[1] + dplx_init_H_dimer;
+         o->ds = (entropyDPT[bestI][bestJ] + SH[0] + dplx_init_S_dimer);
          o->ds = o->ds + (N * saltCorrection);
          o->dg = (o->dh) - (a->temp * o->ds);
          o->temp = ((o->dh) / (o->ds + RC)) - ABSOLUTE_ZERO;
@@ -458,7 +458,7 @@ thal(const unsigned char *oligo_f,
 //=====================================================================================
 
 static void 
-fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct vec2 **traceback_matrix, double RC, double dplx_init_S, double dplx_init_H, const unsigned char *numSeq1, const unsigned char *numSeq2, int oligo1_len, int oligo2_len, thal_results *o)
+fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct vec2 **traceback_matrix, double RC, const unsigned char *numSeq1, const unsigned char *numSeq2, int oligo1_len, int oligo2_len, thal_results *o)
 {
    int d, i, j, ii, jj;
    double SH[2];
@@ -471,11 +471,11 @@ fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct 
             enthalpyDPT[i][j] = _INFINITY;
             entropyDPT[i][j] = -1.0;
          } else {
-            LSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+            LSH(i, j, SH, RC, numSeq1, numSeq2);
             entropyDPT[i][j] = SH[0];
             enthalpyDPT[i][j] = SH[1];
             if (i > 1 && j > 1){
-               RSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+               RSH(i, j, SH, RC, dplx_init_S_dimer, dplx_init_H_dimer, numSeq1, numSeq2);
                saved_RSH[0] = SH[0];
                saved_RSH[1] = SH[1];
 
@@ -593,7 +593,7 @@ traceback_dimer(int i, int j, int* ps1, int* ps2, const struct vec2 **traceback_
 }
 
 static void 
-LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double dplx_init_H, const unsigned char *numSeq1, const unsigned char *numSeq2)
+LSH(int i, int j, double* EntropyEnthalpy, double RC, const unsigned char *numSeq1, const unsigned char *numSeq2)
 {
    double S1, H1, T1, G1;
    double S2, H2, T2, G2;
@@ -621,9 +621,9 @@ LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
                dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]];
       }
       G2 = H2 - TEMP_KELVIN*S2;
-      T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
+      T2 = (H2 + dplx_init_H_dimer) / (S2 + dplx_init_S_dimer + RC);
       if(G1<0) {
-         T1 = (H1 + dplx_init_H) / (S1 + dplx_init_S + RC);
+         T1 = (H1 + dplx_init_H_dimer) / (S1 + dplx_init_S_dimer + RC);
          if(T1 < T2  && G2<0) {
             S1 = S2;
             H1 = H2;
@@ -638,7 +638,7 @@ LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
    
    S2 = atpS[numSeq1[i]][numSeq2[j]];
    H2 = atpH[numSeq1[i]][numSeq2[j]];
-   T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
+   T2 = (H2 + dplx_init_H_dimer) / (S2 + dplx_init_S_dimer + RC);
    G1 = H1 -TEMP_KELVIN*S1;   
    G2 = H2 -TEMP_KELVIN*S2;
    if(T1 < T2) {
