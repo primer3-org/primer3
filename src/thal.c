@@ -404,18 +404,20 @@ thal(const unsigned char *oligo_f,
 
       for (; i <= oligo1_len; i++) {
          for (j = 1; j <= oligo2_len; j++) {
-            RSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-            G1 = (enthalpyDPT[i][j]+ SH[1] + dplx_init_H) - TEMP_KELVIN*(entropyDPT[i][j] + SH[0] + dplx_init_S);  
-            if(G1<bestG){
-               bestG = G1;
-               bestI = i;
-               bestJ = j;
+            if(bpIndx[numSeq1[i]][numSeq2[j]]){
+               RSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
+               G1 = (enthalpyDPT[i][j]+ SH[1] + dplx_init_H) - TEMP_KELVIN*(entropyDPT[i][j] + SH[0] + dplx_init_S);  
+               if(G1<bestG){
+                  bestG = G1;
+                  bestI = i;
+                  bestJ = j;
+               }
             }
          }
       }
 
       /* tracebacking */
-      if(isFinite(enthalpyDPT[bestI][bestJ])){
+      if(bpIndx[numSeq1[bestI]][numSeq2[bestJ]]){
          double dH, dS;
          RSH(bestI, bestJ, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
          dH = enthalpyDPT[bestI][bestJ]+ SH[1] + dplx_init_H;
