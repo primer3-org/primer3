@@ -618,7 +618,7 @@ LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
    S1 = S2 = -1.0;
    H1 = H2 = -_INFINITY;
    T1 = T2 = -_INFINITY;
-   
+
    S1 = atpS[numSeq1[i]][numSeq2[j]] + tstack2Entropies[numSeq2[j]][numSeq2[j-1]][numSeq1[i]][numSeq1[i-1]];
    H1 = atpH[numSeq1[i]][numSeq2[j]] + tstack2Enthalpies[numSeq2[j]][numSeq2[j-1]][numSeq1[i]][numSeq1[i-1]];
    G1 = H1 - TEMP_KELVIN*S1;
@@ -628,73 +628,75 @@ LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
       G1 = 1.0;
    }
    /** If there is two dangling ends at the same end of duplex **/
-   if((is_complement[numSeq1[i-1]][numSeq2[j-1]] != 1 ) && isFinite(dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]]) && isFinite(dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]])) {
-      S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]] +
-        dangleEntropies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]];
-      H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]] +
-        dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]];
-      G2 = H2 - TEMP_KELVIN*S2;
-      if(G2>0) {
-         H2 = _INFINITY;
-         S2 = -1.0;
-     G2 = 1.0;
-      }
-      T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
-      if(isFinite(H1) && G1<0) {
-         T1 = (H1 + dplx_init_H) / (S1 + dplx_init_S + RC);
-         if(T1<T2 && G2<0) {
+   if(!is_complement[numSeq1[i-1]][numSeq2[j-1]]){
+      if(isFinite(dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]]) && isFinite(dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]])) {
+         S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]] +
+         dangleEntropies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]];
+         H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]] +
+         dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]];
+         G2 = H2 - TEMP_KELVIN*S2;
+         if(G2>0) {
+            H2 = _INFINITY;
+            S2 = -1.0;
+      G2 = 1.0;
+         }
+         T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
+         if(isFinite(H1) && G1<0) {
+            T1 = (H1 + dplx_init_H) / (S1 + dplx_init_S + RC);
+            if(T1<T2 && G2<0) {
+               S1 = S2;
+               H1 = H2;
+               T1 = T2;
+            }
+         } else if(G2<0) {
             S1 = S2;
             H1 = H2;
             T1 = T2;
          }
-      } else if(G2<0) {
-         S1 = S2;
-         H1 = H2;
-         T1 = T2;
-      }
-   } else if ((is_complement[numSeq1[i-1]][numSeq2[j-1]] != 1) && isFinite(dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]])) {
-      S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]];
-      H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]];
-      G2 = H2 - TEMP_KELVIN*S2;
-      if(G2>0) {
-         H2 = _INFINITY;
-         S2 = -1.0;
-     G2 = 1.0;
-      }
-      T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
-      if(G1<0) {
-         T1 = (H1 + dplx_init_H) / (S1 + dplx_init_S + RC);
-         if(T1<T2 && G2<0) {
+      } else if (isFinite(dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]])) {
+         S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]];
+         H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]];
+         G2 = H2 - TEMP_KELVIN*S2;
+         if(G2>0) {
+            H2 = _INFINITY;
+            S2 = -1.0;
+      G2 = 1.0;
+         }
+         T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
+         if(G1<0) {
+            T1 = (H1 + dplx_init_H) / (S1 + dplx_init_S + RC);
+            if(T1<T2 && G2<0) {
+               S1 = S2;
+               H1 = H2;
+               T1 = T2;
+            }
+         } else if (G2<0){
             S1 = S2;
             H1 = H2;
             T1 = T2;
          }
-      } else if (G2<0){
-         S1 = S2;
-         H1 = H2;
-         T1 = T2;
-      }
-   } else if ((is_complement[numSeq1[i-1]][numSeq2[j-1]] != 1) && isFinite(dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]])) {
-      S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]];
-      H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]];
-      G2 = H2 - TEMP_KELVIN*S2;
-      if(G2>0) {
-         H2 = _INFINITY;
-         S2 = -1.0;
-     G2 = 1.0;     
-      }
-      T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
-      if(G1<0) {
-         T1 = (H1 + dplx_init_H) / (S1 + dplx_init_S + RC);
-         if(T1 < T2  && G2<0) {
+      } else if (isFinite(dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]])) {
+         S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]];
+         H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]];
+         G2 = H2 - TEMP_KELVIN*S2;
+         if(G2>0) {
+            H2 = _INFINITY;
+            S2 = -1.0;
+      G2 = 1.0;     
+         }
+         T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
+         if(G1<0) {
+            T1 = (H1 + dplx_init_H) / (S1 + dplx_init_S + RC);
+            if(T1 < T2  && G2<0) {
+               S1 = S2;
+               H1 = H2;
+               T1 = T2;
+            }
+         } else if(G2<0) {
             S1 = S2;
             H1 = H2;
             T1 = T2;
          }
-      } else if(G2<0) {
-         S1 = S2;
-         H1 = H2;
-         T1 = T2;
       }
    }
    S2 = atpS[numSeq1[i]][numSeq2[j]];
@@ -745,80 +747,83 @@ RSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
       G1 = 1.0;
    }
    
-   if(is_complement[numSeq1[i+1]][numSeq2[j+1]] == 0 && isFinite(dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]]) && isFinite(dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]])) {
-      S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]] +
-        dangleEntropies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]];
-      H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]] +
-        dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]];
-    G2 = H2 - TEMP_KELVIN*S2;
-      if(G2>0) {
-         H2 = _INFINITY;
-         S2 = -1.0;
-     G2 = 1.0;
-      }
-      
-      T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
-      if(G1<0) {
-         T1 = (H1 + dplx_init_H) / (S1 + dplx_init_S + RC);
-         if(T1 < T2 && G2<0) {
+   if(!is_complement[numSeq1[i+1]][numSeq2[j+1]]){
+      if(isFinite(dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]]) && isFinite(dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]])) {
+         S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]] +
+         dangleEntropies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]];
+         H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]] +
+         dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]];
+      G2 = H2 - TEMP_KELVIN*S2;
+         if(G2>0) {
+            H2 = _INFINITY;
+            S2 = -1.0;
+      G2 = 1.0;
+         }
+         
+         T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
+         if(G1<0) {
+            T1 = (H1 + dplx_init_H) / (S1 + dplx_init_S + RC);
+            if(T1 < T2 && G2<0) {
+               S1 = S2;
+               H1 = H2;
+               T1 = T2;
+            }
+         } else if(G2<0){
             S1 = S2;
             H1 = H2;
             T1 = T2;
          }
-      } else if(G2<0){
-         S1 = S2;
-         H1 = H2;
-         T1 = T2;
+      }
+
+      else if(isFinite(dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]])) {
+         S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]];
+         H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]];
+         G2 = H2 - TEMP_KELVIN*S2;
+         if(G2 >0) {
+            H2 = _INFINITY;
+            S2 = -1.0;
+            G2 = 1.0;
+         }
+         T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
+         if(G1<0) {
+            T1 = (H1 + dplx_init_H) / (S1 + dplx_init_S + RC);
+            if(T1 < T2 && G2<0) {
+               S1 = S2;
+               H1 = H2;
+               T1 = T2;
+            }
+         } else if(G2<0){
+            S1 = S2;
+            H1 = H2;
+            T1 = T2;
+         }
+      }
+
+      else if(isFinite(dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]])) {
+         S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]];
+         H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]];
+         G2 = H2 - TEMP_KELVIN*S2;
+         if(G2>0) {
+            H2 = _INFINITY;
+            S2 = -1.0;
+      G2 = 1.0;
+         }
+         T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
+         if(G1<0) {
+            T1 = (H1 + dplx_init_H) / (S1 + dplx_init_S + RC);
+            if(T1 < T2 && G2<0) {
+               S1 = S2;
+               H1 = H2;
+               T1 = T2;
+            }
+         } else if (G2<0){
+            S1 = S2;
+            H1 = H2;
+            T1 = T2;
+         }
       }
    }
 
-   else if(is_complement[numSeq1[i+1]][numSeq2[j+1]] == 0 && isFinite(dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]])) {
-      S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]];
-      H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]];
-      G2 = H2 - TEMP_KELVIN*S2;
-      if(G2 >0) {
-         H2 = _INFINITY;
-         S2 = -1.0;
-         G2 = 1.0;
-      }
-      T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
-      if(G1<0) {
-         T1 = (H1 + dplx_init_H) / (S1 + dplx_init_S + RC);
-         if(T1 < T2 && G2<0) {
-            S1 = S2;
-            H1 = H2;
-            T1 = T2;
-         }
-      } else if(G2<0){
-         S1 = S2;
-         H1 = H2;
-         T1 = T2;
-      }
-   }
-
-   else if(is_complement[numSeq1[i+1]][numSeq2[j+1]] == 0 && isFinite(dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]])) {
-      S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]];
-      H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]];
-      G2 = H2 - TEMP_KELVIN*S2;
-      if(G2>0) {
-         H2 = _INFINITY;
-         S2 = -1.0;
-     G2 = 1.0;
-      }
-      T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
-      if(G1<0) {
-         T1 = (H1 + dplx_init_H) / (S1 + dplx_init_S + RC);
-         if(T1 < T2 && G2<0) {
-            S1 = S2;
-            H1 = H2;
-            T1 = T2;
-         }
-      } else if (G2<0){
-         S1 = S2;
-         H1 = H2;
-         T1 = T2;
-      }
-   }
    S2 = atpS[numSeq1[i]][numSeq2[j]];
    H2 = atpH[numSeq1[i]][numSeq2[j]];
    T2 = (H2 + dplx_init_H) / (S2 + dplx_init_S + RC);
