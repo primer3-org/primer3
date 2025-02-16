@@ -556,16 +556,18 @@ calc_bulge_internal_dimer(int i, int j, int ii, int jj, double* EntropyEnthalpy,
       H = stackint2Enthalpies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j+1]] +
         stackint2Enthalpies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]];
    } else { /* only internal loops */
-      H = interiorLoopEnthalpies[loopSize] + tstack2Enthalpies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j+1]] +
-        tstack2Enthalpies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]]
-        + (ILAH * abs(loopSize1 - loopSize2));
-
-      S = interiorLoopEntropies[loopSize] + tstack2Entropies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j+1]] +
-        tstack2Entropies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]] + (ILAS * abs(loopSize1 - loopSize2));
-      //This check just makes it so that the tstackEnthalpies/Entropies are not needed.
+      //Only calculate H and S if there is a mismatch in both nearest neighbor stacks. 
+      //This removes the need for the tstack table and improves performance.
+      //At this point, i,j and ii,jj are known to be complementary, so only need to check neighbors.
       //The only difference between tstack and tstack2 tables is when both pairs are complementary
-      if((is_complement[numSeq1[ii]][numSeq2[jj]] && is_complement[numSeq1[ii-1]][numSeq2[jj-1]]) || (is_complement[numSeq1[i]][numSeq2[j]] && is_complement[numSeq1[i+1]][numSeq2[j+1]]))
-         H = _INFINITY;
+      if((!is_complement[numSeq1[ii-1]][numSeq2[jj-1]]) && (!is_complement[numSeq1[i+1]][numSeq2[j+1]])){
+         H = interiorLoopEnthalpies[loopSize] + tstack2Enthalpies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j+1]] +
+         tstack2Enthalpies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]]
+         + (ILAH * abs(loopSize1 - loopSize2));
+
+         S = interiorLoopEntropies[loopSize] + tstack2Entropies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j+1]] +
+         tstack2Entropies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]] + (ILAS * abs(loopSize1 - loopSize2));
+      }
    }
 
    EntropyEnthalpy[0] = S + entropyDPT[i][j];;
