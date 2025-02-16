@@ -125,7 +125,7 @@ static void initMatrix_dimer(double **entropyDPT, double **enthalpyDPT, const un
 static void fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct vec2 **traceback_matrix, double RC,
                                  double dplx_init_S, double dplx_init_H, const unsigned char *numSeq1,
                                  const unsigned char *numSeq2, int oligo1_len, int oligo2_len, thal_results* o);
-static void calc_bulge_internal_dimer(int ii, int jj, int i, int j, double* EntropyEnthalpy, const double *saved_RSH,
+static void calc_bulge_internal_dimer(int ii, int jj, int i, int j, double* EntropyEnthalpy,
                                  const double *const *entropyDPT, const double *const *enthalpyDPT,
                                  const unsigned char *numSeq1, const unsigned char *numSeq2);
 static void traceback_dimer(int i, int j, int* ps1, int* ps2, const struct vec2 **traceback_matrix);
@@ -470,45 +470,26 @@ fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct 
    int d, i, j, ii, jj;
    double SH[2];
    double saved_RSH[2];
-   double T0, T1;
-   double S0, S1;
-   double H0, H1;
+   double bestG, newG;
 
    for (i = 1; i <= oligo1_len; ++i) {
       for (j = 1; j <= oligo2_len; ++j) {
-         if(isFinite(enthalpyDPT[i][j])) { /* if finite */
-            SH[0] = -1.0;
-            SH[1] = _INFINITY;
+         if(bpIndx[numSeq1[i]][numSeq2[j]]) { /* if finite */
             LSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
-            if(isFinite(SH[1])) {
-               entropyDPT[i][j] = SH[0];
-               enthalpyDPT[i][j] = SH[1];
-            }
-            if (i > 1 && j > 1) {
-               S0 = entropyDPT[i][j];
-               H0 = enthalpyDPT[i][j];
+            entropyDPT[i][j] = SH[0];
+            enthalpyDPT[i][j] = SH[1];
+            if (i > 1 && j > 1){
                RSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
                saved_RSH[0] = SH[0];
                saved_RSH[1] = SH[1];
-               T0 = (H0 + dplx_init_H + SH[1]) /(S0 + dplx_init_S + SH[0] + RC); /* at current position */
 
-               if(isFinite(enthalpyDPT[i-1][j-1]) && isFinite(stackEnthalpies[numSeq1[i-1]][numSeq1[i]][numSeq2[j-1]][numSeq2[j]])) {
-                  S1 = entropyDPT[i-1][j-1] + stackEntropies[numSeq1[i-1]][numSeq1[i]][numSeq2[j-1]][numSeq2[j]];
-                  H1 = enthalpyDPT[i-1][j-1] + stackEnthalpies[numSeq1[i-1]][numSeq1[i]][numSeq2[j-1]][numSeq2[j]];
-                  T1 = (H1 + dplx_init_H + SH[1]) /(S1 + dplx_init_S + SH[0] + RC);
-               } else {
-                  S1 = -1.0;
-                  H1 = _INFINITY;
-                  T1 = -_INFINITY;
-               }
-
-               if(T1 > T0) { 
-                  entropyDPT[i][j] = S1;
-                  enthalpyDPT[i][j] = H1;
+               if(bpIndx[numSeq1[i-1]][numSeq2[j-1]]){
+                  entropyDPT[i][j] = entropyDPT[i-1][j-1] + stackEntropies[numSeq1[i-1]][numSeq1[i]][numSeq2[j-1]][numSeq2[j]];
+                  enthalpyDPT[i][j] = enthalpyDPT[i-1][j-1] + stackEnthalpies[numSeq1[i-1]][numSeq1[i]][numSeq2[j-1]][numSeq2[j]];
                   traceback_matrix[i][j].i = i-1;
                   traceback_matrix[i][j].j = j-1;
-               } 
-
+               }
+               bestG = enthalpyDPT[i][j]+saved_RSH[1] - TEMP_KELVIN*(entropyDPT[i][j]+saved_RSH[0]);
                for(d = 3; d <= maxLoop + 2; d++) { /* max=30, length over 30 is not allowed */
                   ii = i - 1;
                   jj = - ii - d + (j + i);
@@ -517,11 +498,11 @@ fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct 
                      jj = 1;
                   }
                   for (; ii > 0 && jj < j; --ii, ++jj) {
-                     SH[0] = -1.0;
-                     SH[1] = _INFINITY;
-                     if (isFinite(enthalpyDPT[ii][jj])) {
-                        calc_bulge_internal_dimer(ii, jj, i, j, SH, saved_RSH, (const double **)entropyDPT, (const double **)enthalpyDPT, numSeq1, numSeq2);
-                        if(isFinite(SH[1])) {
+                     if(bpIndx[numSeq1[ii]][numSeq2[jj]]){// (isFinite(enthalpyDPT[ii][jj])) {
+                        calc_bulge_internal_dimer(ii, jj, i, j, SH, (const double **)entropyDPT, (const double **)enthalpyDPT, numSeq1, numSeq2);
+                        newG = SH[1]+saved_RSH[1] -TEMP_KELVIN*(SH[0]+saved_RSH[0]);
+                        if(newG < bestG ) {
+                           bestG = newG;
                            //This condition is only here to pick the same alignment as the old traceback
                            //when there are multiple, equal alignments.
                            if(!(equal(enthalpyDPT[i][j], SH[1]) && equal(entropyDPT[i][j], SH[0]))){
@@ -541,12 +522,12 @@ fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct 
 }
 
 static void 
-calc_bulge_internal_dimer(int i, int j, int ii, int jj, double* EntropyEnthalpy, const double *saved_RSH,
+calc_bulge_internal_dimer(int i, int j, int ii, int jj, double* EntropyEnthalpy,
                         const double *const *entropyDPT,  const double *const *enthalpyDPT,
                         const unsigned char *numSeq1, const unsigned char *numSeq2)
 {
    int loopSize1, loopSize2, loopSize;
-   double S,H,G1,G2;
+   double S,H;
    S = -1.0;
    H = _INFINITY;
    loopSize1 = ii - i - 1;
@@ -573,24 +554,20 @@ calc_bulge_internal_dimer(int i, int j, int ii, int jj, double* EntropyEnthalpy,
       H = stackint2Enthalpies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j+1]] +
         stackint2Enthalpies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]];
    } else { /* only internal loops */
-      H = interiorLoopEnthalpies[loopSize] + tstackEnthalpies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j+1]] +
-        tstackEnthalpies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]]
+      H = interiorLoopEnthalpies[loopSize] + tstack2Enthalpies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j+1]] +
+        tstack2Enthalpies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]]
         + (ILAH * abs(loopSize1 - loopSize2));
 
-      S = interiorLoopEntropies[loopSize] + tstackEntropies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j+1]] +
-        tstackEntropies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]] + (ILAS * abs(loopSize1 - loopSize2));
+      S = interiorLoopEntropies[loopSize] + tstack2Entropies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j+1]] +
+        tstack2Entropies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]] + (ILAS * abs(loopSize1 - loopSize2));
+      //This check just makes it so that the tstackEnthalpies/Entropies are not needed.
+      //The only difference between tstack and tstack2 tables is when both pairs are complementary
+      if((bpIndx[numSeq1[ii]][numSeq2[jj]] && bpIndx[numSeq1[ii-1]][numSeq2[jj-1]]) || (bpIndx[numSeq1[i]][numSeq2[j]] && bpIndx[numSeq1[i+1]][numSeq2[j+1]]))
+         H = _INFINITY;
    }
 
-   H += enthalpyDPT[i][j];
-   S += entropyDPT[i][j];
-   if(!(((H > 0) && (S > 0)) || !isFinite(H))){ 
-      G1 = H+saved_RSH[1] -TEMP_KELVIN*(S+saved_RSH[0]);
-      G2 = enthalpyDPT[ii][jj]+saved_RSH[1]-TEMP_KELVIN*(entropyDPT[ii][jj]+saved_RSH[0]);
-      if(G1< G2){
-         EntropyEnthalpy[0] = S;
-         EntropyEnthalpy[1] = H;
-      }
-   }
+   EntropyEnthalpy[0] = S + entropyDPT[i][j];;
+   EntropyEnthalpy[1] = H + enthalpyDPT[i][j];
    return;
 }
 
