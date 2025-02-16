@@ -83,7 +83,7 @@ const int MIN_LOOP = 0;
 //                                                  */
 //static const char BASE_PAIRS[4][4] = {"A-T", "C-G", "G-C", "T-A" }; /* allowed basepairs */
 /* matrix for allowed; bp 0 - no bp, watson crick bp - 1 */
-static const int bpIndx[5][5] =  {
+static const int is_complement[5][5] =  {
      {0, 0, 0, 1, 0}, /* A, C, G, T, N; */
      {0, 0, 1, 0, 0},
      {0, 1, 0, 0, 0},
@@ -404,7 +404,7 @@ thal(const unsigned char *oligo_f,
 
       for (; i <= oligo1_len; i++) {
          for (j = 1; j <= oligo2_len; j++) {
-            if(bpIndx[numSeq1[i]][numSeq2[j]]){
+            if(is_complement[numSeq1[i]][numSeq2[j]]){
                RSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
                G1 = (enthalpyDPT[i][j]+ SH[1] + dplx_init_H) - TEMP_KELVIN*(entropyDPT[i][j] + SH[0] + dplx_init_S);  
                if(G1<bestG){
@@ -417,7 +417,7 @@ thal(const unsigned char *oligo_f,
       }
 
       /* tracebacking */
-      if(bpIndx[numSeq1[bestI]][numSeq2[bestJ]]){
+      if(is_complement[numSeq1[bestI]][numSeq2[bestJ]]){
          double dH, dS;
          RSH(bestI, bestJ, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
          dH = enthalpyDPT[bestI][bestJ]+ SH[1] + dplx_init_H;
@@ -455,7 +455,7 @@ initMatrix_dimer(double **entropyDPT, double** enthalpyDPT, const unsigned char 
    int i, j;
    for (i = 1; i <= oligo1_len; ++i) {
       for (j = 1; j <= oligo2_len; ++j) {
-         if (bpIndx[numSeq1[i]][numSeq2[j]] == 0)  {
+         if (is_complement[numSeq1[i]][numSeq2[j]] == 0)  {
             enthalpyDPT[i][j] = _INFINITY;
             entropyDPT[i][j] = -1.0;
          } else {
@@ -476,7 +476,7 @@ fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct 
 
    for (i = 1; i <= oligo1_len; ++i) {
       for (j = 1; j <= oligo2_len; ++j) {
-         if(bpIndx[numSeq1[i]][numSeq2[j]]) { /* if finite */
+         if(is_complement[numSeq1[i]][numSeq2[j]]) { /* if finite */
             LSH(i, j, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
             entropyDPT[i][j] = SH[0];
             enthalpyDPT[i][j] = SH[1];
@@ -485,7 +485,7 @@ fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct 
                saved_RSH[0] = SH[0];
                saved_RSH[1] = SH[1];
 
-               if(bpIndx[numSeq1[i-1]][numSeq2[j-1]]){
+               if(is_complement[numSeq1[i-1]][numSeq2[j-1]]){
                   entropyDPT[i][j] = entropyDPT[i-1][j-1] + stackEntropies[numSeq1[i-1]][numSeq1[i]][numSeq2[j-1]][numSeq2[j]];
                   enthalpyDPT[i][j] = enthalpyDPT[i-1][j-1] + stackEnthalpies[numSeq1[i-1]][numSeq1[i]][numSeq2[j-1]][numSeq2[j]];
                   traceback_matrix[i][j].i = i-1;
@@ -500,7 +500,7 @@ fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct 
                      jj = 1;
                   }
                   for (; ii > 0 && jj < j; --ii, ++jj) {
-                     if(bpIndx[numSeq1[ii]][numSeq2[jj]]){// (isFinite(enthalpyDPT[ii][jj])) {
+                     if(is_complement[numSeq1[ii]][numSeq2[jj]]){// (isFinite(enthalpyDPT[ii][jj])) {
                         calc_bulge_internal_dimer(ii, jj, i, j, SH, (const double **)entropyDPT, (const double **)enthalpyDPT, numSeq1, numSeq2);
                         newG = SH[1]+saved_RSH[1] -TEMP_KELVIN*(SH[0]+saved_RSH[0]);
                         if(newG < bestG ) {
@@ -564,7 +564,7 @@ calc_bulge_internal_dimer(int i, int j, int ii, int jj, double* EntropyEnthalpy,
         tstack2Entropies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]] + (ILAS * abs(loopSize1 - loopSize2));
       //This check just makes it so that the tstackEnthalpies/Entropies are not needed.
       //The only difference between tstack and tstack2 tables is when both pairs are complementary
-      if((bpIndx[numSeq1[ii]][numSeq2[jj]] && bpIndx[numSeq1[ii-1]][numSeq2[jj-1]]) || (bpIndx[numSeq1[i]][numSeq2[j]] && bpIndx[numSeq1[i+1]][numSeq2[j+1]]))
+      if((is_complement[numSeq1[ii]][numSeq2[jj]] && is_complement[numSeq1[ii-1]][numSeq2[jj-1]]) || (is_complement[numSeq1[i]][numSeq2[j]] && is_complement[numSeq1[i+1]][numSeq2[j+1]]))
          H = _INFINITY;
    }
 
@@ -842,7 +842,7 @@ LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
    S1 = S2 = -1.0;
    H1 = H2 = -_INFINITY;
    T1 = T2 = -_INFINITY;
-   if (bpIndx[numSeq1[i]][numSeq2[j]] == 0) {
+   if (is_complement[numSeq1[i]][numSeq2[j]] == 0) {
       EntropyEnthalpy[0] = -1.0;
       EntropyEnthalpy[1] = _INFINITY;
       return;
@@ -856,7 +856,7 @@ LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
       G1 = 1.0;
    }
    /** If there is two dangling ends at the same end of duplex **/
-   if((bpIndx[numSeq1[i-1]][numSeq2[j-1]] != 1 ) && isFinite(dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]]) && isFinite(dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]])) {
+   if((is_complement[numSeq1[i-1]][numSeq2[j-1]] != 1 ) && isFinite(dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]]) && isFinite(dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]])) {
       S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]] +
         dangleEntropies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]];
       H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]] +
@@ -880,7 +880,7 @@ LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
          H1 = H2;
          T1 = T2;
       }
-   } else if ((bpIndx[numSeq1[i-1]][numSeq2[j-1]] != 1) && isFinite(dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]])) {
+   } else if ((is_complement[numSeq1[i-1]][numSeq2[j-1]] != 1) && isFinite(dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]])) {
       S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]];
       H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies3[numSeq2[j]][numSeq2[j - 1]][numSeq1[i]];
       G2 = H2 - TEMP_KELVIN*S2;
@@ -902,7 +902,7 @@ LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
          H1 = H2;
          T1 = T2;
       }
-   } else if ((bpIndx[numSeq1[i-1]][numSeq2[j-1]] != 1) && isFinite(dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]])) {
+   } else if ((is_complement[numSeq1[i-1]][numSeq2[j-1]] != 1) && isFinite(dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]])) {
       S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]];
       H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies5[numSeq2[j]][numSeq1[i]][numSeq1[i - 1]];
       G2 = H2 - TEMP_KELVIN*S2;
@@ -959,7 +959,7 @@ RSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
    S1 = S2 = -1.0;
    H1 = H2 = _INFINITY;
    T1 = T2 = -_INFINITY;
-   if (bpIndx[numSeq1[i]][numSeq2[j]] == 0) {
+   if (is_complement[numSeq1[i]][numSeq2[j]] == 0) {
       EntropyEnthalpy[0] = -1.0;
       EntropyEnthalpy[1] = _INFINITY;
       return;
@@ -973,7 +973,7 @@ RSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
       G1 = 1.0;
    }
    
-   if(bpIndx[numSeq1[i+1]][numSeq2[j+1]] == 0 && isFinite(dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]]) && isFinite(dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]])) {
+   if(is_complement[numSeq1[i+1]][numSeq2[j+1]] == 0 && isFinite(dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]]) && isFinite(dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]])) {
       S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]] +
         dangleEntropies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]];
       H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]] +
@@ -1000,7 +1000,7 @@ RSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
       }
    }
 
-   else if(bpIndx[numSeq1[i+1]][numSeq2[j+1]] == 0 && isFinite(dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]])) {
+   else if(is_complement[numSeq1[i+1]][numSeq2[j+1]] == 0 && isFinite(dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]])) {
       S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]];
       H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies3[numSeq1[i]][numSeq1[i + 1]][numSeq2[j]];
       G2 = H2 - TEMP_KELVIN*S2;
@@ -1024,7 +1024,7 @@ RSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
       }
    }
 
-   else if(bpIndx[numSeq1[i+1]][numSeq2[j+1]] == 0 && isFinite(dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]])) {
+   else if(is_complement[numSeq1[i+1]][numSeq2[j+1]] == 0 && isFinite(dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]])) {
       S2 = atpS[numSeq1[i]][numSeq2[j]] + dangleEntropies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]];
       H2 = atpH[numSeq1[i]][numSeq2[j]] + dangleEnthalpies5[numSeq1[i]][numSeq2[j]][numSeq2[j + 1]];
       G2 = H2 - TEMP_KELVIN*S2;
@@ -1077,7 +1077,7 @@ initMatrix_monomer(double **entropyDPT, double **enthalpyDPT, const unsigned cha
    int i, j;
    for (i = 1; i <= oligo1_len; ++i)
      for (j = i; j <= oligo2_len; ++j)
-       if (j - i < min_hrpn_loop + 1 || (bpIndx[numSeq1[i]][numSeq1[j]] == 0)) {
+       if (j - i < min_hrpn_loop + 1 || (is_complement[numSeq1[i]][numSeq1[j]] == 0)) {
           enthalpyDPT[i][j] = _INFINITY;
           entropyDPT[i][j] = -1.0;
        } else {
