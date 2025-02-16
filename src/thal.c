@@ -421,13 +421,9 @@ thal(const unsigned char *oligo_f,
          RSH(bestI, bestJ, SH, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2);
          traceback_dimer(bestI, bestJ, ps1, ps2, (const struct vec2 **)traceback_matrix);
          int N=0;
-         for(i=0;i<oligo1_len;i++){
+         for(i=0;i<oligo1_len;i++)
             if(ps1[i]>0) ++N;
-         }
-         for(i=0;i<oligo2_len;i++) {
-            if(ps2[i]>0) ++N;
-         }
-         N = (N/2) -1;
+         N--;
          o->dh = enthalpyDPT[bestI][bestJ]+ SH[1] + dplx_init_H;
          o->ds = (entropyDPT[bestI][bestJ] + SH[0] + dplx_init_S);
          o->ds = o->ds + (N * saltCorrection);
