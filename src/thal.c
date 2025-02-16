@@ -618,11 +618,7 @@ LSH(int i, int j, double* EntropyEnthalpy, double RC, double dplx_init_S, double
    S1 = S2 = -1.0;
    H1 = H2 = -_INFINITY;
    T1 = T2 = -_INFINITY;
-   if (is_complement[numSeq1[i]][numSeq2[j]] == 0) {
-      EntropyEnthalpy[0] = -1.0;
-      EntropyEnthalpy[1] = _INFINITY;
-      return;
-   }
+   
    S1 = atpS[numSeq1[i]][numSeq2[j]] + tstack2Entropies[numSeq2[j]][numSeq2[j-1]][numSeq1[i]][numSeq1[i-1]];
    H1 = atpH[numSeq1[i]][numSeq2[j]] + tstack2Enthalpies[numSeq2[j]][numSeq2[j-1]][numSeq1[i]][numSeq1[i-1]];
    G1 = H1 - TEMP_KELVIN*S1;
