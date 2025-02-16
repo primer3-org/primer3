@@ -75,11 +75,6 @@ int main(int argc, char** argv)
                                     do not draw structure or print any additional parameters */
    int thal_debug = 0;
    int thal_only = 0;
-   if((mode == THL_DEBUG) || (mode == THL_DEBUG_F)) {
-#undef DEBUG
-   } else {
-#define DEBUG
-   }
 
    usage = "USAGE: %s OPTIONS oligo\n"
      "-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM\n"
@@ -109,66 +104,50 @@ int main(int argc, char** argv)
      "                       should be provided on one line separated by a comma (dimer only).\n"
      "\n";
    if(argc < 2) {
-#ifdef DEBUG
       fprintf(stderr, usage, argv[0]);
-#endif
       return -1;
    }
    /* BEGIN: READ the INPUT */
    for(i = 1; i < argc; ++i) {
       if (!strncmp("-mv", argv[i], 3)) { /* conc of monovalent cations */
          if(argv[i+1]==NULL) {
-#ifdef DEBUG
             fprintf(stderr, usage, argv[0]);
-#endif
             exit(-1);
          }
          a.mv = strtod(argv[i+1], &endptr);
          if ('\0' != *endptr || a.mv < 0.0) {
-#ifdef DEBUG
             fprintf(stderr, usage, argv[0]);
-#endif
             exit(-1);
          }
          i++;
       } else if (!strncmp("-dv", argv[i], 3)) { /* conc of divalent cations */
          if(argv[i+1]==NULL) {
-#ifdef DEBUG
             fprintf(stderr, usage, argv[0]);
-#endif
             exit(-1);
          }
          a.dv = strtod(argv[i+1], &endptr);
          if('\0' != *endptr || a.dv < 0.0) {
-#ifdef DEBUG
             fprintf(stderr, usage, argv[0]);
-#endif
             exit(-1);
          }
          i++;
       } else if (!strcmp("-path", argv[i])) {
         if(argv[i+1]==NULL) {
-#ifdef DEBUG
             fprintf(stderr, usage, argv[0]);
-#endif
             exit(-1);
          }
          path = (char*)argv[i+1];
          i++;
       } else if (!strncmp("-s1", argv[i], 3)) { /* first sequence in 5'->3' direction */
          if(argv[i+1]==NULL) {
-#ifdef DEBUG
             fprintf(stderr, usage, argv[0]);
-#endif
             exit(-1);
          }
          oligo1 = (const unsigned char*)argv[i+1];
          i++;         
       } else if (!strncmp("-s2", argv[i], 3)) { /* second sequence in 5'->3' direction */
          if(argv[i+1]==NULL) {
-#ifdef DEBUG
             fprintf(stderr, usage, argv[0]);
-#endif
             exit(-1);
          }
          oligo2 = (const unsigned char*)argv[i+1];
@@ -176,9 +155,7 @@ int main(int argc, char** argv)
       } else if (!strncmp("-a", argv[i], 2)) {          /* annealing type END1, END2, ANY, considered only when duplexis; 
                                                   by default ANY  */
          if(argv[i+1]==NULL) {
-#ifdef DEBUG
             fprintf(stderr, usage, argv[0]);
-#endif
             exit(-1);
          }
          if(strcmp(argv[i+1],"END1")==0) {
@@ -191,24 +168,18 @@ int main(int argc, char** argv)
          } else if (strcmp(argv[i+1], "ANY")==0) {
                a.type = thal_any; /* ANY */  
          } else {
-#ifdef DEBUG
             fprintf(stderr, usage, argv[0]);
-#endif
             exit(-1);
          }
          i++;
       } else if (!strncmp("-d", argv[i], 2)) { /* dna conc */
          if(argv[i+1]==NULL) {
-#ifdef DEBUG
             fprintf(stderr, usage, argv[0]);
-#endif
             exit(-1);
          }
          a.dna_conc = strtod(argv[i+1], &endptr);
          if('\0' != *endptr || a.dna_conc < 0 || a.dna_conc == 0) {
-#ifdef DEBUG
             fprintf(stderr, usage, argv[0]);
-#endif
             exit(-1);
          }
          i++;
@@ -216,68 +187,50 @@ int main(int argc, char** argv)
          thal_only = 1;
       } else if (!strncmp("-t", argv[i], 2)) { /* temperature at which sec str are calculated */
          if(argv[i+1]==NULL) {
-#ifdef DEBUG
             fprintf(stderr, usage, argv[0]);
-#endif
             exit(-1);
          }
          a.temp = strtod(argv[i+1], &endptr) + ABSOLUTE_ZERO;
          if('\0' != *endptr) {
-#ifdef DEBUG
             fprintf(stderr, usage, argv[0]);
-#endif
             exit(-1);
          }
          i++;
       } else if (!strncmp("-n", argv[i], 2)) { /* concentration of dNTPs */
          if(argv[i+1]==NULL) {
-#ifdef DEBUG
             fprintf(stderr, usage, argv[0]);
-#endif
             exit(-1);
          }
          a.dntp = strtod(argv[i+1], &endptr);
          if('\0' != *endptr || a.dntp < 0.0) {
-#ifdef DEBUG
             fprintf(stderr, usage, argv[0]);
-#endif
             exit(-1);
          }
          i++;
       } else if (!strncmp("-maxloop", argv[i], 8)) { /* maximum size of loop calculated; 
                                                       this value can not be larger than 30 */
          if(argv[i+1]==NULL) {
-#ifdef DEBUG
             fprintf(stderr, usage, argv[0]);
-#endif
             exit(-1);
          }
          a.maxLoop = (int) (strtod(argv[i+1], &endptr));
                  
          if(a.maxLoop > MAX_LOOP ) {
             a.maxLoop = MAX_LOOP;
-#ifdef DEBUG
             fputs("Warning: the maximum size of secondary structures loop is set to default (30)\n", stderr);
-#endif
          }  else if(a.maxLoop < MIN_LOOP) {         
             a.maxLoop = MIN_LOOP;
-#ifdef DEBUG
             fputs("Warning: the maximum size of secondary structures loop was set to minimum size of allowed loop length (0)\n", stderr);
-#endif
          } 
          if('\0' != *endptr || a.maxLoop < 0) {
-#ifdef DEBUG
             fprintf(stderr, usage, argv[0]);
-#endif
             exit(-1);
          }
          i++;
       } else if (!strncmp("-i", argv[i], 2)) { /* interactive mode */
          interactive = 1;
       } else if(!strncmp("-", argv[i], 1)) { /* Unknown option. */
-#ifdef DEBUG
          fprintf(stderr, usage, argv[0]);
-#endif
          exit(-1);
       } else {
          break;
