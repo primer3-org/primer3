@@ -496,7 +496,7 @@ fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct 
                   ii = i - 1;
                   jj = - ii - d + (j + i);
                   if (jj < 1) {
-                     ii -= abs(jj-1);
+                     ii += jj-1;
                      jj = 1;
                   }
                   for (; ii > 0 && jj < j; --ii, ++jj) {
