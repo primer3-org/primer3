@@ -77,6 +77,8 @@ static const double MinEntropyCutoff = -2500.0; /* to filter out non-existing en
 static const double MinEntropy = -3224.0; /* initiation */
 static const double dplx_init_H_dimer = 200;
 static const double dplx_init_S_dimer = -5.7;
+static const double dplx_init_H_monomer = 0.0;
+static const double dplx_init_S_monomer = 0.0;
 const double ABSOLUTE_ZERO = 273.15;
 const double TEMP_KELVIN = 310.15;
 const int MAX_LOOP = 30; /* the maximum size of loop that can be calculated; for larger loops formula must be implemented */
@@ -279,20 +281,10 @@ thal(const unsigned char *oligo_f,
      const thal_mode mode,
      thal_results *o)
 {
-   double SH[2];
-   int i, j;
    int len_f, len_r;
-   int k;
-   int *bp;
-   double mh, ms;
-   double G1, bestG;
    jmp_buf _jmp_buf;
    double saltCorrection;
    double RC;
-   double dplx_init_S;
-   double dplx_init_H;
-   int bestI;
-   int bestJ;
    int oligo1_len;
    int oligo2_len;
 
@@ -300,6 +292,9 @@ thal(const unsigned char *oligo_f,
    unsigned char *numSeq2 = NULL;
    unsigned char *oligo1 = NULL;
    unsigned char *oligo2 = NULL;
+   double **enthalpyDPT = NULL;
+   double **entropyDPT = NULL;
+
    strcpy(o->msg, "");
    o->temp = THAL_ERROR_SCORE;
    errno = 0; 
@@ -327,12 +322,8 @@ thal(const unsigned char *oligo_f,
    }
    oligo1_len = length_unsig_char(oligo1);
    oligo2_len = length_unsig_char(oligo2);
-   double **enthalpyDPT = allocate_DPT(oligo1_len, oligo2_len, _jmp_buf, o);
-   double **entropyDPT = allocate_DPT(oligo1_len, oligo2_len, _jmp_buf, o);
    /*** INIT values for unimolecular and bimolecular structures ***/
    if (a->type==4) { /* unimolecular folding */
-      dplx_init_H = 0.0;
-      dplx_init_S = 0.0;
       RC=0;
    } else  {
       /* hybridization of two oligos */
@@ -346,20 +337,26 @@ thal(const unsigned char *oligo_f,
    /* convert nucleotides to numbers */
    numSeq1 = (unsigned char*) safe_malloc(oligo1_len + 2, _jmp_buf, o);
    numSeq2 = (unsigned char*) safe_malloc(oligo2_len + 2, _jmp_buf, o);
+   
+   //Allocate Dynamic Programming Tables
+   enthalpyDPT = allocate_DPT(oligo1_len, oligo2_len, _jmp_buf, o);
+   entropyDPT = allocate_DPT(oligo1_len, oligo2_len, _jmp_buf, o);
 
    /*** Calc part of the salt correction ***/
    saltCorrection=saltCorrectS(a->mv,a->dv,a->dntp); /* salt correction for entropy, must be multiplied with N, which is
                                                    the total number of phosphates in the duplex divided by 2; 8bp dplx N=7 */
 
-   for(i = 0; i < oligo1_len; i++) oligo1[i] = toupper(oligo1[i]);
-   for(i = 0; i < oligo2_len; i++) oligo2[i] = toupper(oligo2[i]);
-   for(i = 1; i <= oligo1_len; ++i) numSeq1[i] = str2int(oligo1[i - 1]);
-   for(i = 1; i <= oligo2_len; ++i) numSeq2[i] = str2int(oligo2[i - 1]);
+   for(int i = 0; i < oligo1_len; i++) oligo1[i] = toupper(oligo1[i]);
+   for(int i = 0; i < oligo2_len; i++) oligo2[i] = toupper(oligo2[i]);
+   for(int i = 1; i <= oligo1_len; ++i) numSeq1[i] = str2int(oligo1[i - 1]);
+   for(int i = 1; i <= oligo2_len; ++i) numSeq2[i] = str2int(oligo2[i - 1]);
    numSeq1[0] = numSeq1[oligo1_len + 1] = numSeq2[0] = numSeq2[oligo2_len + 1] = 4; /* mark as N-s */
 
    if (a->type==4) { /* calculate structure of monomer */
+      double mh, ms;
       double *hend5 = (double*) safe_malloc((oligo1_len + 1) * sizeof(double), _jmp_buf, o);
       double *send5 = (double*) safe_malloc((oligo1_len + 1) * sizeof(double), _jmp_buf, o);
+      int *bp = (int*) safe_calloc(oligo1_len, sizeof(int), _jmp_buf, o);
       initMatrix_monomer(entropyDPT, enthalpyDPT, numSeq1, numSeq2, oligo1_len, oligo2_len);
       fillMatrix_monomer(a->maxLoop, entropyDPT, enthalpyDPT, RC, numSeq1, numSeq2, oligo1_len, oligo2_len, o);
       calc_terminal_bp(a->temp, (const double **)entropyDPT, (const double **)enthalpyDPT, send5, hend5, RC, numSeq1, numSeq2, oligo1_len, oligo2_len);
@@ -367,10 +364,9 @@ thal(const unsigned char *oligo_f,
       ms = send5[oligo1_len];
       o->align_end_1 = (int) mh;
       o->align_end_2 = (int) ms;
-      bp = (int*) safe_calloc(oligo1_len, sizeof(int), _jmp_buf, o);
-      for (k = 0; k < oligo1_len; ++k) bp[k] = 0;
+      for (int i = 0; i < oligo1_len; ++i) bp[i] = 0;
       if(isFinite(mh)) {
-        traceback_monomer(bp, a->maxLoop, (const double **)entropyDPT, (const double **)enthalpyDPT, send5, hend5, RC, dplx_init_S, dplx_init_H, numSeq1, numSeq2, oligo1_len, oligo2_len, _jmp_buf, o);
+        traceback_monomer(bp, a->maxLoop, (const double **)entropyDPT, (const double **)enthalpyDPT, send5, hend5, RC, dplx_init_S_monomer, dplx_init_H_monomer, numSeq1, numSeq2, oligo1_len, oligo2_len, _jmp_buf, o);
         /* traceback for unimolecular structure */
         o->sec_struct=drawHairpin(bp, mh, ms, mode,a->temp, oligo1, oligo2, saltCorrection, oligo1_len, oligo2_len, _jmp_buf, o); /* if mode=THL_FAST or THL_DEBUG_F then return after printing basic therm data */
       } else if((mode != THL_FAST) && (mode != THL_DEBUG_F) && (mode != THL_STRUCT)) {
@@ -389,6 +385,11 @@ thal(const unsigned char *oligo_f,
       free(oligo2);
       return;
    } else if(a->type!=4) { /* Hybridization of two moleculs */
+      int bestI;
+      int bestJ;
+      double G1, bestG;
+      double SH[2];
+      int i, j;
       int *ps1, *ps2;
       ps1 = (int*) safe_calloc(oligo1_len, sizeof(int), _jmp_buf, o);
       ps2 = (int*) safe_calloc(oligo2_len, sizeof(int), _jmp_buf, o);
