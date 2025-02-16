@@ -500,7 +500,7 @@ fillMatrix_dimer(int maxLoop, double **entropyDPT, double **enthalpyDPT, struct 
                      jj = 1;
                   }
                   for (; ii > 0 && jj < j; --ii, ++jj) {
-                     if(is_complement[numSeq1[ii]][numSeq2[jj]]){// (isFinite(enthalpyDPT[ii][jj])) {
+                     if(is_complement[numSeq1[ii]][numSeq2[jj]]){
                         calc_bulge_internal_dimer(ii, jj, i, j, SH, (const double **)entropyDPT, (const double **)enthalpyDPT, numSeq1, numSeq2);
                         newG = SH[1]+saved_RSH[1] -TEMP_KELVIN*(SH[0]+saved_RSH[0]);
                         if(newG < bestG ) {
