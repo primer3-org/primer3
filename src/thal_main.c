@@ -54,8 +54,6 @@
 #define OS_WIN
 #endif
 
-#define DEBUG
-
 char *endptr; /* reading input */
 int i; /* index */
 const unsigned char *oligo1, *oligo2; /* inserted oligo sequences */
@@ -73,7 +71,6 @@ int main(int argc, char** argv)
    set_thal_default_args(&a);
    thal_mode mode = THL_GENERAL; /* by default print only melting temperature, 
                                     do not draw structure or print any additional parameters */
-   int thal_debug = 0;
    int thal_only = 0;
 
    usage = "USAGE: %s OPTIONS oligo\n"
@@ -271,17 +268,9 @@ int main(int argc, char** argv)
 
    /* Set the correct mode */
    if (thal_only) {
-     if (thal_debug) {
-       mode = THL_DEBUG_F;
-     } else {
-       mode = THL_FAST;
-     }
+      mode = THL_FAST;
    } else {
-     if (thal_debug) {
-       mode = THL_DEBUG;
-     } else {
-       mode = THL_GENERAL;
-     }
+      mode = THL_GENERAL;
    }
 
    if(interactive) {
@@ -311,7 +300,7 @@ int main(int argc, char** argv)
          tmp_ret = fprintf(stderr, "Error: %s\n", o.msg);
          exit(-1);
        }
-       if((mode == THL_FAST) || (mode == THL_DEBUG_F))
+       if(mode == THL_FAST)
          printf("%f\n",o.temp);
        free(o.sec_struct);
        o.sec_struct=NULL;
@@ -332,7 +321,7 @@ int main(int argc, char** argv)
        tmp_ret = fprintf(stderr, "Error: %s\n", o.msg);
        exit(-1);
      }
-     if((mode == THL_FAST) || (mode == THL_DEBUG_F))
+     if(mode == THL_FAST)
        printf("%f\n",o.temp);
      free(o.sec_struct);
    }
