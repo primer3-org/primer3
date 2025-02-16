@@ -283,7 +283,6 @@ thal(const unsigned char *oligo_f,
 {
    int len_f, len_r;
    jmp_buf _jmp_buf;
-   double saltCorrection;
    double RC;
    int oligo1_len;
    int oligo2_len;
@@ -337,14 +336,10 @@ thal(const unsigned char *oligo_f,
    /* convert nucleotides to numbers */
    numSeq1 = (unsigned char*) safe_malloc(oligo1_len + 2, _jmp_buf, o);
    numSeq2 = (unsigned char*) safe_malloc(oligo2_len + 2, _jmp_buf, o);
-   
+
    //Allocate Dynamic Programming Tables
    enthalpyDPT = allocate_DPT(oligo1_len, oligo2_len, _jmp_buf, o);
    entropyDPT = allocate_DPT(oligo1_len, oligo2_len, _jmp_buf, o);
-
-   /*** Calc part of the salt correction ***/
-   saltCorrection=saltCorrectS(a->mv,a->dv,a->dntp); /* salt correction for entropy, must be multiplied with N, which is
-                                                   the total number of phosphates in the duplex divided by 2; 8bp dplx N=7 */
 
    for(int i = 0; i < oligo1_len; i++) oligo1[i] = toupper(oligo1[i]);
    for(int i = 0; i < oligo2_len; i++) oligo2[i] = toupper(oligo2[i]);
@@ -368,7 +363,7 @@ thal(const unsigned char *oligo_f,
       if(isFinite(mh)) {
         traceback_monomer(bp, a->maxLoop, (const double **)entropyDPT, (const double **)enthalpyDPT, send5, hend5, RC, dplx_init_S_monomer, dplx_init_H_monomer, numSeq1, numSeq2, oligo1_len, oligo2_len, _jmp_buf, o);
         /* traceback for unimolecular structure */
-        o->sec_struct=drawHairpin(bp, mh, ms, mode,a->temp, oligo1, oligo2, saltCorrection, oligo1_len, oligo2_len, _jmp_buf, o); /* if mode=THL_FAST or THL_DEBUG_F then return after printing basic therm data */
+        o->sec_struct=drawHairpin(bp, mh, ms, mode,a->temp, oligo1, oligo2, saltCorrectS(a->mv,a->dv,a->dntp), oligo1_len, oligo2_len, _jmp_buf, o); /* if mode=THL_FAST or THL_DEBUG_F then return after printing basic therm data */
       } else if((mode != THL_FAST) && (mode != THL_DEBUG_F) && (mode != THL_STRUCT)) {
         fputs("No secondary structure could be calculated\n",stderr);
       }
@@ -428,7 +423,7 @@ thal(const unsigned char *oligo_f,
          N--;
          o->dh = enthalpyDPT[bestI][bestJ]+ SH[1] + dplx_init_H_dimer;
          o->ds = (entropyDPT[bestI][bestJ] + SH[0] + dplx_init_S_dimer);
-         o->ds = o->ds + (N * saltCorrection);
+         o->ds = o->ds + (N * saltCorrectS(a->mv,a->dv,a->dntp));
          o->dg = (o->dh) - (a->temp * o->ds);
          o->temp = ((o->dh) / (o->ds + RC)) - ABSOLUTE_ZERO;
          o->align_end_1=bestI;
