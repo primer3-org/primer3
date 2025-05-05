@@ -1,8 +1,7 @@
-/* values in articles are modified as follows: dS *(-10) and dH *(-10) */
 AA_AA inf
 AA_AC inf
 AA_AG inf
-AA_AT inf
+AA_AT 4700
 AA_CA inf
 AA_CC inf
 AA_CG inf
@@ -46,7 +45,7 @@ AG_GT inf
 AG_TA -700
 AG_TC inf
 AG_TG -3100
-AG_TT -1000
+AG_TT 1000
 AT_AA 1200
 AT_AC inf
 AT_AG inf
@@ -191,7 +190,7 @@ GT_TA -2500
 GT_TC inf
 GT_TG 4100
 GT_TT inf
-TA_AA inf
+TA_AA 4700
 TA_AC 3400
 TA_AG 700
 TA_AT inf
@@ -247,7 +246,7 @@ TT_CA 700
 TT_CC inf
 TT_CG inf
 TT_CT inf
-TT_GA -1000
+TT_GA 1000
 TT_GC inf
 TT_GG 5800
 TT_GT inf
