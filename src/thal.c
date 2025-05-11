@@ -213,6 +213,8 @@ static double readDouble(char **str, jmp_buf, thal_results* o);
 //Functions for changing thermodynamic parameters
 //=====================================================================================
 static char* readParamFile(const char* dirname, const char* fname, jmp_buf, thal_results* o); /* file of thermodynamic params */
+void removeComments(char* data);
+void removeFristColumn(char* data);
 static void readLoop(char **str, double *v1, double *v2, double *v3, jmp_buf, thal_results *o);
 static int readTLoop(char **str, char *s, double *v, int triloop, jmp_buf, thal_results *o);
 static void getStack(double stackEntropies[5][5][5][5], double stackEnthalpies[5][5][5][5], const thal_parameters *tp, jmp_buf, thal_results* o);
@@ -2201,6 +2203,88 @@ destroy_thal_structures()
   }
 }
 
+void
+removeComments(char* data)
+{
+  /* Remove # comments */
+  int i = 0;
+  int w = 0;
+  int comm = 0;
+  while (1) {
+    if (data[i] == '\0') {
+      data[w] = '\0';
+      break;
+    }
+    if (data[i] == '#') {
+      comm = 1;
+    }
+    if (comm == 0) {
+      data[w] = data[i];
+      w++;
+    }
+    if (data[i] == '\n') {
+      comm = 0;
+    }
+    i++;
+  }
+  /* Remove empty lines and spaces & tabs at the start */
+  i = 0;
+  w = 0;
+  int last_newline = 1;
+  while (1) {
+   if (data[i] == '\0') {
+     data[w] = '\0';
+     return;
+   }
+   if (last_newline == 0) {
+     if (data[i] == '\n') {
+       last_newline = 1;
+     }
+     data[w] = data[i];
+     w++;
+   } else {
+     switch (data[i]) {
+       case ' ':
+       case '\t':
+       case '\n':
+         break;
+       default:
+         last_newline = 0;
+         data[w] = data[i];
+         w++;
+     }
+   }
+   i++;
+  }
+}
+
+void
+removeFristColumn(char* data)
+{
+  int i = 0;
+  int w = 0;
+  while (1) {
+   if (data[i] == '\0') {
+     data[w] = '\0';
+     return;
+   }
+   switch (data[i]) {
+      case 'A':
+      case 'C':
+      case 'T':
+      case 'G':
+      case 'N':
+      case '_':
+      case ' ':
+      case '\t':
+        break;
+      default:
+        data[w] = data[i];
+        w++;
+   }
+   i++;
+  }
+}
 
 static char* 
 readParamFile(const char* dirname, const char* fname, jmp_buf _jmp_buf, thal_results* o)
@@ -2242,6 +2326,7 @@ readParamFile(const char* dirname, const char* fname, jmp_buf _jmp_buf, thal_res
   while (1) {
     if (feof(file)) {
       ret[i] = '\0';
+      removeComments(ret);
       fclose(file);
       return ret;
     }
@@ -2274,21 +2359,32 @@ thal_load_parameters(const char *path, thal_parameters *a, thal_results* o)
     return -1;
   }
   a->dangle_dh = readParamFile(path, "dangle.dh", _jmp_buf, o);
+  removeFristColumn(a->dangle_dh);
+ // printf("%s" , a->dangle_dh);
   a->dangle_ds = readParamFile(path, "dangle.ds", _jmp_buf, o);
+  removeFristColumn(a->dangle_ds);
   a->loops_dh = readParamFile(path, "loops.dh", _jmp_buf, o);
   a->loops_ds = readParamFile(path, "loops.ds", _jmp_buf, o);
   a->stack_dh = readParamFile(path, "stack.dh", _jmp_buf, o);
+  removeFristColumn(a->stack_dh);
   a->stack_ds = readParamFile(path, "stack.ds", _jmp_buf, o);
+  removeFristColumn(a->stack_ds);
   a->stackmm_dh = readParamFile(path, "stackmm.dh", _jmp_buf, o);
+  removeFristColumn(a->stackmm_dh);
   a->stackmm_ds = readParamFile(path, "stackmm.ds", _jmp_buf, o);
+  removeFristColumn(a->stackmm_ds);
   a->tetraloop_dh = readParamFile(path, "tetraloop.dh", _jmp_buf, o);
   a->tetraloop_ds = readParamFile(path, "tetraloop.ds", _jmp_buf, o);
   a->triloop_dh = readParamFile(path, "triloop.dh", _jmp_buf, o);
   a->triloop_ds = readParamFile(path, "triloop.ds", _jmp_buf, o);
   a->tstack_tm_inf_ds = readParamFile(path, "tstack_tm_inf.ds", _jmp_buf, o);
+  removeFristColumn(a->tstack_tm_inf_ds);
   a->tstack_dh = readParamFile(path, "tstack.dh", _jmp_buf, o);
+  removeFristColumn(a->tstack_dh);
   a->tstack2_dh = readParamFile(path, "tstack2.dh", _jmp_buf, o);
+  removeFristColumn(a->tstack2_dh);
   a->tstack2_ds = readParamFile(path, "tstack2.ds", _jmp_buf, o);
+  removeFristColumn(a->tstack2_ds);
   return 0;
 }
 

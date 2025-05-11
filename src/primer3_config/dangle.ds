@@ -1,128 +1,136 @@
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
--1.1
-14.2
--13.1
--12.6
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
--16.5
--7.4
--10.4
--15
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
--3.9
--0.1
--11.2
--13.1
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
--0.8
-14.9
--3.6
-10.4
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
--7.6
--13
--15
--0.5
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
--10
--11.9
--10.9
--13.8
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
--17.1
--12.6
--14
--10.9
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-2.3
-3.3
--1.6
--20
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
-inf
+# Entropy of dangling end
+# 3' dangling
+
+# Values are read by order, the basepares are ignored and only present for your orientation
+
+AA_A inf
+AC_A inf
+AG_A inf
+AT_A inf
+AA_C inf
+AC_C inf
+AG_C inf
+AT_C inf
+AA_G inf
+AC_G inf
+AG_G inf
+AT_G inf
+AA_T -1.1
+AC_T 14.2
+AG_T -13.1
+AT_T -12.6
+CA_A inf
+CC_A inf
+CG_A inf
+CT_A inf
+CA_C inf
+CC_C inf
+CG_C inf
+CT_C inf
+CA_G -16.5
+CC_G -7.4
+CG_G -10.4
+CT_G -15
+CA_T inf
+CC_T inf
+CG_T inf
+CT_T inf
+GA_A inf
+GC_A inf
+GG_A inf
+GT_A inf
+GA_C -3.9
+GC_C -0.1
+GG_C -11.2
+GT_C -13.1
+GA_G inf
+GC_G inf
+GG_G inf
+GT_G inf
+GA_T inf
+GC_T inf
+GG_T inf
+GT_T inf
+TA_A -0.8
+TC_A 14.9
+TG_A -3.6
+TT_A 10.4
+TA_C inf
+TC_C inf
+TG_C inf
+TT_C inf
+TA_G inf
+TC_G inf
+TG_G inf
+TT_G inf
+TA_T inf
+TC_T inf
+TG_T inf
+TT_T inf
+
+# 5' dangling
+
+A_AA inf
+A_AC inf
+A_AG inf
+A_AT inf
+A_CA inf
+A_CC inf
+A_CG inf
+A_CT inf
+A_GA inf
+A_GC inf
+A_GG inf
+A_GT inf
+A_TA -7.6
+A_TC -13
+A_TG -15
+A_TT -0.5
+C_AA inf
+C_AC inf
+C_AG inf
+C_AT inf
+C_CA inf
+C_CC inf
+C_CG inf
+C_CT inf
+C_GA -10
+C_GC -11.9
+C_GG -10.9
+C_GT -13.8
+C_TA inf
+C_TC inf
+C_TG inf
+C_TT inf
+G_AA inf
+G_AC inf
+G_AG inf
+G_AT inf
+G_CA -17.1
+G_CC -12.6
+G_CG -14
+G_CT -10.9
+G_GA inf
+G_GC inf
+G_GG inf
+G_GT inf
+G_TA inf
+G_TC inf
+G_TG inf
+G_TT inf
+T_AA 2.3
+T_AC 3.3
+T_AG -1.6
+T_AT -20
+T_CA inf
+T_CC inf
+T_CG inf
+T_CT inf
+T_GA inf
+T_GC inf
+T_GG inf
+T_GT inf
+T_TA inf
+T_TC inf
+T_TG inf
+T_TT inf
