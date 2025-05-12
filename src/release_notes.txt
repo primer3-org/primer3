@@ -1,4 +1,4 @@
-release 2.7.0 2024-XX-XX  ===============================================
+release 2.7.0 2025-XX-XX  ===============================================
 This release adds new features to primer3_core and related C code.
 
 The thal part was optimized by Doug Townsend which resulted in a huge 
@@ -24,6 +24,14 @@ results.
 
 The nearest-neighbor thermodynamics from SantaLucia JR and Hicks (2004)
 were added.
+
+The thermodynamic parameter files can have comments and annotations.
+
+An error in the thermodynamic parameters of stackmm.dh was fixed which
+impacted the alignments.
+
+Huge code cleanup and improvements which resulted in a significant spead
+increase.
 
 Minor fixes:
 1. Compiler complains were fixed.

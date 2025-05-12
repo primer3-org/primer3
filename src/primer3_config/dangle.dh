@@ -1,7 +1,12 @@
 # Enthalpy of dangling end
-# 3' dangling
+# values are in cal / mol
+
+# Values in this file originate from:
+# Bommarito et al. "Thermodynamic Parameters for DNA Sequences with Dangling Ends". Nucleic Acids Res. 2000 May 1;28(9):1929-34. doi: 10.1093/nar/28.9.1929.
 
 # Values are read by order, the basepares are ignored and only present for your orientation
+
+# 3' dangling
 
 AA_A 0
 AC_A 0

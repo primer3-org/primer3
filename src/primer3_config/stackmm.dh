@@ -1,4 +1,12 @@
-# values in articles are modified as follows: dH *(-10)
+# Entropy of mismatches
+# values are in cal/mol
+
+# Values in this file originate from:
+# Allawi, SantaLucia, "Nearest-Neighbor Thermodynamics of Internal A·C Mismatches in DNA: Sequence Dependence and pH Effects". Biochemistry. 1998 Jun 30;37(26):9435-44. doi: 10.1021/bi9803729.
+# Allawi, SantaLucia, "Thermodynamics and NMR of Internal G·T Mismatches in DNA". Biochemistry. 1997 Aug 26;36(34):10581-94. doi: 10.1021/bi962590c.
+# Allawi, SantaLucia, "Nearest Neighbor Thermodynamic Parameters for Internal G·A Mismatches in DNA". Biochemistry. 1998 Feb 24;37(8):2170-9. doi: 10.1021/bi9724873.
+# Allawi, SantaLucia, "Thermodynamics of internal C.T mismatches in DNA". Nucleic Acids Res. 1998 Jun 1;26(11):2694-701. doi: 10.1093/nar/26.11.2694.
+# Peyret et al. "Nearest-Neighbor Thermodynamics and NMR of DNA Sequences with Internal A·A, C·C, G·G, and T·T Mismatches". Biochemistry. 1999 Mar 23;38(12):3468-77. doi: 10.1021/bi9825091.
 
 # Values are read by order, the basepares are ignored and only present for your orientation
 
@@ -31,7 +39,7 @@ AC_GC inf
 AC_GG 500
 AC_GT inf
 AC_TA 5300
-AC_TC -10
+AC_TC 0
 AC_TG inf
 AC_TT 700
 AG_AA inf
@@ -118,7 +126,7 @@ CT_AA 2300
 CT_AC inf
 CT_AG inf
 CT_AT inf
-CT_CA -10
+CT_CA 0
 CT_CC inf
 CT_CG inf
 CT_CT inf
@@ -194,7 +202,7 @@ GT_TA -2500
 GT_TC inf
 GT_TG 4100
 GT_TT inf
-TA_AA inf
+TA_AA 4700
 TA_AC 3400
 TA_AG 700
 TA_AT inf
