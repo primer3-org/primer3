@@ -1,4 +1,8 @@
-# values in articles are modified as follows: dS *(-10)
+# Entropy of matching basepares
+# values are in cal / mol K
+
+# Values in this file originate from:
+# SantaLucia, "A Unified View of Polymer, Dumbbell, and Oligonucleotide DNA Nearest-Neighbor Thermodynamics". Proc Natl Acad Sci USA. 1998 Feb 17;95(4):1460-5. doi: 10.1073/pnas.95.4.1460.
 
 # Values are read by order, the basepares are ignored and only present for your orientation
 
