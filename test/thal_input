@@ -1,4 +1,3 @@
--s ccgcagtaagctgcgg -a HAIRPIN
 -s1 ccgcagtaagctgcgg -a HAIRPIN
 -s2 ccgcagtaagctgcgg -a HAIRPIN
 -s2 ccgcagtaagctgcgg -a HAIRPIN -maxloop 
@@ -425,3 +424,5 @@
 -s1 GGATGAATAGC -s2 GCTATACATCC -dv 1000 -dna 400000
 -s1 CGCAAGAGACGG -s2 CCGACTCTAGCG -dv 1000 -dna 400000
 -s1 ATTAGGAACCCACTCCCAAGATAAC -s2 GTTATCTAGGGAGTGGGTTTCTGAT -a ANY -mv 50 -dv 1.5 -n 0.6 -d 50
+-x invalidoption -a HAIRPIN
+-unknown parameter test
