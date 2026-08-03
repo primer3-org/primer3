@@ -627,7 +627,7 @@ web interfaces (distributed separately).<br>
 <br>
 The command line for Primer3 is:<br>
 <br>
-primer3_core [ --format_output ] [ --default_version=1|--default_version=2 ] [ --io_version=4 ] [ --p3_settings_file=&lt;file_path&gt; ] [ --echo_settings_file ] [ --strict_tags ] [ --output=&lt;file_path&gt; ] [ --error=&lt;file_path&gt; ] [ input_file ] <br>
+primer3_core [ --format_output ] [ --default_version=1|--default_version=2 ] [ --io_version=4 ] [ --p3_settings_file=&lt;file_path&gt; ] [ --echo_settings_file ] [ --strict_tags ] [ --output=&lt;file_path&gt; ] [ --error=&lt;file_path&gt; ] [ --progress ] [ input_file ] <br>
 <br>
 A complete list of valid command line arguments can be found in
 COMMAND LINE ARGUMENTS below.<br>
@@ -689,6 +689,15 @@ should be written. If omitted, stdout is used. </p>
 <h3>--error=file_path</h3>
 <p>This argument specifies the file where the error
 messages should be written. If omitted, stderr is used.</p>
+<h3>--progress</h3>
+<p>This argument periodically writes a cumulative work counter and its
+worst-case ceiling on instrumented work to stderr in the form
+<tt>PRIMER3_PROGRESS=record=N completed&lt;bound</tt>. Within each input
+record, the completed count never decreases and the bound never increases;
+the bound is tightened as the actual search space becomes known. The counts
+reset for each record. They measure candidate evaluations rather than wall
+time and do not include template masking, so they are not an ETA. On Unix,
+SIGUSR1 requests an additional report while this option is active.</p>
 <h2><a id="inputOutputConventions">13. INPUT AND OUTPUT CONVENTIONS</a></h2>
 <p>By default, Primer3 accepts input in Boulder-IO format, a
 pre-XML, pre-RDF, text-based input/output format for
@@ -3993,6 +4002,11 @@ programming error is detected by an assertion violation.<br>
 SIGINT and SIGTERM are handled essentially as empty input, except
 the signal received is returned as the exit status and printed to
 stderr.<br>
+<br>
+With <tt>--progress</tt>, Primer3 periodically prints a per-record,
+monotonically increasing work counter and a nonincreasing worst-case ceiling
+to stderr. On Unix, SIGUSR1 requests an immediate progress report while this
+option is active.<br>
 <br>
 In all of the error cases above Primer3 prints a message to stderr.</p>
 <h2><a id="webInterface">29. PRIMER3 WWW INTERFACES</a></h2>
