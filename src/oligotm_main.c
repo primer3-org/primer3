@@ -73,7 +73,7 @@ main(int argc, char **argv)
      "-fo formamide_conc  - concentration of formamide in mol/l, by default 0 mol/l\n"
      "\n"
 
-    "-tp [0|1]     - Specifies the table of thermodynamic parameters and\n"
+    "-tp [0..2]     - Specifies the table of thermodynamic parameters and\n"
     "                the method of melting temperature calculation:\n"
     "                 0  Breslauer et al., 1986 and Rychlik et al., 1990\n"
     "                    (used by primer3 up to and including release 1.1.0).\n"
@@ -220,7 +220,7 @@ main(int argc, char **argv)
          exit(-1);
        }
        tm_santalucia = (int)strtol(argv[i+1], &endptr, 10);
-       if ('\0' != *endptr || tm_santalucia<0 || tm_santalucia>2) {
+       if ('\0' != *endptr || tm_santalucia<0 || tm_santalucia>3) {
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
