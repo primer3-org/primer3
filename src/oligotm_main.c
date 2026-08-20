@@ -122,7 +122,7 @@ main(int argc, char **argv)
    double dmso = 0.0, dmso_fact = 0.6, formamide = 0.0;
    int tm_santalucia=1, salt_corrections=1;
    int i, j, len;
-   if (argc < 2 || argc > 14) {
+   if (argc < 2 || argc > 20) {
      fprintf(stderr, msg, argv[0]);
      fprintf(stderr, "%s", copyright);
      return -1;
