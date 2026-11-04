@@ -73,7 +73,7 @@ main(int argc, char **argv)
      "-fo formamide_conc  - concentration of formamide in mol/l, by default 0 mol/l\n"
      "\n"
 
-    "-tp [0|1]     - Specifies the table of thermodynamic parameters and\n"
+    "-tp [0..2]     - Specifies the table of thermodynamic parameters and\n"
     "                the method of melting temperature calculation:\n"
     "                 0  Breslauer et al., 1986 and Rychlik et al., 1990\n"
     "                    (used by primer3 up to and including release 1.1.0).\n"
@@ -122,14 +122,14 @@ main(int argc, char **argv)
    double dmso = 0.0, dmso_fact = 0.6, formamide = 0.0;
    int tm_santalucia=1, salt_corrections=1;
    int i, j, len;
-   if (argc < 2 || argc > 14) {
+   if (argc < 2 || argc > 20) {
      fprintf(stderr, msg, argv[0]);
      fprintf(stderr, "%s", copyright);
      return -1;
    }
 
    for (i=1; i < argc; ++i) {
-     if (!strncmp("-mv", argv[i], 3)) { /* conc of monovalent cations */
+     if (strcmp(argv[i], "-mv") == 0) { /* conc of monovalent cations */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
@@ -141,7 +141,7 @@ main(int argc, char **argv)
          exit(-1);
        }
        i++;
-     } else if (!strncmp("-dv", argv[i], 3)) { /* conc of divalent cations; added by T.Koressaar */
+     } else if (strcmp(argv[i], "-dv") == 0) { /* conc of divalent cations; added by T.Koressaar */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
@@ -153,7 +153,7 @@ main(int argc, char **argv)
          exit(-1);
        }
        i++;
-     } else if (!strncmp("-n", argv[i], 2)) { /* conc of dNTP; added by T.Koressaar */
+     } else if (strcmp(argv[i], "-n") == 0) { /* conc of dNTP; added by T.Koressaar */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
@@ -165,7 +165,7 @@ main(int argc, char **argv)
          exit(-1);
        }
        i++;
-     } else if (!strncmp("-d", argv[i], 2)) {
+     } else if (strcmp(argv[i], "-d") == 0) {
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
@@ -177,7 +177,7 @@ main(int argc, char **argv)
          exit(-1);
        }
        i++;
-     } else if (!strncmp("-dm", argv[i], 2)) {
+     } else if (strcmp(argv[i], "-dm") == 0) {
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
@@ -189,7 +189,7 @@ main(int argc, char **argv)
          exit(-1);
        }
        i++;
-     } else if (!strncmp("-df", argv[i], 2)) {
+     } else if (strcmp(argv[i], "-df") == 0) {
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
@@ -201,7 +201,7 @@ main(int argc, char **argv)
          exit(-1);
        }
        i++;
-     } else if (!strncmp("-fo", argv[i], 2)) {
+     } else if (strcmp(argv[i], "-fo") == 0) {
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
@@ -213,19 +213,19 @@ main(int argc, char **argv)
          exit(-1);
        }
        i++;
-     } else if (!strncmp("-tp", argv[i], 3)) { /* added by T.Koressaar */
+     } else if (strcmp(argv[i], "-tp") == 0) { /* added by T.Koressaar */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
        tm_santalucia = (int)strtol(argv[i+1], &endptr, 10);
-       if ('\0' != *endptr || tm_santalucia<0 || tm_santalucia>2) {
+       if ('\0' != *endptr || tm_santalucia<0 || tm_santalucia>3) {
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
        i++;
-     } else if (!strncmp("-sc", argv[i], 3)) { /* added by T.Koressaar */
+     } else if (strcmp(argv[i], "-sc") == 0) { /* added by T.Koressaar */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
