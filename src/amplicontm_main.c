@@ -125,7 +125,7 @@ main(int argc, char **argv)
    }
 
    for (i=1; i < argc; ++i) {
-     if (!strncmp("-mv", argv[i], 3)) { /* conc of monovalent cations */
+     if (strcmp(argv[i], "-mv") == 0) { /* conc of monovalent cations */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
@@ -137,7 +137,7 @@ main(int argc, char **argv)
          exit(-1);
        }
        i++;
-     } else if (!strncmp("-dv", argv[i], 3)) { /* conc of divalent cations */
+     } else if (strcmp(argv[i], "-dv") == 0) { /* conc of divalent cations */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
@@ -149,7 +149,7 @@ main(int argc, char **argv)
          exit(-1);
        }
        i++;
-     } else if (!strncmp("-n", argv[i], 3)) { /* conc of dNTP */
+     } else if (strcmp(argv[i], "-n") == 0) { /* conc of dNTP */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
@@ -161,19 +161,7 @@ main(int argc, char **argv)
          exit(-1);
        }
        i++;
-     } else if (!strncmp("-dmso", argv[i], 3)) { /* concentration of DMSO */
-       if (i+1 >= argc) {
-         /* Missing value */
-         fprintf(stderr, msg, argv[0]);
-         exit(-1);
-       }
-       dmso = strtod(argv[i+1], &endptr);
-       if('\0' != *endptr) {
-         fprintf(stderr, msg, argv[0]);
-         exit(-1);
-       }
-       i++;
-     } else if (!strncmp("-dmso_fact", argv[i], 3)) { /* DMSO correction factor */
+     } else if (strcmp(argv[i], "-dmso_fact") == 0) { /* DMSO correction factor */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
@@ -185,7 +173,19 @@ main(int argc, char **argv)
          exit(-1);
        }
        i++;
-     } else if (!strncmp("-formamid", argv[i], 3)) { /* concentration of formamid */
+     } else if (strcmp(argv[i], "-dmso") == 0) { /* concentration of DMSO */
+       if (i+1 >= argc) {
+         /* Missing value */
+         fprintf(stderr, msg, argv[0]);
+         exit(-1);
+       }
+       dmso = strtod(argv[i+1], &endptr);
+       if('\0' != *endptr) {
+         fprintf(stderr, msg, argv[0]);
+         exit(-1);
+       }
+       i++;
+     } else if (strcmp(argv[i], "-formamid") == 0) { /* concentration of formamid */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
@@ -197,7 +197,7 @@ main(int argc, char **argv)
          exit(-1);
        }
        i++;
-     } else if (!strncmp("-tp", argv[i], 3)) { /* parameters for melting temperature calculation */
+     } else if (strcmp(argv[i], "-tp") == 0) { /* parameters for melting temperature calculation */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
@@ -209,7 +209,7 @@ main(int argc, char **argv)
          exit(-1);
        }
        i++;
-     } else if (!strncmp("-sc", argv[i], 3)) { /* method of salt correction */
+     } else if (strcmp(argv[i], "-sc") == 0) { /* method of salt correction */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
@@ -221,7 +221,7 @@ main(int argc, char **argv)
          exit(-1);
        }
        i++;
-     } else if (!strncmp("-mf", argv[i], 3)) { /* formula for melting temperature calculation */
+     } else if (strcmp(argv[i], "-mf") == 0) { /* formula for melting temperature calculation */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
@@ -233,7 +233,7 @@ main(int argc, char **argv)
          exit(-1);
        }
        i++;
-     } else if (!strncmp("-fs", argv[i], 3)) { /* find salt concentation */
+     } else if (strcmp(argv[i], "-fs") == 0) { /* find salt concentation */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
@@ -245,7 +245,7 @@ main(int argc, char **argv)
          exit(-1);
        }
        i++;
-     } else if (!strncmp("-o", argv[i], 3)) { /* output helicities table or list */
+     } else if (strcmp(argv[i], "-o") == 0) { /* output helicities table or list */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);

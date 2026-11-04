@@ -1,4 +1,4 @@
-release 2.7.0 2025-XX-XX  ===============================================
+release 2.7.0 2026-XX-XX  ===============================================
 This release adds new features to primer3_core and related C code.
 
 The thal part was optimized by Doug Townsend which resulted in a huge 
@@ -43,6 +43,8 @@ Minor fixes:
 4. oligotm was rewritten to avoid makros.
 
 5. A bug was fixed in Owczarzy salt correction.
+
+6. A bug was fixed in reading the cli parameters of amplicontm and oligotm
 
 
 release 2.6.1 2022-01-26  ===============================================
