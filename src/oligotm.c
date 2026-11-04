@@ -358,7 +358,7 @@ oligotm(const  char *s,
     } else {
       free_divalent = (divalent_conc - dntp_conc)/1000.0;
     }
-    static double a = 0,b = 0,c = 0,d = 0,e = 0,f = 0,g = 0;
+    double a = 0,b = 0,c = 0,d = 0,e = 0,f = 0,g = 0;
     if(K_mM==0) {
       div_monov_ratio = 6.0;
     } else {
