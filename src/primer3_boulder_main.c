@@ -44,6 +44,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <time.h>
 #include "libprimer3.h"
 #include "format_output.h"
 #include "read_boulder.h"
@@ -57,13 +58,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /* Some function prototypes */
 static void   print_usage();
 static void   sig_handler(int);
+static void   progress_callback(long long, long long, void *);
 #if !defined(OS_WIN)
 static void   validate_kmer_lists_path();
+static void   progress_signal_handler(int);
 #endif
 
 /* Other global variables. */
 static const char *pr_release;
 static const char *pr_program_name;
+/* A signal handler may safely assign only the sig_atomic_t request flag.
+ * Formatting, stdio, and time checks remain in progress_callback(), which is
+ * called from ordinary primer-search code. */
+static volatile sig_atomic_t progress_requested = 0;
+static long long progress_done = 0;
+static long long progress_bound = 0;
+static long long progress_record = 0;
+static time_t progress_last_report = 0;
+static unsigned int progress_callback_count = 0;
 
 int
 main(int argc, char *argv[])
@@ -75,6 +87,7 @@ main(int argc, char *argv[])
   int io_version = 4;
   int default_version = 2;
   int dump_args = 0;
+  int progress = 0;
 
   p3_global_settings *global_pa;
   seq_args *sarg;
@@ -101,6 +114,7 @@ main(int argc, char *argv[])
     {"2x_compat", no_argument, 0, '2'},
     {"output", required_argument, 0, 'o'},
     {"error", required_argument, 0, 'e'},
+    {"progress", no_argument, &progress, 1},
     {0, 0, 0, 0}
   };
   int about = 0, compat = 0, invalid_flag = 0;
@@ -179,6 +193,28 @@ main(int argc, char *argv[])
       invalid_flag = 1;
       break;
     }
+  }
+
+  if (progress) {
+    /* Progress is opt-in so existing stderr output and SIGUSR1's default
+     * disposition remain unchanged for all established command lines. */
+    p3_set_progress_callback(progress_callback, NULL);
+#if !defined(OS_WIN)
+    {
+      struct sigaction action;
+      memset(&action, 0, sizeof(action));
+      action.sa_handler = progress_signal_handler;
+      sigemptyset(&action.sa_mask);
+      /* Restart an interrupted stdin read.  Without SA_RESTART, a report
+       * request could be mistaken for end-of-input on a Boulder stream. */
+      action.sa_flags = SA_RESTART;
+      if (sigaction(SIGUSR1, &action, NULL) != 0) {
+        fprintf(stderr, "%s: unable to install SIGUSR1 handler\n",
+                pr_program_name);
+        exit(-1);
+      }
+    }
+#endif
   }
   /* Open the output and error files specified */
 
@@ -326,6 +362,7 @@ main(int argc, char *argv[])
                              &read_boulder_record_res)) {
       break; /* There were no more boulder records */
     }
+    progress_record++;
     
 #if !defined(OS_WIN)
     if(global_pa->mask_template){
@@ -423,6 +460,15 @@ main(int argc, char *argv[])
                                read_boulder_record_res.file_flag);
     retval = choose_primers(global_pa, sarg);
     if (NULL == retval) exit(-2); /* Out of memory. */
+    if (progress) {
+      /* Force a terminal line even when the record finishes inside the normal
+       * one-second throttle window.  libprimer3 has released all unused work,
+       * so this line is expected to have done == bound. */
+      fprintf(stderr, "PRIMER3_PROGRESS=record=%lld %lld<%lld\n",
+              progress_record, progress_done, progress_bound);
+      fflush(stderr);
+      progress_last_report = time(NULL);
+    }
 
     /* If it was necessary to use a left_input, right_input,
        or internal_oligo_input primer that was
@@ -561,7 +607,7 @@ print_usage()
 {
   fprintf(stderr, "%s", primer3_copyright());
 
-  fprintf(stderr, "\n\nUSAGE: %s %s %s %s %s %s %s %s %s %s\n", pr_program_name,
+  fprintf(stderr, "\n\nUSAGE: %s %s %s %s %s %s %s %s %s %s %s\n", pr_program_name,
           "[--format_output]", 
           "[--default_version=1|--default_version=2]",
           "[--io_version=4]", 
@@ -570,6 +616,7 @@ print_usage()
           "[--strict_tags]", 
           "[--output=<file_path>]", 
           "[--error=<file_path>]",
+          "[--progress]",
           "[input_file]");
   fprintf(stderr, "This is primer3 (%s)\n", pr_release);
   fprintf(stderr, "Input can also be provided on standard input.\n");
@@ -585,3 +632,42 @@ sig_handler(int signal)
     fprintf(stderr, "%s: received signal %d\n", pr_program_name, signal);
     exit(signal);
 }
+
+
+static void
+progress_callback(long long done, long long bound, void *arg)
+{
+  static long long last_record = -1;
+  time_t now;
+  (void) arg;
+  progress_done = done;
+  progress_bound = bound;
+  progress_callback_count++;
+  /* libprimer3 calls us at each expensive evaluation so a pending SIGUSR1 is
+   * noticed promptly.  Avoid calling time() at that same frequency: in the
+   * ordinary periodic path, inspect the clock once per 4096 callbacks. */
+  if (!progress_requested && last_record == progress_record
+      && progress_callback_count % 4096 != 0) return;
+  now = time(NULL);
+  /* Several reservation releases can occur in one second.  They still update
+   * the saved counters above; the next periodic, signal, or terminal report
+   * prints the tightest values. */
+  if (!progress_requested && last_record == progress_record
+      && now == progress_last_report) return;
+  progress_requested = 0;
+  last_record = progress_record;
+  progress_last_report = now;
+  fprintf(stderr, "PRIMER3_PROGRESS=record=%lld %lld<%lld\n",
+          progress_record, done, bound);
+  fflush(stderr);
+}
+
+#if !defined(OS_WIN)
+static void
+progress_signal_handler(int signal)
+{
+  (void) signal;
+  /* Do not call fprintf(), time(), or libprimer3 from signal context. */
+  progress_requested = 1;
+}
+#endif

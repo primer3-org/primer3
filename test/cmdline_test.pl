@@ -172,8 +172,13 @@ sub main() {
     # Test 2 : check '> output' and '< input_file'
     $valgrind_prefix
        = $do_valgrind ? sprintf $valgrind_format, 'cmd_test2' : '';
-    $cmd = "$valgrind_prefix$exe --default_version=1 --st > cmd_test2.tmp < $input";
+    $cmd = "$valgrind_prefix$exe --default_version=1 --st > cmd_test2.tmp 2> cmd_test2.err < $input";
     $exit_stat = runtest(2, $cmd, $output, 0);
+    if (-s 'cmd_test2.err') {
+        print "Unexpected stderr without --progress [FAILED]\n";
+        $all_ok = 0;
+        $exit_stat = -1;
+    }
     
     # Test 3 : check incorrect flag and '-error_file'
     $valgrind_prefix
@@ -192,6 +197,48 @@ sub main() {
        = $do_valgrind ? sprintf $valgrind_format, 'cmd_test5' : '';
     $cmd = "$valgrind_prefix$exe --io_version=3 2> cmd_test5.tmp";
     $exit_stat = runtest(5, $cmd, 'cmd_test5_output', 255);
+
+    # Test 6 : progress goes to stderr and does not alter normal output
+    $valgrind_prefix
+       = $do_valgrind ? sprintf $valgrind_format, 'cmd_test6' : '';
+    $cmd = "$valgrind_prefix$exe --default_version=1 --progress $input > cmd_test6.tmp 2> cmd_test6.progress";
+    $exit_stat = runtest(6, $cmd, $output, 0);
+    open my $progress_file, '<', 'cmd_test6.progress'
+        or die "open cmd_test6.progress: $!";
+    my @progress_lines = <$progress_file>;
+    close $progress_file;
+    my ($last_record, $last_done, $last_bound);
+    my $progress_invalid = !@progress_lines;
+    # Check the public progress contract, not exact counter values.  Exact
+    # values legitimately change when Primer3 tightens a search strategy.
+    for my $line (@progress_lines) {
+        if ($line !~ /^PRIMER3_PROGRESS=record=(\d+) (\d+)<(\d+)\s*$/) {
+            $progress_invalid = 1;
+            next;
+        }
+        my ($record, $done, $bound) = ($1, $2, $3);
+        # Completed work must always remain inside the advertised ceiling.
+        $progress_invalid = 1 if $done > $bound;
+        if (defined $last_record && $record == $last_record) {
+            # Within one record, work advances and its ceiling only tightens.
+            $progress_invalid = 1 if $done < $last_done || $bound > $last_bound;
+        } elsif (defined $last_record) {
+            # A new Boulder record gets a fresh pair of counters, and the
+            # preceding record must have emitted its terminal done==bound line.
+            $progress_invalid = 1 if $record != $last_record + 1;
+            $progress_invalid = 1 if $last_done != $last_bound;
+        } else {
+            $progress_invalid = 1 if $record != 1;
+        }
+        ($last_record, $last_done, $last_bound) = ($record, $done, $bound);
+    }
+    $progress_invalid = 1
+        if defined $last_record && $last_done != $last_bound;
+    if ($progress_invalid) {
+        print "Invalid --progress output [FAILED]\n";
+        $all_ok = 0;
+        $exit_stat = -1;
+    }
 
     # ================================================== 
     # If we were running under valgrind to look for memory-related

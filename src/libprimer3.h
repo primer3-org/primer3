@@ -1272,6 +1272,14 @@ void p3_set_gs_min_3_internal_overlap_of_junction(p3_global_settings *p, int min
 p3retval *choose_primers(const p3_global_settings *pa, 
                          seq_args *sa);
 
+/* Optional progress callback for long-running choose_primers() calls.
+ * "done" is nondecreasing instrumented work and "bound" is a nonincreasing
+ * ceiling for the current call.  Both counters reset for each call.  The
+ * callback observes search work; it must not change primer settings or result
+ * storage.  Passing NULL disables progress instrumentation. */
+typedef void (*p3_progress_fn)(long long done, long long bound, void *arg);
+void p3_set_progress_callback(p3_progress_fn fn, void *arg);
+
 /* For testing/debugging: print the values in pa and sa to stdout. */
 void p3_print_args(const p3_global_settings *pa, seq_args *sa) ;
 

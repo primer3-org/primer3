@@ -134,6 +134,200 @@ static char *thermodynamic_alignment_length_error_msg = NULL;
 static int *max_j_seen;
 static std::unordered_map<int, primer_pair*> **pairs;
 
+/* Progress is expressed as instrumented work rather than elapsed time.
+ * Each phase reserves a worst-case number of evaluations before work on a
+ * record starts.  A phase may later release unused work, but it may never
+ * acquire more.  Consequently the sum of progress_spent[] is monotonically
+ * increasing and the sum of progress_reserved[] is monotonically
+ * nonincreasing for the lifetime of one choose_primers() call.
+ *
+ * These variables have file scope for the same reason as _jmp_buf: deeply
+ * nested search routines update them, and choose_primers() can leave those
+ * routines through longjmp on allocation or thermodynamic-length errors. */
+static p3_progress_fn progress_fn = NULL;
+static void *progress_arg = NULL;
+enum progress_phase { PH_FWD, PH_REV, PH_INTL, PH_PAIR, PH_COUNT };
+static long long progress_reserved[PH_COUNT];
+static long long progress_spent[PH_COUNT];
+
+/* Install an optional observer.  Keeping the callback separate from global
+ * settings avoids changing Boulder-IO parsing, settings-file echoing, or
+ * callers that use libprimer3 without the primer3_core front end. */
+void
+p3_set_progress_callback(p3_progress_fn fn, void *arg)
+{
+  progress_fn = fn;
+  progress_arg = arg;
+}
+
+static long long
+progress_sum(const long long values[PH_COUNT])
+{
+  /* Saturation prevents a diagnostic counter from wrapping and appearing to
+   * move backwards on unusually large templates. */
+  long long sum = 0;
+  int phase;
+  for (phase = 0; phase < PH_COUNT; phase++) {
+    if (sum > LLONG_MAX - values[phase]) return LLONG_MAX;
+    sum += values[phase];
+  }
+  return sum;
+}
+
+static void
+progress_notify(void)
+{
+  if (progress_fn != NULL)
+    progress_fn(progress_sum(progress_spent),
+                progress_sum(progress_reserved), progress_arg);
+}
+
+static long long
+progress_product(long long a, long long b)
+{
+  /* All reservations are products of loop extents.  Saturate instead of
+   * allowing signed overflow, which is undefined in C++. */
+  if (a <= 0 || b <= 0) return 0;
+  if (a > LLONG_MAX / b) return LLONG_MAX;
+  return a * b;
+}
+
+static void
+progress_reset(void)
+{
+  /* Records are independent.  In particular, a multi-record Boulder stream
+   * must not inherit either completed work or a ceiling from its predecessor. */
+  memset(progress_reserved, 0, sizeof(progress_reserved));
+  memset(progress_spent, 0, sizeof(progress_spent));
+}
+
+static void
+progress_release(progress_phase phase, long long new_reservation)
+{
+  /* Tighten a phase after its real search space becomes known.  The two
+   * clamps enforce the central invariant:
+   *
+   *   spent <= reserved, and reserved never increases.
+   */
+  if (new_reservation < progress_spent[phase])
+    new_reservation = progress_spent[phase];
+  if (new_reservation < progress_reserved[phase])
+    progress_reserved[phase] = new_reservation;
+  progress_notify();
+}
+
+static void
+progress_finish(progress_phase phase)
+{
+  progress_release(phase, progress_spent[phase]);
+}
+
+static void
+progress_finish_all(void)
+{
+  /* Collapse all unused reservations on every normal and error exit.  This
+   * makes a terminal report with done == bound an unambiguous record boundary. */
+  int phase;
+  for (phase = 0; phase < PH_COUNT; phase++)
+    progress_reserved[phase] = progress_spent[phase];
+  progress_notify();
+}
+
+static progress_phase
+progress_phase_for_oligo(const oligo_array *oligo)
+{
+  if (oligo->type == OT_RIGHT) return PH_REV;
+  if (oligo->type == OT_INTL) return PH_INTL;
+  return PH_FWD;
+}
+
+static void
+progress_tick(progress_phase phase)
+{
+  if (progress_fn == NULL) return;
+  /* A mistaken underestimate must never change primer selection or terminate
+   * an otherwise valid job.  Clamp the observational counter at its reserved
+   * ceiling; task-specific progress tests are intended to expose this case. */
+  if (progress_spent[phase] >= progress_reserved[phase]) return;
+  progress_spent[phase]++;
+  progress_notify();
+}
+
+static long long
+sequencing_progress_reservation(const p3_global_settings *pa,
+                                const seq_args *sa)
+{
+  /* Sequencing primers use overlapping windows and can inspect a base more
+   * than once.  Reproduce pick_sequencing_primer_list()'s primer-count
+   * calculation here so all of those windows are reserved before the first
+   * callback. */
+  long long primer_count = 0;
+  int tar_n;
+  for (tar_n = 0; tar_n < sa->tar2.count; tar_n++) {
+    int primer_nr = 1;
+    int sequenced_len;
+    if (pa->pick_left_primer && pa->pick_right_primer) {
+      sequenced_len = pa->sequencing.interval;
+      while (sequenced_len < sa->tar2.pairs[tar_n][1]) {
+        primer_nr++;
+        sequenced_len = pa->sequencing.spacing * (primer_nr - 1)
+          + pa->sequencing.interval;
+      }
+    } else {
+      sequenced_len = pa->sequencing.spacing;
+      while (sequenced_len < sa->tar2.pairs[tar_n][1]) {
+        primer_nr++;
+        sequenced_len = pa->sequencing.spacing * primer_nr;
+      }
+    }
+    if (primer_count > LLONG_MAX - primer_nr) return LLONG_MAX;
+    primer_count += primer_nr;
+  }
+  /* Every requested sequencing primer searches a window no wider than
+   * 2 * accuracy + 1, once for each permitted primer length. */
+  return progress_product(progress_product(primer_count,
+                          2LL * pa->sequencing.accuracy + 1),
+                          pa->p_args.max_size - pa->p_args.min_size + 1);
+}
+
+static void
+progress_begin_record(const p3_global_settings *pa, const seq_args *sa,
+                      p3_output_type output_type)
+{
+  /* A general primer scan has at most n + 1 candidate end positions for each
+   * permitted length.  This deliberately overestimates restricted ranges;
+   * unused capacity is released when the candidate lists are complete. */
+  long long n = (long long) strlen(sa->trimmed_seq);
+  long long primer_candidates = progress_product(
+      n + 1, pa->p_args.max_size - pa->p_args.min_size + 1);
+  long long internal_candidates = progress_product(
+      n + 1, pa->o_args.max_size - pa->o_args.min_size + 1);
+
+  if (pa->primer_task == pick_sequencing_primers) {
+    long long sequencing = sequencing_progress_reservation(pa, sa);
+    if (pa->pick_left_primer) progress_reserved[PH_FWD] = sequencing;
+    if (pa->pick_right_primer) progress_reserved[PH_REV] = sequencing;
+  } else if (pa->primer_task == check_primers) {
+    /* A supplied oligo can match at no more than n + 1 positions. */
+    if (sa->left_input) progress_reserved[PH_FWD] = n + 1;
+    if (sa->right_input) progress_reserved[PH_REV] = n + 1;
+    if (sa->internal_input) progress_reserved[PH_INTL] = n + 1;
+    if (output_type == primer_pairs)
+      progress_reserved[PH_PAIR] = progress_product(n + 1, n + 1);
+  } else {
+    if (pa->pick_left_primer) progress_reserved[PH_FWD] = primer_candidates;
+    if (pa->pick_right_primer) progress_reserved[PH_REV] = primer_candidates;
+    if (pa->pick_internal_oligo)
+      progress_reserved[PH_INTL] = internal_candidates;
+    if (output_type == primer_pairs)
+      /* Before the candidate lists exist, reserve the Cartesian product of
+       * their individual worst-case sizes. */
+      progress_reserved[PH_PAIR] = progress_product(primer_candidates,
+                                                     primer_candidates);
+  }
+  progress_notify();
+}
+
 /* Function declarations. */
 
 static void  pr_set_default_global_args_1(p3_global_settings *);
@@ -1235,6 +1429,10 @@ p3retval *
 choose_primers(const p3_global_settings *pa,
                seq_args *sa)
 {
+  /* Reset before setjmp so every return path, including a later longjmp,
+   * belongs to this record and cannot leak progress state into the next one. */
+  progress_reset();
+
   /* Create retval and set were to find the results */
   p3retval *retval = create_p3retval();
   if (retval == NULL)  return NULL;
@@ -1277,10 +1475,12 @@ choose_primers(const p3_global_settings *pa,
       thermodynamic_alignment_length_error_msg = NULL;
       /* Other necessary cleanup. */
       free_pair_memory(retval->rev.num_elem);
+      progress_finish_all();
       return retval;
     }
     /* This was a memory error. */
     destroy_p3retval(retval);
+    progress_finish_all();
     return NULL;  /* If we get here, that means errno should be ENOMEM. */
   }
 
@@ -1292,7 +1492,10 @@ choose_primers(const p3_global_settings *pa,
     p3_print_args(pa, sa) ;
   }
 
-  if (!pr_is_empty(&retval->per_sequence_err)) return retval;
+  if (!pr_is_empty(&retval->per_sequence_err)) {
+    progress_finish_all();
+    return retval;
+  }
 
   /* TO DO -- move the check below to pr_data_control and issue a
      warning if it fails. */
@@ -1307,9 +1510,13 @@ choose_primers(const p3_global_settings *pa,
                        &retval->per_sequence_err, /* Non-fatal errors */
                        &retval->warnings
                        ) !=0 ) {
+    progress_finish_all();
     return retval;
   }
 
+  /* Input adjustment and validation can change task details.  Reserve work
+   * only after both have succeeded, but before any instrumented search starts. */
+  progress_begin_record(pa, sa, retval->output_type);
 
   set_retval_both_stop_codons(sa, retval);
 
@@ -1333,26 +1540,44 @@ choose_primers(const p3_global_settings *pa,
   if (pa->primer_task == pick_primer_list) {
     make_complete_primer_lists(retval, pa, sa,
                                dpal_arg_to_use,thal_arg_to_use,thal_oligo_arg_to_use);
+    progress_finish(PH_FWD);
+    progress_finish(PH_REV);
+    progress_finish(PH_INTL);
   } else if (pa->primer_task == pick_sequencing_primers) {
     pick_sequencing_primer_list(retval, pa, sa,
                                 dpal_arg_to_use,thal_arg_to_use);
+    progress_finish(PH_FWD);
+    progress_finish(PH_REV);
   } else if (pa->primer_task == check_primers) {
     add_primers_to_check(retval, pa, sa,
                          dpal_arg_to_use, thal_arg_to_use, thal_oligo_arg_to_use);
+    progress_finish(PH_FWD);
+    progress_finish(PH_REV);
+    progress_finish(PH_INTL);
   } else { /* The general way to pick primers */
     /* Populate the forward and reverse primer lists */
     if (make_detection_primer_lists(retval, pa, sa,
                                     dpal_arg_to_use,thal_arg_to_use) != 0) {
       /* There was an error */
+      progress_finish_all();
       return retval;
     }
+    progress_finish(PH_FWD);
+    progress_finish(PH_REV);
+    /* Pair characterization memoizes every forward/reverse combination, so
+     * each element of the actual Cartesian product is expensive at most once. */
+    progress_release(PH_PAIR,
+                     progress_product(retval->fwd.num_elem,
+                                      retval->rev.num_elem));
     /* Populate the internal oligo lists */
     if ( pa->pick_internal_oligo) {
       if (make_internal_oligo_list(retval, pa, sa,
                                    dpal_arg_to_use,thal_oligo_arg_to_use) != 0) {
         /* There was an error*/
+        progress_finish_all();
         return retval;
       }
+      progress_finish(PH_INTL);
     }
   }
 
@@ -1374,6 +1599,11 @@ choose_primers(const p3_global_settings *pa,
 
   /* Select primer pairs if needed */
   if (retval->output_type == primer_pairs) {
+    /* check_primers reaches this point through a different list-building path;
+     * repeat the tightening here so every paired task uses actual list sizes. */
+    progress_release(PH_PAIR,
+                     progress_product(retval->fwd.num_elem,
+                                      retval->rev.num_elem));
     choose_pair_or_triple(retval, pa, sa, dpal_arg_to_use, thal_arg_to_use,
        thal_oligo_arg_to_use, &retval->best_pairs);
   }
@@ -1389,6 +1619,7 @@ choose_primers(const p3_global_settings *pa,
     p3_print_args(pa, sa) ;
   }
 
+  progress_finish_all();
   return retval;
 }
 /* ============================================================ */
@@ -1693,6 +1924,7 @@ choose_pair_or_triple(p3retval *retval,
         if (!pair_found) {
           /* Characterize the pair. h is initialized by this
              call. */
+          progress_tick(PH_PAIR);
           int tmp = 
             characterize_pair(retval, pa, sa, j, i,
                               product_size_range_index,
@@ -2670,6 +2902,7 @@ pick_only_best_primer(const int start,
 
       /* Add it to the considered statistics */
       oligo->expl.considered++;
+      progress_tick(progress_phase_for_oligo(oligo));
       /* Calculate all the primer parameters */
       calc_and_check_oligo_features(pa, &h, oligo->type, dpal_arg_to_use, thal_arg_to_use,
                                     sa, &oligo->expl, retval, oligo_seq);
@@ -2834,6 +3067,7 @@ pick_primer_range(const int start, const int length, int *extreme,
 
       /* Add it to the considered statistics */
       oligo->expl.considered++;
+      progress_tick(progress_phase_for_oligo(oligo));
       /* Calculate all the primer parameters */
       calc_and_check_oligo_features(pa, &h, oligo->type, dpal_arg_to_use, thal_arg_to_use,
                                     sa, &oligo->expl, retval, oligo_seq);
@@ -2946,6 +3180,7 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
 
     /* Add it to the considered statistics */
     oligo->expl.considered++;
+    progress_tick(progress_phase_for_oligo(oligo));
 
     /* Calculate all the primer parameters */
     calc_and_check_oligo_features(pa, &h, oligo->type, dpal_arg_to_use, thal_arg_to_use,
@@ -3059,6 +3294,7 @@ add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oli
 
   /* Add it to the considered statistics */
   oligo->expl.considered++;
+  progress_tick(progress_phase_for_oligo(oligo));
 
   /* Calculate all the primer parameters */
   calc_and_check_oligo_features(pa, &h, oligo->type, dpal_arg_to_use, thal_arg_to_use,
