@@ -119,8 +119,8 @@ static const int SantaLucia_1998_dG[5][5] =  {
 
 /* Table 3, updated parameters:
  * Tables of nearest-neighbor thermodynamics for DNA bases, from the
- * paper [SantaLucia JR and Hicks (2004) "The thermodynamics of DNA
- * Structuralmotifs", PAnnu. Rev. Biophys. Biomol. Struct. 2004. 33:
+ * paper [SantaLucia JR and Hicks (2004) "The Thermodynamics of DNA
+ * Structural Motifs", Annu. Rev. Biophys. Biomol. Struct. 2004. 33:
  * 415–40 http://dx.doi.org/10.1146/annurev.biophys.32.110601.141800]
  */
 
