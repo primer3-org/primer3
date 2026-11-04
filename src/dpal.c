@@ -355,12 +355,14 @@ _dpal_generic(const unsigned char *X,
               dpal_results *out)
 {
 
-    /* The "score matrix" (matrix of best scores). */
-    static int S[DPAL_MAX_ALIGN][DPAL_MAX_ALIGN];
+    /* The "score matrix" (matrix of best scores).
+     * Declared static to keep ~10 MB off the stack, and __thread so that
+     * concurrent callers of dpal() do not trample each other's matrices. */
+    static __thread int S[DPAL_MAX_ALIGN][DPAL_MAX_ALIGN];
 
 #ifndef DPAL_FORGET_PATH
-    /* The matrix of "trace" pointers */
-    static int P[DPAL_MAX_ALIGN][DPAL_MAX_ALIGN][3];
+    /* The matrix of "trace" pointers (see comment on S above). */
+    static __thread int P[DPAL_MAX_ALIGN][DPAL_MAX_ALIGN][3];
 #endif
 
     register int i, j, k, mg, c;
