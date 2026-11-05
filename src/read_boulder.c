@@ -85,7 +85,7 @@ static void   parse_2_interval_list(const char *tag_name,
                                     interval_array_t4 *interval_arr,
                                     pr_append_str *err);   
 
-static int    parse_intron_list(char *, int *, int *);
+static int    parse_intron_list(char *, int *, int *, int);
 
 static void   parse_product_size(const char *, char *, p3_global_settings *,
                                  pr_append_str *);
@@ -271,16 +271,26 @@ read_boulder_record(FILE *file_input,
       COMPARE_INTERVAL_LIST("SEQUENCE_INTERNAL_EXCLUDED_REGION",
                               &sa->excl_internal2);
       if (COMPARE("SEQUENCE_OVERLAP_JUNCTION_LIST")) {
-        if (parse_intron_list(datum, sa->primer_overlap_junctions, 
-                              &sa->primer_overlap_junctions_count) == 0) {
+        tmp_int = parse_intron_list(datum, sa->primer_overlap_junctions,
+                                    &sa->primer_overlap_junctions_count,
+                                    PR_MAX_INTERVAL_ARRAY);
+        if (tmp_int == -1) {
+          pr_append_new_chunk(parse_err,
+                              "Too many elements for tag SEQUENCE_OVERLAP_JUNCTION_LIST");
+        } else if (tmp_int == 0) {
           pr_append_new_chunk(parse_err,
                               "Error in SEQUENCE_OVERLAP_JUNCTION_LIST");
         }
         continue;
       }
       if (COMPARE("SEQUENCE_INTERNAL_OVERLAP_JUNCTION_LIST")) {
-        if (parse_intron_list(datum, sa->intl_overlap_junctions,
-                              &sa->intl_overlap_junctions_count) == 0) {
+        tmp_int = parse_intron_list(datum, sa->intl_overlap_junctions,
+                                    &sa->intl_overlap_junctions_count,
+                                    PR_MAX_INTERVAL_ARRAY);
+        if (tmp_int == -1) {
+          pr_append_new_chunk(parse_err,
+                              "Too many elements for tag SEQUENCE_INTERNAL_OVERLAP_JUNCTION_LIST");
+        } else if (tmp_int == 0) {
           pr_append_new_chunk(parse_err,
                               "Error in SEQUENCE_INTERNAL_OVERLAP_JUNCTION_LIST");
         }
@@ -1264,10 +1274,13 @@ parse_2_interval_list(const char *tag_name,
   }
 }
 
+/* Returns the number of values read, 0 on a syntax error, and -1 if
+   the list has more than max_count values. */
 static int
 parse_intron_list(char *s,
                   int *list,
-                  int *count) 
+                  int *count,
+                  int max_count)
 {
   long t;
   char *p, *q;
@@ -1290,6 +1303,9 @@ parse_intron_list(char *s,
     }
     if (t > INT_MAX || t < INT_MIN) {
       return 0;
+    }
+    if (*count >= max_count) {
+      return -1;
     }
     list[*count] = t;
     (*count)++;

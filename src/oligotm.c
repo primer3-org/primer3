@@ -419,8 +419,11 @@ oligodg(const char *s,      /* The sequence. */
   int oligo_int[MAX_PRIMER_LENGTH+1];
   int len, i, sym;
 
+  /* SantaLucia & Hicks (2004) use the same nearest-neighbor dG values
+     as SantaLucia (1998), so both share the branch below. */
   if (tm_method != breslauer_auto
-      && tm_method != santalucia_auto)
+      && tm_method != santalucia_auto
+      && tm_method != santalucia_2004)
     return OLIGOTM_ERROR;
 
   /* Translate to int array */
@@ -490,7 +493,8 @@ double end_oligodg(const char *s,
   int x = strlen(s);
 
   if (tm_method != breslauer_auto
-      && tm_method != santalucia_auto)
+      && tm_method != santalucia_auto
+      && tm_method != santalucia_2004)
     return OLIGOTM_ERROR;
 
   return

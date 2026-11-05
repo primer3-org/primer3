@@ -6936,61 +6936,67 @@ _optimize_ok_regions_list(const p3_global_settings *pa,
 static int
 fake_a_sequence(seq_args *sa, const p3_global_settings *pa)
 {
-  int i, product_size, space, ns_to_fill;
-  char *rev = NULL;
+  int product_size, ns_to_fill;
   int ns_to_fill_first, ns_to_fill_second;
+  size_t left_len = 0, right_len = 0, intl_len = 0;
+  size_t given;
+  char *p;
 
-  /* Determine the product size */
+  /* Length of each given oligo, 0 if it was not given */
+  if (sa->left_input) {
+    left_len = strlen(sa->left_input);
+  }
+  if (sa->right_input) {
+    right_len = strlen(sa->right_input);
+  }
+  if (sa->internal_input) {
+    intl_len = strlen(sa->internal_input);
+  }
+  given = left_len + right_len + intl_len;
+
+  /* Without any primer there is nothing to build;
+     _adjust_seq_args() then reports "No primers provided". */
+  if (given == 0) {
+    return 0;
+  }
+
+  /* Determine the product size: the optimum if given, otherwise the
+     middle of the first product size range. */
   if ((pa->product_opt_size < 1) || (pa->product_opt_size == PR_UNDEFINED_INT_OPT)){
-    product_size = pa->pr_max[0] - pa->pr_min[0];
+    product_size = (pa->pr_min[0] + pa->pr_max[0]) / 2;
   } else {
     product_size = pa->product_opt_size;
-  } 
-
-  space = product_size + 1;
-  ns_to_fill = product_size;
-
-
-  /* Calculate how many Ns have to be added */
-  if (sa->left_input){
-    ns_to_fill = ns_to_fill - strlen(sa->left_input);
   }
-  if (sa->right_input){
-    ns_to_fill = ns_to_fill - strlen(sa->right_input);
-    rev = (char *) pr_safe_malloc(strlen(sa->right_input) + 1);
-    p3_reverse_complement(sa->right_input, rev);
-  }
-  if (sa->internal_input){
-          ns_to_fill = ns_to_fill - strlen(sa->internal_input);
-  }
-  /* Return if there are no primers provided */
-  if (ns_to_fill == product_size + 1){
-    return 0;
+
+  /* Calculate how many Ns have to be added. The range is validated
+     only later in _pr_data_control(), so never go below 0. */
+  ns_to_fill = product_size - (int) given;
+  if (ns_to_fill < 0) {
+    ns_to_fill = 0;
   }
   ns_to_fill_first = ns_to_fill / 2;
   ns_to_fill_second = ns_to_fill - ns_to_fill_first;
-  /* Allocate the space for the sequence */  
-  sa->sequence = (char *) pr_safe_malloc(space);
-  *sa->sequence = '\0';
-  /* Copy over the primers */
-  if (sa->left_input){
-    strcat(sa->sequence, sa->left_input);
-  }
 
-  /* Add the Ns*/
-  for (i = 0; i < ns_to_fill_first; i++ ) {
-    strcat(sa->sequence, "N\0");
+  /* Allocate exactly what is written below */
+  sa->sequence = (char *) pr_safe_malloc(given + ns_to_fill + 1);
+  p = sa->sequence;
+  if (sa->left_input){
+    memcpy(p, sa->left_input, left_len);
+    p += left_len;
   }
+  memset(p, 'N', ns_to_fill_first);
+  p += ns_to_fill_first;
   if (sa->internal_input){
-    strcat(sa->sequence, sa->internal_input);
+    memcpy(p, sa->internal_input, intl_len);
+    p += intl_len;
   }
-  for (i = 0; i < ns_to_fill_second; i++ ) {
-    strcat(sa->sequence, "N\0");
-  }
+  memset(p, 'N', ns_to_fill_second);
+  p += ns_to_fill_second;
   if (sa->right_input){
-    strcat(sa->sequence, rev);
+    p3_reverse_complement(sa->right_input, p);
+    p += right_len;
   }
-  free(rev);
+  *p = '\0';
   return 0;
 }
 

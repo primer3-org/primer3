@@ -2302,14 +2302,17 @@ WARNING: Specified left and right primer are identical
 
 OLIGO            start  len      tm     gc%   any    3' seq
 LEFT PRIMER          1   23   62.46   47.83  2.00  1.00 CACCCCCATCAAACTCTTACTCA
-RIGHT PRIMER        60   23   62.46   47.83  2.00  1.00 CACCCCCATCAAACTCTTACTCA
-SEQUENCE SIZE: 60
-INCLUDED REGION SIZE: 60
+RIGHT PRIMER        70   23   62.46   47.83  2.00  1.00 CACCCCCATCAAACTCTTACTCA
+SEQUENCE SIZE: 70
+INCLUDED REGION SIZE: 70
 
-PRODUCT SIZE: 60, PAIR ANY COMPL: 2.00, PAIR 3' COMPL: 1.00
+PRODUCT SIZE: 70, PAIR ANY COMPL: 2.00, PAIR 3' COMPL: 1.00
 
-    1 CACCCCCATCAAACTCTTACTCANNNNNNNNNNNNNNTGAGTAAGAGTTTGATGGGGGTG
-      >>>>>>>>>>>>>>>>>>>>>>>              <<<<<<<<<<<<<<<<<<<<<<<
+    1 CACCCCCATCAAACTCTTACTCANNNNNNNNNNNNNNNNNNNNNNNNTGAGTAAGAGTTT
+      >>>>>>>>>>>>>>>>>>>>>>>                        <<<<<<<<<<<<<
+
+   61 GATGGGGGTG
+      <<<<<<<<<<
 
 KEYS (in order of precedence):
 >>>>>> left primer
