@@ -64,7 +64,6 @@ int interactive = 0;
 int main(int argc, char** argv) 
 {   
    const char* usage;
-   int tmp_ret = 0;
    thal_args a;
    thal_results o;
    o.sec_struct=NULL;
@@ -256,14 +255,14 @@ int main(int argc, char** argv)
    thal_parameters thermodynamic_parameters;
    thal_set_null_parameters(&thermodynamic_parameters);
 
+   /* Stop with the reason if the parameter files cannot be loaded. */
    if (path != NULL) {
-      thal_load_parameters(path, &thermodynamic_parameters, &o);
-      get_thermodynamic_values(&thermodynamic_parameters, &o);
-   }
-
-   if (tmp_ret) {
-     fprintf(stderr, "%s\n", o.msg);
-     exit(-1);
+      if (thal_load_parameters(path, &thermodynamic_parameters, &o) == -1
+          || get_thermodynamic_values(&thermodynamic_parameters, &o) != 0) {
+         fprintf(stderr, "Error: %s\n", o.msg);
+         thal_free_parameters(&thermodynamic_parameters);
+         exit(-1);
+      }
    }
 
    /* Set the correct mode */
@@ -297,7 +296,7 @@ int main(int argc, char** argv)
        }
        /* encountered error during thermodynamical calc */
        if (o.temp == THAL_ERROR_SCORE) {
-         tmp_ret = fprintf(stderr, "Error: %s\n", o.msg);
+         fprintf(stderr, "Error: %s\n", o.msg);
          exit(-1);
        }
        if(mode == THL_FAST)
@@ -318,7 +317,7 @@ int main(int argc, char** argv)
      }
      /* encountered error during thermodynamical calc */
      if (o.temp == THAL_ERROR_SCORE) {
-       tmp_ret = fprintf(stderr, "Error: %s\n", o.msg);
+       fprintf(stderr, "Error: %s\n", o.msg);
        exit(-1);
      }
      if(mode == THL_FAST)

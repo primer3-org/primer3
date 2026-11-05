@@ -82,15 +82,26 @@ readDouble(char **str, jmp_buf _jmp_buf, thal_results *o)
 {
    double result;
    char *line = th_read_str_line(str, _jmp_buf, o);
-   while (isspace(*line)) line++;
-   if (!strncmp(line, "inf", 3)) {
+   char *p;
+   /* NULL: the file has fewer values than the table needs, or it was
+      not loaded at all. */
+   if (line == NULL) {
+      strcpy(o->msg, "Thermodynamic parameter file has too few values");
+      longjmp(_jmp_buf, 1);
+   }
+   /* Skip leading spaces with p, so that line can still be freed. */
+   p = line;
+   while (isspace(*p)) p++;
+   if (!strncmp(p, "inf", 3)) {
       free(line);
       return _INFINITY;
    }
-   sscanf(line, "%lf", &result);
-   if (line != NULL) {
+   if (sscanf(p, "%lf", &result) != 1) {
+      snprintf(o->msg, 255, "Illegal value in thermodynamic parameter file: %.200s", p);
       free(line);
+      longjmp(_jmp_buf, 1);
    }
+   free(line);
    return result;
 }
 
@@ -99,18 +110,35 @@ static void
 readLoop(char **str, double *v1, double *v2, double *v3, jmp_buf _jmp_buf, thal_results *o)
 {
    char *line = th_read_str_line(str, _jmp_buf, o);
-   char *p = line, *q;
+   char *p, *q;
+   if (line == NULL) {
+      strcpy(o->msg, "Thermodynamic loop parameter file has too few lines");
+      longjmp(_jmp_buf, 1);
+   }
+   p = line;
    while (isspace(*p)) p++;
    while (isdigit(*p)) p++;
    while (isspace(*p)) p++;
    q = p;
-   while (!isspace(*q)) q++;
+   /* Stop at the end of the line; a line with fewer than three values
+      would otherwise be read past its end. */
+   while (*q != '\0' && !isspace(*q)) q++;
+   if (*q == '\0') {
+      strcpy(o->msg, "Thermodynamic loop parameter line has too few values");
+      free(line);
+      longjmp(_jmp_buf, 1);
+   }
    *q = '\0'; q++;
    if (!strcmp(p, "inf")) *v1 = _INFINITY;
    else sscanf(p, "%lf", v1);
    while (isspace(*q)) q++;
    p = q;
-   while (!isspace(*p)) p++;
+   while (*p != '\0' && !isspace(*p)) p++;
+   if (*p == '\0') {
+      strcpy(o->msg, "Thermodynamic loop parameter line has too few values");
+      free(line);
+      longjmp(_jmp_buf, 1);
+   }
    *p = '\0'; p++;
    if (!strcmp(q, "inf")) *v2 = _INFINITY;
    else sscanf(q, "%lf", v2);
@@ -274,36 +302,30 @@ readParamFile(const char *dirname, const char *fname, jmp_buf _jmp_buf, thal_res
       free(paramdir);
       paramdir = NULL;
    }
-   char c;
-   int i = 0;
+   /* fgetc() returns an int: storing it in a char would make the EOF
+      marker look like byte 0xFF and append it to the text. */
+   int c;
+   size_t i = 0;
    size_t ssz = INIT_BUF_SIZE;
-   size_t remaining_size;
-   remaining_size = ssz;
    ret = (char *) safe_malloc(ssz, _jmp_buf, o);
-   while (1) {
-      if (feof(file)) {
-         ret[i] = '\0';
-         removeComments(ret);
-         fclose(file);
-         return ret;
-      }
-      c = fgetc(file);
-      remaining_size -= sizeof(char);
-      if (remaining_size <= 0) {
+   while ((c = fgetc(file)) != EOF) {
+      /* Keep room for the terminating '\0'. */
+      if (i + 1 >= ssz) {
          if (ssz >= INT_MAX / 2) {
             strcpy(o->msg, "Out of memory");
             free(ret);
+            fclose(file);
             longjmp(_jmp_buf, 1);
-            return NULL;
-         } else {
-            ssz += INIT_BUF_SIZE;
-            remaining_size += INIT_BUF_SIZE;
          }
+         ssz += INIT_BUF_SIZE;
          ret = (char *) safe_realloc(ret, ssz, _jmp_buf, o);
       }
-      ret[i] = c;
-      i++;
+      ret[i++] = (char) c;
    }
+   ret[i] = '\0';
+   fclose(file);
+   removeComments(ret);
+   return ret;
 }
 
 /* ----- top-level thal_parameters helpers (declared in thal.h) ----- */
@@ -358,7 +380,8 @@ thal_load_parameters(const char *path, thal_parameters *a, thal_results *o)
    jmp_buf _jmp_buf;
    thal_free_parameters(a);
    if (setjmp(_jmp_buf) != 0) {
-      printf("longjump\n");
+      /* o->msg holds the reason. Don't leave half-loaded tables behind. */
+      thal_free_parameters(a);
       return -1;
    }
    a->dangle_dh = readParamFile(path, "dangle.dh", _jmp_buf, o);

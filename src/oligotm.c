@@ -187,8 +187,14 @@ oligotm(const  char *s,
     return ret;
   }
 
+  len = strlen(s);
+  if (len < 2 || len > MAX_PRIMER_LENGTH) {
+    ret.Tm = OLIGOTM_ERROR;
+    return ret;
+  }
+
   /* Translate to int array */
-  len = (strlen(s)-1);
+  len = len - 1;
   for (i = 0; i < len + 1; i++) {
     switch (s[i]) {
       case 'A':
@@ -426,8 +432,12 @@ oligodg(const char *s,      /* The sequence. */
       && tm_method != santalucia_2004)
     return OLIGOTM_ERROR;
 
+  len = strlen(s);
+  if (len < 1 || len > MAX_PRIMER_LENGTH)
+    return OLIGOTM_ERROR;
+
   /* Translate to int array */
-  len = (strlen(s)-1);
+  len = len - 1;
   for (i = 0; i < len + 1; i++) {
     switch (s[i]) {
       case 'A':

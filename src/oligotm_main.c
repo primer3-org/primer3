@@ -260,7 +260,7 @@ main(int argc, char **argv)
 
   if (OLIGOTM_ERROR == tm) {
     fprintf(stderr,
-            "%s ERROR: length of sequence %s is less than 2 or\n"
+            "%s ERROR: length of sequence %s is not between 2 and 36 or\n"
             "             the sequence contains an illegal character or\n"
             "             you have specified incorrect value for concentration of divalent cations or\n"
             "             you have specified incorrect value for concentration of dNTPs\n",
