@@ -304,6 +304,7 @@ typedef struct p3_global_settings {
                                    the 5' end to avoid quenching */
 
   int    file_flag;   /* TO DO, See if this can be factored out. */
+  int    explain_flag; /* Complete statistics if PRIMER_EXPLAIN_FLAG=1. */
 
   int    first_base_index;  /* 
                              * The index of the first base in the input

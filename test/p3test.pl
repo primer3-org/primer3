@@ -211,6 +211,7 @@ sub main() {
                             'primer3web_v4_0_0_default_settings',
 
                             'primer_overhang_th' => 1,
+                            'primer_explain_lazy' => 1,
                            );
 
     my @TESTS = ( 
@@ -224,6 +225,7 @@ sub main() {
                   'primer_thal_max_seq_error',
                   'primer_first_base_index',
                   'primer_must_match',
+                  'primer_explain_lazy',
 
                   'test_compl_error',
                   'test_left_to_right_of_right',

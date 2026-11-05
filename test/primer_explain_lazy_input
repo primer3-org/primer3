@@ -1,0 +1,15 @@
+SEQUENCE_ID=explain_lazy_dpal
+P3_COMMENT=Every primer with an acceptable Tm fails the self complementarity check. The pair search never reaches some of them, so their statistics are completed afterwards. Expected: ok 0 for left and right primers.
+SEQUENCE_TEMPLATE=GATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATC
+PRIMER_TASK=generic
+PRIMER_MIN_SIZE=20
+PRIMER_MAX_SIZE=20
+PRIMER_EXPLAIN_FLAG=1
+PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT=0
+PRIMER_PRODUCT_SIZE_RANGE=30-52
+=
+SEQUENCE_ID=explain_lazy_thal
+P3_COMMENT=Same template with thermodynamic alignment.
+SEQUENCE_TEMPLATE=GATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATCGATC
+PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT=1
+=

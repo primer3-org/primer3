@@ -390,6 +390,16 @@ static int    strstr_nocase(char *, char *);
 
 static double p_obj_fn(const p3_global_settings *, primer_rec *, int );
 
+static void   complete_oligo_checks(primer_rec *, oligo_type, oligo_stats *,
+                                    const p3_global_settings *, const seq_args *,
+                                    const dpal_arg_holder *,
+                                    const thal_arg_holder *);
+
+static void   complete_oligo_stats(p3retval *, const p3_global_settings *,
+                                   const seq_args *, const dpal_arg_holder *,
+                                   const thal_arg_holder *,
+                                   const thal_arg_holder *);
+
 static void   oligo_compl(primer_rec *,
                           const args_for_one_oligo_or_primer *po_args,
                           oligo_stats *,
@@ -1376,6 +1386,13 @@ choose_primers(const p3_global_settings *pa,
   if (retval->output_type == primer_pairs) {
     choose_pair_or_triple(retval, pa, sa, dpal_arg_to_use, thal_arg_to_use,
        thal_oligo_arg_to_use, &retval->best_pairs);
+
+    /* For performance the evaluation is stopped once the primer is not
+       valid. If the explain flag is set, the evaluation is performed
+       for the explain output. */
+    if (pa->explain_flag)
+      complete_oligo_stats(retval, pa, sa, dpal_arg_to_use,
+                           thal_arg_to_use, thal_oligo_arg_to_use);
   }
 
   /* Calculate secondary structures only for the selected primers */
@@ -1393,6 +1410,98 @@ choose_primers(const p3_global_settings *pa,
 }
 /* ============================================================ */
 /* END choose_primers()                                         */
+/* ============================================================ */
+
+/* ============================================================ */
+/* BEGIN complete_oligo_stats()                                 */
+/*                                                              */
+/* calc_and_check_oligo_features() stops evaluation of a oligo  */
+/* for performance reasons once the oligo will not be part of   */
+/* a primer pair. complete_oligo_checks() performs the self-    */
+/* complementarity and hairpin checks only to complete the      */
+/* stats without changing the selection.                        */
+/* ============================================================ */
+static void
+complete_oligo_checks(primer_rec *h, oligo_type l, oligo_stats *stats,
+                      const p3_global_settings *pa, const seq_args *sa,
+                      const dpal_arg_holder *dpal_arg_to_use,
+                      const thal_arg_holder *thal_arg_to_use)
+{
+  char s[THAL_MAX_ALIGN+1], s_rev[THAL_MAX_ALIGN+1];
+  const char *oligo, *oligo_rev;  /* 5'->3' oligo and its reverse complement */
+  const args_for_one_oligo_or_primer *po_args;
+  int overhang_len;
+
+  if (OT_INTL == l) {
+    po_args = &pa->o_args;
+  } else {
+    po_args = &pa->p_args;
+  }
+
+  if (p3_ol_has_any_problem(h) || h->must_use) {
+    return;
+  }
+
+  /* Build the sequences the same way as characterize_pair() does. */
+  if (OT_LEFT == l) {
+    if (NULL != sa->overhang_left) {
+      overhang_len = strlen(sa->overhang_left);
+      strcpy(s, sa->overhang_left);
+      _pr_shift_substr(sa->trimmed_seq, h->start, h->length, overhang_len, s);
+    } else {
+      _pr_substr(sa->trimmed_seq, h->start, h->length, s);
+    }
+    p3_reverse_complement(s, s_rev);
+    oligo = s;
+    oligo_rev = s_rev;
+  } else if (OT_RIGHT == l) {
+    _pr_substr(sa->trimmed_seq, h->start - h->length + 1, h->length, s);
+    if (NULL != sa->overhang_right) {
+      overhang_len = strlen(sa->overhang_right);
+      _pr_shift_substr(sa->overhang_right_rv, 0, overhang_len, h->length, s);
+    }
+    p3_reverse_complement(s, s_rev);
+    oligo = s_rev;
+    oligo_rev = s;
+  } else {
+    _pr_substr(sa->trimmed_seq, h->start, h->length, s);
+    p3_reverse_complement(s, s_rev);
+    oligo = s;
+    oligo_rev = s_rev;
+  }
+
+  if (pa->thermodynamic_oligo_alignment == 0) {
+    if (h->self_any == ALIGN_SCORE_UNDEF)
+      oligo_compl(h, po_args, stats, dpal_arg_to_use, oligo, oligo_rev);
+  } else {
+    if (h->self_any == ALIGN_SCORE_UNDEF)
+      oligo_compl_thermod(h, po_args, stats, thal_arg_to_use, oligo, oligo);
+    if (!p3_ol_has_any_problem(h) && h->hairpin_th == ALIGN_SCORE_UNDEF)
+      oligo_hairpin(h, po_args, stats, thal_arg_to_use, oligo);
+  }
+}
+
+static void
+complete_oligo_stats(p3retval *retval, const p3_global_settings *pa,
+                     const seq_args *sa,
+                     const dpal_arg_holder *dpal_arg_to_use,
+                     const thal_arg_holder *thal_arg_to_use,
+                     const thal_arg_holder *thal_oligo_arg_to_use)
+{
+  int i;
+
+  for (i = 0; i < retval->fwd.num_elem; i++)
+    complete_oligo_checks(&retval->fwd.oligo[i], OT_LEFT, &retval->fwd.expl,
+                          pa, sa, dpal_arg_to_use, thal_arg_to_use);
+  for (i = 0; i < retval->rev.num_elem; i++)
+    complete_oligo_checks(&retval->rev.oligo[i], OT_RIGHT, &retval->rev.expl,
+                          pa, sa, dpal_arg_to_use, thal_arg_to_use);
+  for (i = 0; i < retval->intl.num_elem; i++)
+    complete_oligo_checks(&retval->intl.oligo[i], OT_INTL, &retval->intl.expl,
+                          pa, sa, dpal_arg_to_use, thal_oligo_arg_to_use);
+}
+/* ============================================================ */
+/* END complete_oligo_stats()                                   */
 /* ============================================================ */
 
 /* ============================================================ */
@@ -8570,6 +8679,12 @@ p3_set_gs_primer_self_end_th(p3_global_settings * p , double val)
 void
 p3_set_gs_primer_hairpin_th(p3_global_settings * p , double val) {
    p->p_args.max_hairpin_th = val;
+}
+
+void   /* Called in primer3_boulder_main.c. */
+p3_set_gs_primer_explain_flag(p3_global_settings * p , int val)
+{
+  p->explain_flag = val;
 }
 
 void   /* Called in primer3_boulder_main.c. */

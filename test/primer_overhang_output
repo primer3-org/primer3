@@ -483,8 +483,8 @@ SEQUENCE_TEMPLATE=TGCTTTCAATCATGTGGGTGATTTTATAGATTGTCATCACCATAGTAACTGTTTTAACTCAC
 SEQUENCE_OVERHANG_LEFT=ATG
 SEQUENCE_OVERHANG_RIGHT=TAA
 P3_COMMENT=PRIMER_TASK=generic with overhangs
-PRIMER_LEFT_EXPLAIN=considered 1122, GC content failed 7, low tm 551, high tm 316, high end compl 1, ok 247
-PRIMER_RIGHT_EXPLAIN=considered 1122, low tm 145, high tm 842, high end compl 2, ok 133
+PRIMER_LEFT_EXPLAIN=considered 1122, GC content failed 7, low tm 551, high tm 316, high any compl 3, high end compl 91, ok 154
+PRIMER_RIGHT_EXPLAIN=considered 1122, low tm 145, high tm 842, high end compl 37, ok 98
 PRIMER_INTERNAL_EXPLAIN=considered 985, low tm 364, high tm 423, ok 198
 PRIMER_PAIR_EXPLAIN=considered 5, unacceptable product size 1, ok 4
 PRIMER_LEFT_NUM_RETURNED=3
@@ -839,8 +839,8 @@ SEQUENCE_TEMPLATE=TGCTTTCAATCATGTGGGTGATTTTATAGATTGTCATCACCATAGTAACTGTTTTAACTCAC
 SEQUENCE_OVERHANG_LEFT=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 SEQUENCE_OVERHANG_RIGHT=CCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 P3_COMMENT=PRIMER_TASK=generic with huge overhangs
-PRIMER_LEFT_EXPLAIN=considered 714, GC content failed 7, low tm 545, high tm 35, high end compl 1, ok 126
-PRIMER_RIGHT_EXPLAIN=considered 714, low tm 145, high tm 434, high end compl 1, ok 134
+PRIMER_LEFT_EXPLAIN=considered 714, GC content failed 7, low tm 545, high tm 35, high any compl 28, high end compl 56, ok 43
+PRIMER_RIGHT_EXPLAIN=considered 714, low tm 145, high tm 434, high end compl 37, ok 98
 PRIMER_PAIR_EXPLAIN=considered 7, unacceptable product size 2, ok 5
 PRIMER_LEFT_NUM_RETURNED=3
 PRIMER_RIGHT_NUM_RETURNED=3
