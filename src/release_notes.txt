@@ -52,6 +52,9 @@ Minor fixes:
 
 6. A bug was fixed in reading the cli parameters of amplicontm and oligotm
 
+7. amplicon3: The Bolton formula had an error, which gave melting points
+   up to almost 1 C too high.
+
 
 release 2.6.1 2022-01-26  ===============================================
 This release fixes a small memory bug.

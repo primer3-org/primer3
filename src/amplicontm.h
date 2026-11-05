@@ -30,6 +30,11 @@
 
 /* error codes: 0 - no errors
                 1 - out of memory
+                2 - sodium equivalent concentration below 0.01 M
+                3 - no melting temperature found
+                4 - Owczarzy salt correction is not supported
+                5 - Breslauer parameters are not supported
+                6 - the sequence contains no A, C, G or T
 
 */
 

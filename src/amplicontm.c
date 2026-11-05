@@ -177,6 +177,11 @@ amplicon_result amplicontm(const  char *inseq,
         }
     }
     ret.seq[ret.seq_len] = '\0';
+    if (ret.seq_len == 0) {
+        ret.error = 6;
+        amp_free_all(alloc_box, alloc_count);
+        return ret;
+    }
     ret.seq_gc = 100.0 * gc_count / ret.seq_len;
 
     if (tm_formula == bolton_amp) {
@@ -184,7 +189,7 @@ amplicon_result amplicontm(const  char *inseq,
                                   + (0.453 * ret.seq_gc / 100.0 - 2.88) * ret.formamid
                                   + 16.6 * (log10(mv + sqrt(dv) * 3.795))
                                   + 0.41 * ret.seq_gc
-                                  - 600 / ret.seq_len;
+                                  - 600.0 / ret.seq_len;
         ret.melt_len = 1;
         return ret;
     }

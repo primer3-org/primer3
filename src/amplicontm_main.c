@@ -311,6 +311,9 @@ main(int argc, char **argv)
   } else if (ret.error == 5) {
       fprintf(stderr, "%s ERROR: -tp 0 breslauer parameters for melting temperature calculation are not supported.\n", argv[0]);
       return -1;
+  } else if (ret.error == 6) {
+      fprintf(stderr, "%s ERROR: the sequence contains no A, C, G or T.\n", argv[0]);
+      return -1;
   } else if ((output != 1) && (tm_formula == 0)) {
       fprintf(stderr, "%s ERROR: -mf 0 requires -o 1.\n", argv[0]);
       return -1;
