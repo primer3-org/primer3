@@ -220,7 +220,7 @@ main(int argc, char **argv)
          exit(-1);
        }
        tm_santalucia = (int)strtol(argv[i+1], &endptr, 10);
-       if ('\0' != *endptr || tm_santalucia<0 || tm_santalucia>3) {
+       if ('\0' != *endptr || tm_santalucia<0 || tm_santalucia>2) {
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }

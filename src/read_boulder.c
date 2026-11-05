@@ -351,11 +351,13 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_MAX_BOUND", pa->p_args.max_bound);
       COMPARE_FLOAT("PRIMER_PAIR_MAX_DIFF_TM", pa->max_diff_tm);
       if (COMPARE("PRIMER_TM_FORMULA")) {
+          tmp_int = -1;  /* stays invalid if parsing fails */
           parse_int("PRIMER_TM_FORMULA", datum, &tmp_int, parse_err);
           pa->tm_santalucia = (tm_method_type) tmp_int;    /* added by T.Koressaar */
           continue;
       }
       if (COMPARE("PRIMER_SALT_CORRECTIONS")) {
+        tmp_int = -1;  /* stays invalid if parsing fails */
         parse_int("PRIMER_SALT_CORRECTIONS", datum, &tmp_int, parse_err);
         pa->salt_corrections = (salt_correction_type) tmp_int; /* added by T.Koressaar */
         continue;
@@ -585,11 +587,14 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT", pa->thermodynamic_oligo_alignment);
       COMPARE_INT("PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT", pa->thermodynamic_template_alignment);
       if (COMPARE("PRIMER_THERMODYNAMIC_PARAMETERS_PATH")) {
+        if (datum_len == 0) {
+          pr_append_new_chunk(glob_err,
+                              "Empty value for PRIMER_THERMODYNAMIC_PARAMETERS_PATH");
+          continue;
+        }
+        /* p3_read_line() has already removed the line end. */
         thermodynamic_params_path = (char*) _rb_safe_malloc(datum_len + 1);
         strcpy(thermodynamic_params_path, datum);
-        if (thermodynamic_params_path[strlen(thermodynamic_params_path) - 1] == '\n') {
-          thermodynamic_params_path[strlen(thermodynamic_params_path) - 1] = '\0';
-        }
 
         thal_results o;
         if (thal_load_parameters(thermodynamic_params_path, &pa->thermodynamic_parameters, &o) == -1) {
@@ -600,6 +605,7 @@ read_boulder_record(FILE *file_input,
           }
         }
         free(thermodynamic_params_path);
+        thermodynamic_params_path = NULL;
         continue;
       }
       if (COMPARE("PRIMER_MASK_KMERLIST_PATH")) {

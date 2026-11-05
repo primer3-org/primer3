@@ -3353,13 +3353,15 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   PR_ASSERT(k >= 0);
   PR_ASSERT(k < TRIMMED_SEQ_LEN(sa));
 
+  /* h->start and start_codon_pos are relative to the included region,
+     the stop codon positions are positions in the full sequence. */
   if ((otype == OT_LEFT) && !PR_START_CODON_POS_IS_NULL(sa)
       /* Make sure the primer would amplify at least part of
          the ORF. */
       && (0 != (h->start - sa->start_codon_pos) % 3
-          || h->start <= retval->upstream_stop_codon
+          || h->start + sa->incl_s <= retval->upstream_stop_codon
           || (retval->stop_codon_pos != -1
-              && h->start >= retval->stop_codon_pos))) {
+              && h->start + sa->incl_s >= retval->stop_codon_pos))) {
     stats->no_orf++;
     op_set_does_not_amplify_orf(h);
     if (!pa->pick_anyway) return;
@@ -3438,14 +3440,16 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
           = (h->start - sa->start_codon_pos) * INSIDE_START_WT;
     } else if (OT_RIGHT == l) {
 
+      /* stop_codon_pos is a position in the full sequence. */
+      int stop_pos = retval->stop_codon_pos - sa->incl_s;
       if (-1 == retval->stop_codon_pos) {
         h->position_penalty = (TRIMMED_SEQ_LEN(sa) - h->start - 1) * INSIDE_STOP_WT;
-      } else if (retval->stop_codon_pos < h->start) {
+      } else if (stop_pos < h->start) {
         h->position_penalty
-          = (h->start - retval->stop_codon_pos) * OUTSIDE_STOP_WT;
+          = (h->start - stop_pos) * OUTSIDE_STOP_WT;
       } else {
         h->position_penalty
-          = (retval->stop_codon_pos - h->start) * INSIDE_STOP_WT;
+          = (stop_pos - h->start) * INSIDE_STOP_WT;
       }
     }
   }
@@ -5879,13 +5883,20 @@ set_retval_both_stop_codons(const seq_args *sa, p3retval *retval) {
    * is to the left of sa->start_codon_pos; valid only if
    * sa->start_codon_pos is "not null".  We will not want to include
    * a stop codon to the right of the the start codon in the
-   * amplicon. */
+   * amplicon.
+   * Both values are stored as positions in the full sequence (0-based),
+   * which is what PRIMER_STOP_CODON_POSITION prints. -1 means "no stop
+   * codon" and must stay -1. */
   retval->upstream_stop_codon = find_stop_codon(sa->trimmed_seq,
                                                 sa->start_codon_pos, -1);
-  retval->upstream_stop_codon += sa->incl_s;
+  if (retval->upstream_stop_codon != -1) {
+    retval->upstream_stop_codon += sa->incl_s;
+  }
   retval->stop_codon_pos = find_stop_codon(sa->trimmed_seq,
                                              sa->start_codon_pos,  1);
-  retval->stop_codon_pos += sa->incl_s;
+  if (retval->stop_codon_pos != -1) {
+    retval->stop_codon_pos += sa->incl_s;
+  }
 }
 
 /*
@@ -7233,7 +7244,10 @@ _pr_data_control(const p3_global_settings *pa,
       pr_append(nonfatal_err,
                 "arguments for PRIMER_INSIDE_PENALTY or PRIMER_OUTSIDE_PENALTY");
     }
-    if (sa->start_codon_pos  > (sa->incl_s + sa->incl_l - 3)) {
+    /* _adjust_seq_args() has already made start_codon_pos relative to the
+       included region, so compare with incl_l and add incl_s back when
+       looking at the full sequence. */
+    if (sa->start_codon_pos > sa->incl_l - 3) {
       pr_append_new_chunk(nonfatal_err,
                           "Start codon position not contained in SEQUENCE_INCLUDED_REGION");
       return 1;
@@ -7243,13 +7257,15 @@ _pr_data_control(const p3_global_settings *pa,
                             "No codon provided in SEQUENCE_START_CODON_SEQUENCE");
         return 1;
       }
-      if (sa->start_codon_pos >= 0
-          && ((toupper(sa->sequence[sa->start_codon_pos]) != sa->start_codon_seq[0])
-              || (toupper(sa->sequence[sa->start_codon_pos + 1]) != sa->start_codon_seq[1])
-              || (toupper(sa->sequence[sa->start_codon_pos + 2]) != sa->start_codon_seq[2]))) {
-        pr_append_new_chunk(nonfatal_err,
-                            "No start codon at SEQUENCE_START_CODON_POSITION");
-        return 1;
+      if (sa->start_codon_pos >= 0) {
+        const char *codon = sa->sequence + sa->incl_s + sa->start_codon_pos;
+        if ((toupper(codon[0]) != sa->start_codon_seq[0])
+            || (toupper(codon[1]) != sa->start_codon_seq[1])
+            || (toupper(codon[2]) != sa->start_codon_seq[2])) {
+          pr_append_new_chunk(nonfatal_err,
+                              "No start codon at SEQUENCE_START_CODON_POSITION");
+          return 1;
+        }
       }
     }
   }
@@ -7368,6 +7384,21 @@ _pr_data_control(const p3_global_settings *pa,
        "Primer binding does not work with Owczarzy salt correction (PRIMER_SALT_CORRECTIONS=2)");
       return 1;
     }
+  }
+
+  /* Without this check an unknown method makes every Tm the error
+     value, and all oligos are rejected as "low tm" without a reason. */
+  if ((int) pa->tm_santalucia < (int) breslauer_auto
+      || (int) pa->tm_santalucia > (int) santalucia_2004) {
+    pr_append_new_chunk(glob_err,
+                        "Illegal value for PRIMER_TM_FORMULA");
+    return 1;
+  }
+  if ((int) pa->salt_corrections < (int) schildkraut
+      || (int) pa->salt_corrections > (int) owczarzy) {
+    pr_append_new_chunk(glob_err,
+                        "Illegal value for PRIMER_SALT_CORRECTIONS");
+    return 1;
   }
 
   if (pa->p_args.min_gc > pa->p_args.max_gc
