@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Primer3 picks PCR primers, hybridization probes ("internal oligos") and sequencing primers from a DNA template. The main program is `primer3_core`. The code is C plus one C++11 file (`src/libprimer3.cc`), built with plain Makefiles. Tests are Perl scripts that diff program output against checked-in golden files.
 
 - `src/primer3_manual.htm` is the reference for every input and output tag. Output tags are parsed by other tools, so renaming one is a breaking change.
+- The manual is maintained in a separate repository, and the copy here is only updated from there. Edits to `src/primer3_manual.htm` in this repository are proposals that the maintainer carries over to that repository. Still make them, so the proposed manual text sits next to the code change.
 - User-visible changes get an entry at the top of `src/release_notes.txt`, under the unreleased version heading.
 
 ## Build
@@ -74,6 +75,16 @@ To change expected output on purpose:
 
 To add a test, add the `_input` and `_output` files and append the name to `@TESTS`. CI runs on Linux, macOS and Windows, so printed numbers must match on all three. That is why `thal.c` is compiled with `-ffloat-store`.
 
+### How thal_test.pl, dpal_test.pl and masker_test.pl work
+
+These three drivers share one design:
+- Each line of the input file (`thal_input`, `thal_long_input`, `dpal_input`, `masker_input`) is the argument list for one call of the tool.
+- The stdout of all calls is concatenated into one `.tmp` file and compared with one golden file. stderr is never compared: thal and masker write it to `.tmp.err`, while dpal leaves it on the terminal.
+- A call that exits non-zero adds a line `EXIT=<code>` at its place in the `.tmp` file. Lines that print nothing and produce an `EXIT` line are deliberate error cases, such as missing or invalid option values. On Windows the code is shifted (`>> 8`) so that it matches Linux.
+- A new input line therefore changes the golden file at that position. Regenerate it by copying the `.tmp` file, and check that every new `EXIT` line is intended.
+
+In `thal_test.pl`, the interactive runs (`-i`) use the same input and golden files as the normal runs. When comparing, it rounds the numbers on `Calculated thermodynamical parameters` lines to one decimal.
+
 ## Architecture
 
 ### primer3_core pipeline
@@ -126,7 +137,7 @@ Follow the pattern of commit 010c4e8:
 4. Validate it in `_pr_data_control()`, including the allowed range of enum-like integers.
 5. Implement the logic in `libprimer3.cc`.
 6. If the tag affects output, update `print_boulder.c` and `format_output.c`. In `print_boulder.c`, guard every per-oligo line with `go_fwd`, `go_rev` or `go_int`, because list output can leave the oligo arrays empty.
-7. Add test input and output, an entry in the release notes, and the manual entry.
+7. Add test input and output, an entry in the release notes, and a proposed manual entry in `src/primer3_manual.htm` (see Overview).
 
 When you add a value to an existing enum, update every place that checks it. For Tm methods (`tm_method_type`) that means `oligotm()`, `oligodg()`, `end_oligodg()` and `seqtm()`, the input validation, and the `-tp` check in `oligotm_main.c`. Salt corrections (`salt_correction_type`) work the same way with `-sc`.
 

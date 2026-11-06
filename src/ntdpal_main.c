@@ -66,7 +66,8 @@ main(int argc, const char**argv)
       "<gval> and <lval> are (positive) floats (.01 precision)\n"
       "    specifying penalties for creating or lengthening a gap\n"
       "    respectively (the penalties are subtracted from the\n"
-      "    output score).\n\n"
+      "    output score).  Both default to 1.  A gap of length L\n"
+      "    costs <gval> + <lval> * (L - 1).\n\n"
       "-a causes the scoring matrix to be modified by dpal_set_ambiguity_codes.\n\n"
       "-e causes the end postion of the alignment in both sequences to\n"
       "   be printed.  Do not confuse with the 'e' <mode>.\n\n"
@@ -81,12 +82,20 @@ main(int argc, const char**argv)
       "   and -1 to a mismatch.)\n\n"
       "-p causes the alignment to be displayed on stderr.\n\n"
       "-s causes _only_ the score to printed.\n\n"
-      "<mval> is the maximum allowed gap (default is 3).\n\n"
+      "<mval> is the maximum allowed gap (default is 3, -1 for any length).\n\n"
       "<seq1> and <seq2> are the sequences to be aligned.\n\n"
       "<mode> is one of g, G, l, or L specifying a global,\n"
       "       global end-anchored, local, or local end-achored\n"
       "       alignment respectively.  For backward compatibility\n"
-      "       e is equivalent to G.\n\n";
+      "       e is equivalent to G.\n\n"
+      "       g and G are not Needleman-Wunsch alignments: bases\n"
+      "       before the start and after the end of the alignment\n"
+      "       are not aligned and cost no penalty.  The alignment\n"
+      "       starts at the first base of <seq1> or <seq2>.  With g\n"
+      "       it must end at the last base of <seq1> or <seq2>, with\n"
+      "       G at the last base of <seq1>.  For example,\n"
+      "       ACCCCTTTTTTTTTTTTT AT g aligns only the last two bases\n"
+      "       (score 0) instead of A----------------T (score -14).\n\n";
 
     if (argc < 4) {
       tmp_ret = fprintf(stderr, msg, argv[0]);
