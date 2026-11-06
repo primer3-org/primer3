@@ -5931,7 +5931,8 @@ find_stop_codon(const char* s,
 
   PR_ASSERT(s != NULL);
   PR_ASSERT(direction == 1 || direction == -1);
-  PR_ASSERT(len >= 3);
+  if (len < 3)
+    return -1;  /* no codon fits */
   PR_ASSERT(start <= (len - 3));
 
   if (start < 0) {
@@ -6761,7 +6762,7 @@ _adjust_seq_args(const p3_global_settings *pa,
 #if !defined(OS_WIN)    
     /* Masks original trimmed sequence */
     /* edited by M. Lepamets */
-    if (pa->mask_template && (pa->pick_left_primer == 1 && pa->pick_right_primer == 1)) {
+    if (pa->mask_template == 1 && (pa->pick_left_primer == 1 && pa->pick_right_primer == 1)) {
        input_sequence *input_seq;
        output_sequence *output_seq;
                           
@@ -7033,6 +7034,20 @@ _pr_data_control(const p3_global_settings *pa,
 
   seq_len = strlen(sa->sequence);
 
+  /* An empty primer or probe would be evaluated as an oligo of length 0 */
+  if (sa->left_input && sa->left_input[0] == '\0') {
+    pr_append_new_chunk(nonfatal_err, "Empty SEQUENCE_PRIMER");
+    return 1;
+  }
+  if (sa->right_input && sa->right_input[0] == '\0') {
+    pr_append_new_chunk(nonfatal_err, "Empty SEQUENCE_PRIMER_REVCOMP");
+    return 1;
+  }
+  if (sa->internal_input && sa->internal_input[0] == '\0') {
+    pr_append_new_chunk(nonfatal_err, "Empty SEQUENCE_INTERNAL_OLIGO");
+    return 1;
+  }
+
   /* The overhang from PRIMER_PRODUCT_SIZE_RANGE is subtracted
      in adjust_seq_args() */
 
@@ -7081,6 +7096,14 @@ _pr_data_control(const p3_global_settings *pa,
     pr_append_new_chunk(glob_err, "Value too large at tag PRIMER_PAIR_MAX_LIBRARY_MISPRIMING");
     return 1;
   }
+  if (pa->pair_repeat_compl < 0) {
+    pr_append_new_chunk(glob_err, "Value too small at tag PRIMER_PAIR_MAX_LIBRARY_MISPRIMING");
+    return 1;
+  }
+  if (pa->max_diff_tm < 0) {
+    pr_append_new_chunk(glob_err, "Value too small at tag PRIMER_PAIR_MAX_DIFF_TM");
+    return 1;
+  }
 
   if (pa->o_args.max_template_mispriming >= 0 && pa->thermodynamic_template_alignment==0)
     pr_append_new_chunk(glob_err,
@@ -7090,6 +7113,9 @@ _pr_data_control(const p3_global_settings *pa,
                         "PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_TH is not supported");
   if (pa->p_args.min_size < 1)
     pr_append_new_chunk(glob_err, "PRIMER_MIN_SIZE must be >= 1");
+  
+  if (pa->o_args.min_size < 1)
+    pr_append_new_chunk(glob_err, "PRIMER_INTERNAL_MIN_SIZE must be >= 1");
 
   if (pa->p_args.max_size > MAX_PRIMER_LENGTH) {
     pr_append_new_chunk(glob_err,
@@ -7394,6 +7420,16 @@ _pr_data_control(const p3_global_settings *pa,
                         "Illegal value for PRIMER_TM_FORMULA");
     return 1;
   }
+  if (pa->thermodynamic_oligo_alignment != 0 && pa->thermodynamic_oligo_alignment != 1) {
+    pr_append_new_chunk(glob_err,
+                        "Illegal value for PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT");
+    return 1;
+  }
+  if (pa->mask_template != 0 && pa->mask_template != 1) {
+    pr_append_new_chunk(glob_err,
+                        "Illegal value for PRIMER_MASK_TEMPLATE");
+    return 1;
+  }
   if (pa->explain_flag < 0 || pa->explain_flag > 2) {
     pr_append_new_chunk(glob_err,
                         "Illegal value for PRIMER_EXPLAIN_FLAG");
@@ -7569,25 +7605,23 @@ _pr_data_control(const p3_global_settings *pa,
     if (strlen(sa->right_input) < (unsigned) pa->p_args.min_size)
       pr_append_new_chunk(warning,
                           "Specified right primer < PRIMER_MIN_SIZE");
-    if (strlen(sa->right_input) > (unsigned) pa->p_args.max_size) {
+    if (strlen(sa->right_input) > (unsigned) pa->p_args.max_size)
       pr_append_new_chunk(warning,
                           "Specified right primer > PRIMER_MAX_SIZE");
-    } else { /* We do not want to overflow s1. */
-      p3_reverse_complement(sa->right_input,s1);
-      if (!strstr_nocase(sa->sequence, s1))
+    p3_reverse_complement(sa->right_input,s1);
+    if (!strstr_nocase(sa->sequence, s1))
+      pr_append_new_chunk(nonfatal_err,
+                          "Specified right primer not in sequence");
+    else if (!strstr_nocase(sa->trimmed_seq, s1))
+      pr_append_new_chunk(nonfatal_err,
+                          "Specified right primer not in Included Region");
+    else if (sa->left_input) {
+      if (strcmp(sa->left_input, s1) == 0)
         pr_append_new_chunk(nonfatal_err,
-                            "Specified right primer not in sequence");
-      else if (!strstr_nocase(sa->trimmed_seq, s1))
-        pr_append_new_chunk(nonfatal_err,
-                            "Specified right primer not in Included Region");
-      else if (sa->left_input) {
-        if (strcmp(sa->left_input, s1) == 0)
-          pr_append_new_chunk(nonfatal_err,
-                            "Specified left and right primer are reverse complementary");
-        if (strcmp(sa->left_input, sa->right_input) == 0)
-          pr_append_new_chunk(warning,
-                            "Specified left and right primer are identical");
-      }
+                          "Specified left and right primer are reverse complementary");
+      if (strcmp(sa->left_input, sa->right_input) == 0)
+        pr_append_new_chunk(warning,
+                          "Specified left and right primer are identical");
     }
   }
 
@@ -7677,7 +7711,7 @@ _pr_data_control(const p3_global_settings *pa,
     return 1;
   }
 
-  if (pa->sequencing.spacing < 0) {
+  if (pa->sequencing.spacing < 25) {
     pr_append_new_chunk(glob_err,
                         "Illegal value for PRIMER_SEQUENCING_SPACING");
     return 1;
@@ -8003,9 +8037,10 @@ _check_and_adjust_1_interval(const char *tag_name,
       pr_append(err, " illegal interval");
       return 1;
     }
-    if (intervals[i][0] - first_index > 0) {
-      intervals[i][0] -= first_index;
-    } else {
+    intervals[i][0] -= first_index;
+    if (intervals[i][0] < 0) {
+      /* Drop the part before the sequence */
+      intervals[i][1] += intervals[i][0];
       intervals[i][0] = 0;
     }
   }

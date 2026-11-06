@@ -117,7 +117,7 @@ typedef struct {
 /* Structure for receiving results from the main function, dpal. */
 typedef struct {
     const   char *msg;
-    int     path[DPAL_MAX_ALIGN][2];
+    int     path[DPAL_MAX_ALIGN + 1][2];  /* traceback starts at index max(I, J) + 1 */
     int     path_length;
     int     align_end_1; /* Last alignment position in the 1st sequence. */
     int     align_end_2; /* Last alignment position in the 2nd sequence. */

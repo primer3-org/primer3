@@ -50,7 +50,7 @@ main(int argc, char **argv)
     "\n"
     "-n  dNTP_conc           - concentration of deoxynycleotide triphosphate in mM, by default 0.6mM\n"
     "\n"
-    "-dmso dmso_conc         - concentration of DMSO in percent, by default 0%\n"
+    "-dmso dmso_conc         - concentration of DMSO in percent, by default 0%%\n"
     "\n"
     "-dmso_fact dmso_fact    - DMSO correction factor, by default 0.6\n"
     "\n"
@@ -313,6 +313,9 @@ main(int argc, char **argv)
       return -1;
   } else if (ret.error == 6) {
       fprintf(stderr, "%s ERROR: the sequence contains no A, C, G or T.\n", argv[0]);
+      return -1;
+  } else if (ret.error == 7) {
+      fprintf(stderr, "%s ERROR: the sequence has fewer than %d A, C, G or T.\n", argv[0], AMP_MIN_LENGTH);
       return -1;
   } else if ((output != 1) && (tm_formula == 0)) {
       fprintf(stderr, "%s ERROR: -mf 0 requires -o 1.\n", argv[0]);

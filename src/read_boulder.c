@@ -584,7 +584,12 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_LOWERCASE_MASKING", pa->lowercase_masking);
 
       /* added by T. Koressaar */
-      COMPARE_INT("PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT", pa->thermodynamic_oligo_alignment);
+      if (COMPARE("PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT")) {
+        parse_int("PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT", datum, &pa->thermodynamic_oligo_alignment, parse_err);
+        if (pa->thermodynamic_oligo_alignment != 0 && pa->thermodynamic_oligo_alignment != 1)
+          pr_append_new_chunk(glob_err, "Illegal value for PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT");
+        continue;
+      }
       COMPARE_INT("PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT", pa->thermodynamic_template_alignment);
       if (COMPARE("PRIMER_THERMODYNAMIC_PARAMETERS_PATH")) {
         if (datum_len == 0) {
@@ -698,6 +703,8 @@ read_boulder_record(FILE *file_input,
                     pa->pr_pair_weights.template_mispriming_th);
       if (COMPARE("PRIMER_MASK_TEMPLATE")) {
                     parse_int("PRIMER_MASK_TEMPLATE", datum, &pa->mask_template, parse_err);
+                    if (pa->mask_template != 0 && pa->mask_template != 1)
+                      pr_append_new_chunk(glob_err, "Illegal value for PRIMER_MASK_TEMPLATE");
                     /* Check in case: PRIMER_LOWERCASE_MASKING=1 and PRIMER_MASK_TEMPLATE=0 */
 #if !defined(OS_WIN)
                     if (pa->mask_template) {
@@ -791,23 +798,19 @@ read_boulder_record(FILE *file_input,
       pa->primer_task = pick_primer_list;
     } else if (!strcmp_nocase(task_tmp, "check_primers")) {
       pa->primer_task = check_primers;
-      /* check_primers sets the picking flags itself */
-      pa->pick_left_primer = 0;
-      pa->pick_right_primer = 0;
-      pa->pick_internal_oligo = 0;
-      if (sa->left_input){
-        pa->pick_left_primer = 1;
-      }
-      if (sa->right_input){
-        pa->pick_right_primer = 1;
-      }
-      if (sa->internal_input){
-        pa->pick_internal_oligo = 1;
-      }
     } else 
       pr_append_new_chunk(glob_err,
                           "Unrecognized PRIMER_TASK");
     free(task_tmp);
+  }
+
+  /* check_primers sets the picking flags from the oligos of each
+     record, also when the task was set in an earlier record or in
+     a settings file */
+  if (pa->primer_task == check_primers) {
+    pa->pick_left_primer = (sa->left_input != NULL);
+    pa->pick_right_primer = (sa->right_input != NULL);
+    pa->pick_internal_oligo = (sa->internal_input != NULL);
   }
 
   /* 

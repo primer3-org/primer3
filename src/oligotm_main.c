@@ -66,7 +66,7 @@ main(int argc, char **argv)
      "\n"
      "-d  dna_conc        - concentration of DNA strands in nM, by default 50nM\n"
      "\n"
-     "-dm dmso_conc       - concentration of DMSO in %, by default 0\n"
+     "-dm dmso_conc       - concentration of DMSO in %%, by default 0\n"
      "\n"
      "-df dmso_factor     - correction factor for DMSO, by default 0.6\n"
      "\n"

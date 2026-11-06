@@ -24,6 +24,8 @@
 #ifndef _AMPLICON_TM
 #define _AMPLICON_TM 1
 
+#define AMP_MIN_LENGTH 20
+
 #ifdef __cplusplus
   extern "C" {
 #endif

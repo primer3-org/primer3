@@ -411,10 +411,12 @@ print_boulder(int io_version,
     /* Print position penalty, this is for backward compatibility */
     if (!_PR_DEFAULT_POSITION_PENALTIES(pa)
         || !PR_START_CODON_POS_IS_NULL(sa)){
-      printf("PRIMER_LEFT%s_POSITION_PENALTY=%f\n", suffix,
-             fwd->position_penalty);
-      printf("PRIMER_RIGHT%s_POSITION_PENALTY=%f\n", suffix,
-             rev->position_penalty);
+      if (go_fwd == 1)
+        printf("PRIMER_LEFT%s_POSITION_PENALTY=%f\n", suffix,
+               fwd->position_penalty);
+      if (go_rev == 1)
+        printf("PRIMER_RIGHT%s_POSITION_PENALTY=%f\n", suffix,
+               rev->position_penalty);
     }
         
     /* Print primer end stability */

@@ -182,6 +182,11 @@ amplicon_result amplicontm(const  char *inseq,
         amp_free_all(alloc_box, alloc_count);
         return ret;
     }
+    if (ret.seq_len < AMP_MIN_LENGTH) {
+        ret.error = 7;
+        amp_free_all(alloc_box, alloc_count);
+        return ret;
+    }
     ret.seq_gc = 100.0 * gc_count / ret.seq_len;
 
     if (tm_formula == bolton_amp) {

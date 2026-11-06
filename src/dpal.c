@@ -272,7 +272,7 @@ dpal(const unsigned char *X,
      dpal_results *out)
 {
   int xlen, ylen;
-  char msg[] = "Illegal character in input: ?";
+  static char msg[] = "Illegal character in input: ?";  /* out->msg points here */
 
   out->score = DPAL_ERROR_SCORE;
   out->path_length = 0;

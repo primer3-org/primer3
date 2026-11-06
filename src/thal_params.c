@@ -277,14 +277,15 @@ readParamFile(const char *dirname, const char *fname, jmp_buf _jmp_buf, thal_res
    FILE *file;
    char *ret = NULL;
    char *paramdir = NULL;
-   paramdir = (char *) safe_malloc(strlen(dirname) + strlen(fname) + 2, _jmp_buf, o);
+   size_t n = strlen(dirname);
+   paramdir = (char *) safe_malloc(n + strlen(fname) + 2, _jmp_buf, o);
    strcpy(paramdir, dirname);
 #ifdef OS_WIN
-   if (paramdir[strlen(paramdir) - 1] != '\\') {
+   if (n > 0 && paramdir[n - 1] != '\\') {
       strcat(paramdir, "\\\0");
    }
 #else
-   if (paramdir[strlen(paramdir) - 1] != '/') {
+   if (n > 0 && paramdir[n - 1] != '/') {
       strcat(paramdir, "/\0");
    }
 #endif
