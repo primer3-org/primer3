@@ -46,6 +46,7 @@ use Getopt::Long;
 use Carp;
 use POSIX; # For testing wait / system return value, e.g. WIFSIGNALED, WTERMSIG.....
 use Config; # To get the number for SIGINT
+use IO::Handle; # For autoflush
 
 our $test_count = 0;
 our $exit_status = 0;
@@ -73,12 +74,21 @@ sub runtest($$$$$) {
     # Reopen STDOUT to get all ntdpal output in one file
     open OLDOUT, ">&STDOUT" or confess "Cannot dup STDOUT: $!";
     open STDOUT, '>', $outfile or confess "open STDOUT '>' $outfile: $!";
+    # Unbuffered, so that EXIT lines stay in order with the program output
+    STDOUT->autoflush(1);
     while (my $in = <Q>) {
         $test_count++;
         my $valgrind_prefix 
             = $do_valgrind ? sprintf($valgrind_format, $test_count) : '';
         my $cmd = "$valgrind_prefix $exe $ntdpal_args $in";
         my $r = _nowarn_system($cmd);
+        # Record failing calls so that error cases are part of the comparison
+        if ($winFlag) {
+            $r = $r >> 8;
+        }
+        if ($r != 0) {
+            print "EXIT=$r\n";
+        }
     }
     close Q;
     open STDOUT, ">&OLDOUT" or confess "Cannot dup OLDOUT: $!";

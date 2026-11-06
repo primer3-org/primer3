@@ -1,9 +1,11 @@
+EXIT=255
 Calculated thermodynamical parameters for dimer:	16	dS = -146.99	dH = -50600	dG = -5011.14	t = 71.0918
 SEQ	//////----\\\\\\
 STR	CCGCAGTAAGCTGCGG
 Calculated thermodynamical parameters for dimer:	16	dS = -146.99	dH = -50600	dG = -5011.14	t = 71.0918
 SEQ	//////----\\\\\\
 STR	CCGCAGTAAGCTGCGG
+EXIT=255
 Calculated thermodynamical parameters for dimer:	dS = -153.512	dH = -54000	dG = -6388.21	t = 11.5486
 SEQ	      TAAGCTGCGG
 SEQ	CCGCAG          
@@ -19,11 +21,21 @@ SEQ	      TAAGCTGCGG
 SEQ	CCGCAG          
 STR	GGCGTC          
 STR	      GAATGACGCC
+EXIT=255
+EXIT=255
+EXIT=255
+EXIT=255
+EXIT=255
+EXIT=255
+EXIT=255
+EXIT=255
+EXIT=255
 Calculated thermodynamical parameters for dimer:	dS = -295.897	dH = -101000	dG = -20471.7	t = 31.0129
 SEQ	      TAAG      
 SEQ	CCGCAG    CTGCGG
 STR	GGCGTC    GACGCC
 STR	      GAAT      
+EXIT=255
 Calculated thermodynamical parameters for dimer:	dS = -280.782	dH = -93200	dG = -6115.6	t = 20.9085
 SEQ	AAAACCCGC         TA-  ----
 SEQ	         TTTGCTAGC   CG    
@@ -47,6 +59,7 @@ SEQ	AACCCGCTTGCTAGCAAAAAAAAAACCCGCTTGCTAGCAAAAAAAAAACCCGCTTGCTAGCAAAAAAAAAACCCGC
 SEQ	                                                                                                     GCTAGCAA          
 STR	                                                                                                     CGATCGTT          
 STR	                                                                                                 GCAT        TCGCCCAAAA
+EXIT=255
 Calculated thermodynamical parameters for dimer:	dS = 8.1	dH = 4600	dG = 2087.78	t = -437.072
 SEQ	 
 SEQ	A
@@ -102,6 +115,11 @@ SEQ	AGTCTCTCTCTCTCTCTC  ----
 SEQ	                  TC    
 STR	                  AG    
 STR	 TCTGACTTTGCGATGCT  CAAA
+Calculated thermodynamical parameters for dimer:	dS = -39.5024	dH = -12800	dG = -548.321	t = -103.982
+SEQ	AAACGATCGT  CGTTTCAGTCT------
+SEQ	          AG                 
+STR	          TC                 
+STR	         C  TCTCTCTCTCTCTCTGA
 Calculated thermodynamical parameters for dimer:	23	dS = -101.25	dH = -32500	dG = -1097.4	t = 47.8385
 SEQ	/////-------\\\\\------
 STR	AAACGATCGTAGCGTTTCAGTCT
