@@ -1388,9 +1388,9 @@ choose_primers(const p3_global_settings *pa,
        thal_oligo_arg_to_use, &retval->best_pairs);
 
     /* For performance the evaluation is stopped once the primer is not
-       valid. If the explain flag is set, the evaluation is performed
+       valid. With PRIMER_EXPLAIN_FLAG=2 the evaluation is completed
        for the explain output. */
-    if (pa->explain_flag)
+    if (pa->explain_flag == 2)
       complete_oligo_stats(retval, pa, sa, dpal_arg_to_use,
                            thal_arg_to_use, thal_oligo_arg_to_use);
   }
@@ -7392,6 +7392,11 @@ _pr_data_control(const p3_global_settings *pa,
       || (int) pa->tm_santalucia > (int) santalucia_2004) {
     pr_append_new_chunk(glob_err,
                         "Illegal value for PRIMER_TM_FORMULA");
+    return 1;
+  }
+  if (pa->explain_flag < 0 || pa->explain_flag > 2) {
+    pr_append_new_chunk(glob_err,
+                        "Illegal value for PRIMER_EXPLAIN_FLAG");
     return 1;
   }
   if ((int) pa->salt_corrections < (int) schildkraut

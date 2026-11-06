@@ -53,9 +53,9 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    1290     0     0     0     0    10     0    60  1039      0     0    18     0     0   163
-Right   1290     0     0     0     0    32     0    38  1096      0     0     5     0     0   119
-Intl    1565     0     0     0     0    32     0    60  1290      0     0    19     0     0   164
+Left    1290     0     0     0     0    10     0    60  1039      0     0     0     0     0   181
+Right   1290     0     0     0     0    32     0    38  1096      0     0     0     0     0   124
+Intl    1565     0     0     0     0    32     0    60  1290      0     0     0     0     0   183
 Pair Stats:
 considered 25, unacceptable product size 20, ok 5
 libprimer3 release 2.3.6
@@ -128,9 +128,9 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3397     0     0     0     0     0     0   897  1543    288     0    63    22     0   584
-Right   3397     0     0     0     0     0     0   839  1673    217     0    63    22     0   583
-Intl    3672     0     0     0     0     0     0   953  1734      0     0    90    22     0   873
+Left    3397     0     0     0     0     0     0   897  1543      0     0     0    22     0   935
+Right   3397     0     0     0     0     0     0   839  1673      0     0     1    22     0   862
+Intl    3672     0     0     0     0     0     0   953  1734      0     0    14    22     0   949
 Pair Stats:
 considered 58, unacceptable product size 51, ok 7
 libprimer3 release 2.3.6
@@ -205,9 +205,9 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3397     0     0     0     0     0     0    52  3139      0     0     8    22     0   176
+Left    3397     0     0     0     0     0     0    52  3139      0     0     1    22     0   183
 Right   3397     0     0     0     0     0     0    59  3137      0     0     0    22     0   179
-Intl    3672     0     0     0     0     0     0   432  2545      0     0    37    22     0   636
+Intl    3672     0     0     0     0     0     0   432  2545      0     0    10    22     0   663
 Pair Stats:
 considered 18, unacceptable product size 11, high template mispriming score 1, ok 6
 libprimer3 release 2.3.6
@@ -282,9 +282,9 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3397     0     0     0     0     0     0    52  3139      0     0     8    22     0   176
+Left    3397     0     0     0     0     0     0    52  3139      0     0     1    22     0   183
 Right   3397     0     0     0     0     0     0    59  3137      0     0     0    22     0   179
-Intl    3672     0     0     0     0     0     0   432  2545      0     0    37    22     0   636
+Intl    3672     0     0     0     0     0     0   432  2545      0     0    10    22     0   663
 Pair Stats:
 considered 20, unacceptable product size 11, high template mispriming score 3, ok 6
 libprimer3 release 2.3.6
@@ -359,9 +359,9 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3146     0     0     0     0     0     0    52  2915     33     0     8    22     0   116
+Left    3146     0     0     0     0     0     0    52  2915     33     0     1    22     0   123
 Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
-Intl    3126     0     0     0     0     0     0   432  2140     83     0    37    22     0   412
+Intl    3126     0     0     0     0     0     0   432  2140     83     0    10    22     0   439
 Pair Stats:
 considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
 libprimer3 release 2.3.6
@@ -436,9 +436,9 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3397     0     0     0     0     0     0    52  3139     72     0     8    22     0   104
-Right   3397     0     0     0     0     0     0    59  3137     37     0     0    22     0   142
-Intl    3672     0     0     0     0     0     0   432  2545    287     0    28    22     0   358
+Left    3397     0     0     0     0     0     0    52  3139      0     0     1    22     0   183
+Right   3397     0     0     0     0     0     0    59  3137      0     0     0    22     0   179
+Intl    3672     0     0     0     0     0     0   432  2545      2     0    10    22     0   661
 Pair Stats:
 considered 18, unacceptable product size 11, high template mispriming score 1, ok 6
 libprimer3 release 2.3.6
@@ -513,9 +513,9 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3397     0     0     0     0     0     0    52  3139     72     0     8    22     0   104
-Right   3397     0     0     0     0     0     0    59  3137     37     0     0    22     0   142
-Intl    3672     0     0     0     0     0     0   432  2545    287     0    28    22     0   358
+Left    3397     0     0     0     0     0     0    52  3139      0     0     1    22     0   183
+Right   3397     0     0     0     0     0     0    59  3137      0     0     0    22     0   179
+Intl    3672     0     0     0     0     0     0   432  2545      2     0    10    22     0   661
 Pair Stats:
 considered 18, unacceptable product size 11, high template mispriming score 1, ok 6
 libprimer3 release 2.3.6
@@ -590,9 +590,9 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3089     0     0     0     0     0     0    52  2863     40     0     8    22     0   104
+Left    3089     0     0     0     0     0     0    52  2863     40     0     1    22     0   111
 Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
-Intl    3030     0     0     0     0     0     0   432  2088    102     0    28    22     0   358
+Intl    3030     0     0     0     0     0     0   432  2088    102     0    10    22     0   376
 Pair Stats:
 considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
 libprimer3 release 2.3.6
@@ -744,9 +744,9 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3089     0     0     0     0     0     0    52  2863     40     0    20    22     0    92
-Right   3209     0     0     0     0     0     0    59  2966     24     0    24    18     0   118
-Intl    3030     0     0     0     0     0     0   432  2088    102     0    28    22     0   358
+Left    3089     0     0     0     0     0     0    52  2863     40     0     1    22     0   111
+Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
+Intl    3030     0     0     0     0     0     0   432  2088    102     0    10    22     0   376
 Pair Stats:
 considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
 libprimer3 release 2.3.6
@@ -821,8 +821,8 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3089     0     0     0     0     0     0    52  2863     40     0    25    22     0    87
-Right   3209     0     0     0     0     0     0    59  2966     24     0    38    18     0   104
+Left    3089     0     0     0     0     0     0    52  2863     40     0     1    22     0   111
+Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
 Intl    3030     0     0     0     0     0     0   432  2088    102     0    28    22     0   358
 Pair Stats:
 considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
@@ -898,8 +898,8 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3089     0     0     0     0     0     0    52  2863     40     0    25    22     0    87
-Right   3209     0     0     0     0     0     0    59  2966     24     0    38    18     0   104
+Left    3089     0     0     0     0     0     0    52  2863     40     0     1    22     0   111
+Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
 Intl    3030     0     0     0     0     0     0   432  2088    102     0    28    22     0   358
 Pair Stats:
 considered 20, unacceptable product size 11, high template mispriming score 1, ok 8
@@ -975,8 +975,8 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3089     0     0     0     0     0     0    52  2863     40     0    25    22     0    87
-Right   3209     0     0     0     0     0     0    59  2966     24     0    38    18     0   104
+Left    3089     0     0     0     0     0     0    52  2863     40     0     1    22     0   111
+Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
 Intl    3030     0     0     0     0     0     0   432  2088    102     0    28    22     0   358
 Pair Stats:
 considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
@@ -1052,8 +1052,8 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-   lib  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin   sim     X  stab    ok
-Left    3089     0     0     0     0     0     0    52  2863     40     0    25     0    22     0    87
-Right   3209     0     0     0     0     0     0    59  2966     24     0    38     0    18     0   104
+Left    3089     0     0     0     0     0     0    52  2863     40     0     1     0    22     0   111
+Right   3209     0     0     0     0     0     0    59  2966     24     0     0     0    18     0   142
 Intl    3030     0     0     0     0     0     0   432  2088    102     0    28     0    22     0   358
 Pair Stats:
 considered 23, unacceptable product size 12, high template mispriming score 3, ok 8

@@ -1762,7 +1762,7 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left     131     0     0     0     0     0     0     0     0     0     0     0     0   131
 Right    131     0     0     0     0     0     0     0     0     0     0     0     0   131
-Intl    1585     0     0     0     0     0     0     0     0   440     0     0     0  1145
+Intl    1585     0     0     0     0     0     0     0     0     0     0     0     0  1585
 Pair Stats:
 considered 64, unacceptable product size 48, ok 16
 libprimer3 release 2.2.1
