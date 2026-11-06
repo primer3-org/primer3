@@ -7,9 +7,9 @@ STR	CCGCAGTAAGCTGCGG
 Calculated thermodynamical parameters for dimer:	22	dS = -77.7449	dH = -24700	dG = -587.432	t = 44.5559
 SEQ	-------///-----\\\----
 STR	AAAACCCGCTTTGCTAGCTACG
-Calculated thermodynamical parameters for dimer:	24	dS = -73.6849	dH = -23400	dG = -546.641	t = 44.4186
-SEQ	-----///----\\\---------
-STR	AACCCGCTTGCTAGCAAAAAAAA 
+Calculated thermodynamical parameters for dimer:	23	dS = -73.6849	dH = -23400	dG = -546.641	t = 44.4186
+SEQ	-----///----\\\--------
+STR	AACCCGCTTGCTAGCAAAAAAAA
 Calculated thermodynamical parameters for dimer:	22	dS = -77.7449	dH = -24700	dG = -587.432	t = 44.5559
 SEQ	-------///-----\\\----
 STR	AAAACCCGCTTTGCTAGCTACG

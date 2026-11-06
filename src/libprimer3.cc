@@ -6253,6 +6253,8 @@ p3_reverse_complement(const char *seq, char *s)
       case 'w': *q='w'; break;
 
       case 'n': *q='n'; break;
+
+      default:  *q='N'; break;
       }
     p--; q++;
   }
@@ -6324,6 +6326,10 @@ dna_to_upper(char * s, int ambiguity_code_ok)
           case 'h': case 'H': *p = 'H'; break;
           case 'v': case 'V': *p = 'V'; break;
           case 'b': case 'B': *p = 'B'; break;
+          default:
+            if (!unrecognized_base) unrecognized_base = *p;
+            *p = 'N';
+            break;
           }
         } else {
           if (!unrecognized_base) unrecognized_base = *p;
@@ -7787,17 +7793,17 @@ _pr_data_control(const p3_global_settings *pa,
     return 1;
   }
 
-  if ((sa->primer_overlap_junctions_count > 0) &&
-      (pa->o_args.min_5_prime_overlap_of_junction > (pa->p_args.max_size / 2))) {
+  if ((sa->intl_overlap_junctions_count > 0) &&
+      (pa->o_args.min_5_prime_overlap_of_junction > (pa->o_args.max_size / 2))) {
     pr_append_new_chunk(glob_err,
-                        "PRIMER_INTERNAL_MIN_5_PRIME_OVERLAP_OF_JUNCTION > PRIMER_MAX_SIZE / 2");
+                        "PRIMER_INTERNAL_MIN_5_PRIME_OVERLAP_OF_JUNCTION > PRIMER_INTERNAL_MAX_SIZE / 2");
     return 1;
   }
 
-  if ((sa->primer_overlap_junctions_count > 0) &&
-      (pa->o_args.min_3_prime_overlap_of_junction > (pa->p_args.max_size / 2))) {
+  if ((sa->intl_overlap_junctions_count > 0) &&
+      (pa->o_args.min_3_prime_overlap_of_junction > (pa->o_args.max_size / 2))) {
     pr_append_new_chunk(glob_err,
-                        "PRIMER_INTERNAL_MIN_3_PRIME_OVERLAP_OF_JUNCTION > PRIMER_MAX_SIZE / 2");
+                        "PRIMER_INTERNAL_MIN_3_PRIME_OVERLAP_OF_JUNCTION > PRIMER_INTERNAL_MAX_SIZE / 2");
     return 1;
   }
 

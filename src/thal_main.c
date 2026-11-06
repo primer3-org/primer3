@@ -60,6 +60,26 @@ const unsigned char *oligo1, *oligo2; /* inserted oligo sequences */
 char *path = NULL; /* path to the parameter files */
 int interactive = 0;
 
+/* Return 0 for a non-empty sequence of A, C, G, T and N (any case),
+   otherwise print the problem and return 1. */
+static int
+check_sequence(const unsigned char *seq)
+{
+   const unsigned char *p;
+   if (seq == NULL) return 0;
+   if (*seq == '\0') {
+      fprintf(stderr, "Error: empty sequence\n");
+      return 1;
+   }
+   for (p = seq; *p != '\0'; p++) {
+      if (!strchr("ACGTNacgtn", *p)) {
+         fprintf(stderr, "Error: illegal character in sequence: '%c'\n", *p);
+         return 1;
+      }
+   }
+   return 0;
+}
+
 /* Beginning of main */
 int main(int argc, char** argv) 
 {   
@@ -251,6 +271,17 @@ int main(int argc, char** argv)
         exit(-1);
       }
    }
+   if (a.temp <= 0.0) {
+      fprintf(stderr, "Error: the temperature must be above -273.15 C\n");
+      exit(-1);
+   }
+   if (a.mv + a.dv <= 0.0) {
+      fprintf(stderr, "Error: the monovalent and divalent concentrations must not both be 0\n");
+      exit(-1);
+   }
+   if (check_sequence(oligo1) || check_sequence(oligo2)) {
+      exit(-1);
+   }
    /* read default thermodynamic parameters */
    thal_parameters thermodynamic_parameters;
    thal_set_null_parameters(&thermodynamic_parameters);
@@ -278,9 +309,11 @@ int main(int argc, char** argv)
      if (oligo_str == NULL) exit(-2);
 
      while(NULL != fgets(oligo_str, buffer_size, stdin)) {
-       oligo_str[strlen(oligo_str)-1] = '\0';
+       /* remove "\n" or "\r\n"; the last line may have neither */
+       oligo_str[strcspn(oligo_str, "\r\n")] = '\0';
        oligo1 = (const unsigned char*)oligo_str;
        if(a.dimer==0) {
+         if (check_sequence(oligo1)) exit(-1);
          thal(oligo1,oligo1,&a,mode,&o);
        } else {
          char *sep = strchr(oligo_str, ',');
@@ -288,6 +321,7 @@ int main(int argc, char** argv)
            oligo2 = (const unsigned char*)sep;
            oligo2++;
            *sep = '\0';
+           if (check_sequence(oligo1) || check_sequence(oligo2)) exit(-1);
            thal(oligo1,oligo2,&a,mode,&o);
          } else {
            fprintf(stderr, usage, argv[0]);
