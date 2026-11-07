@@ -14,15 +14,32 @@ jobs:
     - name: make
       run: make
       working-directory: ./src
-    - name: make test
-      run: make test
-      working-directory: ./src
+    - name: run tests
+      run: |
+        perl cmdline_test.pl
+        perl oligotm_test.pl
+        perl dpal_test.pl
+        perl thal_test.pl
+        perl masker_test.pl
+        perl a3test.pl --action
+        perl p3test.pl --action
+      working-directory: ./test
     - name: make clean
       run: make clean
       working-directory: ./src
-    - name: make test
-      run: make test
+    - name: make
+      run: make
       working-directory: ./src
+    - name: run tests
+      run: |
+        perl cmdline_test.pl
+        perl oligotm_test.pl
+        perl dpal_test.pl
+        perl thal_test.pl
+        perl masker_test.pl
+        perl a3test.pl --action
+        perl p3test.pl --action
+      working-directory: ./test
     - name: mkdir results
       run: mkdir results
     - name: tar -zcvf results/build-paranoid-regular-a-src.tar.gz ./src
@@ -45,9 +62,16 @@ jobs:
     - name: make O_OPTS=-O3
       run: make O_OPTS=-O3
       working-directory: ./src
-    - name: make test
-      run: make test
-      working-directory: ./src
+    - name: run tests
+      run: |
+        perl cmdline_test.pl
+        perl oligotm_test.pl
+        perl dpal_test.pl
+        perl thal_test.pl
+        perl masker_test.pl
+        perl a3test.pl --action
+        perl p3test.pl --action
+      working-directory: ./test
     - name: tar -zcvf results/build-paranoid-regular-b-src.tar.gz ./src
       run: tar -zcvf results/build-paranoid-regular-b-src.tar.gz ./src
     - name: tar -zcvf results/build-paranoid-regular-b-test.tar.gz ./test
