@@ -83,6 +83,9 @@ add_seq_to_seq_lib(seq_lib *sl,
                                    ss*sizeof(*sl->weight));
   }
   sl->seq_num = i + 1;
+  /* destroy_seq_lib() frees these even if we return early */
+  sl->names[i] = NULL;
+  sl->seqs[i]  = NULL;
 
   sl->names[i] = (char*) p3sl_safe_malloc(strlen(seq_id_plus) + 1);
   strcpy(sl->names[i], seq_id_plus);

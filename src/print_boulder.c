@@ -447,6 +447,7 @@ print_boulder(int io_version,
          (oligo_max_template_mispriming_thermod(rev) != ALIGN_SCORE_UNDEF)) {
       printf("PRIMER_RIGHT%s_TEMPLATE_MISPRIMING_TH=%.4f\n", suffix,
              oligo_max_template_mispriming_thermod(rev));
+    }
     /* Print primer secondary structures*/
     if ((go_fwd == 1) && (pa->show_secondary_structure_alignment==1) && 
         (oligo_max_template_mispriming_struct(fwd) != NULL))
@@ -463,7 +464,6 @@ print_boulder(int io_version,
        printf("DEBUG_PRIMER_RIGHT%s_TEMPLATE_MISPRIMING_R_TH=%.4f\n", suffix,
               rev->template_mispriming_r);
 #endif
-     }
      /************************************************************************************/
      /* Print the pair parameters*/
     if (retval->output_type == primer_pairs) {
@@ -528,11 +528,6 @@ print_boulder(int io_version,
        if ((pa->thermodynamic_template_alignment == 1) && (retval->best_pairs.pairs[i].template_mispriming != ALIGN_SCORE_UNDEF))
          printf("PRIMER_PAIR%s_TEMPLATE_MISPRIMING_TH=%.2f\n", suffix,
                 retval->best_pairs.pairs[i].template_mispriming);
-       /* Print primer secondary structures*/
-       if (pa->show_secondary_structure_alignment==1 &&
-           retval->best_pairs.pairs[i].template_mispriming_struct != NULL)
-         printf("PRIMER_PAIR%s_TEMPLATE_MISPRIMING_STUCT=%s\n", suffix,
-                retval->best_pairs.pairs[i].template_mispriming_struct);
 
     } /* End of print parameters of primer pairs */
         

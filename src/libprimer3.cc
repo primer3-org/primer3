@@ -4215,7 +4215,7 @@ oligo_max_template_mispriming_thermod(const primer_rec *h) {
    return h->template_mispriming > h->template_mispriming_r ?
      h->template_mispriming : h->template_mispriming_r;
 }
-  
+
 char *
 oligo_max_template_mispriming_struct(const primer_rec *h) {
    return h->template_mispriming > h->template_mispriming_r ?
@@ -4332,7 +4332,6 @@ characterize_pair(p3retval *retval,
 
   ppair->compl_any_struct = NULL;
   ppair->compl_end_struct = NULL;
-  ppair->template_mispriming_struct = NULL;
 
   if (update_stats) { 
     pair_expl->considered++;
@@ -5047,6 +5046,14 @@ destroy_primer_sec_struct(primer_rec *p_rec) {
     free(p_rec->hairpin_struct);
     p_rec->hairpin_struct = NULL;
   }
+  if (p_rec->template_mispriming_struct != NULL) {
+    free(p_rec->template_mispriming_struct);
+    p_rec->template_mispriming_struct = NULL;
+  }
+  if (p_rec->template_mispriming_r_struct != NULL) {
+    free(p_rec->template_mispriming_r_struct);
+    p_rec->template_mispriming_r_struct = NULL;
+  }
 }
 
 void
@@ -5068,6 +5075,129 @@ save_overwrite_sec_struct(char **base, char *inp) {
     free(*base);
   }
   *base = inp;
+}
+
+/* For thermodynamic template mispriming of a left or right primer:
+   the oligo as it is aligned (oseq), the template strand that contains
+   the oligo's own site (target, with the site at
+   [*site_first, *site_last]) and the other strand (target_r).
+   first and last are the oligo's positions in sa->trimmed_seq.
+   Used for the score and for the structure, so that both look at
+   the same sequences. */
+static void
+thermod_template_targets(const seq_args *sa, oligo_type l,
+                         int first, int last,
+                         const char *s, const char *s_r,
+                         const char **oseq, char **target, char **target_r,
+                         int *site_first, int *site_last)
+{
+  int seqlen = strlen(sa->upcased_seq);
+
+  *site_first = sa->incl_s + first;
+  *site_last = sa->incl_s + last;
+  if (l == OT_RIGHT) {
+    *oseq = s_r;
+    *target = sa->upcased_seq;
+    *target_r = sa->upcased_seq_r;
+  } else {
+    *oseq = s;
+    *target = sa->upcased_seq_r;
+    *target_r = sa->upcased_seq;
+    /* We need to adjust first_untrimmed and last_untrimmed so that
+     * they are correct in the reverse-complemented sequence. */
+    int tmp = (seqlen - *site_last) - 1;
+    *site_last = (seqlen - *site_first) - 1;
+    *site_first = tmp;
+  }
+}
+
+/* thal() on the first len bases of seq */
+static void
+thal_on_part(const char *oseq, const char *seq, int len,
+             const thal_args *a, thal_mode tmode, thal_results *r)
+{
+  char *part = (char *) pr_safe_malloc(len + 1);
+  memcpy(part, seq, len);
+  part[len] = '\0';
+  r->sec_struct = NULL;
+  thal((const unsigned char *) oseq, (const unsigned char *) part, a, tmode, r);
+  free(part);
+}
+
+/* Structure of the best thermodynamic alignment of oseq to the first
+   len bases of part. *temp receives the score of the whole part, as
+   align_thermod() computes it, but without setting negative values to
+   0. Returns NULL if there is no structure.
+   A drawing of the whole part would be as long as the template, so
+   only the region around the binding site is drawn: one oligo length
+   plus one loop on either side of it at first, widened until it gives
+   the same score as the whole part. */
+static char *
+template_part_struct_th(const char *oseq, const char *part, int len,
+                        const thal_args *a, double *temp)
+{
+  thal_results r;
+  int center, margin, from, to;
+
+  *temp = -DBL_MAX;
+  if (len <= 0) return NULL;
+  thal_on_part(oseq, part, len, a, THL_FAST, &r);
+  if (r.temp == THAL_ERROR_SCORE || r.align_end_2 < 1) return NULL;
+  *temp = r.temp;
+
+  /* thal reads the second sequence from its 3' end, so align_end_2
+     counts from the end: the terminal base pair is at len - align_end_2 */
+  center = len - r.align_end_2;
+  for (margin = (int) strlen(oseq) + a->maxLoop; ; margin *= 2) {
+    from = (center - margin > 0) ? center - margin : 0;
+    to = (center + margin + 1 < len) ? center + margin + 1 : len;
+    thal_on_part(oseq, part + from, to - from, a, THL_STRUCT, &r);
+    if (r.temp == THAL_ERROR_SCORE) {
+      free(r.sec_struct);
+      return NULL;
+    }
+    if (fabs(r.temp - *temp) < 1e-6 || (from == 0 && to == len))
+      return r.sec_struct;
+    free(r.sec_struct);
+  }
+}
+
+/* Fill template_mispriming_struct and template_mispriming_r_struct of
+   a left or right primer. Like the other structures, only for values
+   above 0 (align_thermod() reports a negative Tm as 0). */
+static void
+recalc_template_mispriming_struct_th(primer_rec *h, oligo_type l,
+                                     const seq_args *sa,
+                                     const thal_args *a)
+{
+  char s[MAX_PRIMER_LENGTH+1], s_r[MAX_PRIMER_LENGTH+1];
+  const char *oseq;
+  char *target, *target_r, *st5, *st3;
+  int first, last, site_first, site_last, seqlen;
+  double t5, t3;
+
+  oligo_compute_sequence_and_reverse(h, sa, l, &first, &last, s, s_r);
+  thermod_template_targets(sa, l, first, last, s, s_r, &oseq, &target,
+                           &target_r, &site_first, &site_last);
+  seqlen = strlen(target);
+
+  if (h->template_mispriming > 0.0) {
+    /* check the template 5' and 3' around the oligo's binding site */
+    st5 = template_part_struct_th(oseq, target, site_first, a, &t5);
+    st3 = template_part_struct_th(oseq, target + site_last + 1,
+                                  seqlen - site_last - 1, a, &t3);
+    if (t5 > t3) {
+      save_overwrite_sec_struct(&h->template_mispriming_struct, st5);
+      free(st3);
+    } else {
+      save_overwrite_sec_struct(&h->template_mispriming_struct, st3);
+      free(st5);
+    }
+  }
+  if (h->template_mispriming_r > 0.0)
+    save_overwrite_sec_struct(&h->template_mispriming_r_struct,
+                              template_part_struct_th(oseq, target_r, 
+                                                      seqlen, a, &t5));
 }
 
 /* Calculate the secondary structures for selected primers */
@@ -5197,6 +5327,15 @@ recalc_primer_sec_struct(primer_rec *p_rec,
       p_rec->hairpin_th = hair.temp;
       save_overwrite_sec_struct(&p_rec->hairpin_struct, hair.sec_struct);
     }
+  }
+  /* Template mispriming, thermodynamic approach; primers only */
+  if (pa->thermodynamic_template_alignment == 1 && primer_type != 2
+      && p_rec->template_mispriming != ALIGN_SCORE_UNDEF) {
+    recalc_template_mispriming_struct_th(p_rec,
+                                         primer_type == 0 ? OT_LEFT : OT_RIGHT, sa,
+                                         use_end_for_th_template_mispriming
+                                         ? thal_arg_to_use->end1
+                                         : thal_arg_to_use->any);
   }
 }
 
@@ -5606,11 +5745,10 @@ primer_mispriming_to_template_thermod(primer_rec *h,
 {   
    const char *oseq;
    char *target, *target_r;
-   int tmp, seqlen;
    int debug = 0;
    int first_untrimmed, last_untrimmed;
-   /* Indexes of first and last bases of the oligo in sa->seq,
-    *                      that is, WITHIN THE TOTAL SEQUENCE INPUT. */
+   /* Indexes of first and last bases of the oligo in target,
+    * that is, WITHIN THE TOTAL SEQUENCE INPUT. */
    
    /* first, last are indexes of first and last bases of the oligo in
     *      sa->trimmed_seq, that is, WITHIN THE INCLUDED REGION. */
@@ -5618,29 +5756,8 @@ primer_mispriming_to_template_thermod(primer_rec *h,
    char   tmp_char;
    double  tmp_score;
    
-   seqlen = strlen(sa->upcased_seq);
-   first_untrimmed = sa->incl_s + first;
-   last_untrimmed = sa->incl_s + last;
-   
-   if (l == OT_RIGHT) {
-      oseq = &s_r[0];
-      target = &sa->upcased_seq[0];
-      target_r = &sa->upcased_seq_r[0];
-   } else { /* l == OT_RIGHT */
-      if (debug)
-        fprintf(stdout, "first_untrimmed = %d, last_untrimmed = %d\n",
-                first_untrimmed, last_untrimmed);
-      oseq = &s[0];
-      target = &sa->upcased_seq_r[0];
-      target_r = &sa->upcased_seq[0];
-      /* We need to adjust first_untrimmed and last_untrimmed so that
-       * they are correct in the reverse-complemented
-       * sequence.
-             *     */
-            tmp = (seqlen - last_untrimmed) - 1;
-            last_untrimmed  = (seqlen - first_untrimmed) - 1;
-            first_untrimmed = tmp;
-   }
+   thermod_template_targets(sa, l, first, last, s, s_r, &oseq, &target,
+                            &target_r, &first_untrimmed, &last_untrimmed);
    
    /* 1. Align to the template 5' of the oligo. */
    /* tmp_char = target_r[first_untrimmed]; Corrected 2012-05-30 */

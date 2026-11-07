@@ -212,6 +212,7 @@ sub main() {
 
                             'primer_overhang_th' => 1,
                             'primer_explain_lazy' => 1,
+                            'primer_template_mispriming_struct' => 1,
                            );
 
     my @TESTS = ( 
@@ -296,6 +297,7 @@ sub main() {
                   'primer_position_penalty',
                   'primer_position_penalty_formatted',
                   'p3-tmpl-mispriming',
+                  'primer_template_mispriming_struct',
                   'primer_poly_x',
 
                   'primer_three_prime_distance',
@@ -378,8 +380,8 @@ sub main() {
                 next;
             }
             print
-                "\nNOTE: this test takes _much_ longer than the others ",
-                "(5 to 20 minutes or more).\n",
+                "\nNOTE: this test takes longer than the others ",
+                "(1 to 5 minutes or more).\n",
                 "starting $test at ", scalar(localtime), "...";
         }
         my $valgrind_prefix

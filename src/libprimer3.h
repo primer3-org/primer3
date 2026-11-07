@@ -697,8 +697,6 @@ typedef struct primer_pair {
 
   char *compl_end_struct; /* Secondary structure of compl_end */
 
-  char *template_mispriming_struct; /* Secondary structure of template_mispriming */
-
   double repeat_sim;    /* Maximum total similarity of both primers to the
                          * sequence from given file in fasta format.
                          */

@@ -834,6 +834,8 @@ read_boulder_record(FILE *file_input,
       pa->p_args.repeat_lib
         = read_and_create_seq_lib(repeat_file_path, 
                                   "mispriming library");
+      if (NULL == pa->p_args.repeat_lib)
+        out_of_memory_error();
       if(pa->p_args.repeat_lib->error.data != NULL) {
         pr_append_new_chunk(glob_err, pa->p_args.repeat_lib->error.data);
       }
@@ -853,6 +855,8 @@ read_boulder_record(FILE *file_input,
       pa->o_args.repeat_lib = 
         read_and_create_seq_lib(int_repeat_file_path,
                                 "internal oligo mishyb library");
+      if (NULL == pa->o_args.repeat_lib)
+        out_of_memory_error();
       if(pa->o_args.repeat_lib->error.data != NULL) {
         pr_append_new_chunk(glob_err, pa->o_args.repeat_lib->error.data);
       }
