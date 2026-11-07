@@ -59,6 +59,7 @@ main(int argc, const char**argv)
     int dpal_debug = 0;
     int dpal_only = 0;
     char *endptr;
+    double gap_value;
     const char *msg = 
       "\nUsage: %s [-g <gval>] [-l <lval>] [-m <mval>]\n"
       "                 [-f2] [-p] [-s] [-e] <seq1> <seq2> <mode>"
@@ -112,7 +113,12 @@ main(int argc, const char**argv)
             fprintf(stderr, msg, argv[0]);
             exit(-1);
           }
-          a.gapl = (int) (strtod(argv[i+1],(char **)NULL) * -100);
+          gap_value = strtod(argv[i+1], &endptr);
+          if ('\0' != *endptr || !(gap_value >= 0)) {
+            fprintf(stderr, msg, argv[0]);
+            exit(-1);
+          }
+          a.gapl = (int) (gap_value * -100);
           i++;
         } else if (!strncmp("-e", argv[i], 2)) {
           print_align_end = 1;
@@ -126,7 +132,12 @@ main(int argc, const char**argv)
             fprintf(stderr, msg, argv[0]);
             exit(-1);
           }
-          a.gap = (int) (strtod(argv[i+1],(char **)NULL) * -100);
+          gap_value = strtod(argv[i+1], &endptr);
+          if ('\0' != *endptr || !(gap_value >= 0)) {
+            fprintf(stderr, msg, argv[0]);
+            exit(-1);
+          }
+          a.gap = (int) (gap_value * -100);
           i++;
         } else if (!strncmp("-m", argv[i], 2)) {
           if (i+1 >= argc) {

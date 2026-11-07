@@ -323,7 +323,6 @@ sub perldiff($$) {
             $l2 =~ s/\\/\//g;
         }
 
-        $linenumber++;
         # Check for difference between two edited lines (line by line)
         if ($l1 ne $l2) {
             print 

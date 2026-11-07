@@ -208,12 +208,13 @@ main (int argc, const char *argv[])
         idx += 1;
         continue;
       }
-      mp.nucl_masked_in_5p_direction = strtod (argv[idx + 1], &end);
-      if (*end != 0) {
+      double n = strtod (argv[idx + 1], &end);
+      if (*end != 0 || !(n >= 0 && n <= MAX_NUCL_MASKED)) {
         pr_append_new_chunk_external (&parse_err, "Invalid number of nucleotides masked in 5' direction: ");
         pr_append_external (&parse_err, argv[idx + 1]);
         print_help(1);
       }
+      mp.nucl_masked_in_5p_direction = n;
       idx += 1;
 
     } else if (!strcmp (argv[idx], "-m3") || !strcmp (argv[idx], "--mask_3p")) {
@@ -222,12 +223,13 @@ main (int argc, const char *argv[])
         idx += 1;
         continue;
       }
-      mp.nucl_masked_in_3p_direction = strtod (argv[idx + 1], &end);
-      if (*end != 0) {
+      double n = strtod (argv[idx + 1], &end);
+      if (*end != 0 || !(n >= 0 && n <= MAX_NUCL_MASKED)) {
         pr_append_new_chunk_external (&parse_err, "Invalid number of nucleotides masked in 3' direction: ");
         pr_append_external (&parse_err, argv[idx + 1]);
         print_help(1);
       }
+      mp.nucl_masked_in_3p_direction = n;
       idx += 1;
 
     } else if (!strcmp (argv[idx], "-c") || !strcmp (argv[idx], "--masking_char")) {

@@ -23,6 +23,7 @@ make clean_src        # cleans src only; `make clean` also deletes test temp fil
 
 - The build has no warnings under `-Wall`.
 - `make` doesn't notice changed flags. Run `make clean_src` before rebuilding with different `O_OPTS` or `CC_OPTS`.
+- Header dependencies in `src/Makefile` are listed by hand and are incomplete. After changing a struct or macro in a header, also run `make clean_src`.
 - Windows builds use `make TESTOPTS=--windows` (MinGW). That build leaves out the masker.
 
 ## Tests
@@ -40,6 +41,8 @@ Check results by searching the output for `[FAILED]`:
 - `p3test.pl` and `a3test.pl` exit 0 even when tests fail, unless you pass `--action`.
 - The other scripts exit non-zero on failure, which stops `make test` before the later suites run.
 - A plain `FAILED` also matches the reminder line that `make test` prints at the end.
+
+The scripts run the binaries in `../src/`, so don't rebuild while a script is running. For experiments with other build flags, use a copy outside the repository, for example `git archive HEAD | tar -x -C <dir>`.
 
 To run under valgrind, first build with `make O_OPTS=-O0`. Then, in `test/`, run `make valgrnda` and `make valgrndb` (how CI splits it), or `make TESTOPTS=--valgrind` for everything. `src/paranoid_tests.sh` runs the full -O2, -O3 and valgrind sequence.
 
@@ -110,7 +113,8 @@ Primer settings are in `pa->p_args` and internal-oligo (probe) settings are in `
 ### State, coordinates and errors
 
 - **Per-record and global state.** `seq_args` is created fresh for every record. `p3_global_settings` persists into all later records, and so do the file-scope globals in `read_boulder.c` such as `kmer_lists_path`. Don't store values derived from one record's input in the global settings; derive them where they are used. When you change code that reads or writes global settings, test it with a multi-record input.
-- **Validation order.** `choose_primers()` calls `_adjust_seq_args()` before `_pr_data_control()`, so code in `_adjust_seq_args()` sees input that hasn't been validated yet.
+- **Validation order.** `choose_primers()` calls `_adjust_seq_args()` before `_pr_data_control()`, so code in `_adjust_seq_args()` sees input that hasn't been validated yet. Settings that must be valid before masking, such as `PRIMER_MASK_TEMPLATE`, are therefore also checked in `read_boulder.c`.
+- **Unvalidated input aborts.** Values that pass parsing but are out of range often end in a `PR_ASSERT` abort deep in the code. For new numeric input, check the range, NaN and infinity (`parse_double()` accepts both), and 0 where the value is a divisor or a step.
 - **Coordinates.** Input positions count from `PRIMER_FIRST_BASE_INDEX` (default 0). `_adjust_seq_args()` makes them 0-based and relative to the included region. After that, intervals, junction lists, force positions, `start_codon_pos` and oligo positions index `trimmed_seq`, and `incl_s` is the 0-based start of the region in the full `sequence`. Output adds `incl_s + first_base_index` back.
 - **Sequence copies in `seq_args`:**
   - `sequence`: the template as given.
@@ -156,6 +160,10 @@ Each library also has a standalone CLI in a `*_main.c` file.
   - `thal_trace.c`: traceback and debug dumps.
   - `thal_draw.c`: ASCII structure drawing.
   - `thal_util.c`: allocators.
+  - `thal()` does not initialize `thal_results.sec_struct`; set it to NULL before calling.
+  - For two sequences, `align_end_2` counts from the 3′ end of the second sequence, which thal reads in reverse: the terminal base pair is at index `strlen(seq2) - align_end_2`.
+  - `align_thermod()` in libprimer3.cc reports a negative Tm as 0. Structures are drawn only for values above 0.
+- Template mispriming (thermodynamic): `thermod_template_targets()` gives the oligo, `target` (the strand the primer binds at its own site; its own site is left out, so the 5′ and 3′ parts are aligned separately) and `target_r` (the other strand, aligned whole). The score and the `TEMPLATE_MISPRIMING_STUCT` structures both use it, so keep them together.
 - `p3_seq_lib.c`: mispriming and repeat libraries (FASTA).
 - `masker.c` (`primer3_masker`): k-mer based template masking. It is compiled out on Windows (`OS_WIN`).
   - The k-mer lists are binary GenomeTester4 files named `<prefix>_<k>.list`, with k = 11 and 16 and the default prefix `homo_sapiens`. They are memory-mapped: a header, then 12-byte records (an 8-byte k-mer and a 4-byte count). `kmer_lists/readme.txt` explains that the checked-in lists are test files and where to get full ones.
@@ -166,7 +174,15 @@ Makefile quirk: `dpal.c` and each `thal*.c` are compiled twice.
 - `X.o` is used by the standalone executables.
 - `X_primer.o`, built with `$(P_DEFINES)`, goes into the libraries linked into `primer3_core`.
 
-A new thal source file therefore needs both rules, plus entries in `LIBTHAL`, `LIBTHAL_DYN` and the `NTTHAL_EXE` link line.
+A new thal source file therefore needs both rules, plus entries in `LIBTHAL` and the `NTTHAL_EXE` link line. There are no shared-library targets.
+
+### Deliberate behavior
+
+Don't "fix" these:
+- `SEQUENCE_ID` is used unchanged as the base name of the `P3_FILE_FLAG` list files (`<SEQUENCE_ID>.for`, `.rev`, `.int`). Directory parts, including `..` and absolute paths, are allowed on purpose; don't reject `/`, `\` or a leading `.`.
+- Internal oligos are not checked for template mispriming (`PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB` is rejected as unsupported).
+- The pair template-mispriming value is the sum of two separate bindings, one of each primer on opposite strands. It is used for the penalty, but there is no pair structure; only `PRIMER_LEFT/RIGHT_n_TEMPLATE_MISPRIMING_STUCT` exist.
+- dpal's global modes (`g`, `G` in `ntdpal`) are semi-global, not Needleman-Wunsch: unaligned ends cost nothing.
 
 ### Settings files
 

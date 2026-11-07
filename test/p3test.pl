@@ -205,10 +205,10 @@ sub main() {
 
                             'primer_boundary' => 1, # Put the quickest tests first.
 
-                            'primer3_v1_1_4_default_settings',
-                            'primer3web_v0_4_0_default_settings',
-                            'primer3web_v3_0_0_default_settings',
-                            'primer3web_v4_0_0_default_settings',
+                            'primer3_v1_1_4_default_settings' => 1,
+                            'primer3web_v0_4_0_default_settings' => 1,
+                            'primer3web_v3_0_0_default_settings' => 1,
+                            'primer3web_v4_0_0_default_settings' => 1,
 
                             'primer_overhang_th' => 1,
                             'primer_explain_lazy' => 1,
@@ -631,7 +631,6 @@ sub perldiff($$) {
             $l2 =~ s/\\/\//g;
         }
 
-        $linenumber++;
         # Check for difference between two edited lines (line by line)
         if ($l1 ne $l2) {
             print 

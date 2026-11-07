@@ -14,6 +14,9 @@
 #define BOTH 3
 
 #define MAX_BUFFER_SIZE 5000
+/* Most nucleotides masked in 5' or 3' direction: the k-mer (at most
+   32 bases) and the 3' masking must fit into the buffer */
+#define MAX_NUCL_MASKED (MAX_BUFFER_SIZE - 33)
 #define MAX_SPLITS 10
 
 #define NUCLEOTIDE 0

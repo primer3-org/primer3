@@ -234,7 +234,6 @@ sub perldiff($$) {
         my $l1_orig = $l1;
         my $l2_orig = $l2;
 
-        $linenumber++;
         # Check for difference between two edited lines (line by line)
         # special case for lines with thermodynamical parameters values (round to 1 decimal)
         if ($l1 =~ /Eimeria zuernii/) {

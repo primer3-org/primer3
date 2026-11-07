@@ -363,7 +363,6 @@ sub perldiff($$) {
         $l2 =~ s/e-0(\d\d)/e-$1/g;
         $l2 =~ s/e0(\d\d)/e$1/g;
 
-        $linenumber++;
         # Check for difference between two edited lines (line by line)
         if ($l1 ne $l2) {
             print 

@@ -305,7 +305,7 @@ print_oligo(FILE *f,
               o->self_end);
     }
     if (print_lib_sim) {
-        if (seqlib != NULL) 
+        if (seqlib != NULL && o->repeat_sim.score != NULL)
             fprintf(f, "%5.2f ",  o->repeat_sim.score[o->repeat_sim.max]);
         else 
             fprintf(f, "%5s ", "");
@@ -871,7 +871,7 @@ format_oligos(FILE *f,
     if ((pa->pick_internal_oligo) && (retval != NULL )
              && (retval->intl.num_elem > 0)){
       print_oligo(f, "INTERNAL_OLIGO", sa, retval->intl.oligo, INTERNAL, 
-                  pa, pa->p_args.repeat_lib, print_lib_sim);
+                  pa, pa->o_args.repeat_lib, print_lib_sim);
       h = retval->intl.oligo;
       rest_count = 1;
     }
@@ -930,7 +930,7 @@ format_oligos(FILE *f,
       p = h + i;
       fprintf(f, "%2d ", i + 1 - rest_count);
       print_oligo(f, "INTERNAL_OLIGO", sa, p, INTERNAL, pa,
-                  pa->p_args.repeat_lib, print_lib_sim);
+                  pa->o_args.repeat_lib, print_lib_sim);
       }
     if (rest_count == 0) {  
       fprintf(f, "\n ");

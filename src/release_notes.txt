@@ -40,6 +40,8 @@ impacted the alignments.
 Huge code cleanup and improvements which resulted in a significant spead
 increase.
 
+Primer3 can now also provide structures for primers binding to template.
+
 Minor fixes:
 1. Compiler complains were fixed.
 
@@ -55,6 +57,11 @@ Minor fixes:
 
 7. amplicon3: The Bolton formula had an error, which gave melting points
    up to almost 1 C too high.
+
+8. ntthal -a HAIRPIN printed "Calculated thermodynamical parameters for
+   dimer:" with the oligo length as an extra column. It now prints
+   "... for hairpin:" with the same columns as the dimer line. Programs
+   that parse this line must be adapted.
 
 
 release 2.6.1 2022-01-26  ===============================================

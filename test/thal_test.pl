@@ -355,10 +355,9 @@ sub perldiff($$) {
         my $l1_orig = $l1;
         my $l2_orig = $l2;
 
-        $linenumber++;
         # Check for difference between two edited lines (line by line)
         # special case for lines with thermodynamical parameters values (round to 1 decimal)
-        if ($l1 =~ /Calculated thermodynamical parameters for dimer/) {
+        if ($l1 =~ /Calculated thermodynamical parameters for (dimer|hairpin)/) {
             my $new_l1 = round_numbers($l1);
             my $new_l2 = round_numbers($l2);
             if ($new_l1 ne $new_l2) {

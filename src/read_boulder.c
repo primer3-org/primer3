@@ -353,13 +353,21 @@ read_boulder_record(FILE *file_input,
       if (COMPARE("PRIMER_TM_FORMULA")) {
           tmp_int = -1;  /* stays invalid if parsing fails */
           parse_int("PRIMER_TM_FORMULA", datum, &tmp_int, parse_err);
-          pa->tm_santalucia = (tm_method_type) tmp_int;    /* added by T.Koressaar */
+          if (tmp_int < (int) breslauer_auto || tmp_int > (int) santalucia_2004) {
+            pr_append_new_chunk(glob_err, "Illegal value for PRIMER_TM_FORMULA");
+          } else {
+            pa->tm_santalucia = (tm_method_type) tmp_int;    /* added by T.Koressaar */
+          }
           continue;
       }
       if (COMPARE("PRIMER_SALT_CORRECTIONS")) {
         tmp_int = -1;  /* stays invalid if parsing fails */
         parse_int("PRIMER_SALT_CORRECTIONS", datum, &tmp_int, parse_err);
-        pa->salt_corrections = (salt_correction_type) tmp_int; /* added by T.Koressaar */
+        if (tmp_int < (int) schildkraut || tmp_int > (int) owczarzy) {
+          pr_append_new_chunk(glob_err, "Illegal value for PRIMER_SALT_CORRECTIONS");
+        } else {
+          pa->salt_corrections = (salt_correction_type) tmp_int; /* added by T.Koressaar */
+        }
         continue;
       }
       COMPARE_FLOAT("PRIMER_ANNEALING_TEMP", pa->annealing_temp);
@@ -397,7 +405,15 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT("PRIMER_MAX_END_GC", pa->max_end_gc);
       COMPARE_INT("PRIMER_EXPLAIN_FLAG", res->explain_flag);
       COMPARE_INT("PRIMER_LIBERAL_BASE", pa->liberal_base);
-      COMPARE_INT("PRIMER_FIRST_BASE_INDEX", pa->first_base_index);
+      if (COMPARE("PRIMER_FIRST_BASE_INDEX")) {
+        parse_int("PRIMER_FIRST_BASE_INDEX", datum, &pa->first_base_index, parse_err);
+        if (pa->first_base_index < PR_NULL_FORCE_POSITION) {
+          pr_append_new_chunk(glob_err, "Value too small at tag PRIMER_FIRST_BASE_INDEX");
+        } else if (pa->first_base_index > -PR_NULL_FORCE_POSITION) {
+          pr_append_new_chunk(glob_err, "Value too large at tag PRIMER_FIRST_BASE_INDEX");
+        }
+        continue;
+      }
       COMPARE_INT("PRIMER_NUM_RETURN", pa->num_return);
       COMPARE_INT("PRIMER_MIN_QUALITY", pa->p_args.min_quality);
       COMPARE_INT("PRIMER_MIN_END_QUALITY", pa->p_args.min_end_quality);
@@ -720,8 +736,22 @@ read_boulder_record(FILE *file_input,
 #endif
       }
       COMPARE_FLOAT("PRIMER_MASK_FAILURE_RATE", pa->mp.failure_rate);
-      COMPARE_INT("PRIMER_MASK_5P_DIRECTION", pa->mp.nucl_masked_in_5p_direction);
-      COMPARE_INT("PRIMER_MASK_3P_DIRECTION", pa->mp.nucl_masked_in_3p_direction);
+      if (COMPARE("PRIMER_MASK_5P_DIRECTION")) {
+        parse_int("PRIMER_MASK_5P_DIRECTION", datum, &pa->mp.nucl_masked_in_5p_direction, parse_err);
+        if (pa->mp.nucl_masked_in_5p_direction < 0
+            || pa->mp.nucl_masked_in_5p_direction > MAX_NUCL_MASKED) {
+          pr_append_new_chunk(glob_err, "PRIMER_MASK_5P_DIRECTION must be between 0 and 4967");
+        }
+        continue;
+      }
+      if (COMPARE("PRIMER_MASK_3P_DIRECTION")) {
+        parse_int("PRIMER_MASK_3P_DIRECTION", datum, &pa->mp.nucl_masked_in_3p_direction, parse_err);
+        if (pa->mp.nucl_masked_in_3p_direction < 0
+            || pa->mp.nucl_masked_in_3p_direction > MAX_NUCL_MASKED) {
+          pr_append_new_chunk(glob_err, "PRIMER_MASK_3P_DIRECTION must be between 0 and 4967");
+        }
+        continue;
+      }
       if (COMPARE("PRIMER_MASK_KMERLIST_PREFIX")) {
          if(pa->mp.list_prefix == NULL){
             pa->mp.list_prefix = (char*) _rb_safe_malloc(datum_len + 1);

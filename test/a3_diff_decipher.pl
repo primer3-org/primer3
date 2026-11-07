@@ -220,7 +220,6 @@ sub perldiff($$) {
             $all_count++;
         }
 
-        $linenumber++;
         # Check for difference between two edited lines (line by line)
         if ($linErr != 0) {
             print "\n   Difference found at line $linenumber!\n";
@@ -287,7 +286,6 @@ sub perldifffloat($$) {
             $all_count++;
         }
 
-        $linenumber++;
         # Check for difference between two edited lines (line by line)
         if ($linErr != 0) {
             print "\n   Difference found at line $linenumber!\n";

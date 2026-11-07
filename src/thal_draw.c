@@ -317,8 +317,8 @@ drawHairpin(int *bp, double mh, double ms, const thal_mode mode, double temp,
       o->temp = (double) t;
       if((mode != THL_FAST) && (mode != THL_DEBUG_F)) {
          if (mode != THL_STRUCT) {
-           printf("Calculated thermodynamical parameters for dimer:\t%d\tdS = %g\tdH = %g\tdG = %g\tt = %g\n",
-                  oligo1_len, (double) ms, (double) mh, (double) mg, (double) t);
+           printf("Calculated thermodynamical parameters for hairpin:\tdS = %g\tdH = %g\tdG = %g\tt = %g\n",
+                  (double) ms, (double) mh, (double) mg, (double) t);
          } else {
            snprintf(ret_para, 400, "Tm: %.1f&deg;C  dG: %.0f cal/mol  dH: %.0f cal/mol  dS: %.0f cal/mol*K\\n",
                    (double) t, (double) mg, (double) mh, (double) ms);

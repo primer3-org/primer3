@@ -127,7 +127,7 @@ ifeq ($(TESTOPTS),--windows)
 	del /Q /F primer_list_tmp/*
 	del /Q /F th-w-other-tasks_list_tmp/*
 	del /Q /F primer_global_err/*.tmp primer_global_err/*.tmp2 primer_global_err/*.bak
-	del /Q /F amplicon3/*.tm pamplicon3/*.jpg amplicon3/decipher*
+	del /Q /F amplicon3/*.tmp amplicon3/*.jpg amplicon3/decipher*
 	del /Q /F *.tmp *.bak *.tmp.err *~
 	del /Q /F hyb_probe_only.for hyb_probe_only.int
 	del /Q /F right_only.for right_only.rev left_only.for

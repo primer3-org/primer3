@@ -1566,6 +1566,7 @@ choose_pair_or_triple(p3retval *retval,
   
   memset(&the_best_pair, 0, sizeof(the_best_pair));
   max_j_seen = (int *) malloc(sizeof(int) * retval->rev.num_elem);
+  if (!max_j_seen) longjmp(_jmp_buf, 1);
   for (i = 0; i < retval->rev.num_elem; i++) max_j_seen[i] = -1;
 
   /* Pick pairs till we have enough. */
@@ -7349,6 +7350,18 @@ _pr_data_control(const p3_global_settings *pa,
   if ((pa->o_args.must_match_three_prime != NULL) && (strlen(pa->o_args.must_match_three_prime) != 5)) {
     pr_append_new_chunk(glob_err,
                         "PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME must have 5 characters");
+    return 1;
+  }
+  if ((pa->p_args.must_match_five_prime != NULL || pa->p_args.must_match_three_prime != NULL)
+      && pa->p_args.min_size < 5) {
+    pr_append_new_chunk(glob_err,
+                        "PRIMER_MUST_MATCH_FIVE_PRIME and PRIMER_MUST_MATCH_THREE_PRIME need PRIMER_MIN_SIZE >= 5");
+    return 1;
+  }
+  if ((pa->o_args.must_match_five_prime != NULL || pa->o_args.must_match_three_prime != NULL)
+      && pa->o_args.min_size < 5) {
+    pr_append_new_chunk(glob_err,
+                        "PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME and PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME need PRIMER_INTERNAL_MIN_SIZE >= 5");
     return 1;
   }
 
