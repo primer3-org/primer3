@@ -61,6 +61,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define PR_NULL_FORCE_POSITION       -1000000
 
+/* Largest PRIMER_FIRST_BASE_INDEX. Positions are read and printed as
+   first base index + position in the sequence, so half of the int
+   range is left for the sequence. Large values are legitimate, for
+   example chromosome coordinates. */
+#define PR_MAX_FIRST_BASE_INDEX      (INT_MAX / 2)
+
 /*  Exposed in the read_boulder input routine.... */
 #define PR_NULL_START_CODON_POS       -1000000
 #define PR_DEFAULT_START_CODON_POS    -2000000

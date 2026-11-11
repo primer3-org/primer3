@@ -409,7 +409,7 @@ read_boulder_record(FILE *file_input,
         parse_int("PRIMER_FIRST_BASE_INDEX", datum, &pa->first_base_index, parse_err);
         if (pa->first_base_index < PR_NULL_FORCE_POSITION) {
           pr_append_new_chunk(glob_err, "Value too small at tag PRIMER_FIRST_BASE_INDEX");
-        } else if (pa->first_base_index > -PR_NULL_FORCE_POSITION) {
+        } else if (pa->first_base_index > PR_MAX_FIRST_BASE_INDEX) {
           pr_append_new_chunk(glob_err, "Value too large at tag PRIMER_FIRST_BASE_INDEX");
         }
         continue;
