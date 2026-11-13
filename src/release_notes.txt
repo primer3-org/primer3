@@ -81,6 +81,22 @@ Minor fixes:
     the salt correction". -mv 0 with -dv above the dNTP concentration
     is accepted.
 
+12. PRIMER_MASK_TEMPLATE=1 crashed primer3_core when only left or only
+    right primers were picked (PRIMER_PICK_LEFT_PRIMER=0,
+    PRIMER_PICK_RIGHT_PRIMER=0, pick_primer_list for one side or
+    check_primers with one primer). The template is now masked on the
+    strand of the picked primers, and a record that picks both sides
+    after a one-sided record masks both strands again.
+
+13. Masker: with k-mer lists longer than 16 and one or two mismatches,
+    mismatches in the 5' part of the k-mer were not counted. The default
+    model (11-mers and 16-mers without mismatches) is not affected.
+
+14. primer3_masker: -c as last argument crashed; it now uses the default
+    masking character. -c - still masks with a dash. More than four
+    values after -l overflowed a buffer; the fifth value is now reported
+    as an unknown parameter.
+
 
 release 2.6.1 2022-01-26  ===============================================
 This release fixes a small memory bug.

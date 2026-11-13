@@ -1,0 +1,5 @@
+../test/../test/../test/../test/../test/../test/../test/../test/../test/../test/../test/../test/../kmer_lists/homo_sapiens_11.list 0.1772 0
+
+../kmer_lists/homo_sapiens_16.list 0.239 0
+
+-4.336

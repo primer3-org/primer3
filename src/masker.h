@@ -313,7 +313,14 @@ unsigned long long string_to_word (const char *s, unsigned int string_length, un
 char *word_to_string (unsigned long long word, unsigned int wordlength);
 
 void strip_string (char string[]);
+/*
+ * Splits string at c into at most MAX_SPLITS non-empty fields and sets
+ * *nchunks to their number. Returns NULL if memory allocation fails
+ * (*nchunks is then 0) or if there are more fields (*nchunks is then
+ * MAX_SPLITS + 1). Free the result with free_split_string().
+ */
 char **split_string (char string[], char c, unsigned int *nchunks);
+void free_split_string (char **string_chunks, unsigned int nchunks);
 
 
 #endif

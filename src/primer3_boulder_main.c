@@ -345,9 +345,7 @@ main(int argc, char *argv[])
     /* edited by M. Lepamets */
    if (global_pa->mask_template == 1) {
       global_pa->mp.window_size = DEFAULT_WORD_LEN_2;
-                                          
-      if (global_pa->pick_right_primer == 0) global_pa->mp.mdir = fwd;
-      else if (global_pa->pick_left_primer == 0) global_pa->mp.mdir = rev;
+      /* The masking direction is chosen per record in _adjust_seq_args() */
       /* Check if masking parameters (k-mer list usage) have changed */
       if (global_pa->masking_parameters_changed == 1) {
         delete_formula_parameters (global_pa->mp.fp, global_pa->mp.nlists);
@@ -489,8 +487,11 @@ main(int argc, char *argv[])
   destroy_thal_structures();
 
 #if !defined(OS_WIN)  
-  if(global_pa->mask_template == 1){
+  /* The lists may have been loaded for an earlier record even if the
+     last record switched masking off */
+  if (global_pa->mp.fp != NULL) {
     delete_formula_parameters (global_pa->mp.fp, global_pa->mp.nlists);
+    global_pa->mp.fp = NULL;
     /* free(global_pa->mp.list_prefix); */
   }
 #endif

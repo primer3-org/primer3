@@ -109,6 +109,15 @@ delete_input_sequence (input_sequence *input_seq)
  * 
  *==================================================================================*/
 
+/* Unmaps the list file and frees fp */
+static void
+delete_one_formula_parameters (formula_parameters *fp)
+{
+  if (!fp) return;
+  if (fp->pointer) munmap ((void *) fp->pointer, fp->size);
+  free ((void *) fp);
+}
+
 formula_parameters *
 create_formula_parameters_from_list_file_name (const char *list_file_name, pr_append_str *parse_err)
 {
@@ -134,28 +143,53 @@ create_formula_parameters_from_list_file_name (const char *list_file_name, pr_ap
     pr_append_new_chunk_external (parse_err, "List file not found: ");
     pr_append_external (parse_err, fp->list_file_name);
     pr_append_external (parse_err, ". Lists can be specified by names or prefixes from the commandline or text file.");
+    free(fp);
     return NULL;
+  }
+  /* The header has 40 bytes: magic number (offset 0), k-mer length (12),
+     number of k-mers (16, 8 bytes) and header size (32, 8 bytes).
+     Each k-mer record has 12 bytes: the k-mer (8) and its count (4). */
+  if (size < 40) {
+    pr_append_new_chunk_external (parse_err, "List file too short: ");
+    pr_append_external (parse_err, fp->list_file_name);
+    goto error;
   }
   memcpy (&magic, data, sizeof(unsigned int));
   if (magic != glistmaker_code_match) {
     pr_append_new_chunk_external (parse_err, "Given file is not a list file: ");
     pr_append_external (parse_err, fp->list_file_name);
-    return NULL;
+    goto error;
   }
   
   memcpy (&fp->oligo_length, data + 12, sizeof(unsigned int));
-  memcpy (&fp->words_in_list, data + 16, sizeof(unsigned int));
+  memcpy (&fp->words_in_list, data + 16, sizeof(unsigned long long));
   memcpy (&header_size, data + 32, sizeof(unsigned long long));
   if (!fp->words_in_list){
      pr_append_new_chunk_external (parse_err, "List file contains no kmers: ");
            pr_append_external (parse_err, fp->list_file_name);
-     return NULL;
+     goto error;
+  }
+  if (header_size > size
+      || fp->words_in_list > (size - header_size) / (sizeof(unsigned long long) + sizeof(unsigned int))) {
+    pr_append_new_chunk_external (parse_err, "List file is truncated: ");
+    pr_append_external (parse_err, fp->list_file_name);
+    goto error;
+  }
+  if (fp->oligo_length < 1 || fp->oligo_length > 32) {
+    pr_append_new_chunk_external (parse_err, "Unsupported k-mer length in list file: ");
+    pr_append_external (parse_err, fp->list_file_name);
+    goto error;
   }
   fp->word_list = data + header_size;
         fp->pointer = data;
   fp->size = size;
   fp->binary_mask = create_binary_mask (fp->oligo_length);
   return fp;
+
+ error:
+  munmap ((void *) data, size);
+  free(fp);
+  return NULL;
 }
 
 formula_parameters *
@@ -163,16 +197,21 @@ create_formula_parameters_from_list_file_prefix (const char *list_name_prefix, c
 {
   char list_file_name[300];
   formula_parameters *fp;
-  int n = snprintf(list_file_name, sizeof(list_file_name), "%s%s_%u.list",
-                   kmer_lists_path, list_name_prefix, word_length);
+  /* Add the directory separator if the path does not end with one */
+  size_t path_len = strlen(kmer_lists_path);
+  const char *sep = (path_len > 0 && kmer_lists_path[path_len - 1] != '/') ? "/" : "";
+  int n = snprintf(list_file_name, sizeof(list_file_name), "%s%s%s_%u.list",
+                   kmer_lists_path, sep, list_name_prefix, word_length);
   if (n < 0 || (size_t) n >= sizeof(list_file_name)) {
     pr_append_new_chunk_external (parse_err, "List file name too long: ");
     pr_append_external (parse_err, kmer_lists_path);
+    pr_append_external (parse_err, sep);
     pr_append_external (parse_err, list_name_prefix);
     return NULL;
   }
   if(0 != access(list_file_name,0)){
-    pr_append_new_chunk_external (parse_err, "Cannot find list file");
+    pr_append_new_chunk_external (parse_err, "Cannot find list file: ");
+    pr_append_external (parse_err, list_file_name);
     return NULL;
   }
   fp = create_formula_parameters_from_list_file_name (list_file_name, parse_err);
@@ -201,18 +240,23 @@ add_variable_to_formula_parameters (char **list_values, unsigned int nvalues, pa
     fp = create_formula_parameters_from_list_file_name (list_name, parse_err);
     if (!fp) return 1;
     if (pbuilder->nfp >= pbuilder->nslots) {
-      pbuilder->nslots = (pbuilder->nslots + 1) * 2;
-      pbuilder->used_lists = (char **) realloc (pbuilder->used_lists, pbuilder->nslots * sizeof(char *));
-      pbuilder->fp_array = (formula_parameters **) realloc (pbuilder->fp_array, pbuilder->nslots * sizeof(formula_parameters *));
-      if (!pbuilder->used_lists || !pbuilder->fp_array) {
+      /* On failure the old arrays stay valid, the caller frees them */
+      unsigned int nslots = (pbuilder->nslots + 1) * 2;
+      char **used_lists = (char **) realloc (pbuilder->used_lists, nslots * sizeof(char *));
+      formula_parameters **fp_array;
+      if (used_lists) pbuilder->used_lists = used_lists;
+      fp_array = (formula_parameters **) realloc (pbuilder->fp_array, nslots * sizeof(formula_parameters *));
+      if (fp_array) pbuilder->fp_array = fp_array;
+      if (!used_lists || !fp_array) {
         pr_append_new_chunk_external (parse_err, "Memory allocation for parameters builder failed!");
-        free(pbuilder->used_lists);
-        free(pbuilder->fp_array);
+        delete_one_formula_parameters (fp);
         return 1;
       }
+      pbuilder->nslots = nslots;
     }
     
-    pbuilder->used_lists[pbuilder->nfp] = list_name;
+    /* fp keeps a copy of the name, list_name may be freed by the caller */
+    pbuilder->used_lists[pbuilder->nfp] = fp->list_file_name;
     pbuilder->fp_array[pbuilder->nfp] = fp;
     add_position = pbuilder->nfp;
     pbuilder->nfp += 1;
@@ -267,10 +311,17 @@ create_default_formula_parameters (const char *list_name_prefix, const char *kme
 {
   formula_parameters *fp1 = create_formula_parameters_from_list_file_prefix (list_name_prefix, kmer_lists_path, DEFAULT_WORD_LEN_1, parse_err);
   formula_parameters *fp2 = create_formula_parameters_from_list_file_prefix (list_name_prefix, kmer_lists_path, DEFAULT_WORD_LEN_2, parse_err);
-  if (!fp1 || !fp2) return NULL; 
-  formula_parameters **fp = (formula_parameters **) malloc (2 * sizeof (formula_parameters *));
+  formula_parameters **fp = NULL;
+  if (!fp1 || !fp2) {
+    delete_one_formula_parameters (fp1);
+    delete_one_formula_parameters (fp2);
+    return NULL;
+  }
+  fp = (formula_parameters **) malloc (2 * sizeof (formula_parameters *));
   if (fp == NULL) {
     pr_append_new_chunk_external (parse_err, "Memory allocation for formula parameters failed!");
+    delete_one_formula_parameters (fp1);
+    delete_one_formula_parameters (fp2);
     return NULL;
   }
   
@@ -289,7 +340,6 @@ read_formula_parameters_from_file (const char *lists_file_name, unsigned int *nl
   FILE *lists = fopen (lists_file_name, "r");
   char *line = NULL;
   size_t line_length = 0;
-  int read_chars;
   int v;
   
   if (!lists) {
@@ -298,37 +348,66 @@ read_formula_parameters_from_file (const char *lists_file_name, unsigned int *nl
     return NULL;
   }
 
-  while ((read_chars = (int) getline(&line, &line_length, lists)) > 1) {
+  /* Read until the end of the file, empty lines are skipped */
+  while (getline(&line, &line_length, lists) != -1) {
     char **values = NULL;
     unsigned int nvalues = 0;
     
-    line[read_chars] = '\0';
     strip_string(line);
+    if (line[0] == '\0') continue;
     values = split_string(line, ' ', &nvalues);
+    if (!values) {
+      if (nvalues > MAX_SPLITS) {
+        pr_append_new_chunk_external (parse_err, "Too many values in lists file line: ");
+        pr_append_external (parse_err, line);
+      } else {
+        pr_append_new_chunk_external (parse_err, "Memory allocation for lists file line failed!");
+      }
+      goto error;
+    }
+    if (nvalues == 0) {
+      /* line with spaces only */
+      free_split_string(values, nvalues);
+      continue;
+    }
     if (nvalues == 1) {
       double ic;
       double neg = 1.0;
+      const char *s = values[0];
       char *end = NULL;
-      if (values[0][0] == '-') {
-        values[0] += 1;
+      if (s[0] == '-') {
+        s += 1;
         neg = -1.0;
       }
-      ic = strtod (values[0], &end);
+      ic = strtod (s, &end);
       if (*end == 0) {
         *intercept = ic * neg;
+        free_split_string(values, nvalues);
         continue;
       }
     }
     
     v = add_variable_to_formula_parameters (values, nvalues, pbuilder, parse_err);
-    if (v) {
-        free(pbuilder->used_lists);
-        free(pbuilder->fp_array);
-        return NULL;
-    }
+    free_split_string(values, nvalues);
+    if (v) goto error;
     *nlist_parameters += 1;
   }
+  free(line);
+  fclose(lists);
   return pbuilder->fp_array;
+
+ error:
+  free(line);
+  fclose(lists);
+  /* Free the lists read so far and leave an empty builder, so that lists
+     given on the command line can still be added */
+  delete_formula_parameters (pbuilder->fp_array, pbuilder->nfp);
+  free(pbuilder->used_lists);
+  pbuilder->fp_array = NULL;
+  pbuilder->used_lists = NULL;
+  pbuilder->nfp = 0;
+  pbuilder->nslots = 0;
+  return NULL;
 }
 
 void
@@ -337,10 +416,9 @@ delete_formula_parameters (formula_parameters **fp, unsigned int nlists)
   unsigned int i;
   if (!fp) return;
   for (i = 0; i < nlists; i++) {
-    if (fp[i]->pointer) munmap ((void *) fp[i]->pointer, fp[i]->size);
-    if (fp[i]) free ((void *) fp[i]);
+    delete_one_formula_parameters (fp[i]);
   }
-  if (fp) free ((void *) fp);
+  free ((void *) fp);
   return;
 }
 
@@ -559,14 +637,17 @@ binary_search (formula_parameters *fp, unsigned long long word)
   high = fp->words_in_list - 1;
   mid = (low + high) / 2;
   while (low <= high) {
-    current_word = *((unsigned long long *) (fp->word_list + mid * (sizeof (unsigned long long) + sizeof (unsigned int))));
+    /* Records have 12 bytes, so every second one is not 8-byte aligned:
+       copy the bytes instead of reading through a cast pointer */
+    const char *rec = fp->word_list + mid * (sizeof (unsigned long long) + sizeof (unsigned int));
+    memcpy (&current_word, rec, sizeof (current_word));
     if (current_word < word) {
       low = mid + 1;
     } else if (current_word > word) {
       if (mid == 0) break;
       high = mid - 1;
     } else {
-      freq = *((unsigned int *) (fp->word_list + mid * (sizeof (unsigned long long) + sizeof (unsigned int)) + sizeof (unsigned long long)));
+      memcpy (&freq, rec + sizeof (unsigned long long), sizeof (freq));
       return freq;
     }
     mid = (low + high) / 2;
@@ -614,11 +695,11 @@ get_oligo_frequencies (oligo_counts *oc, formula_parameters *fp, unsigned long l
   if (mm > 0) {
     for (i = 0; i < fp->oligo_length; i++) {
       for (mismatch = 1; mismatch < 4; mismatch++) {
-        unsigned long long mask = mismatch << (2 * i);
+        unsigned long long mask = (unsigned long long) mismatch << (2 * i);
         count_1mm += get_frequency_of_canonical_oligo (fp, word ^ mask);
         if (mm > 1) {
           for (j = i + 1; j < fp->oligo_length; j++) {
-            unsigned long long mask2 = mismatch << (2 * j);
+            unsigned long long mask2 = (unsigned long long) mismatch << (2 * j);
             count_2mm += get_frequency_of_canonical_oligo (fp, word ^ mask ^ mask2);
           }
         }
@@ -889,6 +970,7 @@ mmap_by_filename (const char *filename, size_t *size)
 
   data = (const char *) mmap (NULL, st.st_size, PROT_READ, MAP_PRIVATE, handle, 0);
   if (data == (const char *) -1) {
+    close (handle);
     return NULL;
   } else {
     *size = (size_t)st.st_size;
@@ -974,48 +1056,50 @@ char **
 split_string (char string[], char c, unsigned int *nchunks)
 {
   char **string_chunks  = (char **) malloc (MAX_SPLITS * sizeof(char *));
+  char *p;
+  unsigned int i = 0;
+  size_t l;
+
+  *nchunks = 0;
   if (string_chunks == NULL) {
     return NULL;
   }
-  char *p;
-  char tmp[100];
-  unsigned int i = 0, l;
   
-  while ((p = strchr (string, c))) {
-    /* length of substring to copy */
-    l = (int) (p - string);
-    
+  while (1) {
+    p = strchr (string, c);
+    /* length of substring to copy, the last one ends at the end of string */
+    l = p ? (size_t) (p - string) : strlen(string);
+
     /* add substring to the output */
     if (l > 0) {
-      memcpy (tmp, string, l);
-      tmp[l] = '\0';
-      string_chunks[i] = (char *) malloc ((l + 1) * sizeof(char));
-      if (string_chunks[i] == NULL) {
+      if (i == MAX_SPLITS) {
+        free_split_string (string_chunks, i);
+        *nchunks = MAX_SPLITS + 1;
         return NULL;
       }
-      strcpy (string_chunks[i], tmp);
+      string_chunks[i] = (char *) malloc (l + 1);
+      if (string_chunks[i] == NULL) {
+        free_split_string (string_chunks, i);
+        return NULL;
+      }
+      memcpy (string_chunks[i], string, l);
+      string_chunks[i][l] = '\0';
       i += 1;
-      *nchunks += 1;
     }
+    if (!p) break;
     string = p + 1;
   }
-  /* length of the last substring */
-  l = strlen(string);
-  
-  if (l > 0) {
-  
-    memcpy (tmp, string, l);
-    tmp[l] = '\0';
-    /* add last substring to output */
-    string_chunks[i] = (char *) malloc ((l + 1) * sizeof(char));
-    if (string_chunks[i] == NULL) {
-      return NULL;
-    }
-    strcpy (string_chunks[i], tmp);
-    *nchunks += 1;
-  }
-  
+  *nchunks = i;
   return string_chunks;
+}
+
+void
+free_split_string (char **string_chunks, unsigned int nchunks)
+{
+  unsigned int i;
+  if (!string_chunks) return;
+  for (i = 0; i < nchunks; i++) free (string_chunks[i]);
+  free (string_chunks);
 }
 
 
@@ -1023,7 +1107,7 @@ void
 strip_string (char string[])
 {
   size_t l = strlen(string);
-  if (string[l - 1] == '\n') string[l - 1] = '\0';
+  if (l > 0 && string[l - 1] == '\n') string[l - 1] = '\0';
   return;
   
 }

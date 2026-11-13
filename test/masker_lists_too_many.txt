@@ -1,0 +1,1 @@
+../kmer_lists/homo_sapiens_11.list 0.1772 0 a b c d e f g h

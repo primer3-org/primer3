@@ -6897,19 +6897,26 @@ _adjust_seq_args(const p3_global_settings *pa,
 #if !defined(OS_WIN)    
     /* Masks original trimmed sequence */
     /* edited by M. Lepamets */
-    if (pa->mask_template == 1 && (pa->pick_left_primer == 1 && pa->pick_right_primer == 1)) {
+    if (pa->mask_template == 1
+        && (pa->pick_left_primer == 1 || pa->pick_right_primer == 1)) {
        input_sequence *input_seq;
        output_sequence *output_seq;
-                          
+       /* Local copy: pa is const, and the masking direction depends on
+          the primer sides picked in this record */
+       masker_parameters mp = pa->mp;
+       mp.mdir = both_separately;
+       if (pa->pick_right_primer == 0) mp.mdir = fwd;
+       else if (pa->pick_left_primer == 0) mp.mdir = rev;
+
        input_seq = create_input_sequence_from_string (sa->trimmed_orig_seq, nonfatal_err);
-       output_seq =  create_output_sequence ((unsigned long long) sa->incl_l, pa->mp.mdir, nonfatal_err);
-                
-       read_and_mask_sequence (input_seq, output_seq, &pa->mp, nonfatal_err, 0);
+       output_seq =  create_output_sequence ((unsigned long long) sa->incl_l, mp.mdir, nonfatal_err);
+
+       read_and_mask_sequence (input_seq, output_seq, &mp, nonfatal_err, 0);
        if (output_seq->sequence) {
-          if (pa->mp.mdir == fwd) {
+          if (mp.mdir == fwd) {
              sa->trimmed_masked_seq = (char *) pr_safe_malloc(sa->incl_l + 1);
              strcpy (sa->trimmed_masked_seq, output_seq->sequence);
-          } else if (pa->mp.mdir == rev) {
+          } else if (mp.mdir == rev) {
              sa->trimmed_masked_seq_r = (char *) pr_safe_malloc(sa->incl_l + 1);
              strcpy (sa->trimmed_masked_seq_r, output_seq->sequence);
           }

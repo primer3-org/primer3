@@ -20,3 +20,11 @@
 -c \- -l ../kmer_lists/homo_sapiens_16.list ../test/masker.fna
 -c \. -l ../kmer_lists/homo_sapiens_16.list ../test/masker.fna
 -c \, -l ../kmer_lists/homo_sapiens_16.list ../test/masker.fna
+-lf ../test/masker_lists.txt ../test/masker.fna
+-lf ../test/masker_lists_too_many.txt ../test/masker.fna
+-l ../test/masker_short.list ../test/masker.fna
+-lf ../test/masker_lists_bad_value.txt -l ../kmer_lists/homo_sapiens_16.list ../test/masker.fna
+-l ../kmer_lists/homo_sapiens_16.list -c < ../test/masker.fna
+-l ../kmer_lists/homo_sapiens_11.list 1 0 sq 1 2 3 4 5 6 ../test/masker.fna
+-l ../test/masker_k20.list 1 1 -a 1000 ../test/masker_k20.fna
+-lh ../kmer_lists ../test/masker.fna

@@ -137,6 +137,9 @@ main (int argc, const char *argv[])
       /* get the positions of list files */
       list_pos[nlist_parameters] = idx;
       while (argv[idx + 1]) {
+        /* At most four values: name, coefficient, mismatches and "sq";
+           a further argument is parsed as the next option */
+        if (idx - list_pos[nlist_parameters] == 4) break;
         if (argv[idx + 1][0] == '-') {
           if (!argv[idx + 1][1]) break;
             strtod (argv[idx + 1] + 1, &end);
@@ -233,7 +236,8 @@ main (int argc, const char *argv[])
       idx += 1;
 
     } else if (!strcmp (argv[idx], "-c") || !strcmp (argv[idx], "--masking_char")) {
-      if (!argv[idx + 1 || argv[idx + 1][0] == '-']) {
+      /* A dash is a valid masking character */
+      if (!argv[idx + 1]) {
         pr_append_new_chunk_external (&warnings, "Character for masking not specified! Using the default value.");
         idx += 1;
         continue;
@@ -271,6 +275,7 @@ main (int argc, const char *argv[])
     } else {
       pr_append_new_chunk_external (&parse_err, "Unknown parameter: ");
       pr_append_external (&parse_err, argv[idx]);
+      fprintf(stderr, "%s -> parsing commandline: ERROR: %s\n", pr_programme_name, parse_err.data);
       print_help(1);
     }
   }

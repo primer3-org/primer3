@@ -630,9 +630,13 @@ read_boulder_record(FILE *file_input,
         continue;
       }
       if (COMPARE("PRIMER_MASK_KMERLIST_PATH")) {
-        if (kmer_lists_path == NULL) {
+        /* A changed path replaces the old one (or the default directory)
+           and the lists are loaded again */
+        if (kmer_lists_path == NULL || strcmp(kmer_lists_path, datum)) {
+          free(kmer_lists_path);
           kmer_lists_path = (char*) _rb_safe_malloc(datum_len + 1);
           strcpy(kmer_lists_path, datum);
+          pa->masking_parameters_changed = 1;
         }
         continue;
       }
