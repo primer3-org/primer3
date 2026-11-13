@@ -97,6 +97,15 @@ Minor fixes:
     values after -l overflowed a buffer; the fifth value is now reported
     as an unknown parameter.
 
+15. amplicon3: the help text gave -formamid in mM, but the value is
+    used in mol/l, as in oligotm and primer3_core. The help text now
+    says mol/l; the calculation is unchanged.
+
+16. A lowercase SEQUENCE_OVERHANG_RIGHT aborted primer3_core when the
+    oligo alignments used dpal (--default_version=1 or
+    PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT=0). Both overhangs are now
+    upper-cased first.
+
 
 release 2.6.1 2022-01-26  ===============================================
 This release fixes a small memory bug.

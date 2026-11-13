@@ -4,6 +4,9 @@
 # Compiled Object files
 *.o
 
+# Dependency files written by the compiler
+src/*.d
+
 # Compiled Static libraries
 *.a
 

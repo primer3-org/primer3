@@ -54,7 +54,7 @@ main(int argc, char **argv)
     "\n"
     "-dmso_fact dmso_fact    - DMSO correction factor, by default 0.6\n"
     "\n"
-    "-formamid formamid_conc - concentration of formamid in mM, by default 0\n"
+    "-formamid formamid_conc - concentration of formamide in mol/l, by default 0 mol/l\n"
     "\n"
     "-fs find_salt_conc  - provide a measured Tm and obtain a suitable salt concentration (experimental)\n"
     "\n"

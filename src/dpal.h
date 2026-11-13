@@ -104,9 +104,9 @@ typedef struct {
     int force_long_maxgap1; /* Force the use of the long maxgap 1 functions. */
     int gap;                 /* The "gap opening" penalty. */
     int gapl;                /* The "gap extension" penalty. */
-    int max_gap;             /* 
-                              * The maximum allowable size for a gap. -1
-                              * indicates that the gap can be of any size.
+    int max_gap;             /*
+                              * The maximum allowable size for a gap,
+                              * 0 for no gaps. Must not be negative.
                               */
     int score_max;           /* If greater than 0 stop search as soon as
                               * score > score_max.

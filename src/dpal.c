@@ -274,6 +274,9 @@ dpal(const unsigned char *X,
   int xlen, ylen;
   static char msg[] = "Illegal character in input: ?";  /* out->msg points here */
 
+  if (NULL == out) return; /* Leave it to the caller to
+                              crash */
+
   out->score = DPAL_ERROR_SCORE;
   out->path_length = 0;
   out->msg = NULL;
@@ -283,14 +286,12 @@ dpal(const unsigned char *X,
   CHECK_ERROR(NULL == Y,   "NULL second sequence");
   CHECK_ERROR(NULL == in,  "NULL 'in' pointer");
 
-  if (NULL == out) return; /* Leave it to the caller to
-                              crash */
-
   CHECK_ERROR(in->flag != DPAL_GLOBAL
               && in->flag != DPAL_GLOBAL_END
               && in->flag != DPAL_LOCAL_END
               && in->flag != DPAL_LOCAL,
               "Illegal flag");
+  CHECK_ERROR(in->max_gap < 0, "max_gap must not be negative");
   if (in->check_chars) {
     CHECK_ERROR(illegal_char(X, in->ssm, &msg[28]), msg);
     CHECK_ERROR(illegal_char(Y, in->ssm, &msg[28]), msg);

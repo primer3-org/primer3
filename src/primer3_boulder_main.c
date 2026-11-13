@@ -135,6 +135,8 @@ main(int argc, char *argv[])
       about = 1;
       break;
     case 'p':
+      /* A repeated option replaces the earlier value */
+      pr_set_empty(&p3_settings_path);
       if (pr_append_external(&p3_settings_path, optarg)) {
         exit(-2); /* Out of memory. */
       }
@@ -164,12 +166,14 @@ main(int argc, char *argv[])
       compat = 1;
       break;
     case 'o':
+      pr_set_empty(&output_path);
       if (pr_append_external(&output_path, optarg)) {
         exit(-2); /* Out of memory. */
       }
 
       break;
     case 'e':
+      pr_set_empty(&error_path);
       if (pr_append_external(&error_path, optarg)) {
         exit(-2); /* Out of memory. */
       }
@@ -183,6 +187,15 @@ main(int argc, char *argv[])
   /* Open the output and error files specified */
 
   if (!pr_is_empty(&error_path)) {
+    /* Test the file first: a failed freopen() closes stderr, so the
+       message below could not be printed any more */
+    FILE *test_file = fopen(pr_append_str_chars(&error_path), "w");
+    if (test_file == NULL) {
+      fprintf(stderr, "Error creating file %s\n",
+              pr_append_str_chars(&error_path));
+      exit(-1);
+    }
+    fclose(test_file);
     /* reassign stderr */
     if (freopen(pr_append_str_chars(&error_path), "w", stderr)
         == NULL) {

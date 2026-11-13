@@ -47,7 +47,7 @@ typedef struct amplicon_result {
     double dntp;   /* Concentration of dNTPs (millimolar) */
     double dmso;   /* Concentration of DMSO (%) */
     double dmso_fact;  /* DMSO correction factor (default 0.6) */
-    double formamid;   /* Concentration of formamid (millimolar) */
+    double formamid;   /* Concentration of formamide (mol/l) */
     int seq_len;   /* Length of the sequence. */
     char *seq;     /* Sequence with ATCG only and in upper case. */
     double seq_gc;    /* GC content of the sequence in % . */
@@ -163,7 +163,7 @@ amplicon_result amplicontm(const  char *inseq,     /* The sequence. */
                            double dntp_conc,       /* Concentration of dNTPs (millimolar) */
                            double dmso,            /* Concentration of DMSO (%) */
                            double dmso_fact,       /* DMSO correction factor (default 0.6) */
-                           double formamid,        /* Concentration of formamid (millimolar) */
+                           double formamid,        /* Concentration of formamide (mol/l) */
                            amp_tm_parameters_type tm_parameters,       /* See description above. */
                            amp_salt_correction_type salt_corrections,  /* See description above. */
                            amp_tm_method_type tm_formula,              /* See description above. */
@@ -174,7 +174,7 @@ amplicon_result ampliconfindsalt(const  char *inseq,  /* The sequence. */
                                  double fs_temp,      /* Desired melting temperature. */
                                  double dmso,         /* Concentration of DMSO (%) */
                                  double dmso_fact,    /* DMSO correction factor (default 0.6) */
-                                 double formamid,     /* Concentration of formamid (millimolar) */
+                                 double formamid,     /* Concentration of formamide (mol/l) */
                                  amp_tm_parameters_type tm_parameters,       /* See description above. */
                                  amp_salt_correction_type salt_corrections,  /* See description above. */
                                  amp_tm_method_type tm_formula,              /* See description above. */

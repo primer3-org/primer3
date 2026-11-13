@@ -193,6 +193,18 @@ sub main() {
     $cmd = "$valgrind_prefix$exe --io_version=3 2> cmd_test5.tmp";
     $exit_stat = runtest(5, $cmd, 'cmd_test5_output', 255);
 
+    # Test 6 : a repeated '-output' replaces the first value
+    $valgrind_prefix
+       = $do_valgrind ? sprintf $valgrind_format, 'cmd_test6' : '';
+    $cmd = "$valgrind_prefix$exe --default_version=1 --strict --output=cmd_test6_unused.tmp --output=cmd_test6.tmp $input";
+    $exit_stat = runtest(6, $cmd, $output, 0);
+
+    # Test 7 : a repeated '-error_file' replaces the first value
+    $valgrind_prefix
+       = $do_valgrind ? sprintf $valgrind_format, 'cmd_test7' : '';
+    $cmd = "$valgrind_prefix$exe --flag --err=cmd_test7_unused.tmp --err=cmd_test7.tmp < $input";
+    $exit_stat = runtest(7, $cmd, 'cmd_test3_output', 255);
+
     # ================================================== 
     # If we were running under valgrind to look for memory-related
     # errors (reading uninitialized memory, writing off the end of

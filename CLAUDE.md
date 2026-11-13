@@ -23,7 +23,7 @@ make clean_src        # cleans src only; `make clean` also deletes test temp fil
 
 - The build has no warnings under `-Wall`.
 - `make` doesn't notice changed flags. Run `make clean_src` before rebuilding with different `O_OPTS` or `CC_OPTS`.
-- Header dependencies in `src/Makefile` are listed by hand and are incomplete. After changing a struct or macro in a header, also run `make clean_src`.
+- The compiler writes the header dependencies of each object file into `src/*.d` (`DEPFLAGS = -MMD -MP` in `src/Makefile`), so `make` rebuilds every object that includes a changed header. Object rules list only their source file; don't add headers by hand. A program built from a `*_main.c` needs its own object rule, because compiling and linking in one step writes no usable `.d` file.
 - Windows builds use `make TESTOPTS=--windows` (MinGW). That build leaves out the masker.
 
 ## Tests
@@ -82,7 +82,7 @@ To add a test, add the `_input` and `_output` files and append the name to `@TES
 
 These three drivers share one design:
 - Each line of the input file (`thal_input`, `thal_long_input`, `dpal_input`, `masker_input`) is the argument list for one call of the tool.
-- The stdout of all calls is concatenated into one `.tmp` file and compared with one golden file. stderr is never compared: thal and masker write it to `.tmp.err`, while dpal leaves it on the terminal.
+- The stdout of all calls is concatenated into one `.tmp` file and compared with one golden file. stderr is never compared; all three drivers write it to `.tmp.err`.
 - A call that exits non-zero adds a line `EXIT=<code>` at its place in the `.tmp` file. Lines that print nothing and produce an `EXIT` line are deliberate error cases, such as missing or invalid option values. On Windows the code is shifted (`>> 8`) so that it matches Linux.
 - A new input line therefore changes the golden file at that position. Regenerate it by copying the `.tmp` file, and check that every new `EXIT` line is intended.
 

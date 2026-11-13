@@ -194,6 +194,7 @@ thal(const unsigned char *oligo_f,
    unsigned char *oligo1 = NULL;
    unsigned char *oligo2 = NULL;
    struct dpt_entry **dpt = NULL;
+   if (NULL == o) return; /* Leave it to the caller to crash */
    strcpy(o->msg, "");
    o->temp = THAL_ERROR_SCORE;
    errno = 0; 
@@ -1166,6 +1167,7 @@ saltCorrectS (double mv, double dv, double dntp)
 
 static int
 thal_check_errors(const unsigned char *oligo_f, const unsigned char *oligo_r, int *len_f, int *len_r, const thal_args *a, thal_results *o){
+   if (NULL == o) return 1; /* Leave it to the caller to crash */
    if (oligo_f == NULL){
       strcpy(o->msg, "NULL first sequence");
       return 1;
@@ -1197,7 +1199,6 @@ thal_check_errors(const unsigned char *oligo_f, const unsigned char *oligo_r, in
       strcpy(o->msg, "NULL 'in' pointer");
       return 1;
    }
-   if (NULL == o) return 1; /* Leave it to the caller to crash */
    if((a->type != thal_any) && (a->type != thal_end1) && (a->type != thal_end2) && (a->type != thal_hairpin)){
       strcpy(o->msg, "Illegal type");
       return 1;

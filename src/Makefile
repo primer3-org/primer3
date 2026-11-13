@@ -59,7 +59,11 @@ O_OPTS     = -O2
 CC_OPTS    = -g -Wall
 P_DEFINES  =
 
-CFLAGS  = $(CC_OPTS) $(O_OPTS)
+# The compiler writes the header dependencies of X.o into X.d; they are
+# read by the -include after the object rules below.
+DEPFLAGS   = -MMD -MP
+
+CFLAGS  = $(CC_OPTS) $(O_OPTS) $(DEPFLAGS)
 CXXFLAGS = $(CFLAGS) -std=c++11
 LDFLAGS = -g
 # Note, for profiling, use
@@ -125,9 +129,9 @@ all: $(EXES) $(LIBRARIES)
 
 clean_src:
 ifeq ($(TESTOPTS),--windows)
-	del /Q /F *.o $(EXES) *~ $(LIBRARIES) $(example_files) core ../*~
+	del /Q /F *.o *.d $(EXES) *~ $(LIBRARIES) $(example_files) core ../*~
 else
-	-rm -f *.o $(EXES) *~ $(LIBRARIES) $(example_files) core ../*~
+	-rm -f *.o *.d $(EXES) *~ $(LIBRARIES) $(example_files) core ../*~
 endif
 
 clean: clean_src
@@ -164,7 +168,7 @@ $(LIBMASKER): masker.o
 $(PRIMER_EXE): $(PRIMER_OBJECTS)
 	$(CXX) $(CXXFLAGS) -lstdc++ $(LDFLAGS) -o $@ $(PRIMER_OBJECTS) $(LIBOPTS) $(LDLIBS)
 
-libprimer3.o: libprimer3.cc libprimer3.h p3_seq_lib.h dpal.h thal.h oligotm.h thal_default_params.h
+libprimer3.o: libprimer3.cc
 	$(CXX) -c $(CXXFLAGS) $(P_DEFINES) -o $@ libprimer3.cc
 
 $(NTDPAL_EXE): ntdpal_main.o dpal.o
@@ -173,85 +177,101 @@ $(NTDPAL_EXE): ntdpal_main.o dpal.o
 $(NTTHAL_EXE): thal_main.o thal.o thal_trace.o thal_draw.o thal_params.o thal_util.o
 	$(CC) $(LDFLAGS) -o $@ thal_main.o thal.o thal_trace.o thal_draw.o thal_params.o thal_util.o $(LDLIBS)
 
-$(OLIGOTM_EXE): oligotm_main.c oligotm.h $(LIBOLIGOTM)
-	$(CC) $(CFLAGS) -o $@ oligotm_main.c $(LIBOLIGOTM) $(LIBOPTS) $(LDLIBS)
+$(OLIGOTM_EXE): oligotm_main.o $(LIBOLIGOTM)
+	$(CC) $(CFLAGS) -o $@ oligotm_main.o $(LIBOLIGOTM) $(LIBOPTS) $(LDLIBS)
 
-$(AMPLICONTM_EXE): amplicontm_main.c amplicontm.h $(LIBAMPTM)
-	$(CC) $(CFLAGS) -o $@ amplicontm_main.c $(LIBAMPTM) $(LIBOPTS) $(LDLIBS)
+$(AMPLICONTM_EXE): amplicontm_main.o $(LIBAMPTM)
+	$(CC) $(CFLAGS) -o $@ amplicontm_main.o $(LIBAMPTM) $(LIBOPTS) $(LDLIBS)
 
-$(LONG_SEQ_EXE): long_seq_tm_test_main.c oligotm.o
-	$(CC) $(CFLAGS) -o $@ long_seq_tm_test_main.c oligotm.o $(LIBOPTS) $(LDLIBS)
+$(LONG_SEQ_EXE): long_seq_tm_test_main.o oligotm.o
+	$(CC) $(CFLAGS) -o $@ long_seq_tm_test_main.o oligotm.o $(LIBOPTS) $(LDLIBS)
 
-$(MASKER_EXE): masker_main.c $(LIBRARIES)
-	$(CXX) $(CXXFLAGS) -lstdc++ -o $@ masker_main.c $(LIBRARIES) $(LIBOPTS) $(LDLIBS)
+$(MASKER_EXE): masker_main.o $(LIBRARIES)
+	$(CXX) $(CXXFLAGS) -lstdc++ -o $@ masker_main.o $(LIBRARIES) $(LIBOPTS) $(LDLIBS)
 
-read_boulder.o: read_boulder.c read_boulder.h libprimer3.h dpal.h thal.h p3_seq_lib.h thal_default_params.h 
+read_boulder.o: read_boulder.c
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ read_boulder.c
 
-print_boulder.o: print_boulder.c print_boulder.h libprimer3.h p3_seq_lib.h 
+print_boulder.o: print_boulder.c
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ print_boulder.c
 
-dpal.o: dpal.c dpal.h
+dpal.o: dpal.c
 	$(CC) -c $(CFLAGS) -o $@ dpal.c
 
 # We use '-ffloat-store' on windows to prevent undesirable
 # precision which may lead to differences in floating point results.
-thal.o: thal.c thal.h thal_internal.h
+thal.o: thal.c
 	$(CC) -c $(CFLAGS) -ffloat-store -o $@ thal.c
 
-thal_trace.o: thal_trace.c thal_internal.h
+thal_trace.o: thal_trace.c
 	$(CC) -c $(CFLAGS) -o $@ thal_trace.c
 
-thal_trace_primer.o: thal_trace.c thal_internal.h
+thal_trace_primer.o: thal_trace.c
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ thal_trace.c
 
-thal_draw.o: thal_draw.c thal_internal.h
+thal_draw.o: thal_draw.c
 	$(CC) -c $(CFLAGS) -o $@ thal_draw.c
 
-thal_draw_primer.o: thal_draw.c thal_internal.h
+thal_draw_primer.o: thal_draw.c
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ thal_draw.c
 
-thal_params.o: thal_params.c thal_internal.h thal_default_params.h
+thal_params.o: thal_params.c
 	$(CC) -c $(CFLAGS) -o $@ thal_params.c
 
-thal_params_primer.o: thal_params.c thal_internal.h thal_default_params.h
+thal_params_primer.o: thal_params.c
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ thal_params.c
 
-thal_util.o: thal_util.c thal_internal.h
+thal_util.o: thal_util.c
 	$(CC) -c $(CFLAGS) -o $@ thal_util.c
 
-thal_util_primer.o: thal_util.c thal_internal.h
+thal_util_primer.o: thal_util.c
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ thal_util.c
 
-p3_seq_lib.o: p3_seq_lib.c p3_seq_lib.h libprimer3.h
+p3_seq_lib.o: p3_seq_lib.c
 	$(CC) -c $(CFLAGS) -o $@ p3_seq_lib.c
 
-dpal_primer.o: dpal.c dpal.h
+dpal_primer.o: dpal.c
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ dpal.c
 
-thal_primer.o: thal.c thal.h thal_internal.h
+thal_primer.o: thal.c
 	$(CC) -c $(CFLAGS) -ffloat-store $(P_DEFINES) -o $@ thal.c
 
-format_output.o: format_output.c format_output.h libprimer3.h dpal.h thal.h p3_seq_lib.h thal_default_params.h
+format_output.o: format_output.c
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ format_output.c
 
-ntdpal_main.o: ntdpal_main.c dpal.h
-	$(CC) -c $(CC_OPTS) -o $@ ntdpal_main.c
+ntdpal_main.o: ntdpal_main.c
+	$(CC) -c $(CC_OPTS) $(DEPFLAGS) -o $@ ntdpal_main.c
 
-thal_main.o: thal_main.c thal.h thal_default_params.h
+thal_main.o: thal_main.c
 	$(CC) -c $(CFLAGS) -o $@ thal_main.c
 # We use CC_OPTS above rather than CFLAGS because
 # gcc 2.7.2 crashes while compiling ntdpal_main.c with -O2
 
-amplicontm.o: amplicontm.c amplicontm.h
+amplicontm.o: amplicontm.c
 
-oligotm.o: oligotm.c oligotm.h
+oligotm.o: oligotm.c
 
-primer3_boulder_main.o: primer3_boulder_main.c libprimer3.h dpal.h thal.h oligotm.h format_output.h print_boulder.h read_boulder.h thal_default_params.h
+primer3_boulder_main.o: primer3_boulder_main.c
 	$(CC) -c $(CFLAGS) $(P_DEFINES) primer3_boulder_main.c
 
-masker.o: masker.c masker.h libprimer3.h
+masker.o: masker.c
 	$(CC) -c $(CFLAGS) $(P_DEFINES) masker.c
+
+oligotm_main.o: oligotm_main.c
+	$(CC) -c $(CFLAGS) -o $@ oligotm_main.c
+
+amplicontm_main.o: amplicontm_main.c
+	$(CC) -c $(CFLAGS) -o $@ amplicontm_main.c
+
+long_seq_tm_test_main.o: long_seq_tm_test_main.c
+	$(CC) -c $(CFLAGS) -o $@ long_seq_tm_test_main.c
+
+# masker_main.c is compiled as C++
+masker_main.o: masker_main.c
+	$(CXX) -c $(CXXFLAGS) -o $@ masker_main.c
+
+# Header dependencies written by the compiler (see DEPFLAGS)
+-include $(wildcard *.d)
 
 primer_test: test
 

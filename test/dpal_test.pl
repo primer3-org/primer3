@@ -70,12 +70,16 @@ sub runtest($$$$$) {
     my ($desc, $ntdpal_args, $infile, $benchfile, $outfile) = @_;
     print $desc, '...';
     open Q, $infile or confess "open $infile: $!";
+    my $errfile = "$outfile.err";
 
     # Reopen STDOUT to get all ntdpal output in one file
     open OLDOUT, ">&STDOUT" or confess "Cannot dup STDOUT: $!";
+    open OLDERR, ">&" , \*STDERR or confess "Cannot dup STDERR: $!";
     open STDOUT, '>', $outfile or confess "open STDOUT '>' $outfile: $!";
     # Unbuffered, so that EXIT lines stay in order with the program output
     STDOUT->autoflush(1);
+    # Error messages of the error cases are not compared
+    open STDERR, '>', $errfile or confess "open STDERR '>' $errfile $!";
     while (my $in = <Q>) {
         $test_count++;
         my $valgrind_prefix 
@@ -92,6 +96,8 @@ sub runtest($$$$$) {
     }
     close Q;
     open STDOUT, ">&OLDOUT" or confess "Cannot dup OLDOUT: $!";
+    open STDERR, ">&OLDERR" or confess "Cannot dup OLDERR: $!";
+    close OLDERR;
     close OLDOUT;
     my $r = perldiff $benchfile, $outfile;
     if ($r == 0) {

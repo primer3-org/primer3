@@ -6819,6 +6819,18 @@ _adjust_seq_args(const p3_global_settings *pa,
     return;
   }
 
+  /* Upper-case the overhangs before the reverse complement is copied:
+     dpal cannot align lowercase letters. Illegal letters stay letters
+     and are reported by _pr_data_control(). */
+  if (NULL != sa->overhang_left) {
+    for (char *c = sa->overhang_left; *c; c++)
+      *c = (char) toupper((unsigned char) *c);
+  }
+  if (NULL != sa->overhang_right) {
+    for (char *c = sa->overhang_right; *c; c++)
+      *c = (char) toupper((unsigned char) *c);
+  }
+
   /* Calculate once for all the reverse complement of the overhang_right */
   if (NULL != sa->overhang_right) {
     overhang_len = strlen(sa->overhang_right);
@@ -7865,7 +7877,9 @@ _pr_data_control(const p3_global_settings *pa,
     return 1;
   }
 
-  if (pa->sequencing.spacing < 25) {
+  /* The upper limit keeps the position arithmetic in
+     pick_sequencing_primer_list() inside int */
+  if (pa->sequencing.spacing < 25 || pa->sequencing.spacing > 10000) {
     pr_append_new_chunk(glob_err,
                         "Illegal value for PRIMER_SEQUENCING_SPACING");
     return 1;

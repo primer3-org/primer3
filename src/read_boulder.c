@@ -46,6 +46,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ctype.h> /* toupper, isspace */
 #include <string.h> /* memset, strlen,  strcmp, ... */
 #include <float.h>
+#include <math.h> /* isfinite */
 #include "read_boulder.h"
 #include "masker.h"
 
@@ -1052,8 +1053,8 @@ parse_double(const char *tag_name, const char *datum,
 {
     char *nptr;
     *out = strtod(datum, &nptr);
-    if (nptr == datum) {
-        /* Empty string or complete junk. */
+    if (nptr == datum || !isfinite(*out)) {
+        /* Empty string, complete junk, nan or inf. */
         tag_syntax_error(tag_name, datum, err);
         *out = 0.0;
         return;

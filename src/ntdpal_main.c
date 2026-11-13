@@ -37,6 +37,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "dpal.h"
 #include <string.h>
+
+/* Limits of the options; larger values overflow the scores */
+#define MAX_GAP_PENALTY 10000
+#define STR(X) #X
+#define XSTR(X) STR(X)
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -60,11 +65,12 @@ main(int argc, const char**argv)
     int dpal_only = 0;
     char *endptr;
     double gap_value;
+    long max_gap;
     const char *msg = 
       "\nUsage: %s [-g <gval>] [-l <lval>] [-m <mval>]\n"
       "                 [-f2] [-p] [-s] [-e] <seq1> <seq2> <mode>"
       "\n\nwhere\n\n"
-      "<gval> and <lval> are (positive) floats (.01 precision)\n"
+      "<gval> and <lval> are floats from 0 to " XSTR(MAX_GAP_PENALTY) " (.01 precision)\n"
       "       specifying penalties for creating or lengthening a gap\n"
       "       respectively (the penalties are subtracted from the\n"
       "       output score).  Both default to 1.  A gap of length L\n"
@@ -83,8 +89,8 @@ main(int argc, const char**argv)
       "       and -1 to a mismatch.)\n\n"
       "-p causes the alignment to be displayed on stderr.\n\n"
       "-s causes _only_ the score to printed.\n\n"
-      "<mval> is the maximum allowed gap length (default is 3, 0 for no\n"
-      "       gaps).  Negative values are not supported.\n\n"
+      "<mval> is the maximum allowed gap length, from 0 (no gaps) to\n"
+      "       " XSTR(DPAL_MAX_ALIGN) " (default is 3).\n\n"
       "<seq1> and <seq2> are the sequences to be aligned.\n\n"
       "<mode> is one of g, G, l, or L specifying a global,\n"
       "       global end-anchored, local, or local end-achored\n"
@@ -115,7 +121,7 @@ main(int argc, const char**argv)
             exit(-1);
           }
           gap_value = strtod(argv[i+1], &endptr);
-          if ('\0' != *endptr || !(gap_value >= 0)) {
+          if ('\0' != *endptr || !(gap_value >= 0 && gap_value <= MAX_GAP_PENALTY)) {
             fprintf(stderr, msg, argv[0]);
             exit(-1);
           }
@@ -134,7 +140,7 @@ main(int argc, const char**argv)
             exit(-1);
           }
           gap_value = strtod(argv[i+1], &endptr);
-          if ('\0' != *endptr || !(gap_value >= 0)) {
+          if ('\0' != *endptr || !(gap_value >= 0 && gap_value <= MAX_GAP_PENALTY)) {
             fprintf(stderr, msg, argv[0]);
             exit(-1);
           }
@@ -146,11 +152,12 @@ main(int argc, const char**argv)
             fprintf(stderr, msg, argv[0]);
             exit(-1);
           }
-          a.max_gap = strtol(argv[i+1], &endptr, 10);
-          if ('\0' != *endptr) {
+          max_gap = strtol(argv[i+1], &endptr, 10);
+          if ('\0' != *endptr || max_gap < 0 || max_gap > DPAL_MAX_ALIGN) {
             fprintf(stderr, msg, argv[0]);
             exit(-1);
           }
+          a.max_gap = (int) max_gap;
           i++;
         } else if (!strncmp("-s", argv[i], 2)) {
            dpal_only = 1;

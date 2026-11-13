@@ -369,7 +369,7 @@ print_2_pair_array(FILE *f, const char* title, int num,
 #define INTL_EXCL_REGION (1<<6)
 
 /* Prints out the asci picture of the sequence */
-/* Return 1 on ENOMEM. Otherwise return 0. */
+/* Return 1 on ENOMEM. Otherwise return 0. retval must not be NULL. */
 static int
 print_seq(FILE *f,
     const p3_global_settings *pa,
@@ -428,8 +428,7 @@ print_seq(FILE *f,
                  i < h->start + h->length + sa->incl_s)
                notes[i] |= INTL_OLIGO;
         } else if (pa->primer_task == pick_sequencing_primers) {
-                if (pa->pick_right_primer && retval != NULL
-                         && retval->rev.num_elem > 0){
+                if (pa->pick_right_primer && retval->rev.num_elem > 0){
                   h2 = retval->rev.oligo;
               for (j = 0; j < pa->num_return; j++) {
                     if(j > retval->rev.num_elem -1) break;
@@ -439,8 +438,7 @@ print_seq(FILE *f,
                    notes[i] |= RIGHT_OLIGO;
                   }
             }           
-                if (pa->pick_left_primer && retval != NULL
-                         && retval->fwd.num_elem > 0){
+                if (pa->pick_left_primer && retval->fwd.num_elem > 0){
                   h2 = retval->fwd.oligo;
               for (j = 0; j < pa->num_return; j++) {
                     if(j > retval->fwd.num_elem -1) break;
