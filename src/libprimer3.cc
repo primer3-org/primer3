@@ -3121,6 +3121,17 @@ add_one_primer_by_position(int start, int length, int *extreme, oligo_array *oli
   PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
 
   /* Just to be sure */
+  if (length < 1 || length > MAX_PRIMER_LENGTH) {
+    return 1;
+  }
+  if (oligo->type == OT_LEFT && sa->overhang_left
+      && length + strlen(sa->overhang_left) > THAL_MAX_ALIGN) {
+    return 1;
+  }
+  if (oligo->type == OT_RIGHT && sa->overhang_right
+      && length + strlen(sa->overhang_right) > THAL_MAX_ALIGN) {
+    return 1;
+  }
   if (start < 0) {
     return 1;
   }
@@ -6002,9 +6013,9 @@ set_retval_both_stop_codons(const seq_args *sa, p3retval *retval) {
    * sa->start_codon_pos is "not null".  We will not want to include
    * a stop codon to the right of the the start codon in the
    * amplicon.
-   * Both values are stored as positions in the full sequence (0-based),
-   * which is what PRIMER_STOP_CODON_POSITION prints. -1 means "no stop
-   * codon" and must stay -1. */
+   * Both values are stored as positions in the full sequence (0-based);
+   * PRIMER_STOP_CODON_POSITION prints them plus PRIMER_FIRST_BASE_INDEX.
+   * -1 means "no stop codon" and must stay -1. */
   retval->upstream_stop_codon = find_stop_codon(sa->trimmed_seq,
                                                 sa->start_codon_pos, -1);
   if (retval->upstream_stop_codon != -1) {
@@ -7883,6 +7894,41 @@ _pr_data_control(const p3_global_settings *pa,
     pr_append_new_chunk(glob_err,
                         "SEQUENCE_FORCE_RIGHT_END > SEQUENCE_FORCE_RIGHT_START");
     return 1;
+  }
+
+  /* With both ends forced the primer length is taken from the
+     positions, not limited by PRIMER_MAX_SIZE; the primer and the
+     primer with its overhang must fit the oligo buffers. */
+  if ((sa->force_left_start > -1) && (sa->force_left_end > -1)) {
+    if (sa->force_left_end - sa->force_left_start >= MAX_PRIMER_LENGTH) {
+      pr_append_new_chunk(nonfatal_err,
+                          "Forced left primer longer than ");
+      pr_append(nonfatal_err, MACRO_VALUE_AS_STRING(MAX_PRIMER_LENGTH));
+      return 1;
+    }
+    if (sa->force_left_end - sa->force_left_start + 1
+        + overhang_left_len > THAL_MAX_ALIGN) {
+      pr_append_new_chunk(nonfatal_err,
+                          "Forced left primer + overhang longer than ");
+      pr_append(nonfatal_err, MACRO_VALUE_AS_STRING(THAL_MAX_ALIGN));
+      return 1;
+    }
+  }
+
+  if ((sa->force_right_start > -1) && (sa->force_right_end > -1)) {
+    if (sa->force_right_start - sa->force_right_end >= MAX_PRIMER_LENGTH) {
+      pr_append_new_chunk(nonfatal_err,
+                          "Forced right primer longer than ");
+      pr_append(nonfatal_err, MACRO_VALUE_AS_STRING(MAX_PRIMER_LENGTH));
+      return 1;
+    }
+    if (sa->force_right_start - sa->force_right_end + 1
+        + overhang_right_len > THAL_MAX_ALIGN) {
+      pr_append_new_chunk(nonfatal_err,
+                          "Forced right primer + overhang longer than ");
+      pr_append(nonfatal_err, MACRO_VALUE_AS_STRING(THAL_MAX_ALIGN));
+      return 1;
+    }
   }
 
   if (pa->p_args.min_5_prime_overlap_of_junction < 1) {

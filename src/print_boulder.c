@@ -137,8 +137,11 @@ print_boulder(int io_version,
   if (explain_flag) print_all_explain(pa, sa, retval, io_version);
     
   /* Print out the stop codon if a reading frame was specified */
-  if (!PR_START_CODON_POS_IS_NULL(sa))
-    printf("PRIMER_STOP_CODON_POSITION=%d\n", retval->stop_codon_pos);
+  if (!PR_START_CODON_POS_IS_NULL(sa)) {
+    int stop = retval->stop_codon_pos;
+    if (stop != -1) stop += pa->first_base_index;
+    printf("PRIMER_STOP_CODON_POSITION=%d\n", stop);
+  }
     
   /* How often has the loop to be done? */
   if (retval->output_type == primer_list) {

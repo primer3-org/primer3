@@ -423,6 +423,11 @@ amplicon_result amplicontm(const  char *inseq,
         return ret;
     }
 
+    if (salt_corrections == schildkraut_amps) {
+        schildkraut_corr = 16.6 * log10(mv);
+        mv = 1.0;
+    }
+
     int pos = 2, k = 0, it = 0;
     while (pos > 1) { // each temperature
         if (output==0) {
@@ -453,11 +458,6 @@ amplicon_result amplicontm(const  char *inseq,
                 }
                 k = stack[pos];
             }
-        }
-
-        if (salt_corrections == schildkraut_amps) {
-            schildkraut_corr = 16.6 * log10(mv);
-            mv = 1.0;
         }
 
         RT = 1.9871*(273.15 + ret.dmso * ret.dmso_fact - schildkraut_corr

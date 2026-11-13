@@ -122,6 +122,12 @@ create_formula_parameters_from_list_file_name (const char *list_file_name, pr_ap
     return NULL;
   }
   memset (fp, 0, sizeof(formula_parameters));
+  if (strlen(list_file_name) >= sizeof(fp->list_file_name)) {
+    pr_append_new_chunk_external (parse_err, "List file name too long: ");
+    pr_append_external (parse_err, list_file_name);
+    free(fp);
+    return NULL;
+  }
   strcpy(fp->list_file_name, list_file_name);
   data = mmap_by_filename (fp->list_file_name, &size);
   if (!data) {
@@ -157,7 +163,14 @@ create_formula_parameters_from_list_file_prefix (const char *list_name_prefix, c
 {
   char list_file_name[300];
   formula_parameters *fp;
-  snprintf(list_file_name, 300, "%s%s_%u.list", kmer_lists_path, list_name_prefix, word_length);
+  int n = snprintf(list_file_name, sizeof(list_file_name), "%s%s_%u.list",
+                   kmer_lists_path, list_name_prefix, word_length);
+  if (n < 0 || (size_t) n >= sizeof(list_file_name)) {
+    pr_append_new_chunk_external (parse_err, "List file name too long: ");
+    pr_append_external (parse_err, kmer_lists_path);
+    pr_append_external (parse_err, list_name_prefix);
+    return NULL;
+  }
   if(0 != access(list_file_name,0)){
     pr_append_new_chunk_external (parse_err, "Cannot find list file");
     return NULL;

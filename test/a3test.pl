@@ -180,7 +180,9 @@ sub main() {
                   'long',
                   'optimal',
                   'only_mv',
-                  'no_dmso'
+                  'no_dmso',
+                  'schildkraut',
+                  'schildkraut_only_mv'
                 );
 
     # The range of this for loop is a set of test names

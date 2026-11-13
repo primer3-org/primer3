@@ -1195,3 +1195,9 @@ SEQ	ATT  G           A
 SEQ	   AG AACCCACTCCC AGATAAC
 STR	   TC TTGGGTGAGGG TCTATTG
 STR	TAG  T           A       
+EXIT=255
+Calculated thermodynamical parameters for dimer:	dS = -297.013	dH = -101000	dG = -8881.34	t = 29.9936
+SEQ	      TAAG      
+SEQ	CCGCAG    CTGCGG
+STR	GGCGTC    GACGCC
+STR	      GAAT      

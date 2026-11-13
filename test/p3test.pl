@@ -262,6 +262,7 @@ sub main() {
                   'primer_new_tasks',
                   'primer_new_tasks_formatted',
                   'primer_internal_position',
+                  'primer_force_length',
 
                   'primer_annealing_temp',
 

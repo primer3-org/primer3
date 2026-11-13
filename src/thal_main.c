@@ -275,10 +275,6 @@ int main(int argc, char** argv)
       fprintf(stderr, "Error: the temperature must be above -273.15 C\n");
       exit(-1);
    }
-   if (a.mv + a.dv <= 0.0) {
-      fprintf(stderr, "Error: the monovalent and divalent concentrations must not both be 0\n");
-      exit(-1);
-   }
    if (check_sequence(oligo1) || check_sequence(oligo2)) {
       exit(-1);
    }

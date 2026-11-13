@@ -63,6 +63,24 @@ Minor fixes:
    "... for hairpin:" with the same columns as the dimer line. Programs
    that parse this line must be adapted.
 
+9. amplicon3: with -sc 0 (Schildkraut) the salt correction was applied
+   to the first temperature of the melting curve only, so the melting
+   point was the one for 1 M salt whatever -mv, -dv and -n said. The
+   -sc 0 melting points are now lower for all concentrations below 1 M.
+
+10. PRIMER_STOP_CODON_POSITION ignored PRIMER_FIRST_BASE_INDEX and was
+    always counted from 0. It is now counted from
+    PRIMER_FIRST_BASE_INDEX like all other positions, so with
+    PRIMER_FIRST_BASE_INDEX=1 the value is one higher than before.
+    -1 (no stop codon) is unchanged.
+
+11. ntthal: -mv 0 with a -dv not above the dNTP concentration (-n,
+    default 0.8 mM) gave dS = -inf instead of an error. The thal library
+    now rejects a salt concentration that is too low for the salt
+    correction, and ntthal prints "Error: Salt concentration too low for
+    the salt correction". -mv 0 with -dv above the dNTP concentration
+    is accepted.
+
 
 release 2.6.1 2022-01-26  ===============================================
 This release fixes a small memory bug.

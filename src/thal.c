@@ -1202,6 +1202,11 @@ thal_check_errors(const unsigned char *oligo_f, const unsigned char *oligo_r, in
       strcpy(o->msg, "Illegal type");
       return 1;
    }
+   /* saltCorrectS() takes the logarithm of this value */
+   if (a->mv + 120.0 * sqrt(fmax(0.0, a->dv - (a->dv <= 0 ? a->dv : a->dntp))) <= 0.0) {
+      strcpy(o->msg, "Salt concentration too low for the salt correction");
+      return 1;
+   }
    o->align_end_1 = -1;
    o->align_end_2 = -1;
    if (oligo_f && '\0' == *oligo_f) {
