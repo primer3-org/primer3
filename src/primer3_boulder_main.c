@@ -341,10 +341,6 @@ main(int argc, char *argv[])
     }
     
 #if !defined(OS_WIN)
-    if(global_pa->mask_template){
-           global_pa->lowercase_masking=global_pa->mask_template;
-     }        
-
      /* Check if template masking flag was given */
      if (global_pa->mask_template == 1)
         validate_kmer_lists_path();

@@ -325,7 +325,9 @@ dpal(const unsigned char *X,
     _dpal_generic(X, Y, xlen, ylen, in, mode, out);
   } else if (1 == in->force_long_generic) {
     _dpal_long_nopath_generic(X, Y, xlen, ylen, in, out);
-  } else if (1 == in->max_gap ) {
+  } else if (1 == in->max_gap && xlen >= 4 && ylen >= 3) {
+    /* The maxgap1 functions handle only these lengths; shorter
+       sequences are aligned by the generic functions below. */
     if (DPAL_LOCAL == in->flag)
       _dpal_long_nopath_maxgap1_local(X, Y, xlen, ylen, in, out);
     else if (DPAL_GLOBAL_END == in->flag)

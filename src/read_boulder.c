@@ -726,11 +726,7 @@ read_boulder_record(FILE *file_input,
                     parse_int("PRIMER_MASK_TEMPLATE", datum, &pa->mask_template, parse_err);
                     if (pa->mask_template != 0 && pa->mask_template != 1)
                       pr_append_new_chunk(glob_err, "Illegal value for PRIMER_MASK_TEMPLATE");
-                    /* Check in case: PRIMER_LOWERCASE_MASKING=1 and PRIMER_MASK_TEMPLATE=0 */
 #if !defined(OS_WIN)
-                    if (pa->mask_template) {
-                        pa->lowercase_masking = pa->mask_template;
-                    }
                     pa->masking_parameters_changed = pa->mask_template;
                     continue;
 #else
@@ -1028,9 +1024,6 @@ read_p3_file(const char *file_name,
                                 pa, sa, fatal_err, 
                                 nonfatal_err, warnings, 
                                 read_boulder_record_res);
-  if(pa->mask_template){
-    pa->lowercase_masking=pa->mask_template;
-  }
   if (echo_output) printf("P3_SETTINGS_FILE_END=\n");
   if (file) fclose(file);
   

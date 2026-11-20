@@ -152,6 +152,10 @@ main (int argc, const char *argv[])
         }
         idx += 1;
       }
+      if (idx == list_pos[nlist_parameters]) {
+        fprintf(stderr, "%s: No list name specified with -l\n", pr_programme_name);
+        exit(-1);
+      }
       list_components[nlist_parameters] = idx - list_pos[nlist_parameters];
       nlist_parameters += 1;
       npos += 1;
@@ -340,6 +344,10 @@ main (int argc, const char *argv[])
   }
 
   mp.nlists = nlists;
+
+  if (nlists == 0) {
+    pr_append_new_chunk_external (&parse_err, "No k-mer list given");
+  }
 
   if (mp.abs_cutoff > 0 && nlist_parameters != 1) {
     fprintf (stderr, "Error: Absolute value cutoff works with one list and one k-mer frequency parameter only. Currently you are using %u lists and %u parameters.\n", nlists, nlist_parameters);

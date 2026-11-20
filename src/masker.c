@@ -59,10 +59,10 @@ get_next_char_from_input (input_sequence *input_seq, unsigned long long *current
   if (input_seq->sequence_file) {
     *current_pos = ftell(input_seq->sequence_file);
     c = fgetc (input_seq->sequence_file);
-  } else if (input_seq->sequence_string && input_seq->input_size > 0) {
-    if (input_seq->current_pos == input_seq->input_size) return -1;
+  } else if (input_seq->sequence_string) {
+    if (input_seq->current_pos >= input_seq->input_size) return -1;
     *current_pos = input_seq->current_pos;
-    c = (int) input_seq->sequence_string[input_seq->current_pos];
+    c = (int) (unsigned char) input_seq->sequence_string[input_seq->current_pos];
     input_seq->current_pos += 1;
   }
   return c;
@@ -83,6 +83,7 @@ get_header_name_from_input (input_sequence *input_seq, unsigned long long header
     v = fgets (header_name, current_pos - header_pos + 2, input_seq->sequence_file);
   } else if (input_seq->sequence_string && input_seq->input_size > 0) {
     v = memcpy (header_name, input_seq->sequence_string + header_pos, current_pos - header_pos + 1);
+    header_name[current_pos - header_pos + 1] = '\0';
   }
   if (!v) {
     pr_append_new_chunk_external (parse_err, "Reading header name failed!");
@@ -540,7 +541,7 @@ void
 initialize_masking_buffer (masking_buffer *mbuffer, unsigned int word_length)
 {
   memset (mbuffer, 0, sizeof (masking_buffer));
-  mbuffer->ei = MAX_BUFFER_SIZE - word_length + 1;
+  mbuffer->ei = (MAX_BUFFER_SIZE - word_length + 1) % MAX_BUFFER_SIZE;
   return;
 }
 
@@ -852,7 +853,7 @@ read_and_mask_sequence (input_sequence *input_seq, output_sequence *output_seq, 
   masking_buffer *mbuffer;
   unsigned long long header_pos = 0, current_pos = 0;
   unsigned int i;
-  
+
   /* size of window is the length of the longest k-mers that we use */
   for (i = 0; i < mp->nlists; i++) {
     if (mp->fp[i]->oligo_length > word_length) {
@@ -860,7 +861,25 @@ read_and_mask_sequence (input_sequence *input_seq, output_sequence *output_seq, 
       word_length = mp->fp[i]->oligo_length;
     }
   }
-  
+
+  if (word_length == 0) {
+    pr_append_new_chunk_external(parse_err, "No k-mer list given");
+    return;
+  }
+  /* The masking buffer needs a window of at least 2 characters */
+  if (word_length + mp->nucl_masked_in_3p_direction < 2) {
+    pr_append_new_chunk_external(parse_err,
+        "k-mer length plus nucleotides masked in 3' direction must be at least 2");
+    return;
+  }
+  /* The masking window is the longest k-mer; more bases than that
+     cannot be masked in 5' direction */
+  if (mp->nucl_masked_in_5p_direction > (int) word_length) {
+    pr_append_new_chunk_external(parse_err,
+        "Nucleotides masked in 5' direction must not exceed the longest k-mer length");
+    return;
+  }
+
   /* buffer for masking*/
   mbuffer = create_masking_buffer (word_length + mp->nucl_masked_in_3p_direction, parse_err);
   
@@ -874,9 +893,11 @@ read_and_mask_sequence (input_sequence *input_seq, output_sequence *output_seq, 
       fprintf (stderr, "pos: %llu, input: %c\n", current_pos, c);
     }
     
-    /* In case it is a FASTA file we need to consider 
-     * the headers separately */
-    if (c == '>') {
+    /* In case it is a FASTA file we need to consider
+     * the headers separately. String input (the template from
+     * primer3_core) has no headers, there '>' is a masked character.
+     * A '>' inside a header does not start a new header. */
+    if (c == '>' && !is_header && input_seq->sequence_file) {
       header_pos = current_pos;
       word_fwd = word_rev = 0;
       current_length = 0;

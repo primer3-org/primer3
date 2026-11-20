@@ -630,10 +630,12 @@ print_explain(FILE *f,
    
    
   const char *format;  /* Format string for the table headers */
+  /* Template masking uses the lowercase masking check */
+  int lowercase_masking = pa->lowercase_masking || pa->mask_template;
   if(pa->thermodynamic_oligo_alignment==0)
     format    = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s";
   else format = "%6s%6s%6s%6s%6s%6s%6s%6s%6s%6s%7s%6s";
-  
+
   fprintf(f, "\nStatistics\n");
    
   if (!pa->pick_anyway || !(
@@ -664,7 +666,7 @@ print_explain(FILE *f,
       if(print_lib_sim) 
         fprintf(f, "%6s", "high");
       fprintf(f, "%6s%6s", "", "high");
-      if(pa->lowercase_masking) 
+      if(lowercase_masking) 
         fprintf(f, "%6s", "lower");
       fprintf(f, "%6s\n", "");
       
@@ -681,7 +683,7 @@ print_explain(FILE *f,
       if(print_lib_sim) 
         fprintf(f, "%6s", "lib");
       fprintf(f, "%6s%6s", "poly", "end");
-      if(pa->lowercase_masking) 
+      if(lowercase_masking) 
         fprintf(f, "%6s", " case");
       fprintf(f, "%6s\n", "");
       
@@ -697,9 +699,9 @@ print_explain(FILE *f,
       if(print_lib_sim) 
         fprintf(f, "%6s", "sim");
       fprintf(f, "%6s%6s", "X", "stab");
-      if(pa->lowercase_masking) 
+      if(lowercase_masking) 
         fprintf(f, "%6s", " end");
-      if(pa->lowercase_masking)
+      if(lowercase_masking)
         fprintf(f, "%6s\n", "ok  ");
       else
         fprintf(f, "%6s\n", "ok");
@@ -707,17 +709,17 @@ print_explain(FILE *f,
   if (pa->pick_left_primer == 1
       && !(pa->pick_anyway && sa->left_input))
     print_stat_line(f, "Left", retval->fwd.expl, 
-                    print_lib_sim, pa->lowercase_masking, pa->thermodynamic_oligo_alignment);
+                    print_lib_sim, lowercase_masking, pa->thermodynamic_oligo_alignment);
   
   if (pa->pick_right_primer == 1
       && !(pa->pick_anyway && sa->right_input))
     print_stat_line(f, "Right", retval->rev.expl,
-                    print_lib_sim, pa->lowercase_masking, pa->thermodynamic_oligo_alignment);
+                    print_lib_sim, lowercase_masking, pa->thermodynamic_oligo_alignment);
   
   if (pa->pick_internal_oligo == 1
       && !(pa->pick_anyway && sa->internal_input))
     print_stat_line(f, "Intl", retval->intl.expl, 
-                    print_lib_sim, pa->lowercase_masking, pa->thermodynamic_oligo_alignment);
+                    print_lib_sim, lowercase_masking, pa->thermodynamic_oligo_alignment);
   
   if (pa->pick_left_primer == 1 && pa->pick_right_primer == 1) {
     fprintf(f, "Pair Stats:\n%s\n",

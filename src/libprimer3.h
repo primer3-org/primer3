@@ -560,16 +560,16 @@ typedef struct rep_sim {
                      * similarity to the oligo.
                      */
 
-  short min;        /* 
+  int min;          /*
                      * The minimum score in slot 'score' (below).
                      * (Used when the objective function involves
                      * minimization of mispriming possibilities.)
                      */
 
-  short max;        /* The index of the maximum score in slot 'score'
+  int max;          /* The index of the maximum score in slot 'score'
                        (below). */
 
-  double *score;    /* 
+  double *score;   /*
                     * Array of similarity (i.e. false-priming) scores,
                     * one for each entry in the 'repeat_lib' slot
                     * of the primargs struct.  In libprimer3.c,

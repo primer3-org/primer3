@@ -1,5 +1,6 @@
 # IDE files
 .vscode/
+claude/
 
 # Compiled Object files
 *.o

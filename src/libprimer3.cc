@@ -1221,6 +1221,7 @@ static void free_pair_memory(int rev_num_elem)
   int i;
 
   free(max_j_seen);
+  max_j_seen = NULL;
   for (i=0; i<rev_num_elem; i++) {
     hmap = pairs[i];
     if (hmap) {
@@ -1233,6 +1234,7 @@ static void free_pair_memory(int rev_num_elem)
     }
   }
   free(pairs);
+  pairs = NULL;
 }
 
 
@@ -3380,7 +3382,9 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   }
 
   /* edited by T. Koressaar and M. Lepamets for lowercase masking */
-  if(pa->lowercase_masking == 1) {
+  /* Template masking marks masked bases by lowercase, so it uses the
+     lowercase check without changing the user setting */
+  if (pa->lowercase_masking == 1 || pa->mask_template == 1) {
     char *sequence_check = sa->trimmed_orig_seq;
     if (pa->mask_template == 1) {
        if (l == OT_LEFT) sequence_check = sa->trimmed_masked_seq;
@@ -3391,9 +3395,6 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
                             h, stats)) {
       if (!must_use) return;
     }
-  } else if(pa->lowercase_masking == 0 && pa->mask_template == 1){
-           pr_append_new_chunk(&retval->warnings, "Use PRIMER_LOWERCASE_MASKING=1 when using PRIMER_MASK_TEMPLATE=1.");
-           return;
   }
   /* end T. Koressar's changes */
 
@@ -4325,6 +4326,7 @@ characterize_pair(p3retval *retval,
   double compl_end, compl_end2;
   pair_stats *pair_expl = &retval->best_pairs.expl;
   int must_use = 0;
+  int newly_checked;  /* a mispriming check ran in this call */
   double min_oligo_tm;
   int i, overhang_len;
   tm_ret tm_calc;  /* structure with Tm and bound (primer fraction) */
@@ -4579,35 +4581,52 @@ characterize_pair(p3retval *retval,
   /* Mispriming of _individual_ primers to template and 
      to repeat libraries. */
 
+  /* The repeat library check can already have run in
+     calc_and_check_oligo_features() (PRIMER_WT_LIBRARY_MISPRIMING > 0)
+     without the template check, so check each one separately.
+     newly_checked limits the failure handling to the call that ran
+     a check, as before. */
+  newly_checked = 0;
   if (retval->fwd.oligo[m].repeat_sim.score == NULL) {
     /* We have not yet checked the oligo against the repeat library. */
     oligo_repeat_library_mispriming(&retval->fwd.oligo[m], pa, sa, OT_LEFT,
                                     &retval->fwd.expl,dpal_arg_to_use, &retval->glob_err);
-    if (OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
-      oligo_template_mispriming(&retval->fwd.oligo[m], pa, sa, OT_LEFT,
-                                &retval->fwd.expl,
-                                dpal_arg_to_use->local_end,
-                                thal_args_for_template_mispriming);
-    }
-    if (!OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
-      pair_expl->considered--;
-      if (!must_use) return PAIR_FAILED;
+    newly_checked = 1;
+  }
+  if (OK_OR_MUST_USE(&retval->fwd.oligo[m])
+      && retval->fwd.oligo[m].template_mispriming == ALIGN_SCORE_UNDEF) {
+    oligo_template_mispriming(&retval->fwd.oligo[m], pa, sa, OT_LEFT,
+                              &retval->fwd.expl,
+                              dpal_arg_to_use->local_end,
+                              thal_args_for_template_mispriming);
+    if (retval->fwd.oligo[m].template_mispriming != ALIGN_SCORE_UNDEF) {
+      newly_checked = 1;
     }
   }
-   
+  if (newly_checked && !OK_OR_MUST_USE(&retval->fwd.oligo[m])) {
+    pair_expl->considered--;
+    if (!must_use) return PAIR_FAILED;
+  }
+
+  newly_checked = 0;
   if (retval->rev.oligo[n].repeat_sim.score == NULL) {
     oligo_repeat_library_mispriming(&retval->rev.oligo[n], pa, sa, OT_RIGHT,
                                     &retval->rev.expl, dpal_arg_to_use, &retval->glob_err);
-    if (OK_OR_MUST_USE(&retval->rev.oligo[n])) {
-      oligo_template_mispriming(&retval->rev.oligo[n], pa, sa, OT_RIGHT,
-                                &retval->rev.expl, 
-                                dpal_arg_to_use->local_end,
-                                thal_args_for_template_mispriming);
+    newly_checked = 1;
+  }
+  if (OK_OR_MUST_USE(&retval->rev.oligo[n])
+      && retval->rev.oligo[n].template_mispriming == ALIGN_SCORE_UNDEF) {
+    oligo_template_mispriming(&retval->rev.oligo[n], pa, sa, OT_RIGHT,
+                              &retval->rev.expl,
+                              dpal_arg_to_use->local_end,
+                              thal_args_for_template_mispriming);
+    if (retval->rev.oligo[n].template_mispriming != ALIGN_SCORE_UNDEF) {
+      newly_checked = 1;
     }
-    if (!OK_OR_MUST_USE(&retval->rev.oligo[n])) {
-      pair_expl->considered--;
-      if (!must_use) return PAIR_FAILED;
-    }
+  }
+  if (newly_checked && !OK_OR_MUST_USE(&retval->rev.oligo[n])) {
+    pair_expl->considered--;
+    if (!must_use) return PAIR_FAILED;
   }
    
   /* End of mispriming of _individual_ primers to template and
@@ -5865,16 +5884,16 @@ oligo_repeat_library_mispriming(primer_rec *h,
   int first, last; /* Indexes of first and last bases of the oligo in
                      sa->trimmed_seq, that is, WITHIN THE INCLUDED
                      REGION. */
-  int   min, max;
-  short max_lib_compl;
+  double   min, max;
+  double max_lib_compl;
 
   /* First, check the oligo against the repeat library. */
   if (OT_INTL == l) {
     lib = pa->o_args.repeat_lib;
-    max_lib_compl = (short) pa->o_args.max_repeat_compl;
+    max_lib_compl = pa->o_args.max_repeat_compl;
   } else {
     lib = pa->p_args.repeat_lib;
-    max_lib_compl = (short) pa->p_args.max_repeat_compl;
+    max_lib_compl = pa->p_args.max_repeat_compl;
   }
 
   oligo_compute_sequence_and_reverse(h, sa, l, &first, &last, s, s_r);
@@ -5890,7 +5909,7 @@ oligo_repeat_library_mispriming(primer_rec *h,
     h->repeat_sim.score =
       (double *) pr_safe_malloc(lib->seq_num * sizeof(double));
     h->repeat_sim.max = h->repeat_sim.min = 0;
-    max = min = 0;
+    max = min = 0.0;
     h->repeat_sim.name = lib->names[0];
 
     for (i = 0; i < lib->seq_num; i++) {
@@ -5923,12 +5942,12 @@ oligo_repeat_library_mispriming(primer_rec *h,
       }
       h->repeat_sim.score[i] = w;
       if(w > max){
-        max = (int) w;
+        max = w;
         h->repeat_sim.max = i;
         h->repeat_sim.name = lib->names[i];
       }
       if(w < min){
-        min = (int) w;
+        min = w;
         h->repeat_sim.min = i;
       }
 
@@ -6786,7 +6805,7 @@ _adjust_seq_args(const p3_global_settings *pa,
                  pr_append_str *nonfatal_err,
                  pr_append_str *warning)
 {
-  int seq_len, inc_len, overhang_len;
+  int seq_len, overhang_len;
 
   /* Subtract the overhang from PRIMER_PRODUCT_SIZE_RANGE */
 
@@ -6893,10 +6912,9 @@ _adjust_seq_args(const p3_global_settings *pa,
   sa->force_right_start -= sa->incl_s;
   sa->force_right_end -= sa->incl_s;
 
-  inc_len = sa->incl_s + sa->incl_l - 1;
-
-  if ((sa->incl_l < INT_MAX) && (sa->incl_s > -1)
-      && (sa->incl_l > -1) && (inc_len < seq_len) ) {
+  if (sa->incl_s > -1 && sa->incl_l > -1
+      && sa->incl_s <= seq_len
+      && sa->incl_l <= seq_len - sa->incl_s) {
     /* Copies inluded region into trimmed_seq */
     sa->trimmed_seq = (char *) pr_safe_malloc(sa->incl_l + 1);
     _pr_substr(sa->sequence, sa->incl_s, sa->incl_l, sa->trimmed_seq);
@@ -6924,19 +6942,33 @@ _adjust_seq_args(const p3_global_settings *pa,
        output_seq =  create_output_sequence ((unsigned long long) sa->incl_l, mp.mdir, nonfatal_err);
 
        read_and_mask_sequence (input_seq, output_seq, &mp, nonfatal_err, 0);
+       const char *masked_fwd = NULL, *masked_rev = NULL;
        if (output_seq->sequence) {
           if (mp.mdir == fwd) {
-             sa->trimmed_masked_seq = (char *) pr_safe_malloc(sa->incl_l + 1);
-             strcpy (sa->trimmed_masked_seq, output_seq->sequence);
+             masked_fwd = output_seq->sequence;
           } else if (mp.mdir == rev) {
-             sa->trimmed_masked_seq_r = (char *) pr_safe_malloc(sa->incl_l + 1);
-             strcpy (sa->trimmed_masked_seq_r, output_seq->sequence);
+             masked_rev = output_seq->sequence;
           }
        } else {
+          masked_fwd = output_seq->sequence_fwd;
+          masked_rev = output_seq->sequence_rev;
+       }
+       /* The masked sequences are indexed like trimmed_seq. A shorter
+          one would leave the bytes behind it uninitialized. */
+       if ((masked_fwd && strlen(masked_fwd) != (size_t) sa->incl_l)
+           || (masked_rev && strlen(masked_rev) != (size_t) sa->incl_l)) {
+          pr_append_new_chunk(nonfatal_err,
+                              "Masking the template failed: masked sequence "
+                              "differs in length from the template");
+       } else {
+          if (masked_fwd) {
              sa->trimmed_masked_seq = (char *) pr_safe_malloc(sa->incl_l + 1);
-             strcpy (sa->trimmed_masked_seq, output_seq->sequence_fwd);
+             strcpy (sa->trimmed_masked_seq, masked_fwd);
+          }
+          if (masked_rev) {
              sa->trimmed_masked_seq_r = (char *) pr_safe_malloc(sa->incl_l + 1);
-             strcpy (sa->trimmed_masked_seq_r, output_seq->sequence_rev);
+             strcpy (sa->trimmed_masked_seq_r, masked_rev);
+          }
        }
        delete_input_sequence (input_seq);
        delete_output_sequence (output_seq);
@@ -8699,7 +8731,7 @@ p3_sa_add_to_quality_array(seq_args *sargs, int quality) {
       pr_safe_malloc(sizeof(*sargs->quality)
                      * sargs->quality_storage_size);
   }
-  if (n > sargs->quality_storage_size) {
+  if (n > sargs->quality_storage_size - 1) {
     sargs->quality_storage_size *= 2;
     sargs->quality
       = (int *)
