@@ -35,6 +35,7 @@ int
 main(int argc, char **argv)
 {
   amplicon_result ret;
+  int no_melt_point = 0;
 
   const char *msg = "USAGE: %s OPTIONS oligo\n"
     "\n"
@@ -296,6 +297,14 @@ main(int argc, char **argv)
                            output);
   }
 
+  /* With -o 2 the curves are printed even without a melting point,
+     they show why there is none; the program still fails at the end */
+  if (ret.error == 3 && output == 2 &&
+      ret.temp != NULL && ret.melt != NULL && ret.deriv != NULL) {
+      no_melt_point = 1;
+      ret.error = 0;
+  }
+
   if (ret.error == 1) {
       fprintf(stderr, "%s ERROR: out of memory\n", argv[0]);
       return -1;
@@ -303,7 +312,7 @@ main(int argc, char **argv)
       fprintf(stderr, "%s ERROR: input is corrupted. Sodium equivalent concentration must be at least 0.01M.\n", argv[0]);
       return -1;
   } else if (ret.error == 3) {
-      fprintf(stderr, "%s ERROR: no melting temperature found.\n", argv[0]);
+      fprintf(stderr, "%s ERROR: no melting temperature found between 60 and 95 C.\n", argv[0]);
       return -1;
   } else if (ret.error == 4) {
       fprintf(stderr, "%s ERROR: -sc 2 salt_corrections==owczarzy is not supported.\n", argv[0]);
@@ -316,6 +325,15 @@ main(int argc, char **argv)
       return -1;
   } else if (ret.error == 7) {
       fprintf(stderr, "%s ERROR: the sequence has fewer than %d A, C, G or T.\n", argv[0], AMP_MIN_LENGTH);
+      return -1;
+  } else if (ret.error == 8) {
+      fprintf(stderr, "%s ERROR: unknown parameters for melting temperature calculation or salt correction.\n", argv[0]);
+      return -1;
+  } else if (ret.error == 9) {
+      fprintf(stderr, "%s ERROR: concentrations of salt, divalent cations and dNTPs must not be negative.\n", argv[0]);
+      return -1;
+  } else if (ret.error == 10) {
+      fprintf(stderr, "%s ERROR: the melting temperature is above %.1f C even at the lowest sodium concentration of 10 mM.\n", argv[0], fs_temp);
       return -1;
   } else if ((output != 1) && (tm_formula == 0)) {
       fprintf(stderr, "%s ERROR: -mf 0 requires -o 1.\n", argv[0]);
@@ -360,16 +378,15 @@ main(int argc, char **argv)
                printf("AMPLICON_SEQUENCE=%s\n", ret.seq);
            }
            printf("AMPLICON_GC_PERCENT=%.1f\n", ret.seq_gc);
-           printf("AMPLICON_MELTPOINTS=");
-           for (j = 0; j < ret.melt_len; j++) {
-               if (j == ret.melt_len - 1) {
-                   printf("%.1f\n", ret.melt_points[j]);
-               } else {
-                   printf("%.1f,", ret.melt_points[j]);
+           if (ret.melt_len > 0) {
+               printf("AMPLICON_MELTPOINTS=");
+               for (j = 0; j < ret.melt_len; j++) {
+                   if (j == ret.melt_len - 1) {
+                       printf("%.1f\n", ret.melt_points[j]);
+                   } else {
+                       printf("%.1f,", ret.melt_points[j]);
+                   }
                }
-           }
-           if (ret.melt_len == 0) {
-               printf("-10.0\n");
            }
            if (output == 2) {
                printf("AMPLICON_TEMPERATURES=");
@@ -401,5 +418,9 @@ main(int argc, char **argv)
   }
 
   free_amplicon_result(&ret);
+  if (no_melt_point == 1) {
+      fprintf(stderr, "%s ERROR: no melting temperature found between 60 and 95 C.\n", argv[0]);
+      return -1;
+  }
   return 0;
 }

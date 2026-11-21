@@ -47,6 +47,11 @@ void free_amplicon_result(amplicon_result *res) {
     if (res->deriv != NULL) {
         free(res->deriv);
     }
+    res->seq = NULL;
+    res->temp = NULL;
+    res->pos_prob = NULL;
+    res->melt = NULL;
+    res->deriv = NULL;
 }
 
 void amp_init_all(void **alloc_box, int max_count) {
@@ -136,7 +141,7 @@ amplicon_result amplicontm(const  char *inseq,
 
     // Check Input
     if (tm_parameters != breslauer_amp && tm_parameters != santalucia_amp) {
-        ret.error = 2;
+        ret.error = 8;
         return ret;
     }
     if (tm_parameters == breslauer_amp) {
@@ -144,14 +149,24 @@ amplicon_result amplicontm(const  char *inseq,
         return ret;
     }
     if (salt_corrections != schildkraut_amps && salt_corrections != santalucia_amps && salt_corrections != owczarzy_amps) {
-        ret.error = 2;
+        ret.error = 8;
         return ret;
     }
     if (salt_corrections == owczarzy_amps) {
         ret.error = 4;
         return ret;
     }
-    if (mv < 0.01 || dv < 0.0) {
+    if (mv < 0.0 || dv < 0.0 || dntp < 0.0) {
+        ret.error = 9;
+        return ret;
+    }
+    /* The limit applies to the sodium equivalent, which includes the
+       divalent cations not bound by dNTPs (see the conversion of mv below) */
+    double sodium_equivalent = mv;
+    if (dv > dntp) {
+        sodium_equivalent += sqrt(dv - dntp) * 3.795;
+    }
+    if (sodium_equivalent < 0.01) {
         ret.error = 2;
         return ret;
     }
@@ -190,9 +205,15 @@ amplicon_result amplicontm(const  char *inseq,
     ret.seq_gc = 100.0 * gc_count / ret.seq_len;
 
     if (tm_formula == bolton_amp) {
+        /* Only the divalent cations not bound by dNTPs count, as in
+           divalent_to_monovalent() used by long_seq_tm() in primer3 */
+        double free_dv = 0.0;
+        if (dv > dntp) {
+            free_dv = dv - dntp;
+        }
         ret.melt_points[0] = 81.5 - ret.dmso * ret.dmso_fact
                                   + (0.453 * ret.seq_gc / 100.0 - 2.88) * ret.formamid
-                                  + 16.6 * (log10(mv + sqrt(dv) * 3.795))
+                                  + 16.6 * (log10(mv + sqrt(free_dv) * 3.795))
                                   + 0.41 * ret.seq_gc
                                   - 600.0 / ret.seq_len;
         ret.melt_len = 1;
@@ -704,6 +725,10 @@ amplicon_result amplicontm(const  char *inseq,
                 }
             }
         }
+        /* No peak in the calculated range (60 - 95 C) */
+        if (ret.melt_len == 0) {
+            ret.error = 3;
+        }
     }
 
     amp_free_all(alloc_box, alloc_count);
@@ -746,6 +771,15 @@ amplicon_result ampliconfindsalt(const  char *inseq,
 
         if (fabs(ret.melt_points[0] - fs_temp) < 0.01) {
             break;
+        }
+
+        /* The search starts at the lowest allowed concentration; if the
+           melting temperature is already too high there, no salt
+           concentration reaches fs_temp */
+        if (mv < 10.0 + 0.5 && ret.melt_points[0] > fs_temp) {
+            ret.error = 10;
+            free_amplicon_result(&ret);
+            return ret;
         }
 
         if (ret.melt_points[0] < fs_temp) {

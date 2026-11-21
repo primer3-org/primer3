@@ -33,11 +33,17 @@
 /* error codes: 0 - no errors
                 1 - out of memory
                 2 - sodium equivalent concentration below 0.01 M
-                3 - no melting temperature found
+                3 - no melting temperature found between 60 and 95 C
                 4 - Owczarzy salt correction is not supported
                 5 - Breslauer parameters are not supported
                 6 - the sequence contains no A, C, G or T
-
+                7 - the sequence has fewer than AMP_MIN_LENGTH A, C, G or T
+                8 - unknown value of tm_parameters or salt_corrections
+                9 - a concentration of salt, divalent cations or dNTPs
+                    is negative
+               10 - ampliconfindsalt(): the melting temperature at the
+                    lowest sodium concentration (10 mM) is already above
+                    fs_temp
 */
 
 typedef struct amplicon_result {
@@ -141,7 +147,8 @@ typedef enum amp_tm_method_type {
    Tm = 81.5 + 16.6*(log10([Na+] + sqrt([Mg++])*3.795)) + 0.41*(%GC) - 600/length
 
    Where [Na+] is the molar sodium concentration, [Mg++] is the molar
-   magnesium concentration, (%GC) is the percent of Gs and Cs in the
+   magnesium concentration minus the molar dNTP concentration (0 if the
+   dNTPs exceed the magnesium), (%GC) is the percent of Gs and Cs in the
    sequence, and length is the length of the sequence. Be aware that
    the tm_parameters and salt_corrections are ignored using this
    formula.
