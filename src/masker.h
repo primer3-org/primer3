@@ -14,7 +14,11 @@
 #define BOTH 3
 
 #define MAX_BUFFER_SIZE 5000
-/* Most nucleotides masked in 5' or 3' direction: the k-mer (at most
+#define MAX_KMER_LENGTH 32
+/* Most nucleotides masked in 5' direction: the masking window is the
+   longest k-mer, so at most that many bases can be masked */
+#define MAX_NUCL_MASKED_5P MAX_KMER_LENGTH
+/* Most nucleotides masked in 3' direction: the k-mer (at most
    32 bases) and the 3' masking must fit into the buffer */
 #define MAX_NUCL_MASKED (MAX_BUFFER_SIZE - 33)
 #define MAX_SPLITS 10
@@ -253,7 +257,6 @@ input_sequence *create_input_sequence_from_string (char *input_string, pr_append
 void delete_input_sequence (input_sequence *input_seq);
 
 int get_next_char_from_input (input_sequence *input_seq, unsigned long long *current_pos);
-char *get_header_name_from_input (input_sequence *input_seq, unsigned long long header_pos, unsigned long long current_pos, pr_append_str *parse_err);
 
 /*
  * 

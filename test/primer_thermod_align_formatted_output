@@ -438,7 +438,7 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
 Left    3397     0     0     0     0     0     0    52  3139      0     0     1    22     0   183
 Right   3397     0     0     0     0     0     0    59  3137      0     0     0    22     0   179
-Intl    3672     0     0     0     0     0     0   432  2545      2     0    10    22     0   661
+Intl    3672     0     0     0     0     0     0   432  2545     17     0    10    22     0   646
 Pair Stats:
 considered 18, unacceptable product size 11, high template mispriming score 1, ok 6
 libprimer3 release 2.3.6
@@ -515,7 +515,7 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
 Left    3397     0     0     0     0     0     0    52  3139      0     0     1    22     0   183
 Right   3397     0     0     0     0     0     0    59  3137      0     0     0    22     0   179
-Intl    3672     0     0     0     0     0     0   432  2545      2     0    10    22     0   661
+Intl    3672     0     0     0     0     0     0   432  2545     17     0    10    22     0   646
 Pair Stats:
 considered 18, unacceptable product size 11, high template mispriming score 1, ok 6
 libprimer3 release 2.3.6
@@ -1133,7 +1133,7 @@ Left    3089     0     0     0     0     0     0    52  2863     40     0    25 
 Right   3209     0     0     0     0     0     0    59  2966     24     0    38     0    18     0   104
 Intl    3030     0     0     0     0     0     0   432  2088    102     0    28     0    22     0   358
 Pair Stats:
-considered 8911, unacceptable product size 3799, high any compl 86, no internal oligo 571, high template mispriming score 119, ok 4336
+considered 8972, unacceptable product size 3851, high any compl 38, no internal oligo 628, high template mispriming score 119, ok 4336
 libprimer3 release 2.3.6
 
 

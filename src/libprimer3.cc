@@ -142,6 +142,8 @@ static void _adjust_seq_args(const p3_global_settings *pa,
                              seq_args *sa,
                              pr_append_str *nonfatal_err,
                              pr_append_str *warning);
+static int  shift_force_position(int *pos, int first_base_index,
+                                 int incl_s, int incl_l);
 
 static void _optimize_ok_regions_list(const p3_global_settings *pa,
                                       seq_args *sa,
@@ -152,6 +154,8 @@ static int any_5_prime_ol_extension_has_problem(const primer_rec *);
 static int p3_ol_is_uninitialized(const primer_rec *);
 
 static int fake_a_sequence(seq_args *sa, const p3_global_settings *pa);
+
+static int    check_weights(const p3_global_settings *, pr_append_str *);
 
 static int    _pr_data_control(const p3_global_settings *,
                                const seq_args *,
@@ -237,6 +241,10 @@ static int    characterize_pair(p3retval *p,
                                 const thal_arg_holder*,
                                 int update_stats);
 
+/* Pair penalties closer than this count as equal in
+   compare_primer_pair(); the order is then decided by position. */
+#define PAIR_QUALITY_EPSILON 1e-6
+
 static void    choose_pair_or_triple(p3retval *,
                                     const p3_global_settings *,
                                     const seq_args *,
@@ -250,6 +258,9 @@ static int    sequence_quality_is_ok(const p3_global_settings *, primer_rec *,
                                      const seq_args *, int, int,
                                      oligo_stats *global_oligo_stats,
                                      const args_for_one_oligo_or_primer *);
+
+static double intl_penalty_lower_bound(const p3retval *,
+                                       const p3_global_settings *);
 
 static int    choose_internal_oligo(p3retval *,
                                     const primer_rec *, const primer_rec *,
@@ -1222,6 +1233,11 @@ static void free_pair_memory(int rev_num_elem)
 
   free(max_j_seen);
   max_j_seen = NULL;
+  /* pairs is NULL if a thal length error ended the record before
+     choose_pair_or_triple() allocated it. */
+  if (pairs == NULL) {
+    return;
+  }
   for (i=0; i<rev_num_elem; i++) {
     hmap = pairs[i];
     if (hmap) {
@@ -1533,6 +1549,8 @@ choose_pair_or_triple(p3retval *retval,
   int n_int; /* Index of the internal oligo */
   int more_intl_oligos = 1;
   int valid_intl;
+  double intl_bound; /* lower bound of the internal oligo part of the
+                        pair penalty, see intl_penalty_lower_bound() */
   /*int *max_j_seen; */  /* The maximum value of j (loop index for forward primers)
                             that has been examined for every reverse primer
                             index (i) -- global variable now */
@@ -1582,6 +1600,8 @@ choose_pair_or_triple(p3retval *retval,
     /* To start put penalty to the maximum */
     the_best_pair.pair_quality = DBL_MAX;
 
+    intl_bound = intl_penalty_lower_bound(retval, pa);
+
     /* Iterate over the reverse primers. */
     for (i = 0; i < retval->rev.num_elem; i++) {
 
@@ -1618,6 +1638,17 @@ choose_pair_or_triple(p3retval *retval,
       if (pa->pr_pair_weights.primer_quality *
            (retval->rev.oligo[i].quality + retval->fwd.oligo[0].quality)
               > the_best_pair.pair_quality) {
+        break;
+      }
+      /* The same with the smallest possible internal oligo part, in
+         the order in which obj_fn() adds it. Within
+         PAIR_QUALITY_EPSILON the position decides, so the pair might
+         still win there. */
+      if (intl_bound > 0.0
+          && pa->pr_pair_weights.primer_quality *
+             (retval->rev.oligo[i].quality + retval->fwd.oligo[0].quality)
+             + intl_bound
+             > the_best_pair.pair_quality + PAIR_QUALITY_EPSILON) {
         break;
       }
 
@@ -1686,6 +1717,13 @@ choose_pair_or_triple(p3retval *retval,
         if (pa->pr_pair_weights.primer_quality *
             (retval->fwd.oligo[j].quality + retval->rev.oligo[i].quality) 
             > the_best_pair.pair_quality) {
+          break;
+        }
+        if (intl_bound > 0.0
+            && pa->pr_pair_weights.primer_quality *
+               (retval->fwd.oligo[j].quality + retval->rev.oligo[i].quality)
+               + intl_bound
+               > the_best_pair.pair_quality + PAIR_QUALITY_EPSILON) {
           break;
         }
 
@@ -1803,6 +1841,31 @@ choose_pair_or_triple(p3retval *retval,
         }
 
         if (!pair_found) {
+          int pick_intl = pa->pick_right_primer && pa->pick_left_primer
+            && pa->pick_internal_oligo;
+          /* Choose the internal oligo before characterize_pair(): it
+             needs only the positions of the primers, while
+             characterize_pair() runs the expensive alignments. Pairs
+             given by the user keep the old order, so that they are
+             assessed and counted as before. */
+          int intl_first = pick_intl && !must_use;
+          if (intl_first) {
+            if (choose_internal_oligo(retval, &retval->fwd.oligo[j],
+                                      &retval->rev.oligo[i],
+                                      &n_int, &more_intl_oligos, sa, pa,
+                                      dpal_arg_to_use, thal_oligo_arg_to_use)!=0) {
+              /* No internal oligo: characterize_pair() would have
+                 counted the pair as considered. */
+              if (update_stats) {
+                pair_expl->considered++;
+                pair_expl->internal++;
+              }
+              /* Mark the pair as not good - the entry in the hash
+                 map will be a NULL */
+              (*hmap)[j] = NULL;
+              continue;
+            }
+          }
           /* Characterize the pair. h is initialized by this
              call. */
           int tmp = 
@@ -1814,8 +1877,7 @@ choose_pair_or_triple(p3retval *retval,
           if (tmp == PAIR_OK) {
 
             /* Choose internal oligo if needed */
-            if (pa->pick_right_primer && pa->pick_left_primer
-                && pa->pick_internal_oligo) {
+            if (pick_intl && !intl_first) {
               if (choose_internal_oligo(retval, h.left, h.right,
                                         &n_int, &more_intl_oligos, sa, pa,
                                         dpal_arg_to_use, thal_oligo_arg_to_use)!=0) {
@@ -1829,11 +1891,12 @@ choose_pair_or_triple(p3retval *retval,
                    map will be a NULL */
                 (*hmap)[j] = NULL;
                 continue;
-              } else {
-                /* We DID choose an internal oligo, and we
-                   set h.intl to point to it. */
-                h.intl = &retval->intl.oligo[n_int];
               }
+            }
+            if (pick_intl) {
+              /* We DID choose an internal oligo, and we
+                 set h.intl to point to it. */
+              h.intl = &retval->intl.oligo[n_int];
             }
 
             if (update_stats) { 
@@ -1975,6 +2038,40 @@ choose_pair_or_triple(p3retval *retval,
 /* END choose_pair_or_triple                                    */
 /* ============================================================ */
 
+/* Lower bound of the internal oligo part of the pair penalty
+   (PRIMER_PAIR_WT_IO_PENALTY times the penalty of the internal
+   oligo): the smallest penalty of an internal oligo that
+   choose_internal_oligo() can still use. Internal oligos only become
+   worse or unusable during the pair search, so the value stays a
+   lower bound until it is computed again. */
+static double
+intl_penalty_lower_bound(const p3retval *retval,
+                         const p3_global_settings *pa)
+{
+  const primer_rec *h;
+  double min = DBL_MAX;
+  int k;
+
+  if (!(pa->pick_left_primer && pa->pick_right_primer
+        && pa->pick_internal_oligo)
+      || pa->pr_pair_weights.io_quality <= 0.0) {
+    return 0.0;
+  }
+  for (k = 0; k < retval->intl.num_elem; k++) {
+    h = &retval->intl.oligo[k];
+    if (h->overlaps && !h->must_use) {
+      continue;
+    }
+    if (OK_OR_MUST_USE(h) && h->quality < min) {
+      min = h->quality;
+    }
+  }
+  if (min == DBL_MAX) {
+    return 0.0;
+  }
+  return pa->pr_pair_weights.io_quality * min;
+}
+
 /* ============================================================ */
 /* BEGIN choose_internal_oligo */
 /* Choose best internal oligo for given pair of left and right
@@ -1996,16 +2093,19 @@ choose_internal_oligo(p3retval *retval,
   double min;
   char oligo_seq[MAX_PRIMER_LENGTH+1], revc_oligo_seq[MAX_PRIMER_LENGTH+1];
   primer_rec *h;
-  min = 1000000.;
+  min = DBL_MAX;  /* a large penalty must not hide every oligo */
   i = -1;
   *more_intl_oligos = 0;
 
   for (k=0; k < retval->intl.num_elem; k++) {
     h = &retval->intl.oligo[k];  /* h is the record for the oligo currently
                                     under consideration */
+    /* Only oligos that may still be usable count. Oligos that have
+       not been fully checked yet are OK until a check fails, so the
+       search does not stop too early. */
     if (h->overlaps) {
       if (!(h)->must_use) continue;
-    } else {
+    } else if (OK_OR_MUST_USE(h)) {
       *more_intl_oligos = 1;
     }
 
@@ -2331,8 +2431,8 @@ make_detection_primer_lists(p3retval *retval,
          
     }
     /* Pick primers at one position */
-    else if(sa->force_left_start > -1 ||
-                sa->force_left_end > -1) {
+    else if(sa->force_left_start != PR_NULL_FORCE_POSITION ||
+                sa->force_left_end != PR_NULL_FORCE_POSITION) {
       pick_primers_by_position(sa->force_left_start, sa->force_left_end,
                                &left, &retval->fwd, pa, sa,
                                dpal_arg_to_use, thal_arg_to_use, retval);
@@ -2367,8 +2467,8 @@ make_detection_primer_lists(p3retval *retval,
 
     }
     /* Pick primers at one position */
-    else if(sa->force_right_start > -1 ||
-                sa->force_right_end > -1) {
+    else if(sa->force_right_start != PR_NULL_FORCE_POSITION ||
+                sa->force_right_end != PR_NULL_FORCE_POSITION) {
       pick_primers_by_position(sa->force_right_start, sa->force_right_end,
                                &right, &retval->rev, pa, sa,
                                dpal_arg_to_use, thal_arg_to_use, retval);
@@ -3227,7 +3327,7 @@ pick_primers_by_position(const int start, const int end, int *extreme,
   found_primer = 1;
   ret = 1;
 
-  if(start > -1 && end > -1) {
+  if(start != PR_NULL_FORCE_POSITION && end != PR_NULL_FORCE_POSITION) {
     if (oligo->type != OT_RIGHT) {
       length = end - start + 1;
     } else {
@@ -3237,7 +3337,7 @@ pick_primers_by_position(const int start, const int end, int *extreme,
     found_primer = add_one_primer_by_position(start, length, extreme, oligo,
                                               pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
     return found_primer;
-  } else if (start > -1) {
+  } else if (start != PR_NULL_FORCE_POSITION) {
     /* Loop over possible primer lengths, from min to max */
     ret = 0;
     for (j = pa->p_args.min_size; j <= pa->p_args.max_size; j++) {
@@ -3248,7 +3348,7 @@ pick_primers_by_position(const int start, const int end, int *extreme,
       }
     }
     return found_primer;
-  } else if (end > -1) {
+  } else if (end != PR_NULL_FORCE_POSITION) {
     /* Loop over possible primer lengths, from min to max */
     ret = 0;
     for (j = pa->p_args.min_size; j <= pa->p_args.max_size; j++) {
@@ -4143,10 +4243,16 @@ p_obj_fn(const p3_global_settings *pa,
       if(pa->o_args.weights.temp_lt && h->temp < pa->o_args.opt_tm)
          sum += pa->o_args.weights.temp_lt * (pa->o_args.opt_tm - h->temp);
 
-      if(pa->o_args.weights.bound_gt && h->bound > pa->o_args.opt_bound)
-         sum += pa->o_args.weights.bound_gt * (h->bound - pa->o_args.opt_bound);
-      if(pa->o_args.weights.bound_lt && h->bound < pa->o_args.opt_bound)
-         sum += pa->o_args.weights.bound_lt * (pa->o_args.opt_bound - h->bound);
+      /* h->bound is only computed with an annealing temperature;
+         otherwise it holds OLIGOTM_ERROR. */
+      if (pa->annealing_temp > 0.0) {
+        if (pa->o_args.weights.bound_gt && h->bound > pa->o_args.opt_bound) {
+          sum += pa->o_args.weights.bound_gt * (h->bound - pa->o_args.opt_bound);
+        }
+        if (pa->o_args.weights.bound_lt && h->bound < pa->o_args.opt_bound) {
+          sum += pa->o_args.weights.bound_lt * (pa->o_args.opt_bound - h->bound);
+        }
+      }
 
       if(pa->o_args.weights.gc_content_gt && h->gc_content > pa->o_args.opt_gc_content)
            sum += pa->o_args.weights.gc_content_gt
@@ -4272,7 +4378,7 @@ compare_primer_pair(const void *x1, const void *x2)
 {
   const primer_pair *a1 = (const primer_pair *) x1;
   const primer_pair *a2 = (const primer_pair *) x2;
-  const double epsilon = 1e-6;
+  const double epsilon = PAIR_QUALITY_EPSILON;
   int y1, y2;
 
   if ((a1->pair_quality + epsilon) < a2->pair_quality) return -1;
@@ -4355,19 +4461,19 @@ characterize_pair(p3retval *retval,
     must_use = 1;
   }
 
+  /* Primers in reversed order cannot be analyzed as a pair, even if
+     the caller specified them (check_primers or must_use). */
+  if (ppair->product_size < 1) {
+    if (update_stats) {
+      pair_expl->reversed++;
+    }
+    return PAIR_FAILED;
+  }
+
   /* We must use the pair if the caller specifed
      both the left and the right primer. */
   if (ppair->left->must_use != 0 &&
       ppair->right->must_use != 0) {
-
-    /* But if caller specified primers are in
-       reversed order we cannot analyze them
-       as a pair. */
-    if (ppair->product_size < 1) {
-      pair_expl->reversed++;
-      return PAIR_FAILED;
-    }
-
     must_use = 1;
   }
 
@@ -4425,9 +4531,6 @@ characterize_pair(p3retval *retval,
   /* ============================================================= */
   /* Compute product Tm and related parameters; check constraints. */
 
-  if (ppair->right->start - ppair->left->start + 1 <= 0) {
-    fprintf(stderr, "temporary");
-  }
   PR_ASSERT(ppair->right->start - ppair->left->start + 1 > 0)
   tm_calc
     = long_seq_tm(sa->trimmed_seq, ppair->left->start,
@@ -4751,7 +4854,7 @@ characterize_pair(p3retval *retval,
            ppair->template_mispriming
            = ppair->left->template_mispriming_r + ppair->right->template_mispriming;
 
-       if (pa->pair_max_template_mispriming_th
+       if (pa->pair_max_template_mispriming_th >= 0.0
            && ppair->template_mispriming > pa->pair_max_template_mispriming_th) {
             if (update_stats) {
                pair_expl->template_mispriming++;
@@ -4811,9 +4914,13 @@ compute_position_penalty(const p3_global_settings *pa,
       }
     }
   }
-  if (!inside_flag)
+  if (!inside_flag) {
     h->position_penalty *= pa->outside_penalty;
-  else {
+  } else if (pa->inside_penalty == PR_INFINITE_POSITION_PENALTY) {
+    /* Overlap with the target is not allowed */
+    h->position_penalty = 0.0;
+    bf_set_infinite_pos_penalty(h,1);
+  } else {
     h->position_penalty *= pa->inside_penalty;
   }
 }
@@ -6798,6 +6905,28 @@ pr_safe_realloc(void *p, size_t x)
 /* START functions which check and modify the input             */
 /* ============================================================ */
 
+/* Makes a forced position (SEQUENCE_FORCE_*) 0-based and relative to
+   the included region, which starts at the 0-based incl_s and has
+   incl_l bases. A position that is not set stays
+   PR_NULL_FORCE_POSITION. Returns 1 if the position is outside of the
+   included region; *pos is then not changed. Computed in long long, so
+   that values near the int limits do not overflow. */
+static int
+shift_force_position(int *pos, int first_base_index, int incl_s, int incl_l)
+{
+  long long rel;
+
+  if (*pos == PR_NULL_FORCE_POSITION) {
+    return 0;
+  }
+  rel = (long long) *pos - first_base_index - incl_s;
+  if (rel < 0 || rel >= incl_l) {
+    return 1;
+  }
+  *pos = (int) rel;
+  return 0;
+}
+
 /* Fuction to set the included region and fix the start positions */
 static void
 _adjust_seq_args(const p3_global_settings *pa,
@@ -6900,17 +7029,41 @@ _adjust_seq_args(const p3_global_settings *pa,
   sa->incl_s -= pa->first_base_index;
   sa->start_codon_pos -= pa->first_base_index;
 
-  /* Fix the start */
-  sa->force_left_start -= pa->first_base_index;
-  sa->force_left_end -= pa->first_base_index;
-  sa->force_right_start -= pa->first_base_index;
-  sa->force_right_end -= pa->first_base_index;
-
-  /* Make it relative to included region */
-  sa->force_left_start -= sa->incl_s;
-  sa->force_left_end -= sa->incl_s;
-  sa->force_right_start -= sa->incl_s;
-  sa->force_right_end -= sa->incl_s;
+  /* Make the forced positions 0-based and relative to the included
+     region. If the region itself is invalid, _pr_data_control()
+     reports that. pick_discriminative_primers derives the two end
+     positions from SEQUENCE_TARGET. */
+  if (sa->incl_s > -1 && sa->incl_l > -1
+      && sa->incl_s <= seq_len
+      && sa->incl_l <= seq_len - sa->incl_s) {
+    int discr = (pa->primer_task == pick_discriminative_primers);
+    /* Without exactly one target the error above is enough */
+    int skip_ends = discr && sa->tar2.count != 1;
+    if (shift_force_position(&sa->force_left_start, pa->first_base_index,
+                             sa->incl_s, sa->incl_l)) {
+      pr_append_new_chunk(nonfatal_err,
+                          "SEQUENCE_FORCE_LEFT_START outside of SEQUENCE_INCLUDED_REGION");
+    }
+    if (shift_force_position(&sa->force_left_end, pa->first_base_index,
+                             sa->incl_s, sa->incl_l)
+        && !skip_ends) {
+      pr_append_new_chunk(nonfatal_err, discr
+                          ? "No room for a left primer between the start of SEQUENCE_INCLUDED_REGION and SEQUENCE_TARGET"
+                          : "SEQUENCE_FORCE_LEFT_END outside of SEQUENCE_INCLUDED_REGION");
+    }
+    if (shift_force_position(&sa->force_right_start, pa->first_base_index,
+                             sa->incl_s, sa->incl_l)) {
+      pr_append_new_chunk(nonfatal_err,
+                          "SEQUENCE_FORCE_RIGHT_START outside of SEQUENCE_INCLUDED_REGION");
+    }
+    if (shift_force_position(&sa->force_right_end, pa->first_base_index,
+                             sa->incl_s, sa->incl_l)
+        && !skip_ends) {
+      pr_append_new_chunk(nonfatal_err, discr
+                          ? "No room for a right primer between SEQUENCE_TARGET and the end of SEQUENCE_INCLUDED_REGION"
+                          : "SEQUENCE_FORCE_RIGHT_END outside of SEQUENCE_INCLUDED_REGION");
+    }
+  }
 
   if (sa->incl_s > -1 && sa->incl_l > -1
       && sa->incl_s <= seq_len
@@ -6927,8 +7080,10 @@ _adjust_seq_args(const p3_global_settings *pa,
 #if !defined(OS_WIN)    
     /* Masks original trimmed sequence */
     /* edited by M. Lepamets */
+    /* _pr_data_control() has not checked the picking flags yet, so
+       test them for != 0, as the primer search does */
     if (pa->mask_template == 1
-        && (pa->pick_left_primer == 1 || pa->pick_right_primer == 1)) {
+        && (pa->pick_left_primer != 0 || pa->pick_right_primer != 0)) {
        input_sequence *input_seq;
        output_sequence *output_seq;
        /* Local copy: pa is const, and the masking direction depends on
@@ -7198,6 +7353,82 @@ fake_a_sequence(seq_args *sa, const p3_global_settings *pa)
   return 0;
 }
 
+/* Penalties must not be negative: the pair search stops at a penalty
+   of 0 and cuts the search with bounds that assume that no term
+   lowers the penalty. A negative weight would also reward a deviation
+   from the optimum. Appends one error per bad weight to glob_err and
+   returns 1 if there is any. */
+static int
+check_weights(const p3_global_settings *pa, pr_append_str *glob_err)
+{
+  const struct { const char *tag; double value; } weights[] = {
+    { "PRIMER_WT_TM_GT",                       pa->p_args.weights.temp_gt },
+    { "PRIMER_WT_TM_LT",                       pa->p_args.weights.temp_lt },
+    { "PRIMER_WT_BOUND_GT",                    pa->p_args.weights.bound_gt },
+    { "PRIMER_WT_BOUND_LT",                    pa->p_args.weights.bound_lt },
+    { "PRIMER_WT_GC_PERCENT_GT",               pa->p_args.weights.gc_content_gt },
+    { "PRIMER_WT_GC_PERCENT_LT",               pa->p_args.weights.gc_content_lt },
+    { "PRIMER_WT_SIZE_LT",                     pa->p_args.weights.length_lt },
+    { "PRIMER_WT_SIZE_GT",                     pa->p_args.weights.length_gt },
+    { "PRIMER_WT_SELF_ANY",                    pa->p_args.weights.compl_any },
+    { "PRIMER_WT_SELF_END",                    pa->p_args.weights.compl_end },
+    { "PRIMER_WT_SELF_ANY_TH",                 pa->p_args.weights.compl_any_th },
+    { "PRIMER_WT_SELF_END_TH",                 pa->p_args.weights.compl_end_th },
+    { "PRIMER_WT_HAIRPIN_TH",                  pa->p_args.weights.hairpin_th },
+    { "PRIMER_WT_NUM_NS",                      pa->p_args.weights.num_ns },
+    { "PRIMER_WT_LIBRARY_MISPRIMING",          pa->p_args.weights.repeat_sim },
+    { "PRIMER_WT_SEQ_QUAL",                    pa->p_args.weights.seq_quality },
+    { "PRIMER_WT_END_QUAL",                    pa->p_args.weights.end_quality },
+    { "PRIMER_WT_POS_PENALTY",                 pa->p_args.weights.pos_penalty },
+    { "PRIMER_WT_END_STABILITY",               pa->p_args.weights.end_stability },
+    { "PRIMER_WT_TEMPLATE_MISPRIMING",         pa->p_args.weights.template_mispriming },
+    { "PRIMER_WT_TEMPLATE_MISPRIMING_TH",      pa->p_args.weights.template_mispriming_th },
+    { "PRIMER_WT_MASK_FAILURE_RATE",           pa->p_args.weights.failure_rate },
+    { "PRIMER_INTERNAL_WT_TM_GT",              pa->o_args.weights.temp_gt },
+    { "PRIMER_INTERNAL_WT_TM_LT",              pa->o_args.weights.temp_lt },
+    { "PRIMER_INTERNAL_WT_BOUND_GT",           pa->o_args.weights.bound_gt },
+    { "PRIMER_INTERNAL_WT_BOUND_LT",           pa->o_args.weights.bound_lt },
+    { "PRIMER_INTERNAL_WT_GC_PERCENT_GT",      pa->o_args.weights.gc_content_gt },
+    { "PRIMER_INTERNAL_WT_GC_PERCENT_LT",      pa->o_args.weights.gc_content_lt },
+    { "PRIMER_INTERNAL_WT_SIZE_LT",            pa->o_args.weights.length_lt },
+    { "PRIMER_INTERNAL_WT_SIZE_GT",            pa->o_args.weights.length_gt },
+    { "PRIMER_INTERNAL_WT_SELF_ANY",           pa->o_args.weights.compl_any },
+    { "PRIMER_INTERNAL_WT_SELF_END",           pa->o_args.weights.compl_end },
+    { "PRIMER_INTERNAL_WT_SELF_ANY_TH",        pa->o_args.weights.compl_any_th },
+    { "PRIMER_INTERNAL_WT_SELF_END_TH",        pa->o_args.weights.compl_end_th },
+    { "PRIMER_INTERNAL_WT_HAIRPIN_TH",         pa->o_args.weights.hairpin_th },
+    { "PRIMER_INTERNAL_WT_NUM_NS",             pa->o_args.weights.num_ns },
+    { "PRIMER_INTERNAL_WT_LIBRARY_MISHYB",     pa->o_args.weights.repeat_sim },
+    { "PRIMER_INTERNAL_WT_SEQ_QUAL",           pa->o_args.weights.seq_quality },
+    { "PRIMER_INTERNAL_WT_END_QUAL",           pa->o_args.weights.end_quality },
+    { "PRIMER_PAIR_WT_PR_PENALTY",             pa->pr_pair_weights.primer_quality },
+    { "PRIMER_PAIR_WT_IO_PENALTY",             pa->pr_pair_weights.io_quality },
+    { "PRIMER_PAIR_WT_DIFF_TM",                pa->pr_pair_weights.diff_tm },
+    { "PRIMER_PAIR_WT_COMPL_ANY",              pa->pr_pair_weights.compl_any },
+    { "PRIMER_PAIR_WT_COMPL_END",              pa->pr_pair_weights.compl_end },
+    { "PRIMER_PAIR_WT_COMPL_ANY_TH",           pa->pr_pair_weights.compl_any_th },
+    { "PRIMER_PAIR_WT_COMPL_END_TH",           pa->pr_pair_weights.compl_end_th },
+    { "PRIMER_PAIR_WT_PRODUCT_TM_LT",          pa->pr_pair_weights.product_tm_lt },
+    { "PRIMER_PAIR_WT_PRODUCT_TM_GT",          pa->pr_pair_weights.product_tm_gt },
+    { "PRIMER_PAIR_WT_PRODUCT_SIZE_GT",        pa->pr_pair_weights.product_size_gt },
+    { "PRIMER_PAIR_WT_PRODUCT_SIZE_LT",        pa->pr_pair_weights.product_size_lt },
+    { "PRIMER_PAIR_WT_LIBRARY_MISPRIMING",     pa->pr_pair_weights.repeat_sim },
+    { "PRIMER_PAIR_WT_TEMPLATE_MISPRIMING",    pa->pr_pair_weights.template_mispriming },
+    { "PRIMER_PAIR_WT_TEMPLATE_MISPRIMING_TH", pa->pr_pair_weights.template_mispriming_th },
+  };
+  int i;
+  int bad_weight = 0;
+
+  for (i = 0; i < (int) (sizeof(weights) / sizeof(weights[0])); i++) {
+    if (!isfinite(weights[i].value) || weights[i].value < 0.0) {
+      pr_append_new_chunk(glob_err, weights[i].tag);
+      pr_append(glob_err, " must be >= 0");
+      bad_weight = 1;
+    }
+  }
+  return bad_weight;
+}
+
 /*
  * Return 1 on error, 0 on success.  Set sa->trimmed_seq and possibly modify
  * sa->tar.  Upcase and check all bases in sa->trimmed_seq.
@@ -7302,6 +7533,31 @@ _pr_data_control(const p3_global_settings *pa,
   
   if (pa->o_args.min_size < 1)
     pr_append_new_chunk(glob_err, "PRIMER_INTERNAL_MIN_SIZE must be >= 1");
+
+  if ((pa->pick_left_primer != 0 && pa->pick_left_primer != 1)
+      || (pa->pick_right_primer != 0 && pa->pick_right_primer != 1)
+      || (pa->pick_internal_oligo != 0 && pa->pick_internal_oligo != 1)) {
+    pr_append_new_chunk(glob_err,
+                        "PRIMER_PICK_LEFT_PRIMER, PRIMER_PICK_RIGHT_PRIMER and "
+                        "PRIMER_PICK_INTERNAL_OLIGO must be 0 or 1");
+    return 1;
+  }
+
+  if (check_weights(pa, glob_err)) {
+    return 1;
+  }
+
+  /* A negative position penalty would be a bonus. The only negative
+     PRIMER_INSIDE_PENALTY is PR_INFINITE_POSITION_PENALTY (-1): no
+     overlap with the target allowed. */
+  if (!isfinite(pa->outside_penalty) || pa->outside_penalty < 0.0) {
+    pr_append_new_chunk(glob_err, "PRIMER_OUTSIDE_PENALTY must be >= 0");
+  }
+  if (!isfinite(pa->inside_penalty)
+      || (pa->inside_penalty < 0.0
+          && pa->inside_penalty != PR_INFINITE_POSITION_PENALTY)) {
+    pr_append_new_chunk(glob_err, "PRIMER_INSIDE_PENALTY must be >= 0 or -1");
+  }
 
   if (pa->p_args.max_size > MAX_PRIMER_LENGTH) {
     pr_append_new_chunk(glob_err,
@@ -7628,6 +7884,17 @@ _pr_data_control(const p3_global_settings *pa,
                         "Illegal value for PRIMER_MASK_TEMPLATE");
     return 1;
   }
+  if (pa->thermodynamic_template_alignment != 0
+      && pa->thermodynamic_template_alignment != 1) {
+    pr_append_new_chunk(glob_err,
+                        "Illegal value for PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT");
+    return 1;
+  }
+  if (pa->lowercase_masking != 0 && pa->lowercase_masking != 1) {
+    pr_append_new_chunk(glob_err,
+                        "Illegal value for PRIMER_LOWERCASE_MASKING");
+    return 1;
+  }
   if (pa->explain_flag < 0 || pa->explain_flag > 2) {
     pr_append_new_chunk(glob_err,
                         "Illegal value for PRIMER_EXPLAIN_FLAG");
@@ -7935,14 +8202,14 @@ _pr_data_control(const p3_global_settings *pa,
     return 1;
   }
 
-  if((sa->force_left_start > -1) && (sa->force_left_end > -1)
+  if((sa->force_left_start != PR_NULL_FORCE_POSITION) && (sa->force_left_end != PR_NULL_FORCE_POSITION)
      && (sa->force_left_start > sa->force_left_end)) {
     pr_append_new_chunk(glob_err,
                         "SEQUENCE_FORCE_LEFT_START > SEQUENCE_FORCE_LEFT_END");
     return 1;
   }
 
-  if((sa->force_right_end > -1) && (sa->force_right_start > -1)
+  if((sa->force_right_end != PR_NULL_FORCE_POSITION) && (sa->force_right_start != PR_NULL_FORCE_POSITION)
      && (sa->force_right_end > sa->force_right_start)) {
     pr_append_new_chunk(glob_err,
                         "SEQUENCE_FORCE_RIGHT_END > SEQUENCE_FORCE_RIGHT_START");
@@ -7952,7 +8219,7 @@ _pr_data_control(const p3_global_settings *pa,
   /* With both ends forced the primer length is taken from the
      positions, not limited by PRIMER_MAX_SIZE; the primer and the
      primer with its overhang must fit the oligo buffers. */
-  if ((sa->force_left_start > -1) && (sa->force_left_end > -1)) {
+  if ((sa->force_left_start != PR_NULL_FORCE_POSITION) && (sa->force_left_end != PR_NULL_FORCE_POSITION)) {
     if (sa->force_left_end - sa->force_left_start >= MAX_PRIMER_LENGTH) {
       pr_append_new_chunk(nonfatal_err,
                           "Forced left primer longer than ");
@@ -7968,7 +8235,7 @@ _pr_data_control(const p3_global_settings *pa,
     }
   }
 
-  if ((sa->force_right_start > -1) && (sa->force_right_end > -1)) {
+  if ((sa->force_right_start != PR_NULL_FORCE_POSITION) && (sa->force_right_end != PR_NULL_FORCE_POSITION)) {
     if (sa->force_right_start - sa->force_right_end >= MAX_PRIMER_LENGTH) {
       pr_append_new_chunk(nonfatal_err,
                           "Forced right primer longer than ");

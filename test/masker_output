@@ -564,7 +564,24 @@ TAACGATTGTTATATATTATTTATTGCTCTCTCATATATCTATCTAGACCTGAAATCAGTCGAGGATACC
 CGCTGAATTTAAGCATATTATTAAGCGGAGGAAAAGAAAATAACTATGATTCCCTCAGTAACGGCGAGTG
 AAGAGGGAGGTGCTCAAAGTGAAAATCGTGGTACCTCTTATGGTACCGCGAGTTGTAGCCTCTAGAGGCG
 T
-EXIT=255
+Usage: ./primer3_masker [OPTIONS] <INPUTFILE>
+Options:
+    -h, --help                   - print this usage screen and exit
+
+    -p, --probability_cutoff     - masking cutoff [0, 1] (default: >=0.1)
+    -lh, --kmer_lists_path       - path to the kmer list files (default: ../kmer_lists/)
+    -lp, --list_prefix           - prefix of the k-mer lists to use with default model (default: homo_sapiens)
+
+    -a, --absolute_value_cutoff  - masking cutoff based on k-mer count; requires a single list name, defined with -l
+    -l, --list                   - define a single k-mer list for masking with absolute cutoff option -a
+
+    -m5, --mask_5p               - nucleotides to mask in 5' direction (default: 1, at most the longest k-mer length)
+    -m3, --mask_3p               - nucleotides to mask in 3' direction (default: 0)
+    -c, --masking_char           - character used for masking (default: N)
+    -s, --soft_mask              - use soft masking (default: false)
+    -d, --masking_direction      - a strand to mask (fwd, rev, both) (default: both)
+
+EXIT=1
 >AB769665.1 Eimeria zuernii genes for 18S rRNA, internal transcribed spacer 1, 5.8S rRNA, internal transcribed spacer 2 and 28S rRNA, partial and complete sequence, isolate: 4-1
 AGTAGTCATTATGCTTGTCTCAAAGATTAAGCCATGCATGTCTAAGTATAAGCTTTTATACGGTGAAACT
 GCGAATGGCTCATTAAAACAGTTATAGTTTATTTGATGGTCTCTTCTTACATGGATAACCATGGTAATTC
@@ -623,7 +640,7 @@ Options:
     -a, --absolute_value_cutoff  - masking cutoff based on k-mer count; requires a single list name, defined with -l
     -l, --list                   - define a single k-mer list for masking with absolute cutoff option -a
 
-    -m5, --mask_5p               - nucleotides to mask in 5' direction (default: 1)
+    -m5, --mask_5p               - nucleotides to mask in 5' direction (default: 1, at most the longest k-mer length)
     -m3, --mask_3p               - nucleotides to mask in 3' direction (default: 0)
     -c, --masking_char           - character used for masking (default: N)
     -s, --soft_mask              - use soft masking (default: false)
@@ -973,7 +990,7 @@ Options:
     -a, --absolute_value_cutoff  - masking cutoff based on k-mer count; requires a single list name, defined with -l
     -l, --list                   - define a single k-mer list for masking with absolute cutoff option -a
 
-    -m5, --mask_5p               - nucleotides to mask in 5' direction (default: 1)
+    -m5, --mask_5p               - nucleotides to mask in 5' direction (default: 1, at most the longest k-mer length)
     -m3, --mask_3p               - nucleotides to mask in 3' direction (default: 0)
     -c, --masking_char           - character used for masking (default: N)
     -s, --soft_mask              - use soft masking (default: false)

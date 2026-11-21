@@ -1016,7 +1016,7 @@ SEQUENCE_TEMPLATE=AGTGAGCTCATTCAATACAAGCAATACGACCTGCTGATTATCGACGATATTCAGTTCATCAA
 PRIMER_WARNING=PRIMER_SALT_DIVALENT > 0.0 but PRIMER_DNTP_CONC <= 0.0; use reasonable value for PRIMER_DNTP_CONC
 PRIMER_LEFT_EXPLAIN=considered 3397, low tm 52, high tm 3139, high hairpin stability 1, long poly-x seq 22, ok 183
 PRIMER_RIGHT_EXPLAIN=considered 3397, low tm 59, high tm 3137, long poly-x seq 22, ok 179
-PRIMER_INTERNAL_EXPLAIN=considered 3672, low tm 432, high tm 2545, high any compl 2, high hairpin stability 10, long poly-x seq 22, ok 661
+PRIMER_INTERNAL_EXPLAIN=considered 3672, low tm 432, high tm 2545, high any compl 17, high hairpin stability 10, long poly-x seq 22, ok 646
 PRIMER_PAIR_EXPLAIN=considered 18, unacceptable product size 11, high template mispriming score 1, ok 6
 PRIMER_LEFT_NUM_RETURNED=5
 PRIMER_RIGHT_NUM_RETURNED=5
@@ -1210,7 +1210,7 @@ SEQUENCE_TEMPLATE=AGTGAGCTCATTCAATACAAGCAATACGACCTGCTGATTATCGACGATATTCAGTTCATCAA
 PRIMER_WARNING=PRIMER_SALT_DIVALENT > 0.0 but PRIMER_DNTP_CONC <= 0.0; use reasonable value for PRIMER_DNTP_CONC
 PRIMER_LEFT_EXPLAIN=considered 3397, low tm 52, high tm 3139, high hairpin stability 1, long poly-x seq 22, ok 183
 PRIMER_RIGHT_EXPLAIN=considered 3397, low tm 59, high tm 3137, long poly-x seq 22, ok 179
-PRIMER_INTERNAL_EXPLAIN=considered 3672, low tm 432, high tm 2545, high any compl 2, high hairpin stability 10, long poly-x seq 22, ok 661
+PRIMER_INTERNAL_EXPLAIN=considered 3672, low tm 432, high tm 2545, high any compl 17, high hairpin stability 10, long poly-x seq 22, ok 646
 PRIMER_PAIR_EXPLAIN=considered 18, unacceptable product size 11, high template mispriming score 1, ok 6
 PRIMER_LEFT_NUM_RETURNED=5
 PRIMER_RIGHT_NUM_RETURNED=5
@@ -2758,7 +2758,7 @@ PRIMER_WARNING=PRIMER_SALT_DIVALENT > 0.0 but PRIMER_DNTP_CONC <= 0.0; use reaso
 PRIMER_LEFT_EXPLAIN=considered 3089, low tm 52, high tm 2863, high any compl 40, high hairpin stability 25, high repeat similarity 3, long poly-x seq 22, ok 84
 PRIMER_RIGHT_EXPLAIN=considered 3209, low tm 59, high tm 2966, high any compl 24, high hairpin stability 38, long poly-x seq 18, ok 104
 PRIMER_INTERNAL_EXPLAIN=considered 3030, low tm 432, high tm 2088, high any compl 102, high hairpin stability 28, long poly-x seq 22, ok 358
-PRIMER_PAIR_EXPLAIN=considered 8911, unacceptable product size 3799, high any compl 86, no internal oligo 571, high template mispriming score 119, ok 4336
+PRIMER_PAIR_EXPLAIN=considered 8972, unacceptable product size 3851, high any compl 38, no internal oligo 628, high template mispriming score 119, ok 4336
 PRIMER_LEFT_NUM_RETURNED=5
 PRIMER_RIGHT_NUM_RETURNED=5
 PRIMER_INTERNAL_NUM_RETURNED=5

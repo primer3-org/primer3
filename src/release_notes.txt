@@ -106,6 +106,13 @@ Minor fixes:
     PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT=0). Both overhangs are now
     upper-cased first.
 
+17. Negative penalty weights (PRIMER_WT_*, PRIMER_INTERNAL_WT_* and
+    PRIMER_PAIR_WT_*) were accepted. Depending on the weight they
+    aborted primer3_core with an assertion or silently rewarded the
+    deviation from the optimum. They are now a fatal error
+    "<TAG> must be >= 0". This includes PRIMER_WT_END_STABILITY; to
+    prefer stable 3' ends use PRIMER_GC_CLAMP or PRIMER_MAX_END_GC.
+
 
 release 2.6.1 2022-01-26  ===============================================
 This release fixes a small memory bug.

@@ -99,6 +99,13 @@ static int    parse_seq_quality(char *, seq_args *);
 
 static const char *pr_program_name = "TMP";
 
+/* check_primers derives the picking flags from the oligos of each
+   record. The flags the user set are kept here and restored at the
+   start of the next record, so that they don't carry over into later
+   records with another task. */
+static int saved_pick_valid = 0;
+static int saved_pick_left, saved_pick_right, saved_pick_intl;
+
 /* 
  * See read_boulder.h for description.
  */
@@ -155,6 +162,18 @@ static const char *pr_program_name = "TMP";
        continue;                               \
    }
 
+/* For flags that are only allowed to be 0 or 1. The code compares
+   some of them with 1, so other values must not get through. */
+#define COMPARE_INT_0_OR_1(TAG,T)                           \
+   if (COMPARE(TAG)) {                                      \
+       parse_int(TAG, datum, &(T), parse_err);              \
+       if ((T) != 0 && (T) != 1) {                          \
+           pr_append_new_chunk(glob_err,                    \
+                               "Illegal value for " TAG);   \
+       }                                                    \
+       continue;                                            \
+   }
+
 #define COMPARE_INTERVAL_LIST(TAG, PLACE)                  \
    if (COMPARE(TAG)) {                                     \
        parse_interval_list(TAG, datum, PLACE, parse_err);  \
@@ -201,6 +220,14 @@ read_boulder_record(FILE *file_input,
   double tmp_double;
 
   non_fatal_err = nonfatal_parse_err;
+
+  /* Undo the picking flags that a check_primers record set */
+  if (saved_pick_valid && file_type != settings) {
+    pa->pick_left_primer = saved_pick_left;
+    pa->pick_right_primer = saved_pick_right;
+    pa->pick_internal_oligo = saved_pick_intl;
+    saved_pick_valid = 0;
+  }
 
   while (((s = p3_read_line(file_input)) != NULL) && (strcmp(s,"="))) {
     /* If we are reading from a settings file, then skip every 
@@ -499,9 +526,9 @@ read_boulder_record(FILE *file_input,
         continue;
       }
       COMPARE_AND_MALLOC("PRIMER_TASK", task_tmp);
-      COMPARE_INT("PRIMER_PICK_RIGHT_PRIMER", pa->pick_right_primer);
-      COMPARE_INT("PRIMER_PICK_INTERNAL_OLIGO", pa->pick_internal_oligo);
-      COMPARE_INT("PRIMER_PICK_LEFT_PRIMER", pa->pick_left_primer);
+      COMPARE_INT_0_OR_1("PRIMER_PICK_RIGHT_PRIMER", pa->pick_right_primer);
+      COMPARE_INT_0_OR_1("PRIMER_PICK_INTERNAL_OLIGO", pa->pick_internal_oligo);
+      COMPARE_INT_0_OR_1("PRIMER_PICK_LEFT_PRIMER", pa->pick_left_primer);
 
       COMPARE_INT("PRIMER_INTERNAL_REV_COMP_G_RICH", pa->rev_comp_internal_oligo_g_c);
       COMPARE_INT("PRIMER_INTERNAL_NO_5_PRIME_G", pa->no_internal_oligo_5_G);
@@ -598,7 +625,7 @@ read_boulder_record(FILE *file_input,
       }
       if (COMPARE("P3_COMMENT")) continue;
       COMPARE_FLOAT("PRIMER_MAX_END_STABILITY", pa->max_end_stability);
-      COMPARE_INT("PRIMER_LOWERCASE_MASKING", pa->lowercase_masking);
+      COMPARE_INT_0_OR_1("PRIMER_LOWERCASE_MASKING", pa->lowercase_masking);
 
       /* added by T. Koressaar */
       if (COMPARE("PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT")) {
@@ -607,7 +634,7 @@ read_boulder_record(FILE *file_input,
           pr_append_new_chunk(glob_err, "Illegal value for PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT");
         continue;
       }
-      COMPARE_INT("PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT", pa->thermodynamic_template_alignment);
+      COMPARE_INT_0_OR_1("PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT", pa->thermodynamic_template_alignment);
       if (COMPARE("PRIMER_THERMODYNAMIC_PARAMETERS_PATH")) {
         if (datum_len == 0) {
           pr_append_new_chunk(glob_err,
@@ -740,8 +767,8 @@ read_boulder_record(FILE *file_input,
       if (COMPARE("PRIMER_MASK_5P_DIRECTION")) {
         parse_int("PRIMER_MASK_5P_DIRECTION", datum, &pa->mp.nucl_masked_in_5p_direction, parse_err);
         if (pa->mp.nucl_masked_in_5p_direction < 0
-            || pa->mp.nucl_masked_in_5p_direction > MAX_NUCL_MASKED) {
-          pr_append_new_chunk(glob_err, "PRIMER_MASK_5P_DIRECTION must be between 0 and 4967");
+            || pa->mp.nucl_masked_in_5p_direction > MAX_NUCL_MASKED_5P) {
+          pr_append_new_chunk(glob_err, "PRIMER_MASK_5P_DIRECTION must be between 0 and 32");
         }
         continue;
       }
@@ -837,8 +864,13 @@ read_boulder_record(FILE *file_input,
 
   /* check_primers sets the picking flags from the oligos of each
      record, also when the task was set in an earlier record or in
-     a settings file */
+     a settings file. The user's flags are restored at the start of
+     the next record. */
   if (pa->primer_task == check_primers) {
+    saved_pick_left = pa->pick_left_primer;
+    saved_pick_right = pa->pick_right_primer;
+    saved_pick_intl = pa->pick_internal_oligo;
+    saved_pick_valid = 1;
     pa->pick_left_primer = (sa->left_input != NULL);
     pa->pick_right_primer = (sa->right_input != NULL);
     pa->pick_internal_oligo = (sa->internal_input != NULL);

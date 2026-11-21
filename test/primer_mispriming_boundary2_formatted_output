@@ -35,10 +35,10 @@ Statistics
          sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left      83     0     0     0     0     0     0     0     0     0     0    82     0     0     1
-Right     83     0     0     0     0     0     0     0     0     0     0    71     0     0    12
-Intl     163     0     0     0     0     0     0     0     0     0     0   121     0     0    42
+Right     83     0     0     0     0     0     0     0     0     0     0    31     0     0    52
+Intl     163     0     0     0     0     0     0     0     0     0     0   122     0     0    41
 Pair Stats:
-considered 381, unacceptable product size 369, no internal oligo 11, ok 1
+considered 2292, unacceptable product size 1783, no internal oligo 508, ok 1
 primer3 release 2.0.0
 
 
@@ -62,11 +62,11 @@ Statistics
          con   too    in    in   not          no    tm    tm  high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
-Left      64     0     0     0     0     0     0     0     0     0     0    64     0     0     0
+Left      64     0     0     0     0     0     0     0     0     0     0     0     0     0    64
 Right     64     0     0     0     0     0     0     0     0     0     0     0     0     0    64
-Intl     144     0     0     0     0     0     0     0     0     0     0     0     0     0   144
+Intl     144     0     0     0     0     0     0     0     0     0     0   104     0     0    40
 Pair Stats:
-considered 32, unacceptable product size 32, ok 0
+considered 4096, unacceptable product size 2016, no internal oligo 2080, ok 0
 primer3 release 2.0.0
 
 

@@ -2683,7 +2683,7 @@ Left   17856     0     0     0     0     9     0     0  8066     0     0     0  
 Right  17856     0     0     0     0     9     0     0  7973     0     0     0     0  9874
 Intl   14749     0     0     0     0     3     0  2973  7694     0     0    44     0  4035
 Pair Stats:
-considered 4406, unacceptable product size 4245, high end compl 34, no internal oligo 48, primer in pair overlaps a primer in a better pair 2557, ok 79
+considered 4406, unacceptable product size 4245, high end compl 16, no internal oligo 66, primer in pair overlaps a primer in a better pair 2557, ok 79
 libprimer3 release 2.6.1
 
 
@@ -3040,7 +3040,7 @@ Left   17856     0     0     0     0     9     0     0  8066     0     0     0  
 Right  17856     0     0     0     0     9     0     0  7973     0     0     0     0  9874
 Intl   14749     0     0     0     0     3     0  2973  7694     0     0    44     0  4035
 Pair Stats:
-considered 4406, unacceptable product size 4245, high end compl 34, no internal oligo 48, primer in pair overlaps a primer in a better pair 2557, ok 79
+considered 4406, unacceptable product size 4245, high end compl 16, no internal oligo 66, primer in pair overlaps a primer in a better pair 2557, ok 79
 libprimer3 release 2.6.1
 
 
@@ -3397,7 +3397,7 @@ Left   17856     0     0     0     0     9     0     0  8066     0     0     0  
 Right  17856     0     0     0     0     9     0     0  7973     0     0     0     0  9874
 Intl   11350     0     0     0     0     1     0  2251  5931     0     0    43     0  3124
 Pair Stats:
-considered 4458, unacceptable product size 4294, high end compl 35, no internal oligo 49, primer in pair overlaps a primer in a better pair 2533, ok 80
+considered 4458, unacceptable product size 4294, high end compl 15, no internal oligo 69, primer in pair overlaps a primer in a better pair 2533, ok 80
 libprimer3 release 2.6.1
 
 
@@ -3754,7 +3754,7 @@ Left   17856     0     0     0     0     9     0     0  8066     0     0     0  
 Right  17856     0     0     0     0     9     0     0  7973     0     0     0     0  9874
 Intl   12492     0     0     0     0     1     0  2576  6386     0     0    39     0  3490
 Pair Stats:
-considered 4394, unacceptable product size 4226, high end compl 36, no internal oligo 50, primer in pair overlaps a primer in a better pair 2474, ok 82
+considered 4394, unacceptable product size 4226, high end compl 17, no internal oligo 69, primer in pair overlaps a primer in a better pair 2474, ok 82
 libprimer3 release 2.6.1
 
 

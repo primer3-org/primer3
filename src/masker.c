@@ -56,9 +56,14 @@ int
 get_next_char_from_input (input_sequence *input_seq, unsigned long long *current_pos) 
 {
   int c = 0;
+  /* The position is counted, not taken from ftell(), because the
+     file can be a pipe (stdin). */
   if (input_seq->sequence_file) {
-    *current_pos = ftell(input_seq->sequence_file);
+    *current_pos = input_seq->current_pos;
     c = fgetc (input_seq->sequence_file);
+    if (c != EOF) {
+      input_seq->current_pos += 1;
+    }
   } else if (input_seq->sequence_string) {
     if (input_seq->current_pos >= input_seq->input_size) return -1;
     *current_pos = input_seq->current_pos;
@@ -68,29 +73,26 @@ get_next_char_from_input (input_sequence *input_seq, unsigned long long *current
   return c;
 }
 
-char *
-get_header_name_from_input (input_sequence *input_seq, unsigned long long header_pos, unsigned long long current_pos, pr_append_str *parse_err)
+/* Appends c to the NUL-terminated header *buf of length *len and
+   grows the buffer (*size bytes) as needed. The header is collected
+   while it is read, because a pipe can't be read a second time.
+   Returns 0 if memory runs out. */
+static int
+append_char_to_header (char **buf, size_t *len, size_t *size, int c)
 {
-  void *v = NULL;
-  char *header_name = (char *) malloc (sizeof(char) * (current_pos - header_pos + 2));
-  if (header_name == NULL) {
-    pr_append_new_chunk_external (parse_err, "Memory allocation for header name failed!");
-    free(header_name);
-    return NULL;
+  if (*len + 2 > *size) {
+    size_t new_size = (*size == 0) ? 128 : 2 * *size;
+    char *tmp = (char *) realloc (*buf, new_size);
+    if (tmp == NULL) {
+      return 0;
+    }
+    *buf = tmp;
+    *size = new_size;
   }
-  if (input_seq->sequence_file) {
-    fseek (input_seq->sequence_file, header_pos, SEEK_SET);
-    v = fgets (header_name, current_pos - header_pos + 2, input_seq->sequence_file);
-  } else if (input_seq->sequence_string && input_seq->input_size > 0) {
-    v = memcpy (header_name, input_seq->sequence_string + header_pos, current_pos - header_pos + 1);
-    header_name[current_pos - header_pos + 1] = '\0';
-  }
-  if (!v) {
-    pr_append_new_chunk_external (parse_err, "Reading header name failed!");
-    free(header_name);
-    return NULL;
-  }
-  return header_name;
+  (*buf)[*len] = (char) c;
+  *len += 1;
+  (*buf)[*len] = '\0';
+  return 1;
 }
 
 void
@@ -176,7 +178,7 @@ create_formula_parameters_from_list_file_name (const char *list_file_name, pr_ap
     pr_append_external (parse_err, fp->list_file_name);
     goto error;
   }
-  if (fp->oligo_length < 1 || fp->oligo_length > 32) {
+  if (fp->oligo_length < 1 || fp->oligo_length > MAX_KMER_LENGTH) {
     pr_append_new_chunk_external (parse_err, "Unsupported k-mer length in list file: ");
     pr_append_external (parse_err, fp->list_file_name);
     goto error;
@@ -851,7 +853,9 @@ read_and_mask_sequence (input_sequence *input_seq, output_sequence *output_seq, 
   unsigned int word_length = 0;
   unsigned long long binary_mask = 0;
   masking_buffer *mbuffer;
-  unsigned long long header_pos = 0, current_pos = 0;
+  unsigned long long current_pos = 0;
+  char *header = NULL;
+  size_t header_len = 0, header_size = 0;
   unsigned int i;
 
   /* size of window is the length of the longest k-mers that we use */
@@ -898,21 +902,23 @@ read_and_mask_sequence (input_sequence *input_seq, output_sequence *output_seq, 
      * primer3_core) has no headers, there '>' is a masked character.
      * A '>' inside a header does not start a new header. */
     if (c == '>' && !is_header && input_seq->sequence_file) {
-      header_pos = current_pos;
       word_fwd = word_rev = 0;
       current_length = 0;
+      header_len = 0;
       is_header = 1;
     }
-    /* continue until the end of header */
+    /* collect the header up to and including the line end */
     if (is_header) {
+      if (!append_char_to_header (&header, &header_len, &header_size, c)) {
+        pr_append_new_chunk_external (parse_err, "Memory allocation for header name failed!");
+        break;
+      }
       if (c == 10 || c == 13) {
-        char *header_name = get_header_name_from_input (input_seq, header_pos, current_pos, parse_err);
         empty_buffer (output_seq, mp, mbuffer, FLUSH_ALL, parse_err);
-        write_header_to_output (output_seq, header_name, mp, parse_err);
+        write_header_to_output (output_seq, header, mp, parse_err);
         initialize_masking_buffer (mbuffer, word_length + mp->nucl_masked_in_3p_direction);
         init_round = 1;
         is_header = 0;
-        free(header_name);
       }
     } else {
       if (!init_round && mbuffer->wi == mbuffer->ri) {
@@ -963,8 +969,9 @@ read_and_mask_sequence (input_sequence *input_seq, output_sequence *output_seq, 
   
   empty_buffer (output_seq, mp, mbuffer, FLUSH_ALL, parse_err);
   delete_masking_buffer (mbuffer);
+  free (header);
   return;
-} 
+}
 
 /*==================================================================================
  * 

@@ -163,47 +163,50 @@ sub main() {
     die "Cannot read $input"  unless -r $input;
     die "Cannot read $output" unless -r $output;
     
+    # Each failed test sets $exit_stat to -1; a later test that
+    # passes must not reset it.
+
     # Test 1 : check '-output' and 'input_file'
     $valgrind_prefix
        = $do_valgrind ? sprintf $valgrind_format, 'cmd_test1' : '';
     $cmd = "$valgrind_prefix$exe --default_version=1 --strict --output=cmd_test1.tmp $input";
-    $exit_stat = runtest(1, $cmd, $output, 0);
+    $exit_stat = -1 if runtest(1, $cmd, $output, 0);
     
     # Test 2 : check '> output' and '< input_file'
     $valgrind_prefix
        = $do_valgrind ? sprintf $valgrind_format, 'cmd_test2' : '';
     $cmd = "$valgrind_prefix$exe --default_version=1 --st > cmd_test2.tmp < $input";
-    $exit_stat = runtest(2, $cmd, $output, 0);
+    $exit_stat = -1 if runtest(2, $cmd, $output, 0);
     
     # Test 3 : check incorrect flag and '-error_file'
     $valgrind_prefix
        = $do_valgrind ? sprintf $valgrind_format, 'cmd_test3' : '';
     $cmd = "$valgrind_prefix$exe --flag --err=cmd_test3.tmp < $input";
-    $exit_stat = runtest(3, $cmd, 'cmd_test3_output', 255);
+    $exit_stat = -1 if runtest(3, $cmd, 'cmd_test3_output', 255);
     
     # Test 4 : check nonexistent input file and '2> error_file'
     $valgrind_prefix
        = $do_valgrind ? sprintf $valgrind_format, 'cmd_test4' : '';
     $cmd = "$valgrind_prefix$exe invalid_input 2> cmd_test4.tmp";
-    $exit_stat = runtest(4, $cmd, 'cmd_test4_output', 255);
+    $exit_stat = -1 if runtest(4, $cmd, 'cmd_test4_output', 255);
 
     # Test 5 : check that io_version=3 fails
     $valgrind_prefix
        = $do_valgrind ? sprintf $valgrind_format, 'cmd_test5' : '';
     $cmd = "$valgrind_prefix$exe --io_version=3 2> cmd_test5.tmp";
-    $exit_stat = runtest(5, $cmd, 'cmd_test5_output', 255);
+    $exit_stat = -1 if runtest(5, $cmd, 'cmd_test5_output', 255);
 
     # Test 6 : a repeated '-output' replaces the first value
     $valgrind_prefix
        = $do_valgrind ? sprintf $valgrind_format, 'cmd_test6' : '';
     $cmd = "$valgrind_prefix$exe --default_version=1 --strict --output=cmd_test6_unused.tmp --output=cmd_test6.tmp $input";
-    $exit_stat = runtest(6, $cmd, $output, 0);
+    $exit_stat = -1 if runtest(6, $cmd, $output, 0);
 
     # Test 7 : a repeated '-error_file' replaces the first value
     $valgrind_prefix
        = $do_valgrind ? sprintf $valgrind_format, 'cmd_test7' : '';
     $cmd = "$valgrind_prefix$exe --flag --err=cmd_test7_unused.tmp --err=cmd_test7.tmp < $input";
-    $exit_stat = runtest(7, $cmd, 'cmd_test3_output', 255);
+    $exit_stat = -1 if runtest(7, $cmd, 'cmd_test3_output', 255);
 
     # ================================================== 
     # If we were running under valgrind to look for memory-related

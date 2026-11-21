@@ -503,10 +503,10 @@ SEQUENCE_TEMPLATE=TGCTTTCAATCATGTGGGTGATTTTATAGATTGTCATCACCATAGTAACTGTTTTAACTCAC
 SEQUENCE_OVERHANG_LEFT=ATG
 SEQUENCE_OVERHANG_RIGHT=TAA
 P3_COMMENT=PRIMER_TASK=generic with overhangs
-PRIMER_LEFT_EXPLAIN=considered 1342, GC content failed 7, low tm 643, high tm 321, high hairpin stability 45, ok 326
-PRIMER_RIGHT_EXPLAIN=considered 1342, low tm 285, high tm 799, high hairpin stability 7, ok 251
+PRIMER_LEFT_EXPLAIN=considered 1342, GC content failed 7, low tm 643, high tm 321, ok 371
+PRIMER_RIGHT_EXPLAIN=considered 1342, low tm 285, high tm 799, high hairpin stability 1, ok 257
 PRIMER_INTERNAL_EXPLAIN=considered 985, low tm 634, high tm 148, ok 203
-PRIMER_PAIR_EXPLAIN=considered 3489, unacceptable product size 2177, no internal oligo 1308, ok 4
+PRIMER_PAIR_EXPLAIN=considered 5965, unacceptable product size 3474, no internal oligo 2487, ok 4
 PRIMER_LEFT_NUM_RETURNED=3
 PRIMER_RIGHT_NUM_RETURNED=3
 PRIMER_INTERNAL_NUM_RETURNED=3
