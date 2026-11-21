@@ -113,6 +113,21 @@ Minor fixes:
     "<TAG> must be >= 0". This includes PRIMER_WT_END_STABILITY; to
     prefer stable 3' ends use PRIMER_GC_CLAMP or PRIMER_MAX_END_GC.
 
+18. PRIMER_INTERNAL_REV_COMP_G_RICH: checks that depend on the direction
+    of an internal oligo were done on the template strand instead of
+    the printed reverse complement. PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME
+    and _THREE_PRIME, the 3' end in PRIMER_LOWERCASE_MASKING, the 3'
+    self-complementarity (PRIMER_INTERNAL_n_SELF_END, _SELF_END_TH),
+    hairpins and the printed structures now use the printed oligo, so
+    these values change for reversed oligos.
+
+19. PRIMER_INTERNAL_REV_COMP_G_RICH: an internal oligo printed as
+    reverse complement was rejected as SEQUENCE_INTERNAL_OLIGO
+    ("Specified internal oligo not in sequence"). It is now accepted.
+    A given internal oligo is always printed as it was given; if it was
+    given as reverse complement, PRIMER_INTERNAL_n_REVERSE_COMPLEMENTED=1
+    is printed.
+
 
 release 2.6.1 2022-01-26  ===============================================
 This release fixes a small memory bug.

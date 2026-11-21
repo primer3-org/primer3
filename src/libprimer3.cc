@@ -1484,8 +1484,14 @@ complete_oligo_checks(primer_rec *h, oligo_type l, oligo_stats *stats,
   } else {
     _pr_substr(sa->trimmed_seq, h->start, h->length, s);
     p3_reverse_complement(s, s_rev);
-    oligo = s;
-    oligo_rev = s_rev;
+    /* PRIMER_INTERNAL_REV_COMP_G_RICH prints the reverse complement */
+    if (h->rev_comp) {
+      oligo = s_rev;
+      oligo_rev = s;
+    } else {
+      oligo = s;
+      oligo_rev = s_rev;
+    }
   }
 
   if (pa->thermodynamic_oligo_alignment == 0) {
@@ -2092,6 +2098,7 @@ choose_internal_oligo(p3retval *retval,
   int i,k;
   double min;
   char oligo_seq[MAX_PRIMER_LENGTH+1], revc_oligo_seq[MAX_PRIMER_LENGTH+1];
+  const char *p_seq, *p_revc;
   primer_rec *h;
   min = DBL_MAX;  /* a large penalty must not hide every oligo */
   i = -1;
@@ -2115,29 +2122,34 @@ choose_internal_oligo(p3retval *retval,
         && (h->quality < min)
         && (OK_OR_MUST_USE(h))) {
 
+      /* p_seq is the printed oligo, p_revc its reverse complement;
+         PRIMER_INTERNAL_REV_COMP_G_RICH may print the reverse
+         complement of the template. */
+      _pr_substr(sa->trimmed_seq, h->start, h->length, oligo_seq);
+      p3_reverse_complement(oligo_seq, revc_oligo_seq);
+      if (h->rev_comp) {
+        p_seq = revc_oligo_seq;
+        p_revc = oligo_seq;
+      } else {
+        p_seq = oligo_seq;
+        p_revc = revc_oligo_seq;
+      }
+
       if (h->self_any == ALIGN_SCORE_UNDEF && pa->thermodynamic_oligo_alignment==0) {
-
-        _pr_substr(sa->trimmed_seq, h->start, h->length, oligo_seq);
-        p3_reverse_complement(oligo_seq, revc_oligo_seq);
-
         oligo_compl(h, &pa->o_args, &retval->intl.expl,
-                    dpal_arg_to_use, oligo_seq, revc_oligo_seq);
+                    dpal_arg_to_use, p_seq, p_revc);
         if (!OK_OR_MUST_USE(h)) continue;
       }
        
       if (h->self_any == ALIGN_SCORE_UNDEF && pa->thermodynamic_oligo_alignment==1) {
-        _pr_substr(sa->trimmed_seq, h->start, h->length, oligo_seq);
-        p3_reverse_complement(oligo_seq, revc_oligo_seq);
-          
         oligo_compl_thermod(h, &pa->o_args, &retval->intl.expl,
-                            thal_oligo_arg_to_use, oligo_seq, oligo_seq);
+                            thal_oligo_arg_to_use, p_seq, p_seq);
         if (!OK_OR_MUST_USE(h)) continue;
       }
       if(h->hairpin_th == ALIGN_SCORE_UNDEF && pa->thermodynamic_oligo_alignment==1) {
-        _pr_substr(sa->trimmed_seq, h->start, h->length, oligo_seq);
         oligo_hairpin(h, &pa->o_args,
                       &retval->intl.expl, thal_oligo_arg_to_use,
-                      oligo_seq);
+                      p_seq);
         if (!OK_OR_MUST_USE(h)) continue;
       }
        
@@ -3094,6 +3106,7 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
   /* Variables for the loop */
   int i, j;
   int n;
+  int intl_rev_comp;
 
   /* Array to store one primer sequences in */
   char oligo_seq[MAX_PRIMER_LENGTH+1] , test_oligo[MAX_PRIMER_LENGTH+1];
@@ -3108,6 +3121,17 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
     strncat(test_oligo, primer, MAX_PRIMER_LENGTH);
   } else {
     p3_reverse_complement(primer, test_oligo);
+  }
+
+  /* With PRIMER_INTERNAL_REV_COMP_G_RICH an internal oligo may be given
+     as the reverse complement of the template, as Primer3 prints it.
+     It is then printed reversed again, so the output shows the oligo
+     as it was given. */
+  intl_rev_comp = 0;
+  if (oligo->type == OT_INTL && pa->rev_comp_internal_oligo_g_c > 0
+      && !strstr_nocase(sa->trimmed_seq, test_oligo)) {
+    p3_reverse_complement(primer, test_oligo);
+    intl_rev_comp = 1;
   }
 
   PR_ASSERT(INT_MAX > (n=strlen(sa->trimmed_seq)));
@@ -3129,7 +3153,7 @@ add_one_primer(const char *primer, int *extreme, oligo_array *oligo,
 
       /* Set the start of the primer */
       h.start = i - j +1;
-      h.rev_comp = 0;
+      h.rev_comp = intl_rev_comp;
 
       /* Put the real primer sequence in s */
       _pr_substr(sa->trimmed_seq, h.start, j, oligo_seq);
@@ -3442,10 +3466,13 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   PR_ASSERT(OT_LEFT == l || OT_RIGHT == l || OT_INTL == l);
    
   p3_reverse_complement(input_oligo_seq, s1_rev);
-  if (OT_RIGHT == l) {
+  /* Check the sequence that is printed: right primers and internal
+     oligos reversed by PRIMER_INTERNAL_REV_COMP_G_RICH are the reverse
+     complement of the template. */
+  if (OT_RIGHT == l || (OT_INTL == l && h->rev_comp)) {
     oligo_seq = s1_rev;
     revc_oligo_seq = input_oligo_seq;
- } else {
+  } else {
     oligo_seq = input_oligo_seq;
     revc_oligo_seq = s1_rev;
   }
@@ -3463,6 +3490,10 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
   }  else {
     three_prime_pos = j = h->start-h->length+1;
     k = h->start;
+  }
+  /* The 3' end of a reversed internal oligo is its leftmost base */
+  if (OT_INTL == otype && h->rev_comp) {
+    three_prime_pos = j;
   }
   PR_ASSERT(k >= 0);
   PR_ASSERT(k < TRIMMED_SEQ_LEN(sa));
@@ -5413,8 +5444,15 @@ recalc_primer_sec_struct(primer_rec *p_rec,
     }
     p3_reverse_complement(s1, s1_rev);
   } else if (primer_type == 2) {  /* intl */
-    _pr_substr(sa->trimmed_seq, p_rec->start, p_rec->length, s1);
-     p3_reverse_complement(s1, s1_rev);
+    /* s1 is the printed oligo: PRIMER_INTERNAL_REV_COMP_G_RICH may
+       print the reverse complement of the template */
+    if (p_rec->rev_comp) {
+      _pr_substr(sa->trimmed_seq, p_rec->start, p_rec->length, s1_rev);
+      p3_reverse_complement(s1_rev, s1);
+    } else {
+      _pr_substr(sa->trimmed_seq, p_rec->start, p_rec->length, s1);
+      p3_reverse_complement(s1, s1_rev);
+    }
   } else {  /* right */
     _pr_substr(sa->trimmed_seq, p_rec->start - p_rec->length + 1,
                  p_rec->length, s1_rev);
@@ -7047,9 +7085,13 @@ _adjust_seq_args(const p3_global_settings *pa,
     if (shift_force_position(&sa->force_left_end, pa->first_base_index,
                              sa->incl_s, sa->incl_l)
         && !skip_ends) {
-      pr_append_new_chunk(nonfatal_err, discr
-                          ? "No room for a left primer between the start of SEQUENCE_INCLUDED_REGION and SEQUENCE_TARGET"
-                          : "SEQUENCE_FORCE_LEFT_END outside of SEQUENCE_INCLUDED_REGION");
+      if (discr) {
+        pr_append_new_chunk(nonfatal_err,
+                            "No room for a left primer between the start of SEQUENCE_INCLUDED_REGION and SEQUENCE_TARGET");
+      } else {
+        pr_append_new_chunk(nonfatal_err,
+                            "SEQUENCE_FORCE_LEFT_END outside of SEQUENCE_INCLUDED_REGION");
+      }
     }
     if (shift_force_position(&sa->force_right_start, pa->first_base_index,
                              sa->incl_s, sa->incl_l)) {
@@ -7059,9 +7101,13 @@ _adjust_seq_args(const p3_global_settings *pa,
     if (shift_force_position(&sa->force_right_end, pa->first_base_index,
                              sa->incl_s, sa->incl_l)
         && !skip_ends) {
-      pr_append_new_chunk(nonfatal_err, discr
-                          ? "No room for a right primer between SEQUENCE_TARGET and the end of SEQUENCE_INCLUDED_REGION"
-                          : "SEQUENCE_FORCE_RIGHT_END outside of SEQUENCE_INCLUDED_REGION");
+      if (discr) {
+        pr_append_new_chunk(nonfatal_err,
+                            "No room for a right primer between SEQUENCE_TARGET and the end of SEQUENCE_INCLUDED_REGION");
+      } else {
+        pr_append_new_chunk(nonfatal_err,
+                            "SEQUENCE_FORCE_RIGHT_END outside of SEQUENCE_INCLUDED_REGION");
+      }
     }
   }
 
@@ -8021,12 +8067,20 @@ _pr_data_control(const p3_global_settings *pa,
       pr_append_new_chunk(warning,
                           "Specified internal oligo < PRIMER_INTERNAL_MIN_SIZE");
 
-    if (!strstr_nocase(sa->sequence, sa->internal_input))
+    /* With PRIMER_INTERNAL_REV_COMP_G_RICH the oligo may also be given
+       as the reverse complement, see add_one_primer() */
+    char intl_rc[MAX_PRIMER_LENGTH + 1];
+    int rc_ok = pa->rev_comp_internal_oligo_g_c > 0;
+    p3_reverse_complement(sa->internal_input, intl_rc);
+    if (!strstr_nocase(sa->sequence, sa->internal_input)
+        && !(rc_ok && strstr_nocase(sa->sequence, intl_rc))) {
       pr_append_new_chunk(nonfatal_err,
                           "Specified internal oligo not in sequence");
-    else if (!strstr_nocase(sa->trimmed_seq, sa->internal_input))
+    } else if (!strstr_nocase(sa->trimmed_seq, sa->internal_input)
+               && !(rc_ok && strstr_nocase(sa->trimmed_seq, intl_rc))) {
       pr_append_new_chunk(nonfatal_err,
                           "Specified internal oligo not in Included Region");
+    }
   }
   if (sa->left_input) {
     if (strlen(sa->left_input) > MAX_PRIMER_LENGTH) {

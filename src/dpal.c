@@ -957,7 +957,8 @@ print_align(const unsigned char *X,
             const dpal_mode mode,
             dpal_results *out)
 {
-  int JX[DPAL_MAX_ALIGN],JY[DPAL_MAX_ALIGN];
+  /* k below can be max(I, J) + 1 = DPAL_MAX_ALIGN */
+  int JX[DPAL_MAX_ALIGN + 1],JY[DPAL_MAX_ALIGN + 1];
   int k,i,j,n,m,ret_nr,ret_pr_once;
   char sx[3*DPAL_MAX_ALIGN],sy[3*DPAL_MAX_ALIGN],sxy[3*DPAL_MAX_ALIGN];
   char ret_str[9*(DPAL_MAX_ALIGN + 10)];
