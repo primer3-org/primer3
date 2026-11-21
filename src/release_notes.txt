@@ -169,6 +169,14 @@ Minor fixes:
     overhangs, and internal oligos reversed by
     PRIMER_INTERNAL_REV_COMP_G_RICH as the reverse complement.
 
+26. Hairpin Tm (thal): the salt correction left out one base pair if the
+    3' end base of the oligo was paired, which gave a Tm about 2-4 C too
+    high. All base pairs are counted now. PRIMER_*_HAIRPIN_TH,
+    the HAIRPIN_STUCT structures and ntthal -a HAIRPIN are lower for
+    such hairpins, fewer oligos are rejected by PRIMER_MAX_HAIRPIN_TH
+    and PRIMER_INTERNAL_MAX_HAIRPIN_TH, and different oligos may be
+    picked.
+
 
 release 2.6.1 2022-01-26  ===============================================
 This release fixes a small memory bug.

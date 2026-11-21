@@ -299,13 +299,10 @@ drawHairpin(int *bp, double mh, double ms, const thal_mode mode, double temp,
          strcpy(o->msg, "No predicted sec struc for given seq\n");
       }
    } else {
-      if((mode != THL_FAST) && (mode != THL_DEBUG_F)) {
-         for (i = 1; i < oligo1_len; ++i) {
-            if(bp[i-1] > 0) N++;
-         }
-      } else {
-         for (i = 1; i < oligo1_len; ++i) {
-            if(bp[i-1] > 0) N++;
+      /* Count all paired bases, including the 3' end base */
+      for (i = 0; i < oligo1_len; ++i) {
+         if (bp[i] > 0) {
+            N++;
          }
       }
       t = (mh / (ms + (((N/2)-1) * saltCorrection))) - ABSOLUTE_ZERO;

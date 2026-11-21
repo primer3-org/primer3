@@ -116,7 +116,7 @@ ADDITIONAL OLIGOS
 
  3 LEFT PRIMER        149   20   59.98   50.00    0.00   0.00    0.00 AGCTCATCCTCACTTGCGAT
    RIGHT PRIMER       368   20   59.75   60.00    7.28   0.00    0.00 CCGTACGCACTATAGGAGCC
-   INTERNAL OLIGO     172   20   59.94   40.00    4.21   4.21   43.62 TTACCCGCCAAAATCTTTTG
+   INTERNAL OLIGO     172   20   59.94   40.00    4.21   4.21   40.38 TTACCCGCCAAAATCTTTTG
    PRODUCT SIZE: 220, PAIR ANY_TH COMPL: 9.42, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         17   20   60.01   50.00    6.12   0.00   42.83 CAAGCAATACGACCTGCTGA
@@ -667,11 +667,11 @@ Statistics
          con   too    in    in   not          no    tm    tm   high  high  high        high      
          sid  many   tar  excl    ok   bad    GC   too   too any_th 3'_th hair-  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
-Left    3089     0     0     0     0     0     0    52  2863     40     0     8    22     0   104
+Left    3089     0     0     0     0     0     0    52  2863     40     0     2    22     0   110
 Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
 Intl    3030     0     0     0     0     0     0   432  2088    102     0    10    22     0   376
 Pair Stats:
-considered 19, unacceptable product size 8, high template mispriming score 3, ok 8
+considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
 libprimer3 release 2.3.6
 
 

@@ -1,8 +1,8 @@
 EXIT=255
-Calculated thermodynamical parameters for hairpin:	dS = -146.99	dH = -50600	dG = -5011.14	t = 71.0918
+Calculated thermodynamical parameters for hairpin:	dS = -148.092	dH = -50600	dG = -4669.22	t = 68.5292
 SEQ	//////----\\\\\\
 STR	CCGCAGTAAGCTGCGG
-Calculated thermodynamical parameters for hairpin:	dS = -146.99	dH = -50600	dG = -5011.14	t = 71.0918
+Calculated thermodynamical parameters for hairpin:	dS = -148.092	dH = -50600	dG = -4669.22	t = 68.5292
 SEQ	//////----\\\\\\
 STR	CCGCAGTAAGCTGCGG
 EXIT=255
@@ -1044,10 +1044,10 @@ SEQ	CAAAA    GT ------
 SEQ	     CCGT  C      
 STR	     GGCA  G      
 STR	         T- ATGTGA
-Calculated thermodynamical parameters for hairpin:	dS = -240.662	dH = -81400	dG = -6758.72	t = 65.0839
+Calculated thermodynamical parameters for hairpin:	dS = -241.764	dH = -81400	dG = -6416.8	t = 63.5416
 SEQ	///////////-------\\\\\\\\\\\
 STR	CCAAAACCCATGATGATGATGGGTTTTGG
-Calculated thermodynamical parameters for hairpin:	dS = -282.667	dH = -97400	dG = -9730.92	t = 71.4254
+Calculated thermodynamical parameters for hairpin:	dS = -283.769	dH = -97400	dG = -9389	t = 70.0867
 SEQ	/////////////-------\\\\\\\\\\\\\
 STR	CCCCAAAACCCATGATGATGATGGGTTTTGGGG
 Calculated thermodynamical parameters for dimer:	dS = -116.017	dH = -39900	dG = -3917.33	t = -10.959

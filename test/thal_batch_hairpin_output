@@ -1,7 +1,7 @@
-Calculated thermodynamical parameters for hairpin:	dS = -146.99	dH = -50600	dG = -5011.14	t = 71.0918
+Calculated thermodynamical parameters for hairpin:	dS = -148.092	dH = -50600	dG = -4669.22	t = 68.5292
 SEQ	//////----\\\\\\
 STR	CCGCAGTAAGCTGCGG
-Calculated thermodynamical parameters for hairpin:	dS = -146.99	dH = -50600	dG = -5011.14	t = 71.0918
+Calculated thermodynamical parameters for hairpin:	dS = -148.092	dH = -50600	dG = -4669.22	t = 68.5292
 SEQ	//////----\\\\\\
 STR	CCGCAGTAAGCTGCGG
 Calculated thermodynamical parameters for hairpin:	dS = -77.7449	dH = -24700	dG = -587.432	t = 44.5559
@@ -13,7 +13,7 @@ STR	AACCCGCTTGCTAGCAAAAAAAA
 Calculated thermodynamical parameters for hairpin:	dS = -77.7449	dH = -24700	dG = -587.432	t = 44.5559
 SEQ	-------///-----\\\----
 STR	AAAACCCGCTTTGCTAGCTACG
-Calculated thermodynamical parameters for hairpin:	dS = -209.027	dH = -69300	dG = -4470.27	t = 58.3861
+Calculated thermodynamical parameters for hairpin:	dS = -210.129	dH = -69300	dG = -4128.36	t = 56.6467
 SEQ	-------/////////---------------------\\\\\\\\\
 STR	ACTGGAAAGAGGAAGGACTGGTTGGGACATCTCTATACCTTCCTCT
 Calculated thermodynamical parameters for hairpin:	dS = -119.79	dH = -38800	dG = -1647.22	t = 50.7509
