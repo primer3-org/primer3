@@ -129,8 +129,13 @@ readLoop(char **str, double *v1, double *v2, double *v3, jmp_buf _jmp_buf, thal_
       longjmp(_jmp_buf, 1);
    }
    *q = '\0'; q++;
-   if (!strcmp(p, "inf")) *v1 = _INFINITY;
-   else sscanf(p, "%lf", v1);
+   if (!strcmp(p, "inf")) {
+      *v1 = _INFINITY;
+   } else if (sscanf(p, "%lf", v1) != 1) {
+      snprintf(o->msg, 255, "Illegal value in thermodynamic loop parameter file: %.200s", p);
+      free(line);
+      longjmp(_jmp_buf, 1);
+   }
    while (isspace(*q)) q++;
    p = q;
    while (*p != '\0' && !isspace(*p)) p++;
@@ -140,14 +145,24 @@ readLoop(char **str, double *v1, double *v2, double *v3, jmp_buf _jmp_buf, thal_
       longjmp(_jmp_buf, 1);
    }
    *p = '\0'; p++;
-   if (!strcmp(q, "inf")) *v2 = _INFINITY;
-   else sscanf(q, "%lf", v2);
+   if (!strcmp(q, "inf")) {
+      *v2 = _INFINITY;
+   } else if (sscanf(q, "%lf", v2) != 1) {
+      snprintf(o->msg, 255, "Illegal value in thermodynamic loop parameter file: %.200s", q);
+      free(line);
+      longjmp(_jmp_buf, 1);
+   }
    while (isspace(*p)) p++;
    q = p;
    while (!isspace(*q) && (*q != '\0')) q++;
    *q = '\0';
-   if (!strcmp(p, "inf")) *v3 = _INFINITY;
-   else sscanf(p, "%lf", v3);
+   if (!strcmp(p, "inf")) {
+      *v3 = _INFINITY;
+   } else if (sscanf(p, "%lf", v3) != 1) {
+      snprintf(o->msg, 255, "Illegal value in thermodynamic loop parameter file: %.200s", p);
+      free(line);
+      longjmp(_jmp_buf, 1);
+   }
    if (line != NULL) {
       free(line);
    }
@@ -163,6 +178,13 @@ readTLoop(char **str, char *s, double *v, int triloop, jmp_buf _jmp_buf, thal_re
    while (isspace(*p)) p++;
    q = p;
    while (isalpha(*q)) q++;
+   /* The loop sequence must be followed by whitespace and a value;
+      without this check q would move past the end of the line */
+   if (!isspace(*q)) {
+      snprintf(o->msg, 255, "Illegal line in triloop/tetraloop parameter file: %.200s", p);
+      free(line);
+      longjmp(_jmp_buf, 1);
+   }
    *q = '\0'; q++;
    if (triloop) {
       strncpy(s, p, 5);
@@ -173,8 +195,13 @@ readTLoop(char **str, char *s, double *v, int triloop, jmp_buf _jmp_buf, thal_re
    p = q;
    while (!isspace(*p) && (*p != '\0')) p++;
    *p = '\0';
-   if (!strcmp(q, "inf")) *v = _INFINITY;
-   else sscanf(q, "%lg", v);
+   if (!strcmp(q, "inf")) {
+      *v = _INFINITY;
+   } else if (sscanf(q, "%lg", v) != 1) {
+      snprintf(o->msg, 255, "Illegal value in triloop/tetraloop parameter file: %.200s", q);
+      free(line);
+      longjmp(_jmp_buf, 1);
+   }
    if (line != NULL) {
       free(line);
    }
@@ -195,15 +222,17 @@ removeComments(char *data)
          data[w] = '\0';
          break;
       }
+      /* A comment ends before the newline, which is kept; otherwise
+         a comment after a value would join the next line to it */
+      if (data[i] == '\n') {
+         comm = 0;
+      }
       if (data[i] == '#') {
          comm = 1;
       }
       if (comm == 0) {
          data[w] = data[i];
          w++;
-      }
-      if (data[i] == '\n') {
-         comm = 0;
       }
       i++;
    }
@@ -611,7 +640,11 @@ getTriloop(struct triloop **triloopEntropies, struct triloop **triloopEnthalpies
          *triloopEntropies = (struct triloop *) safe_realloc(*triloopEntropies, size * sizeof(struct triloop), _jmp_buf, o);
       }
    }
-   *triloopEntropies = (struct triloop *) safe_realloc(*triloopEntropies, *num * sizeof(struct triloop), _jmp_buf, o);
+   /* realloc() to 0 bytes would free the block and return NULL */
+   if (*num > 0) {
+      *triloopEntropies = (struct triloop *) safe_realloc(*triloopEntropies, *num * sizeof(struct triloop), _jmp_buf, o);
+   }
+   int num_ds = *num;
 
    char *pt_dh = tp->triloop_dh;
    *num = 0;
@@ -631,7 +664,15 @@ getTriloop(struct triloop **triloopEntropies, struct triloop **triloopEnthalpies
          *triloopEnthalpies = (struct triloop *) safe_realloc(*triloopEnthalpies, size * sizeof(struct triloop), _jmp_buf, o);
       }
    }
-   *triloopEnthalpies = (struct triloop *) safe_realloc(*triloopEnthalpies, *num * sizeof(struct triloop), _jmp_buf, o);
+   /* realloc() to 0 bytes would free the block and return NULL */
+   if (*num > 0) {
+      *triloopEnthalpies = (struct triloop *) safe_realloc(*triloopEnthalpies, *num * sizeof(struct triloop), _jmp_buf, o);
+   }
+   /* Both tables are searched with the same count */
+   if (*num != num_ds) {
+      strcpy(o->msg, "triloop.ds and triloop.dh differ in the number of entries");
+      longjmp(_jmp_buf, 1);
+   }
 }
 
 void
@@ -658,7 +699,11 @@ getTetraloop(struct tetraloop **tetraloopEntropies, struct tetraloop **tetraloop
          *tetraloopEntropies = (struct tetraloop *) safe_realloc(*tetraloopEntropies, size * sizeof(struct tetraloop), _jmp_buf, o);
       }
    }
-   *tetraloopEntropies = (struct tetraloop *) safe_realloc(*tetraloopEntropies, *num * sizeof(struct tetraloop), _jmp_buf, o);
+   /* realloc() to 0 bytes would free the block and return NULL */
+   if (*num > 0) {
+      *tetraloopEntropies = (struct tetraloop *) safe_realloc(*tetraloopEntropies, *num * sizeof(struct tetraloop), _jmp_buf, o);
+   }
+   int num_ds = *num;
 
    char *pt_dh = tp->tetraloop_dh;
    *num = 0;
@@ -678,7 +723,15 @@ getTetraloop(struct tetraloop **tetraloopEntropies, struct tetraloop **tetraloop
          *tetraloopEnthalpies = (struct tetraloop *) safe_realloc(*tetraloopEnthalpies, size * sizeof(struct tetraloop), _jmp_buf, o);
       }
    }
-   *tetraloopEnthalpies = (struct tetraloop *) safe_realloc(*tetraloopEnthalpies, *num * sizeof(struct tetraloop), _jmp_buf, o);
+   /* realloc() to 0 bytes would free the block and return NULL */
+   if (*num > 0) {
+      *tetraloopEnthalpies = (struct tetraloop *) safe_realloc(*tetraloopEnthalpies, *num * sizeof(struct tetraloop), _jmp_buf, o);
+   }
+   /* Both tables are searched with the same count */
+   if (*num != num_ds) {
+      strcpy(o->msg, "tetraloop.ds and tetraloop.dh differ in the number of entries");
+      longjmp(_jmp_buf, 1);
+   }
 }
 
 void

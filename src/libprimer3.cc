@@ -4769,57 +4769,9 @@ characterize_pair(p3retval *retval,
 
 
   /* ============================================================= */
-  /*
-   * Similarity between s1 and s2 is equivalent to complementarity between
-   * s2's complement and s1.  (Both s1 and s2 are taken from the same strand.)
-   */
-   if(pa->thermodynamic_oligo_alignment==0) {
-      ppair->compl_any = align(s1, s2, dpal_arg_to_use->local);
-      if (ppair->compl_any > pa->pair_compl_any) {
-         if (update_stats) { pair_expl->compl_any++; }
-         if (!must_use) return PAIR_FAILED;
-      }
-      
-      ppair->compl_end = align(s1, s2, dpal_arg_to_use->end);
-      if (ppair->compl_end > pa->pair_compl_end) {
-         if (update_stats) { pair_expl->compl_end++; }
-         if (!must_use) return PAIR_FAILED;
-      }
-   } else {
-      /* thermodynamical approach */
-      ppair->compl_any = align_thermod(s1, s2_rev, thal_arg_to_use->any);
-      if (ppair->compl_any > pa->pair_compl_any_th) {
-         if (update_stats) {
-            pair_expl->compl_any++; 
-         }
-         if (!must_use) return PAIR_FAILED;
-      }
-      ppair->compl_end = align_thermod(s1, s2_rev, thal_arg_to_use->end1);
-      compl_end        = align_thermod(s1, s2_rev, thal_arg_to_use->end2); /* Triinu Please check */
-      if (ppair->compl_end < compl_end) {
-         ppair->compl_end = compl_end;
-      }
-      if (ppair->compl_end > pa->pair_compl_end_th) {
-         if (update_stats) {
-            pair_expl->compl_end++; 
-         }
-         if (!must_use) return PAIR_FAILED;
-      }
-   }
-   
-  /*
-   * It is conceivable (though unlikely) that
-   * align(s2_rev, s1_rev, end_args) > align(s1,s2,end_args).
-   */
-  if (pa->thermodynamic_oligo_alignment==0 && (compl_end = align(s2_rev, s1_rev, dpal_arg_to_use->end))
-      > ppair->compl_end) {
-    if (compl_end > pa->pair_compl_end) {
-      if (update_stats) { pair_expl->compl_end++; }
-      if (!must_use) return PAIR_FAILED;
-    }
-    ppair->compl_end = compl_end;
-  }
-
+  /* The pair limits for library and template mispriming only add
+     values of the single primers, which are known here. Check them
+     before the expensive pair alignments below. */
   if ((ppair->repeat_sim = pair_repeat_sim(ppair, pa))
       > pa->pair_repeat_compl) {
     if (update_stats) { pair_expl->repeat_sim++; }
@@ -4886,6 +4838,59 @@ characterize_pair(p3retval *retval,
       
    /* End of calculating _pair_ mispriming if necessary. */
    /* ============================================================= */
+
+
+  /* ============================================================= */
+  /*
+   * Similarity between s1 and s2 is equivalent to complementarity between
+   * s2's complement and s1.  (Both s1 and s2 are taken from the same strand.)
+   */
+   if(pa->thermodynamic_oligo_alignment==0) {
+      ppair->compl_any = align(s1, s2, dpal_arg_to_use->local);
+      if (ppair->compl_any > pa->pair_compl_any) {
+         if (update_stats) { pair_expl->compl_any++; }
+         if (!must_use) return PAIR_FAILED;
+      }
+
+      ppair->compl_end = align(s1, s2, dpal_arg_to_use->end);
+      if (ppair->compl_end > pa->pair_compl_end) {
+         if (update_stats) { pair_expl->compl_end++; }
+         if (!must_use) return PAIR_FAILED;
+      }
+   } else {
+      /* thermodynamical approach */
+      ppair->compl_any = align_thermod(s1, s2_rev, thal_arg_to_use->any);
+      if (ppair->compl_any > pa->pair_compl_any_th) {
+         if (update_stats) {
+            pair_expl->compl_any++;
+         }
+         if (!must_use) return PAIR_FAILED;
+      }
+      ppair->compl_end = align_thermod(s1, s2_rev, thal_arg_to_use->end1);
+      compl_end        = align_thermod(s1, s2_rev, thal_arg_to_use->end2); /* Triinu Please check */
+      if (ppair->compl_end < compl_end) {
+         ppair->compl_end = compl_end;
+      }
+      if (ppair->compl_end > pa->pair_compl_end_th) {
+         if (update_stats) {
+            pair_expl->compl_end++;
+         }
+         if (!must_use) return PAIR_FAILED;
+      }
+   }
+
+  /*
+   * It is conceivable (though unlikely) that
+   * align(s2_rev, s1_rev, end_args) > align(s1,s2,end_args).
+   */
+  if (pa->thermodynamic_oligo_alignment==0 && (compl_end = align(s2_rev, s1_rev, dpal_arg_to_use->end))
+      > ppair->compl_end) {
+    if (compl_end > pa->pair_compl_end) {
+      if (update_stats) { pair_expl->compl_end++; }
+      if (!must_use) return PAIR_FAILED;
+    }
+    ppair->compl_end = compl_end;
+  }
 
   return PAIR_OK;
 } /* characterize_pair */
