@@ -54,6 +54,19 @@
 #define OS_WIN
 #endif
 
+/* Reads the whole string s as a finite number into *out. Returns 1 on
+   success, 0 for an empty string, trailing characters, nan or inf. */
+static int
+parse_finite(const char *s, double *out)
+{
+  char *end;
+  *out = strtod(s, &end);
+  if (end == s || *end != '\0' || !isfinite(*out)) {
+    return 0;
+  }
+  return 1;
+}
+
 char *endptr; /* reading input */
 int i; /* index */
 const unsigned char *oligo1, *oligo2; /* inserted oligo sequences */
@@ -130,8 +143,7 @@ int main(int argc, char** argv)
             fprintf(stderr, usage, argv[0]);
             exit(-1);
          }
-         a.mv = strtod(argv[i+1], &endptr);
-         if ('\0' != *endptr || a.mv < 0.0) {
+         if (!parse_finite(argv[i+1], &a.mv) || a.mv < 0.0) {
             fprintf(stderr, usage, argv[0]);
             exit(-1);
          }
@@ -141,8 +153,7 @@ int main(int argc, char** argv)
             fprintf(stderr, usage, argv[0]);
             exit(-1);
          }
-         a.dv = strtod(argv[i+1], &endptr);
-         if('\0' != *endptr || a.dv < 0.0) {
+         if (!parse_finite(argv[i+1], &a.dv) || a.dv < 0.0) {
             fprintf(stderr, usage, argv[0]);
             exit(-1);
          }
@@ -193,8 +204,7 @@ int main(int argc, char** argv)
             fprintf(stderr, usage, argv[0]);
             exit(-1);
          }
-         a.dna_conc = strtod(argv[i+1], &endptr);
-         if('\0' != *endptr || a.dna_conc < 0 || a.dna_conc == 0) {
+         if (!parse_finite(argv[i+1], &a.dna_conc) || a.dna_conc <= 0.0) {
             fprintf(stderr, usage, argv[0]);
             exit(-1);
          }
@@ -206,19 +216,20 @@ int main(int argc, char** argv)
             fprintf(stderr, usage, argv[0]);
             exit(-1);
          }
-         a.temp = strtod(argv[i+1], &endptr) + ABSOLUTE_ZERO;
-         if('\0' != *endptr) {
+         double temp_c;
+         /* The temperature must be above absolute zero */
+         if (!parse_finite(argv[i+1], &temp_c) || temp_c <= -ABSOLUTE_ZERO) {
             fprintf(stderr, usage, argv[0]);
             exit(-1);
          }
+         a.temp = temp_c + ABSOLUTE_ZERO;
          i++;
       } else if (!strncmp("-n", argv[i], 2)) { /* concentration of dNTPs */
          if(argv[i+1]==NULL) {
             fprintf(stderr, usage, argv[0]);
             exit(-1);
          }
-         a.dntp = strtod(argv[i+1], &endptr);
-         if('\0' != *endptr || a.dntp < 0.0) {
+         if (!parse_finite(argv[i+1], &a.dntp) || a.dntp < 0.0) {
             fprintf(stderr, usage, argv[0]);
             exit(-1);
          }
@@ -229,18 +240,21 @@ int main(int argc, char** argv)
             fprintf(stderr, usage, argv[0]);
             exit(-1);
          }
-         a.maxLoop = (int) (strtod(argv[i+1], &endptr));
-                 
-         if(a.maxLoop > MAX_LOOP ) {
-            a.maxLoop = MAX_LOOP;
-            fputs("Warning: the maximum size of secondary structures loop is set to default (30)\n", stderr);
-         }  else if(a.maxLoop < MIN_LOOP) {         
-            a.maxLoop = MIN_LOOP;
-            fputs("Warning: the maximum size of secondary structures loop was set to minimum size of allowed loop length (0)\n", stderr);
-         } 
-         if('\0' != *endptr || a.maxLoop < 0) {
+         double max_loop;
+         /* Check the value before the conversion to int, which is
+            undefined for values that do not fit into an int */
+         if (!parse_finite(argv[i+1], &max_loop)) {
             fprintf(stderr, usage, argv[0]);
             exit(-1);
+         }
+         if (max_loop > MAX_LOOP) {
+            a.maxLoop = MAX_LOOP;
+            fputs("Warning: the maximum size of secondary structures loop is set to default (30)\n", stderr);
+         } else if (max_loop < MIN_LOOP) {
+            a.maxLoop = MIN_LOOP;
+            fputs("Warning: the maximum size of secondary structures loop was set to minimum size of allowed loop length (0)\n", stderr);
+         } else {
+            a.maxLoop = (int) max_loop;
          }
          i++;
       } else if (!strncmp("-i", argv[i], 2)) { /* interactive mode */

@@ -245,6 +245,9 @@ static int    characterize_pair(p3retval *p,
    compare_primer_pair(); the order is then decided by position. */
 #define PAIR_QUALITY_EPSILON 1e-6
 
+/* Pure formamide (1.13 g/cm3, 45.04 g/mol) is about 25.1 mol/l */
+#define PR_MAX_FORMAMIDE_CONC 25.1
+
 static void    choose_pair_or_triple(p3retval *,
                                     const p3_global_settings *,
                                     const seq_args *,
@@ -639,6 +642,9 @@ pr_set_default_global_args_2(p3_global_settings *a)
   a->thermodynamic_template_alignment = 0;
   a->p_args.divalent_conc             = 1.5;
   a->p_args.dntp_conc                 = 0.6;
+  /* Internal oligos are in the same reaction as the primers */
+  a->o_args.divalent_conc             = 1.5;
+  a->o_args.dntp_conc                 = 0.6;
   a->lib_ambiguity_codes_consensus    = 0;
 }
 
@@ -788,6 +794,7 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->o_args.min_end_quality       = 0;
   a->o_args.max_template_mispriming = PR_UNDEFINED_ALIGN_OPT;
   a->o_args.max_template_mispriming_th = PR_UNDEFINED_ALIGN_OPT;
+  a->o_args.weights.temp_cutoff   = 5;
   a->o_args.weights.temp_gt       = 1;
   a->o_args.weights.temp_lt       = 1;
   a->o_args.weights.bound_gt      = 0;
@@ -8006,6 +8013,71 @@ _pr_data_control(const p3_global_settings *pa,
     return 1;
   }
 
+  /* Negative values would reverse the DMSO and formamide corrections
+     and raise the Tm */
+  if (pa->p_args.dmso_conc < 0.0 || pa->p_args.dmso_conc > 100.0
+      || pa->p_args.dmso_fact < 0.0 || pa->p_args.formamide_conc < 0.0
+      || pa->p_args.formamide_conc > PR_MAX_FORMAMIDE_CONC) {
+    pr_append_new_chunk(glob_err,
+                        "Illegal value for primer DMSO or formamide concentration "
+                        "or DMSO factor");
+    return 1;
+  }
+
+  if (pa->o_args.dmso_conc < 0.0 || pa->o_args.dmso_conc > 100.0
+      || pa->o_args.dmso_fact < 0.0 || pa->o_args.formamide_conc < 0.0
+      || pa->o_args.formamide_conc > PR_MAX_FORMAMIDE_CONC) {
+    pr_append_new_chunk(glob_err,
+                        "Illegal value for internal oligo DMSO or formamide concentration "
+                        "or DMSO factor");
+    return 1;
+  }
+
+  /* Internal oligos and primers are usually in the same reaction;
+     different salt conditions give Tm values that do not fit together */
+  if (pa->pick_internal_oligo
+      && (pa->pick_left_primer || pa->pick_right_primer)) {
+    char salt_diff[300];
+    salt_diff[0] = '\0';
+    if (pa->o_args.salt_conc != pa->p_args.salt_conc) {
+      strcat(salt_diff, " PRIMER_INTERNAL_SALT_MONOVALENT");
+    }
+    if (pa->o_args.divalent_conc != pa->p_args.divalent_conc) {
+      strcat(salt_diff, " PRIMER_INTERNAL_SALT_DIVALENT");
+    }
+    if (pa->o_args.dntp_conc != pa->p_args.dntp_conc) {
+      strcat(salt_diff, " PRIMER_INTERNAL_DNTP_CONC");
+    }
+    if (salt_diff[0] != '\0') {
+      char buffer[400];
+      snprintf(buffer, sizeof(buffer),
+               "Internal oligo and primers are calculated for different "
+               "salt conditions; differs from the primer value:%s",
+               salt_diff);
+      pr_append_new_chunk(warning, buffer);
+    }
+
+    char additive_diff[150];
+    additive_diff[0] = '\0';
+    if (pa->o_args.dmso_conc != pa->p_args.dmso_conc) {
+      strcat(additive_diff, " PRIMER_INTERNAL_DMSO_CONC");
+    }
+    if (pa->o_args.dmso_fact != pa->p_args.dmso_fact) {
+      strcat(additive_diff, " PRIMER_INTERNAL_DMSO_FACTOR");
+    }
+    if (pa->o_args.formamide_conc != pa->p_args.formamide_conc) {
+      strcat(additive_diff, " PRIMER_INTERNAL_FORMAMIDE_CONC");
+    }
+    if (additive_diff[0] != '\0') {
+      char buffer[200];
+      snprintf(buffer, sizeof(buffer),
+               "Internal oligo and primers are calculated for different "
+               "DMSO or formamide settings; differs from the primer value:%s",
+               additive_diff);
+      pr_append_new_chunk(warning, buffer);
+    }
+  }
+
   if (!_PR_DEFAULT_POSITION_PENALTIES(pa) && sa->tar2.count > 1) {
     pr_append_new_chunk(nonfatal_err,
                         "Non-default inside penalty or outside penalty ");
@@ -8334,6 +8406,14 @@ _pr_data_control(const p3_global_settings *pa,
                         "PRIMER_SALT_DIVALENT > 0.0 "
                         "but PRIMER_DNTP_CONC <= 0.0; "
                         "use reasonable value for PRIMER_DNTP_CONC");
+  }
+
+  if (pa->pick_internal_oligo
+      && pa->o_args.divalent_conc > 0.0 && pa->o_args.dntp_conc <= 0.0) {
+    pr_append_new_chunk(warning,
+                        "PRIMER_INTERNAL_SALT_DIVALENT > 0.0 "
+                        "but PRIMER_INTERNAL_DNTP_CONC <= 0.0; "
+                        "use reasonable value for PRIMER_INTERNAL_DNTP_CONC");
   }
 
   if ((pa->p_args.must_match_five_prime != NULL) &&
@@ -9118,11 +9198,19 @@ p3_get_gs_o_args(p3_global_settings * p) {
 
 void
 p3_set_gs_prmin (p3_global_settings * p , int val, int i) {
+  /* pr_min has PR_MAX_INTERVAL_ARRAY entries */
+  if (i < 0 || i >= PR_MAX_INTERVAL_ARRAY) {
+    return;
+  }
   p->pr_min[i] = val ;
 }
 
 void
 p3_set_gs_prmax (p3_global_settings * p , int val, int i) {
+  /* pr_max has PR_MAX_INTERVAL_ARRAY entries */
+  if (i < 0 || i >= PR_MAX_INTERVAL_ARRAY) {
+    return;
+  }
   p->pr_max[i] = val ;
 }
 
@@ -9924,7 +10012,7 @@ p3_set_gs_max_end_gc(p3_global_settings *p, int max_end_gc) {
 }
 
 void
-p3_set_gs_max_end_stability(p3_global_settings * p , int max_end_stability){
+p3_set_gs_max_end_stability(p3_global_settings * p , double max_end_stability){
   p->max_end_stability = max_end_stability;
 }
 
@@ -9985,7 +10073,7 @@ p3_set_gs_pair_compl_end(p3_global_settings * p , double  pair_compl_end)
 void
 p3_set_gs_pair_compl_end_th(p3_global_settings * p , double  pair_compl_end_th) 
 {   
-  p->pair_compl_end = pair_compl_end_th;
+  p->pair_compl_end_th = pair_compl_end_th;
 }
 
 void

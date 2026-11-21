@@ -751,6 +751,7 @@ amplicon_result ampliconfindsalt(const  char *inseq,
     double mv_min = 10.0;
     double mv_max = 10.0;
     double step = 10.0;
+    int found = 0;
     amplicon_result ret;
 
     fs_temp = ((int) (fs_temp * 10.0 + 0.5)) / 10.0;
@@ -770,6 +771,8 @@ amplicon_result ampliconfindsalt(const  char *inseq,
         }
 
         if (fabs(ret.melt_points[0] - fs_temp) < 0.01) {
+            found = 1;
+            free_amplicon_result(&ret);
             break;
         }
 
@@ -788,10 +791,18 @@ amplicon_result ampliconfindsalt(const  char *inseq,
             mv -= step;
             step /= 10.0;
             if (step < 0.5) {
+                found = 1;
+                free_amplicon_result(&ret);
                 break;
             }
         }
         free_amplicon_result(&ret);
+    }
+    /* After 100 steps of 10 mM the melting temperature is still below
+       fs_temp: no salt concentration up to about 1 M reaches it */
+    if (found == 0) {
+        ret.error = 11;
+        return ret;
     }
     mv_min = mv;
     while (mv_min > 10) {
@@ -810,6 +821,7 @@ amplicon_result ampliconfindsalt(const  char *inseq,
 
         if (fabs(ret.melt_points[0] - fs_temp) > 0.01) {
             mv_min += 1.0;
+            free_amplicon_result(&ret);
             break;
         }
         free_amplicon_result(&ret);
@@ -831,6 +843,7 @@ amplicon_result ampliconfindsalt(const  char *inseq,
 
         if (fabs(ret.melt_points[0] - fs_temp) > 0.01) {
             mv_max -= 1.0;
+            free_amplicon_result(&ret);
             break;
         }
         free_amplicon_result(&ret);

@@ -1239,7 +1239,7 @@ int p3_set_afogop_opt_tm(args_for_one_oligo_or_primer *, double);
 /* max_end_gc must be >= 0 and <= 5 */
 void p3_set_gs_max_end_gc(p3_global_settings *p, int max_end_gc);
 
-void p3_set_gs_max_end_stability(p3_global_settings * p , int max_end_stability);
+void p3_set_gs_max_end_stability(p3_global_settings * p , double max_end_stability);
 void p3_set_gs_gc_clamp(p3_global_settings * p , int gc_clamp);
 void p3_set_gs_lowercase_masking(p3_global_settings * p , int lowercase_masking);
 void p3_set_gs_outside_penalty(p3_global_settings * p , double outside_penalty);

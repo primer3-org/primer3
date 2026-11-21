@@ -24,8 +24,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <ctype.h>
 #include "amplicontm.h"
+
+/* Reads the whole string s as a finite number into *out. Returns 1 on
+   success, 0 for an empty string, trailing characters, nan or inf. */
+static int
+parse_finite(const char *s, double *out)
+{
+  char *end;
+  *out = strtod(s, &end);
+  if (end == s || *end != '\0' || !isfinite(*out)) {
+    return 0;
+  }
+  return 1;
+}
 
 /* Print the melting temperature of an amplicon on stdout. */
 /* This program provides a command line interface to
@@ -37,9 +51,11 @@ main(int argc, char **argv)
   amplicon_result ret;
   int no_melt_point = 0;
 
-  const char *msg = "USAGE: %s OPTIONS oligo\n"
+  const char *msg = "USAGE: %s OPTIONS amplicon\n"
     "\n"
-    "where amplicon is a DNA sequence of > 36 bases\n"
+    "where amplicon is a DNA sequence of at least 20 bases.\n"
+    "Characters other than A, C, G and T (also N and IUPAC codes)\n"
+    "are removed from the sequence before the calculation.\n"
     "\n"
     "and\n"
     "\n"
@@ -57,13 +73,13 @@ main(int argc, char **argv)
     "\n"
     "-formamid formamid_conc - concentration of formamide in mol/l, by default 0 mol/l\n"
     "\n"
-    "-fs find_salt_conc  - provide a measured Tm and obtain a suitable salt concentration (experimental)\n"
+    "-fs find_salt_conc  - provide a measured Tm (>= 0) and obtain a suitable salt concentration (experimental)\n"
     "\n"
 
     "-tp [0|1]     - Specifies the table of thermodynamic parameters and\n"
     "                the method of melting temperature calculation:\n"
     "                 0  Breslauer et al., 1986 and Rychlik et al., 1990\n"
-    "                    (used by primer3 up to and including release 1.1.0).\n"
+    "                    (not supported by amplicon3)\n"
     "                 1  Use nearest neighbor parameters from SantaLucia 1998\n"
     "                    *This is the default and recommended value*\n"
     "\n"
@@ -73,7 +89,7 @@ main(int argc, char **argv)
     "                     and including release 1.1.0.\n"
     "                  1  SantaLucia 1998\n"
     "                     *This is the default and recommended value*\n"
-    "                  2  Owczarzy et al., 2004\n"
+    "                  2  Owczarzy et al., 2004 (not supported by amplicon3)\n"
     "\n"
     "-mf [0..1]    - Specifies the formula for the melting temperature\n"
     "                 calculation\n"
@@ -132,8 +148,7 @@ main(int argc, char **argv)
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
-       mv = strtod(argv[i+1], &endptr);
-       if ('\0' != *endptr) {
+       if (!parse_finite(argv[i+1], &mv) || mv < 0.0) {
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
@@ -144,8 +159,7 @@ main(int argc, char **argv)
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
-       dv = strtod(argv[i+1], &endptr);
-       if('\0' != *endptr) {
+       if (!parse_finite(argv[i+1], &dv) || dv < 0.0) {
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
@@ -156,8 +170,7 @@ main(int argc, char **argv)
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
-       dntp = strtod(argv[i+1], &endptr);
-       if('\0' != *endptr) {
+       if (!parse_finite(argv[i+1], &dntp) || dntp < 0.0) {
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
@@ -168,8 +181,7 @@ main(int argc, char **argv)
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
-       dmso_fact = strtod(argv[i+1], &endptr);
-       if('\0' != *endptr) {
+       if (!parse_finite(argv[i+1], &dmso_fact) || dmso_fact < 0.0) {
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
@@ -180,8 +192,7 @@ main(int argc, char **argv)
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
-       dmso = strtod(argv[i+1], &endptr);
-       if('\0' != *endptr) {
+       if (!parse_finite(argv[i+1], &dmso) || dmso < 0.0 || dmso > 100.0) {
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
@@ -192,8 +203,8 @@ main(int argc, char **argv)
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
-       formamid = strtod(argv[i+1], &endptr);
-       if('\0' != *endptr) {
+       /* Pure formamide is about 25.1 mol/l */
+       if (!parse_finite(argv[i+1], &formamid) || formamid < 0.0 || formamid > 25.1) {
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
@@ -240,8 +251,7 @@ main(int argc, char **argv)
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
-       fs_temp = strtod(argv[i+1], &endptr);
-       if('\0' != *endptr) {
+       if (!parse_finite(argv[i+1], &fs_temp) || fs_temp < 0.0) {
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
@@ -331,6 +341,9 @@ main(int argc, char **argv)
       return -1;
   } else if (ret.error == 9) {
       fprintf(stderr, "%s ERROR: concentrations of salt, divalent cations and dNTPs must not be negative.\n", argv[0]);
+      return -1;
+  } else if (ret.error == 11) {
+      fprintf(stderr, "%s ERROR: the melting temperature is below %.1f C even at the highest sodium concentration of about 1 M.\n", argv[0], fs_temp);
       return -1;
   } else if (ret.error == 10) {
       fprintf(stderr, "%s ERROR: the melting temperature is above %.1f C even at the lowest sodium concentration of 10 mM.\n", argv[0], fs_temp);

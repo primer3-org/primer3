@@ -186,6 +186,7 @@ thal(const unsigned char *oligo_f,
    int len_f, len_r;
    jmp_buf _jmp_buf;
    double RC;
+   double sym_dS = 0.0; /* symmetry correction of the entropy */
    int oligo1_len;
    int oligo2_len;
 
@@ -222,13 +223,24 @@ thal(const unsigned char *oligo_f,
    }
    oligo1_len = length_unsig_char(oligo1);
    oligo2_len = length_unsig_char(oligo2);
+   for(int i = 0; i < oligo1_len; i++) oligo1[i] = toupper(oligo1[i]);
+   for(int i = 0; i < oligo2_len; i++) oligo2[i] = toupper(oligo2[i]);
    /*** INIT values for unimolecular and bimolecular structures ***/
    if (a->type==4) { /* unimolecular folding */
       RC=0;
    } else  {
-      /* hybridization of two oligos */
-      if(symmetry_thermo(oligo1) && symmetry_thermo(oligo2)) {
+      /* hybridization of two oligos. A self-complementary oligo paired
+         with itself gets the terms of SantaLucia (1998) for symmetric
+         duplexes, as in oligotm(): R*ln(c) instead of R*ln(c/4) and the
+         symmetry correction of the entropy. Two different palindromes
+         are two different molecules and get the normal terms.
+         Strictly, ln(c) applies to any two identical molecules, also
+         to the self-dimer of a non-palindromic oligo; this is not done
+         to stay consistent with oligotm(). */
+      if(symmetry_thermo(oligo1)
+         && strcmp((const char*)oligo1, (const char*)oligo2) == 0) {
          RC = R  * log(a->dna_conc/1000000000.0);
+         sym_dS = -1.4;
       } else {
          RC = R  * log(a->dna_conc/4000000000.0);
       }
@@ -241,8 +253,6 @@ thal(const unsigned char *oligo_f,
    //Allocate Dynamic Programming Table
    dpt = allocate_DPT(oligo1_len, oligo2_len, _jmp_buf, o);
 
-   for(int i = 0; i < oligo1_len; i++) oligo1[i] = toupper(oligo1[i]);
-   for(int i = 0; i < oligo2_len; i++) oligo2[i] = toupper(oligo2[i]);
    for(int i = 1; i <= oligo1_len; ++i) numSeq1[i] = str2int(oligo1[i - 1]);
    for(int i = 1; i <= oligo2_len; ++i) numSeq2[i] = str2int(oligo2[i - 1]);
    numSeq1[0] = numSeq1[oligo1_len + 1] = numSeq2[0] = numSeq2[oligo2_len + 1] = 4; /* mark as N-s */
@@ -323,7 +333,7 @@ thal(const unsigned char *oligo_f,
             if(ps1[i]>0) ++N;
          N--;
          o->dh = dpt[bestI][bestJ].h+ SH[1] + dplx_init_H_dimer;
-         o->ds = (dpt[bestI][bestJ].s + SH[0] + dplx_init_S_dimer);
+         o->ds = (dpt[bestI][bestJ].s + SH[0] + dplx_init_S_dimer) + sym_dS;
          o->ds = o->ds + (N * saltCorrectS(a->mv,a->dv,a->dntp));
          o->dg = (o->dh) - (a->temp * o->ds);
          o->temp = ((o->dh) / (o->ds + RC)) - ABSOLUTE_ZERO;
@@ -1281,16 +1291,12 @@ symmetry_thermo(const unsigned char* seq)
       i++;
       s=toupper(*seq);
       e=toupper(*seq_end);
-      if ((s=='A' && e!='T')
-          || (s=='T' && e!='A')
-          || (e=='A' && s!='T')
-          || (e=='T' && s!='A')) {
-         return 0;
-      }
-      if ((s=='C' && e!='G')
-          || (s=='G' && e!='C')
-          || (e=='C' && s!='G')
-          || (e=='G' && s!='C')) {
+      /* Only Watson-Crick pairs count; an N (or any other character)
+         may be any base, so the sequence is not known to be symmetric */
+      if (!((s=='A' && e=='T')
+            || (s=='T' && e=='A')
+            || (s=='C' && e=='G')
+            || (s=='G' && e=='C'))) {
          return 0;
       }
       seq++;

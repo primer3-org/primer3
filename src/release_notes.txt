@@ -42,6 +42,22 @@ increase.
 
 Primer3 can now also provide structures for primers binding to template.
 
+With --default_version=2 (the default of primer3_core) internal oligos
+were calculated without divalent cations and dNTPs
+(PRIMER_INTERNAL_SALT_DIVALENT=0.0, PRIMER_INTERNAL_DNTP_CONC=0.0),
+while the primers used 1.5 mM and 0.6 mM. Internal oligos and primers
+are in the same reaction, so the Tm of internal oligos was about 6 C
+too low. Internal oligos now use the same defaults as the primers
+(1.5 mM and 0.6 mM). Internal oligo Tm values, hairpin and
+self-complementarity values change, and different internal oligos and
+pairs are picked. Settings files and inputs that set these tags are
+not affected. A warning is printed if internal oligos are picked
+together with primers and PRIMER_INTERNAL_SALT_MONOVALENT,
+PRIMER_INTERNAL_SALT_DIVALENT or PRIMER_INTERNAL_DNTP_CONC differ
+from the primer values, and a second warning if
+PRIMER_INTERNAL_DMSO_CONC, PRIMER_INTERNAL_DMSO_FACTOR or
+PRIMER_INTERNAL_FORMAMIDE_CONC differ.
+
 Minor fixes:
 1. Compiler complains were fixed.
 
@@ -176,6 +192,30 @@ Minor fixes:
     such hairpins, fewer oligos are rejected by PRIMER_MAX_HAIRPIN_TH
     and PRIMER_INTERNAL_MAX_HAIRPIN_TH, and different oligos may be
     picked.
+
+27. PRIMER_*_BOUND (with PRIMER_ANNEALING_TEMP > 0) ignored
+    PRIMER_DMSO_CONC and PRIMER_FORMAMIDE_CONC, which lower the Tm.
+    With 5% DMSO, 75% instead of 50% of the oligos were reported as
+    bound at the printed Tm. The fraction bound now takes the DMSO and
+    formamide correction into account, so it is lower in such runs;
+    PRIMER_MIN_BOUND, PRIMER_MAX_BOUND and PRIMER_WT_BOUND_* can
+    select different oligos.
+
+28. Oligos with N (SantaLucia Tm, PRIMER_TM_FORMULA=1): the entropy
+    values for an N followed by a base were copied from the Breslauer
+    table, so the Tm of an oligo with N depended on the strand (for
+    example 56.2 C and 54.5 C for the two strands of the same duplex).
+    The values now follow the rule used for a base followed by N (the
+    values that give the lowest Tm), also for one dG value (CN) used by
+    the end stability. The Tm is now the same on both strands; it is
+    lower for oligos with an N that is followed by a base.
+
+29. PRIMER_INTERNAL_WT_SELF_ANY_TH, PRIMER_INTERNAL_WT_SELF_END_TH and
+    PRIMER_INTERNAL_WT_HAIRPIN_TH compared the structure Tm with the
+    Tm of the internal oligo instead of the internal oligo Tm - 5 C,
+    as documented and as done for primers. The penalty of internal
+    oligos with these weights is now higher, in particular for
+    structures less than 5 C below the internal oligo Tm.
 
 
 release 2.6.1 2022-01-26  ===============================================

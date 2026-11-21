@@ -51,6 +51,19 @@ static const double t_kelvin = 273.15;
  *
  * These are included in this file because they are not needed by
  * clients (callers) of oligtm().
+ *
+ * Unknown bases (N): the last column (XN) and the last row (NX) hold
+ * replacement values derived from the 16 known pairs.
+ * - Breslauer 1986: XN is the mean of row X, NX the mean of column X,
+ *   NN the mean of all 16 pairs.
+ * - SantaLucia 1998 and 2004: the values that give the lowest Tm, that
+ *   is the smallest dH and dG (row or column minimum) and the largest
+ *   dS (row or column maximum); NN is the minimum or maximum of all.
+ * Pair XN on one strand is pair N comp(X) on the other strand, so
+ * table[X][N] must equal table[N][comp(X)]. Because the 16 known pairs
+ * are symmetric in this way, row X and column comp(X) hold the same
+ * values, and the rules above keep the Tm independent of the strand.
+ * Keep both the row and the column in step when changing a table.
  */
 
 /* Table 1 (old parameters):
@@ -106,12 +119,12 @@ static const int SantaLucia_1998_dS[5][5] =  {
      {227, 199, 272, 210, 272},  /* CA, CC, CG, CT, CN; */
      {222, 244, 199, 224, 244},  /* GA, GC, GG, GT, GN; */
      {213, 222, 227, 222, 227},  /* TA, TC, TG, TT, TN; */
-     {168, 210, 220, 215, 220}}; /* NA, NC, NG, NT, NN; */
+     {227, 244, 272, 224, 272}}; /* NA, NC, NG, NT, NN; */
 
 /* dG *-0.001 cal/mol */
 static const int SantaLucia_1998_dG[5][5] =  {
      {1000, 1440, 1280,  880,  880},  /* AA, AC, AG, AT, AN; */
-     {1450, 1840, 2170, 1280, 1450},  /* CA, CC, CG, CT, CN; */
+     {1450, 1840, 2170, 1280, 1280},  /* CA, CC, CG, CT, CN; */
      {1300, 2240, 1840, 1440, 1300},  /* GA, GC, GG, GT, GN; */
      { 580, 1300, 1450, 1000,  580},  /* TA, TC, TG, TT, TN; */
      { 580, 1300, 1280,  880,  580}}; /* NA, NC, NG, NT, NN; */
@@ -138,7 +151,7 @@ static const int SantaLucia_2004_dS[5][5] =  {
      {227, 199, 272, 210, 272},  /* CA, CC, CG, CT, CN; */
      {222, 244, 199, 224, 244},  /* GA, GC, GG, GT, GN; */
      {213, 222, 227, 213, 227},  /* TA, TC, TG, TT, TN; */
-     {168, 210, 220, 215, 220}}; /* NA, NC, NG, NT, NN; */
+     {227, 244, 272, 224, 272}}; /* NA, NC, NG, NT, NN; */
 
 /* dG *-0.001 cal/mol */
 /* unmodified to SantaLucia_1998_dG */
@@ -164,6 +177,7 @@ oligotm(const  char *s,
   double delta_H = 0.0;
   double delta_S = 0.0;
   double ddG, ka;
+  double t_shift; /* Tm shift by DMSO and formamide */
   tm_ret ret;
   ret.bound = OLIGOTM_ERROR;
   double correction;
@@ -306,6 +320,13 @@ oligotm(const  char *s,
   ret.Tm=0;  /* Melting temperature */
   len=len+1;
 
+  /* Tm shift by DMSO and formamide. The fraction bound at the
+     annealing temperature is computed at the temperature shifted the
+     other way, so that 50% are bound at the Tm also with DMSO or
+     formamide. */
+  t_shift = -dmso_conc * dmso_fact
+            + (0.453 * ((double) GC_count) / len - 2.88) * formamide_conc;
+
   /* For testing */
   /* printf("dH: %.2f kcal/mol\ndS: %.2f cal/k*mol\n", delta_H / 1000.0, delta_S); */
 
@@ -317,8 +338,8 @@ oligotm(const  char *s,
     ret.Tm -= dmso_conc * dmso_fact;
     ret.Tm += (0.453 * ((double) GC_count) / len - 2.88) * formamide_conc;
     if (annealing_temp > 0.0) {
-      ddG = delta_H - (annealing_temp - correction + t_kelvin) * delta_S;
-      ka = exp(-ddG / (1.987 * (annealing_temp - correction + t_kelvin)));
+      ddG = delta_H - (annealing_temp - correction - t_shift + t_kelvin) * delta_S;
+      ka = exp(-ddG / (1.987 * (annealing_temp - correction - t_shift + t_kelvin)));
       ret.bound = (1 / (1 + sqrt(1/((DNA_nM/4000000000.0) * ka)))) * 100;
     }
   } else if (salt_corrections == santalucia) {
@@ -330,8 +351,8 @@ oligotm(const  char *s,
       ret.Tm -= dmso_conc * dmso_fact;
       ret.Tm += (0.453 * ((double) GC_count) / len - 2.88) * formamide_conc;
       if (annealing_temp > 0.0) {
-        ddG = delta_H - (annealing_temp + t_kelvin) * delta_S;
-        ka = exp(-ddG / (1.987 * (annealing_temp + t_kelvin)));
+        ddG = delta_H - (annealing_temp - t_shift + t_kelvin) * delta_S;
+        ka = exp(-ddG / (1.987 * (annealing_temp - t_shift + t_kelvin)));
         ret.bound = (1 / (1 + sqrt(1/((DNA_nM/1000000000.0) * ka)))) * 100;
       }
     } else {
@@ -340,8 +361,8 @@ oligotm(const  char *s,
       ret.Tm -= dmso_conc * dmso_fact;
       ret.Tm += (0.453 * ((double) GC_count) / len - 2.88) * formamide_conc;
       if (annealing_temp > 0.0) {
-        ddG = delta_H - (annealing_temp + t_kelvin) * delta_S;
-        ka = exp(-ddG / (1.987 * (annealing_temp + t_kelvin)));
+        ddG = delta_H - (annealing_temp - t_shift + t_kelvin) * delta_S;
+        ka = exp(-ddG / (1.987 * (annealing_temp - t_shift + t_kelvin)));
         ret.bound = (1 / (1 + sqrt(1/((DNA_nM/4000000000.0) * ka)))) * 100;
       }
     }

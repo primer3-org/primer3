@@ -38,8 +38,22 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <ctype.h>
 #include "oligotm.h"
+
+/* Reads the whole string s as a finite number into *out. Returns 1 on
+   success, 0 for an empty string, trailing characters, nan or inf. */
+static int
+parse_finite(const char *s, double *out)
+{
+  char *end;
+  *out = strtod(s, &end);
+  if (end == s || *end != '\0' || !isfinite(*out)) {
+    return 0;
+  }
+  return 1;
+}
 
 /* Print the melting temperature of an oligo on stdout. */
 /* This program provides a command line interface to
@@ -135,8 +149,7 @@ main(int argc, char **argv)
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
-       mv = strtod(argv[i+1], &endptr);
-       if ('\0' != *endptr) {
+       if (!parse_finite(argv[i+1], &mv) || mv < 0.0) {
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
@@ -147,8 +160,7 @@ main(int argc, char **argv)
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
-       dv = strtod(argv[i+1], &endptr);
-       if('\0' != *endptr) {
+       if (!parse_finite(argv[i+1], &dv) || dv < 0.0) {
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
@@ -159,8 +171,7 @@ main(int argc, char **argv)
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
-       n = strtod(argv[i+1], &endptr);
-       if('\0' != *endptr) {
+       if (!parse_finite(argv[i+1], &n) || n < 0.0) {
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
@@ -171,8 +182,7 @@ main(int argc, char **argv)
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
-       d = strtod(argv[i+1], &endptr);
-       if ('\0' != *endptr) {
+       if (!parse_finite(argv[i+1], &d) || d <= 0.0) {
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
@@ -183,8 +193,7 @@ main(int argc, char **argv)
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
-       dmso = strtod(argv[i+1], &endptr);
-       if ('\0' != *endptr) {
+       if (!parse_finite(argv[i+1], &dmso) || dmso < 0.0 || dmso > 100.0) {
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
@@ -195,8 +204,7 @@ main(int argc, char **argv)
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
-       dmso_fact = strtod(argv[i+1], &endptr);
-       if ('\0' != *endptr) {
+       if (!parse_finite(argv[i+1], &dmso_fact) || dmso_fact < 0.0) {
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
@@ -207,8 +215,8 @@ main(int argc, char **argv)
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
-       formamide = strtod(argv[i+1], &endptr);
-       if ('\0' != *endptr) {
+       /* Pure formamide is about 25.1 mol/l */
+       if (!parse_finite(argv[i+1], &formamide) || formamide < 0.0 || formamide > 25.1) {
          fprintf(stderr, msg, argv[0]);
          exit(-1);
        }
@@ -245,6 +253,12 @@ main(int argc, char **argv)
        break;                /* all args processed. go on to sequences. */
    }
 
+  /* Without monovalent cations and without divalent cations that are
+     not bound by dNTPs the salt correction takes the log of 0 */
+  if (mv <= 0.0 && dv <= n) {
+    fprintf(stderr, "%s ERROR: salt concentration too low for the salt correction\n", argv[0]);
+    exit(-1);
+  }
   if(!argv[i]) { /* if no oligonucleotide sequence is specified */
     fprintf(stderr, msg, argv[0]);
     exit(-1);

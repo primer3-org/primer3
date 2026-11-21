@@ -44,6 +44,9 @@
                10 - ampliconfindsalt(): the melting temperature at the
                     lowest sodium concentration (10 mM) is already above
                     fs_temp
+               11 - ampliconfindsalt(): the melting temperature at the
+                    highest sodium concentration (about 1 M) is still
+                    below fs_temp
 */
 
 typedef struct amplicon_result {
@@ -106,9 +109,9 @@ typedef enum amp_salt_correction_type {
    and the thermodynamic parameters in the paper [Breslauer KJ, Frank
    R, Bl?cker H and Marky LA (1986) "Predicting DNA duplex stability
    from the base sequence" Proc Natl Acad Sci 83:4746-50
-   http://dx.doi.org/10.1073/pnas.83.11.3746], are is used.  This is
+   http://dx.doi.org/10.1073/pnas.83.11.3746], are used.  This is
    the method and the table that primer3 used up to and including
-   version 1.0.1
+   version 1.0.1. amplicontm() does not support it (error 5).
 
    If salt_corrections==schildkraut_amp, then formula for
    salt correction in the paper [Schildkraut, C, and Lifson, S (1965)
@@ -140,7 +143,7 @@ typedef enum amp_tm_method_type {
 } amp_tm_method_type;
 
 /*
-   If tm_parameters==bolton_amp, then the the formula from Bolton and McCarthy,
+   If tm_formula==bolton_amp, then the formula from Bolton and McCarthy,
    PNAS 84:1390 (1962) as presented in Sambrook, Fritsch and Maniatis,
    Molecular Cloning, p 11.46 (1989, CSHL Press).
 
@@ -153,7 +156,7 @@ typedef enum amp_tm_method_type {
    the tm_parameters and salt_corrections are ignored using this
    formula.
 
-   If tm_parameters==wright_amp, then the the formula from Wright and
+   If tm_formula==wright_amp, then the formula from Wright and
    Vetsigian (2016) "DesignSignatures: a tool for designing primers
    that yields amplicons with distinct signatures.", Bioinformatics,
    32:1565-7 http://doi.org/10.1093/bioinformatics/btw047 is used.
