@@ -4460,7 +4460,7 @@ characterize_pair(p3retval *retval,
                   int update_stats) {
   char s1[THAL_MAX_ALIGN+1], s2[THAL_MAX_ALIGN+1],
     s1_rev[THAL_MAX_ALIGN+1], s2_rev[THAL_MAX_ALIGN+1];
-  double compl_end, compl_end2;
+  double compl_end;
   pair_stats *pair_expl = &retval->best_pairs.expl;
   int must_use = 0;
   int newly_checked;  /* a mispriming check ran in this call */
@@ -4813,7 +4813,7 @@ characterize_pair(p3retval *retval,
    */
   if (pa->thermodynamic_oligo_alignment==0 && (compl_end = align(s2_rev, s1_rev, dpal_arg_to_use->end))
       > ppair->compl_end) {
-    if (compl_end > pa->p_args.max_self_end) {
+    if (compl_end > pa->pair_compl_end) {
       if (update_stats) { pair_expl->compl_end++; }
       if (!must_use) return PAIR_FAILED;
     }
@@ -4825,24 +4825,6 @@ characterize_pair(p3retval *retval,
     if (update_stats) { pair_expl->repeat_sim++; }
     if (!must_use) return PAIR_FAILED;
   }
-   /* thermodynamic approach */
-   if (pa->thermodynamic_oligo_alignment==1) {
-     compl_end = align_thermod(s2, s1_rev, thal_arg_to_use->end1);
-     compl_end2 = align_thermod(s2, s1_rev, thal_arg_to_use->end2);
-     if (compl_end2 > compl_end) {
-       compl_end = compl_end2;
-     }
-     if (compl_end > ppair->compl_end) {
-       if (compl_end > pa->p_args.max_self_end_th) {
-         if (update_stats) {
-            pair_expl->compl_end++; 
-         }
-         if (!must_use) return PAIR_FAILED;
-       }
-       ppair->compl_end = compl_end;
-     }
-   }
-   
   /* ============================================================= */
 
 
@@ -4857,12 +4839,16 @@ characterize_pair(p3retval *retval,
         PR_ASSERT(ppair->left->template_mispriming_r != ALIGN_SCORE_UNDEF);
         PR_ASSERT(ppair->right->template_mispriming != ALIGN_SCORE_UNDEF);
         PR_ASSERT(ppair->right->template_mispriming_r != ALIGN_SCORE_UNDEF);
+        /* Only primers on opposite strands can give a product: both
+           on the strand they bind at their own site (template_mispriming),
+           or both on the other strand (template_mispriming_r). */
         ppair->template_mispriming =
-           ppair->left->template_mispriming + ppair->right->template_mispriming_r;
-        if ((ppair->left->template_mispriming_r + ppair->right->template_mispriming)
-             > ppair->template_mispriming)
+           ppair->left->template_mispriming + ppair->right->template_mispriming;
+        if ((ppair->left->template_mispriming_r + ppair->right->template_mispriming_r)
+             > ppair->template_mispriming) {
            ppair->template_mispriming
-           = ppair->left->template_mispriming_r + ppair->right->template_mispriming;
+           = ppair->left->template_mispriming_r + ppair->right->template_mispriming_r;
+        }
 
         if (pa->pair_max_template_mispriming >= 0.0
              && ppair->template_mispriming > pa->pair_max_template_mispriming) {
@@ -4878,12 +4864,15 @@ characterize_pair(p3retval *retval,
        PR_ASSERT(ppair->left->template_mispriming_r != ALIGN_SCORE_UNDEF);
        PR_ASSERT(ppair->right->template_mispriming != ALIGN_SCORE_UNDEF);
        PR_ASSERT(ppair->right->template_mispriming_r != ALIGN_SCORE_UNDEF);
+       /* Only primers on opposite strands can give a product, see the
+          dpal branch above */
        ppair->template_mispriming =
-           ppair->left->template_mispriming + ppair->right->template_mispriming_r;
-       if ((ppair->left->template_mispriming_r + ppair->right->template_mispriming)
-             > ppair->template_mispriming)
+           ppair->left->template_mispriming + ppair->right->template_mispriming;
+       if ((ppair->left->template_mispriming_r + ppair->right->template_mispriming_r)
+             > ppair->template_mispriming) {
            ppair->template_mispriming
-           = ppair->left->template_mispriming_r + ppair->right->template_mispriming;
+           = ppair->left->template_mispriming_r + ppair->right->template_mispriming_r;
+       }
 
        if (pa->pair_max_template_mispriming_th >= 0.0
            && ppair->template_mispriming > pa->pair_max_template_mispriming_th) {
@@ -5577,12 +5566,10 @@ recalc_pair_sec_struct(primer_pair *ppair,
     }
   } else {
     /* thermodynamical approach */
-    thal_results any, end1, end2, end3, end4;
+    thal_results any, end1, end2;
     any.sec_struct = NULL;
     end1.sec_struct = NULL;
     end2.sec_struct = NULL;
-    end3.sec_struct = NULL;
-    end4.sec_struct = NULL;
     if (ppair->compl_any > 0.0) {
       thal((const unsigned char *) s1, (const unsigned char *) s2_rev, thal_arg_to_use->any, THL_STRUCT, &any);
       ppair->compl_any = any.temp;
@@ -5600,26 +5587,6 @@ recalc_pair_sec_struct(primer_pair *ppair,
         if (end2.sec_struct != NULL) {
           free(end2.sec_struct);
           end2.sec_struct = NULL;
-        }
-      }
-      thal((const unsigned char *) s2, (const unsigned char *) s1_rev, thal_arg_to_use->end1, THL_STRUCT, &end3);
-      if (ppair->compl_end < end3.temp) {
-        ppair->compl_end = end3.temp;
-        save_overwrite_sec_struct(&ppair->compl_end_struct, end3.sec_struct);
-      } else { 
-        if (end3.sec_struct != NULL) {
-          free(end3.sec_struct);
-          end3.sec_struct = NULL;
-        }
-      }
-      thal((const unsigned char *) s2, (const unsigned char *) s1_rev, thal_arg_to_use->end2, THL_STRUCT, &end4); /* Triinu Please check */
-      if (ppair->compl_end < end4.temp) {
-        ppair->compl_end = end4.temp;
-        save_overwrite_sec_struct(&ppair->compl_end_struct, end4.sec_struct);
-      } else {
-        if (end4.sec_struct != NULL) {
-          free(end4.sec_struct);
-          end4.sec_struct = NULL;
         }
       }
     }
@@ -6077,7 +6044,7 @@ oligo_repeat_library_mispriming(primer_rec *h,
           align(s_r, lib->rev_compl_seqs[i],
                 (pa->lib_ambiguity_codes_consensus
                  ? dpal_arg_to_use->local_end_ambig
-                 : dpal_arg_to_use->local));
+                 : dpal_arg_to_use->local_end));
 
       if (w > SHRT_MAX || w < SHRT_MIN) {
         /* This check is necessary for the next 9 lines */
@@ -8831,11 +8798,20 @@ print_oligo(FILE *fh,
   int ret;
 
   /* WARNING, *p points to static storage that is overwritten on next
-     call to pr_oligo_sequence or pr_oligo_rev_c_sequence. */
-  char *p = 
-    (OT_RIGHT != type)
-    ? pr_oligo_sequence(sa, h)
-    : pr_oligo_rev_c_sequence(sa, h);
+     call to the pr_oligo_*sequence functions. The oligos are printed
+     as in the Boulder-IO output: primers with their overhangs and
+     internal oligos reversed by PRIMER_INTERNAL_REV_COMP_G_RICH as
+     the reverse complement. */
+  char *p;
+  if (OT_LEFT == type) {
+    p = pr_oligo_overhang_sequence(sa, h);
+  } else if (OT_RIGHT == type) {
+    p = pr_oligo_rev_c_overhang_sequence(sa, h);
+  } else if (h->rev_comp > 0) {
+    p = pr_internal_rev_c_sequence(sa, h);
+  } else {
+    p = pr_oligo_sequence(sa, h);
+  }
 
   ret = fprintf(fh,
                 "%4d %-30s %5d %2d %2d %5.2f %5.3f %5.2f %5.2f", 

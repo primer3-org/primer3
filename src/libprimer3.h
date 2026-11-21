@@ -696,8 +696,9 @@ typedef struct primer_pair {
   
   double template_mispriming;
                         /* Maximum total mispriming score of both primers
-                           to ectopic sites in the template, on "same"
-                           strand (* 100). */
+                           to ectopic sites in the template, with the two
+                           primers on opposite strands, so that they could
+                           amplify a product (* 100). */
 
   char *compl_any_struct; /* Secondary structure of compl_any */
 

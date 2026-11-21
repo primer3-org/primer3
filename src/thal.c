@@ -313,8 +313,9 @@ thal(const unsigned char *oligo_f,
          }
       }
 
-      /* tracebacking */
-      if(is_complement[numSeq1[bestI]][numSeq2[bestJ]]){
+      /* tracebacking; bestG stays infinite if no terminal pair was
+         found (for END1/END2: none with the required 3' end) */
+      if(isFinite(bestG)){
          RSH(bestI, bestJ, SH, RC, dplx_init_S_dimer, dplx_init_H_dimer, numSeq1, numSeq2);
          traceback_dimer(bestI, bestJ, ps1, ps2, (const struct dpt_entry **)dpt);
          int N=0;

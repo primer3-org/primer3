@@ -66,7 +66,7 @@ static void format_oligos(FILE *,
 static int lib_sim_specified(const p3_global_settings *);
 static void print_explain(FILE *, const p3_global_settings *, const seq_args *,
                           const p3retval *retval, int, const char *);
-static void print_pair_info(FILE *, const primer_pair *,
+static void print_pair_info(FILE *, const primer_pair *, const seq_args *,
                             const p3_global_settings *);
 static void print_oligo(FILE *, const char *, const seq_args *,
                         const primer_rec *, int, const p3_global_settings *, 
@@ -240,7 +240,7 @@ print_summary(FILE *f, const p3_global_settings *pa,
     fprintf(f, "SEQUENCE SIZE: %d\n", seq_len);
     fprintf(f, "INCLUDED REGION SIZE: %d\n\n", sa->incl_l);
 
-    if (best_pairs->num_pairs > 0) print_pair_info(f, p, pa);
+    if (best_pairs->num_pairs > 0) print_pair_info(f, p, sa, pa);
     print_pair_array(f, "TARGETS", sa->tar2.count, sa->tar2.pairs, pa, sa);
     print_pair_array(f, "EXCLUDED REGIONS", sa->excl2.count, sa->excl2.pairs, pa, sa);
     print_pair_array(f, "INTERNAL OLIGO EXCLUDED REGIONS",
@@ -277,11 +277,12 @@ print_oligo(FILE *f,
 {
     const char *format1;
     char *seq;
+    /* The primers with their overhangs, as in the Boulder-IO output */
     if (dir == FORWARD) {
-      seq = pr_oligo_sequence(sa, o);
+      seq = pr_oligo_overhang_sequence(sa, o);
     }
     if (dir == REVERSE) {
-      seq = pr_oligo_rev_c_sequence(sa, o);
+      seq = pr_oligo_rev_c_overhang_sequence(sa, o);
     }
     if (dir == INTERNAL) {
       if (o->rev_comp > 0) {
@@ -571,9 +572,18 @@ print_seq_lines(FILE *f, const char *s, const char *n, int seq_size,
 }
 
 static void
-print_pair_info(FILE *f, const primer_pair *p, const p3_global_settings *pa)
+print_pair_info(FILE *f, const primer_pair *p, const seq_args *sa,
+                const p3_global_settings *pa)
 {
-  fprintf(f, "PRODUCT SIZE: %d, ", p->product_size);
+  /* The product includes the overhangs, as in the Boulder-IO output */
+  int product_size = p->product_size;
+  if (NULL != sa->overhang_left) {
+    product_size += strlen(sa->overhang_left);
+  }
+  if (NULL != sa->overhang_right) {
+    product_size += strlen(sa->overhang_right);
+  }
+  fprintf(f, "PRODUCT SIZE: %d, ", product_size);
    if(pa->thermodynamic_oligo_alignment==0)
      fprintf(f, "PAIR ANY COMPL: %.2f, PAIR 3' COMPL: %.2f\n",
              p->compl_any, p->compl_end);
@@ -612,7 +622,7 @@ print_rest(FILE *f, const p3_global_settings *pa,
         }
         if (best_pairs->pairs[i].product_size > 0) {
             fprintf(f, "   ");
-            print_pair_info(f, &best_pairs->pairs[i], pa);
+            print_pair_info(f, &best_pairs->pairs[i], sa, pa);
         }
     }
 }

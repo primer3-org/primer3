@@ -128,6 +128,47 @@ Minor fixes:
     given as reverse complement, PRIMER_INTERNAL_n_REVERSE_COMPLEMENTED=1
     is printed.
 
+20. PRIMER_PAIR_n_COMPL_END_TH also aligned the reverse complements of
+    both primers, which measures dimers at the 5' ends of the primers.
+    The value could be higher than PRIMER_PAIR_n_COMPL_ANY_TH, and
+    PRIMER_PAIR_n_COMPL_END_STUCT then showed sequences that are not the
+    primers. Only the 3' ends of the two primers are aligned now, so the
+    value is lower for some pairs.
+
+21. The pair 3' complementarity was checked against PRIMER_MAX_SELF_END
+    (PRIMER_MAX_SELF_END_TH) instead of PRIMER_PAIR_MAX_COMPL_END
+    (PRIMER_PAIR_MAX_COMPL_END_TH) for one of the two primers. Pairs
+    above PRIMER_PAIR_MAX_COMPL_END(_TH) are now always rejected.
+
+22. PRIMER_MISPRIMING_LIBRARY: with PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS=0
+    (the default of --default_version=2) the similarity of right primers
+    to the library was computed without requiring the 3' end of the
+    primer to be part of the match, unlike for left primers. Right
+    primers are now aligned like left primers, as in release 1.1.2 and
+    earlier. PRIMER_RIGHT_n_LIBRARY_MISPRIMING and
+    PRIMER_PAIR_n_LIBRARY_MISPRIMING can be lower, so fewer right primers
+    are rejected and different right primers may be picked.
+
+23. PRIMER_PAIR_n_TEMPLATE_MISPRIMING and
+    PRIMER_PAIR_n_TEMPLATE_MISPRIMING_TH added the bindings of the left
+    and the right primer to the same template strand, an orientation
+    in which the two primers cannot amplify a product. The pair value
+    now adds the bindings on opposite strands, as documented for
+    PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING_TH. The pair values, the pair
+    penalty with PRIMER_PAIR_WT_TEMPLATE_MISPRIMING(_TH) and the pairs
+    rejected by PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING(_TH) change.
+
+24. ntthal -a END1 and -a END2: if no structure with the required 3' end
+    exists, thal reported a single base pair at the other end, with a Tm
+    below -273 C. It now reports no structure (0 with -r). primer3_core
+    is not affected, because it reports such values as 0.
+
+25. --format_output and the list files written with P3_FILE_FLAG=1 now
+    print the oligos as the Boulder-IO output does: primers with
+    SEQUENCE_OVERHANG_LEFT/RIGHT, the product size including the
+    overhangs, and internal oligos reversed by
+    PRIMER_INTERNAL_REV_COMP_G_RICH as the reverse complement.
+
 
 release 2.6.1 2022-01-26  ===============================================
 This release fixes a small memory bug.

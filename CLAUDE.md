@@ -181,7 +181,7 @@ A new thal source file therefore needs both rules, plus entries in `LIBTHAL` and
 Don't "fix" these:
 - `SEQUENCE_ID` is used unchanged as the base name of the `P3_FILE_FLAG` list files (`<SEQUENCE_ID>.for`, `.rev`, `.int`). Directory parts, including `..` and absolute paths, are allowed on purpose; don't reject `/`, `\` or a leading `.`.
 - Internal oligos are not checked for template mispriming (`PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB` is rejected as unsupported).
-- The pair template-mispriming value is the sum of two separate bindings, one of each primer on opposite strands. It is used for the penalty, but there is no pair structure; only `PRIMER_LEFT/RIGHT_n_TEMPLATE_MISPRIMING_STUCT` exist.
+- The pair template-mispriming value is the sum of two separate bindings, one of each primer on opposite strands, in the orientation that could amplify a product: the larger of `left->template_mispriming + right->template_mispriming` (both on the strand they bind at their own site) and `left->template_mispriming_r + right->template_mispriming_r` (both on the other strand). The positions of the two bindings are not compared. It is used for the penalty, but there is no pair structure; only `PRIMER_LEFT/RIGHT_n_TEMPLATE_MISPRIMING_STUCT` exist.
 - dpal's global modes (`g`, `G` in `ntdpal`) are semi-global, not Needleman-Wunsch: unaligned ends cost nothing.
 
 ### Settings files
