@@ -49,6 +49,7 @@ use POSIX; # For testing wait / system return value, e.g. WIFSIGNALED, WTERMSIG.
 use Config; # To get the number for SIGINT
 
 sub perldiff($$);
+sub valgrind_prefix($$);
 sub test_fatal_errors();
 sub main();
 
@@ -64,6 +65,24 @@ our ($verbose, $do_valgrind, $do_valgrinda, $do_valgrindb, $return_action,
 our %signo;
 
 our $valgrind_format;
+
+# Valgrind logs written in this run.  Only these are checked at the
+# end, so logs of earlier runs and of the other test scripts (which
+# also write *.vg files into this directory) do not count.
+our @valgrind_logs;
+
+# Returns the valgrind prefix for a command whose log is $name.vg in
+# the directory the command runs in; $dir is that directory relative to
+# test/ ('' for test/ itself).  Deletes an old log of the same name.
+sub valgrind_prefix($$) {
+    my ($name, $dir) = @_;
+    return '' if !$do_valgrind;
+    my $log = $name . '.vg';
+    $log = "$dir/$log" if $dir ne '';
+    unlink $log;
+    push @valgrind_logs, $log;
+    return sprintf $valgrind_format, $name;
+}
                    
 # Global variable for Errors
 my $all_ok;
@@ -386,8 +405,18 @@ sub main() {
                 "(1 to 5 minutes or more).\n",
                 "starting $test at ", scalar(localtime), "...";
         }
-        my $valgrind_prefix
-            = $do_valgrind ? sprintf $valgrind_format, $test : '';
+        my %list_test
+        = ('primer' => 1,
+           'primer1' => 1,
+           'primer1_th' => 1,
+           'th-w-other-tasks' => 1);
+
+        # The list tests run in their *_list_tmp directory
+        my $valgrind_dir = '';
+        if (exists($list_test{$test})) {
+            $valgrind_dir = $test . '_list_tmp';
+        }
+        my $valgrind_prefix = valgrind_prefix($test, $valgrind_dir);
 
         # Figure out what the files are called for a particular test
         my $testx = $test;
@@ -401,12 +430,6 @@ sub main() {
         die "Cannot read $output"  unless -r $output;
 
         my $r;                  # Return value for tests
-
-        my %list_test
-        = ('primer' => 1,
-           'primer1' => 1,
-           'primer1_th' => 1,
-           'th-w-other-tasks' => 1);
 
         if (exists($list_test{$test})) {
             # These tests generate primer lists, which
@@ -488,24 +511,37 @@ sub main() {
             # primer lists.
             my $list_tmp = $test.'_list_tmp';
             my $list_last = $test.'_list_last';
+            my $rl = 0;   # result of the list files only
+            my $msg = '';
             if (!-r $list_last) {
-                print "Configuration error, $list_last does not exist or is not readable ";
-                $r = 1;
+                $msg .= "Configuration error, $list_last does not exist or is not readable\n";
+                $rl = 1;
             }
-            my @tempList = glob($list_last.'/*');
+            # glob returns dir/file; keep only the file names.  The
+            # valgrind log of this test is also written to $list_tmp.
+            my @last = map { s/^[^\/]+\///r } glob($list_last.'/*');
+            my @tmp = grep { $_ ne "$test.vg" }
+                      map { s/^[^\/]+\///r } glob($list_tmp.'/*');
+            my %in_last = map { $_ => 1 } @last;
             # do _file by file_ comparison within primer_list_last to primer_list_tmp
             # since we are not using diff - diff used to do directory comparison
-            for my $t (@tempList) {
-                # sneakily get correct paths since glob of primer_list_last returns
-                # primer_list_last/filename_within_primer_list_last
-                my $regex = "[^/]+/";
-                $t=~ s/$regex//g;
-                if (perldiff $list_tmp."/".$t, $list_last."/".$t) {
-                    $r = 1;
+            for my $t (@last) {
+                if (!-r "$list_tmp/$t") {
+                    $msg .= "Missing file $list_tmp/$t\n";
+                    $rl = 1;
+                } elsif (perldiff $list_tmp."/".$t, $list_last."/".$t) {
+                    $rl = 1;
                 }
             }
+            for my $t (@tmp) {
+                if (!$in_last{$t}) {
+                    $msg .= "Unexpected file $list_tmp/$t\n";
+                    $rl = 1;
+                }
+            }
+            print $msg;
             print $test. "_list_files...";
-            if ($r == 0) {
+            if ($rl == 0) {
                 print "[OK]\n";
             } else {
                 $all_ok = 0;
@@ -520,26 +556,27 @@ sub main() {
     # errors (reading uninitialized memory, writing off the end of
     # an array, etc) or leaks, then we look through the valgrind
     # logs to summarize errors and leaks.
-    if ($do_valgrind) {
+    if ($do_valgrind && @valgrind_logs) {
         # Assume this is Unix/Linux envrionment, so
         # we have grep.
-        my $r = system "grep ERROR *.vg */*.vg | grep -v 'ERROR SUMMARY: 0 errors'";
+        my $logs = join(' ', @valgrind_logs);
+        my $r = system "grep ERROR $logs | grep -v 'ERROR SUMMARY: 0 errors'";
         if (!$r) { # !$r because grep returns 0 if something is found,
             # and if something is found, we have a problem.
             $all_ok = 0;
-            print "\nValgrind ERRORs found [FAILED]";
+            print "\nValgrind errors found [FAILED]";
             $exit_stat = -1;
         }
-        $r = system "grep 'definitely lost' *.vg */*.vg | grep -v ' 0 bytes'";
+        $r = system "grep 'definitely lost' $logs | grep -v ' 0 bytes'";
         if (!$r) {
             $all_ok = 0;
-            print "\nValgrind LEAKSs found [WARNING]";
+            print "\nValgrind leaks (definitely lost) found [FAILED]";
             $exit_stat = -1;
         }
-        $r = system "grep 'possibly lost' *.vg */*.vg   | grep -v ' 0 bytes'";
+        $r = system "grep 'possibly lost' $logs | grep -v ' 0 bytes'";
         if (!$r) {
             $all_ok = 0;
-            print "\nValgrind LEAKSs found [WARNING]";
+            print "\nValgrind leaks (possibly lost) found [FAILED]";
             $exit_stat = -1;
         }
     }
@@ -552,7 +589,7 @@ sub main() {
         $exit_stat = -1;
     }
 
-    if ($return_action || $do_valgrinda || $do_valgrindb) {
+    if ($return_action || $do_valgrind) {
         exit $exit_stat;
     } else {
         exit 0;  #  Generally we want the testing to continue.
@@ -661,8 +698,7 @@ sub test_fatal_errors() {
                                    # the result of the match in
                                    # an array context.
         print "  $root\n";
-        my $valgrind_prefix
-            = $do_valgrind ? sprintf $valgrind_format, $root : '';
+        my $valgrind_prefix = valgrind_prefix($root, '');
 
         my $cmd;
         if ($_ =~ /bad_settings\d\.in/) {
@@ -726,7 +762,7 @@ sub _nowarn_system($) {
         if (!$all_ok) {
             print "\n\nIn addition, at least 1 test FAILED ... [FAILED]\n\n";
         }
-        exit;
+        exit 1;  # an interrupted run is not a success
     }
     if (!$winFlag && WIFEXITED($r2)) {
         $r = WEXITSTATUS($r2);

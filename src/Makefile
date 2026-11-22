@@ -83,14 +83,12 @@ ifeq ($(TESTOPTS),--windows)
 	NTTHAL_EXE      = ntthal.exe
 	OLIGOTM_EXE     = oligotm.exe
 	AMPLICONTM_EXE  = amplicon3_core.exe
-	LONG_SEQ_EXE	= long_seq_tm_test.exe
 else
 	PRIMER_EXE      = primer3_core
 	NTDPAL_EXE      = ntdpal
 	NTTHAL_EXE      = ntthal
 	OLIGOTM_EXE     = oligotm
 	AMPLICONTM_EXE  = amplicon3_core
-	LONG_SEQ_EXE	= long_seq_tm_test
 	MASKER_EXE      = primer3_masker
 endif
 LIBOLIGOTM      = liboligotm.a
@@ -120,9 +118,9 @@ PRIMER_OBJECTS=$(PRIMER_OBJECTS1) $(LIBRARIES)
 example_files=example.for example.rev example.int
 
 ifeq ($(TESTOPTS),--windows)
-    EXES=$(PRIMER_EXE) $(NTDPAL_EXE) $(NTTHAL_EXE) $(AMPLICONTM_EXE) $(OLIGOTM_EXE) $(LONG_SEQ_EXE)
+    EXES=$(PRIMER_EXE) $(NTDPAL_EXE) $(NTTHAL_EXE) $(AMPLICONTM_EXE) $(OLIGOTM_EXE)
 else
-    EXES=$(PRIMER_EXE) $(NTDPAL_EXE) $(NTTHAL_EXE) $(AMPLICONTM_EXE) $(OLIGOTM_EXE) $(LONG_SEQ_EXE) $(MASKER_EXE)
+    EXES=$(PRIMER_EXE) $(NTDPAL_EXE) $(NTTHAL_EXE) $(AMPLICONTM_EXE) $(OLIGOTM_EXE) $(MASKER_EXE)
 endif
 
 all: $(EXES) $(LIBRARIES)
@@ -172,19 +170,16 @@ libprimer3.o: libprimer3.cc
 	$(CXX) -c $(CXXFLAGS) $(P_DEFINES) -o $@ libprimer3.cc
 
 $(NTDPAL_EXE): ntdpal_main.o dpal.o
-	$(CC) $(LDFLAGS) -o $@ ntdpal_main.o dpal.o
+	$(CC) $(LDFLAGS) -o $@ ntdpal_main.o dpal.o $(LIBOPTS) $(LDLIBS)
 
 $(NTTHAL_EXE): thal_main.o thal.o thal_trace.o thal_draw.o thal_params.o thal_util.o
-	$(CC) $(LDFLAGS) -o $@ thal_main.o thal.o thal_trace.o thal_draw.o thal_params.o thal_util.o $(LDLIBS)
+	$(CC) $(LDFLAGS) -o $@ thal_main.o thal.o thal_trace.o thal_draw.o thal_params.o thal_util.o $(LIBOPTS) $(LDLIBS)
 
 $(OLIGOTM_EXE): oligotm_main.o $(LIBOLIGOTM)
 	$(CC) $(CFLAGS) -o $@ oligotm_main.o $(LIBOLIGOTM) $(LIBOPTS) $(LDLIBS)
 
 $(AMPLICONTM_EXE): amplicontm_main.o $(LIBAMPTM)
 	$(CC) $(CFLAGS) -o $@ amplicontm_main.o $(LIBAMPTM) $(LIBOPTS) $(LDLIBS)
-
-$(LONG_SEQ_EXE): long_seq_tm_test_main.o oligotm.o
-	$(CC) $(CFLAGS) -o $@ long_seq_tm_test_main.o oligotm.o $(LIBOPTS) $(LDLIBS)
 
 $(MASKER_EXE): masker_main.o $(LIBRARIES)
 	$(CXX) $(CXXFLAGS) -lstdc++ -o $@ masker_main.o $(LIBRARIES) $(LIBOPTS) $(LDLIBS)
@@ -240,12 +235,10 @@ format_output.o: format_output.c
 	$(CC) -c $(CFLAGS) $(P_DEFINES) -o $@ format_output.c
 
 ntdpal_main.o: ntdpal_main.c
-	$(CC) -c $(CC_OPTS) $(DEPFLAGS) -o $@ ntdpal_main.c
+	$(CC) -c $(CFLAGS) -o $@ ntdpal_main.c
 
 thal_main.o: thal_main.c
 	$(CC) -c $(CFLAGS) -o $@ thal_main.c
-# We use CC_OPTS above rather than CFLAGS because
-# gcc 2.7.2 crashes while compiling ntdpal_main.c with -O2
 
 amplicontm.o: amplicontm.c
 
@@ -262,9 +255,6 @@ oligotm_main.o: oligotm_main.c
 
 amplicontm_main.o: amplicontm_main.c
 	$(CC) -c $(CFLAGS) -o $@ amplicontm_main.c
-
-long_seq_tm_test_main.o: long_seq_tm_test_main.c
-	$(CC) -c $(CFLAGS) -o $@ long_seq_tm_test_main.c
 
 # masker_main.c is compiled as C++
 masker_main.o: masker_main.c
@@ -308,7 +298,7 @@ install: $(EXES) $(LIBRARIES)
 # 
 # Run valgrind on a small example:
 #
-# $ valgrind --leak-check=yes --show-reachable=yes --log-file-exactly=p3vg ./primer3_core < ../example
+# $ valgrind --leak-check=yes --show-reachable=yes --log-file=p3vg ./primer3_core < ../example
 #
 # Check output in file p3vg 
 #
@@ -318,14 +308,17 @@ install: $(EXES) $(LIBRARIES)
 #
 # $ cd ../test
 # 
-# Check valgrind path in p3test.pl, ntdpal_test.pl, and oligotm_test.pl
-# and correct if necessary.  This code works under valgrind 3.2.3.
+# The test scripts look for valgrind in /usr/bin, /usr/local/bin and
+# then in the PATH.
 # 
 # $ make TESTOPTS=--valgrind  # Remember, you have to be in test/
 # 
-# When the --valgrind flag is set, the perl test scripts grep for and
-# display errors and leaks, but you need to ***look at the output** to
-# see these and figure out which test caused the problem, so you can
-# debug it.
+# This runs all suites (cmdline_test.pl, oligotm_test.pl, dpal_test.pl,
+# thal_test.pl, masker_test.pl, a3test.pl and p3test.pl) under valgrind
+# through run_tests.pl.  Each script checks its own valgrind logs for
+# errors and leaks and fails if it finds any; the summary at the end
+# lists the failed suites.  The logs are *.vg (cmdline, a3test, p3test)
+# and *.valg (oligotm, dpal, thal, masker) files in test/; look there
+# to find which call caused the problem.
 #
 # ======================================================================

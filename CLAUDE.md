@@ -39,20 +39,27 @@ Don't reformat untouched code. But when new code belongs under an existing brace
 Run the test scripts from `test/`. They find the binaries through `../src/`.
 
 ```sh
-cd src && make test                               # build, then run every suite (~1.5 min)
-cd test && perl p3test.pl --onetest primer_task   # run one primer3_core test
-perl p3test.pl --fast --action                    # skip the slowest tests
+cd src && make test                                # build, then run every suite (~1.75 min)
+cd test && perl run_tests.pl --only=thal,p3 --fast # some suites; --fast skips the slowest p3 tests
+perl p3test.pl --onetest primer_task               # run one primer3_core test
 perl thal_test.pl     # also: dpal_test.pl oligotm_test.pl masker_test.pl cmdline_test.pl a3test.pl
 ```
 
-Check results by searching the output for `[FAILED]`:
+`make test` runs `test/run_tests.pl`:
+- It runs every suite, also after one fails, and passes `--action` to `p3test.pl` and `a3test.pl`.
+- At the end it prints the run time of each suite, every failed test and a `RESULT:` line, and exits 1 if anything failed. So read the summary instead of searching the output.
+- Options: `--windows` (also skips the masker), `--valgrind`, `--valgrinda`, `--valgrindb`, `--fast` (only for `p3test.pl`) and `--only=SUITE,...` with the suites `cmdline oligotm dpal thal masker a3 p3`.
+- `--valgrinda` and `--valgrindb` split the valgrind run as CI does: `--valgrinda` runs the small suites with `--valgrind` and `a3test.pl` and `p3test.pl` with `--valgrinda`; `--valgrindb` runs only `p3test.pl --valgrindb`.
+- With `GITHUB_ACTIONS=true` it also writes `::error` annotations and a job summary. The workflows call each script in its own step; only the valgrind jobs use it, through `make valgrnda` and `make valgrndb`.
+- `make test_separately` is the old chain of targets, which stops at the first suite that exits non-zero.
+
+When you run a single script, search its output for `[FAILED]`:
 - `p3test.pl` and `a3test.pl` exit 0 even when tests fail, unless you pass `--action`.
-- The other scripts exit non-zero on failure, which stops `make test` before the later suites run.
-- A plain `FAILED` also matches the reminder line that `make test` prints at the end.
+- The other scripts exit non-zero on failure.
 
 The scripts run the binaries in `../src/`, so don't rebuild while a script is running. For experiments with other build flags, use a copy outside the repository, for example `git archive HEAD | tar -x -C <dir>`.
 
-To run under valgrind, first build with `make O_OPTS=-O0`. Then, in `test/`, run `make valgrnda` and `make valgrndb` (how CI splits it), or `make TESTOPTS=--valgrind` for everything. `src/paranoid_tests.sh` runs the full -O2, -O3 and valgrind sequence.
+To run under valgrind, first build with `make O_OPTS=-O0`. Then, in `test/`, run `make valgrnda` and `make valgrndb` (how CI splits it; they call `run_tests.pl --valgrinda` and `--valgrindb`), or `make TESTOPTS=--valgrind` for everything. Each script checks only the valgrind logs it wrote itself: `*.vg` from `cmdline_test.pl`, `a3test.pl` and `p3test.pl`, and `*.valg` from the other scripts. `src/paranoid_tests.sh` runs the full -O2, -O3 and valgrind sequence.
 
 For AddressSanitizer and UBSan, rebuild and then run the test scripts as usual:
 
@@ -213,6 +220,7 @@ To debug thal:
 
 ## CI
 
-The workflows in `.github/workflows/` run only on pushes to `main`.
-- On Ubuntu, macOS and Windows, each test script runs separately, with `--action` for `p3test.pl` and `a3test.pl`.
-- A "paranoid" job repeats the tests at -O2 and -O3 and under valgrind.
+The workflows in `.github/workflows/`:
+- Ubuntu, macOS and Windows run on pushes to `main`, on pull requests and by hand (`workflow_dispatch`). Each test script runs in its own step, with `--action` for `p3test.pl` and `a3test.pl`. Windows leaves out the masker.
+- The "paranoid" workflow runs on pushes to `main` and by hand. Its first job tests at -O2, with AddressSanitizer and UBSan, and at -O3; two more jobs run `make valgrnda` and `make valgrndb` on an -O0 build.
+- After a failed test step the later test steps still run, as long as their build succeeded, and the `src` and `test` folders are always uploaded as artifacts. The job still fails.

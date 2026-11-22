@@ -81,6 +81,8 @@ if ($do_valgrind) {
 my $valgrind_format
     = "$valgrind_exe --leak-check=yes "
     . " --show-reachable=yes --log-file=oligotm.%0.3d.valg ";
+# Logs of an earlier run would be checked, too
+unlink glob('oligotm.*.valg') if $do_valgrind;
 
 my $nr=1;
 my $failure=0;
@@ -110,7 +112,7 @@ while(<F>){
     if($tm){
         if(abs($tm-$tmp[6])>EPSILON) {
             $failure++;
-            print "$cmd [FAILED] (expected $tm, got $tmp[6])\n";
+            print "$cmd [FAILED] (expected $tmp[6], got $tm)\n";
         }
     } else {
         $failure++;
@@ -123,11 +125,22 @@ close F;
 $nr--;
 
 if ($do_valgrind) {
-    my $r = system "grep ERROR *.valg.* | grep -v 'ERROR SUMMARY: 0 errors'";
+    my $r = system "grep ERROR oligotm.*.valg | grep -v 'ERROR SUMMARY: 0 errors'";
     if (!$r) { 
         # !$r because grep returns 0 if something is found,
         # and if something is found, we have a problem.
-        print "valgrind found errors\n";
+        print "valgrind found errors [FAILED]\n";
+        $failure++;
+    }
+    $r = system "grep 'definitely lost' oligotm.*.valg | grep -v ' 0 bytes'";
+    if (!$r) {
+        print "valgrind found leaks [FAILED]\n";
+        $failure++;
+    }
+    $r = system "grep 'possibly lost' oligotm.*.valg | grep -v ' 0 bytes'";
+    if (!$r) {
+        print "valgrind found leaks [FAILED]\n";
+        $failure++;
     }
 }
 

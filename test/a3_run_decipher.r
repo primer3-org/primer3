@@ -15,9 +15,12 @@ if (length(args) > 0) {
 
 cat("Installing Decipher library...\n")
 
-if (!requireNamespace("BiocManager", quietly=TRUE))
-   install.packages("BiocManager")
-BiocManager::install("DECIPHER")
+# Install only what is missing, not on every run
+if (!requireNamespace("DECIPHER", quietly=TRUE)) {
+   if (!requireNamespace("BiocManager", quietly=TRUE))
+      install.packages("BiocManager")
+   BiocManager::install("DECIPHER")
+}
 
 cat("Loading Decipher library...\n")
 library("DECIPHER")
@@ -25,8 +28,9 @@ library("DECIPHER")
 cat("Loading Amplicons...\n")
 allSeqs <- read.table(file = 'amplicon3/amplicons.csv', header = FALSE, sep=";", stringsAsFactors=FALSE)
 
-sName <- character(nrow(allSeqs) - 1)
-rTemp <- numeric(nrow(allSeqs) - 1)
+# One entry per amplicon; amplicons.csv has no header line
+sName <- character(nrow(allSeqs))
+rTemp <- numeric(nrow(allSeqs))
 
 for (wCol in 1:nrow(allSeqs)){
     cat(paste("Processing ", allSeqs[wCol, 1], "...\n", sep = "",  collapse = ""))
@@ -63,9 +67,9 @@ for (wCol in 1:nrow(allSeqs)){
         dev.off()
     }
 
-    sName[wCol - 1] <- allSeqs[wCol, 1]
+    sName[wCol] <- allSeqs[wCol, 1]
     calcTemp <- temp[which.max(deriv)]
-    rTemp[wCol - 1] <- calcTemp
+    rTemp[wCol] <- calcTemp
     cat(paste(allSeqs[wCol, 1], ": ", calcTemp, "°C\n", sep = "",  collapse = ""))
 }
 

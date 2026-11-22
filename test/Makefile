@@ -39,19 +39,35 @@
 
 WINMAKE=mingw32-make
 
+# The targets below run test scripts one after the other; with make -j
+# they would run in parallel to the build and to each other, but they
+# share the programs in ../src and some output files.
+.NOTPARALLEL:
+
 # See ../src/Makefile for detailed instructions on how to use TESTOPTS
 # The only valid non-empty values for TESTOPTS are --valgrind and --windows
 TESTOPTS =
 
 
-test: makeexes testcmdline testtm testdpal testthal testmasker testamp testcore
+# Runs every suite, also after a failure, and prints a summary of all
+# failures with the run times; exits non-0 if anything failed.
+test: makeexes
+	perl run_tests.pl $(TESTOPTS)
+
+# The old way: stops at the first suite that exits non-0, and the
+# output has to be searched for [FAILED].
+test_separately: makeexes testcmdline testtm testdpal testthal testmasker testamp testcore
 	echo; echo; echo "Testing completed. You must check the test output for the string FAILED"; echo; echo;
 
-valgrnda: makeexes testcmdline testtm testdpal testthal testmasker testampa testcorea
-	echo; echo; echo "Testing completed. You must check the test output for the string FAILED"; echo; echo;
+# The two halves of the valgrind run in CI.  valgrnda runs the small
+# suites with --valgrind and a3test.pl and p3test.pl with --valgrinda;
+# valgrndb runs the rest of p3test.pl.  Like make test, every suite
+# runs also after a failure, and a summary follows at the end.
+valgrnda: makeexes
+	perl run_tests.pl --valgrinda
 
-valgrndb: testcoreb
-	echo; echo; echo "Testing completed. You must check the test output for the string FAILED"; echo; echo;
+valgrndb: makeexes
+	perl run_tests.pl --valgrindb
 
 
 testcmdline:
@@ -76,7 +92,7 @@ else
 endif
 
 testampa:
-	echo; echo; echo 'TESTING primer3_core'; echo; perl a3test.pl --valgrinda
+	echo; echo; echo 'TESTING amplicon3_core'; echo; perl a3test.pl --valgrinda
 
 testcorea:
 	echo; echo; echo 'TESTING primer3_core'; echo; perl p3test.pl --valgrinda
@@ -100,7 +116,7 @@ endif
 
 testmasker:
 ifeq ($(TESTOPTS),--windows)
-	echo 'TESTING MASKER' & perl masker_test.pl $(TESTOPTS)
+	echo 'masker is not built on Windows'
 else
 	echo; echo; echo 'TESTING MASKER'; echo; perl masker_test.pl $(TESTOPTS);
 endif
@@ -114,7 +130,7 @@ endif
 
 makeexes:
 ifeq ($(TESTOPTS),--windows)
-	cd ../src & $(WINMAKE)
+	cd ../src & $(WINMAKE) TESTOPTS=$(TESTOPTS)
 else
 	cd ../src; make
 endif

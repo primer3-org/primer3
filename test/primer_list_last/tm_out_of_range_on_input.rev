@@ -1,0 +1,9 @@
+ACCEPTABLE RIGHT PRIMERS
+                                  0-based     #               self  self  qual-
+   # sequence                       start ln  N   GC%     Tm   any   end   lity
+   0 atctacctcctcaatggt              1919 18  0 44.44 48.744  3.00  0.00 13.226
+   1 tctacctcctcaatggtg              1918 18  0 50.00 51.404  3.00  2.00 10.566
+   2 atctacctcctcaatggtg             1919 19  0 47.37 52.239  3.00  2.00  8.731
+   3 tacctcctcaatggtggg              1916 18  0 55.56 56.726  4.00  2.00  5.244
+   4 ctacctcctcaatggtggg             1917 19  0 57.89 57.927  4.00  2.00  3.043
+   5 tctacctcctcaatggtggg            1918 20  0 55.00 59.920  4.00  2.00  0.050

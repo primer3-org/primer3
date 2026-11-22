@@ -108,6 +108,15 @@ sub runtest($$$$$) {
 }
 
 sub main() {
+    # Signal numbers by name, for the Ctrl-C check in _nowarn_system()
+    if (defined $Config{sig_name}) {
+        my $i = 0;
+        for my $name (split(' ', $Config{sig_name})) {
+            $signo{$name} = $i;
+            $i++;
+        }
+    }
+
     my %args;
 
     # select STDERR;
@@ -146,6 +155,8 @@ sub main() {
     $valgrind_format
         = "$valgrind_exe --leak-check=yes "
         . " --show-reachable=yes --log-file=masker.%0.4d.valg ";
+    # Logs of an earlier run would be checked, too
+    unlink glob('masker.*.valg') if $do_valgrind;
 
     if ($winFlag) {
         $exe = '..\\src\\masker.exe';
@@ -175,11 +186,11 @@ sub main() {
             # and if something is found, we have a problem.
             $exit_status = -1;
         }
-        $r = system "grep 'definitely lost' masker.*.*valg* | grep -v '0 bytes'";
+        $r = system "grep 'definitely lost' masker.*.*valg* | grep -v ' 0 bytes'";
         if (!$r) {
             $exit_status = -1;
         }
-        $r = system "grep 'possibly lost' masker.*.*valg*  | grep -v '0 bytes'";
+        $r = system "grep 'possibly lost' masker.*.*valg*  | grep -v ' 0 bytes'";
         if (!$r) {
             $exit_status = -1;
         }
@@ -266,7 +277,7 @@ sub _nowarn_system($) {
         print "Presumably interrupted by SIGINT\n";
         print "Tests halted\n\n";
         print "\nWARNING: not all tests executed ... [FAILED]\n";
-        exit;
+        exit 1;  # an interrupted run is not a success
     }
     if (!$winFlag && WIFEXITED($r2)) {
         $r = WEXITSTATUS($r2);

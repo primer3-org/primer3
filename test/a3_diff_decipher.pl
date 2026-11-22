@@ -171,7 +171,7 @@ sub main() {
         $exit_stat = -1;
     }
 
-    exit 0;  #  Generally we want the testing to continue.
+    exit $exit_stat;
 }
 
 # Usage: perldiff("string", "filename2")
@@ -211,7 +211,8 @@ sub perldiff($$) {
             $linErr = 1;
         }
         for my $i (0 .. $#arr1) {
-            if ($arr1[$i] - $arr2[$i] > 0.000003) {
+            # Deviations in both directions count
+            if (abs($arr1[$i] - $arr2[$i]) > 0.000003) {
                 $linErr = 1;
             }
             if (($arr1[$i] < 0.000003) || ($arr2[$i] < 0.000003)) {
@@ -230,8 +231,12 @@ sub perldiff($$) {
     }
     close(F1);
     close(F2);
-    my $percent = ($test_count / $all_count) * 100;
-    print "\n   $test_count of $all_count (" . sprintf("%.1f", $percent) . "%) below test limit of 0.000003.\n";
+    if ($all_count > 0) {
+        my $percent = ($test_count / $all_count) * 100;
+        print "\n   $test_count of $all_count (" . sprintf("%.1f", $percent) . "%) below test limit of 0.000003.\n";
+    } else {
+        print "\n   No values compared.\n";
+    }
 
     return 0;
 }
@@ -277,7 +282,8 @@ sub perldifffloat($$) {
             $linErr = 1;
         }
         for my $i (0 .. $#arr1) {
-            if ($arr1[$i] - $arr2[$i] > 0.000003) {
+            # Deviations in both directions count
+            if (abs($arr1[$i] - $arr2[$i]) > 0.000003) {
                 $linErr = 1;
             }
             if (($arr1[$i] < 0.000003) || ($arr2[$i] < 0.000003)) {
@@ -297,8 +303,12 @@ sub perldifffloat($$) {
     }
     close(F1);
     close(F2);
-    my $percent = ($test_count / $all_count) * 100;
-    print "\n   $test_count of $all_count (" . sprintf("%.1f", $percent) . "%) below test limit of 0.000003.\n";
+    if ($all_count > 0) {
+        my $percent = ($test_count / $all_count) * 100;
+        print "\n   $test_count of $all_count (" . sprintf("%.1f", $percent) . "%) below test limit of 0.000003.\n";
+    } else {
+        print "\n   No values compared.\n";
+    }
 
     return 0;
 }

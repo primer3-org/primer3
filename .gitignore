@@ -12,7 +12,6 @@ src/*.d
 *.a
 
 # Executables
-src/long_seq_tm_test
 src/ntdpal
 src/ntthal
 src/oligotm

@@ -63,6 +63,24 @@ our ($verbose, $do_valgrind, $winFlag, $fastFlag);
 our %signo;
 
 our $valgrind_format;
+
+# Valgrind logs written in this run.  Only these are checked at the
+# end, so logs of earlier runs and of the other test scripts (which
+# also write *.vg files into this directory) do not count.
+our @valgrind_logs;
+
+# Returns the valgrind prefix for a command whose log is $name.vg in
+# the directory the command runs in; $dir is that directory relative to
+# test/ ('' for test/ itself).  Deletes an old log of the same name.
+sub valgrind_prefix($$) {
+    my ($name, $dir) = @_;
+    return '' if !$do_valgrind;
+    my $log = $name . '.vg';
+    $log = "$dir/$log" if $dir ne '';
+    unlink $log;
+    push @valgrind_logs, $log;
+    return sprintf $valgrind_format, $name;
+}
                    
 # Global variable for Errors
 my $all_ok;
@@ -167,44 +185,37 @@ sub main() {
     # passes must not reset it.
 
     # Test 1 : check '-output' and 'input_file'
-    $valgrind_prefix
-       = $do_valgrind ? sprintf $valgrind_format, 'cmd_test1' : '';
+    $valgrind_prefix = valgrind_prefix('cmd_test1', '');
     $cmd = "$valgrind_prefix$exe --default_version=1 --strict --output=cmd_test1.tmp $input";
     $exit_stat = -1 if runtest(1, $cmd, $output, 0);
     
     # Test 2 : check '> output' and '< input_file'
-    $valgrind_prefix
-       = $do_valgrind ? sprintf $valgrind_format, 'cmd_test2' : '';
+    $valgrind_prefix = valgrind_prefix('cmd_test2', '');
     $cmd = "$valgrind_prefix$exe --default_version=1 --st > cmd_test2.tmp < $input";
     $exit_stat = -1 if runtest(2, $cmd, $output, 0);
     
     # Test 3 : check incorrect flag and '-error_file'
-    $valgrind_prefix
-       = $do_valgrind ? sprintf $valgrind_format, 'cmd_test3' : '';
+    $valgrind_prefix = valgrind_prefix('cmd_test3', '');
     $cmd = "$valgrind_prefix$exe --flag --err=cmd_test3.tmp < $input";
     $exit_stat = -1 if runtest(3, $cmd, 'cmd_test3_output', 255);
     
     # Test 4 : check nonexistent input file and '2> error_file'
-    $valgrind_prefix
-       = $do_valgrind ? sprintf $valgrind_format, 'cmd_test4' : '';
+    $valgrind_prefix = valgrind_prefix('cmd_test4', '');
     $cmd = "$valgrind_prefix$exe invalid_input 2> cmd_test4.tmp";
     $exit_stat = -1 if runtest(4, $cmd, 'cmd_test4_output', 255);
 
     # Test 5 : check that io_version=3 fails
-    $valgrind_prefix
-       = $do_valgrind ? sprintf $valgrind_format, 'cmd_test5' : '';
+    $valgrind_prefix = valgrind_prefix('cmd_test5', '');
     $cmd = "$valgrind_prefix$exe --io_version=3 2> cmd_test5.tmp";
     $exit_stat = -1 if runtest(5, $cmd, 'cmd_test5_output', 255);
 
     # Test 6 : a repeated '-output' replaces the first value
-    $valgrind_prefix
-       = $do_valgrind ? sprintf $valgrind_format, 'cmd_test6' : '';
+    $valgrind_prefix = valgrind_prefix('cmd_test6', '');
     $cmd = "$valgrind_prefix$exe --default_version=1 --strict --output=cmd_test6_unused.tmp --output=cmd_test6.tmp $input";
     $exit_stat = -1 if runtest(6, $cmd, $output, 0);
 
     # Test 7 : a repeated '-error_file' replaces the first value
-    $valgrind_prefix
-       = $do_valgrind ? sprintf $valgrind_format, 'cmd_test7' : '';
+    $valgrind_prefix = valgrind_prefix('cmd_test7', '');
     $cmd = "$valgrind_prefix$exe --flag --err=cmd_test7_unused.tmp --err=cmd_test7.tmp < $input";
     $exit_stat = -1 if runtest(7, $cmd, 'cmd_test3_output', 255);
 
@@ -213,19 +224,20 @@ sub main() {
     # errors (reading uninitialized memory, writing off the end of
     # an array, etc) or leaks, then we look through the valgrind
     # logs to summarize errors and leaks.
-    if ($do_valgrind) {
+    if ($do_valgrind && @valgrind_logs) {
         # Assume this is Unix/Linux environment, so
         # we have grep.
-        my $r = system "grep ERROR *.vg | grep -v 'ERROR SUMMARY: 0 errors'";
+        my $logs = join(' ', @valgrind_logs);
+        my $r = system "grep ERROR $logs | grep -v 'ERROR SUMMARY: 0 errors'";
         if (!$r) { # !$r because grep returns 0 if something is found,
             # and if something is found, we have a problem.
             $exit_stat = -1;
         }
-        $r = system "grep 'definitely lost' *.vg | grep -v ' 0 bytes'";
+        $r = system "grep 'definitely lost' $logs | grep -v ' 0 bytes'";
         if (!$r) {
             $exit_stat = -1;
         }
-        $r = system "grep 'possibly lost' *.vg   | grep -v ' 0 bytes'";
+        $r = system "grep 'possibly lost' $logs | grep -v ' 0 bytes'";
         if (!$r) {
             $exit_stat = -1;
         }
@@ -364,7 +376,7 @@ sub _nowarn_system($) {
         print "Presumably interrupted by SIGINT\n";
         print "Tests halted\n\n";
         print "\nWARNING: not all tests executed ... [FAILED]\n";
-        exit;
+        exit 1;  # an interrupted run is not a success
     }
     if (!$winFlag && WIFEXITED($r2)) {
         $r = WEXITSTATUS($r2);
