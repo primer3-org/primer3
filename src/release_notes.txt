@@ -217,6 +217,29 @@ Minor fixes:
     oligos with these weights is now higher, in particular for
     structures less than 5 C below the internal oligo Tm.
 
+30. primer3_core no longer catches SIGINT and SIGTERM. Before, it
+    printed the usage text and ended with the signal number as exit
+    status (2 or 15), which could not be told apart from a normal
+    error and was not safe in a signal handler. Now the signal ends
+    the program without a message, and the shell reports 130 or 143.
+
+31. libprimer3.h now matches the library. Programs that link against
+    libprimer3.a could not use several declared functions:
+    - The prototype of p3_set_gs_primer_annealing_temp() now takes a
+      double.
+    - p3_get_global_settings_p_args/o_args() are now named
+      p3_get_gs_p_args/o_args(), and p3_set_gs_primer_io_wt_wt_coml_any()
+      and its _th variant are now spelled ..._compl_any(), as in the
+      library.
+    - New prototypes for existing functions: p3_get_sa_n_quality(),
+      p3_get_sa_intl_overlap_junctions(),
+      p3_sa_add_to_intl_overlap_junctions_array(),
+      p3_set_gs_primer_internal_oligo_opt_gc_percent() and
+      p3_set_gs_primer_internal_oligo_hairpin_th().
+    - 16 declarations of functions that never existed were removed,
+      and the duplicate p3_set_gs_max_diff_tm() was removed (use
+      p3_set_gs_primer_max_diff_tm()).
+
 
 release 2.6.1 2022-01-26  ===============================================
 This release fixes a small memory bug.

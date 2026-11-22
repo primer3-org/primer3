@@ -283,7 +283,7 @@ add_variable_to_formula_parameters (char **list_values, unsigned int nvalues, pa
       if (*end != 0 || mm > 2) {
         pr_append_new_chunk_external (parse_err, "Invalid mismatches value specified: ");
         pr_append_external (parse_err, list_values[2]);
-        pr_append_external (parse_err, ". Must be a positive integer less than 2.");
+        pr_append_external (parse_err, ". Must be 0, 1 or 2.");
         return 3;
       }
     }

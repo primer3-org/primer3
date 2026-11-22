@@ -564,7 +564,8 @@ TAACGATTGTTATATATTATTTATTGCTCTCTCATATATCTATCTAGACCTGAAATCAGTCGAGGATACC
 CGCTGAATTTAAGCATATTATTAAGCGGAGGAAAAGAAAATAACTATGATTCCCTCAGTAACGGCGAGTG
 AAGAGGGAGGTGCTCAAAGTGAAAATCGTGGTACCTCTTATGGTACCGCGAGTTGTAGCCTCTAGAGGCG
 T
-Usage: ./primer3_masker [OPTIONS] <INPUTFILE>
+Usage: ./primer3_masker [OPTIONS] [INPUTFILE]
+Reads FASTA from INPUTFILE, or from stdin if no INPUTFILE is given (needs at least one option).
 Options:
     -h, --help                   - print this usage screen and exit
 
@@ -573,13 +574,17 @@ Options:
     -lp, --list_prefix           - prefix of the k-mer lists to use with default model (default: homo_sapiens)
 
     -a, --absolute_value_cutoff  - masking cutoff based on k-mer count; requires a single list name, defined with -l
-    -l, --list                   - define a single k-mer list for masking with absolute cutoff option -a
+    -l, --list                   - add a term to the masking formula, may be repeated:
+                                   -l LIST [COEFFICIENT [MISMATCHES [sq]]], MISMATCHES 0, 1 or 2,
+                                   or -l INTERCEPT for the constant term
+    -lf, --lists_file            - file with the formula terms, one -l value list per line
 
     -m5, --mask_5p               - nucleotides to mask in 5' direction (default: 1, at most the longest k-mer length)
     -m3, --mask_3p               - nucleotides to mask in 3' direction (default: 0)
     -c, --masking_char           - character used for masking (default: N)
     -s, --soft_mask              - use soft masking (default: false)
     -d, --masking_direction      - a strand to mask (fwd, rev, both) (default: both)
+    -D                           - print the parameters and debug information to stderr; repeat for more
 
 EXIT=1
 >AB769665.1 Eimeria zuernii genes for 18S rRNA, internal transcribed spacer 1, 5.8S rRNA, internal transcribed spacer 2 and 28S rRNA, partial and complete sequence, isolate: 4-1
@@ -629,7 +634,8 @@ TAACGATTGTTATATATTATTTATTGCTCTCTCATATATCTATCTAGACCTGAAATCAGTCGAGGATACC
 CGCTGAATTTAAGCATATTATTAAGCGGAGGAAAAGAAAATAACTATGATTCCCTCAGTAACGGCGAGTG
 AAGAGGGAGGTGCTCAAAGTGAAAATCGTGGTACCTCTTATGGTACCGCGAGTTGTAGCCTCTAGAGGCG
 T
-Usage: ./primer3_masker [OPTIONS] <INPUTFILE>
+Usage: ./primer3_masker [OPTIONS] [INPUTFILE]
+Reads FASTA from INPUTFILE, or from stdin if no INPUTFILE is given (needs at least one option).
 Options:
     -h, --help                   - print this usage screen and exit
 
@@ -638,13 +644,17 @@ Options:
     -lp, --list_prefix           - prefix of the k-mer lists to use with default model (default: homo_sapiens)
 
     -a, --absolute_value_cutoff  - masking cutoff based on k-mer count; requires a single list name, defined with -l
-    -l, --list                   - define a single k-mer list for masking with absolute cutoff option -a
+    -l, --list                   - add a term to the masking formula, may be repeated:
+                                   -l LIST [COEFFICIENT [MISMATCHES [sq]]], MISMATCHES 0, 1 or 2,
+                                   or -l INTERCEPT for the constant term
+    -lf, --lists_file            - file with the formula terms, one -l value list per line
 
     -m5, --mask_5p               - nucleotides to mask in 5' direction (default: 1, at most the longest k-mer length)
     -m3, --mask_3p               - nucleotides to mask in 3' direction (default: 0)
     -c, --masking_char           - character used for masking (default: N)
     -s, --soft_mask              - use soft masking (default: false)
     -d, --masking_direction      - a strand to mask (fwd, rev, both) (default: both)
+    -D                           - print the parameters and debug information to stderr; repeat for more
 
 EXIT=1
 >AB769665.1 Eimeria zuernii genes for 18S rRNA, internal transcribed spacer 1, 5.8S rRNA, internal transcribed spacer 2 and 28S rRNA, partial and complete sequence, isolate: 4-1
@@ -979,7 +989,8 @@ TAACGATTGTTATATATTATTTATTGCTCTCTCATATATCTATCTAGACCTGAAATCAGTCGAGGATACC
 CGCTGAATTTAAGCATATTATTAAGCGGAGGAAAAGAAAATAACTATGATTCCCTCAGTAACGGCGAGTG
 AAGAGGGAGGTGCTCAAAGTGAAAATCGTGGTACCTCTTATGGTACCGCGAGTTGTAGCCTCTAGAGGCG
 T
-Usage: ./primer3_masker [OPTIONS] <INPUTFILE>
+Usage: ./primer3_masker [OPTIONS] [INPUTFILE]
+Reads FASTA from INPUTFILE, or from stdin if no INPUTFILE is given (needs at least one option).
 Options:
     -h, --help                   - print this usage screen and exit
 
@@ -988,13 +999,17 @@ Options:
     -lp, --list_prefix           - prefix of the k-mer lists to use with default model (default: homo_sapiens)
 
     -a, --absolute_value_cutoff  - masking cutoff based on k-mer count; requires a single list name, defined with -l
-    -l, --list                   - define a single k-mer list for masking with absolute cutoff option -a
+    -l, --list                   - add a term to the masking formula, may be repeated:
+                                   -l LIST [COEFFICIENT [MISMATCHES [sq]]], MISMATCHES 0, 1 or 2,
+                                   or -l INTERCEPT for the constant term
+    -lf, --lists_file            - file with the formula terms, one -l value list per line
 
     -m5, --mask_5p               - nucleotides to mask in 5' direction (default: 1, at most the longest k-mer length)
     -m3, --mask_3p               - nucleotides to mask in 3' direction (default: 0)
     -c, --masking_char           - character used for masking (default: N)
     -s, --soft_mask              - use soft masking (default: false)
     -d, --masking_direction      - a strand to mask (fwd, rev, both) (default: both)
+    -D                           - print the parameters and debug information to stderr; repeat for more
 
 EXIT=1
 >k20 test: the 20-mer has a one-mismatch neighbour (first base) in masker_k20.list

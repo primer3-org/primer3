@@ -41,6 +41,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define OS_WIN
 #endif
 
+#include <errno.h>
 #include <limits.h>
 #include <stdlib.h>  /* strtod, strtol,... */
 #include <ctype.h> /* toupper, isspace */
@@ -719,8 +720,7 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_LIBRARY_MISHYB", pa->o_args.weights.repeat_sim);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_SEQ_QUAL", pa->o_args.weights.seq_quality);
       COMPARE_FLOAT("PRIMER_INTERNAL_WT_END_QUAL", pa->o_args.weights.end_quality);
-      COMPARE_FLOAT("PRIMER_WT_TEMPLATE_MISPRIMING_TH",
-                    pa->o_args.weights.template_mispriming_th);
+
       COMPARE_FLOAT("PRIMER_PAIR_WT_PR_PENALTY", 
                     pa->pr_pair_weights.primer_quality);
       COMPARE_FLOAT("PRIMER_PAIR_WT_IO_PENALTY",
@@ -1100,8 +1100,9 @@ parse_int(const char *tag_name, const char *datum,
 {
     char *nptr;
     long tlong;
+    errno = 0;
     tlong = strtol(datum, &nptr, 10);
-    if (tlong > INT_MAX || tlong < INT_MIN) {
+    if (errno == ERANGE || tlong > INT_MAX || tlong < INT_MIN) {
         tag_syntax_error(tag_name, datum, err);
         pr_append(err, " (value too large or too small)");
         return;
@@ -1135,8 +1136,9 @@ parse_int_pair(const char    *tag_name, const char *datum,
 {
     char *nptr, *tmp;
     long tlong;
+    errno = 0;
     tlong = strtol(datum, &nptr, 10);
-    if (tlong > INT_MAX || tlong < INT_MIN) {
+    if (errno == ERANGE || tlong > INT_MAX || tlong < INT_MIN) {
         tag_syntax_error(tag_name, datum, err);
         pr_append(err, " (value too large or too small)");
         return NULL;
@@ -1154,8 +1156,9 @@ parse_int_pair(const char    *tag_name, const char *datum,
     nptr++; /* Advance past separator. */
     while (' ' == *nptr || '\t' == *nptr) nptr++;
     tmp = nptr;
+    errno = 0;
     tlong = strtol(tmp, &nptr, 10);
-    if (tlong > INT_MAX || tlong < INT_MIN) {
+    if (errno == ERANGE || tlong > INT_MAX || tlong < INT_MIN) {
         tag_syntax_error(tag_name, datum, err);
         pr_append(err, " (value too large or too small)");
         return NULL;
@@ -1167,14 +1170,6 @@ parse_int_pair(const char    *tag_name, const char *datum,
     }
     while (' ' == *nptr || '\t' == *nptr) nptr++;
 
-    /* A hack to live with the old TARGET syntax. */
-    if (',' == *nptr && !strcmp(tag_name, "TARGET")) {
-        /* Skip the old-fashioned "description". */
-        while(' ' != *nptr && '\t' != *nptr 
-              && '\0' != *nptr && '\n' != *nptr) nptr++;
-        /* Advance to non-space, non-tab. */
-        while (' ' == *nptr || '\t' == *nptr) nptr++;
-    }
     return nptr;
 }
 
@@ -1222,8 +1217,9 @@ parse_2_int_pair(const char    *tag_name, char *datum,
     if (*nptr == sep) {
       *out1 = -1;
     } else {
+      errno = 0;
       tlong = strtol(datum, &nptr, 10);
-      if (tlong > INT_MAX || tlong < INT_MIN) {
+      if (errno == ERANGE || tlong > INT_MAX || tlong < INT_MIN) {
         tag_syntax_error(tag_name, datum, err);
         pr_append(err, " (value too large or too small)");
         return NULL;
@@ -1245,8 +1241,9 @@ parse_2_int_pair(const char    *tag_name, char *datum,
     if (*nptr == sep) {
       *out2 = -1;
     } else {
+      errno = 0;
       tlong = strtol(tmp, &nptr, 10);
-      if (tlong > INT_MAX || tlong < INT_MIN) {
+      if (errno == ERANGE || tlong > INT_MAX || tlong < INT_MIN) {
         tag_syntax_error(tag_name, datum, err);
         pr_append(err, " (value too large or too small)");
         return NULL;
@@ -1268,8 +1265,9 @@ parse_2_int_pair(const char    *tag_name, char *datum,
     if (*nptr == sep) {
       *out3 = -1;
     } else {
+      errno = 0;
       tlong = strtol(tmp, &nptr, 10);
-      if (tlong > INT_MAX || tlong < INT_MIN) {
+      if (errno == ERANGE || tlong > INT_MAX || tlong < INT_MIN) {
         tag_syntax_error(tag_name, datum, err);
         pr_append(err, " (value too large or too small)");
         return NULL;
@@ -1291,8 +1289,9 @@ parse_2_int_pair(const char    *tag_name, char *datum,
     if ((*nptr == '\n') || (*nptr == '\0') || (*nptr == sep2)) {
       *out4 = -1;
     } else {
+      errno = 0;
       tlong = strtol(tmp, &nptr, 10);
-      if (tlong > INT_MAX || tlong < INT_MIN) {
+      if (errno == ERANGE || tlong > INT_MAX || tlong < INT_MIN) {
         tag_syntax_error(tag_name, datum, err);
         pr_append(err, " (value too large or too small)");
         return NULL;
@@ -1363,6 +1362,7 @@ parse_intron_list(char *s,
   p = q = s;
 
   while (*q != '\0' && *q != '\n') {
+    errno = 0;
     t = strtol(p, &q, 10);
     if (q == p) {
       while (*q != '\0') {
@@ -1374,7 +1374,7 @@ parse_intron_list(char *s,
       }
       return *count;
     }
-    if (t > INT_MAX || t < INT_MIN) {
+    if (errno == ERANGE || t > INT_MAX || t < INT_MIN) {
       return 0;
     }
     if (*count >= max_count) {
@@ -1448,6 +1448,7 @@ parse_seq_quality(char *s,
   p = q = s;
 
   while (*q != '\0' && *q != '\n') {
+    errno = 0;
     t = strtol(p, &q, 10);
     if (q == p) {
       while (*q != '\0') {
@@ -1458,6 +1459,10 @@ parse_seq_quality(char *s,
         q++;
       }
       return sargs->n_quality;
+    }
+    if (errno == ERANGE || t > INT_MAX || t < INT_MIN) {
+      p3_set_sa_empty_quality(sargs);
+      return 0;
     }
     p3_sa_add_to_quality_array(sargs, t);
 

@@ -660,9 +660,6 @@ typedef struct primer_rec {
         
 } primer_rec;
 
-const char *
-       p3_primer_rec_problems_to_string(const primer_rec *);
-
 int p3_ol_is_ok(const primer_rec *);
 
 /* 
@@ -996,10 +993,6 @@ const char *p3_get_rv_warnings(const p3retval *r);
 p3_output_type p3_get_rv_output_type(const p3retval *r);
 int            p3_get_rv_stop_codon_pos(p3retval *r);
 
-/* Get elements of an oligo_array */
-int p3_get_oa_n(const oligo_array *x);
-const  primer_rec *p3_get_oa_i(const oligo_array *x, int i);
-
 /* We still need accessors (getters) for the elements of
    primer_rec */
 
@@ -1014,7 +1007,9 @@ int p3_set_sa_right_input(seq_args *sargs, const char *right_input);
 int p3_set_sa_internal_input(seq_args *sargs, const char *internal_input);
 void p3_set_sa_empty_quality(seq_args *sargs);
 void p3_sa_add_to_quality_array(seq_args *sargs, int quality);
+int p3_get_sa_n_quality(seq_args *sargs);
 int p3_sa_add_to_overlap_junctions_array(seq_args *, int);
+int p3_sa_add_to_intl_overlap_junctions_array(seq_args *, int);
 
 /* The following three functions return 0 on success,
    1 on error (no space for additional intervals). */
@@ -1030,6 +1025,7 @@ const interval_array_t2 *p3_get_sa_excl_internal2(const seq_args *sargs);
 const interval_array_t4 *p3_get_sa_ok_regions(const seq_args *sargs);
 
 const int* p3_get_sa_overlap_junctions(const seq_args *sargs);
+const int* p3_get_sa_intl_overlap_junctions(const seq_args *sargs);
 
 /*
   use p3_add_to_interval_array(interval_array_t2 *interval_arr, int i1, int i2);
@@ -1049,12 +1045,7 @@ int p3_add_to_2_interval_array(interval_array_t4 *interval_arr, int i1, int i2, 
 void p3_set_sa_incl_s(seq_args *sargs, int incl_s);
 void p3_set_sa_incl_l(seq_args *sargs, int incl_l);
 
-void p3_set_sa_n_quality(seq_args *sargs, int n_quality) ;
 void p3_set_sa_start_codon_pos(seq_args *sargs, int start_codon_pos);
-int p3_set_sa_sequence_file(seq_args *sargs, const char *sequence_file);
-int p3_set_sa_trimmed_sequence(seq_args *sargs, const char *trimmed_sequence);
-int p3_set_sa_trimmed_original_sequence(seq_args *sargs, const char *trimmed_original_sequence);
-int p3_set_sa_upcased_sequence(seq_args *sargs, const char *upcased_sequencd);
 
 
 /* ============================================================ */
@@ -1088,8 +1079,7 @@ void p3_set_gs_primer_tm_santalucia(p3_global_settings * p,
                                     tm_method_type val);
 void p3_set_gs_primer_salt_corrections(p3_global_settings * p,
                                        salt_correction_type salt_corrections);
-void p3_set_gs_primer_annealing_temp(p3_global_settings * p,
-                                     salt_correction_type salt_corrections);
+void p3_set_gs_primer_annealing_temp(p3_global_settings * p, double val);
 void p3_set_gs_primer_min_gc(p3_global_settings * p , double val);
 void p3_set_gs_primer_max_gc(p3_global_settings * p , double val);
 void p3_set_gs_primer_salt_conc(p3_global_settings * p , double val);
@@ -1135,6 +1125,7 @@ void p3_set_gs_primer_internal_oligo_opt_bound(p3_global_settings * p , double v
 void p3_set_gs_primer_internal_oligo_max_bound(p3_global_settings * p , double val);
 void p3_set_gs_primer_internal_oligo_min_bound(p3_global_settings * p , double val);
 void p3_set_gs_primer_internal_oligo_min_gc(p3_global_settings * p , double val);
+void p3_set_gs_primer_internal_oligo_opt_gc_percent(p3_global_settings * p , double val);
 void p3_set_gs_primer_internal_oligo_max_gc(p3_global_settings * p , double val);
 void p3_set_gs_primer_internal_oligo_salt_conc(p3_global_settings * p , double val);
 void p3_set_gs_primer_internal_oligo_divalent_conc(p3_global_settings * p , double val);
@@ -1149,11 +1140,10 @@ void p3_set_gs_primer_internal_oligo_self_any(p3_global_settings * p , double va
 void p3_set_gs_primer_internal_oligo_self_any_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_internal_oligo_self_end(p3_global_settings * p , double val);
 void p3_set_gs_primer_internal_oligo_self_end_th(p3_global_settings * p , double val);
+void p3_set_gs_primer_internal_oligo_hairpin_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_max_mispriming(p3_global_settings * p , double val);
-void p3_set_gs_primer_max_mispriming_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_internal_oligo_max_mishyb(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_max_mispriming(p3_global_settings * p , double val);
-void p3_set_gs_primer_pair_max_mispriming_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_max_template_mispriming(p3_global_settings * p , double val);
 void p3_set_gs_primer_max_template_mispriming_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_lib_ambiguity_codes_consensus(p3_global_settings * p , int val);
@@ -1194,9 +1184,9 @@ void p3_set_gs_primer_io_wt_gc_percent_gt(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_gc_percent_lt(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_size_lt(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_size_gt(p3_global_settings * p , double val);
-void p3_set_gs_primer_io_wt_wt_coml_any(p3_global_settings * p , double val);
+void p3_set_gs_primer_io_wt_wt_compl_any(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_compl_end(p3_global_settings * p , double val);
-void p3_set_gs_primer_io_wt_wt_coml_any_th(p3_global_settings * p , double val);
+void p3_set_gs_primer_io_wt_wt_compl_any_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_compl_end_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_hairpin_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_io_wt_num_ns(p3_global_settings * p , double val);
@@ -1210,7 +1200,6 @@ void p3_set_gs_primer_pair_wt_compl_any(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_compl_any_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_compl_end(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_compl_end_th(p3_global_settings * p , double val);
-void p3_set_gs_primer_pair_wt_hairpin_th(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_product_tm_lt(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_product_tm_gt(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_product_size_gt(p3_global_settings * p , double val);
@@ -1218,9 +1207,6 @@ void p3_set_gs_primer_pair_wt_product_size_lt(p3_global_settings * p , double va
 void p3_set_gs_primer_pair_wt_rep_sim(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_template_mispriming(p3_global_settings * p , double val);
 void p3_set_gs_primer_pair_wt_template_mispriming_th(p3_global_settings * p , double val);
-void p3_set_gs_first_base_index(p3_global_settings * p , int first_base_index);
-void p3_set_gs_liberal_base(p3_global_settings * p , int liberal_base);
-void p3_set_gs_num_return(p3_global_settings * p , int num_return);
 void p3_set_gs_pick_anyway(p3_global_settings * p , int pick_anyway);
 void p3_set_gs_lib_ambiguity_codes_consensus(p3_global_settings * p , int lib_ambiguity_codes_consensus);
 void p3_set_gs_quality_range_min(p3_global_settings * p , int quality_range_min);
@@ -1231,10 +1217,8 @@ void p3_empty_gs_product_size_range(p3_global_settings *pgs);
    otherwise return 0. */
 
 int  p3_add_to_gs_product_size_range(p3_global_settings *, int, int);
-args_for_one_oligo_or_primer *p3_get_global_settings_p_args(p3_global_settings * p);
-args_for_one_oligo_or_primer *p3_get_global_settings_o_args(p3_global_settings * p);
-int p3_set_afogop_seq_lib(args_for_one_oligo_or_primer *, seq_lib *);
-int p3_set_afogop_opt_tm(args_for_one_oligo_or_primer *, double);
+args_for_one_oligo_or_primer *p3_get_gs_p_args(p3_global_settings * p);
+args_for_one_oligo_or_primer *p3_get_gs_o_args(p3_global_settings * p);
 
 /* max_end_gc must be >= 0 and <= 5 */
 void p3_set_gs_max_end_gc(p3_global_settings *p, int max_end_gc);

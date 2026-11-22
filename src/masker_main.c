@@ -38,6 +38,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <limits.h>
 
 #include "libprimer3.h"
 
@@ -50,6 +51,8 @@
 
 
 static void print_help (int exit_value);
+static void print_error_and_help (const pr_append_str *err);
+static int parse_count (const char *s, double max, unsigned int *value);
 void print_parameters (masker_parameters *mp);
 
 const char *pr_programme_name = "primer3_masker";
@@ -109,15 +112,16 @@ main (int argc, const char *argv[])
       if (file){
         fclose(file);
       } else {
-        print_help(1);
+        pr_append_new_chunk_external (&parse_err, "Cannot open input file: ");
+        pr_append_external (&parse_err, sequence_file_name);
+        print_error_and_help (&parse_err);
       }
 
     } else if (!strcmp (argv[idx], "-lf") || !strcmp (argv[idx], "--lists_file")) {
       /* lists specified from the file */
       if (!argv[idx + 1] || argv[idx + 1][0] == '-') {
-        pr_append_new_chunk_external (&warnings, "No lists file specified.");
-        idx += 1;
-        print_help(1);
+        pr_append_new_chunk_external (&parse_err, "No lists file specified with -lf");
+        print_error_and_help (&parse_err);
       }
       lists_file_name = argv[idx + 1];
       idx += 1;
@@ -126,12 +130,12 @@ main (int argc, const char *argv[])
       /* lists specified from the commandline */
       if (nlist_parameters == MAX_VARIABLES) {
         pr_append_new_chunk_external (&parse_err, "Maximum number of list variables reached.");
-        print_help(1);
+        print_error_and_help (&parse_err);
       }
 
       if (!argv[idx + 1]) {
-        pr_append_new_chunk_external (&warnings, "No list name specified with -l parameter!.");
-        print_help(1);
+        pr_append_new_chunk_external (&parse_err, "No list name specified with -l");
+        print_error_and_help (&parse_err);
       }
 
       /* get the positions of list files */
@@ -163,18 +167,16 @@ main (int argc, const char *argv[])
     } else if (!strcmp (argv[idx], "-lp") || !strcmp (argv[idx], "--list_prefix")) {
       /* lists specified by the prefix */
       if (!argv[idx + 1] || argv[idx + 1][0] == '-') {
-        pr_append_new_chunk_external (&warnings, "No list prefix specified! Using the default value.");
-        idx += 1;
-        print_help(1);
+        pr_append_new_chunk_external (&parse_err, "No list prefix specified with -lp");
+        print_error_and_help (&parse_err);
       }
       mp.list_prefix = (char *)argv[idx + 1];
       idx += 1;
     } else if (!strcmp (argv[idx], "-lh") || !strcmp (argv[idx], "--kmer_lists_path")) {
       /* kmer lists path */
       if (!argv[idx + 1] || argv[idx + 1][0] == '-') {
-         pr_append_new_chunk_external (&warnings, "No list prefix specified! Using the default value.");
-         idx += 1;
-         print_help(1);
+         pr_append_new_chunk_external (&parse_err, "No k-mer lists path specified with -lh");
+         print_error_and_help (&parse_err);
       }
          kmer_lists_path = (char *)argv[idx + 1];
          idx += 1;
@@ -186,7 +188,9 @@ main (int argc, const char *argv[])
       }
       mp.failure_rate = strtod (argv[idx + 1], &end);
       mp.abs_cutoff = 0;
-      if (*end != 0 || mp.failure_rate < 0 || mp.failure_rate > 1) {
+      /* The negated test also rejects NaN */
+      if (end == argv[idx + 1] || *end != 0
+          || !(mp.failure_rate >= 0 && mp.failure_rate <= 1)) {
         pr_append_new_chunk_external (&parse_err, "Invalid cutoff value: ");
         pr_append_external (&parse_err, argv[idx + 1]);
         /*free(parse_err.data);*/
@@ -200,9 +204,8 @@ main (int argc, const char *argv[])
         idx += 1;
         break;
       }
-      mp.abs_cutoff = strtod (argv[idx + 1], &end);
       mp.failure_rate = 0.0;
-      if (*end != 0 || mp.abs_cutoff < 0) {
+      if (!parse_count (argv[idx + 1], (double) UINT_MAX, &mp.abs_cutoff)) {
         pr_append_new_chunk_external (&parse_err, "Invalid absolute cutoff value: ");
         pr_append_external (&parse_err, argv[idx + 1]);
         break;
@@ -215,11 +218,11 @@ main (int argc, const char *argv[])
         idx += 1;
         continue;
       }
-      double n = strtod (argv[idx + 1], &end);
-      if (*end != 0 || !(n >= 0 && n <= MAX_NUCL_MASKED_5P)) {
+      unsigned int n;
+      if (!parse_count (argv[idx + 1], MAX_NUCL_MASKED_5P, &n)) {
         pr_append_new_chunk_external (&parse_err, "Invalid number of nucleotides masked in 5' direction: ");
         pr_append_external (&parse_err, argv[idx + 1]);
-        print_help(1);
+        print_error_and_help (&parse_err);
       }
       mp.nucl_masked_in_5p_direction = n;
       idx += 1;
@@ -230,11 +233,11 @@ main (int argc, const char *argv[])
         idx += 1;
         continue;
       }
-      double n = strtod (argv[idx + 1], &end);
-      if (*end != 0 || !(n >= 0 && n <= MAX_NUCL_MASKED)) {
+      unsigned int n;
+      if (!parse_count (argv[idx + 1], MAX_NUCL_MASKED, &n)) {
         pr_append_new_chunk_external (&parse_err, "Invalid number of nucleotides masked in 3' direction: ");
         pr_append_external (&parse_err, argv[idx + 1]);
-        print_help(1);
+        print_error_and_help (&parse_err);
       }
       mp.nucl_masked_in_3p_direction = n;
       idx += 1;
@@ -250,13 +253,15 @@ main (int argc, const char *argv[])
       if (strlen(argv[idx + 1]) > 1 || mp.masking_char < 33 || mp.masking_char > 126) {
         pr_append_new_chunk_external (&parse_err, "Invalid character for masking: ");
         pr_append_external (&parse_err, argv[idx + 1]);
-        print_help(1);
+        print_error_and_help (&parse_err);
       }
       idx += 1;
 
     } else if (!strcmp (argv[idx], "-d") || !strcmp (argv[idx], "--masking_direction")) {
       if (!argv[idx + 1] || argv[idx + 1][0] == '-') {
+        /* Do not consume the next argument, it is another option */
         pr_append_new_chunk_external (&warnings, "Masking direction not specified! Masking both strands by default.");
+        continue;
       } else if (!strcmp (argv[idx + 1], "both")) {
         mp.mdir = both_on_same;
       } else if (!strcmp (argv[idx + 1], "fwd")) {
@@ -279,8 +284,7 @@ main (int argc, const char *argv[])
     } else {
       pr_append_new_chunk_external (&parse_err, "Unknown parameter: ");
       pr_append_external (&parse_err, argv[idx]);
-      fprintf(stderr, "%s -> parsing commandline: ERROR: %s\n", pr_programme_name, parse_err.data);
-      print_help(1);
+      print_error_and_help (&parse_err);
     }
   }
         /*FILE *file = fopen(sequence_file_name, "r");
@@ -409,21 +413,57 @@ print_parameters (masker_parameters *mp)
 
 }
 
+/* Print the parse error to stderr, then the usage text, and exit with 1 */
+static void
+print_error_and_help (const pr_append_str *err)
+{
+  if (err->data != NULL) {
+    fprintf (stderr, "%s -> parsing commandline: ERROR: %s\n", pr_programme_name, err->data);
+  }
+  print_help (1);
+}
+
+/* Parse a whole number in [0, max]. Returns 0 for empty, non-numeric,
+   fractional, out-of-range and non-finite values. */
+static int
+parse_count (const char *s, double max, unsigned int *value)
+{
+  char *end;
+  double v = strtod (s, &end);
+  if (end == s || *end != 0) {
+    return 0;
+  }
+  /* The negated test also rejects NaN */
+  if (!(v >= 0 && v <= max)) {
+    return 0;
+  }
+  if (v != (double) (unsigned int) v) {
+    return 0;
+  }
+  *value = (unsigned int) v;
+  return 1;
+}
+
 static void
 print_help (int exit_value)
 {
-  fprintf (stdout, "Usage: ./primer3_masker [OPTIONS] <INPUTFILE>\n");
+  fprintf (stdout, "Usage: ./primer3_masker [OPTIONS] [INPUTFILE]\n");
+  fprintf (stdout, "Reads FASTA from INPUTFILE, or from stdin if no INPUTFILE is given (needs at least one option).\n");
   fprintf (stdout, "Options:\n");
   fprintf (stdout, "    -h, --help                   - print this usage screen and exit\n\n");
   fprintf (stdout, "    -p, --probability_cutoff     - masking cutoff [0, 1] (default: >=0.1)\n");
   fprintf (stdout, "    -lh, --kmer_lists_path       - path to the kmer list files (default: ../kmer_lists/)\n");
   fprintf (stdout, "    -lp, --list_prefix           - prefix of the k-mer lists to use with default model (default: homo_sapiens)\n\n");
   fprintf (stdout, "    -a, --absolute_value_cutoff  - masking cutoff based on k-mer count; requires a single list name, defined with -l\n");
-  fprintf (stdout, "    -l, --list                   - define a single k-mer list for masking with absolute cutoff option -a\n\n");
+  fprintf (stdout, "    -l, --list                   - add a term to the masking formula, may be repeated:\n");
+  fprintf (stdout, "                                   -l LIST [COEFFICIENT [MISMATCHES [sq]]], MISMATCHES 0, 1 or 2,\n");
+  fprintf (stdout, "                                   or -l INTERCEPT for the constant term\n");
+  fprintf (stdout, "    -lf, --lists_file            - file with the formula terms, one -l value list per line\n\n");
   fprintf (stdout, "    -m5, --mask_5p               - nucleotides to mask in 5' direction (default: 1, at most the longest k-mer length)\n");
   fprintf (stdout, "    -m3, --mask_3p               - nucleotides to mask in 3' direction (default: 0)\n");
   fprintf (stdout, "    -c, --masking_char           - character used for masking (default: N)\n");
   fprintf (stdout, "    -s, --soft_mask              - use soft masking (default: false)\n");
-  fprintf (stdout, "    -d, --masking_direction      - a strand to mask (fwd, rev, both) (default: both)\n\n");
+  fprintf (stdout, "    -d, --masking_direction      - a strand to mask (fwd, rev, both) (default: both)\n");
+  fprintf (stdout, "    -D                           - print the parameters and debug information to stderr; repeat for more\n\n");
   exit (exit_value);
 }

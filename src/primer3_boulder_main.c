@@ -36,7 +36,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <signal.h>
 #include <ctype.h>
 #include <string.h> /* strcmp() */
 #include <stdlib.h> /* free() */
@@ -56,7 +55,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* Some function prototypes */
 static void   print_usage();
-static void   sig_handler(int);
 #if !defined(OS_WIN)
 static void   validate_kmer_lists_path();
 #endif
@@ -120,12 +118,6 @@ main(int argc, char *argv[])
   pr_release = libprimer3_release();
   pr_program_name = argv[0];
   p3_set_program_name(pr_program_name);
-
-  /* We set up some signal handlers in case someone starts up the program
-   * from the command line, wonders why nothing is happening, and then kills
-   * the program. */
-  signal(SIGINT, sig_handler);
-  signal(SIGTERM, sig_handler);
 
   /* Read in the flags provided with the program call */
   opterr = 0;
@@ -587,11 +579,3 @@ print_usage()
   fprintf(stderr, "$ primer3_core < my_input_file\n");
 }
 
-/* Print out copyright, a short usage message and the signal */
-static void
-sig_handler(int signal)
-{
-    print_usage();
-    fprintf(stderr, "%s: received signal %d\n", pr_program_name, signal);
-    exit(signal);
-}

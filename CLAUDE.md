@@ -26,6 +26,14 @@ make clean_src        # cleans src only; `make clean` also deletes test temp fil
 - The compiler writes the header dependencies of each object file into `src/*.d` (`DEPFLAGS = -MMD -MP` in `src/Makefile`), so `make` rebuilds every object that includes a changed header. Object rules list only their source file; don't add headers by hand. A program built from a `*_main.c` needs its own object rule, because compiling and linking in one step writes no usable `.d` file.
 - Windows builds use `make TESTOPTS=--windows` (MinGW). That build leaves out the masker.
 
+## Code style
+
+In new or changed C/C++ code:
+- Write every `if`, `else if` and `else` with braces, never as a one-liner such as `if (x) y = 1;`.
+- Don't use the ternary operator `?:` to choose a value; write `if (...) { ... } else { ... }`.
+
+Don't reformat untouched code.
+
 ## Tests
 
 Run the test scripts from `test/`. They find the binaries through `../src/`.
@@ -183,6 +191,7 @@ Don't "fix" these:
 - Internal oligos are not checked for template mispriming (`PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB` is rejected as unsupported).
 - The pair template-mispriming value is the sum of two separate bindings, one of each primer on opposite strands, in the orientation that could amplify a product: the larger of `left->template_mispriming + right->template_mispriming` (both on the strand they bind at their own site) and `left->template_mispriming_r + right->template_mispriming_r` (both on the other strand). The positions of the two bindings are not compared. It is used for the penalty, but there is no pair structure; only `PRIMER_LEFT/RIGHT_n_TEMPLATE_MISPRIMING_STUCT` exist.
 - dpal's global modes (`g`, `G` in `ntdpal`) are semi-global, not Needleman-Wunsch: unaligned ends cost nothing.
+- In `test/masker_lists.txt` the first path starts with `../test/` twelve times on purpose: it tests a bug with long paths in lists files.
 
 ### Settings files
 

@@ -377,22 +377,24 @@ sub _nowarn_system($) {
     no warnings 'all';
     my $r = system $cmd;
     my $r2 = $?;
+    # Ctrl-C (SIGINT) ends the tested program. The shell that runs the
+    # command then exits with 128 + the signal number, or is ended by
+    # the signal itself.
+    if (!$winFlag && defined $signo{'INT'}
+        && ((WIFEXITED($r2) && WEXITSTATUS($r2) == 128 + $signo{'INT'})
+            || (WIFSIGNALED($r2) && WTERMSIG($r2) == $signo{'INT'}))) {
+        print "\nCommand: $cmd\n";
+        print "Presumably interrupted by SIGINT\n";
+        print "Tests halted\n\n";
+        print "\nWARNING: not all tests executed ... [FAILED]\n";
+        exit;
+    }
     if (!$winFlag && WIFEXITED($r2)) {
         $r = WEXITSTATUS($r2);
-        if (defined $signo{'INT'}) {
-            if ($r == $signo{'INT'}) {
-                print "\nCommand: $cmd\n";
-                print "generated exit value $r\n";
-                print "Presumably caused by catching SIGINT\n";
-                print "Tests halted\n\n";
-                print "\nWARNING: not all tests executed ... [FAILED]\n";
-                exit;
-            }
-        }
     }
     if (!$winFlag && WIFSIGNALED($r2)) {
-        my $r2 = WTERMSIG($r2);
-        print "Exited with signal $r2\n";
+        my $sig = WTERMSIG($r2);
+        print "Exited with signal $sig\n";
     }
-    $r;
+    return $r;
 }

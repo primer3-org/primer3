@@ -207,30 +207,30 @@ static double align(const char *, const char*, const dpal_args *a);
 
 static double align_thermod(const char *, const char *, const thal_args *a);
 
-void destroy_primer_sec_struct(primer_rec *p_rec);
+static void destroy_primer_sec_struct(primer_rec *p_rec);
 
-void destroy_pair_sec_struct(primer_pair *ppair);
+static void destroy_pair_sec_struct(primer_pair *ppair);
 
-void save_overwrite_sec_struct(char **base, char *inp);
+static void save_overwrite_sec_struct(char **base, char *inp);
 
-void recalc_secundary_structures(const p3_global_settings *pa,
-                                 const seq_args *sa,
-                                 const dpal_arg_holder *dpal_arg_to_use,
-                                 const thal_arg_holder *thal_arg_to_use,
-                                 const thal_arg_holder *thal_oligo_arg_to_use,
-                                 p3retval *retval);
+static void recalc_secundary_structures(const p3_global_settings *pa,
+                                        const seq_args *sa,
+                                        const dpal_arg_holder *dpal_arg_to_use,
+                                        const thal_arg_holder *thal_arg_to_use,
+                                        const thal_arg_holder *thal_oligo_arg_to_use,
+                                        p3retval *retval);
 
-void recalc_primer_sec_struct(primer_rec *p_rec,
-                              const int rev,
-                              const p3_global_settings *pa,
-                              const seq_args *sa,
-                              const dpal_arg_holder *dpal_arg_to_use,
-                              const thal_arg_holder *thal_arg_to_use);
-void recalc_pair_sec_struct(primer_pair *ppair,
-                            const p3_global_settings *pa,
-                            const seq_args *sa,
-                            const dpal_arg_holder *dpal_arg_to_use,
-                            const thal_arg_holder *thal_arg_to_use);
+static void recalc_primer_sec_struct(primer_rec *p_rec,
+                                     const int rev,
+                                     const p3_global_settings *pa,
+                                     const seq_args *sa,
+                                     const dpal_arg_holder *dpal_arg_to_use,
+                                     const thal_arg_holder *thal_arg_to_use);
+static void recalc_pair_sec_struct(primer_pair *ppair,
+                                   const p3_global_settings *pa,
+                                   const seq_args *sa,
+                                   const dpal_arg_holder *dpal_arg_to_use,
+                                   const thal_arg_holder *thal_arg_to_use);
 
 static int    characterize_pair(p3retval *p,
                                 const p3_global_settings *,
@@ -274,7 +274,7 @@ static int    choose_internal_oligo(p3retval *,
                                     const dpal_arg_holder *,
                                     const thal_arg_holder *);
 
-void          compute_position_penalty(const p3_global_settings *,
+static void   compute_position_penalty(const p3_global_settings *,
                                        const seq_args *,
                                        primer_rec *, oligo_type);
 
@@ -983,7 +983,7 @@ create_p3retval(void)
 /* ============================================================ */
 
 /* Create the dpal arg holder */
-dpal_arg_holder *
+static dpal_arg_holder *
 create_dpal_arg_holder () 
 {
 
@@ -1014,7 +1014,7 @@ create_dpal_arg_holder ()
 }
 
 /* Free the dpal arg holder */
-void
+static void
 destroy_dpal_arg_holder(dpal_arg_holder *h) 
 {
   if (NULL != h) {
@@ -1041,7 +1041,7 @@ static dpal_arg_holder *dpal_arg_to_use = NULL;
 /* BEGIN functions for thal_arg_holder                           */
 /* ============================================================ */
 /* Create the thal arg holder */
-thal_arg_holder *
+static thal_arg_holder *
 create_thal_arg_holder (const args_for_one_oligo_or_primer *po_args)
 {
    
@@ -1085,7 +1085,7 @@ create_thal_arg_holder (const args_for_one_oligo_or_primer *po_args)
 }
 
 /* Free the thal arg holder */
-void
+static void
 destroy_thal_arg_holder(thal_arg_holder *h) 
 {  
   if (NULL != h) {
@@ -4905,7 +4905,7 @@ characterize_pair(p3retval *retval,
 
 /*
  */
-void
+static void
 compute_position_penalty(const p3_global_settings *pa,
                          const seq_args *sa,
                          primer_rec *h,
@@ -5201,7 +5201,7 @@ destroy_secundary_structures(const p3_global_settings *pa,
   }
 }
 
-void
+static void
 destroy_primer_sec_struct(primer_rec *p_rec) {
   if (NULL == p_rec) return;
   if (p_rec->self_any_struct != NULL) {
@@ -5226,7 +5226,7 @@ destroy_primer_sec_struct(primer_rec *p_rec) {
   }
 }
 
-void
+static void
 destroy_pair_sec_struct(primer_pair *ppair) {
   if (NULL == ppair) return;
   if (ppair->compl_any_struct != NULL) {
@@ -5239,7 +5239,7 @@ destroy_pair_sec_struct(primer_pair *ppair) {
   }
 }
 
-void
+static void
 save_overwrite_sec_struct(char **base, char *inp) {
   if (*base != NULL) {
     free(*base);
@@ -5371,7 +5371,7 @@ recalc_template_mispriming_struct_th(primer_rec *h, oligo_type l,
 }
 
 /* Calculate the secondary structures for selected primers */
-void
+static void
 recalc_secundary_structures(const p3_global_settings *pa,
                             const seq_args *sa,
                             const dpal_arg_holder *dpal_arg_to_use,
@@ -5424,7 +5424,7 @@ recalc_secundary_structures(const p3_global_settings *pa,
 }
 
 /* This functions overwrite the any/end values to report discrepancies for debugging.*/
-void
+static void
 recalc_primer_sec_struct(primer_rec *p_rec,
                          const int primer_type, /* left 0, right 1, intl 2 */
                          const p3_global_settings *pa,
@@ -5516,7 +5516,7 @@ recalc_primer_sec_struct(primer_rec *p_rec,
   }
 }
 
-void
+static void
 recalc_pair_sec_struct(primer_pair *ppair,
                        const p3_global_settings *pa,
                        const seq_args *sa,
@@ -6238,13 +6238,13 @@ find_stop_codon(const char* s,
 int
 strcmp_nocase(const char *s1, const char *s2)
 {
-  static char M[UCHAR_MAX];
+  static char M[UCHAR_MAX + 1];
   static int f = 0;
   int i;
   const char *p, *q;
 
   if(f != 1){
-    for(i = 0; i < UCHAR_MAX; i++) M[i] = i;
+    for(i = 0; i <= UCHAR_MAX; i++) M[i] = i;
     i = 'a'; M[i] = 'A'; i = 'b'; M[i] = 'B'; i = 'c'; M[i] = 'C';
     i = 'A'; M[i] = 'a'; i = 'B'; M[i] = 'b'; i = 'C'; M[i] = 'c';
     i = 'd'; M[i] = 'D'; i = 'e'; M[i] = 'E'; i = 'f'; M[i] = 'F';
@@ -6270,7 +6270,8 @@ strcmp_nocase(const char *s1, const char *s2)
   if(strlen(s1) != strlen(s2)) return 1;
   p = s1; q = s2;
   while(*p != '\0' && *p != '\n' && *q != '\0' && *q != '\n'){
-    i = *p;
+    /* char may be signed; bytes from 0x80 must not give a negative index */
+    i = (unsigned char) *p;
     if(*p == *q || M[i] == *q ) {p++; q++; continue;}
 
     return 1;
@@ -6641,7 +6642,7 @@ strstr_nocase(char *s1, char *s2) {
 #define CHECK  if (r > bsize || r < 0) return "Internal error, not enough space for \"explain\" string";  bufp += r; bsize -= r
 #define SP_AND_CHECK(FMT, VAL) { r = snprintf(bufp, bsize, FMT, VAL); CHECK; }
 #define IF_SP_AND_CHECK(FMT, VAL) { if (VAL) { SP_AND_CHECK(FMT, VAL) } }
-const char *
+static const char *
 p3_pair_explain_string(const pair_stats *pair_expl)
 {
   /* WARNING WARNING WARNING
@@ -6682,7 +6683,7 @@ p3_pair_explain_string(const pair_stats *pair_expl)
   return buf;
 }
 
-const char *
+static const char *
 p3_oligo_explain_string(const oligo_stats *stat)
 {
   /* WARNING WARNING WARNING
@@ -10116,11 +10117,6 @@ void
 p3_set_gs_min_3_internal_overlap_of_junction(p3_global_settings *p, int min_3_prime)
 {
   p->o_args.min_3_prime_overlap_of_junction = min_3_prime;
-}
-
-void
-p3_set_gs_max_diff_tm(p3_global_settings * p , double max_diff_tm) {
-  p->max_diff_tm = max_diff_tm;
 }
 
 void
