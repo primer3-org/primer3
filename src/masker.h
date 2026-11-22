@@ -28,6 +28,8 @@
 #define MASKED_CHAR 2
 
 #define FLUSH_ALL 1
+/* Like FLUSH_ALL, for a full buffer (wi == ri, which otherwise means empty) */
+#define FLUSH_FULL_BUFFER 2
 #define KEEP_UNCERTAIN_REGION 0
 
 #define DEFAULT_COEF 1.0

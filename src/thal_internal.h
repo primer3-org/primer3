@@ -40,9 +40,10 @@ void *safe_realloc(void *ptr, size_t n, jmp_buf _jmp_buf, thal_results *o);
    is set in the environment.
 
      THAL_DPT_DUMP_MD=<path|->    markdown snapshots (- = stderr)
-     THAL_DPT_DUMP_JSON=<path|->  JSON stream for matplotlib renderer
+     THAL_DPT_DUMP_JSON=<path|->  JSON array of snapshots (- = stderr)
 
-   See docs/make_hairpin_figures.py for the JSON consumer. */
+   The files stay open for all thal() calls of the process; see
+   thal_trace.c. dpt_dump_close() ends one thal() call. */
 void dpt_dump_close(void);
 void dpt_dump(struct dpt_entry **dpt, int len1, int len2,
               int is_hairpin, const char *label);

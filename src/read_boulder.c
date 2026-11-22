@@ -770,7 +770,16 @@ read_boulder_record(FILE *file_input,
                     continue;
 #endif
       }
-      COMPARE_FLOAT("PRIMER_MASK_FAILURE_RATE", pa->mp.failure_rate);
+      if (COMPARE("PRIMER_MASK_FAILURE_RATE")) {
+        parse_double("PRIMER_MASK_FAILURE_RATE", datum, &pa->mp.failure_rate, parse_err);
+        /* 0 would switch off the masking: the masker uses it to mark the
+           absolute cutoff of primer3_masker -a. The negated test also
+           rejects NaN. */
+        if (!(pa->mp.failure_rate > 0.0 && pa->mp.failure_rate <= 1.0)) {
+          pr_append_new_chunk(glob_err, "PRIMER_MASK_FAILURE_RATE must be > 0 and <= 1");
+        }
+        continue;
+      }
       if (COMPARE("PRIMER_MASK_5P_DIRECTION")) {
         parse_int("PRIMER_MASK_5P_DIRECTION", datum, &pa->mp.nucl_masked_in_5p_direction, parse_err);
         if (pa->mp.nucl_masked_in_5p_direction < 0

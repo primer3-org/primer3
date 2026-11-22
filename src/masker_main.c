@@ -190,11 +190,10 @@ main (int argc, const char *argv[])
       mp.abs_cutoff = 0;
       /* The negated test also rejects NaN */
       if (end == argv[idx + 1] || *end != 0
-          || !(mp.failure_rate >= 0 && mp.failure_rate <= 1)) {
+          || !(mp.failure_rate > 0 && mp.failure_rate <= 1)) {
         pr_append_new_chunk_external (&parse_err, "Invalid cutoff value: ");
         pr_append_external (&parse_err, argv[idx + 1]);
-        /*free(parse_err.data);*/
-        break;
+        print_error_and_help (&parse_err);
       }
       idx += 1;
 
@@ -208,7 +207,7 @@ main (int argc, const char *argv[])
       if (!parse_count (argv[idx + 1], (double) UINT_MAX, &mp.abs_cutoff)) {
         pr_append_new_chunk_external (&parse_err, "Invalid absolute cutoff value: ");
         pr_append_external (&parse_err, argv[idx + 1]);
-        break;
+        print_error_and_help (&parse_err);
       }
       idx += 1;
 
@@ -451,7 +450,7 @@ print_help (int exit_value)
   fprintf (stdout, "Reads FASTA from INPUTFILE, or from stdin if no INPUTFILE is given (needs at least one option).\n");
   fprintf (stdout, "Options:\n");
   fprintf (stdout, "    -h, --help                   - print this usage screen and exit\n\n");
-  fprintf (stdout, "    -p, --probability_cutoff     - masking cutoff [0, 1] (default: >=0.1)\n");
+  fprintf (stdout, "    -p, --probability_cutoff     - masking cutoff, greater than 0 and at most 1 (default: 0.1)\n");
   fprintf (stdout, "    -lh, --kmer_lists_path       - path to the kmer list files (default: ../kmer_lists/)\n");
   fprintf (stdout, "    -lp, --list_prefix           - prefix of the k-mer lists to use with default model (default: homo_sapiens)\n\n");
   fprintf (stdout, "    -a, --absolute_value_cutoff  - masking cutoff based on k-mer count; requires a single list name, defined with -l\n");

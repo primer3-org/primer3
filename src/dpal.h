@@ -101,7 +101,6 @@ typedef struct {
                              * Force the use of the long generic no-path
                              * function.
                              */
-    int force_long_maxgap1; /* Force the use of the long maxgap 1 functions. */
     int gap;                 /* The "gap opening" penalty. */
     int gapl;                /* The "gap extension" penalty. */
     int max_gap;             /*

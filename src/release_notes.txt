@@ -40,6 +40,9 @@ impacted the alignments.
 Huge code cleanup and improvements which resulted in a significant spead
 increase.
 
+A huge code audit was performed with Claude Fable 5.2. All issues were
+validated and fixed by Andreas Untergasser.
+
 Primer3 can now also provide structures for primers binding to template.
 
 With --default_version=2 (the default of primer3_core) internal oligos

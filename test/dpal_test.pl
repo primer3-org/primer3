@@ -200,13 +200,6 @@ sub main() {
             '-s -f2', "dpal_long_input", 'dpal_long_score_output',
             "dpal_long_score_output2.tmp");
 
-    runtest('Force long maxgap1 functions 1',
-            '-s -f3',  "dpal_input", 'dpal_score_output',
-            "dpal_score_output3.tmp");
-
-    runtest('Force long maxgap1 functions 2',
-            '-s -f3',  "dpal_long_input", 'dpal_long_score_output', 
-            "dpal_long_score_output3.tmp");
 
 
 

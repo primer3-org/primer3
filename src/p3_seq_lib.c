@@ -97,16 +97,17 @@ add_seq_to_seq_lib(seq_lib *sl,
 
   /* sl->rev_compl_seqs[i] = */ sl->seqs[i] = (char*) p3sl_safe_malloc(strlen(seq) + 1);
   strcpy(sl->seqs[i], seq);
-  if(strlen(sl->seqs[i]) == 0) {
-    p3sl_append_new_chunk(&sl->error, "Empty sequence in ");
+
+  /* Removes whitespace, so check for an empty sequence afterwards */
+  offender = upcase_and_check_char(sl->seqs[i]);
+  if (strlen(sl->seqs[i]) == 0) {
+    p3sl_append_new_chunk(&sl->error, "Empty sequence");
     return 1;
   }
-
-  offender = upcase_and_check_char(sl->seqs[i]);
   if ('\0' != offender) {
     buf[0] = offender;
     buf[1] = '\0';
-    p3sl_append(&sl->warning, "Unrecognized character (");
+    p3sl_append_new_chunk(&sl->warning, "Unrecognized character (");
     p3sl_append(&sl->warning, buf);
 
     p3sl_append(&sl->warning, ") in ");
@@ -151,8 +152,8 @@ add_seq_and_rev_comp_to_seq_lib(seq_lib *sl,
   return save_r;
 }
 
-seq_lib *
-create_empty_seq_lib() {
+static seq_lib *
+create_empty_seq_lib(void) {
   seq_lib *lib;
 
   if (setjmp(_jmp_buf) != 0)
@@ -340,6 +341,7 @@ reverse_complement_seq_lib(seq_lib  *lib)
         lib->rev_compl_seqs = (char**) p3sl_safe_malloc(2*n*sizeof(*lib->seqs));
 
         lib->seq_num *= 2;
+        lib->storage_size = lib->seq_num;
         for(i=n; i<lib->seq_num; i++){
             k = strlen(lib->names[i-n]);
             lib->names[i] = (char*) p3sl_safe_malloc(k + 9);
@@ -379,9 +381,14 @@ parse_seq_name(char *s)
     else {
          p++;
          n = strtod( p, &q );
-         if( q == p ) return -1;
+         /* Written so that NaN is rejected, too */
+         if (q == p || !(n >= 0.0 && n <= PR_MAX_LIBRARY_WT)) {
+           return -1;
+         }
     }
-    if(n > PR_MAX_LIBRARY_WT) return -1;
+    if (n == 0.0) {
+      n = 0.0; /* turn "-0" into 0 */
+    }
 
     return n;
 }

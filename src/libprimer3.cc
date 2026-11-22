@@ -207,6 +207,8 @@ static double align(const char *, const char*, const dpal_args *a);
 
 static double align_thermod(const char *, const char *, const thal_args *a);
 
+static void handle_thal_error(const thal_results *r);
+
 static void destroy_primer_sec_struct(primer_rec *p_rec);
 
 static void destroy_pair_sec_struct(primer_pair *ppair);
@@ -5135,23 +5137,26 @@ align_thermod(const char *s1,
              s1, s2, r.temp, r.msg, r.align_end_1, r.align_end_2);
    }
    PR_ASSERT(r.temp <= DBL_MAX);
-   if (r.temp == THAL_ERROR_SCORE) 
-     {
-        /* There was an error. */
-        if (errno == ENOMEM) {
-          longjmp(_jmp_buf, 1);
-        } else {
-          /* This branch is taken if there is an error other than
-             ENOMEM, in which case we treat it as a per sequence error.
-          */
-          /* Save the error string */
-          if (!_set_string(&thermodynamic_alignment_length_error_msg, r.msg)) {
-            thermodynamic_alignment_length_error = 1;
-          }
-          longjmp(_jmp_buf, 1);
-        }
-     }
+   if (r.temp == THAL_ERROR_SCORE) {
+     handle_thal_error(&r);
+   }
    return ((r.temp < 0.0) ? 0.0 : (double) (r.temp));
+}
+
+/* Called when thal() returned THAL_ERROR_SCORE. Does not return: jumps
+   back to choose_primers(), which reports out of memory or, for any
+   other error, a per sequence error with the message of thal(). */
+static void
+handle_thal_error(const thal_results *r)
+{
+  if (errno == ENOMEM) {
+    longjmp(_jmp_buf, 1);
+  }
+  /* Save the error string */
+  if (!_set_string(&thermodynamic_alignment_length_error_msg, r->msg)) {
+    thermodynamic_alignment_length_error = 1;
+  }
+  longjmp(_jmp_buf, 1);
 }
 
 /* Free the secondary structure strings for selected primers */
@@ -5494,18 +5499,27 @@ recalc_primer_sec_struct(primer_rec *p_rec,
     if (p_rec->self_any > 0.0 ) {
       thal((const unsigned char *) s1, (const unsigned char *) s1, 
            thal_arg_to_use->any, THL_STRUCT, &any);
+      if (any.temp == THAL_ERROR_SCORE) {
+        handle_thal_error(&any);
+      }
       p_rec->self_any = any.temp;
       save_overwrite_sec_struct(&p_rec->self_any_struct, any.sec_struct);
     }
     if (p_rec->self_end > 0.0) {
       thal((const unsigned char *) s1, (const unsigned char *) s1, 
            thal_arg_to_use->end1, THL_STRUCT, &end);
+      if (end.temp == THAL_ERROR_SCORE) {
+        handle_thal_error(&end);
+      }
       p_rec->self_end = end.temp;
       save_overwrite_sec_struct(&p_rec->self_end_struct, end.sec_struct);
     }
     if (p_rec->hairpin_th > 0.0 ) {
       thal((const unsigned char *) s1, (const unsigned char *) s1, 
             thal_arg_to_use->hairpin_th, THL_STRUCT, &hair);
+      if (hair.temp == THAL_ERROR_SCORE) {
+        handle_thal_error(&hair);
+      }
       p_rec->hairpin_th = hair.temp;
       save_overwrite_sec_struct(&p_rec->hairpin_struct, hair.sec_struct);
     }
@@ -5589,14 +5603,23 @@ recalc_pair_sec_struct(primer_pair *ppair,
     end2.sec_struct = NULL;
     if (ppair->compl_any > 0.0) {
       thal((const unsigned char *) s1, (const unsigned char *) s2_rev, thal_arg_to_use->any, THL_STRUCT, &any);
+      if (any.temp == THAL_ERROR_SCORE) {
+        handle_thal_error(&any);
+      }
       ppair->compl_any = any.temp;
       save_overwrite_sec_struct(&ppair->compl_any_struct, any.sec_struct);
     }
     if (ppair->compl_end > 0.0) {
       thal((const unsigned char *) s1, (const unsigned char *) s2_rev, thal_arg_to_use->end1, THL_STRUCT, &end1);
+      if (end1.temp == THAL_ERROR_SCORE) {
+        handle_thal_error(&end1);
+      }
       ppair->compl_end = end1.temp;
       save_overwrite_sec_struct(&ppair->compl_end_struct, end1.sec_struct);
       thal((const unsigned char *) s1, (const unsigned char *) s2_rev, thal_arg_to_use->end2, THL_STRUCT, &end2); /* Triinu Please check */
+      if (end2.temp == THAL_ERROR_SCORE) {
+        handle_thal_error(&end2);
+      }
       if (ppair->compl_end < end2.temp) {
         ppair->compl_end = end2.temp;
         save_overwrite_sec_struct(&ppair->compl_end_struct, end2.sec_struct);
@@ -9736,16 +9759,28 @@ p3_set_gs_primer_outside_penalty(p3_global_settings * p , double val) {
   p->outside_penalty = val ;
 }
 
+/*
+ * Replace the library; a NULL or empty path removes it.  The new
+ * library is NULL on ENOMEM.  The caller must check
+ * repeat_lib->error.data: on errors the library is only partly read.
+ */
 void
 p3_set_gs_primer_mispriming_library(p3_global_settings * p , char * path) {
-  /* TO DO: Re-factor this? TO DO: Check for errors */
-  p->p_args.repeat_lib = read_and_create_seq_lib(path, "mispriming library") ;
+  destroy_seq_lib(p->p_args.repeat_lib);
+  p->p_args.repeat_lib = NULL;
+  if (NULL != path && '\0' != *path) {
+    p->p_args.repeat_lib = read_and_create_seq_lib(path, "mispriming library");
+  }
 }
 
+/* See p3_set_gs_primer_mispriming_library() */
 void
 p3_set_gs_primer_internal_oligo_mishyb_library(p3_global_settings * p , char * path) {
-  /* TO DO: Re-factor this? TO DO: Check for errors */
-  p->o_args.repeat_lib = read_and_create_seq_lib(path, "internal oligio mishyb library") ;
+  destroy_seq_lib(p->o_args.repeat_lib);
+  p->o_args.repeat_lib = NULL;
+  if (NULL != path && '\0' != *path) {
+    p->o_args.repeat_lib = read_and_create_seq_lib(path, "internal oligo mishyb library");
+  }
 }
 
 void

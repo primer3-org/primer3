@@ -2,10 +2,15 @@
 
    Enable by setting either env var before running:
      THAL_DPT_DUMP_MD=<path|->     markdown snapshots (- = stderr)
-     THAL_DPT_DUMP_JSON=<path|->   JSON stream for matplotlib renderer
+     THAL_DPT_DUMP_JSON=<path|->   JSON array of snapshots (- = stderr)
 
-   When neither is set, every entry point here is a cheap no-op.
-   See docs/make_hairpin_figures.py for the JSON consumer. */
+   The variables are read once per process. The files stay open for all
+   thal() calls of the process, so a primer3_core run or several ntthal
+   lines end up in one file; each call starts a new "call" with steps
+   counted from 1. The closing bracket of the JSON array is written at
+   process exit (atexit), so the JSON file is valid after a normal exit.
+
+   When neither is set, every entry point here is a cheap no-op. */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,38 +21,84 @@
 static FILE *dpt_dump_md_fp   = NULL;
 static FILE *dpt_dump_json_fp = NULL;
 static int   dpt_dump_inited  = 0;
-static int   dpt_dump_step    = 0;
+static int   dpt_dump_step    = 0;  /* step within the current thal() call */
+static int   dpt_dump_call    = 0;  /* number of the current thal() call */
+static int   dpt_dump_call_started = 0;
 static int   dpt_dump_json_first = 1;
 
-static void dpt_dump_init(void) {
-   if (dpt_dump_inited) return;
-   dpt_dump_inited = 1;
-   const char *md_path = getenv("THAL_DPT_DUMP_MD");
-   if (md_path) {
-      dpt_dump_md_fp = (strcmp(md_path, "-") == 0) ? stderr : fopen(md_path, "w");
+/* atexit handler: end the JSON array and close the files */
+static void dpt_dump_finish(void) {
+   if (dpt_dump_json_fp) {
+      fprintf(dpt_dump_json_fp, "\n]\n");
+      if (dpt_dump_json_fp != stderr) {
+         fclose(dpt_dump_json_fp);
+      } else {
+         fflush(dpt_dump_json_fp);
+      }
+      dpt_dump_json_fp = NULL;
    }
-   const char *json_path = getenv("THAL_DPT_DUMP_JSON");
-   if (json_path) {
-      dpt_dump_json_fp = (strcmp(json_path, "-") == 0) ? stderr : fopen(json_path, "w");
-      if (dpt_dump_json_fp) fprintf(dpt_dump_json_fp, "[\n");
+   if (dpt_dump_md_fp) {
+      if (dpt_dump_md_fp != stderr) {
+         fclose(dpt_dump_md_fp);
+      } else {
+         fflush(dpt_dump_md_fp);
+      }
+      dpt_dump_md_fp = NULL;
    }
 }
 
-void dpt_dump_close(void) {
-   if (dpt_dump_md_fp && dpt_dump_md_fp != stderr) {
-      fclose(dpt_dump_md_fp);
+static void dpt_dump_init(void) {
+   if (dpt_dump_inited) {
+      return;
    }
-   dpt_dump_md_fp = NULL;
-   if (dpt_dump_json_fp) {
-      if (dpt_dump_json_fp != stderr) {
-         fprintf(dpt_dump_json_fp, "\n]\n");
-         fclose(dpt_dump_json_fp);
+   dpt_dump_inited = 1;
+   const char *md_path = getenv("THAL_DPT_DUMP_MD");
+   if (md_path) {
+      if (strcmp(md_path, "-") == 0) {
+         dpt_dump_md_fp = stderr;
+      } else {
+         dpt_dump_md_fp = fopen(md_path, "w");
       }
    }
-   dpt_dump_json_fp = NULL;
-   dpt_dump_inited = 0;
+   const char *json_path = getenv("THAL_DPT_DUMP_JSON");
+   if (json_path) {
+      if (strcmp(json_path, "-") == 0) {
+         dpt_dump_json_fp = stderr;
+      } else {
+         dpt_dump_json_fp = fopen(json_path, "w");
+      }
+      if (dpt_dump_json_fp) {
+         fprintf(dpt_dump_json_fp, "[\n");
+      }
+   }
+   if (dpt_dump_md_fp || dpt_dump_json_fp) {
+      atexit(dpt_dump_finish);
+   }
+}
+
+/* Called at the start of each snapshot: count a new thal() call when
+   this is its first snapshot, and write a heading for it */
+static void dpt_dump_start_call(void) {
+   if (dpt_dump_call_started) {
+      return;
+   }
+   dpt_dump_call_started = 1;
+   dpt_dump_call++;
+   if (dpt_dump_md_fp) {
+      fprintf(dpt_dump_md_fp, "\n## thal() call %d\n", dpt_dump_call);
+   }
+}
+
+/* End of one thal() call. The files stay open for the next call. */
+void dpt_dump_close(void) {
+   if (dpt_dump_md_fp) {
+      fflush(dpt_dump_md_fp);
+   }
+   if (dpt_dump_json_fp) {
+      fflush(dpt_dump_json_fp);
+   }
    dpt_dump_step = 0;
-   dpt_dump_json_first = 1;
+   dpt_dump_call_started = 0;
 }
 
 /* Print one (i,j) cell to the JSON stream. Helper for dpt_dump.
@@ -76,6 +127,7 @@ void dpt_dump(struct dpt_entry **dpt, int len1, int len2,
               int is_hairpin, const char *label) {
    if (!dpt_dump_inited) dpt_dump_init();
    if (!dpt_dump_md_fp && !dpt_dump_json_fp) return;
+   dpt_dump_start_call();
    int step = ++dpt_dump_step;
    double T = TEMP_KELVIN;
 
@@ -120,8 +172,8 @@ void dpt_dump(struct dpt_entry **dpt, int len1, int len2,
       FILE *f = dpt_dump_json_fp;
       if (!dpt_dump_json_first) fprintf(f, ",\n");
       dpt_dump_json_first = 0;
-      fprintf(f, "  {\"step\":%d,\"label\":\"%s\",\"is_hairpin\":%s,\"len1\":%d,\"len2\":%d,\"temp\":%g,\"cells\":[\n",
-              step, label, is_hairpin ? "true" : "false", len1, len2, T);
+      fprintf(f, "  {\"call\":%d,\"step\":%d,\"label\":\"%s\",\"is_hairpin\":%s,\"len1\":%d,\"len2\":%d,\"temp\":%g,\"cells\":[\n",
+              dpt_dump_call, step, label, is_hairpin ? "true" : "false", len1, len2, T);
       int first = 1;
       for (int i = 1; i <= len1; ++i) {
          for (int j = 1; j <= len2; ++j) {
@@ -142,6 +194,7 @@ void dpt_dump(struct dpt_entry **dpt, int len1, int len2,
 void send5_dump(double *send5, double *hend5, int len, const char *label) {
    if (!dpt_dump_inited) dpt_dump_init();
    if (!dpt_dump_md_fp) return;
+   dpt_dump_start_call();
    FILE *f = dpt_dump_md_fp;
    int step = ++dpt_dump_step;
    double T = TEMP_KELVIN;

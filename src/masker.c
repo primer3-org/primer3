@@ -602,8 +602,11 @@ void
 empty_buffer (output_sequence *output_seq, const masker_parameters *mp, masking_buffer *mbuffer, int flush_all, pr_append_str *parse_err)
 {
   unsigned int end = mbuffer->ei;
+  /* A full buffer has wi == ri: go once around it */
+  int full = (flush_all == FLUSH_FULL_BUFFER);
   if (flush_all) end = mbuffer->wi;
-  while (mbuffer->ri != end) {
+  while (full || mbuffer->ri != end) {
+    full = 0;
     if (COND0(mbuffer->ri)) {
       write_char_to_output (output_seq, mbuffer->buffer[mbuffer->ri], mbuffer->buffer[mbuffer->ri], mp, parse_err);
     } else {
@@ -923,6 +926,16 @@ read_and_mask_sequence (input_sequence *input_seq, output_sequence *output_seq, 
     } else {
       if (!init_round && mbuffer->wi == mbuffer->ri) {
         empty_buffer (output_seq, mp, mbuffer, KEEP_UNCERTAIN_REGION, parse_err);
+        if (mbuffer->wi == mbuffer->ri) {
+          /* Nothing written: the buffer is full of whitespace behind the
+             last k-mer. Write all of it, or the next character would
+             overwrite the oldest one. A k-mer does not continue across
+             this much whitespace, so start a new word. */
+          empty_buffer (output_seq, mp, mbuffer, FLUSH_FULL_BUFFER, parse_err);
+          initialize_masking_buffer (mbuffer, word_length + mp->nucl_masked_in_3p_direction);
+          word_fwd = word_rev = 0;
+          current_length = 0;
+        }
       }
       init_round = 0;
       

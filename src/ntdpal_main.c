@@ -67,8 +67,8 @@ main(int argc, const char**argv)
     double gap_value;
     long max_gap;
     const char *msg = 
-      "\nUsage: %s [-g <gval>] [-l <lval>] [-m <mval>]\n"
-      "                 [-f2] [-p] [-s] [-e] <seq1> <seq2> <mode>"
+      "\nUsage: %s [-g <gval>] [-l <lval>] [-m <mval>] [-a] [-h]\n"
+      "                 [-f1|-f2] [-p] [-s] [-e] <seq1> <seq2> <mode>"
       "\n\nwhere\n\n"
       "<gval> and <lval> are floats from 0 to " XSTR(MAX_GAP_PENALTY) " (.01 precision)\n"
       "       specifying penalties for creating or lengthening a gap\n"
@@ -78,8 +78,10 @@ main(int argc, const char**argv)
       "-a causes the scoring matrix to be modified by dpal_set_ambiguity_codes.\n\n"
       "-e causes the end postion of the alignment in both sequences to\n"
       "       be printed.  Do not confuse with the 'e' <mode>.\n\n"
-      "-f1, -f2, f3\n"
+      "-f1, -f2\n"
       "       force specific implementations.\n"
+      "       -f1 forces the implementation that also computes the\n"
+      "       alignment path.\n"
       "       -f2 forces use an implementation that might provide more\n"
       "       informative error messages, possibly at the expense\n"
       "       of some speed.\n\n"
@@ -112,9 +114,9 @@ main(int argc, const char**argv)
     }
     dpal_set_default_nt_args(&a);
     for (i=1; i < argc; ++i) {
-        if (!strncmp("-p", argv[i], 2)) {
+        if (!strcmp("-p", argv[i])) {
             dpal_debug = 1;
-        } else if (!strncmp("-l", argv[i], 2)) {
+        } else if (!strcmp("-l", argv[i])) {
           if (i+1 >= argc) {
             /* Missing value */
             fprintf(stderr, msg, argv[0]);
@@ -125,15 +127,16 @@ main(int argc, const char**argv)
             fprintf(stderr, msg, argv[0]);
             exit(-1);
           }
-          a.gapl = (int) (gap_value * -100);
+          /* Round: 0.29 * 100 is 28.999... in floating point */
+          a.gapl = -(int) (gap_value * 100 + 0.5);
           i++;
-        } else if (!strncmp("-e", argv[i], 2)) {
+        } else if (!strcmp("-e", argv[i])) {
           print_align_end = 1;
-        } else if (!strncmp("-a", argv[i], 2)) {
+        } else if (!strcmp("-a", argv[i])) {
           use_ambiguity_codes = 1;
-        } else if (!strncmp("-h", argv[i], 2)) {
+        } else if (!strcmp("-h", argv[i])) {
           use_h_matrix = 1;
-        } else if (!strncmp("-g", argv[i], 2)) {
+        } else if (!strcmp("-g", argv[i])) {
           if (i+1 >= argc) {
             /* Missing value */
             fprintf(stderr, msg, argv[0]);
@@ -144,9 +147,10 @@ main(int argc, const char**argv)
             fprintf(stderr, msg, argv[0]);
             exit(-1);
           }
-          a.gap = (int) (gap_value * -100);
+          /* Round: 0.29 * 100 is 28.999... in floating point */
+          a.gap = -(int) (gap_value * 100 + 0.5);
           i++;
-        } else if (!strncmp("-m", argv[i], 2)) {
+        } else if (!strcmp("-m", argv[i])) {
           if (i+1 >= argc) {
             /* Missing value */
             fprintf(stderr, msg, argv[0]);
@@ -159,16 +163,12 @@ main(int argc, const char**argv)
           }
           a.max_gap = (int) max_gap;
           i++;
-        } else if (!strncmp("-s", argv[i], 2)) {
+        } else if (!strcmp("-s", argv[i])) {
            dpal_only = 1;
-        } else if (!strncmp("-e", argv[i], 2)) {
-          print_align_end = 1;
-        } else if (!strncmp("-f1", argv[i], 3)) {
+        } else if (!strcmp("-f1", argv[i])) {
           a.force_generic = 1;
-        } else if (!strncmp("-f2", argv[i], 3)) {
+        } else if (!strcmp("-f2", argv[i])) {
           a.force_long_generic = 1;
-        } else if (!strncmp("-f3", argv[i], 3)) {
-          a.force_long_maxgap1 = 1;
         } else if (!strncmp("-", argv[i], 1)) {
           /* Unknown option. */
           fprintf(stderr, msg, argv[0]);
@@ -224,7 +224,7 @@ main(int argc, const char**argv)
       printf("%.2f\n", 0.01 * r.score);
       if (print_align_end) {
         if(r.align_end_1 >= 0) printf("align_end_1=%d ",r.align_end_1);
-        if(r.align_end_2 >= 0) printf("align_end_2=%d\n ",r.align_end_2);
+        if(r.align_end_2 >= 0) printf("align_end_2=%d\n",r.align_end_2);
       }
     } else {
       printf("|%s|  |%s| %c ", s1, s2, mode); 

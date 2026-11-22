@@ -198,6 +198,9 @@ thal(const unsigned char *oligo_f,
    if (NULL == o) return; /* Leave it to the caller to crash */
    strcpy(o->msg, "");
    o->temp = THAL_ERROR_SCORE;
+   /* Set only if a structure is drawn (THL_STRUCT); NULL on every other
+      return, also after an error. The caller frees it. */
+   o->sec_struct = NULL;
    errno = 0; 
 
    if (setjmp(_jmp_buf) != 0) {

@@ -113,7 +113,8 @@ typedef struct {
    double dh;
    int align_end_1;
    int align_end_2;
-   char *sec_struct;
+   char *sec_struct; /* Drawn structure (THL_STRUCT) or NULL; set by
+                        thal(), freed by the caller */
 } thal_results;
 
 /* The files from the directory primer3_config loaded as strings */

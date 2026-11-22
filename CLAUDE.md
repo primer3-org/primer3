@@ -122,7 +122,7 @@ Primer settings are in `pa->p_args` and internal-oligo (probe) settings are in `
 
 - **Per-record and global state.** `seq_args` is created fresh for every record. `p3_global_settings` persists into all later records, and so do the file-scope globals in `read_boulder.c` such as `kmer_lists_path`. Don't store values derived from one record's input in the global settings; derive them where they are used. When you change code that reads or writes global settings, test it with a multi-record input.
 - **Validation order.** `choose_primers()` calls `_adjust_seq_args()` before `_pr_data_control()`, so code in `_adjust_seq_args()` sees input that hasn't been validated yet. Settings that must be valid before masking, such as `PRIMER_MASK_TEMPLATE`, are therefore also checked in `read_boulder.c`.
-- **Unvalidated input aborts.** Values that pass parsing but are out of range often end in a `PR_ASSERT` abort deep in the code. For new numeric input, check the range, NaN and infinity (`parse_double()` accepts both), and 0 where the value is a divisor or a step.
+- **Unvalidated input aborts.** Values that pass parsing but are out of range often end in a `PR_ASSERT` abort deep in the code. For new numeric input, check the range, and 0 where the value is a divisor or a step. `parse_double()` rejects NaN and infinity (it reports a syntax error and stores 0); values read with plain `strtod()`, as in the standalone CLIs, still need that check.
 - **Coordinates.** Input positions count from `PRIMER_FIRST_BASE_INDEX` (default 0). `_adjust_seq_args()` makes them 0-based and relative to the included region. After that, intervals, junction lists, force positions, `start_codon_pos` and oligo positions index `trimmed_seq`, and `incl_s` is the 0-based start of the region in the full `sequence`. Output adds `incl_s + first_base_index` back.
 - **Sequence copies in `seq_args`:**
   - `sequence`: the template as given.
@@ -168,7 +168,7 @@ Each library also has a standalone CLI in a `*_main.c` file.
   - `thal_trace.c`: traceback and debug dumps.
   - `thal_draw.c`: ASCII structure drawing.
   - `thal_util.c`: allocators.
-  - `thal()` does not initialize `thal_results.sec_struct`; set it to NULL before calling.
+  - `thal()` sets `thal_results.sec_struct`: NULL unless it drew a structure (`THL_STRUCT`), also after an error. The caller frees it.
   - For two sequences, `align_end_2` counts from the 3′ end of the second sequence, which thal reads in reverse: the terminal base pair is at index `strlen(seq2) - align_end_2`.
   - `align_thermod()` in libprimer3.cc reports a negative Tm as 0. Structures are drawn only for values above 0.
 - Template mispriming (thermodynamic): `thermod_template_targets()` gives the oligo, `target` (the strand the primer binds at its own site; its own site is left out, so the 5′ and 3′ parts are aligned separately) and `target_r` (the other strand, aligned whole). The score and the `TEMPLATE_MISPRIMING_STUCT` structures both use it, so keep them together.
@@ -208,7 +208,8 @@ Don't "fix" these:
 
 To debug thal:
 - `THAL_DPT_DUMP_MD=-` prints Markdown snapshots of the DP matrix to stderr. `THAL_DPT_DUMP_MD=<path>` writes them to a file.
-- `THAL_DPT_DUMP_JSON=<path>` writes a JSON stream instead.
+- `THAL_DPT_DUMP_JSON=<path|->` writes a JSON array instead; the closing bracket is written at process exit.
+- The variables are read once per process, and the file collects all `thal()` calls of the run (a primer3_core run or several ntthal lines). Each call starts with `## thal() call N` (Markdown) or carries `"call": N` (JSON).
 
 ## CI
 

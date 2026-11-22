@@ -162,9 +162,7 @@ drawDimer(int *ps1, int *ps2, const thal_mode mode, double t37,
      strcat(ret_str[0], duplex[0]);
      ret_nr = 0;
      while (duplex[1][ret_nr] != '\0') {
-       if (duplex[1][ret_nr] == 'A' || duplex[1][ret_nr] == 'T' ||
-           duplex[1][ret_nr] == 'C' || duplex[1][ret_nr] == 'G' ||
-           duplex[1][ret_nr] == '-') {
+       if (duplex[1][ret_nr] != ' ') {
          ret_str[0][ret_nr + 3] = duplex[1][ret_nr];
        }
        ret_nr++;
@@ -181,9 +179,7 @@ drawDimer(int *ps1, int *ps2, const thal_mode mode, double t37,
      ret_nr = 3;
      ret_pr_once = 1;
      while (ret_str[0][ret_nr] != '\0' && ret_pr_once == 1) {
-       if (ret_str[0][ret_nr] == 'A' || ret_str[0][ret_nr] == 'T' ||
-           ret_str[0][ret_nr] == 'C' || ret_str[0][ret_nr] == 'G' ||
-           ret_str[0][ret_nr] == '-') {
+       if (ret_str[0][ret_nr] != ' ') {
          ret_str[0][ret_nr - 3] = '5';
          ret_str[0][ret_nr - 2] = '\'';
          ret_pr_once = 0;
@@ -194,8 +190,7 @@ drawDimer(int *ps1, int *ps2, const thal_mode mode, double t37,
      /* Create the align tics */
      strcpy(ret_str[1], "     ");
      for (i = 0 ; i < strlen(duplex[1]) ; i++) {
-       if (duplex[1][i] == 'A' || duplex[1][i] == 'T' ||
-           duplex[1][i] == 'C' || duplex[1][i] == 'G' ) {
+       if (duplex[1][i] != ' ' && duplex[1][i] != '-') {
          ret_str[1][i + 3] = '|';
        } else {
          ret_str[1][i + 3] = ' ';
@@ -212,9 +207,7 @@ drawDimer(int *ps1, int *ps2, const thal_mode mode, double t37,
      strcat(ret_str[2], duplex[2]);
      ret_nr = 0;
      while (duplex[3][ret_nr] != '\0') {
-       if (duplex[3][ret_nr] == 'A' || duplex[3][ret_nr] == 'T' ||
-           duplex[3][ret_nr] == 'C' || duplex[3][ret_nr] == 'G' ||
-           duplex[3][ret_nr] == '-') {
+       if (duplex[3][ret_nr] != ' ') {
          ret_str[2][ret_nr + 3] = duplex[3][ret_nr];
        }
        ret_nr++;
@@ -231,9 +224,7 @@ drawDimer(int *ps1, int *ps2, const thal_mode mode, double t37,
      ret_nr = 3;
      ret_pr_once = 1;
      while (ret_str[2][ret_nr] != '\0' && ret_pr_once == 1) {
-       if (ret_str[2][ret_nr] == 'A' || ret_str[2][ret_nr] == 'T' ||
-           ret_str[2][ret_nr] == 'C' || ret_str[2][ret_nr] == 'G' ||
-           ret_str[2][ret_nr] == '-') {
+       if (ret_str[2][ret_nr] != ' ') {
          ret_str[2][ret_nr - 3] = '3';
          ret_str[2][ret_nr - 2] = '\'';
          ret_pr_once = 0;
@@ -360,6 +351,33 @@ drawHairpin(int *bp, double mh, double ms, const thal_mode mode, double temp,
          ret_first_r = i;
        }
      }
+     /* The folding below assumes one stem. With several stems (the
+        first '\' before the last '/') print the sequence and the
+        structure in dot-bracket notation instead of a wrong picture.
+        Brackets instead of the '/' and '\' of ntthal, because a
+        backslash could be taken for part of the "\n" escape. */
+     if (ret_first_r != -1 && ret_first_r < ret_last_l) {
+       save_append_string(&ret_str, &ret_space, o, "5' ", _jmp_buf);
+       for (i = 0 ; i < oligo1_len ; i++) {
+         save_append_char(&ret_str, &ret_space, o, (char) oligo1[i], _jmp_buf);
+       }
+       save_append_string(&ret_str, &ret_space, o, " 3'\\n   ", _jmp_buf);
+       for (i = 0 ; i < oligo1_len ; i++) {
+         if (asciiRow[i] == '/') {
+           save_append_char(&ret_str, &ret_space, o, '(', _jmp_buf);
+         } else if (asciiRow[i] == '\\') {
+           save_append_char(&ret_str, &ret_space, o, ')', _jmp_buf);
+         } else {
+           save_append_char(&ret_str, &ret_space, o, '.', _jmp_buf);
+         }
+       }
+       save_append_string(&ret_str, &ret_space, o, "\\n", _jmp_buf);
+       ret_ptr = (char *) safe_malloc(strlen(ret_str) + 1, _jmp_buf, o);
+       strcpy(ret_ptr, ret_str);
+       free(ret_str);
+       free(asciiRow);
+       return ret_ptr;
+     }
      ret_center = ret_first_r - ret_last_l;
      if (ret_center % 2 == 0) {
        /* ret_center is odd */
@@ -409,7 +427,7 @@ drawHairpin(int *bp, double mh, double ms, const thal_mode mode, double temp,
        save_append_char(&ret_str, &ret_space, o, ' ', _jmp_buf);
      }
      save_append_string(&ret_str, &ret_space, o, "3' ", _jmp_buf);
-     for (i = oligo1_len ; i > ret_right_start - 1; i--) {
+     for (i = oligo1_len - 1 ; i > ret_right_start - 1; i--) {
        save_append_char(&ret_str, &ret_space, o, (char) oligo1[i], _jmp_buf);
      }
      save_append_string(&ret_str, &ret_space, o, "U+2518\\n", _jmp_buf);

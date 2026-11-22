@@ -138,7 +138,6 @@ set_dpal_args(dpal_args *a) {
   a->check_chars        = 0;
   a->force_generic      = 0;
   a->force_long_generic = 0;
-  a->force_long_maxgap1 = 0;
 }
 
 void
@@ -431,6 +430,24 @@ _dpal_generic(const unsigned char *X,
                 smax = S[0][ylen-1];
                 I=0; J=ylen-1;
     }
+    /* The main loop starts at i = 1 and j = 1. With one base in X, row 0
+       is the last row and every cell of it is an end point of a
+       non-local alignment; with one base in Y, column 0 is the last
+       column, an end point for DPAL_GLOBAL. */
+    if (DPAL_LOCAL != in->flag && xlen == 1) {
+        for (j = 1; j < ylen; j++) {
+            if (S[0][j] > smax) {
+                smax = S[0][j]; I = 0; J = j;
+            }
+        }
+    }
+    if (DPAL_GLOBAL == in->flag && ylen == 1) {
+        for (i = 0; i < xlen; i++) {
+            if (S[i][0] > smax) {
+                smax = S[i][0]; I = i; J = 0;
+            }
+        }
+    }
 
     /* Further is the solution for dynamic programming problem. */
     for(i=1; i<xlen; i++) {
@@ -643,6 +660,15 @@ _dpal_long_nopath_generic(const unsigned char *X,
          */
         smax = S[0][xlen-1]; I=xlen-1; J=0;
     }
+    /* With one base in Y, column 0 is the last column: every cell of it
+       is an end point for DPAL_GLOBAL */
+    if (DPAL_GLOBAL == in->flag && ylen == 1) {
+        for (i = 0; i < xlen; i++) {
+            if (S[0][i] > smax) {
+                smax = S[0][i]; I = i; J = 0;
+            }
+        }
+    }
            
     /* Initialize the 0th row of the score matrix. 
     for(j=0; j<ylen; j++) { 
@@ -670,11 +696,19 @@ _dpal_long_nopath_generic(const unsigned char *X,
         score = in->ssm[X[0]][Y[j]];
          if (DPAL_LOCAL == in->flag) {
              if (score < 0) score = 0;
-             if(score > smax) smax = score;
+             if (score > smax) {
+                 smax = score; I = 0; J = j;
+             }
          }    
          else if (DPAL_LOCAL_END == in->flag) { if (score < 0) score = 0;}
-         else if (DPAL_GLOBAL == in->flag && j == ylen-1 && score > smax)
-                        smax = score;
+         else if (DPAL_GLOBAL == in->flag && j == ylen-1 && score > smax) {
+             smax = score; I = 0; J = j;
+         }
+         /* With one base in X, row 0 is the last row: every cell of it is
+            an end point of a non-local alignment */
+         if (DPAL_LOCAL != in->flag && xlen == 1 && score > smax) {
+             smax = score; I = 0; J = j;
+         }
         S[mgy][0] = score;
         for(i=1; i<xlen; i++) {
 
@@ -730,8 +764,8 @@ _dpal_long_nopath_generic(const unsigned char *X,
     }
     /* I and J now specify the last pair of an optimum alignment. */
 
-    if (DPAL_LOCAL == in->flag && smax <= 0) {
-        /* There is no alignment at all. */
+    if ((DPAL_LOCAL == in->flag || DPAL_LOCAL_END == in->flag) && smax <= 0) {
+        /* There is no alignment at all (as in _dpal_generic()) */
         out->score = 0;
         out->path_length = 0;
     } else {
