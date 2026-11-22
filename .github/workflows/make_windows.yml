@@ -3,6 +3,8 @@ name: make test windows-latest
 on:
   push:
     branches: [ main ]
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   build-windows:
@@ -12,38 +14,49 @@ jobs:
     steps:
     - uses: actions/checkout@v7
     - name: make TESTOPTS=--windows
+      id: build
       run: make TESTOPTS=--windows
       working-directory: ./src
     - name: perl cmdline_test.pl --windows
       run: perl cmdline_test.pl --windows
       working-directory: ./test
     - name: perl oligotm_test.pl --windows
+      if: (success() || failure()) && steps.build.outcome == 'success'
       run: perl oligotm_test.pl --windows
       working-directory: ./test
     - name: perl dpal_test.pl --windows
+      if: (success() || failure()) && steps.build.outcome == 'success'
       run: perl dpal_test.pl --windows
       working-directory: ./test
     - name: perl thal_test.pl --windows
+      if: (success() || failure()) && steps.build.outcome == 'success'
       run: perl thal_test.pl --windows
       working-directory: ./test
     - name: perl a3test.pl --windows --action
+      if: (success() || failure()) && steps.build.outcome == 'success'
       run: perl a3test.pl --windows --action
       working-directory: ./test
     - name: perl p3test.pl --windows --action
+      if: (success() || failure()) && steps.build.outcome == 'success'
       run: perl p3test.pl --windows --action
       working-directory: ./test
     - name: mkdir results
+      if: success() || failure()
       run: mkdir results
     - name: powershell Compress-Archive src results/build-windows-src.zip
+      if: success() || failure()
       run: powershell Compress-Archive src results/build-windows-src.zip
     - name: powershell Compress-Archive test results/build-windows-test.zip
+      if: success() || failure()
       run: powershell Compress-Archive test results/build-windows-test.zip
     - name: Upload src folder for job 1
+      if: success() || failure()
       uses: actions/upload-artifact@v7
       with:
         name: build-windows-src.zip
         path: results/build-windows-src.zip
     - name: Upload test folder for job 1
+      if: success() || failure()
       uses: actions/upload-artifact@v7
       with:
         name: build-windows-test.zip
