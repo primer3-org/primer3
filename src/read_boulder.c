@@ -410,7 +410,14 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_DMSO_FACTOR", pa->p_args.dmso_fact);
       COMPARE_FLOAT("PRIMER_FORMAMIDE_CONC", pa->p_args.formamide_conc);
       COMPARE_INT("PRIMER_MAX_NS_ACCEPTED", pa->p_args.num_ns_accepted);
-      COMPARE_INT("PRIMER_PRODUCT_OPT_SIZE", pa->product_opt_size);
+      if (COMPARE("PRIMER_PRODUCT_OPT_SIZE")) {
+        parse_int("PRIMER_PRODUCT_OPT_SIZE", datum, &pa->product_opt_size, parse_err);
+        if (pa->product_opt_size > PR_MAX_PRODUCT_SIZE) {
+          pr_append_new_chunk(glob_err, "Value too large at tag PRIMER_PRODUCT_OPT_SIZE (maximum "
+                              MACRO_VALUE_AS_STRING(PR_MAX_PRODUCT_SIZE) ")");
+        }
+        continue;
+      }
       COMPARE_FLOAT("PRIMER_MAX_SELF_ANY", pa->p_args.max_self_any);
 
       /* COMPARE_FLOAT("PRIMER_MAX_SELF_END", pa->p_args.max_self_end); */
@@ -1424,6 +1431,13 @@ parse_product_size(const char *tag_name, char *in,
         p = parse_int_pair(tag_name, p, '-',
                            &pa->pr_min[i], &pa->pr_max[i], err);
         if (NULL == p) return;
+        if (pa->pr_min[i] > PR_MAX_PRODUCT_SIZE
+            || pa->pr_max[i] > PR_MAX_PRODUCT_SIZE) {
+            pr_append_new_chunk(err, "Value too large at tag ");
+            pr_append(err, tag_name);
+            pr_append(err, " (maximum " MACRO_VALUE_AS_STRING(PR_MAX_PRODUCT_SIZE) ")");
+            return;
+        }
         i++;
     }
     pa->num_intervals = i;

@@ -32,7 +32,7 @@ In new or changed C/C++ code:
 - Write every `if`, `else if` and `else` with braces, never as a one-liner such as `if (x) y = 1;`.
 - Don't use the ternary operator `?:` to choose a value; write `if (...) { ... } else { ... }`.
 
-Don't reformat untouched code.
+Don't reformat untouched code. But when new code belongs under an existing braceless `if`, put it in that `if`: add the braces there rather than repeating the condition in a second block.
 
 ## Tests
 

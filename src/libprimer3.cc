@@ -86,7 +86,6 @@ namespace std
                                oligo Tms. */
 
 #define MACRO_CAT_2(A,B) A##B
-#define MACRO_VALUE_AS_STRING(A) MACRO_STRING(A)
 
 #define PR_POSITION_PENALTY_IS_NULL(PA) \
 (PR_DEFAULT_INSIDE_PENALTY == (PA)->inside_penalty \
@@ -144,6 +143,7 @@ static void _adjust_seq_args(const p3_global_settings *pa,
                              pr_append_str *warning);
 static int  shift_force_position(int *pos, int first_base_index,
                                  int incl_s, int incl_l);
+static int  clamp_to_int(long long v);
 
 static void _optimize_ok_regions_list(const p3_global_settings *pa,
                                       seq_args *sa,
@@ -4252,10 +4252,15 @@ p_obj_fn(const p3_global_settings *pa,
       if(pa->p_args.weights.end_stability)
            sum += pa->p_args.weights.end_stability * h->end_stability;
 
-      /* FIX ME QUALITY WT Change here */
       if(pa->p_args.weights.seq_quality)
            sum += pa->p_args.weights.seq_quality *
-             (pa->quality_range_max - h->seq_quality);  /* Look for end seq quality */
+             (pa->quality_range_max - h->seq_quality);
+
+      /* Minimum quality of the 3' pentamer */
+      if (pa->p_args.weights.end_quality) {
+        sum += pa->p_args.weights.end_quality *
+          (pa->quality_range_max - h->seq_end_quality);
+      }
 
       if (pa->p_args.weights.template_mispriming && pa->thermodynamic_template_alignment==0) {
         PR_ASSERT(oligo_max_template_mispriming(h) != ALIGN_SCORE_UNDEF);
@@ -6923,6 +6928,21 @@ pr_safe_realloc(void *p, size_t x)
 /* START functions which check and modify the input             */
 /* ============================================================ */
 
+/* Limit v to the int range. Used where input positions are shifted:
+   a position outside the int range is outside the sequence anyway, and
+   the following checks report it. */
+static int
+clamp_to_int(long long v)
+{
+  if (v > INT_MAX) {
+    return INT_MAX;
+  }
+  if (v < INT_MIN) {
+    return INT_MIN;
+  }
+  return (int) v;
+}
+
 /* Makes a forced position (SEQUENCE_FORCE_*) 0-based and relative to
    the included region, which starts at the 0-based incl_s and has
    incl_l bases. A position that is not set stays
@@ -7011,10 +7031,12 @@ _adjust_seq_args(const p3_global_settings *pa,
   if (pa->primer_task == pick_cloning_primers) {
     if(sa->incl_l == -1) {
       sa->force_left_start = pa->first_base_index;
-      sa->force_right_start = seq_len + pa->first_base_index - 1;
+      sa->force_right_start
+        = clamp_to_int((long long) seq_len + pa->first_base_index - 1);
     } else {
       sa->force_left_start = sa->incl_s;
-      sa->force_right_start = sa->incl_s + sa->incl_l - 1;
+      sa->force_right_start
+        = clamp_to_int((long long) sa->incl_s + sa->incl_l - 1);
     }
   }
 
@@ -7025,8 +7047,9 @@ _adjust_seq_args(const p3_global_settings *pa,
       pr_append_new_chunk(nonfatal_err,
                           "Task pick_discriminative_primers requires exactly one SEQUENCE_TARGET");
     }
-    sa->force_left_end = sa->tar2.pairs[0][0] - 1;
-    sa->force_right_end = sa->tar2.pairs[0][0] + sa->tar2.pairs[0][1];
+    sa->force_left_end = clamp_to_int((long long) sa->tar2.pairs[0][0] - 1);
+    sa->force_right_end
+      = clamp_to_int((long long) sa->tar2.pairs[0][0] + sa->tar2.pairs[0][1]);
   }
 
   /* If no included region is specified,
@@ -7044,8 +7067,9 @@ _adjust_seq_args(const p3_global_settings *pa,
   }
 
   /* Fix the start of the included region and start codon */
-  sa->incl_s -= pa->first_base_index;
-  sa->start_codon_pos -= pa->first_base_index;
+  sa->incl_s = clamp_to_int((long long) sa->incl_s - pa->first_base_index);
+  sa->start_codon_pos
+    = clamp_to_int((long long) sa->start_codon_pos - pa->first_base_index);
 
   /* Make the forced positions 0-based and relative to the included
      region. If the region itself is invalid, _pr_data_control()
@@ -7196,8 +7220,9 @@ _adjust_seq_args(const p3_global_settings *pa,
     return;
   }
 
-  /* Update ok regions, if non empty */
-  if (sa->ok_regions.count > 0) {
+  /* Update ok regions, if non empty. An invalid included region
+     (trimmed_seq not set) is reported by _pr_data_control(). */
+  if (sa->ok_regions.count > 0 && sa->trimmed_seq != NULL) {
     _optimize_ok_regions_list(pa, sa, warning);
   }
 
@@ -7230,10 +7255,20 @@ _optimize_ok_regions_list(const p3_global_settings *pa,
   int omin = pa->p_args.min_size;
   int omax = pa->p_args.max_size;
 
+  /* The sizes are validated only later in _pr_data_control(); with
+     invalid values the sums below could overflow */
+  if (omin < 1 || omax < 1 || omin > MAX_PRIMER_LENGTH || omax > MAX_PRIMER_LENGTH) {
+    return;
+  }
+
   /* Determine min/max product size */
   for (int i=0; i<pa->num_intervals; i++) {
     if (pa->pr_min[i] < pmin) { pmin = pa->pr_min[i]; }
     if (pa->pr_max[i] > pmax) { pmax = pa->pr_max[i]; }
+  }
+  /* A negative size is reported by _pr_data_control() */
+  if (pmin < 0) {
+    return;
   }
 
   /* Update each region */
@@ -7715,7 +7750,7 @@ _pr_data_control(const p3_global_settings *pa,
   }
 
   if (sa->incl_s < 0 || sa->incl_l < 0
-      || sa->incl_s + sa->incl_l > seq_len) {
+      || (long long) sa->incl_s + sa->incl_l > seq_len) {
     pr_append_new_chunk(nonfatal_err, "Illegal value for SEQUENCE_INCLUDED_REGION");
     return 1;
   }
@@ -7806,7 +7841,8 @@ _pr_data_control(const p3_global_settings *pa,
       }
     }
   }
-  else if (pa->p_args.weights.seq_quality || pa->o_args.weights.seq_quality) {
+  else if (pa->p_args.weights.seq_quality || pa->o_args.weights.seq_quality
+           || pa->p_args.weights.end_quality) {
     pr_append_new_chunk(nonfatal_err,
                         "Sequence quality is part of objective function but sequence quality is not defined");
     return 1;
@@ -7826,9 +7862,9 @@ _pr_data_control(const p3_global_settings *pa,
   if (NULL != sa->overhang_left) {
     overhang_left_len = strlen(sa->overhang_left);
     if ((unsigned) pa->p_args.max_size  + overhang_left_len > THAL_MAX_ALIGN) {
-      pr_append_new_chunk(glob_err,
+      pr_append_new_chunk(nonfatal_err,
            "PRIMER_MAX_SIZE + SEQUENCE_OVERHANG_LEFT exceeds built-in maximum of ");
-      pr_append(glob_err, MACRO_VALUE_AS_STRING(THAL_MAX_ALIGN));
+      pr_append(nonfatal_err, MACRO_VALUE_AS_STRING(THAL_MAX_ALIGN));
       return 1;
     }
     if ((offending_char = dna_to_upper(sa->overhang_left, 0))) {
@@ -7840,9 +7876,9 @@ _pr_data_control(const p3_global_settings *pa,
   if (NULL != sa->overhang_right) {
     overhang_right_len = strlen(sa->overhang_right);
     if ((unsigned) pa->p_args.max_size + overhang_right_len > THAL_MAX_ALIGN) {
-      pr_append_new_chunk(glob_err,
+      pr_append_new_chunk(nonfatal_err,
            "PRIMER_MAX_SIZE + SEQUENCE_OVERHANG_RIGHT exceeds built-in maximum of ");
-      pr_append(glob_err, MACRO_VALUE_AS_STRING(THAL_MAX_ALIGN));
+      pr_append(nonfatal_err, MACRO_VALUE_AS_STRING(THAL_MAX_ALIGN));
       return 1;
     }
     if ((offending_char = dna_to_upper(sa->overhang_right, 0))) {
@@ -8099,9 +8135,9 @@ _pr_data_control(const p3_global_settings *pa,
   }
   if (sa->internal_input) {
     if (strlen(sa->internal_input) > MAX_PRIMER_LENGTH) {
-      pr_append_new_chunk(glob_err,
+      pr_append_new_chunk(nonfatal_err,
                           "Specified internal oligo exceeds built-in maximum of ");
-      pr_append(glob_err, MACRO_VALUE_AS_STRING(MAX_PRIMER_LENGTH));
+      pr_append(nonfatal_err, MACRO_VALUE_AS_STRING(MAX_PRIMER_LENGTH));
       return 1;
     }
     if (strlen(sa->internal_input) > (unsigned) pa->o_args.max_size)
@@ -8129,15 +8165,15 @@ _pr_data_control(const p3_global_settings *pa,
   }
   if (sa->left_input) {
     if (strlen(sa->left_input) > MAX_PRIMER_LENGTH) {
-      pr_append_new_chunk(glob_err,
+      pr_append_new_chunk(nonfatal_err,
                           "Specified left primer exceeds built-in maximum of ");
-      pr_append(glob_err, MACRO_VALUE_AS_STRING(MAX_PRIMER_LENGTH));
+      pr_append(nonfatal_err, MACRO_VALUE_AS_STRING(MAX_PRIMER_LENGTH));
       return 1;
     }
     if (strlen(sa->left_input) + overhang_left_len > THAL_MAX_ALIGN) {
-      pr_append_new_chunk(glob_err,
+      pr_append_new_chunk(nonfatal_err,
                           "Specified left primer + overhang exceeds built-in maximum of ");
-      pr_append(glob_err, MACRO_VALUE_AS_STRING(THAL_MAX_ALIGN));
+      pr_append(nonfatal_err, MACRO_VALUE_AS_STRING(THAL_MAX_ALIGN));
       return 1;
     }
     if (strlen(sa->left_input) > (unsigned) pa->p_args.max_size)
@@ -8155,15 +8191,15 @@ _pr_data_control(const p3_global_settings *pa,
   }
   if (sa->right_input) {
     if (strlen(sa->right_input) > MAX_PRIMER_LENGTH) {
-      pr_append_new_chunk(glob_err,
+      pr_append_new_chunk(nonfatal_err,
                           "Specified right primer exceeds built-in maximum of ");
-      pr_append(glob_err, MACRO_VALUE_AS_STRING(MAX_PRIMER_LENGTH));
+      pr_append(nonfatal_err, MACRO_VALUE_AS_STRING(MAX_PRIMER_LENGTH));
       return 1;
     }
     if (strlen(sa->right_input) + overhang_right_len > THAL_MAX_ALIGN) {
-      pr_append_new_chunk(glob_err,
+      pr_append_new_chunk(nonfatal_err,
                           "Specified right primer + overhang exceeds built-in maximum of ");
-      pr_append(glob_err, MACRO_VALUE_AS_STRING(THAL_MAX_ALIGN));
+      pr_append(nonfatal_err, MACRO_VALUE_AS_STRING(THAL_MAX_ALIGN));
       return 1;
     }
     if (strlen(sa->right_input) < (unsigned) pa->p_args.min_size)
@@ -8303,14 +8339,14 @@ _pr_data_control(const p3_global_settings *pa,
 
   if((sa->force_left_start != PR_NULL_FORCE_POSITION) && (sa->force_left_end != PR_NULL_FORCE_POSITION)
      && (sa->force_left_start > sa->force_left_end)) {
-    pr_append_new_chunk(glob_err,
+    pr_append_new_chunk(nonfatal_err,
                         "SEQUENCE_FORCE_LEFT_START > SEQUENCE_FORCE_LEFT_END");
     return 1;
   }
 
   if((sa->force_right_end != PR_NULL_FORCE_POSITION) && (sa->force_right_start != PR_NULL_FORCE_POSITION)
      && (sa->force_right_end > sa->force_right_start)) {
-    pr_append_new_chunk(glob_err,
+    pr_append_new_chunk(nonfatal_err,
                         "SEQUENCE_FORCE_RIGHT_END > SEQUENCE_FORCE_RIGHT_START");
     return 1;
   }
@@ -8364,14 +8400,14 @@ _pr_data_control(const p3_global_settings *pa,
 
   if ((sa->primer_overlap_junctions_count > 0) &&
       (pa->p_args.min_5_prime_overlap_of_junction > (pa->p_args.max_size / 2))) {
-    pr_append_new_chunk(glob_err,
+    pr_append_new_chunk(nonfatal_err,
                         "PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION > PRIMER_MAX_SIZE / 2");
     return 1;
   }
 
   if ((sa->primer_overlap_junctions_count > 0) &&
       (pa->p_args.min_3_prime_overlap_of_junction > (pa->p_args.max_size / 2))) {
-    pr_append_new_chunk(glob_err,
+    pr_append_new_chunk(nonfatal_err,
                         "PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION > PRIMER_MAX_SIZE / 2");
     return 1;
   }
@@ -8390,14 +8426,14 @@ _pr_data_control(const p3_global_settings *pa,
 
   if ((sa->intl_overlap_junctions_count > 0) &&
       (pa->o_args.min_5_prime_overlap_of_junction > (pa->o_args.max_size / 2))) {
-    pr_append_new_chunk(glob_err,
+    pr_append_new_chunk(nonfatal_err,
                         "PRIMER_INTERNAL_MIN_5_PRIME_OVERLAP_OF_JUNCTION > PRIMER_INTERNAL_MAX_SIZE / 2");
     return 1;
   }
 
   if ((sa->intl_overlap_junctions_count > 0) &&
       (pa->o_args.min_3_prime_overlap_of_junction > (pa->o_args.max_size / 2))) {
-    pr_append_new_chunk(glob_err,
+    pr_append_new_chunk(nonfatal_err,
                         "PRIMER_INTERNAL_MIN_3_PRIME_OVERLAP_OF_JUNCTION > PRIMER_INTERNAL_MAX_SIZE / 2");
     return 1;
   }
@@ -8467,7 +8503,7 @@ _check_and_adjust_overlap_pos(seq_args *sa,
 
   for (i = 0; i < *count; i++) {
     /* Subtract first_index from the "must overlap" positions */
-    list[i] -= first_index;
+    list[i] = clamp_to_int((long long) list[i] - first_index);
 
     if (list[i] >= seq_len) {
       snprintf(buffer, 255, "%s beyond end of sequence", tag);
@@ -8482,7 +8518,7 @@ _check_and_adjust_overlap_pos(seq_args *sa,
     }
 
     /* Cause the intron positions to be relative to the included region. */
-    list[i] -= sa->incl_s;
+    list[i] = clamp_to_int((long long) list[i] - sa->incl_s);
 
     /* Check that intron positions are within the included region. */
     if (list[i] < 0 
@@ -8584,7 +8620,7 @@ _check_and_adjust_intervals(seq_args *sa,
                                    first_index,
                                    nonfatal_err, sa, warning, 0)
       == 1) return 1;
-  sa->start_codon_pos -= sa->incl_s;
+  sa->start_codon_pos = clamp_to_int((long long) sa->start_codon_pos - sa->incl_s);
 
   if (_check_and_adjust_1_interval("EXCLUDED_REGION",
                                    sa->excl2.count, sa->excl2.pairs,
@@ -8646,26 +8682,26 @@ _check_and_adjust_1_interval(const char *tag_name,
       pr_append(err, " illegal interval");
       return 1;
     }
-    intervals[i][0] -= first_index;
+    intervals[i][0] = clamp_to_int((long long) intervals[i][0] - first_index);
     if (intervals[i][0] < 0) {
       /* Drop the part before the sequence */
-      intervals[i][1] += intervals[i][0];
+      intervals[i][1] = clamp_to_int((long long) intervals[i][1] + intervals[i][0]);
       intervals[i][0] = 0;
     }
   }
   for (i=0; i < num_intervals; i++) {
     if (empty_allowed && (intervals[i][0] == -1) && (intervals[i][1] == -1))
       continue;
-    if (intervals[i][0] + intervals[i][1] > seq_len) {
+    if ((long long) intervals[i][0] + intervals[i][1] > seq_len) {
       pr_append_new_chunk(err, tag_name);
       pr_append(err, " beyond end of sequence");
       return 1;
     }
     /* Cause the interval start to be relative to the included region. */
-    intervals[i][0] -= sa->incl_s;
+    intervals[i][0] = clamp_to_int((long long) intervals[i][0] - sa->incl_s);
     /* Check that intervals are within the included region. */
     if (intervals[i][0] < 0
-        || intervals[i][0] + intervals[i][1] > sa->incl_l) {
+        || (long long) intervals[i][0] + intervals[i][1] > sa->incl_l) {
       if (!outside_warning_issued) {
         pr_append_new_chunk(warning, tag_name);
         pr_append(warning,

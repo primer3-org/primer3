@@ -310,6 +310,7 @@ sub main() {
                   'primer_masker_formatted',
 
                   'primer_overhang',
+                  'primer_seq_err_nonfatal',
 
                   # Put slow tests last
                   'primer_overhang_th',

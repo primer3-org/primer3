@@ -58,6 +58,15 @@ from the primer values, and a second warning if
 PRIMER_INTERNAL_DMSO_CONC, PRIMER_INTERNAL_DMSO_FACTOR or
 PRIMER_INTERNAL_FORMAMIDE_CONC differ.
 
+PRIMER_WT_END_QUAL had no effect. It now adds PRIMER_WT_END_QUAL *
+(PRIMER_QUALITY_RANGE_MAX - lowest SEQUENCE_QUALITY value of the five
+3' bases) to the penalty of left and right primers. Without
+SEQUENCE_QUALITY a non-0 weight is an error for the record. The new
+output tags PRIMER_LEFT_n_MIN_END_SEQ_QUALITY and
+PRIMER_RIGHT_n_MIN_END_SEQ_QUALITY print this lowest value; like
+PRIMER_LEFT_n_MIN_SEQ_QUALITY they are only printed with
+SEQUENCE_QUALITY. PRIMER_INTERNAL_WT_END_QUAL still has no effect.
+
 Minor fixes:
 1. Compiler complains were fixed.
 
@@ -239,6 +248,18 @@ Minor fixes:
     - 16 declarations of functions that never existed were removed,
       and the duplicate p3_set_gs_max_diff_tm() was removed (use
       p3_set_gs_primer_max_diff_tm()).
+
+32. Errors in the input of one record no longer end the whole run.
+    SEQUENCE_FORCE_LEFT_START > SEQUENCE_FORCE_LEFT_END (and the right
+    counterpart), a SEQUENCE_PRIMER, SEQUENCE_PRIMER_REVCOMP or
+    SEQUENCE_INTERNAL_OLIGO longer than 36 bases, a primer plus
+    overhang or PRIMER_MAX_SIZE plus SEQUENCE_OVERHANG_LEFT/RIGHT
+    longer than 60 bases, and the PRIMER_(INTERNAL_)MIN_5/3_PRIME_
+    OVERLAP_OF_JUNCTION checks in records with a junction list were
+    fatal: primer3_core exited with -4 (252) and skipped all later
+    records. Now only the record gets PRIMER_ERROR, the next record
+    runs, and the exit status is 0. Scripts that detected these errors
+    by the exit status have to look for PRIMER_ERROR instead.
 
 
 release 2.6.1 2022-01-26  ===============================================

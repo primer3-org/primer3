@@ -399,12 +399,18 @@ print_boulder(int io_version,
 
     /* If a sequence quality was provided, print it*/
     if (NULL != sa->quality){
-      if (go_fwd == 1)
+      if (go_fwd == 1) {
         printf("PRIMER_LEFT%s_MIN_SEQ_QUALITY=%d\n", suffix,
                fwd->seq_quality);
-      if (go_rev == 1) 
+        printf("PRIMER_LEFT%s_MIN_END_SEQ_QUALITY=%d\n", suffix,
+               fwd->seq_end_quality);
+      }
+      if (go_rev == 1) {
         printf("PRIMER_RIGHT%s_MIN_SEQ_QUALITY=%d\n", suffix,
                rev->seq_quality);
+        printf("PRIMER_RIGHT%s_MIN_END_SEQ_QUALITY=%d\n", suffix,
+               rev->seq_end_quality);
+      }
       if (go_int == 1 && (retval->output_type == primer_list)) 
         printf("PRIMER_%s%s_MIN_SEQ_QUALITY=%d\n", int_oligo, suffix,
                intl->seq_quality);

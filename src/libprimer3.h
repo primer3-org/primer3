@@ -67,6 +67,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
    example chromosome coordinates. */
 #define PR_MAX_FIRST_BASE_INDEX      (INT_MAX / 2)
 
+/* Largest value in PRIMER_PRODUCT_SIZE_RANGE and PRIMER_PRODUCT_OPT_SIZE.
+   Far above any PCR product; keeps sums of product sizes and positions
+   in the int range and limits the template check_primers builds. */
+#define PR_MAX_PRODUCT_SIZE           100000
+
 /*  Exposed in the read_boulder input routine.... */
 #define PR_NULL_START_CODON_POS       -1000000
 #define PR_DEFAULT_START_CODON_POS    -2000000
@@ -79,6 +84,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define PR_ALIGN_SCORE_PRECISION 100.0
 
 #define MACRO_STRING(X) #X
+#define MACRO_VALUE_AS_STRING(A) MACRO_STRING(A)
 /* pr_progam_name must be set in main(). */
 #define PR_ASSERT(COND)                                  \
 if (!(COND)) {                                           \
