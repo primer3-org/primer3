@@ -708,7 +708,7 @@ PRIMER PICKING RESULTS FOR boundary_test_23
 No mispriming library specified
 No internal oligo mishyb library specified
 Using 1-based sequence positions
-WARNING: PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION outside of INCLUDED_REGION
+WARNING: SEQUENCE_INTERNAL_EXCLUDED_REGION outside of SEQUENCE_INCLUDED_REGION
 
 OLIGO            start  len      tm     gc%   any    3' seq
 LEFT PRIMER          3   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
@@ -792,7 +792,7 @@ PRIMER PICKING RESULTS FOR boundary_test_25
 No mispriming library specified
 No internal oligo mishyb library specified
 Using 1-based sequence positions
-WARNING: PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION outside of INCLUDED_REGION
+WARNING: SEQUENCE_INTERNAL_EXCLUDED_REGION outside of SEQUENCE_INCLUDED_REGION
 
 OLIGO            start  len      tm     gc%   any    3' seq
 LEFT PRIMER          3   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
@@ -1028,7 +1028,7 @@ PRIMER PICKING RESULTS FOR boundary_test_31
 No mispriming library specified
 No internal oligo mishyb library specified
 Using 1-based sequence positions
-WARNING: PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION outside of INCLUDED_REGION
+WARNING: SEQUENCE_INTERNAL_EXCLUDED_REGION outside of SEQUENCE_INCLUDED_REGION
 
 OLIGO            start  len      tm     gc%   any    3' seq
 LEFT PRIMER          3   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
@@ -1071,7 +1071,7 @@ PRIMER PICKING RESULTS FOR boundary_test_32
 No mispriming library specified
 No internal oligo mishyb library specified
 Using 1-based sequence positions
-WARNING: PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION outside of INCLUDED_REGION
+WARNING: SEQUENCE_INTERNAL_EXCLUDED_REGION outside of SEQUENCE_INCLUDED_REGION
 
 OLIGO            start  len      tm     gc%   any    3' seq
 LEFT PRIMER          3   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG

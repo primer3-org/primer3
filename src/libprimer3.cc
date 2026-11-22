@@ -6704,15 +6704,18 @@ p3_oligo_explain_string(const oligo_stats *stat)
 
   IF_SP_AND_CHECK("sequencing locations %d, ", stat->sequencing_location)
   SP_AND_CHECK("considered %d", stat->considered)
+  IF_SP_AND_CHECK(", too short %d", stat->size_min)
+  IF_SP_AND_CHECK(", too long %d", stat->size_max)
   IF_SP_AND_CHECK(", would not amplify any of the ORF %d", stat->no_orf)
   IF_SP_AND_CHECK(", too many Ns %d", stat->ns)
   IF_SP_AND_CHECK(", overlap target %d", stat->target)
   IF_SP_AND_CHECK(", overlap excluded region %d", stat->excluded)
   IF_SP_AND_CHECK(", GC content failed %d", stat->gc)
   IF_SP_AND_CHECK(", GC clamp failed %d", stat->gc_clamp)
+  IF_SP_AND_CHECK(", high GC content at 3' end %d", stat->gc_end_high)
   IF_SP_AND_CHECK(", low tm %d", stat->temp_min)
   IF_SP_AND_CHECK(", high tm %d", stat->temp_max)
-  IF_SP_AND_CHECK(", low faction bound %d", stat->bound_min)
+  IF_SP_AND_CHECK(", low fraction bound %d", stat->bound_min)
   IF_SP_AND_CHECK(", high fraction bound %d", stat->bound_max)
   IF_SP_AND_CHECK(", high any compl %d", stat->compl_any)
   IF_SP_AND_CHECK(", high end compl %d", stat->compl_end)
@@ -7000,7 +7003,7 @@ _adjust_seq_args(const p3_global_settings *pa,
     if (pa->primer_task == check_primers) {
       pr_append_new_chunk(nonfatal_err, "No primers provided");
     } else {
-      pr_append_new_chunk(nonfatal_err, "Missing SEQUENCE tag");
+      pr_append_new_chunk(nonfatal_err, "Missing SEQUENCE_TEMPLATE tag");
     }
     return;
   }
@@ -7325,7 +7328,7 @@ _optimize_ok_regions_list(const p3_global_settings *pa,
       sa->ok_regions.right_pairs[i][0] = rs;
       sa->ok_regions.right_pairs[i][1] = re - rs + 1;
     } else {
-      snprintf(buffer, 255, "PAIR_OK_REGIONS[%d,%d,%d,%d] does not allow products of %d-%dbp", \
+      snprintf(buffer, 255, "SEQUENCE_PRIMER_PAIR_OK_REGION_LIST[%d,%d,%d,%d] does not allow products of %d-%dbp", \
                sa->ok_regions.left_pairs[i][0], \
                sa->ok_regions.left_pairs[i][1], \
                sa->ok_regions.right_pairs[i][0], \
@@ -7629,13 +7632,13 @@ _pr_data_control(const p3_global_settings *pa,
 
   if (pa->p_args.opt_size > pa->p_args.max_size) {
     pr_append_new_chunk(glob_err,
-                        "PRIMER_{OPT,DEFAULT}_SIZE > PRIMER_MAX_SIZE");
+                        "PRIMER_OPT_SIZE > PRIMER_MAX_SIZE");
     return 1;
   }
 
   if (pa->p_args.opt_size < pa->p_args.min_size) {
     pr_append_new_chunk(glob_err,
-                        "PRIMER_{OPT,DEFAULT}_SIZE < PRIMER_MIN_SIZE");
+                        "PRIMER_OPT_SIZE < PRIMER_MIN_SIZE");
     return 1;
   }
 
@@ -7981,7 +7984,7 @@ _pr_data_control(const p3_global_settings *pa,
       || pa->o_args.min_gc > 100
       || pa->o_args.max_gc < 0) {
     pr_append_new_chunk(glob_err,
-                        "Illegal value for PRIMER_INTERNAL_OLIGO_GC");
+                        "Illegal value for PRIMER_INTERNAL_MAX_GC and PRIMER_INTERNAL_MIN_GC");
     return 1;
   }
   if (pa->p_args.num_ns_accepted < 0) {
@@ -8512,7 +8515,7 @@ _check_and_adjust_overlap_pos(seq_args *sa,
     }
 
     if (list[i] < 0) {
-      snprintf(buffer, 255, "Negative %s length", tag);
+      snprintf(buffer, 255, "Negative %s position", tag);
       pr_append_new_chunk(nonfatal_err, buffer);
       return 1;
     }
@@ -8524,7 +8527,7 @@ _check_and_adjust_overlap_pos(seq_args *sa,
     if (list[i] < 0 
         || list[i] > sa->incl_l) {
       if (!outside_warning_issued) {
-        snprintf(buffer, 255, "%s outside of INCLUDED_REGION", tag);
+        snprintf(buffer, 255, "%s outside of SEQUENCE_INCLUDED_REGION", tag);
         pr_append_new_chunk(warning, buffer);
         outside_warning_issued = 1;
       }
@@ -8613,7 +8616,7 @@ _check_and_adjust_intervals(seq_args *sa,
                             pr_append_str * nonfatal_err,
                             pr_append_str *warning) {
 
-  if (_check_and_adjust_1_interval("TARGET",
+  if (_check_and_adjust_1_interval("SEQUENCE_TARGET",
                                    sa->tar2.count, 
                                    sa->tar2.pairs,
                                    seq_len,
@@ -8622,27 +8625,27 @@ _check_and_adjust_intervals(seq_args *sa,
       == 1) return 1;
   sa->start_codon_pos = clamp_to_int((long long) sa->start_codon_pos - sa->incl_s);
 
-  if (_check_and_adjust_1_interval("EXCLUDED_REGION",
+  if (_check_and_adjust_1_interval("SEQUENCE_EXCLUDED_REGION",
                                    sa->excl2.count, sa->excl2.pairs,
                                    seq_len, first_index, 
                                    nonfatal_err, sa, warning, 0)
       == 1) return 1;
 
-  if (_check_and_adjust_1_interval("PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION",
+  if (_check_and_adjust_1_interval("SEQUENCE_INTERNAL_EXCLUDED_REGION",
                                    sa->excl_internal2.count,
                                    sa->excl_internal2.pairs,
                                    seq_len,
                                    first_index,
                                    nonfatal_err, sa, warning, 0)
       == 1) return 1;
-  if (_check_and_adjust_1_interval("PRIMER_PAIR_OK_REGION_LIST",
+  if (_check_and_adjust_1_interval("SEQUENCE_PRIMER_PAIR_OK_REGION_LIST",
                                    sa->ok_regions.count, 
                                    sa->ok_regions.left_pairs,
                                    seq_len,
                                    first_index,
                                    nonfatal_err, sa, warning, 1)
       == 1) return 1;
-  if (_check_and_adjust_1_interval("PRIMER_PAIR_OK_REGION_LIST",
+  if (_check_and_adjust_1_interval("SEQUENCE_PRIMER_PAIR_OK_REGION_LIST",
                                    sa->ok_regions.count, 
                                    sa->ok_regions.right_pairs,
                                    seq_len,
@@ -8705,7 +8708,7 @@ _check_and_adjust_1_interval(const char *tag_name,
       if (!outside_warning_issued) {
         pr_append_new_chunk(warning, tag_name);
         pr_append(warning,
-                  " outside of INCLUDED_REGION");
+                  " outside of SEQUENCE_INCLUDED_REGION");
         outside_warning_issued = 1;
       }
     }

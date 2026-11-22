@@ -815,8 +815,13 @@ read_boulder_record(FILE *file_input,
   /* Check if the record was terminated by "=" */
   if (NULL == s) { /* End of file. */
     if (data_found) {
-       pr_append_new_chunk(glob_err, 
-                          "Final record not terminated by '='");
+      if (file_type == settings) {
+        pr_append_new_chunk(glob_err,
+                            "Settings file not terminated by '='");
+      } else {
+        pr_append_new_chunk(glob_err,
+                            "Final record not terminated by '='");
+      }
       return 1;
     } else  return 0;
   }

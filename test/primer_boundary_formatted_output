@@ -1858,13 +1858,13 @@ libprimer3 release 2.2.1
 
 PRIMER PICKING RESULTS FOR boundary_test_61
 
-INPUT PROBLEM: Negative EXCLUDED_REGION length
+INPUT PROBLEM: Negative SEQUENCE_EXCLUDED_REGION length
 
 PRIMER PICKING RESULTS FOR boundary_test_62
 
 No mispriming library specified
 Using 0-based sequence positions
-WARNING: EXCLUDED_REGION outside of INCLUDED_REGION
+WARNING: SEQUENCE_EXCLUDED_REGION outside of SEQUENCE_INCLUDED_REGION
 
 OLIGO            start  len      tm     gc%   any    3' seq
 LEFT PRIMER          2   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
@@ -1928,13 +1928,13 @@ libprimer3 release 2.2.1
 
 PRIMER PICKING RESULTS FOR boundary_test_64
 
-INPUT PROBLEM: EXCLUDED_REGION beyond end of sequence
+INPUT PROBLEM: SEQUENCE_EXCLUDED_REGION beyond end of sequence
 
 PRIMER PICKING RESULTS FOR boundary_test_65
 
 No mispriming library specified
 Using 0-based sequence positions
-WARNING: EXCLUDED_REGION outside of INCLUDED_REGION
+WARNING: SEQUENCE_EXCLUDED_REGION outside of SEQUENCE_INCLUDED_REGION
 
 OLIGO            start  len      tm     gc%   any    3' seq
 LEFT PRIMER          2   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG
@@ -2002,7 +2002,7 @@ No mispriming library specified
 Using 0-based sequence positions
 NO PRIMERS FOUND
 
-WARNING: EXCLUDED_REGION outside of INCLUDED_REGION
+WARNING: SEQUENCE_EXCLUDED_REGION outside of SEQUENCE_INCLUDED_REGION
 
 SEQUENCE SIZE: 59
 INCLUDED REGION SIZE: 55
@@ -2089,7 +2089,7 @@ libprimer3 release 2.2.1
 
 PRIMER PICKING RESULTS FOR boundary_test_70
 
-INPUT PROBLEM: Negative TARGET length
+INPUT PROBLEM: Negative SEQUENCE_TARGET length
 
 PRIMER PICKING RESULTS FOR boundary_test_71
 
@@ -2097,7 +2097,7 @@ No mispriming library specified
 Using 0-based sequence positions
 NO PRIMERS FOUND
 
-WARNING: TARGET outside of INCLUDED_REGION
+WARNING: SEQUENCE_TARGET outside of SEQUENCE_INCLUDED_REGION
 
 SEQUENCE SIZE: 59
 INCLUDED REGION SIZE: 55
@@ -2155,7 +2155,7 @@ libprimer3 release 2.2.1
 
 PRIMER PICKING RESULTS FOR boundary_test_73
 
-INPUT PROBLEM: TARGET beyond end of sequence
+INPUT PROBLEM: SEQUENCE_TARGET beyond end of sequence
 
 PRIMER PICKING RESULTS FOR boundary_test_74
 
@@ -2163,7 +2163,7 @@ No mispriming library specified
 Using 0-based sequence positions
 NO PRIMERS FOUND
 
-WARNING: TARGET outside of INCLUDED_REGION
+WARNING: SEQUENCE_TARGET outside of SEQUENCE_INCLUDED_REGION
 
 SEQUENCE SIZE: 59
 INCLUDED REGION SIZE: 55
@@ -2225,7 +2225,7 @@ No mispriming library specified
 Using 0-based sequence positions
 NO PRIMERS FOUND
 
-WARNING: TARGET outside of INCLUDED_REGION
+WARNING: SEQUENCE_TARGET outside of SEQUENCE_INCLUDED_REGION
 
 SEQUENCE SIZE: 59
 INCLUDED REGION SIZE: 55
@@ -2587,7 +2587,7 @@ PRIMER PICKING RESULTS FOR boundary_test_71_2
 
 No mispriming library specified
 Using 0-based sequence positions
-WARNING: TARGET outside of INCLUDED_REGION
+WARNING: SEQUENCE_TARGET outside of SEQUENCE_INCLUDED_REGION
 
 OLIGO            start  len      tm     gc%   any    3' seq
 LEFT PRIMER          2   25   62.73   36.00 12.00 10.00 CACGTCATCTCATCAAATTTGATTG

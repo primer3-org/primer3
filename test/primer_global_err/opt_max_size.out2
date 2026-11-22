@@ -1,1 +1,1 @@
-../src/primer3_core: PRIMER_{OPT,DEFAULT}_SIZE > PRIMER_MAX_SIZE
+../src/primer3_core: PRIMER_OPT_SIZE > PRIMER_MAX_SIZE

@@ -338,13 +338,16 @@ main(int argc, char *argv[])
         validate_kmer_lists_path();
 
     /* Check that we found the kmer lists in case masking flag was set to 1. */
+    /* Reported as a fatal error below, like the other global errors */
     if (global_pa->mask_template == 1 && kmer_lists_path == NULL){
-        printf("PRIMER_ERROR=masking template chosen, but path to kmer lists not specified\n=\n");
-        exit(-1);
+        if (pr_append_new_chunk_external(&fatal_parse_err,
+                                         "masking template chosen, but path to kmer lists not specified")) {
+          exit(-2); /* Out of memory */
+        }
     }
     /* Set up some masking parameters */
     /* edited by M. Lepamets */
-   if (global_pa->mask_template == 1) {
+   if (global_pa->mask_template == 1 && kmer_lists_path != NULL) {
       global_pa->mp.window_size = DEFAULT_WORD_LEN_2;
       /* The masking direction is chosen per record in _adjust_seq_args() */
       /* Check if masking parameters (k-mer list usage) have changed */
@@ -399,20 +402,12 @@ main(int argc, char *argv[])
 
     if (read_boulder_record_res.file_flag && sarg->sequence_name == NULL) {
       /* We will not have a base name for the files */
-      if (default_version == 2) {
-        if (format_output) {
-          format_error(stdout, NULL,
-                       "Need SEQUENCE_ID if P3_FILE_FLAG is not 0");
-        } else {
-          print_boulder_error("Need SEQUENCE_ID if P3_FILE_FLAG is not 0");
-        }
+      /* P3_FILE_FLAG and SEQUENCE_ID are the tags with both default versions */
+      if (format_output) {
+        format_error(stdout, NULL,
+                     "Need SEQUENCE_ID if P3_FILE_FLAG is not 0");
       } else {
-        if (format_output) {
-          format_error(stdout, NULL,
-                       "Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG is not 0");
-        } else {
-          print_boulder_error("Need PRIMER_SEQUENCE_ID if PRIMER_FILE_FLAG is not 0");
-        }
+        print_boulder_error("Need SEQUENCE_ID if P3_FILE_FLAG is not 0");
       }
       goto loop_wrap_up;
     }
