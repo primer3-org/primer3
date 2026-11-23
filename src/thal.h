@@ -166,17 +166,22 @@ typedef enum thal_mode {
 void set_thal_default_args(thal_args *a);
 void set_thal_oligo_default_args(thal_args *a);
 
-/* Read the thermodynamic values (parameters) from the parameter files
-   in the directory specified by 'path'.  Return 0 on success and -1
-   on error. The thermodynamic values are stored in multiple static
-   variables. */
-/* Here is an example of how this function is used in 
-   primer3_boulder_main.c: */
+/* thal_load_parameters() reads the thermodynamic values (parameters)
+   from the parameter files in the directory 'path' into 'a'.
+   get_thermodynamic_values() then stores them in the process-wide
+   tables that thal() uses. Both return 0 on success and -1 on error,
+   with the reason in o->msg. Example (as in thal_main.c): */
 #if 0
-  if (get_thermodynamic_values(thermodynamic_params_path, &o)) {
+  thal_parameters tp;
+  thal_results o;
+  thal_set_null_parameters(&tp);
+  if (thal_load_parameters(path, &tp, &o) == -1
+      || get_thermodynamic_values(&tp, &o) != 0) {
     fprintf(stderr, "%s\n", o.msg);
-    exit(-1);
+    thal_free_parameters(&tp);
+    exit(P3_EXIT_INPUT_ERROR);
   }
+  thal_free_parameters(&tp);
 #endif
 int  thal_set_null_parameters(thal_parameters *a);
 
@@ -189,9 +194,9 @@ int  get_thermodynamic_values(const thal_parameters *tp, thal_results *o);
 void destroy_thal_structures();
 
 /* Central method for finding the best alignment.  On error, o->temp
-   is set to THAL_ERROR_SCORE and a message is put in o->msg.  The
-   error might be caused by ENOMEM. To determine this it is necessary
-   to check errno.
+   is set to THAL_ERROR_SCORE and a message is put in o->msg.  If thal
+   ran out of memory, o->msg is "Out of memory" and errno is ENOMEM
+   (thal sets errno to 0 at the start).
 */
 
 void thal(const unsigned char *oligo1, 

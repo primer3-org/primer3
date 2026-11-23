@@ -1196,8 +1196,14 @@ thal_check_errors(const unsigned char *oligo_f, const unsigned char *oligo_r, in
    /* The following error messages will be seen by end users and will
       not be easy to understand. */
    if((*len_f > THAL_MAX_ALIGN) && (*len_r > THAL_MAX_ALIGN)){
-      strcpy(o->msg, "Both sequences longer than " XSTR(THAL_MAX_ALIGN)
-         " for thermodynamic alignment");
+      /* For a hairpin oligo_r is oligo_f, so there is only one sequence */
+      if (a->type == thal_hairpin) {
+         strcpy(o->msg, "Sequence longer than " XSTR(THAL_MAX_ALIGN)
+            " for hairpin calculation");
+      } else {
+         strcpy(o->msg, "Both sequences longer than " XSTR(THAL_MAX_ALIGN)
+            " for thermodynamic alignment");
+      }
       return 1;
    }
    if((*len_f > THAL_MAX_SEQ)){ 

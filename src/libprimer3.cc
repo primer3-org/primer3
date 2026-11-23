@@ -459,7 +459,7 @@ static void   oligo_template_mispriming(primer_rec *,
                                         const dpal_args *,
                                         const thal_args *);
 
-static int    pair_repeat_sim(primer_pair *, const p3_global_settings *);
+static double pair_repeat_sim(primer_pair *, const p3_global_settings *);
 
 static void   free_repeat_sim_score(p3retval *);
 static void   free_primer_repeat_sim_score(primer_rec *); 
@@ -586,6 +586,10 @@ p3_create_global_settings()
   }
 
   pr_set_default_global_args_2(r);
+  if (NULL == r->mp.list_prefix) {
+    free(r);
+    return NULL;
+  }
 
   return r;
 }
@@ -601,6 +605,10 @@ p3_create_global_settings_default_version_1()
   }
 
   pr_set_default_global_args_1(r);
+  if (NULL == r->mp.list_prefix) {
+    free(r);
+    return NULL;
+  }
 
   return r;
 }
@@ -861,8 +869,12 @@ pr_set_default_global_args_1(p3_global_settings *a)
   a->mp.print_sequence               = 0;
   a->mp.do_soft_masking              = 1;
   a->mp.nlists                       = DEFAULT_NLISTS;
-  a->mp.list_prefix                  = (char *) pr_safe_malloc (strlen (DEFAULT_LIST_FILE_PREFIX) + 1);
-  strcpy (a->mp.list_prefix, DEFAULT_LIST_FILE_PREFIX);
+  /* Called outside of the setjmp() in choose_primers(), so no
+     pr_safe_malloc(). The callers check for NULL. */
+  a->mp.list_prefix                  = (char *) malloc (strlen (DEFAULT_LIST_FILE_PREFIX) + 1);
+  if (NULL != a->mp.list_prefix) {
+    strcpy (a->mp.list_prefix, DEFAULT_LIST_FILE_PREFIX);
+  }
   a->mp.fp                           = NULL;
   a->mp.formula_intercept            = DEFAULT_INTERCEPT;  
 }
@@ -2191,54 +2203,63 @@ choose_internal_oligo(p3retval *retval,
    associated with a given primer i.e. that primer was supplied by the
    caller and pick_anyway is set.
 */
-void
+int
 add_must_use_warnings(pr_append_str *warning,
                       const char* text,
                       const oligo_stats *stats)
 {
+  /* Called from main(), outside of the setjmp() in choose_primers(),
+     so only the _external append functions are used here. */
   const char *sep = "/";
+  const struct { int flag; const char *reason; } reasons[] = {
+    { stats->size_min, "Too short" },
+    { stats->size_max, "Too long" },
+    { stats->ns, "Too many Ns" },
+    { stats->target, "Overlaps Target" },
+    { stats->excluded, "Overlaps Excluded Region" },
+    { stats->gc, "Unacceptable GC content" },
+    { stats->gc_clamp, "No GC clamp" },
+    { stats->temp_min, "Tm too low" },
+    { stats->temp_max, "Tm too high" },
+    { stats->bound_min, "Fraction bound too low" },
+    { stats->bound_max, "Fraction bound too high" },
+    { stats->compl_any, "High self complementarity" },
+    { stats->compl_end, "High end self complementarity" },
+    { stats->hairpin_th, "High hairpin stability (thermod. approach)" },
+    { stats->repeat_score, "High similarity to mispriming or mishyb library" },
+    { stats->poly_x, "Long poly-X" },
+    { stats->seq_quality, "Low sequence quality" },
+    { stats->stability, "High 3' stability" },
+    { stats->no_orf, "Would not amplify any ORF" },
+    { stats->not_in_any_left_ok_region, "Not in any ok left region" },
+    { stats->not_in_any_right_ok_region, "Not in any ok right region" },
+    /* edited by T. Koressaar for lowercase masking: */
+    { stats->gmasked, "Masked with lowercase letter" },
+    { stats->must_match_fail, "Failed must_match requirements" }
+  };
   pr_append_str s;
+  size_t i;
+  int err = 0;
 
   s.data = NULL;
   s.storage_size = 0;
 
-  if (stats->size_min) pr_append_w_sep(&s, sep, "Too short");
-  if (stats->size_max) pr_append_w_sep(&s, sep, "Too long");
-  if (stats->ns) pr_append_w_sep(&s, sep, "Too many Ns");
-  if (stats->target) pr_append_w_sep(&s, sep, "Overlaps Target");
-  if (stats->excluded) pr_append_w_sep(&s, sep, "Overlaps Excluded Region");
-  if (stats->gc) pr_append_w_sep(&s, sep, "Unacceptable GC content");
-  if (stats->gc_clamp) pr_append_w_sep(&s, sep, "No GC clamp");
-  if (stats->temp_min) pr_append_w_sep(&s, sep, "Tm too low");
-  if (stats->temp_max) pr_append_w_sep(&s, sep, "Tm too high");
-  if (stats->bound_min) pr_append_w_sep(&s, sep, "Fraction bound too low");
-  if (stats->bound_max) pr_append_w_sep(&s, sep, "Fraction bound too high");
-  if (stats->compl_any) pr_append_w_sep(&s, sep, "High self complementarity");
-  if (stats->compl_end)
-    pr_append_w_sep(&s, sep, "High end self complementarity");
-  if (stats->hairpin_th) pr_append_w_sep(&s, sep, "High hairpin stability (thermod. approach)");
-  if (stats->repeat_score)
-    pr_append_w_sep(&s, sep, "High similarity to mispriming or mishyb library");
-  if (stats->poly_x) pr_append_w_sep(&s, sep, "Long poly-X");
-  if (stats->seq_quality) pr_append_w_sep(&s, sep, "Low sequence quality");
-  if (stats->stability) pr_append_w_sep(&s, sep, "High 3' stability");
-  if (stats->no_orf) pr_append_w_sep(&s, sep, "Would not amplify any ORF");
-  if (stats->not_in_any_left_ok_region) pr_append_w_sep(&s, sep, "Not in any ok left region");
-  if (stats->not_in_any_right_ok_region) pr_append_w_sep(&s, sep, "Not in any ok right region");
-
-  /* edited by T. Koressaar for lowercase masking: */
-  if (stats->gmasked)
-    pr_append_w_sep(&s, sep, "Masked with lowercase letter");
-
-  if (stats->must_match_fail)
-    pr_append_w_sep(&s, sep, "Failed must_match requirements");
+  for (i = 0; i < sizeof(reasons) / sizeof(reasons[0]); i++) {
+    if (reasons[i].flag) {
+      if (pr_append_w_sep_external(&s, sep, reasons[i].reason)) {
+        free(s.data);
+        return 1;
+      }
+    }
+  }
 
   if (s.data) {
-    pr_append_new_chunk(warning, text);
-    pr_append(warning, " is unacceptable: ");
-    pr_append(warning, s.data);
+    err = pr_append_new_chunk_external(warning, text)
+      || pr_append_external(warning, " is unacceptable: ")
+      || pr_append_external(warning, s.data);
     free(s.data);
   }
+  return err;
 }
 
 /*
@@ -2665,8 +2686,8 @@ pick_sequencing_primer_list(p3retval *retval,
                             const dpal_arg_holder *dpal_arg_to_use,
                             const thal_arg_holder *thal_arg_to_use)
 {
-  int length, start;
-  int n, rest_accuracy;
+  int length, start, end;
+  int n;
   int primer_nr; /* number of primers we need to pick */
   int tar_n; /* counter for the targets */
   int step_nr; /* counter to step through the targets */
@@ -2726,18 +2747,18 @@ pick_sequencing_primer_list(p3retval *retval,
       }
       if (pr_position_f > (n - pa->p_args.min_size - 1)) {
         pr_position_f = n - pa->p_args.min_size - 1;
-        /* Actually this should never happen */
+        /* Happens e.g. with a target at the end of the sequence */
         pr_append_new_chunk(&retval->warnings,
-                            "Calculation error in forward "
-                            "sequencing position calculation");
+                            "Forward sequencing primer position beyond "
+                            "end of sequence, moved to the end");
       }
       /* position_r cannot be outside included region */
       if (pr_position_r < (pa->p_args.min_size - 1)) {
         pr_position_r = pa->p_args.min_size - 1;
-        /* Actually this should never happen */
+        /* Happens e.g. with a small interval and a target at the start */
         pr_append_new_chunk(&retval->warnings,
-                            "Calculation error in reverse "
-                            "sequencing position calculation");
+                            "Reverse sequencing primer position before "
+                            "start of sequence, moved to the start");
       }
       if (pr_position_r > (n - pa->p_args.min_size - 1)) {
         pr_position_r = n - pa->p_args.min_size - 1;
@@ -2745,34 +2766,34 @@ pick_sequencing_primer_list(p3retval *retval,
       /* Now all pr_positions are within the sequence */
       if (pa->pick_left_primer) {
         /* Set the start and length for the regions */
+        /* Search the 3' end from p - accuracy to p + accuracy,
+           cut at the ends of the sequence */
         start = pr_position_f - pa->sequencing.accuracy;
         if (start < 0) {
-          rest_accuracy = pr_position_f + 1;
           start = 0;
-        } else {
-          rest_accuracy = pa->sequencing.accuracy;
         }
-        length = rest_accuracy + pa->sequencing.accuracy ;
-        if ((start + length) > n) {
-          length = n - start;
+        end = pr_position_f + pa->sequencing.accuracy;
+        if (end > n - 1) {
+          end = n - 1;
         }
+        length = end - start + 1;
         /* Pick all good in the given range */
         retval->fwd.expl.sequencing_location++;
         pick_only_best_primer(start, length, &retval->fwd,
                               pa, sa, dpal_arg_to_use, thal_arg_to_use, retval);
       }
       if (pa->pick_right_primer) {
+        /* Search the 3' end from p - accuracy to p + accuracy,
+           cut at the ends of the sequence */
         start = pr_position_r - pa->sequencing.accuracy;
         if (start < 0) {
-          rest_accuracy = pr_position_r + 1;
           start = 0;
-        } else {
-          rest_accuracy = pa->sequencing.accuracy;
         }
-        length = rest_accuracy + pa->sequencing.accuracy ;
-        if ((start + length) > n) {
-          length = n - start;
+        end = pr_position_r + pa->sequencing.accuracy;
+        if (end > n - 1) {
+          end = n - 1;
         }
+        length = end - start + 1;
         /* Pick all good in the given range */
         retval->rev.expl.sequencing_location++;
         pick_only_best_primer(start, length, &retval->rev,
@@ -2816,7 +2837,7 @@ add_oligo_to_oligo_array(oligo_array *oarray, primer_rec orec) {
 }
 
 /* pick_primer_range picks all primers which have their 3' end in the range
- * from start to start+length and store only the best *oligo  */
+ * from start to start+length-1 and store only the best *oligo  */
 static int
 pick_only_best_primer(const int start,
                       const int length,
@@ -2842,7 +2863,7 @@ pick_only_best_primer(const int start,
   primer_rec best;
   memset(&h, 0, sizeof(primer_rec));
   memset(&best, 0, sizeof(primer_rec));
-  best.quality = 1000.00;
+  best.quality = DBL_MAX;  /* a large penalty must not hide every primer */
   found_primer = 0;
 
   /* Set n to the length of included region */
@@ -2949,7 +2970,7 @@ pick_only_best_primer(const int start,
     snprintf(p_number, 20, "%d", temp_value);
     pr_append(&retval->warnings, p_number);
     pr_append(&retval->warnings, " - ");
-    temp_value = start + length + pa->first_base_index;
+    temp_value = start + length - 1 + pa->first_base_index;
     snprintf(p_number, 20, "%d", temp_value);
     pr_append(&retval->warnings, p_number);
   }
@@ -3593,8 +3614,11 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
           = (h->start - sa->start_codon_pos) * INSIDE_START_WT;
     } else if (OT_RIGHT == l) {
 
-      /* stop_codon_pos is a position in the full sequence. */
-      int stop_pos = retval->stop_codon_pos - sa->incl_s;
+      /* stop_codon_pos is a position in the full sequence and points
+         to the first base of the stop codon. The penalty is 0 when the
+         5' end of the right primer is on the last base of the stop
+         codon, so that the product includes the whole stop codon. */
+      int stop_pos = retval->stop_codon_pos - sa->incl_s + 2;
       if (-1 == retval->stop_codon_pos) {
         h->position_penalty = (TRIMMED_SEQ_LEN(sa) - h->start - 1) * INSIDE_STOP_WT;
       } else if (stop_pos < h->start) {
@@ -6164,22 +6188,25 @@ oligo_template_mispriming(primer_rec *h,
   }
 }
 
-static int
+static double
 pair_repeat_sim(primer_pair *h,
                 const p3_global_settings *pa) {
-  int i, n, max, w;
+  int i, n;
+  double max, w;
   primer_rec *fw, *rev;
 
   fw = h->left;
   rev = h->right;
 
-  max = 0;
+  max = 0.0;
   n = seq_lib_num_seq(pa->p_args.repeat_lib);
-  if(n == 0) return 0;
+  if (n == 0) {
+    return 0.0;
+  }
   h->rep_name =  pa->p_args.repeat_lib->names[0] ;
   for (i = 0; i < n; i++) {
-    if ((w = (int) (fw->repeat_sim.score[i] +
-                    rev->repeat_sim.score[i])) > max) {
+    w = fw->repeat_sim.score[i] + rev->repeat_sim.score[i];
+    if (w > max) {
       max = w;
       h->rep_name =  pa->p_args.repeat_lib->names[i] ;
     }
@@ -9009,14 +9036,16 @@ print_oligo(FILE *fh,
   * libraries.
   * ============================================================ */
 
-/* Read a line of any length from file.  Return NULL on end of file,
- * otherwise return a pointer to static storage containing the line.  Any
- * trailing newline is stripped off.  Be careful -- there is only
- * one static buffer, so subsequent calls will replace the string
- * pointed to by the return value.
- * Used in seq_lib functions and also exported
- * used in p3_read_line and seq_lib functions
- * */
+/* Read a line of any length from file.  Return a pointer to static
+ * storage containing the line.  Any trailing newline is stripped off.
+ * Be careful -- there is only one static buffer, so subsequent calls
+ * will replace the string pointed to by the return value.
+ *
+ * Return NULL at end of file and on error, and set errno to tell them
+ * apart (see libprimer3.h). The function does not use pr_safe_malloc(),
+ * because it is called outside of the setjmp() in choose_primers().
+ * Used in seq_lib functions and also exported.
+ */
 #define INIT_BUF_SIZE 1024
 
 char*
@@ -9025,27 +9054,36 @@ p3_read_line(FILE *file)
   static size_t ssz;
   static char *s = NULL;
 
-  size_t remaining_size;
+  size_t remaining_size, new_ssz;
   char *p, *n;
+  int err;
 
   if (NULL == s) {
+    s = (char *) malloc(INIT_BUF_SIZE);
+    if (NULL == s) {
+      errno = ENOMEM;
+      return NULL;
+    }
     ssz = INIT_BUF_SIZE;
-    s = (char *) pr_safe_malloc(ssz);
   }
   p = s;
   remaining_size = ssz;
   while (1) {
-    if (fgets(p, remaining_size, file) == NULL) { /* End of file. */
-      if (p == s) {
-        ssz = 0;
-        if (s != NULL) {
-          free(s);
+    errno = 0;
+    if (fgets(p, (int) remaining_size, file) == NULL) {
+      if (ferror(file)) {
+        err = errno;
+        if (0 == err) {
+          err = EIO;
         }
-        s = NULL;
-        return NULL;
-      } else {
-        return s;
+        goto release_buffer;
       }
+      /* End of file. */
+      if (p == s) {
+        err = 0;
+        goto release_buffer;
+      }
+      return s; /* Last line without a newline */
     }
     if ((n = strchr(p, '\n')) != NULL) {
       *n = '\0';
@@ -9056,25 +9094,44 @@ p3_read_line(FILE *file)
       return s;
     }
 
-    /* We did not get the whole line. */
-
-    /*
-     * The following assertion is a bit of hack, a at least for 32-bit
-     * machines, because we will usually run out of address space first.
-     * Really we should treat an over-long line as an input error, but
-     * since an over-long line is unlikely and we do want to provide some
-     * protection....
-     */
-    PR_ASSERT(ssz <= INT_MAX);
-    if (ssz >= INT_MAX / 2)
-      ssz = INT_MAX;
-    else {
-      ssz *= 2;
+    /* fgets() stops at a newline, at the end of the file or when the
+       buffer is full. If none of these happened, it read a NUL byte,
+       and strchr() did not see the rest of the line. */
+    if (strlen(p) < remaining_size - 1) {
+      if (feof(file)) {
+        return s; /* Last line without a newline */
+      }
+      err = EILSEQ;
+      goto release_buffer;
     }
-    s = (char *) pr_safe_realloc(s, ssz);
-    p = strchr(s, '\0');
+
+    /* The buffer is full, but we did not get the whole line. */
+    if (ssz >= (size_t) INT_MAX) {
+      err = EOVERFLOW;
+      goto release_buffer;
+    }
+    if (ssz >= INT_MAX / 2) {
+      new_ssz = INT_MAX;
+    } else {
+      new_ssz = ssz * 2;
+    }
+    n = (char *) realloc(s, new_ssz);
+    if (NULL == n) {
+      err = ENOMEM;
+      goto release_buffer;
+    }
+    p = n + ssz - 1; /* The terminating NUL of what was read so far */
+    s = n;
+    ssz = new_ssz;
     remaining_size = ssz - (p - s);
   }
+
+ release_buffer:
+  free(s);
+  s = NULL;
+  ssz = 0;
+  errno = err;
+  return NULL;
 }
 
 /* ============================================================ */
@@ -9176,26 +9233,33 @@ p3_set_sa_empty_quality(seq_args *sargs) {
   sargs->n_quality = 0;
 }
 
-void 
+/* Called from read_boulder.c, outside of the setjmp() in
+   choose_primers(), so no pr_safe_malloc() or pr_safe_realloc(). */
+int
 p3_sa_add_to_quality_array(seq_args *sargs, int quality) {
   int n = sargs->n_quality;
+  int *q;
   if (sargs->quality_storage_size == 0) {
+    q = (int *) malloc(sizeof(*sargs->quality) * 3000);
+    if (NULL == q) {
+      return 1;
+    }
+    sargs->quality = q;
     sargs->quality_storage_size = 3000;
-    sargs->quality
-      = (int *)
-      pr_safe_malloc(sizeof(*sargs->quality)
-                     * sargs->quality_storage_size);
   }
   if (n > sargs->quality_storage_size - 1) {
+    q = (int *) realloc(sargs->quality,
+                        sizeof(*sargs->quality)
+                        * sargs->quality_storage_size * 2);
+    if (NULL == q) {
+      return 1;
+    }
+    sargs->quality = q;
     sargs->quality_storage_size *= 2;
-    sargs->quality
-      = (int *)
-      pr_safe_realloc(sargs->quality,
-                      sizeof(*sargs->quality)
-                      * sargs->quality_storage_size);
   }
   sargs->quality[n] = quality;
   sargs->n_quality++;
+  return 0;
 }
 
 int
@@ -10623,24 +10687,38 @@ char *
 p3_get_rv_and_gs_warnings(const p3retval *retval,
                           const p3_global_settings *pa) {
 
+  /* Called from the output functions, outside of the setjmp() in
+     choose_primers(), so only the _external append functions are
+     used here. If memory runs out, NULL is returned as if there were
+     no warnings. */
   pr_append_str warning;
+  int err = 0;
 
   PR_ASSERT(NULL != pa);
 
   init_pr_append_str(&warning);
 
-  if (seq_lib_warning_data(pa->p_args.repeat_lib))
-    pr_append_new_chunk(&warning, seq_lib_warning_data(pa->p_args.repeat_lib));
-
-  if(seq_lib_warning_data(pa->o_args.repeat_lib)) {
-    pr_append_new_chunk(&warning, seq_lib_warning_data(pa->o_args.repeat_lib));
-    pr_append(&warning, " (for internal oligo)");
+  if (seq_lib_warning_data(pa->p_args.repeat_lib)) {
+    err = err || pr_append_new_chunk_external(&warning,
+                   seq_lib_warning_data(pa->p_args.repeat_lib));
   }
 
-  if (!pr_is_empty(&retval->warnings))
-    pr_append_new_chunk(&warning,  retval->warnings.data);
+  if(seq_lib_warning_data(pa->o_args.repeat_lib)) {
+    err = err || pr_append_new_chunk_external(&warning,
+                   seq_lib_warning_data(pa->o_args.repeat_lib));
+    err = err || pr_append_external(&warning, " (for internal oligo)");
+  }
 
-  return pr_is_empty(&warning) ? NULL : warning.data;
+  if (!pr_is_empty(&retval->warnings)) {
+    err = err || pr_append_new_chunk_external(&warning,
+                                              retval->warnings.data);
+  }
+
+  if (err || pr_is_empty(&warning)) {
+    free(warning.data);
+    return NULL;
+  }
+  return warning.data;
 }
 
 const char *

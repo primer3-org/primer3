@@ -95,6 +95,19 @@ check_sequence(const unsigned char *seq)
 }
 
 /* Beginning of main */
+/* Print the error of a failed thal() call and exit. thal() sets errno
+   to ENOMEM if it ran out of memory. */
+static void
+exit_on_thal_error(const thal_results *o)
+{
+   int thal_errno = errno; /* fprintf may change errno */
+   fprintf(stderr, "Error: %s\n", o->msg);
+   if (thal_errno == ENOMEM) {
+      exit(P3_EXIT_OUT_OF_MEMORY);
+   }
+   exit(P3_EXIT_INPUT_ERROR);
+}
+
 int main(int argc, char** argv) 
 {   
    const char* usage;
@@ -106,7 +119,7 @@ int main(int argc, char** argv)
                                     do not draw structure or print any additional parameters */
    int thal_only = 0;
 
-   usage = "USAGE: %s OPTIONS oligo\n"
+   usage = "USAGE: %s OPTIONS\n"
      "-mv monovalent_conc  - concentration of monovalent cations in mM, by default 50 mM\n"
      "\n"
      "-dv divalent_conc    - concentration of divalent cations in mM, by default 0 mM\n"
@@ -119,7 +132,7 @@ int main(int argc, char** argv)
      "\n"
      "-t  temp             - temperature at which duplex is calculated, by default 37C\n"
      "\n"
-     "-r                   - causes the alignment NOT to be displayed on stderr, _only_ Tm is printed\n"
+     "-r                   - causes the alignment NOT to be displayed on stdout, _only_ Tm is printed\n"
      "\n"
      "-maxloop size        - the maximum size of secondary structures loops.\n" 
      "                       Default is 30 (this is maximum allowed length, currently).\n"
@@ -139,7 +152,7 @@ int main(int argc, char** argv)
    }
    /* BEGIN: READ the INPUT */
    for(i = 1; i < argc; ++i) {
-      if (!strncmp("-mv", argv[i], 3)) { /* conc of monovalent cations */
+      if (!strcmp("-mv", argv[i])) { /* conc of monovalent cations */
          if(argv[i+1]==NULL) {
             fprintf(stderr, usage, argv[0]);
             exit(P3_EXIT_USAGE);
@@ -149,7 +162,7 @@ int main(int argc, char** argv)
             exit(P3_EXIT_USAGE);
          }
          i++;
-      } else if (!strncmp("-dv", argv[i], 3)) { /* conc of divalent cations */
+      } else if (!strcmp("-dv", argv[i])) { /* conc of divalent cations */
          if(argv[i+1]==NULL) {
             fprintf(stderr, usage, argv[0]);
             exit(P3_EXIT_USAGE);
@@ -166,21 +179,21 @@ int main(int argc, char** argv)
          }
          path = (char*)argv[i+1];
          i++;
-      } else if (!strncmp("-s1", argv[i], 3)) { /* first sequence in 5'->3' direction */
+      } else if (!strcmp("-s1", argv[i])) { /* first sequence in 5'->3' direction */
          if(argv[i+1]==NULL) {
             fprintf(stderr, usage, argv[0]);
             exit(P3_EXIT_USAGE);
          }
          oligo1 = (const unsigned char*)argv[i+1];
          i++;         
-      } else if (!strncmp("-s2", argv[i], 3)) { /* second sequence in 5'->3' direction */
+      } else if (!strcmp("-s2", argv[i])) { /* second sequence in 5'->3' direction */
          if(argv[i+1]==NULL) {
             fprintf(stderr, usage, argv[0]);
             exit(P3_EXIT_USAGE);
          }
          oligo2 = (const unsigned char*)argv[i+1];
          i++;
-      } else if (!strncmp("-a", argv[i], 2)) {          /* annealing type END1, END2, ANY, considered only when duplexis; 
+      } else if (!strcmp("-a", argv[i])) {          /* annealing type END1, END2, ANY, considered only when duplexis; 
                                                   by default ANY  */
          if(argv[i+1]==NULL) {
             fprintf(stderr, usage, argv[0]);
@@ -200,7 +213,7 @@ int main(int argc, char** argv)
             exit(P3_EXIT_USAGE);
          }
          i++;
-      } else if (!strncmp("-d", argv[i], 2)) { /* dna conc */
+      } else if (!strcmp("-d", argv[i])) { /* dna conc */
          if(argv[i+1]==NULL) {
             fprintf(stderr, usage, argv[0]);
             exit(P3_EXIT_USAGE);
@@ -210,9 +223,9 @@ int main(int argc, char** argv)
             exit(P3_EXIT_USAGE);
          }
          i++;
-      } else if (!strncmp("-r", argv[i], 2)) { /* only temp is calculated */
+      } else if (!strcmp("-r", argv[i])) { /* only temp is calculated */
          thal_only = 1;
-      } else if (!strncmp("-t", argv[i], 2)) { /* temperature at which sec str are calculated */
+      } else if (!strcmp("-t", argv[i])) { /* temperature at which sec str are calculated */
          if(argv[i+1]==NULL) {
             fprintf(stderr, usage, argv[0]);
             exit(P3_EXIT_USAGE);
@@ -225,7 +238,7 @@ int main(int argc, char** argv)
          }
          a.temp = temp_c + ABSOLUTE_ZERO;
          i++;
-      } else if (!strncmp("-n", argv[i], 2)) { /* concentration of dNTPs */
+      } else if (!strcmp("-n", argv[i])) { /* concentration of dNTPs */
          if(argv[i+1]==NULL) {
             fprintf(stderr, usage, argv[0]);
             exit(P3_EXIT_USAGE);
@@ -235,7 +248,7 @@ int main(int argc, char** argv)
             exit(P3_EXIT_USAGE);
          }
          i++;
-      } else if (!strncmp("-maxloop", argv[i], 8)) { /* maximum size of loop calculated; 
+      } else if (!strcmp("-maxloop", argv[i])) { /* maximum size of loop calculated; 
                                                       this value can not be larger than 30 */
          if(argv[i+1]==NULL) {
             fprintf(stderr, usage, argv[0]);
@@ -258,14 +271,20 @@ int main(int argc, char** argv)
             a.maxLoop = (int) max_loop;
          }
          i++;
-      } else if (!strncmp("-i", argv[i], 2)) { /* interactive mode */
+      } else if (!strcmp("-i", argv[i])) { /* interactive mode */
          interactive = 1;
-      } else if(!strncmp("-", argv[i], 1)) { /* Unknown option. */
+      } else if (argv[i][0] == '-') { /* Unknown option. */
          fprintf(stderr, usage, argv[0]);
          exit(P3_EXIT_USAGE);
       } else {
          break;
       }
+   }
+   /* Sequences are given only with -s1 and -s2, so any other
+      argument is an error */
+   if (i < argc) {
+      fprintf(stderr, usage, argv[0]);
+      exit(P3_EXIT_USAGE);
    }
    /* END reading INPUT */
    /* check the input correctness */
@@ -355,8 +374,7 @@ int main(int argc, char** argv)
        }
        /* encountered error during thermodynamical calc */
        if (o.temp == THAL_ERROR_SCORE) {
-         fprintf(stderr, "Error: %s\n", o.msg);
-         exit(P3_EXIT_INPUT_ERROR);
+         exit_on_thal_error(&o);
        }
        if(mode == THL_FAST)
          printf("%f\n",o.temp);
@@ -376,8 +394,7 @@ int main(int argc, char** argv)
      }
      /* encountered error during thermodynamical calc */
      if (o.temp == THAL_ERROR_SCORE) {
-       fprintf(stderr, "Error: %s\n", o.msg);
-       exit(P3_EXIT_INPUT_ERROR);
+       exit_on_thal_error(&o);
      }
      if(mode == THL_FAST)
        printf("%f\n",o.temp);

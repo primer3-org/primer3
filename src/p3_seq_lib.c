@@ -38,6 +38,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ctype.h>       /* toupper() ... */
 #include <string.h>      /* memset(), ... */
 #include <setjmp.h>      /* longjmp(), ... */
+#include <errno.h>
 #include "libprimer3.h"  /* Must include libprimer3.h, which
                             includes p3_seq_lib.h */
 
@@ -209,6 +210,26 @@ read_and_create_seq_lib(const char * filename, const char *errfrag) {
     /* Read in the lines from the file */
     while(1) {
       p = p3_read_line(file);
+
+      if (NULL == p && 0 != errno) {
+        /* Read error, see p3_read_line() */
+        int e = errno;
+        if (ENOMEM == e) {
+          free(seq);
+          free(seq_id_plus);
+          fclose(file);
+          destroy_seq_lib(lib);
+          return NULL;
+        }
+        if (EOVERFLOW == e) {
+          p3sl_append_new_chunk(&lib->error, "Line too long in ");
+        } else if (EILSEQ == e) {
+          p3sl_append_new_chunk(&lib->error, "NUL byte in ");
+        } else {
+          p3sl_append_new_chunk(&lib->error, "Error reading ");
+        }
+        goto ERROR;
+      }
 
       if (NULL == p) {
         /* End of file */

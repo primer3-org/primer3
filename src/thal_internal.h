@@ -123,6 +123,7 @@ extern double hairpinLoopEntropies[30];
 extern double interiorLoopEnthalpies[30];
 extern double bulgeLoopEnthalpies[30];
 extern double hairpinLoopEnthalpies[30];
+/* tstack tables: loaded, but not used (see getTstack()) */
 extern double tstackEntropies[5][5][5][5];
 extern double tstackEnthalpies[5][5][5][5];
 extern double tstack2Entropies[5][5][5][5];

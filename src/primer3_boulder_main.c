@@ -85,6 +85,7 @@ main(int argc, char *argv[])
   pr_append_str fatal_parse_err;
   pr_append_str nonfatal_parse_err;
   pr_append_str warnings;
+  pr_append_str settings_warnings;
 
   /* Some variables needed by getopt */
   int opt, option_index = 0;
@@ -111,6 +112,7 @@ main(int argc, char *argv[])
   init_pr_append_str(&fatal_parse_err);
   init_pr_append_str(&nonfatal_parse_err);
   init_pr_append_str(&warnings);
+  init_pr_append_str(&settings_warnings);
   init_pr_append_str(&p3_settings_path);
   init_pr_append_str(&output_path);
   init_pr_append_str(&error_path);
@@ -298,6 +300,11 @@ main(int argc, char *argv[])
     }
   }
 
+  /* Keep the warnings from the settings file; the loop below
+     empties warnings for each record. */
+  settings_warnings = warnings;
+  init_pr_append_str(&warnings);
+
   /* The temporary sarg is not needed any more */
   destroy_seq_args(sarg);
   sarg = NULL;
@@ -391,6 +398,19 @@ main(int argc, char *argv[])
       goto loop_wrap_up;
     }
 
+    /* The warnings from the settings file are printed with the first
+       record that gets this far, before the warnings of the record */
+    if (!pr_is_empty(&settings_warnings)) {
+      if (!pr_is_empty(&warnings)
+          && pr_append_new_chunk_external(&settings_warnings,
+                                          warnings.data)) {
+        exit(P3_EXIT_OUT_OF_MEMORY); /* Out of memory */
+      }
+      destroy_pr_append_str_data(&warnings);
+      warnings = settings_warnings;
+      init_pr_append_str(&settings_warnings);
+    }
+
     /* Print any warnings and continue processing */
     if (!pr_is_empty(&warnings)) {
       if (format_output) {
@@ -426,16 +446,22 @@ main(int argc, char *argv[])
        unacceptable, then add warnings. */
     if (global_pa->pick_anyway && format_output) {
       if (sarg->left_input) {
-        add_must_use_warnings(&retval->warnings,
-                              "Left primer", &retval->fwd.expl);
+        if (add_must_use_warnings(&retval->warnings,
+                                  "Left primer", &retval->fwd.expl)) {
+          exit(P3_EXIT_OUT_OF_MEMORY); /* Out of memory. */
+        }
       }
       if (sarg->right_input) {
-        add_must_use_warnings(&retval->warnings,
-                              "Right primer", &retval->rev.expl);
+        if (add_must_use_warnings(&retval->warnings,
+                                  "Right primer", &retval->rev.expl)) {
+          exit(P3_EXIT_OUT_OF_MEMORY); /* Out of memory. */
+        }
       }
       if (sarg->internal_input) {
-        add_must_use_warnings(&retval->warnings,
-                              "Hybridization probe", &retval->intl.expl);
+        if (add_must_use_warnings(&retval->warnings,
+                                  "Hybridization probe", &retval->intl.expl)) {
+          exit(P3_EXIT_OUT_OF_MEMORY); /* Out of memory. */
+        }
       }
     }
 
@@ -501,6 +527,7 @@ main(int argc, char *argv[])
   destroy_pr_append_str_data(&nonfatal_parse_err);
   destroy_pr_append_str_data(&fatal_parse_err);
   destroy_pr_append_str_data(&warnings);
+  destroy_pr_append_str_data(&settings_warnings);
   destroy_dpal_thal_arg_holder();
 #if !defined(OS_WIN)  
   free(kmer_lists_path);

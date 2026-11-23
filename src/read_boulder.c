@@ -64,6 +64,7 @@ char *kmer_lists_path = NULL;
 /* Static functions. */
 static void *_rb_safe_malloc(size_t x);
 static void  out_of_memory_error();
+static int   read_line_error(pr_append_str *err, const char *file_name);
 
 static void   parse_double(const char *, const char *, double *,
                            pr_append_str *);
@@ -825,7 +826,10 @@ read_boulder_record(FILE *file_input,
   }  /* while ((s = p3_read_line(stdin)) != NULL && strcmp(s,"=")) { */
 
   /* Check if the record was terminated by "=" */
-  if (NULL == s) { /* End of file. */
+  if (NULL == s) { /* End of file or read error. */
+    if (read_line_error(glob_err, NULL)) {
+      return 1;
+    }
     if (data_found) {
       if (file_type == settings) {
         pr_append_new_chunk(glob_err,
@@ -1014,6 +1018,9 @@ read_p3_file(const char *file_name,
 
   /* Line 1 */
   line1 = p3_read_line(file);
+  if (!line1 && read_line_error(fatal_err, file_name)) {
+    return ret_par;
+  }
   if (!line1) {
     pr_append2(fatal_err, 
                "Settings file is empty: ", 
@@ -1030,6 +1037,9 @@ read_p3_file(const char *file_name,
 
   /* Line 2 */
   line2 = p3_read_line(file);
+  if (!line2 && read_line_error(fatal_err, file_name)) {
+    return ret_par;
+  }
   if (!line2) {
     pr_append2(fatal_err, 
                "Incorrect file format (too few lines) in ", 
@@ -1044,7 +1054,7 @@ read_p3_file(const char *file_name,
     file_type = settings;
   } else {
     pr_append2(fatal_err, 
-               "Unknown file type in at line 2 (line2='", line2);
+               "Unknown file type at line 2 (line2='", line2);
     pr_append(fatal_err, "') in ");
     pr_append(fatal_err, file_name);
     return ret_par;
@@ -1056,6 +1066,9 @@ read_p3_file(const char *file_name,
 
   /* Line 3 */
   line3 = p3_read_line(file);
+  if (!line3 && read_line_error(fatal_err, file_name)) {
+    return ret_par;
+  }
   if (!line3) {
     pr_append2(fatal_err, 
                "Incorrect file format (too few lines) in ", 
@@ -1069,9 +1082,10 @@ read_p3_file(const char *file_name,
   }
 
   /* Check if the file type matches the expected type */
+  /* The file is read anyway. main() prints the warning with the
+     first record, so that no extra output record is written. */
   if (file_type != expected_file_type){
-    pr_append_new_chunk(nonfatal_err, 
-                        "Unexpected P3 file type parsed");
+    pr_append2(warnings, "Unexpected P3_FILE_TYPE in ", file_name);
   }
 
   /* read the file */
@@ -1495,7 +1509,9 @@ parse_seq_quality(char *s,
       p3_set_sa_empty_quality(sargs);
       return 0;
     }
-    p3_sa_add_to_quality_array(sargs, t);
+    if (p3_sa_add_to_quality_array(sargs, t)) {
+      out_of_memory_error();
+    }
 
     p = q;
   }
@@ -1532,6 +1548,35 @@ pr_append_new_chunk(pr_append_str *x,
 {
   if (pr_append_new_chunk_external(x, s))
     out_of_memory_error();
+}
+
+/* Call after p3_read_line() returned NULL. Return 0 at the end of the
+   file. On a read error, add a message to err (naming file_name if it
+   is not NULL) and return 1. Exit if memory ran out. */
+static int
+read_line_error(pr_append_str *err, const char *file_name)
+{
+  int e = errno;
+
+  if (0 == e) {
+    return 0;
+  }
+  if (ENOMEM == e) {
+    out_of_memory_error();
+  }
+  if (EOVERFLOW == e) {
+    pr_append_new_chunk(err, "Input line too long");
+  } else if (EILSEQ == e) {
+    pr_append_new_chunk(err, "Input line contains a NUL byte");
+  } else {
+    pr_append_new_chunk(err, "Error reading input: ");
+    pr_append(err, strerror(e));
+  }
+  if (NULL != file_name) {
+    pr_append(err, " in ");
+    pr_append(err, file_name);
+  }
+  return 1;
 }
 
 static void

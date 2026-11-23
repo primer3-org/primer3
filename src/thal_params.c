@@ -562,6 +562,11 @@ getLoop(double hairpinLoopEntropies[30], double interiorLoopEntropies[30], doubl
    }
 }
 
+/* The tstack tables are read but not used in the calculation: thal.c
+   uses only tstack2, because the two tables differ only where both
+   neighboring pairs are complementary (see calc_bulge_internal_dimer() in
+   thal.c). tstack_tm_inf.ds and tstack.dh are still required in a
+   parameter directory. */
 void
 getTstack(double tstackEntropies[5][5][5][5], double tstackEnthalpies[5][5][5][5],
           const thal_parameters *tp, jmp_buf _jmp_buf, thal_results *o)

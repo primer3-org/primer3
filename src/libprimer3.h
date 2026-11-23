@@ -975,7 +975,8 @@ const oligo_array *p3_get_rv_intl(const p3retval *r);
 const oligo_array *p3_get_rv_rev(const p3retval *r);
 
 /* TO DO -- needs more documentation
-   It is the responsibility of caller to free the return value. */
+   It is the responsibility of caller to free the return value.
+   Returns NULL if there are no warnings, and also if memory runs out. */
 char *p3_get_rv_and_gs_warnings(const p3retval *retval, 
                                       const p3_global_settings *pa);
 
@@ -1012,7 +1013,8 @@ int p3_set_sa_left_input(seq_args *sargs, const char *left_input);
 int p3_set_sa_right_input(seq_args *sargs, const char *right_input);
 int p3_set_sa_internal_input(seq_args *sargs, const char *internal_input);
 void p3_set_sa_empty_quality(seq_args *sargs);
-void p3_sa_add_to_quality_array(seq_args *sargs, int quality);
+/* Returns 0 on success and 1 if memory runs out. */
+int p3_sa_add_to_quality_array(seq_args *sargs, int quality);
 int p3_get_sa_n_quality(seq_args *sargs);
 int p3_sa_add_to_overlap_junctions_array(seq_args *, int);
 int p3_sa_add_to_intl_overlap_junctions_array(seq_args *, int);
@@ -1326,6 +1328,13 @@ p3_set_program_name(const char *name);
  * Utility function for C clients -- will not overflow
  * buffer.  Warning: points to static storage that is over-written
  * on the next call.
+ * Returns NULL at end of file and on error, and sets errno:
+ *   0          end of file
+ *   ENOMEM     out of memory
+ *   EOVERFLOW  the line has INT_MAX - 1 or more characters
+ *   EILSEQ     the line contains a NUL byte
+ *   other      reading the file failed (EIO if the read set no errno)
+ * After an error, the rest of the line is not read.
  */
 char* p3_read_line(FILE *file);
 
@@ -1363,10 +1372,11 @@ int    p3_print_oligo_lists(const p3retval*,
    Call this function only if the 'stat's contains the _errors_
    associated with a given primer i.e. that primer was supplied by the
    caller and pick_anyway is set.
+   Returns 0 on success and 1 if memory runs out.
 */
-void add_must_use_warnings(pr_append_str *warning,
-                           const char* text,
-                           const oligo_stats *stats);
+int add_must_use_warnings(pr_append_str *warning,
+                          const char* text,
+                          const oligo_stats *stats);
 
 
 
