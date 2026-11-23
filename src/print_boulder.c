@@ -335,11 +335,11 @@ print_boulder(int io_version,
       printf("PRIMER_RIGHT%s_SELF_ANY_TH=%.2f\n", suffix, rev->self_any);
     /* Print primer secondary structures*/
     if (go_fwd == 1 && pa->show_secondary_structure_alignment==1 && fwd->self_any_struct != NULL)
-      printf("PRIMER_LEFT%s_SELF_ANY_STUCT=%s\n", suffix, fwd->self_any_struct);
+      printf("PRIMER_LEFT%s_SELF_ANY_STRUCT=%s\n", suffix, fwd->self_any_struct);
     if (go_rev == 1 && pa->show_secondary_structure_alignment==1 && rev->self_any_struct != NULL)
-      printf("PRIMER_RIGHT%s_SELF_ANY_STUCT=%s\n", suffix, rev->self_any_struct);
+      printf("PRIMER_RIGHT%s_SELF_ANY_STRUCT=%s\n", suffix, rev->self_any_struct);
     if (go_int == 1 && pa->show_secondary_structure_alignment==1 && intl->self_any_struct != NULL)
-      printf("PRIMER_%s%s_SELF_ANY_STUCT=%s\n", int_oligo, suffix, intl->self_any_struct);
+      printf("PRIMER_%s%s_SELF_ANY_STRUCT=%s\n", int_oligo, suffix, intl->self_any_struct);
 
     /* Print primer self_end and secondary structures*/
     if (go_fwd == 1 && pa->thermodynamic_oligo_alignment==0)
@@ -357,11 +357,11 @@ print_boulder(int io_version,
       printf("PRIMER_RIGHT%s_SELF_END_TH=%.2f\n", suffix, rev->self_end);
     /* Print primer secondary structures*/
     if (go_fwd == 1 && pa->show_secondary_structure_alignment==1 && fwd->self_end_struct != NULL)
-      printf("PRIMER_LEFT%s_SELF_END_STUCT=%s\n", suffix, fwd->self_end_struct);
+      printf("PRIMER_LEFT%s_SELF_END_STRUCT=%s\n", suffix, fwd->self_end_struct);
     if (go_rev == 1 && pa->show_secondary_structure_alignment==1 && rev->self_end_struct != NULL)
-      printf("PRIMER_RIGHT%s_SELF_END_STUCT=%s\n", suffix, rev->self_end_struct);
+      printf("PRIMER_RIGHT%s_SELF_END_STRUCT=%s\n", suffix, rev->self_end_struct);
     if (go_int == 1 && pa->show_secondary_structure_alignment==1 && intl->self_end_struct != NULL)
-      printf("PRIMER_%s%s_SELF_END_STUCT=%s\n", int_oligo, suffix, intl->self_end_struct);
+      printf("PRIMER_%s%s_SELF_END_STRUCT=%s\n", int_oligo, suffix, intl->self_end_struct);
 
     /* Print primer hairpin */
     if (go_fwd == 1 && pa->thermodynamic_oligo_alignment==1)
@@ -372,11 +372,11 @@ print_boulder(int io_version,
       printf("PRIMER_%s%s_HAIRPIN_TH=%.2f\n", int_oligo, suffix, intl->hairpin_th);
     /* Print primer secondary structures*/
     if (go_fwd == 1 && pa->show_secondary_structure_alignment==1 && fwd->hairpin_struct != NULL)
-      printf("PRIMER_LEFT%s_HAIRPIN_STUCT=%s\n", suffix, fwd->hairpin_struct);
+      printf("PRIMER_LEFT%s_HAIRPIN_STRUCT=%s\n", suffix, fwd->hairpin_struct);
     if (go_rev == 1 && pa->show_secondary_structure_alignment==1 && rev->hairpin_struct != NULL)
-      printf("PRIMER_RIGHT%s_HAIRPIN_STUCT=%s\n", suffix, rev->hairpin_struct);
+      printf("PRIMER_RIGHT%s_HAIRPIN_STRUCT=%s\n", suffix, rev->hairpin_struct);
     if (go_int == 1 && pa->show_secondary_structure_alignment==1 && intl->hairpin_struct != NULL)
-      printf("PRIMER_%s%s_HAIRPIN_STUCT=%s\n", int_oligo, suffix, intl->hairpin_struct);
+      printf("PRIMER_%s%s_HAIRPIN_STRUCT=%s\n", int_oligo, suffix, intl->hairpin_struct);
 
     /*Print out primer mispriming scores */
      if (seq_lib_num_seq(pa->p_args.repeat_lib) > 0) {
@@ -463,11 +463,11 @@ print_boulder(int io_version,
     /* Print primer secondary structures*/
     if ((go_fwd == 1) && (pa->show_secondary_structure_alignment==1) && 
         (oligo_max_template_mispriming_struct(fwd) != NULL))
-      printf("PRIMER_LEFT%s_TEMPLATE_MISPRIMING_STUCT=%s\n", suffix, 
+      printf("PRIMER_LEFT%s_TEMPLATE_MISPRIMING_STRUCT=%s\n", suffix, 
              oligo_max_template_mispriming_struct(fwd));
     if ((go_rev == 1) && (pa->show_secondary_structure_alignment==1) &&
         (oligo_max_template_mispriming_struct(rev) != NULL))
-      printf("PRIMER_RIGHT%s_TEMPLATE_MISPRIMING_STUCT=%s\n", suffix, 
+      printf("PRIMER_RIGHT%s_TEMPLATE_MISPRIMING_STRUCT=%s\n", suffix, 
              oligo_max_template_mispriming_struct(rev));
 
 #if 0
@@ -492,7 +492,7 @@ print_boulder(int io_version,
        /* Print primer secondary structures*/
        if (pa->show_secondary_structure_alignment==1 && 
            retval->best_pairs.pairs[i].compl_any_struct != NULL)
-         printf("PRIMER_PAIR%s_COMPL_ANY_STUCT=%s\n", suffix, 
+         printf("PRIMER_PAIR%s_COMPL_ANY_STRUCT=%s\n", suffix, 
                 retval->best_pairs.pairs[i].compl_any_struct);
        /* Print pair comp_end */
        if(pa->thermodynamic_oligo_alignment==0)
@@ -504,7 +504,7 @@ print_boulder(int io_version,
        /* Print primer secondary structures*/
        if (pa->show_secondary_structure_alignment==1 && 
            retval->best_pairs.pairs[i].compl_end_struct != NULL)
-         printf("PRIMER_PAIR%s_COMPL_END_STUCT=%s\n", suffix, 
+         printf("PRIMER_PAIR%s_COMPL_END_STRUCT=%s\n", suffix, 
                 retval->best_pairs.pairs[i].compl_end_struct);
        /* Print product size */
        int product_size = retval->best_pairs.pairs[i].product_size;

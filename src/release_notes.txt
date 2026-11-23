@@ -159,7 +159,7 @@ Minor fixes:
 20. PRIMER_PAIR_n_COMPL_END_TH also aligned the reverse complements of
     both primers, which measures dimers at the 5' ends of the primers.
     The value could be higher than PRIMER_PAIR_n_COMPL_ANY_TH, and
-    PRIMER_PAIR_n_COMPL_END_STUCT then showed sequences that are not the
+    PRIMER_PAIR_n_COMPL_END_STRUCT then showed sequences that are not the
     primers. Only the 3' ends of the two primers are aligned now, so the
     value is lower for some pairs.
 
@@ -200,7 +200,7 @@ Minor fixes:
 26. Hairpin Tm (thal): the salt correction left out one base pair if the
     3' end base of the oligo was paired, which gave a Tm about 2-4 C too
     high. All base pairs are counted now. PRIMER_*_HAIRPIN_TH,
-    the HAIRPIN_STUCT structures and ntthal -a HAIRPIN are lower for
+    the HAIRPIN_STRUCT structures and ntthal -a HAIRPIN are lower for
     such hairpins, fewer oligos are rejected by PRIMER_MAX_HAIRPIN_TH
     and PRIMER_INTERNAL_MAX_HAIRPIN_TH, and different oligos may be
     picked.
@@ -279,6 +279,14 @@ Minor fixes:
     of memory error in dpal makes primer3_core exit with 2 instead of
     -1; the field fail_stop of dpal_args and DPAL_EXIT_ON_ERROR were
     removed.
+
+34. The output tags with secondary structures were misspelled _STUCT and
+    now end with _STRUCT: PRIMER_{LEFT,RIGHT,INTERNAL}_n_SELF_ANY_STRUCT,
+    PRIMER_{LEFT,RIGHT,INTERNAL}_n_SELF_END_STRUCT,
+    PRIMER_{LEFT,RIGHT,INTERNAL}_n_HAIRPIN_STRUCT,
+    PRIMER_PAIR_n_COMPL_ANY_STRUCT, PRIMER_PAIR_n_COMPL_END_STRUCT and
+    PRIMER_{LEFT,RIGHT}_n_TEMPLATE_MISPRIMING_STRUCT. Programs that read
+    the _STUCT tags have to be changed.
 
 
 release 2.6.1 2022-01-26  ===============================================

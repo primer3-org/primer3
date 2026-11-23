@@ -192,7 +192,7 @@ Each library also has a standalone CLI in a `*_main.c` file.
   - `thal()` sets `thal_results.sec_struct`: NULL unless it drew a structure (`THL_STRUCT`), also after an error. The caller frees it.
   - For two sequences, `align_end_2` counts from the 3′ end of the second sequence, which thal reads in reverse: the terminal base pair is at index `strlen(seq2) - align_end_2`.
   - `align_thermod()` in libprimer3.cc reports a negative Tm as 0. Structures are drawn only for values above 0.
-- Template mispriming (thermodynamic): `thermod_template_targets()` gives the oligo, `target` (the strand the primer binds at its own site; its own site is left out, so the 5′ and 3′ parts are aligned separately) and `target_r` (the other strand, aligned whole). The score and the `TEMPLATE_MISPRIMING_STUCT` structures both use it, so keep them together.
+- Template mispriming (thermodynamic): `thermod_template_targets()` gives the oligo, `target` (the strand the primer binds at its own site; its own site is left out, so the 5′ and 3′ parts are aligned separately) and `target_r` (the other strand, aligned whole). The score and the `TEMPLATE_MISPRIMING_STRUCT` structures both use it, so keep them together.
 - `p3_seq_lib.c`: mispriming and repeat libraries (FASTA).
 - `masker.c` (`primer3_masker`): k-mer based template masking. It is compiled out on Windows (`OS_WIN`).
   - The k-mer lists are binary GenomeTester4 files named `<prefix>_<k>.list`, with k = 11 and 16 and the default prefix `homo_sapiens`. They are memory-mapped: a header, then 12-byte records (an 8-byte k-mer and a 4-byte count). `kmer_lists/readme.txt` explains that the checked-in lists are test files and where to get full ones.
@@ -210,7 +210,7 @@ A new thal source file therefore needs both rules, plus entries in `LIBTHAL` and
 Don't "fix" these:
 - `SEQUENCE_ID` is used unchanged as the base name of the `P3_FILE_FLAG` list files (`<SEQUENCE_ID>.for`, `.rev`, `.int`). Directory parts, including `..` and absolute paths, are allowed on purpose; don't reject `/`, `\` or a leading `.`.
 - Internal oligos are not checked for template mispriming (`PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB` is rejected as unsupported).
-- The pair template-mispriming value is the sum of two separate bindings, one of each primer on opposite strands, in the orientation that could amplify a product: the larger of `left->template_mispriming + right->template_mispriming` (both on the strand they bind at their own site) and `left->template_mispriming_r + right->template_mispriming_r` (both on the other strand). The positions of the two bindings are not compared. It is used for the penalty, but there is no pair structure; only `PRIMER_LEFT/RIGHT_n_TEMPLATE_MISPRIMING_STUCT` exist.
+- The pair template-mispriming value is the sum of two separate bindings, one of each primer on opposite strands, in the orientation that could amplify a product: the larger of `left->template_mispriming + right->template_mispriming` (both on the strand they bind at their own site) and `left->template_mispriming_r + right->template_mispriming_r` (both on the other strand). The positions of the two bindings are not compared. It is used for the penalty, but there is no pair structure; only `PRIMER_LEFT/RIGHT_n_TEMPLATE_MISPRIMING_STRUCT` exist.
 - dpal's global modes (`g`, `G` in `ntdpal`) are semi-global, not Needleman-Wunsch: unaligned ends cost nothing.
 - In `test/masker_lists.txt` the first path starts with `../test/` twelve times on purpose: it tests a bug with long paths in lists files.
 
