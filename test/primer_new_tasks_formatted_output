@@ -2141,12 +2141,9 @@ INCLUDED REGION SIZE: 1527
 
 KEYS (in order of precedence):
 >>>>>> left primer
+^^^^^^ internal oligo
 
 
-ADDITIONAL OLIGOS
-                    start  len      tm     gc%   any    3' seq
-ADDITIONAL OLIGOS
-                    start  len      tm     gc%   any    3' seq
 
 
 PRIMER PICKING RESULTS FOR Pick a right primer and an internal oligo
@@ -2233,19 +2230,16 @@ INCLUDED REGION SIZE: 1527
                                                                   
 
  1440 agtaataagttggtgttggattggaaatcaagacgtttgctttctgcttccctttggact
-                                     <<<<<<<<<<<<<<<<<<<<^^^^^^^^^
+                                     <<<<<<<<<<<<<<<<<<<<         
 
  1500 tgttcttcttcagattctgatttatag
-      ^^^^^^^^^^                 
+                                 
 
 KEYS (in order of precedence):
 <<<<<< right primer
+^^^^^^ internal oligo
 
 
-ADDITIONAL OLIGOS
-                    start  len      tm     gc%   any    3' seq
-ADDITIONAL OLIGOS
-                    start  len      tm     gc%   any    3' seq
 
 
 PRIMER PICKING RESULTS FOR Test behavior of SEQUENCE_PRIMER_PAIR_OK_REGION_LIST with PRIMER_TASK=pick_primer_list
@@ -3755,6 +3749,325 @@ Right  17856     0     0     0     0     9     0     0  7973     0     0     0  
 Intl   12492     0     0     0     0     1     0  2576  6386     0     0    39     0  3490
 Pair Stats:
 considered 4394, unacceptable product size 4226, high end compl 17, no internal oligo 69, primer in pair overlaps a primer in a better pair 2474, ok 82
+libprimer3 release 2.6.1
+
+
+PRIMER PICKING RESULTS FOR Pick a left primer and an internal oligo at different positions
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT_PRIMER       1472   20   60.00   50.00  4.00  0.00 gacgtttgctttctgcttcc
+INTERNAL_OLIGO    1277   24   59.99   45.83  6.00  0.00 ggatatatagaacgggtggtgaag
+SEQUENCE SIZE: 1527
+INCLUDED REGION SIZE: 1527
+
+    1 atggatttgatggacatggatgccatcaatgacctccacttctctggacacagctccctc
+                                                                  
+
+   61 accaacacccctacttccgacgaggattatggttgcacctggaaccactggtctcccatc
+                                                                  
+
+  121 gtcaactgggacacctttacaggtgccccagatgactttcaccacctcatggacaccatc
+                                                                  
+
+  181 atcgaggacagaacaactgtcctcgaacagctcagtccatctatcaccacaaccaccacc
+                                                                  
+
+  241 accaccacaaccacggatgaggaagaagaagaaatggaaacaacaaccacaacaacaaca
+                                                                  
+
+  301 acggcaataaaaacgcatgaagttggtgatgattcaaaagggctaaaactagtgcaccta
+                                                                  
+
+  361 ttgatggctggcgcggaagccttaaccggttcaaccaaaaaccgtgacttagctcgagtg
+                                                                  
+
+  421 atattgatccggctcaaggaattagtctcacaacatgctaacggctccaacatggagaga
+                                                                  
+
+  481 cttgccgctcatttcaccgaagcccttcatggactactagaaggtgctgggggtgcgcat
+                                                                  
+
+  541 aataaccaccatcaccacaacaacaacaaacattacctcaccacaaatggtccccacgac
+                                                                  
+
+  601 aaccaaaacgacacacttgctgctttccaactacttcaagacatgtcaccttacgtcaaa
+                                                                  
+
+  661 ttcggccacttcacagccaatcaagccatcatcgaagccgtggcccacgaacgccgcgtc
+                                                                  
+
+  721 catgtcatcgactacgatatcatggaaggggtccaatgggcctcattaatccaatcactt
+                                                                  
+
+  781 gcttccaacaacaacggtccacatcttcggataaccgcattatcgcggacaggaaccggc
+                                                                  
+
+  841 cggaggtcaatcgccaccgtacaagaaaccggcaggcgattaacctcctttgccgcttcc
+                                                                  
+
+  901 ctcggacaaccattttcttttcatcactgcagattagactccgatgaaactttccgtcct
+                                                                  
+
+  961 tctgcattaaagcttgtacgtggagaggctttggttttcaactgcatgctgaatttacct
+                                                                  
+
+ 1021 caccttagttaccgtgcaccggaatcagttgcttcgtttttaaacggagcaaaaacgttg
+                                                                  
+
+ 1081 aatccaaagcttgtgacgttggttgaagaagaagttggttctgttattggtgggtttgtg
+                                                                  
+
+ 1141 gaaaggttcatggactcacttcatcattattcagcggtttttgattcattggaggctggt
+                                                                  
+
+ 1201 tttccgatgcagaaccgggcccggactttggtggagagggtattttttgggcctagaatt
+                                                                  
+
+ 1261 gcaggctcgttgggccggatatatagaacgggtggtgaagaggagagaaggtcatggggg
+                      ^^^^^^^^^^^^^^^^^^^^^^^^                    
+
+ 1321 gagtggttaggtgaggtagggtttaggggagttccggtgagctttgcaaatcattgtcaa
+                                                                  
+
+ 1381 gcaaagctgttgttagggctttttaatgatgggtatagggttgaagaggtgggtgtgggt
+                                                                  
+
+ 1441 agtaataagttggtgttggattggaaatcaagacgtttgctttctgcttccctttggact
+                                     >>>>>>>>>>>>>>>>>>>>         
+
+ 1501 tgttcttcttcagattctgatttatag
+                                 
+
+KEYS (in order of precedence):
+>>>>>> left primer
+^^^^^^ internal oligo
+
+
+
+Statistics
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left   18078     0     0     0     0     9     0     0  8076     0     0     0     0  9993
+Intl    5890     0     0     0     0     0     0    47  4955     0     0    44     0   844
+libprimer3 release 2.6.1
+
+
+PRIMER PICKING RESULTS FOR Pick a right primer and an internal oligo at different positions
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+INTERNAL_OLIGO    1277   24   59.99   45.83  6.00  0.00 ggatatatagaacgggtggtgaag
+RIGHT_PRIMER      1491   20   60.00   50.00  4.00  2.00 ggaagcagaaagcaaacgtc
+SEQUENCE SIZE: 1527
+INCLUDED REGION SIZE: 1527
+
+    1 atggatttgatggacatggatgccatcaatgacctccacttctctggacacagctccctc
+                                                                  
+
+   61 accaacacccctacttccgacgaggattatggttgcacctggaaccactggtctcccatc
+                                                                  
+
+  121 gtcaactgggacacctttacaggtgccccagatgactttcaccacctcatggacaccatc
+                                                                  
+
+  181 atcgaggacagaacaactgtcctcgaacagctcagtccatctatcaccacaaccaccacc
+                                                                  
+
+  241 accaccacaaccacggatgaggaagaagaagaaatggaaacaacaaccacaacaacaaca
+                                                                  
+
+  301 acggcaataaaaacgcatgaagttggtgatgattcaaaagggctaaaactagtgcaccta
+                                                                  
+
+  361 ttgatggctggcgcggaagccttaaccggttcaaccaaaaaccgtgacttagctcgagtg
+                                                                  
+
+  421 atattgatccggctcaaggaattagtctcacaacatgctaacggctccaacatggagaga
+                                                                  
+
+  481 cttgccgctcatttcaccgaagcccttcatggactactagaaggtgctgggggtgcgcat
+                                                                  
+
+  541 aataaccaccatcaccacaacaacaacaaacattacctcaccacaaatggtccccacgac
+                                                                  
+
+  601 aaccaaaacgacacacttgctgctttccaactacttcaagacatgtcaccttacgtcaaa
+                                                                  
+
+  661 ttcggccacttcacagccaatcaagccatcatcgaagccgtggcccacgaacgccgcgtc
+                                                                  
+
+  721 catgtcatcgactacgatatcatggaaggggtccaatgggcctcattaatccaatcactt
+                                                                  
+
+  781 gcttccaacaacaacggtccacatcttcggataaccgcattatcgcggacaggaaccggc
+                                                                  
+
+  841 cggaggtcaatcgccaccgtacaagaaaccggcaggcgattaacctcctttgccgcttcc
+                                                                  
+
+  901 ctcggacaaccattttcttttcatcactgcagattagactccgatgaaactttccgtcct
+                                                                  
+
+  961 tctgcattaaagcttgtacgtggagaggctttggttttcaactgcatgctgaatttacct
+                                                                  
+
+ 1021 caccttagttaccgtgcaccggaatcagttgcttcgtttttaaacggagcaaaaacgttg
+                                                                  
+
+ 1081 aatccaaagcttgtgacgttggttgaagaagaagttggttctgttattggtgggtttgtg
+                                                                  
+
+ 1141 gaaaggttcatggactcacttcatcattattcagcggtttttgattcattggaggctggt
+                                                                  
+
+ 1201 tttccgatgcagaaccgggcccggactttggtggagagggtattttttgggcctagaatt
+                                                                  
+
+ 1261 gcaggctcgttgggccggatatatagaacgggtggtgaagaggagagaaggtcatggggg
+                      ^^^^^^^^^^^^^^^^^^^^^^^^                    
+
+ 1321 gagtggttaggtgaggtagggtttaggggagttccggtgagctttgcaaatcattgtcaa
+                                                                  
+
+ 1381 gcaaagctgttgttagggctttttaatgatgggtatagggttgaagaggtgggtgtgggt
+                                                                  
+
+ 1441 agtaataagttggtgttggattggaaatcaagacgtttgctttctgcttccctttggact
+                                     <<<<<<<<<<<<<<<<<<<<         
+
+ 1501 tgttcttcttcagattctgatttatag
+                                 
+
+KEYS (in order of precedence):
+<<<<<< right primer
+^^^^^^ internal oligo
+
+
+
+Statistics
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Right  18078     0     0     0     0     9     0     0  8076     0     0     0     0  9993
+Intl    5890     0     0     0     0     0     0    47  4955     0     0    44     0   844
+libprimer3 release 2.6.1
+
+
+PRIMER PICKING RESULTS FOR Pick left primers and internal oligos with additional oligos
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 1-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT_PRIMER       1472   20   60.00   50.00  4.00  0.00 gacgtttgctttctgcttcc
+INTERNAL_OLIGO    1277   24   59.99   45.83  6.00  0.00 ggatatatagaacgggtggtgaag
+SEQUENCE SIZE: 1527
+INCLUDED REGION SIZE: 1527
+
+    1 atggatttgatggacatggatgccatcaatgacctccacttctctggacacagctccctc
+                                                                  
+
+   61 accaacacccctacttccgacgaggattatggttgcacctggaaccactggtctcccatc
+                                                                  
+
+  121 gtcaactgggacacctttacaggtgccccagatgactttcaccacctcatggacaccatc
+                                                                  
+
+  181 atcgaggacagaacaactgtcctcgaacagctcagtccatctatcaccacaaccaccacc
+                                                                  
+
+  241 accaccacaaccacggatgaggaagaagaagaaatggaaacaacaaccacaacaacaaca
+                                                                  
+
+  301 acggcaataaaaacgcatgaagttggtgatgattcaaaagggctaaaactagtgcaccta
+                                                                  
+
+  361 ttgatggctggcgcggaagccttaaccggttcaaccaaaaaccgtgacttagctcgagtg
+                                                                  
+
+  421 atattgatccggctcaaggaattagtctcacaacatgctaacggctccaacatggagaga
+                                                                  
+
+  481 cttgccgctcatttcaccgaagcccttcatggactactagaaggtgctgggggtgcgcat
+                                                                  
+
+  541 aataaccaccatcaccacaacaacaacaaacattacctcaccacaaatggtccccacgac
+                                                                  
+
+  601 aaccaaaacgacacacttgctgctttccaactacttcaagacatgtcaccttacgtcaaa
+                                                                  
+
+  661 ttcggccacttcacagccaatcaagccatcatcgaagccgtggcccacgaacgccgcgtc
+                                                                  
+
+  721 catgtcatcgactacgatatcatggaaggggtccaatgggcctcattaatccaatcactt
+                                                                  
+
+  781 gcttccaacaacaacggtccacatcttcggataaccgcattatcgcggacaggaaccggc
+                                                                  
+
+  841 cggaggtcaatcgccaccgtacaagaaaccggcaggcgattaacctcctttgccgcttcc
+                                                                  
+
+  901 ctcggacaaccattttcttttcatcactgcagattagactccgatgaaactttccgtcct
+                                                                  
+
+  961 tctgcattaaagcttgtacgtggagaggctttggttttcaactgcatgctgaatttacct
+                                                                  
+
+ 1021 caccttagttaccgtgcaccggaatcagttgcttcgtttttaaacggagcaaaaacgttg
+                                                                  
+
+ 1081 aatccaaagcttgtgacgttggttgaagaagaagttggttctgttattggtgggtttgtg
+                                                                  
+
+ 1141 gaaaggttcatggactcacttcatcattattcagcggtttttgattcattggaggctggt
+                                                                  
+
+ 1201 tttccgatgcagaaccgggcccggactttggtggagagggtattttttgggcctagaatt
+                                                                  
+
+ 1261 gcaggctcgttgggccggatatatagaacgggtggtgaagaggagagaaggtcatggggg
+                      ^^^^^^^^^^^^^^^^^^^^^^^^                    
+
+ 1321 gagtggttaggtgaggtagggtttaggggagttccggtgagctttgcaaatcattgtcaa
+                                                                  
+
+ 1381 gcaaagctgttgttagggctttttaatgatgggtatagggttgaagaggtgggtgtgggt
+                                                                  
+
+ 1441 agtaataagttggtgttggattggaaatcaagacgtttgctttctgcttccctttggact
+                                     >>>>>>>>>>>>>>>>>>>>         
+
+ 1501 tgttcttcttcagattctgatttatag
+                                 
+
+KEYS (in order of precedence):
+>>>>>> left primer
+^^^^^^ internal oligo
+
+
+ADDITIONAL OLIGOS
+                    start  len      tm     gc%   any    3' seq
+ 1 LEFT_PRIMER        850   20   60.00   50.00  4.00  0.00 atcgccaccgtacaagaaac
+ 2 LEFT_PRIMER        297   20   60.01   40.00  2.00  2.00 aacaacggcaataaaaacgc
+                    start  len      tm     gc%   any    3' seq
+ 1 INTERNAL_OLIGO     554   24   59.99   37.50  2.00  0.00 accacaacaacaacaaacattacc
+ 2 INTERNAL_OLIGO     620   24   59.98   41.67  5.00  2.00 ctgctttccaactacttcaagaca
+
+Statistics
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left   18078     0     0     0     0     9     0     0  8076     0     0     0     0  9993
+Intl    5890     0     0     0     0     0     0    47  4955     0     0    44     0   844
 libprimer3 release 2.6.1
 
 
