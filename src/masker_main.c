@@ -42,6 +42,7 @@
 
 #include "libprimer3.h"
 
+#include "p3_exit_codes.h"
 /* maximum number of variables allowed in the probability formula */
 #define MAX_VARIABLES 100
 
@@ -97,14 +98,14 @@ main (int argc, const char *argv[])
   mp.list_prefix = DEFAULT_LIST_FILE_PREFIX;
   kmer_lists_path = "../kmer_lists/";
   if(argc < 2){
-   print_help (0);
+   print_help(P3_EXIT_OK);
   }
 
   /* parsing and checking the commandline arguments */
   for (idx = 1; (int)idx < argc; idx++) {
 
       if (!strcmp (argv[idx], "-h") || !strcmp (argv[idx], "--help") || !strcmp (argv[idx], "-?") || (argc < 2)) {
-      print_help (0);
+      print_help(P3_EXIT_OK);
 
     } else if ((int)idx == argc - 1 && argv[idx][0] != '-') {
       sequence_file_name = argv[idx];
@@ -112,9 +113,9 @@ main (int argc, const char *argv[])
       if (file){
         fclose(file);
       } else {
-        pr_append_new_chunk_external (&parse_err, "Cannot open input file: ");
-        pr_append_external (&parse_err, sequence_file_name);
-        print_error_and_help (&parse_err);
+        fprintf(stderr, "%s -> parsing commandline: ERROR: Cannot open input file: %s\n",
+                pr_programme_name, sequence_file_name);
+        exit(P3_EXIT_INPUT_ERROR);
       }
 
     } else if (!strcmp (argv[idx], "-lf") || !strcmp (argv[idx], "--lists_file")) {
@@ -158,7 +159,7 @@ main (int argc, const char *argv[])
       }
       if (idx == list_pos[nlist_parameters]) {
         fprintf(stderr, "%s: No list name specified with -l\n", pr_programme_name);
-        exit(-1);
+        exit(P3_EXIT_USAGE);
       }
       list_components[nlist_parameters] = idx - list_pos[nlist_parameters];
       nlist_parameters += 1;
@@ -297,7 +298,7 @@ main (int argc, const char *argv[])
 
   if (parse_err.data != NULL) {
     fprintf(stderr, "%s -> parsing commandline: ERROR: %s\n", pr_programme_name, parse_err.data);
-    exit(-1);
+    exit(P3_EXIT_INPUT_ERROR);
   }
   if (warnings.data != NULL) {
     fprintf(stderr, "%s -> parsing commandline: WARNING: %s\n", pr_programme_name, warnings.data);
@@ -354,13 +355,13 @@ main (int argc, const char *argv[])
 
   if (mp.abs_cutoff > 0 && nlist_parameters != 1) {
     fprintf (stderr, "Error: Absolute value cutoff works with one list and one k-mer frequency parameter only. Currently you are using %u lists and %u parameters.\n", nlists, nlist_parameters);
-    print_help(1);
+    print_help(P3_EXIT_USAGE);
   }
 
   if (parse_err.data != NULL) {
     fprintf(stderr, "%s -> building formula: ERROR: %s\n", pr_programme_name, parse_err.data);
     delete_input_sequence (input_seq);
-    exit(-1);
+    exit(P3_EXIT_INPUT_ERROR);
   }
 
   if (debug > 0) print_parameters (&mp);
@@ -371,7 +372,7 @@ main (int argc, const char *argv[])
     fprintf(stderr, "%s -> masking sequence: ERROR: %s\n", pr_programme_name, parse_err.data);
     delete_input_sequence (input_seq);
     delete_formula_parameters (mp.fp, nlists);
-    exit(-1);
+    exit(P3_EXIT_INPUT_ERROR);
   }
 
   destroy_pr_append_str_data (&warnings);
@@ -412,14 +413,15 @@ print_parameters (masker_parameters *mp)
 
 }
 
-/* Print the parse error to stderr, then the usage text, and exit with 1 */
+/* Print the parse error to stderr, then the usage text, and exit with
+   P3_EXIT_USAGE */
 static void
 print_error_and_help (const pr_append_str *err)
 {
   if (err->data != NULL) {
     fprintf (stderr, "%s -> parsing commandline: ERROR: %s\n", pr_programme_name, err->data);
   }
-  print_help (1);
+  print_help(P3_EXIT_USAGE);
 }
 
 /* Parse a whole number in [0, max]. Returns 0 for empty, non-numeric,

@@ -134,7 +134,6 @@ set_dpal_args(dpal_args *a) {
   a->gapl               = -200;
   a->flag               = DPAL_LOCAL;
   a->max_gap            = 1;
-  a->fail_stop          = 1;
   a->check_chars        = 0;
   a->force_generic      = 0;
   a->force_long_generic = 0;
@@ -144,7 +143,6 @@ void
 dpal_set_default_nt_args(dpal_args *a) {
   set_dpal_args(a);
   a->check_chars        = 1;
-  a->fail_stop          = DPAL_EXIT_ON_ERROR;
   a->gap                = -100;
   a->gapl               = -100;
   a->max_gap            = 3;
@@ -250,16 +248,12 @@ xlate_ambiguity_code(char c)
 
 #define CHECK_ERROR(COND,MSG) if (COND) { out->msg = MSG; goto FAIL; }
 
-/* If fail_stop is set, the code at FAIL: will use fprintf, otherwise
-   will return with msg set. */
+/* The code at FAIL: returns with out->score set to DPAL_ERROR_SCORE
+   and out->msg set; dpal never exits the program. */
 #define DPAL_OOM_ERROR {out->msg = "Out of memory", errno=ENOMEM; goto FAIL; }
 
 static void
-fail_action(const dpal_args *in, dpal_results *out) {
-  if (in->fail_stop) {
-    fprintf(stderr, "\n%s\n", out->msg);
-    exit(-1);
-  } 
+fail_action(dpal_results *out) {
   out->score=DPAL_ERROR_SCORE; 
 }
 
@@ -344,7 +338,7 @@ dpal(const unsigned char *X,
 
   return;
  FAIL:
-  fail_action(in, out);
+  fail_action(out);
 }
 
 static void
@@ -596,7 +590,7 @@ _dpal_generic(const unsigned char *X,
 #endif
     return;
  FAIL:
-    fail_action(in, out);
+    fail_action(out);
 } /* _dpal_generic */
 
 /* Linear space, no path, for any value of maxgap and for any alignment. */
@@ -778,7 +772,7 @@ _dpal_long_nopath_generic(const unsigned char *X,
     free(P);
     return;
  FAIL:
-    fail_action(in, out);
+    fail_action(out);
 } /* _dpal_long_nopath_generic */
 
 static void
@@ -871,7 +865,7 @@ _dpal_long_nopath_maxgap1_local(const unsigned char *X,
     free(P0); free(P1); free(P2);
     return;
  FAIL:
-    fail_action(in, out);
+    fail_action(out);
 } /* _dpal_long_nopath_maxgap1_local */
 
 static void
@@ -975,7 +969,7 @@ _dpal_long_nopath_maxgap1_global_end(const unsigned char *X,
   out->path_length=0;
   return;
  FAIL:
-  fail_action(in, out);
+  fail_action(out);
 } /* _dpal_long_nopath_maxgap_global_end */
 
 
@@ -1272,5 +1266,5 @@ _dpal_long_nopath_maxgap1_local_end(const unsigned char *X,
   free(P0); free(P1); free(P2);
   return;
  FAIL:
-  fail_action(in, out);
+  fail_action(out);
 } /* _dpal_long_nopath_maxgap1_local */

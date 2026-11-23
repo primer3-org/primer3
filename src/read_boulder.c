@@ -51,6 +51,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "read_boulder.h"
 #include "masker.h"
 
+#include "p3_exit_codes.h"
 #define INIT_BUF_SIZE 1024
 #define INIT_LIB_SIZE  500
 #define PR_MAX_LIBRARY_WT 100.0
@@ -277,7 +278,9 @@ read_boulder_record(FILE *file_input,
           pr_append_new_chunk(parse_err, "Duplicate tag: ");
           pr_append(parse_err, "SEQUENCE_TEMPLATE"); 
         } else {
-          if (p3_set_sa_sequence(sa, datum)) exit(-2);
+          if (p3_set_sa_sequence(sa, datum)) {
+            exit(P3_EXIT_OUT_OF_MEMORY);
+          }
         }
         continue;
       }
@@ -1535,7 +1538,7 @@ static void
 out_of_memory_error() 
 {
   fprintf(stderr, "out of memory in read_boulder\n");
-  exit(-2);
+  exit(P3_EXIT_OUT_OF_MEMORY);
 }
 
 /* End of fail-stop wrappers. */

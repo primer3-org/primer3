@@ -48,6 +48,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "read_boulder.h"
 #include "print_boulder.h"
 
+#include "p3_exit_codes.h"
 /* Check on which OS we compile */
 #if defined(_WIN32) || defined(WIN32) || defined (__WIN32__) || defined(__CYGWIN__) || defined(__MINGW32__)
 #define OS_WIN
@@ -130,7 +131,7 @@ main(int argc, char *argv[])
       /* A repeated option replaces the earlier value */
       pr_set_empty(&p3_settings_path);
       if (pr_append_external(&p3_settings_path, optarg)) {
-        exit(-2); /* Out of memory. */
+        exit(P3_EXIT_OUT_OF_MEMORY); /* Out of memory. */
       }
       break;
     case 'i':
@@ -160,14 +161,14 @@ main(int argc, char *argv[])
     case 'o':
       pr_set_empty(&output_path);
       if (pr_append_external(&output_path, optarg)) {
-        exit(-2); /* Out of memory. */
+        exit(P3_EXIT_OUT_OF_MEMORY); /* Out of memory. */
       }
 
       break;
     case 'e':
       pr_set_empty(&error_path);
       if (pr_append_external(&error_path, optarg)) {
-        exit(-2); /* Out of memory. */
+        exit(P3_EXIT_OUT_OF_MEMORY); /* Out of memory. */
       }
 
       break;
@@ -185,7 +186,7 @@ main(int argc, char *argv[])
     if (test_file == NULL) {
       fprintf(stderr, "Error creating file %s\n",
               pr_append_str_chars(&error_path));
-      exit(-1);
+      exit(P3_EXIT_OUTPUT_ERROR);
     }
     fclose(test_file);
     /* reassign stderr */
@@ -193,7 +194,7 @@ main(int argc, char *argv[])
         == NULL) {
       fprintf(stderr, "Error creating file %s\n",
               pr_append_str_chars(&error_path));
-      exit(-1);
+      exit(P3_EXIT_OUTPUT_ERROR);
     }
     destroy_pr_append_str_data(&error_path);
   }
@@ -204,7 +205,7 @@ main(int argc, char *argv[])
         == NULL) {
       fprintf(stderr, "Error creating file %s\n",
               pr_append_str_chars(&output_path));
-      exit(-1);
+      exit(P3_EXIT_OUTPUT_ERROR);
     }
     destroy_pr_append_str_data(&output_path);
   }
@@ -215,22 +216,22 @@ main(int argc, char *argv[])
   }
   if ((io_version == -1) || (invalid_flag == 1) || (default_version == -1)) {
     print_usage();
-    exit(-1);
+    exit(P3_EXIT_USAGE);
   }
   if (compat == 1) {
     printf("PRIMER_ERROR=flag -2x_compat is no longer supported\n=\n");
-    exit(-1);
+    exit(P3_EXIT_USAGE);
   }
 
   /* Check if an input file has been specified on the command line. */
   if (optind < argc) {
     if (optind + 1 != argc) {
       print_usage();
-      exit(-1);
+      exit(P3_EXIT_USAGE);
     }
     if (freopen(argv[optind], "r", stdin) == NULL) {
       fprintf(stderr, "Error opening file %s\n", argv[optind]);
-      exit(-1);
+      exit(P3_EXIT_INPUT_ERROR);
     }
   }
 
@@ -241,18 +242,18 @@ main(int argc, char *argv[])
     global_pa = p3_create_global_settings();
   else {
     print_usage();
-    exit(-1);
+    exit(P3_EXIT_USAGE);
   }
 
   if (!global_pa) {
-    exit(-2); /* Out of memory. */
+    exit(P3_EXIT_OUT_OF_MEMORY); /* Out of memory. */
   }
   global_pa->dump = dump_args ;
 
   /* Settings files have to be read in just below, and
      the functions need a temporary sarg */
   if (!(sarg = create_seq_arg())) {
-    exit(-2);
+    exit(P3_EXIT_OUT_OF_MEMORY);
   }
 
   /* Read data from the settings file until a "=" line occurs.  Assign
@@ -283,7 +284,7 @@ main(int argc, char *argv[])
     fprintf(stderr, "%s: %s\n",
               pr_program_name, fatal_parse_err.data);
     destroy_seq_args(sarg);
-    exit(-4);
+    exit(P3_EXIT_INPUT_ERROR);
   }
 
   /* If there are nonfatal errors, write the proper message
@@ -308,7 +309,7 @@ main(int argc, char *argv[])
      * initialized here because Values are _not_ retained across different
      * input records. */
     if (!(sarg = create_seq_arg())) {
-      exit(-2);
+      exit(P3_EXIT_OUT_OF_MEMORY);
     }
 
     /* Reset all errors handlers and the return structure */
@@ -342,7 +343,7 @@ main(int argc, char *argv[])
     if (global_pa->mask_template == 1 && kmer_lists_path == NULL){
         if (pr_append_new_chunk_external(&fatal_parse_err,
                                          "masking template chosen, but path to kmer lists not specified")) {
-          exit(-2); /* Out of memory */
+          exit(P3_EXIT_OUT_OF_MEMORY); /* Out of memory */
         }
     }
     /* Set up some masking parameters */
@@ -375,7 +376,7 @@ main(int argc, char *argv[])
               pr_program_name, fatal_parse_err.data);
       destroy_p3retval(retval);
       destroy_seq_args(sarg);
-      exit(-4);
+      exit(P3_EXIT_INPUT_ERROR);
     }
 
     /* If there are nonfatal errors, write the proper message
@@ -416,7 +417,9 @@ main(int argc, char *argv[])
     p3_set_gs_primer_explain_flag(global_pa, read_boulder_record_res.explain_flag);
     p3_set_gs_primer_file_flag(global_pa, read_boulder_record_res.file_flag);
     retval = choose_primers(global_pa, sarg);
-    if (NULL == retval) exit(-2); /* Out of memory. */
+    if (NULL == retval) {
+      exit(P3_EXIT_OUT_OF_MEMORY); /* Out of memory. */
+    }
 
     /* If it was necessary to use a left_input, right_input,
        or internal_oligo_input primer that was
@@ -467,7 +470,7 @@ main(int argc, char *argv[])
         destroy_secundary_structures(global_pa, retval);
         destroy_p3retval(retval);
         destroy_seq_args(sarg);
-        exit(-4);
+        exit(P3_EXIT_INPUT_ERROR);
       }
     }
     destroy_secundary_structures(global_pa, retval); /* This works even if retval is NULL */
@@ -505,7 +508,7 @@ main(int argc, char *argv[])
   /* If it could not read input, then complain and die */
   if (0 == input_found) {
     print_usage();
-    exit(-3);
+    exit(P3_EXIT_EMPTY_INPUT);
   }
   return 0;
 }
@@ -518,7 +521,9 @@ static void validate_kmer_lists_path(){
       if ((stat("..\\kmer_lists", &st) == 0) && S_ISDIR(st.st_mode)) {
          kmer_lists_path =
            (char*) malloc(strlen("..\\kmer_lists\\") * sizeof(char) + 1);
-         if (NULL == kmer_lists_path) exit (-2); /* Out of memory */
+         if (NULL == kmer_lists_path) {
+           exit(P3_EXIT_OUT_OF_MEMORY); /* Out of memory */
+         }
          strcpy(kmer_lists_path, "..\\kmer_lists\\");
       } else {
          /* no default directory found */
@@ -536,12 +541,16 @@ static void validate_kmer_lists_path(){
       if ((stat("../kmer_lists", &st) == 0) && S_ISDIR(st.st_mode)) {
          kmer_lists_path =
            (char*) malloc(strlen("../kmer_lists/") * sizeof(char) + 1);
-         if (NULL == kmer_lists_path) exit (-2); /* Out of memory */
+         if (NULL == kmer_lists_path) {
+           exit(P3_EXIT_OUT_OF_MEMORY); /* Out of memory */
+         }
          strcpy(kmer_lists_path, "../kmer_lists/");
       } else if ((stat("/opt/kmer_lists", &st) == 0)  && S_ISDIR(st.st_mode)) {
          kmer_lists_path =
            (char*) malloc(strlen("/opt/kmer_lists/") * sizeof(char) + 1);
-         if (NULL == kmer_lists_path) exit (-2); /* Out of memory */
+         if (NULL == kmer_lists_path) {
+           exit(P3_EXIT_OUT_OF_MEMORY); /* Out of memory */
+         }
          strcpy(kmer_lists_path, "/opt/kmer_lists/");
       } else {
          /* no default directory found */

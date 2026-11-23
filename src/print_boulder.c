@@ -39,6 +39,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h> /* strcpy */
 #include "print_boulder.h"
 
+#include "p3_exit_codes.h"
 static const char *pr_program_name = "Program name is probably primer3_core";
 
 static void   print_all_explain(const p3_global_settings *,
@@ -109,15 +110,17 @@ print_boulder(int io_version,
   */
 
   combined_retval_err = create_pr_append_str();
-  if (NULL == combined_retval_err) exit(-2); /* Out of memory */
+  if (NULL == combined_retval_err) {
+    exit(P3_EXIT_OUT_OF_MEMORY); /* Out of memory */
+  }
 
   if (pr_append_new_chunk_external(combined_retval_err, 
                                    retval->glob_err.data))
-    exit(-2);
+    exit(P3_EXIT_OUT_OF_MEMORY);
 
   if (pr_append_new_chunk_external(combined_retval_err, 
                                    retval->per_sequence_err.data)) 
-    exit(-2);
+    exit(P3_EXIT_OUT_OF_MEMORY);
 
   /* Check if there are errors, print and return */
   if (!pr_is_empty(combined_retval_err)) {
@@ -546,7 +549,7 @@ print_boulder(int io_version,
   printf("=\n");
   if (fflush(stdout) == EOF) {
     perror("fflush(stdout) failed");
-    exit(-1);
+    exit(P3_EXIT_OUTPUT_ERROR);
   }
 }
 
@@ -556,7 +559,7 @@ print_boulder_error(const char *err)
   printf("PRIMER_ERROR=%s\n=\n", err);
   if (fflush(stdout) == EOF) {
     perror("fflush(stdout) failed");
-    exit(-1);
+    exit(P3_EXIT_OUTPUT_ERROR);
   }
 }
 
@@ -566,7 +569,7 @@ print_boulder_warning(const char *err)
   printf("PRIMER_WARNING=%s\n", err);
   if (fflush(stdout) == EOF) {
     perror("fflush(stdout) failed");
-    exit(-1);
+    exit(P3_EXIT_OUTPUT_ERROR);
   }
 }
 

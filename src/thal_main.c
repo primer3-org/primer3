@@ -49,6 +49,7 @@
 
 #include "thal.h"
 
+#include "p3_exit_codes.h"
 /* Check on which OS we compile */
 #if defined(_WIN32) || defined(WIN32) || defined (__WIN32__) || defined(__CYGWIN__) || defined(__MINGW32__)
 #define OS_WIN
@@ -134,48 +135,48 @@ int main(int argc, char** argv)
      "\n";
    if(argc < 2) {
       fprintf(stderr, usage, argv[0]);
-      return -1;
+      return P3_EXIT_USAGE;
    }
    /* BEGIN: READ the INPUT */
    for(i = 1; i < argc; ++i) {
       if (!strncmp("-mv", argv[i], 3)) { /* conc of monovalent cations */
          if(argv[i+1]==NULL) {
             fprintf(stderr, usage, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
          }
          if (!parse_finite(argv[i+1], &a.mv) || a.mv < 0.0) {
             fprintf(stderr, usage, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
          }
          i++;
       } else if (!strncmp("-dv", argv[i], 3)) { /* conc of divalent cations */
          if(argv[i+1]==NULL) {
             fprintf(stderr, usage, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
          }
          if (!parse_finite(argv[i+1], &a.dv) || a.dv < 0.0) {
             fprintf(stderr, usage, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
          }
          i++;
       } else if (!strcmp("-path", argv[i])) {
         if(argv[i+1]==NULL) {
             fprintf(stderr, usage, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
          }
          path = (char*)argv[i+1];
          i++;
       } else if (!strncmp("-s1", argv[i], 3)) { /* first sequence in 5'->3' direction */
          if(argv[i+1]==NULL) {
             fprintf(stderr, usage, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
          }
          oligo1 = (const unsigned char*)argv[i+1];
          i++;         
       } else if (!strncmp("-s2", argv[i], 3)) { /* second sequence in 5'->3' direction */
          if(argv[i+1]==NULL) {
             fprintf(stderr, usage, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
          }
          oligo2 = (const unsigned char*)argv[i+1];
          i++;
@@ -183,7 +184,7 @@ int main(int argc, char** argv)
                                                   by default ANY  */
          if(argv[i+1]==NULL) {
             fprintf(stderr, usage, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
          }
          if(strcmp(argv[i+1],"END1")==0) {
             a.type = thal_end1;
@@ -196,17 +197,17 @@ int main(int argc, char** argv)
                a.type = thal_any; /* ANY */  
          } else {
             fprintf(stderr, usage, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
          }
          i++;
       } else if (!strncmp("-d", argv[i], 2)) { /* dna conc */
          if(argv[i+1]==NULL) {
             fprintf(stderr, usage, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
          }
          if (!parse_finite(argv[i+1], &a.dna_conc) || a.dna_conc <= 0.0) {
             fprintf(stderr, usage, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
          }
          i++;
       } else if (!strncmp("-r", argv[i], 2)) { /* only temp is calculated */
@@ -214,38 +215,38 @@ int main(int argc, char** argv)
       } else if (!strncmp("-t", argv[i], 2)) { /* temperature at which sec str are calculated */
          if(argv[i+1]==NULL) {
             fprintf(stderr, usage, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
          }
          double temp_c;
          /* The temperature must be above absolute zero */
          if (!parse_finite(argv[i+1], &temp_c) || temp_c <= -ABSOLUTE_ZERO) {
             fprintf(stderr, usage, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
          }
          a.temp = temp_c + ABSOLUTE_ZERO;
          i++;
       } else if (!strncmp("-n", argv[i], 2)) { /* concentration of dNTPs */
          if(argv[i+1]==NULL) {
             fprintf(stderr, usage, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
          }
          if (!parse_finite(argv[i+1], &a.dntp) || a.dntp < 0.0) {
             fprintf(stderr, usage, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
          }
          i++;
       } else if (!strncmp("-maxloop", argv[i], 8)) { /* maximum size of loop calculated; 
                                                       this value can not be larger than 30 */
          if(argv[i+1]==NULL) {
             fprintf(stderr, usage, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
          }
          double max_loop;
          /* Check the value before the conversion to int, which is
             undefined for values that do not fit into an int */
          if (!parse_finite(argv[i+1], &max_loop)) {
             fprintf(stderr, usage, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
          }
          if (max_loop > MAX_LOOP) {
             a.maxLoop = MAX_LOOP;
@@ -261,7 +262,7 @@ int main(int argc, char** argv)
          interactive = 1;
       } else if(!strncmp("-", argv[i], 1)) { /* Unknown option. */
          fprintf(stderr, usage, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
       } else {
          break;
       }
@@ -271,26 +272,33 @@ int main(int argc, char** argv)
    if(interactive) {
      if(oligo1!=NULL || oligo2!=NULL) {
         fprintf(stderr, usage, argv[0]);
-        exit(-1);
+        exit(P3_EXIT_USAGE);
      }
    } else {
       if(a.dimer!=0 && (oligo2==NULL || oligo1==NULL)) { /* if user wants to calculate structure 
                                              of dimer then two sequences must be defined*/
         fprintf(stderr, usage, argv[0]);
-        exit(-1);
+        exit(P3_EXIT_USAGE);
       }
       if(a.dimer==0 && (oligo2==NULL && oligo1==NULL)) { /* if user wants to calculate structure
                                              of monomer then only one sequence must be defined */
         fprintf(stderr, usage, argv[0]);
-        exit(-1);
+        exit(P3_EXIT_USAGE);
       }
    }
    if (a.temp <= 0.0) {
       fprintf(stderr, "Error: the temperature must be above -273.15 C\n");
-      exit(-1);
+      exit(P3_EXIT_USAGE);
+   }
+   /* Without monovalent cations and without divalent cations that are
+      not bound by dNTPs the salt correction takes the log of 0; thal()
+      checks the same, but this is an error in the options */
+   if (a.mv <= 0.0 && a.dv <= a.dntp) {
+      fprintf(stderr, "Error: Salt concentration too low for the salt correction\n");
+      exit(P3_EXIT_USAGE);
    }
    if (check_sequence(oligo1) || check_sequence(oligo2)) {
-      exit(-1);
+      exit(P3_EXIT_INPUT_ERROR);
    }
    /* read default thermodynamic parameters */
    thal_parameters thermodynamic_parameters;
@@ -302,7 +310,7 @@ int main(int argc, char** argv)
           || get_thermodynamic_values(&thermodynamic_parameters, &o) != 0) {
          fprintf(stderr, "Error: %s\n", o.msg);
          thal_free_parameters(&thermodynamic_parameters);
-         exit(-1);
+         exit(P3_EXIT_INPUT_ERROR);
       }
    }
 
@@ -316,14 +324,18 @@ int main(int argc, char** argv)
    if(interactive) {
      size_t buffer_size = 16384;
      char *oligo_str = (char*)malloc(sizeof(char)*buffer_size);
-     if (oligo_str == NULL) exit(-2);
+     if (oligo_str == NULL) {
+       exit(P3_EXIT_OUT_OF_MEMORY);
+     }
 
      while(NULL != fgets(oligo_str, buffer_size, stdin)) {
        /* remove "\n" or "\r\n"; the last line may have neither */
        oligo_str[strcspn(oligo_str, "\r\n")] = '\0';
        oligo1 = (const unsigned char*)oligo_str;
        if(a.dimer==0) {
-         if (check_sequence(oligo1)) exit(-1);
+         if (check_sequence(oligo1)) {
+           exit(P3_EXIT_INPUT_ERROR);
+         }
          thal(oligo1,oligo1,&a,mode,&o);
        } else {
          char *sep = strchr(oligo_str, ',');
@@ -331,17 +343,20 @@ int main(int argc, char** argv)
            oligo2 = (const unsigned char*)sep;
            oligo2++;
            *sep = '\0';
-           if (check_sequence(oligo1) || check_sequence(oligo2)) exit(-1);
+           if (check_sequence(oligo1) || check_sequence(oligo2)) {
+             exit(P3_EXIT_INPUT_ERROR);
+           }
            thal(oligo1,oligo2,&a,mode,&o);
          } else {
+           /* A dimer needs two sequences, as on the command line */
            fprintf(stderr, usage, argv[0]);
-           exit(-1);
+           exit(P3_EXIT_USAGE);
          }
        }
        /* encountered error during thermodynamical calc */
        if (o.temp == THAL_ERROR_SCORE) {
          fprintf(stderr, "Error: %s\n", o.msg);
-         exit(-1);
+         exit(P3_EXIT_INPUT_ERROR);
        }
        if(mode == THL_FAST)
          printf("%f\n",o.temp);
@@ -362,7 +377,7 @@ int main(int argc, char** argv)
      /* encountered error during thermodynamical calc */
      if (o.temp == THAL_ERROR_SCORE) {
        fprintf(stderr, "Error: %s\n", o.msg);
-       exit(-1);
+       exit(P3_EXIT_INPUT_ERROR);
      }
      if(mode == THL_FAST)
        printf("%f\n",o.temp);

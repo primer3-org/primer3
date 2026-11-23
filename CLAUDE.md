@@ -139,8 +139,22 @@ Primer settings are in `pa->p_args` and internal-oligo (probe) settings are in `
   - `trimmed_masked_seq` and `trimmed_masked_seq_r`: the k-mer-masked region for each strand.
 - **Oligo records (`primer_rec`).** `start` is the 5′ base: the leftmost base of a left primer or internal oligo, and the rightmost base of a right primer. `rev_comp` marks the printed orientation. For an internal oligo it is set when `PRIMER_INTERNAL_REV_COMP_G_RICH` prints the reverse complement, so checks that depend on orientation must use the printed sequence.
 - **Errors.**
-  - In `read_boulder.c`, a bad `SEQUENCE_*` tag is a per-record error: that record prints `PRIMER_ERROR` and the next record runs. A bad global tag is fatal: primer3_core prints the error and exits with -4.
+  - In `read_boulder.c`, a bad `SEQUENCE_*` tag is a per-record error: that record prints `PRIMER_ERROR` and the next record runs. A bad global tag is fatal: primer3_core prints the error and exits with 4.
   - In `p3retval`, `glob_err` is fatal, `per_sequence_err` ends only the current record, and `warnings` are printed as `PRIMER_WARNING`.
+- **Exit codes.** All programs end with the codes in `src/p3_exit_codes.h`, and each code means the same in every program. Chapter 28 "EXIT STATUS CODES" of the manual documents them for users.
+
+  | Code | Constant | Meaning |
+  |---|---|---|
+  | 0 | `P3_EXIT_OK` | success |
+  | 1 | `P3_EXIT_USAGE` | invalid command line: unknown option, missing or invalid option value, wrong number of arguments, options that do not fit together |
+  | 2 | `P3_EXIT_OUT_OF_MEMORY` | out of memory |
+  | 3 | `P3_EXIT_EMPTY_INPUT` | no input record (primer3_core) |
+  | 4 | `P3_EXIT_INPUT_ERROR` | input that cannot be read or used: input file, settings, library, parameter or k-mer files, a bad global tag, an invalid sequence, a calculation that fails for the input |
+  | 5 | `P3_EXIT_OUTPUT_ERROR` | output that cannot be written: `--output`/`--error` file, failed `fflush` |
+
+  - Call `exit()` only with these constants, never with a literal or a negative value. The golden files and `cmdline_test.pl` check the values, and callers depend on them.
+  - Library code (`dpal.c`, `thal*.c`, `oligotm.c`, `masker.c`, `libprimer3.cc`) never calls `exit()`. It returns an error, and the `*_main.c` program picks the code.
+  - When a program checks the same condition as another one, use the same code. For example, a salt concentration too low for the salt correction is 1 in `oligotm`, `ntthal` and `amplicon3_core`.
 - **Failure values.** Calculations signal failure with sentinel values instead of status codes: `OLIGOTM_ERROR` (−999999.9999) from the Tm and ΔG functions, `THAL_ERROR_SCORE` from thal, and `DPAL_ERROR_SCORE` from dpal. `ALIGN_SCORE_UNDEF` marks a score that hasn't been computed yet. Check for them before using a value.
 - **Fixed limits.** `PR_MAX_INTERVAL_ARRAY` (200 entries per interval or junction list), `MAX_PRIMER_LENGTH` (36), `THAL_MAX_ALIGN` (60) and `DPAL_MAX_ALIGN` (1600) size fixed arrays. When filling them from input, use the bounds-checked helpers such as `p3_add_to_interval_array()` and `p3_sa_add_to_overlap_junctions_array()`.
 - **Shared buffers and process-wide state.**

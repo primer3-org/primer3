@@ -40,6 +40,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "format_output.h"
 #include "libprimer3.h"
 
+#include "p3_exit_codes.h"
 #define FORWARD 1
 #define INTERNAL 0
 #define REVERSE -1
@@ -105,15 +106,17 @@ print_format_output(FILE *f,
   pr_append_str *combined_retval_err = NULL;
 
   combined_retval_err = create_pr_append_str();
-  if (NULL == combined_retval_err) exit(-2); /* Out of memory */
+  if (NULL == combined_retval_err) {
+    exit(P3_EXIT_OUT_OF_MEMORY); /* Out of memory */
+  }
 
   if (pr_append_new_chunk_external(combined_retval_err, 
                                    retval->glob_err.data))
-    exit(-2);
+    exit(P3_EXIT_OUT_OF_MEMORY);
 
   if (pr_append_new_chunk_external(combined_retval_err, 
                                    retval->per_sequence_err.data)) 
-    exit(-2);
+    exit(P3_EXIT_OUT_OF_MEMORY);
 
   /* Print as primer pairs */
   if (retval->output_type == primer_pairs) {
@@ -193,7 +196,7 @@ format_pairs(FILE *f,
 
   /* Print nicely out the sequence with the best pair */
   if (print_seq(f, pa, sa, retval, NULL, NULL, NULL, best_pairs, 0)) {
-    exit(-2); /* ENOMEM */
+    exit(P3_EXIT_OUT_OF_MEMORY); /* ENOMEM */
   }
   
   /* Print out the alternative pairs */
@@ -207,7 +210,7 @@ format_pairs(FILE *f,
   fprintf(f, "\n\n");
   if (fflush(f) == EOF) {
     perror("fflush(f) failed");
-    exit(-1);
+    exit(P3_EXIT_OUTPUT_ERROR);
   }
 
 }
@@ -965,7 +968,7 @@ format_oligos(FILE *f,
   if (pa->primer_task != pick_primer_list ) {
     if (print_seq(f, pa, sa, retval, best_left, best_intl, best_right,
                   best_pairs, 0)) {
-      exit(-2); /* ENOMEM */
+      exit(P3_EXIT_OUT_OF_MEMORY); /* ENOMEM */
     }
   }
   fprintf(f, "\n");
@@ -993,7 +996,7 @@ format_oligos(FILE *f,
   fprintf(f, "\n\n");
   if (fflush(f) == EOF) {
     perror("fflush(f) failed");
-    exit(-1);
+    exit(P3_EXIT_OUTPUT_ERROR);
   }
 }
 

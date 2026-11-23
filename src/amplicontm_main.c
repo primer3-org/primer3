@@ -28,6 +28,7 @@
 #include <ctype.h>
 #include "amplicontm.h"
 
+#include "p3_exit_codes.h"
 /* Reads the whole string s as a finite number into *out. Returns 1 on
    success, 0 for an empty string, trailing characters, nan or inf. */
 static int
@@ -138,7 +139,7 @@ main(int argc, char **argv)
    if (argc < 2 || argc > 24) {
      fprintf(stderr, msg, argv[0]);       
      fprintf(stderr, "%s", copyright);
-     return -1;
+     return P3_EXIT_USAGE;
    }
 
    for (i=1; i < argc; ++i) {
@@ -146,139 +147,139 @@ main(int argc, char **argv)
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        if (!parse_finite(argv[i+1], &mv) || mv < 0.0) {
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        i++;
      } else if (strcmp(argv[i], "-dv") == 0) { /* conc of divalent cations */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        if (!parse_finite(argv[i+1], &dv) || dv < 0.0) {
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        i++;
      } else if (strcmp(argv[i], "-n") == 0) { /* conc of dNTP */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        if (!parse_finite(argv[i+1], &dntp) || dntp < 0.0) {
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        i++;
      } else if (strcmp(argv[i], "-dmso_fact") == 0) { /* DMSO correction factor */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        if (!parse_finite(argv[i+1], &dmso_fact) || dmso_fact < 0.0) {
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        i++;
      } else if (strcmp(argv[i], "-dmso") == 0) { /* concentration of DMSO */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        if (!parse_finite(argv[i+1], &dmso) || dmso < 0.0 || dmso > 100.0) {
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        i++;
      } else if (strcmp(argv[i], "-formamid") == 0) { /* concentration of formamid */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        /* Pure formamide is about 25.1 mol/l */
        if (!parse_finite(argv[i+1], &formamid) || formamid < 0.0 || formamid > 25.1) {
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        i++;
      } else if (strcmp(argv[i], "-tp") == 0) { /* parameters for melting temperature calculation */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        tm_parameters = (int)strtol(argv[i+1], &endptr, 10);
        if ('\0' != *endptr || tm_parameters<0 || tm_parameters>1) {
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        i++;
      } else if (strcmp(argv[i], "-sc") == 0) { /* method of salt correction */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        salt_corrections = (int)strtol(argv[i+1], &endptr, 10);
        if ('\0' != *endptr || salt_corrections<0 || salt_corrections>2) {
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        i++;
      } else if (strcmp(argv[i], "-mf") == 0) { /* formula for melting temperature calculation */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        tm_formula = (int)strtol(argv[i+1], &endptr, 10);
        if ('\0' != *endptr || tm_formula<0 || tm_formula>1) {
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        i++;
      } else if (strcmp(argv[i], "-fs") == 0) { /* find salt concentation */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        if (!parse_finite(argv[i+1], &fs_temp) || fs_temp < 0.0) {
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        i++;
      } else if (strcmp(argv[i], "-o") == 0) { /* output helicities table or list */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        output = (int)strtol(argv[i+1], &endptr, 10);
        if ('\0' != *endptr || output<0 || output>2) {
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        i++;
      } else if (!strncmp("-", argv[i], 1)) {
        /* Unknown option. */
        fprintf(stderr, msg, argv[0]);
-       exit(-1);
+       exit(P3_EXIT_USAGE);
      } else
        break;                /* all args processed. go on to sequences. */
    }
    
   if(!argv[i]) { /* if no oligonucleotide sequence is specified */
     fprintf(stderr, msg, argv[0]);
-    exit(-1);
+    exit(P3_EXIT_USAGE);
   }
   /* input sequence to uppercase */
   seq = argv[i];
@@ -317,40 +318,40 @@ main(int argc, char **argv)
 
   if (ret.error == 1) {
       fprintf(stderr, "%s ERROR: out of memory\n", argv[0]);
-      return -1;
+      return P3_EXIT_OUT_OF_MEMORY;
   } else if (ret.error == 2) {
       fprintf(stderr, "%s ERROR: input is corrupted. Sodium equivalent concentration must be at least 0.01M.\n", argv[0]);
-      return -1;
+      return P3_EXIT_USAGE;
   } else if (ret.error == 3) {
       fprintf(stderr, "%s ERROR: no melting temperature found between 60 and 95 C.\n", argv[0]);
-      return -1;
+      return P3_EXIT_INPUT_ERROR;
   } else if (ret.error == 4) {
       fprintf(stderr, "%s ERROR: -sc 2 salt_corrections==owczarzy is not supported.\n", argv[0]);
-      return -1;
+      return P3_EXIT_USAGE;
   } else if (ret.error == 5) {
       fprintf(stderr, "%s ERROR: -tp 0 breslauer parameters for melting temperature calculation are not supported.\n", argv[0]);
-      return -1;
+      return P3_EXIT_USAGE;
   } else if (ret.error == 6) {
       fprintf(stderr, "%s ERROR: the sequence contains no A, C, G or T.\n", argv[0]);
-      return -1;
+      return P3_EXIT_INPUT_ERROR;
   } else if (ret.error == 7) {
       fprintf(stderr, "%s ERROR: the sequence has fewer than %d A, C, G or T.\n", argv[0], AMP_MIN_LENGTH);
-      return -1;
+      return P3_EXIT_INPUT_ERROR;
   } else if (ret.error == 8) {
       fprintf(stderr, "%s ERROR: unknown parameters for melting temperature calculation or salt correction.\n", argv[0]);
-      return -1;
+      return P3_EXIT_USAGE;
   } else if (ret.error == 9) {
       fprintf(stderr, "%s ERROR: concentrations of salt, divalent cations and dNTPs must not be negative.\n", argv[0]);
-      return -1;
+      return P3_EXIT_USAGE;
   } else if (ret.error == 11) {
       fprintf(stderr, "%s ERROR: the melting temperature is below %.1f C even at the highest sodium concentration of about 1 M.\n", argv[0], fs_temp);
-      return -1;
+      return P3_EXIT_INPUT_ERROR;
   } else if (ret.error == 10) {
       fprintf(stderr, "%s ERROR: the melting temperature is above %.1f C even at the lowest sodium concentration of 10 mM.\n", argv[0], fs_temp);
-      return -1;
+      return P3_EXIT_INPUT_ERROR;
   } else if ((output != 1) && (tm_formula == 0)) {
       fprintf(stderr, "%s ERROR: -mf 0 requires -o 1.\n", argv[0]);
-      return -1;
+      return P3_EXIT_USAGE;
   } else {
       if (output == 0) {
            printf("\t");
@@ -433,7 +434,7 @@ main(int argc, char **argv)
   free_amplicon_result(&ret);
   if (no_melt_point == 1) {
       fprintf(stderr, "%s ERROR: no melting temperature found between 60 and 95 C.\n", argv[0]);
-      return -1;
+      return P3_EXIT_INPUT_ERROR;
   }
   return 0;
 }

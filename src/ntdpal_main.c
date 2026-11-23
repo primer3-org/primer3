@@ -36,12 +36,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "dpal.h"
+#include "p3_exit_codes.h"
 #include <string.h>
 
 /* Limits of the options; larger values overflow the scores */
 #define MAX_GAP_PENALTY 10000
 #define STR(X) #X
 #define XSTR(X) STR(X)
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -51,7 +53,6 @@ main(int argc, const char**argv)
     dpal_args a;
     dpal_results r;
     const unsigned char *s1, *s2;
-    int tmp_ret;
     int i;
     int print_align_end = 0; /* 
                               * Print align_end_1 and align_end_2 from
@@ -108,9 +109,8 @@ main(int argc, const char**argv)
       "       (score 0) instead of A----------------T (score -14).\n\n";
 
     if (argc < 4) {
-      tmp_ret = fprintf(stderr, msg, argv[0]);
-      exit(-1);
-      return tmp_ret;
+      fprintf(stderr, msg, argv[0]);
+      exit(P3_EXIT_USAGE);
     }
     dpal_set_default_nt_args(&a);
     for (i=1; i < argc; ++i) {
@@ -120,12 +120,12 @@ main(int argc, const char**argv)
           if (i+1 >= argc) {
             /* Missing value */
             fprintf(stderr, msg, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
           }
           gap_value = strtod(argv[i+1], &endptr);
           if ('\0' != *endptr || !(gap_value >= 0 && gap_value <= MAX_GAP_PENALTY)) {
             fprintf(stderr, msg, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
           }
           /* Round: 0.29 * 100 is 28.999... in floating point */
           a.gapl = -(int) (gap_value * 100 + 0.5);
@@ -140,12 +140,12 @@ main(int argc, const char**argv)
           if (i+1 >= argc) {
             /* Missing value */
             fprintf(stderr, msg, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
           }
           gap_value = strtod(argv[i+1], &endptr);
           if ('\0' != *endptr || !(gap_value >= 0 && gap_value <= MAX_GAP_PENALTY)) {
             fprintf(stderr, msg, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
           }
           /* Round: 0.29 * 100 is 28.999... in floating point */
           a.gap = -(int) (gap_value * 100 + 0.5);
@@ -154,12 +154,12 @@ main(int argc, const char**argv)
           if (i+1 >= argc) {
             /* Missing value */
             fprintf(stderr, msg, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
           }
           max_gap = strtol(argv[i+1], &endptr, 10);
           if ('\0' != *endptr || max_gap < 0 || max_gap > DPAL_MAX_ALIGN) {
             fprintf(stderr, msg, argv[0]);
-            exit(-1);
+            exit(P3_EXIT_USAGE);
           }
           a.max_gap = (int) max_gap;
           i++;
@@ -172,7 +172,7 @@ main(int argc, const char**argv)
         } else if (!strncmp("-", argv[i], 1)) {
           /* Unknown option. */
           fprintf(stderr, msg, argv[0]);
-          exit(-1);
+          exit(P3_EXIT_USAGE);
         } else
           break;                /* all args processed. go on to sequences. */
     }
@@ -180,7 +180,7 @@ main(int argc, const char**argv)
     if (use_ambiguity_codes) dpal_set_ambiguity_code_matrix(&a);
     if (dpal_debug && dpal_only) {
         fprintf(stderr, msg, argv[0]);
-        exit(-1);
+        exit(P3_EXIT_USAGE);
     } else {
       if (dpal_debug) {
         dp_mode = DPM_DEBUG;
@@ -195,7 +195,7 @@ main(int argc, const char**argv)
     if ((argc - i) != 3){
       /* Not enough remaining arguments. */
       fprintf(stderr, msg, argv[0]);
-      exit(-1);
+      exit(P3_EXIT_USAGE);
     }
     s1 = (unsigned char *) argv[i];
     s2 = (unsigned char *) argv[i+1];
@@ -210,15 +210,19 @@ main(int argc, const char**argv)
         a.flag = DPAL_LOCAL_END;
     else {
         fprintf(stderr, msg, argv[0]);
-        exit(-1);
+        exit(P3_EXIT_USAGE);
     }
     if(print_align_end == 1) a.force_long_generic = 1;
 
+    errno = 0;
     dpal(s1, s2, &a, dp_mode, &r);
     if (r.score == DPAL_ERROR_SCORE) {
-      tmp_ret = fprintf(stderr, "Error: %s\n", r.msg);
-      exit(-1);
-      return tmp_ret;
+      int dpal_errno = errno; /* fprintf may change errno */
+      fprintf(stderr, "Error: %s\n", r.msg);
+      if (dpal_errno == ENOMEM) {
+        exit(P3_EXIT_OUT_OF_MEMORY);
+      }
+      exit(P3_EXIT_INPUT_ERROR);
     }
     if (dp_mode == DPM_FAST) {
       printf("%.2f\n", 0.01 * r.score);

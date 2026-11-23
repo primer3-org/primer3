@@ -264,6 +264,22 @@ Minor fixes:
     runs, and the exit status is 0. Scripts that detected these errors
     by the exit status have to look for PRIMER_ERROR instead.
 
+33. All programs (primer3_core, ntthal, ntdpal, oligotm, amplicon3_core
+    and primer3_masker) now end with the same positive exit codes, and
+    each code means the same in every program: 0 success, 1 invalid
+    command line, 2 out of memory, 3 empty input, 4 input that cannot
+    be read or used, 5 output that cannot be written. Before, the
+    programs called exit() with -1 to -4, which callers on Linux and
+    macOS saw as 255 to 252, and primer3_masker also used 1. For
+    primer3_core, -2, -3 and -4 are now 2, 3 and 4; -1 is now 1 for
+    command line errors, 4 for an input file that cannot be opened and
+    5 for output errors. Scripts that check for 252 to 255 or for
+    negative values have to be changed. See EXIT STATUS CODES in the
+    manual. dpal() no longer ends the program on an error, so an out
+    of memory error in dpal makes primer3_core exit with 2 instead of
+    -1; the field fail_stop of dpal_args and DPAL_EXIT_ON_ERROR were
+    removed.
+
 
 release 2.6.1 2022-01-26  ===============================================
 This release fixes a small memory bug.

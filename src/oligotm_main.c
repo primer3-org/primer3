@@ -42,6 +42,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <ctype.h>
 #include "oligotm.h"
 
+#include "p3_exit_codes.h"
 /* Reads the whole string s as a finite number into *out. Returns 1 on
    success, 0 for an empty string, trailing characters, nan or inf. */
 static int
@@ -139,7 +140,7 @@ main(int argc, char **argv)
    if (argc < 2 || argc > 20) {
      fprintf(stderr, msg, argv[0]);
      fprintf(stderr, "%s", copyright);
-     return -1;
+     return P3_EXIT_USAGE;
    }
 
    for (i=1; i < argc; ++i) {
@@ -147,108 +148,108 @@ main(int argc, char **argv)
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        if (!parse_finite(argv[i+1], &mv) || mv < 0.0) {
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        i++;
      } else if (strcmp(argv[i], "-dv") == 0) { /* conc of divalent cations; added by T.Koressaar */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        if (!parse_finite(argv[i+1], &dv) || dv < 0.0) {
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        i++;
      } else if (strcmp(argv[i], "-n") == 0) { /* conc of dNTP; added by T.Koressaar */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        if (!parse_finite(argv[i+1], &n) || n < 0.0) {
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        i++;
      } else if (strcmp(argv[i], "-d") == 0) {
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        if (!parse_finite(argv[i+1], &d) || d <= 0.0) {
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        i++;
      } else if (strcmp(argv[i], "-dm") == 0) {
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        if (!parse_finite(argv[i+1], &dmso) || dmso < 0.0 || dmso > 100.0) {
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        i++;
      } else if (strcmp(argv[i], "-df") == 0) {
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        if (!parse_finite(argv[i+1], &dmso_fact) || dmso_fact < 0.0) {
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        i++;
      } else if (strcmp(argv[i], "-fo") == 0) {
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        /* Pure formamide is about 25.1 mol/l */
        if (!parse_finite(argv[i+1], &formamide) || formamide < 0.0 || formamide > 25.1) {
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        i++;
      } else if (strcmp(argv[i], "-tp") == 0) { /* added by T.Koressaar */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        tm_santalucia = (int)strtol(argv[i+1], &endptr, 10);
        if ('\0' != *endptr || tm_santalucia<0 || tm_santalucia>2) {
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        i++;
      } else if (strcmp(argv[i], "-sc") == 0) { /* added by T.Koressaar */
        if (i+1 >= argc) {
          /* Missing value */
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        salt_corrections = (int)strtol(argv[i+1], &endptr, 10);
        if ('\0' != *endptr || salt_corrections<0 || salt_corrections>2) {
          fprintf(stderr, msg, argv[0]);
-         exit(-1);
+         exit(P3_EXIT_USAGE);
        }
        i++;
      } else if (!strncmp("-", argv[i], 1)) {
        /* Unknown option. */
        fprintf(stderr, msg, argv[0]);
-       exit(-1);
+       exit(P3_EXIT_USAGE);
      } else
        break;                /* all args processed. go on to sequences. */
    }
@@ -257,11 +258,11 @@ main(int argc, char **argv)
      not bound by dNTPs the salt correction takes the log of 0 */
   if (mv <= 0.0 && dv <= n) {
     fprintf(stderr, "%s ERROR: salt concentration too low for the salt correction\n", argv[0]);
-    exit(-1);
+    exit(P3_EXIT_USAGE);
   }
   if(!argv[i]) { /* if no oligonucleotide sequence is specified */
     fprintf(stderr, msg, argv[0]);
-    exit(-1);
+    exit(P3_EXIT_USAGE);
   }
   /* input sequence to uppercase */
   seq = argv[i];
@@ -279,7 +280,7 @@ main(int argc, char **argv)
             "             you have specified incorrect value for concentration of divalent cations or\n"
             "             you have specified incorrect value for concentration of dNTPs\n",
             argv[0], argv[i]);
-    return -1;
+    return P3_EXIT_INPUT_ERROR;
   }
   fprintf(stdout, "%f\n", tm);
   return 0;

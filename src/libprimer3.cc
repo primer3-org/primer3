@@ -5074,6 +5074,23 @@ obj_fn(const p3_global_settings *pa, primer_pair *h)
    return sum;
 }
 
+/* Handle an error from dpal(). Out of memory ends choose_primers()
+   through longjmp. Any other error is a programming error, because s1
+   or s2 was NULL or contained an illegal character; print the message
+   and abort. */
+static void
+check_dpal_result(const dpal_results *r)
+{
+  if (r->score == DPAL_ERROR_SCORE) {
+    if (errno == ENOMEM) {
+      longjmp(_jmp_buf, 1);
+    }
+    fprintf(stderr, "%s", r->msg);
+    /* Always false, causes an abort: */
+    PR_ASSERT(r->score != DPAL_ERROR_SCORE);
+  }
+}
+
 static double
 align(const char *s1,
       const char *s2,
@@ -5090,19 +5107,7 @@ align(const char *s1,
   }
   dpal((const unsigned char *) s1, (const unsigned char *) s2, a, DPM_FAST, &r);
   PR_ASSERT(r.score <= SHRT_MAX);
-  if (r.score == DPAL_ERROR_SCORE) {
-    /* There was an error. */
-    if (errno == ENOMEM) {
-      longjmp(_jmp_buf, 1);
-    } else {
-      /* This branch is taken only if there is a programming error, in
-         that s1 or s2 were NULL or contained an illegal character. We
-         try to print some debugging information before aborting. */
-      fprintf(stderr, "%s", r.msg);
-      /* Always false, causes an abort: */
-      PR_ASSERT(r.score != DPAL_ERROR_SCORE);
-    }
-  }
+  check_dpal_result(&r);
   return ((r.score < 0.0) ? 0.0 : r.score / PR_ALIGN_SCORE_PRECISION);
 }
 
@@ -5483,12 +5488,14 @@ recalc_primer_sec_struct(primer_rec *p_rec,
     if (p_rec->self_any > 0.0) {
       dpal((const unsigned char *) s1, (const unsigned char *) s1_rev, 
            dpal_arg_to_use->local, DPM_STRUCT, &any);
+      check_dpal_result(&any);
       p_rec->self_any = any.score / PR_ALIGN_SCORE_PRECISION;
       save_overwrite_sec_struct(&p_rec->self_any_struct, any.sec_struct);
     }
     if (p_rec->self_end > 0.0) {
       dpal((const unsigned char *) s1, (const unsigned char *) s1_rev, 
            dpal_arg_to_use->end, DPM_STRUCT, &end);
+      check_dpal_result(&end);
       p_rec->self_end = end.score / PR_ALIGN_SCORE_PRECISION;
       save_overwrite_sec_struct(&p_rec->self_end_struct, end.sec_struct);
     }
@@ -5577,14 +5584,17 @@ recalc_pair_sec_struct(primer_pair *ppair,
     end2.sec_struct = NULL;
     if (ppair->compl_any > 0.0) {
       dpal((const unsigned char *) s1, (const unsigned char *) s2, dpal_arg_to_use->local, DPM_STRUCT, &any);
+      check_dpal_result(&any);
       ppair->compl_any = any.score / PR_ALIGN_SCORE_PRECISION;
       save_overwrite_sec_struct(&ppair->compl_any_struct, any.sec_struct);
     }
     if (ppair->compl_end > 0.0) {
       dpal((const unsigned char *) s1, (const unsigned char *) s2, dpal_arg_to_use->end, DPM_STRUCT, &end);
+      check_dpal_result(&end);
       ppair->compl_end = end.score / PR_ALIGN_SCORE_PRECISION;
       save_overwrite_sec_struct(&ppair->compl_end_struct, end.sec_struct);
       dpal((const unsigned char *) s2_rev, (const unsigned char *) s1_rev, dpal_arg_to_use->end, DPM_STRUCT, &end2);
+      check_dpal_result(&end2);
       if (end2.score / PR_ALIGN_SCORE_PRECISION > ppair->compl_end){
         ppair->compl_end = end2.score / PR_ALIGN_SCORE_PRECISION;
         save_overwrite_sec_struct(&ppair->compl_end_struct, end2.sec_struct);

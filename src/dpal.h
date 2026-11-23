@@ -45,9 +45,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define DPAL_ERROR_SCORE INT_MIN
 
-#define DPAL_EXIT_ON_ERROR 0
-  /* 0 means do not exit on error. */
-
 #ifndef DPAL_MAX_ALIGN
 #define DPAL_MAX_ALIGN   1600 /* 
                                * The maximum size of a string that can be
@@ -91,7 +88,6 @@ typedef struct {
                              * If non-0, check for and raise an error on an
                              * illegal character in the input strings.
                              */
-    int fail_stop;           /* Exit with -1 on error. */
     int flag;                /* 
                               * One of DPAL_GLOBAL, DPAL_LOCAL,
                               * DPAL_GLOBAL_END, DPAL_LOCAL_END
