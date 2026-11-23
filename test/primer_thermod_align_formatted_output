@@ -8,7 +8,7 @@ WARNING: Internal oligo and primers are calculated for different salt conditions
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         11   20   59.70   55.00    0.00   0.00    0.00 GACTTCACTTTCCGACCCTG
 RIGHT PRIMER       113   20   59.96   50.00    3.73   0.00    0.00 TGACGGTCATCATGGTGAGT
-INTERNAL OLIGO      45   18   61.68   55.56    4.59   0.00   42.44 ACCCACGAGTGAAGACTC
+INTERNAL OLIGO      45   19   66.15   57.89    4.59   0.00   45.27 ACCCACGAGTGAAGACTCC
 SEQUENCE SIZE: 178
 INCLUDED REGION SIZE: 178
 
@@ -18,7 +18,7 @@ PRODUCT SIZE: 103, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
                  >>>>>>>>>>>>>>>>>>>>              ^^^^^^^^^^^^^^^
 
    60 CTCCGCCAGCCTTGCCCCTCGGGCCTCTCCCTCAACTCACCATGATGACCGTCAGGCTGA
-      ^^^                               <<<<<<<<<<<<<<<<<<<<      
+      ^^^^                              <<<<<<<<<<<<<<<<<<<<      
 
   120 GGAGGCAGGCGGACTGAGGCGTGGTCCGCGGGGCTCAGGGAGGTGGCTCCTGCGCCGG
                                                                 
@@ -33,22 +33,22 @@ ADDITIONAL OLIGOS
 
  1 LEFT PRIMER         10   20   59.70   50.00    0.00   0.00    0.00 TGACTTCACTTTCCGACCCT
    RIGHT PRIMER       113   20   59.96   50.00    3.73   0.00    0.00 TGACGGTCATCATGGTGAGT
-   INTERNAL OLIGO      45   18   61.68   55.56    4.59   0.00   42.44 ACCCACGAGTGAAGACTC
+   INTERNAL OLIGO      45   19   66.15   57.89    4.59   0.00   45.27 ACCCACGAGTGAAGACTCC
    PRODUCT SIZE: 104, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  2 LEFT PRIMER         11   20   59.70   55.00    0.00   0.00    0.00 GACTTCACTTTCCGACCCTG
    RIGHT PRIMER       114   20   60.11   55.00    3.73   0.00    0.00 CTGACGGTCATCATGGTGAG
-   INTERNAL OLIGO      45   18   61.68   55.56    4.59   0.00   42.44 ACCCACGAGTGAAGACTC
+   INTERNAL OLIGO      45   19   66.15   57.89    4.59   0.00   45.27 ACCCACGAGTGAAGACTCC
    PRODUCT SIZE: 104, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  3 LEFT PRIMER         10   20   59.70   50.00    0.00   0.00    0.00 TGACTTCACTTTCCGACCCT
    RIGHT PRIMER       114   20   60.11   55.00    3.73   0.00    0.00 CTGACGGTCATCATGGTGAG
-   INTERNAL OLIGO      45   18   61.68   55.56    4.59   0.00   42.44 ACCCACGAGTGAAGACTC
+   INTERNAL OLIGO      45   19   66.15   57.89    4.59   0.00   45.27 ACCCACGAGTGAAGACTCC
    PRODUCT SIZE: 105, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER          2   20   59.29   50.00    0.00   0.00    0.00 GCCGAGGATGACTTCACTTT
    RIGHT PRIMER       113   20   59.96   50.00    3.73   0.00    0.00 TGACGGTCATCATGGTGAGT
-   INTERNAL OLIGO      45   18   61.68   55.56    4.59   0.00   42.44 ACCCACGAGTGAAGACTC
+   INTERNAL OLIGO      45   19   66.15   57.89    4.59   0.00   45.27 ACCCACGAGTGAAGACTCC
    PRODUCT SIZE: 112, PAIR ANY_TH COMPL: 7.99, PAIR 3'_TH COMPL: 0.00
 
 Statistics
@@ -57,7 +57,7 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
 Left    1290     0     0     0     0    10     0    60  1039      0     0     0     0     0   181
 Right   1290     0     0     0     0    32     0    38  1096      0     0     0     0     0   124
-Intl    1565     0     0     0     0    32     0     1  1511      0     0     0     0     0    21
+Intl    1565     0     0     0     0    32     0    22  1378      0     0     2     0     0   131
 Pair Stats:
 considered 25, unacceptable product size 20, ok 5
 libprimer3 release 2.3.6
@@ -73,7 +73,7 @@ WARNING: Internal oligo and primers are calculated for different salt conditions
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         17   20   60.01   50.00    6.12   0.00   42.83 CAAGCAATACGACCTGCTGA
 RIGHT PRIMER       168   20   59.98   50.00    0.00   0.00   39.48 ATCGCAAGTGAGGATGAGCT
-INTERNAL OLIGO      62   20   59.97   40.00   21.47   0.00    0.00 AGGAAAGTGAGCTCATTAAG
+INTERNAL OLIGO      79   20   65.82   45.00   18.76   0.00    0.00 AAGACCGTACGATGGAAGAA
 SEQUENCE SIZE: 404
 INCLUDED REGION SIZE: 404
 
@@ -83,7 +83,7 @@ PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
                        >>>>>>>>>>>>>>>>>>>>                       
 
    60 AAAGGAAAGTGAGCTCATTAAGACCGTACGATGGAAGAATTTTTCTATCTGTACAACGTG
-        ^^^^^^^^^^^^^^^^^^^^                                      
+                         ^^^^^^^^^^^^^^^^^^^^                     
 
   120 TGCAAAACATTTTCACAATGAGAAAAAACAGCTCATCCTCACTTGCGATGTTTTACCCGC
                                    <<<<<<<<<<<<<<<<<<<<           
@@ -110,22 +110,22 @@ ADDITIONAL OLIGOS
 
  1 LEFT PRIMER         17   20   60.01   50.00    6.12   0.00   42.83 CAAGCAATACGACCTGCTGA
    RIGHT PRIMER       191   20   59.94   40.00    5.65   0.00   39.80 CAAAAGATTTTGGCGGGTAA
-   INTERNAL OLIGO      62   20   59.97   40.00   21.47   0.00    0.00 AGGAAAGTGAGCTCATTAAG
+   INTERNAL OLIGO      79   20   65.82   45.00   18.76   0.00    0.00 AAGACCGTACGATGGAAGAA
    PRODUCT SIZE: 175, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  2 LEFT PRIMER         17   20   60.01   50.00    6.12   0.00   42.83 CAAGCAATACGACCTGCTGA
    RIGHT PRIMER       368   20   59.75   60.00    7.28   0.00    0.00 CCGTACGCACTATAGGAGCC
-   INTERNAL OLIGO     219   20   60.01   45.00    0.00   0.00    0.00 ATCCCGCTTTAGTGTAGTAG
+   INTERNAL OLIGO     240   20   65.85   55.00    0.00   0.00   41.66 GAGCTATTACAGGTCGTGGG
    PRODUCT SIZE: 352, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  3 LEFT PRIMER        149   20   59.98   50.00    0.00   0.00    0.00 AGCTCATCCTCACTTGCGAT
    RIGHT PRIMER       368   20   59.75   60.00    7.28   0.00    0.00 CCGTACGCACTATAGGAGCC
-   INTERNAL OLIGO     219   20   60.01   45.00    0.00   0.00    0.00 ATCCCGCTTTAGTGTAGTAG
+   INTERNAL OLIGO     240   20   65.85   55.00    0.00   0.00   41.66 GAGCTATTACAGGTCGTGGG
    PRODUCT SIZE: 220, PAIR ANY_TH COMPL: 9.42, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         17   20   60.01   50.00    6.12   0.00   42.83 CAAGCAATACGACCTGCTGA
    RIGHT PRIMER       232   20   59.70   50.00    0.00   0.00    0.00 CACTAAAGCGGGATTTGAGG
-   INTERNAL OLIGO      62   20   59.97   40.00   21.47   0.00    0.00 AGGAAAGTGAGCTCATTAAG
+   INTERNAL OLIGO      79   20   65.82   45.00   18.76   0.00    0.00 AAGACCGTACGATGGAAGAA
    PRODUCT SIZE: 216, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
 Statistics
@@ -134,7 +134,7 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
 Left    3397     0     0     0     0     0     0   897  1543      0     0     0    22     0   935
 Right   3397     0     0     0     0     0     0   839  1673      0     0     1    22     0   862
-Intl    3672     0     0     0     0     0     0   213  3001      0     0     9    22     0   427
+Intl    3672     0     0     0     0     0     0   649  2188      0     0    31    22     0   782
 Pair Stats:
 considered 58, unacceptable product size 51, ok 7
 libprimer3 release 2.3.6
@@ -150,7 +150,7 @@ WARNING: Internal oligo and primers are calculated for different salt conditions
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-INTERNAL OLIGO     123   19   59.82   26.32    1.59   0.00    0.00 AAAACATTTTCACAATGAG
+INTERNAL OLIGO     121   20   65.94   30.00    1.59   0.00    0.00 GCAAAACATTTTCACAATGA
 SEQUENCE SIZE: 404
 INCLUDED REGION SIZE: 404
 
@@ -163,7 +163,7 @@ PRODUCT SIZE: 157, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
                                             >>>>>>>>>>>>>>>>>>>>  
 
   120 TGCAAAACATTTTCACAATGAGAAAAAACAGCTCATCCTCACTTGCGATGTTTTACCCGC
-         ^^^^^^^^^^^^^^^^^^^                                      
+       ^^^^^^^^^^^^^^^^^^^^                                       
 
   180 CAAAATCTTTTGCACCGAAGGTATGGACGACCGCCTCAAATCCCGCTTTAGTGTAGTAGT
                                                              <<<<<
@@ -187,22 +187,22 @@ ADDITIONAL OLIGOS
 
  1 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     123   19   59.82   26.32    1.59   0.00    0.00 AAAACATTTTCACAATGAG
+   INTERNAL OLIGO     121   20   65.94   30.00    1.59   0.00    0.00 GCAAAACATTTTCACAATGA
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     123   19   59.82   26.32    1.59   0.00    0.00 AAAACATTTTCACAATGAG
+   INTERNAL OLIGO     121   20   65.94   30.00    1.59   0.00    0.00 GCAAAACATTTTCACAATGA
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     123   19   59.82   26.32    1.59   0.00    0.00 AAAACATTTTCACAATGAG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     123   19   59.82   26.32    1.59   0.00    0.00 AAAACATTTTCACAATGAG
+   INTERNAL OLIGO     121   20   65.94   30.00    1.59   0.00    0.00 GCAAAACATTTTCACAATGA
    PRODUCT SIZE: 145, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
 Statistics
@@ -211,7 +211,7 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
 Left    3397     0     0     0     0     0     0    52  3139      0     0     1    22     0   183
 Right   3397     0     0     0     0     0     0    59  3137      0     0     0    22     0   179
-Intl    3672     0     0     0     0     0     0   100  3247      0     0     0    22     0   303
+Intl    3672     0     0     0     0     0     0   403  2607      0     0    10    22     0   630
 Pair Stats:
 considered 18, unacceptable product size 11, high template mispriming score 1, ok 6
 libprimer3 release 2.3.6
@@ -227,7 +227,7 @@ WARNING: Internal oligo and primers are calculated for different salt conditions
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-INTERNAL OLIGO     123   19   59.82   26.32    1.59   0.00    0.00 AAAACATTTTCACAATGAG
+INTERNAL OLIGO     121   20   65.94   30.00    1.59   0.00    0.00 GCAAAACATTTTCACAATGA
 SEQUENCE SIZE: 404
 INCLUDED REGION SIZE: 404
 
@@ -240,7 +240,7 @@ PRODUCT SIZE: 157, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
                                             >>>>>>>>>>>>>>>>>>>>  
 
   120 TGCAAAACATTTTCACAATGAGAAAAAACAGCTCATCCTCACTTGCGATGTTTTACCCGC
-         ^^^^^^^^^^^^^^^^^^^                                      
+       ^^^^^^^^^^^^^^^^^^^^                                       
 
   180 CAAAATCTTTTGCACCGAAGGTATGGACGACCGCCTCAAATCCCGCTTTAGTGTAGTAGT
                                                              <<<<<
@@ -264,22 +264,22 @@ ADDITIONAL OLIGOS
 
  1 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     123   19   59.82   26.32    1.59   0.00    0.00 AAAACATTTTCACAATGAG
+   INTERNAL OLIGO     121   20   65.94   30.00    1.59   0.00    0.00 GCAAAACATTTTCACAATGA
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     123   19   59.82   26.32    1.59   0.00    0.00 AAAACATTTTCACAATGAG
+   INTERNAL OLIGO     121   20   65.94   30.00    1.59   0.00    0.00 GCAAAACATTTTCACAATGA
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     123   19   59.82   26.32    1.59   0.00    0.00 AAAACATTTTCACAATGAG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     123   19   59.82   26.32    1.59   0.00    0.00 AAAACATTTTCACAATGAG
+   INTERNAL OLIGO     121   20   65.94   30.00    1.59   0.00    0.00 GCAAAACATTTTCACAATGA
    PRODUCT SIZE: 145, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
 Statistics
@@ -288,7 +288,7 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
 Left    3397     0     0     0     0     0     0    52  3139      0     0     1    22     0   183
 Right   3397     0     0     0     0     0     0    59  3137      0     0     0    22     0   179
-Intl    3672     0     0     0     0     0     0   100  3247      0     0     0    22     0   303
+Intl    3672     0     0     0     0     0     0   403  2607      0     0    10    22     0   630
 Pair Stats:
 considered 20, unacceptable product size 11, high template mispriming score 3, ok 6
 libprimer3 release 2.3.6
@@ -304,7 +304,7 @@ WARNING: Internal oligo and primers are calculated for different salt conditions
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-INTERNAL OLIGO     123   19   59.82   26.32    1.59   0.00    0.00 AAAACATTTTCACAATGAG
+INTERNAL OLIGO     121   20   65.94   30.00    1.59   0.00    0.00 GCAAAACATTTTCACAATGA
 SEQUENCE SIZE: 404
 INCLUDED REGION SIZE: 404
 
@@ -317,7 +317,7 @@ PRODUCT SIZE: 157, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
                                             >>>>>>>>>>>>>>>>>>>>  
 
   120 TGCAAAACATTTTCACAATGAGAAAAAACAGCTCATCCTCACTTGCGATGTTTTACCCGC
-         ^^^^^^^^^^^^^^^^^^^                                      
+       ^^^^^^^^^^^^^^^^^^^^                                       
 
   180 CAAAATCTTTTGCACCGAAGGTATGGACGACCGCCTCAAATCCCGCTTTAGTGTAGTAGT
                                                              <<<<<
@@ -341,22 +341,22 @@ ADDITIONAL OLIGOS
 
  1 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     123   19   59.82   26.32    1.59   0.00    0.00 AAAACATTTTCACAATGAG
+   INTERNAL OLIGO     121   20   65.94   30.00    1.59   0.00    0.00 GCAAAACATTTTCACAATGA
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     123   19   59.82   26.32    1.59   0.00    0.00 AAAACATTTTCACAATGAG
+   INTERNAL OLIGO     121   20   65.94   30.00    1.59   0.00    0.00 GCAAAACATTTTCACAATGA
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     123   19   59.82   26.32    1.59   0.00    0.00 AAAACATTTTCACAATGAG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     123   19   59.82   26.32    1.59   0.00    0.00 AAAACATTTTCACAATGAG
+   INTERNAL OLIGO     121   20   65.94   30.00    1.59   0.00    0.00 GCAAAACATTTTCACAATGA
    PRODUCT SIZE: 145, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
 Statistics
@@ -365,7 +365,7 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
 Left    3146     0     0     0     0     0     0    52  2915     33     0     1    22     0   123
 Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
-Intl    3225     0     0     0     0     0     0   100  2864     58     0     0    22     0   181
+Intl    3031     0     0     0     0     0     0   403  2125    102     0    10    22     0   369
 Pair Stats:
 considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
 libprimer3 release 2.3.6
@@ -381,7 +381,7 @@ WARNING: Internal oligo and primers are calculated for different salt conditions
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
 SEQUENCE SIZE: 404
 INCLUDED REGION SIZE: 404
 
@@ -394,7 +394,7 @@ PRODUCT SIZE: 157, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
                                             >>>>>>>>>>>>>>>>>>>>  
 
   120 TGCAAAACATTTTCACAATGAGAAAAAACAGCTCATCCTCACTTGCGATGTTTTACCCGC
-        ^^^^^^^^^^^^^^^^^^                                        
+                               ^^^^^^^^^^^^^^^^^^^^               
 
   180 CAAAATCTTTTGCACCGAAGGTATGGACGACCGCCTCAAATCCCGCTTTAGTGTAGTAGT
                                                              <<<<<
@@ -418,22 +418,22 @@ ADDITIONAL OLIGOS
 
  1 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 145, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
 Statistics
@@ -442,7 +442,7 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
 Left    3397     0     0     0     0     0     0    52  3139      0     0     1    22     0   183
 Right   3397     0     0     0     0     0     0    59  3137      0     0     0    22     0   179
-Intl    3672     0     0     0     0     0     0   100  3247     15     0     0    22     0   288
+Intl    3672     0     0     0     0     0     0   403  2607     16     0    10    22     0   614
 Pair Stats:
 considered 18, unacceptable product size 11, high template mispriming score 1, ok 6
 libprimer3 release 2.3.6
@@ -458,7 +458,7 @@ WARNING: Internal oligo and primers are calculated for different salt conditions
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
 SEQUENCE SIZE: 404
 INCLUDED REGION SIZE: 404
 
@@ -471,7 +471,7 @@ PRODUCT SIZE: 157, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
                                             >>>>>>>>>>>>>>>>>>>>  
 
   120 TGCAAAACATTTTCACAATGAGAAAAAACAGCTCATCCTCACTTGCGATGTTTTACCCGC
-        ^^^^^^^^^^^^^^^^^^                                        
+                               ^^^^^^^^^^^^^^^^^^^^               
 
   180 CAAAATCTTTTGCACCGAAGGTATGGACGACCGCCTCAAATCCCGCTTTAGTGTAGTAGT
                                                              <<<<<
@@ -495,22 +495,22 @@ ADDITIONAL OLIGOS
 
  1 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 145, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
 Statistics
@@ -519,7 +519,7 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
 Left    3397     0     0     0     0     0     0    52  3139      0     0     1    22     0   183
 Right   3397     0     0     0     0     0     0    59  3137      0     0     0    22     0   179
-Intl    3672     0     0     0     0     0     0   100  3247     15     0     0    22     0   288
+Intl    3672     0     0     0     0     0     0   403  2607     16     0    10    22     0   614
 Pair Stats:
 considered 18, unacceptable product size 11, high template mispriming score 1, ok 6
 libprimer3 release 2.3.6
@@ -535,7 +535,7 @@ WARNING: Internal oligo and primers are calculated for different salt conditions
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
 SEQUENCE SIZE: 404
 INCLUDED REGION SIZE: 404
 
@@ -548,7 +548,7 @@ PRODUCT SIZE: 157, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
                                             >>>>>>>>>>>>>>>>>>>>  
 
   120 TGCAAAACATTTTCACAATGAGAAAAAACAGCTCATCCTCACTTGCGATGTTTTACCCGC
-        ^^^^^^^^^^^^^^^^^^                                        
+                               ^^^^^^^^^^^^^^^^^^^^               
 
   180 CAAAATCTTTTGCACCGAAGGTATGGACGACCGCCTCAAATCCCGCTTTAGTGTAGTAGT
                                                              <<<<<
@@ -572,22 +572,22 @@ ADDITIONAL OLIGOS
 
  1 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 145, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
 Statistics
@@ -596,7 +596,7 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
 Left    3089     0     0     0     0     0     0    52  2863     40     0     1    22     0   111
 Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
-Intl    3166     0     0     0     0     0     0   100  2815     65     0     0    22     0   164
+Intl    2981     0     0     0     0     0     0   403  2084    109     0    10    22     0   353
 Pair Stats:
 considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
 libprimer3 release 2.3.6
@@ -612,7 +612,7 @@ WARNING: Internal oligo and primers are calculated for different salt conditions
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
 SEQUENCE SIZE: 404
 INCLUDED REGION SIZE: 404
 
@@ -625,7 +625,7 @@ PRODUCT SIZE: 157, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
                                             >>>>>>>>>>>>>>>>>>>>  
 
   120 TGCAAAACATTTTCACAATGAGAAAAAACAGCTCATCCTCACTTGCGATGTTTTACCCGC
-        ^^^^^^^^^^^^^^^^^^                                        
+                               ^^^^^^^^^^^^^^^^^^^^               
 
   180 CAAAATCTTTTGCACCGAAGGTATGGACGACCGCCTCAAATCCCGCTTTAGTGTAGTAGT
                                                              <<<<<
@@ -649,22 +649,22 @@ ADDITIONAL OLIGOS
 
  1 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 145, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
 Statistics
@@ -673,7 +673,7 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
 Left    3089     0     0     0     0     0     0    52  2863     40     0     2    22     0   110
 Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
-Intl    3166     0     0     0     0     0     0   100  2815     65     0     6    22     0   158
+Intl    2981     0     0     0     0     0     0   403  2084    109     0    29    22     0   334
 Pair Stats:
 considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
 libprimer3 release 2.3.6
@@ -689,7 +689,7 @@ WARNING: Internal oligo and primers are calculated for different salt conditions
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
 SEQUENCE SIZE: 404
 INCLUDED REGION SIZE: 404
 
@@ -702,7 +702,7 @@ PRODUCT SIZE: 157, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
                                             >>>>>>>>>>>>>>>>>>>>  
 
   120 TGCAAAACATTTTCACAATGAGAAAAAACAGCTCATCCTCACTTGCGATGTTTTACCCGC
-        ^^^^^^^^^^^^^^^^^^                                        
+                               ^^^^^^^^^^^^^^^^^^^^               
 
   180 CAAAATCTTTTGCACCGAAGGTATGGACGACCGCCTCAAATCCCGCTTTAGTGTAGTAGT
                                                              <<<<<
@@ -726,22 +726,22 @@ ADDITIONAL OLIGOS
 
  1 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 145, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
 Statistics
@@ -750,7 +750,7 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
 Left    3089     0     0     0     0     0     0    52  2863     40     0     1    22     0   111
 Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
-Intl    3166     0     0     0     0     0     0   100  2815     65     0     0    22     0   164
+Intl    2981     0     0     0     0     0     0   403  2084    109     0    14    22     0   349
 Pair Stats:
 considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
 libprimer3 release 2.3.6
@@ -766,7 +766,7 @@ WARNING: Internal oligo and primers are calculated for different salt conditions
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
 SEQUENCE SIZE: 404
 INCLUDED REGION SIZE: 404
 
@@ -779,7 +779,7 @@ PRODUCT SIZE: 157, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
                                             >>>>>>>>>>>>>>>>>>>>  
 
   120 TGCAAAACATTTTCACAATGAGAAAAAACAGCTCATCCTCACTTGCGATGTTTTACCCGC
-        ^^^^^^^^^^^^^^^^^^                                        
+                               ^^^^^^^^^^^^^^^^^^^^               
 
   180 CAAAATCTTTTGCACCGAAGGTATGGACGACCGCCTCAAATCCCGCTTTAGTGTAGTAGT
                                                              <<<<<
@@ -803,22 +803,22 @@ ADDITIONAL OLIGOS
 
  1 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 145, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
 Statistics
@@ -827,7 +827,7 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
 Left    3089     0     0     0     0     0     0    52  2863     40     0     1    22     0   111
 Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
-Intl    3166     0     0     0     0     0     0   100  2815     65     0    10    22     0   154
+Intl    2981     0     0     0     0     0     0   403  2084    109     0    29    22     0   334
 Pair Stats:
 considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
 libprimer3 release 2.3.6
@@ -843,7 +843,7 @@ WARNING: Internal oligo and primers are calculated for different salt conditions
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
 SEQUENCE SIZE: 404
 INCLUDED REGION SIZE: 404
 
@@ -856,7 +856,7 @@ PRODUCT SIZE: 157, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
                                             >>>>>>>>>>>>>>>>>>>>  
 
   120 TGCAAAACATTTTCACAATGAGAAAAAACAGCTCATCCTCACTTGCGATGTTTTACCCGC
-        ^^^^^^^^^^^^^^^^^^                                        
+                               ^^^^^^^^^^^^^^^^^^^^               
 
   180 CAAAATCTTTTGCACCGAAGGTATGGACGACCGCCTCAAATCCCGCTTTAGTGTAGTAGT
                                                              <<<<<
@@ -880,22 +880,22 @@ ADDITIONAL OLIGOS
 
  1 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 145, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
 Statistics
@@ -904,7 +904,7 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
 Left    3089     0     0     0     0     0     0    52  2863     40     0     1    22     0   111
 Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
-Intl    3166     0     0     0     0     0     0   100  2815     65     0    10    22     0   154
+Intl    2981     0     0     0     0     0     0   403  2084    109     0    29    22     0   334
 Pair Stats:
 considered 20, unacceptable product size 11, high template mispriming score 1, ok 8
 libprimer3 release 2.3.6
@@ -920,7 +920,7 @@ WARNING: Internal oligo and primers are calculated for different salt conditions
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
 SEQUENCE SIZE: 404
 INCLUDED REGION SIZE: 404
 
@@ -933,7 +933,7 @@ PRODUCT SIZE: 157, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
                                             >>>>>>>>>>>>>>>>>>>>  
 
   120 TGCAAAACATTTTCACAATGAGAAAAAACAGCTCATCCTCACTTGCGATGTTTTACCCGC
-        ^^^^^^^^^^^^^^^^^^                                        
+                               ^^^^^^^^^^^^^^^^^^^^               
 
   180 CAAAATCTTTTGCACCGAAGGTATGGACGACCGCCTCAAATCCCGCTTTAGTGTAGTAGT
                                                              <<<<<
@@ -957,22 +957,22 @@ ADDITIONAL OLIGOS
 
  1 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 ATTTTTCTATCTGTACAACG
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 TCTATCTGTACAACGTGTG
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00 CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00 AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 145, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
 Statistics
@@ -981,7 +981,7 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin     X  stab    ok
 Left    3089     0     0     0     0     0     0    52  2863     40     0     1    22     0   111
 Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
-Intl    3166     0     0     0     0     0     0   100  2815     65     0    10    22     0   154
+Intl    2981     0     0     0     0     0     0   403  2084    109     0    29    22     0   334
 Pair Stats:
 considered 24, unacceptable product size 12, high template mispriming score 1, ok 11
 libprimer3 release 2.3.6
@@ -997,7 +997,7 @@ WARNING: Internal oligo and primers are calculated for different salt conditions
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin   rep seq
 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 12.00 ATTTTTCTATCTGTACAACG
 RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 11.00 GACCTGTAATAGCTCACTAC
-INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00       CAAAACATTTTCACAATG
+INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00       AAACAGCTCATCCTCACTTG
 SEQUENCE SIZE: 404
 INCLUDED REGION SIZE: 404
 
@@ -1010,7 +1010,7 @@ PRODUCT SIZE: 157, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
                                             >>>>>>>>>>>>>>>>>>>>  
 
   120 TGCAAAACATTTTCACAATGAGAAAAAACAGCTCATCCTCACTTGCGATGTTTTACCCGC
-        ^^^^^^^^^^^^^^^^^^                                        
+                               ^^^^^^^^^^^^^^^^^^^^               
 
   180 CAAAATCTTTTGCACCGAAGGTATGGACGACCGCCTCAAATCCCGCTTTAGTGTAGTAGT
                                                              <<<<<
@@ -1034,22 +1034,22 @@ ADDITIONAL OLIGOS
 
  1 LEFT PRIMER         98   20   60.84   30.00    0.00   0.00    0.00 12.00 ATTTTTCTATCTGTACAACG
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00  9.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00       CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00       AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 146, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  2 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 11.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 11.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00       CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00       AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 156, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 11.00 TCTATCTGTACAACGTGTG
    RIGHT PRIMER       254   20   59.66   45.00    0.00   0.00    0.00 11.00 GACCTGTAATAGCTCACTAC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00       CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00       AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 152, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
  4 LEFT PRIMER         99   20   61.09   30.00    0.00   0.00    0.00 11.00 TTTTTCTATCTGTACAACGT
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00  9.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00       CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00       AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 145, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
 Statistics
@@ -1058,7 +1058,7 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin   sim     X  stab    ok
 Left    3089     0     0     0     0     0     0    52  2863     40     0     1     0    22     0   111
 Right   3209     0     0     0     0     0     0    59  2966     24     0     0     0    18     0   142
-Intl    3166     0     0     0     0     0     0   100  2815     65     0    10     0    22     0   154
+Intl    2981     0     0     0     0     0     0   403  2084    109     0    29     0    22     0   334
 Pair Stats:
 considered 24, unacceptable product size 12, high template mispriming score 1, ok 11
 libprimer3 release 2.3.6
@@ -1072,19 +1072,19 @@ Using 0-based sequence positions
 WARNING: Internal oligo and primers are calculated for different salt conditions; differs from the primer value: PRIMER_INTERNAL_SALT_DIVALENT PRIMER_INTERNAL_DNTP_CONC; PRIMER_SALT_DIVALENT > 0.0 but PRIMER_DNTP_CONC <= 0.0; use reasonable value for PRIMER_DNTP_CONC
 
 OLIGO            start  len      tm     gc%  any_th  3'_th hairpin   rep seq
-LEFT PRIMER         46   19   60.82   31.58    0.00   0.00    0.00 10.00 ATATTCAGTTCATCAAAGG
+LEFT PRIMER         11   18   61.57   33.33    0.00   0.00    0.00 11.00 TCAATACAAGCAATACGA
 RIGHT PRIMER       122   18   61.01   44.44    0.00   0.00    0.00 10.00 GCACACGTTGTACAGATA
-INTERNAL OLIGO      86   18   60.12   27.78    0.00   0.00    0.00       TACGATGGAAGAATTTTT
+INTERNAL OLIGO      55   20   66.28   40.00    0.00   0.00    0.00       TCATCAAAGGAAAGTGAGCT
 SEQUENCE SIZE: 404
 INCLUDED REGION SIZE: 404
 
-PRODUCT SIZE: 77, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+PRODUCT SIZE: 112, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
     0 AGTGAGCTCATTCAATACAAGCAATACGACCTGCTGATTATCGACGATATTCAGTTCATC
-                                                    >>>>>>>>>>>>>>
+                 >>>>>>>>>>>>>>>>>>                          ^^^^^
 
    60 AAAGGAAAGTGAGCTCATTAAGACCGTACGATGGAAGAATTTTTCTATCTGTACAACGTG
-      >>>>>                     ^^^^^^^^^^^^^^^^^^ <<<<<<<<<<<<<<<
+      ^^^^^^^^^^^^^^^                              <<<<<<<<<<<<<<<
 
   120 TGCAAAACATTTTCACAATGAGAAAAAACAGCTCATCCTCACTTGCGATGTTTTACCCGC
       <<<                                                         
@@ -1109,25 +1109,25 @@ KEYS (in order of precedence):
 ADDITIONAL OLIGOS
                     start  len      tm     gc%  any_th  3'_th hairpin   rep seq
 
- 1 LEFT PRIMER         47   18   59.66   33.33    0.00   0.00    0.00 10.00 TATTCAGTTCATCAAAGG
-   RIGHT PRIMER       122   18   61.01   44.44    0.00   0.00    0.00 10.00 GCACACGTTGTACAGATA
-   INTERNAL OLIGO      86   18   60.12   27.78    0.00   0.00    0.00       TACGATGGAAGAATTTTT
-   PRODUCT SIZE: 76, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
-
- 2 LEFT PRIMER         11   18   61.57   33.33    0.00   0.00    0.00 11.00 TCAATACAAGCAATACGA
-   RIGHT PRIMER       122   18   61.01   44.44    0.00   0.00    0.00 10.00 GCACACGTTGTACAGATA
-   INTERNAL OLIGO      46   20   60.89   30.00    0.00   0.00    0.00       ATATTCAGTTCATCAAAGGA
-   PRODUCT SIZE: 112, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
-
- 3 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 11.00 TCTATCTGTACAACGTGTG
+ 1 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 11.00 TCTATCTGTACAACGTGTG
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00  9.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     122   18   59.17   27.78    0.00   0.00    0.00       CAAAACATTTTCACAATG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00       AAACAGCTCATCCTCACTTG
    PRODUCT SIZE: 141, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
- 4 LEFT PRIMER          8   19   59.84   31.58    0.00   0.00    0.00 12.00 CATTCAATACAAGCAATAC
+ 2 LEFT PRIMER          8   19   59.84   31.58    0.00   0.00    0.00 12.00 CATTCAATACAAGCAATAC
    RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00  9.00 GCTCACTACTACACTAAAGC
-   INTERNAL OLIGO     102   20   60.01   40.00    0.00   0.00    0.00       TTCTATCTGTACAACGTGTG
+   INTERNAL OLIGO     106   20   66.00   40.00    0.00   0.00   42.18       ATCTGTACAACGTGTGCAAA
    PRODUCT SIZE: 236, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+
+ 3 LEFT PRIMER         46   19   60.82   31.58    0.00   0.00    0.00 10.00 ATATTCAGTTCATCAAAGG
+   RIGHT PRIMER       243   20   60.39   45.00    0.00   0.00    0.00  9.00 GCTCACTACTACACTAAAGC
+   INTERNAL OLIGO     106   20   66.00   40.00    0.00   0.00   42.18       ATCTGTACAACGTGTGCAAA
+   PRODUCT SIZE: 198, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
+
+ 4 LEFT PRIMER        103   19   59.90   42.11    0.00   0.00    0.00 11.00 TCTATCTGTACAACGTGTG
+   RIGHT PRIMER       241   19   59.75   42.11    0.00   0.00    0.00 10.00 TCACTACTACACTAAAGCG
+   INTERNAL OLIGO     145   20   66.47   45.00    0.00   0.00    0.00       AAACAGCTCATCCTCACTTG
+   PRODUCT SIZE: 139, PAIR ANY_TH COMPL: 0.00, PAIR 3'_TH COMPL: 0.00
 
 Statistics
          con   too    in    in   not          no    tm    tm   high  high  high  high        high      
@@ -1135,9 +1135,9 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high  compl compl   pin   sim     X  stab    ok
 Left    3089     0     0     0     0     0     0    52  2863     40     0    25     3    22     0    84
 Right   3209     0     0     0     0     0     0    59  2966     24     0    38     0    18     0   104
-Intl    3166     0     0     0     0     0     0   100  2815     65     0    10     0    22     0   154
+Intl    2981     0     0     0     0     0     0   403  2084    109     0    29     0    22     0   334
 Pair Stats:
-considered 8941, unacceptable product size 3826, high any compl 38, no internal oligo 354, high template mispriming score 135, ok 4588
+considered 8972, unacceptable product size 3851, high any compl 38, no internal oligo 645, high template mispriming score 135, ok 4303
 libprimer3 release 2.3.6
 
 

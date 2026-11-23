@@ -59,7 +59,14 @@ together with primers and PRIMER_INTERNAL_SALT_MONOVALENT,
 PRIMER_INTERNAL_SALT_DIVALENT or PRIMER_INTERNAL_DNTP_CONC differ
 from the primer values, and a second warning if
 PRIMER_INTERNAL_DMSO_CONC, PRIMER_INTERNAL_DMSO_FACTOR or
-PRIMER_INTERNAL_FORMAMIDE_CONC differ.
+PRIMER_INTERNAL_FORMAMIDE_CONC differ. With the same salt as the
+primers, internal oligos would have the same Tm window as the primers.
+Internal oligos should melt above the primers, so with
+--default_version=2 the defaults are now PRIMER_INTERNAL_MIN_TM=63.0,
+PRIMER_INTERNAL_OPT_TM=66.0 and PRIMER_INTERNAL_MAX_TM=69.0 (was 57.0,
+60.0 and 63.0). This picks about the same internal oligos as before
+the salt change. --default_version=1 and settings files or inputs
+that set these tags are not affected.
 
 PRIMER_WT_END_QUAL had no effect. It now adds PRIMER_WT_END_QUAL *
 (PRIMER_QUALITY_RANGE_MAX - lowest SEQUENCE_QUALITY value of the five

@@ -655,6 +655,11 @@ pr_set_default_global_args_2(p3_global_settings *a)
   /* Internal oligos are in the same reaction as the primers */
   a->o_args.divalent_conc             = 1.5;
   a->o_args.dntp_conc                 = 0.6;
+  /* Probes should melt above the primers. 63/66/69 at 1.5 mM Mg
+     picks about the same oligos as 57/60/63 did at 0 mM Mg. */
+  a->o_args.opt_tm                    = 66.0;
+  a->o_args.min_tm                    = 63.0;
+  a->o_args.max_tm                    = 69.0;
   a->lib_ambiguity_codes_consensus    = 0;
 }
 
