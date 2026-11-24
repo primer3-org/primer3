@@ -1,3 +1,26 @@
+# Entropy of terminal mismatches
+# values are in cal / mol K
+
+# Values in this file originate from:
+# SantaLucia, Peyret, "Method and system for predicting nucleic acid hybridization thermodynamics 
+#     and computer-readable storage medium for use therein". Patent WO 01/94611 A2. 2001 Dec 13. 
+#     Table 2 and Table 3.
+# SantaLucia, Hicks, "The Thermodynamics of DNA Structural Motifs". Annu Rev Biophys Biomol Struct. 
+#     2004:33:415-40. doi: 10.1146/annurev.biophys.32.110601.141800. (cites the terminal mismatches 
+#     as S. Varma & J. SantaLucia, unpublished)
+
+# XY_ZW is 5'-XY-3' paired with 3'-ZW-5': X-Z is the Watson-Crick pair, Y-W the terminal mismatch.
+# Mismatch entries: Table 2 (A-A, C-C, G-G, T-T) and Table 3 (A-C, C-T, G-A, G-T) of WO 01/94611.
+# Each mismatch value is listed twice: XY_ZW and WZ_YX (the same duplex read from the other strand,
+# rotated by 180 degrees) have the same value.
+# Exception GG_CG and GC_GG: WO 01/94611 Table 2 prints dH = -0.7 kcal/mol for GG/CG, which contradicts
+# its dS and dG37 and the raw data in Table 1; -6.9 is calculated from Table 1 as 
+# (GCGATATCGG - CGATATCG) / 2.
+# Watson-Crick entries (Y-W is also a Watson-Crick pair, e.g. AA_TT) were not measured,
+# their values are estimates.
+# For these entries XY_ZW and WZ_YX are different motifs and may have different values.
+# All other entries are not allowed (0 / inf).
+
 # Values are read by order, the basepares are ignored and only present for your orientation
 
 AA_AA inf
@@ -15,7 +38,7 @@ AA_GT -5.8
 AA_TA -7.8
 AA_TC -4.0
 AA_TG -4.4
-AA_TT -13.5
+AA_TT -13.2
 AC_AA inf
 AC_AC inf
 AC_AG -22.5
@@ -29,7 +52,7 @@ AC_GC inf
 AC_GG -11.4
 AC_GT inf
 AC_TA -3.8
-AC_TC -0.5
+AC_TC 0.5
 AC_TG -16.1
 AC_TT -1.7
 AG_AA inf
@@ -116,7 +139,7 @@ CT_AA -4.0
 CT_AC inf
 CT_AG inf
 CT_AT inf
-CT_CA -0.5
+CT_CA 0.5
 CT_CC inf
 CT_CG inf
 CT_CT inf

@@ -62,11 +62,16 @@
 
 /* file-private constants */
 static const int min_hrpn_loop = 3;
-static const double R = 1.9872; /* cal/Kmol */
+static const double R = 1.987; /* cal/Kmol, as in SantaLucia (1998) and oligotm() */
 static const double ILAS = (-300 / 310.15); /* Internal Loop Entropy ASymmetry correction -0.3kcal/mol*/
 static const double ILAH = 0.0; /* Internal Loop EntHalpy Asymmetry correction */
 static const double dplx_init_H_dimer = 200;
-static const double dplx_init_S_dimer = -5.7;
+/* Duplex initiation of SantaLucia (1998): 0.1 kcal/mol and -2.8 cal/(mol K)
+   for each terminal G-C pair, 2.3 kcal/mol and 4.1 cal/(mol K) for each
+   terminal A-T pair. Written as one initiation (dH 200, dS -5.6) plus the
+   terminal AT penalty AT_H/AT_S (2200, 6.9; thal_params.c) for each A-T
+   end, which gives the same values. SantaLucia and Hicks (2004) use -5.7. */
+static const double dplx_init_S_dimer = -5.6;
 static const int is_complement[5][5] = { /* watson-crick bp -> 1; else 0 */
      {0, 0, 0, 1, 0}, /* A, C, G, T, N */
      {0, 0, 1, 0, 0},
@@ -464,10 +469,11 @@ calc_bulge_internal_dimer(int i, int j, int ii, int jj, double* EntropyEnthalpy,
       H = stackint2Enthalpies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j+1]] +
           stackint2Enthalpies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]];
    } else { /* only internal loops */
-      //Only calculate H and S if there is a mismatch in both nearest neighbor stacks. 
-      //This removes the need for the tstack table and improves performance.
-      //At this point, i,j and ii,jj are known to be complementary, so only need to check neighbors.
-      //The only difference between tstack and tstack2 tables is when both pairs are complementary
+      /* Internal loop: count it only if both closing pairs are followed by a
+         mismatch. A complementary neighbor would pair and is no first
+         mismatch of the loop. tstack2 also has values for complementary
+         neighbors, which must not be used here. i,j and ii,jj are known to be
+         complementary at this point, so only the neighbors are checked. */
       if((!is_complement[numSeq1[ii-1]][numSeq2[jj-1]]) && (!is_complement[numSeq1[i+1]][numSeq2[j+1]])){
          H = interiorLoopEnthalpies[loopSize] + tstack2Enthalpies[numSeq1[i]][numSeq1[i+1]][numSeq2[j]][numSeq2[j+1]] +
              tstack2Enthalpies[numSeq2[jj]][numSeq2[jj-1]][numSeq1[ii]][numSeq1[ii-1]] +

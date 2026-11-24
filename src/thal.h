@@ -131,8 +131,6 @@ typedef struct thal_parameters {
   char *tetraloop_ds;
   char *triloop_dh;
   char *triloop_ds;
-  char *tstack_tm_inf_ds;
-  char *tstack_dh;
   char *tstack2_dh;
   char *tstack2_ds;
 } thal_parameters;

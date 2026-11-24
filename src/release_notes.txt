@@ -77,6 +77,54 @@ PRIMER_RIGHT_n_MIN_END_SEQ_QUALITY print this lowest value; like
 PRIMER_LEFT_n_MIN_SEQ_QUALITY they are only printed with
 SEQUENCE_QUALITY. PRIMER_INTERNAL_WT_END_QUAL still has no effect.
 
+The terminal mismatch parameters of thal (tstack2.dh, tstack2.ds) were
+checked against their source, Tables 2 and 3 of the patent WO 01/94611
+(SantaLucia and Peyret, 2001). 46 of the 48 mismatch values were
+identical, two were wrong, and one estimated entry was corrected:
+- GG_CG and GC_GG: dH was -700 cal/mol and is now -6900 cal/mol. Table 2
+  of the patent prints -0.7 kcal/mol, but this contradicts its own dS
+  and dG37 values and the raw data in Table 1, from which -6.9 kcal/mol
+  is calculated. With the old value a G-G mismatch next to a G-C pair
+  was destabilizing (dG37 +5.25 instead of -0.95 kcal/mol), and the Tm
+  of such hairpins was calculated up to about 12 C too low.
+- AC_TC and CT_CA: dS was -0.5 and is now +0.5 cal/(mol K) as in the
+  patent. The sign was lost when the value was copied. Tm values of
+  affected hairpins and dimers change by about 2.5 C.
+- AA_TT: dS was changed from -13.2 to -13.5 cal/(mol K) in release 2.3.7
+  to make it equal to TT_AA. Both entries describe different hairpins
+  (closing A-T pair with a loop starting with A and ending with T, and
+  closing T-A pair with a loop starting with T and ending with A), so
+  they need not be equal. AA_TT is -13.2 again. This affects only such
+  hairpins, by about 0.1 kcal/mol.
+All values calculated by thal (hairpins, self and pair complementarity,
+template mispriming, ntthal) can change for sequences with these motifs,
+and some oligos are now rejected for hairpins. The 16 entries in tstack2
+where both neighbors are Watson-Crick pairs were not measured; their
+values are estimates. The sources of all thermodynamic parameter files
+are now given in the files and in the manual under
+PRIMER_THERMODYNAMIC_PARAMETERS_PATH, together with the places where
+Primer3 deviates from the published values.
+
+The parameter files tstack.dh and tstack_tm_inf.ds were loaded but never
+used and were removed. A parameter directory for
+PRIMER_THERMODYNAMIC_PARAMETERS_PATH or ntthal -path no longer needs
+them; if they are present they are ignored. The fields tstack_dh and
+tstack_tm_inf_ds were removed from struct thal_parameters in thal.h.
+
+thal mixed two parameter sets: the Watson-Crick nearest neighbors of
+SantaLucia (1998) with the duplex initiation (dS -5.7 cal/(mol K)) and
+the gas constant (1.9872) of SantaLucia and Hicks (2004). The initiation
+is now dS -5.6 cal/(mol K) and R is 1.987 cal/(mol K), which is exactly
+the initiation of SantaLucia (1998). ntthal and the thermodynamic
+alignments of primer3_core now give a perfect duplex the same Tm as
+oligotm and PRIMER_TM_FORMULA=1 (SantaLucia 1998); before, they differed
+by up to 0.1 C. All dimer values (PRIMER_*_SELF_ANY_TH,
+PRIMER_*_SELF_END_TH, PRIMER_PAIR_*_COMPL_*_TH, template mispriming,
+ntthal) rise by about 0.1 to 0.2 C. Hairpins are not affected. This also
+changes results that use parameters from
+PRIMER_THERMODYNAMIC_PARAMETERS_PATH, because the initiation and R are
+not read from the parameter files.
+
 Minor fixes:
 1. Compiler complains were fixed.
 

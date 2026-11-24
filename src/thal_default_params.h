@@ -23,8 +23,6 @@ double hairpinLoopEntropies[30];  hairpin loop params accordint to length of the
 double interiorLoopEnthalpies[30];  same as interiorLoopEntropies but values of entropy 
 double bulgeLoopEnthalpies[30];  same as bulgeLoopEntropies but values of entropy 
 double hairpinLoopEnthalpies[30];  same as hairpinLoopEntropies but values of entropy 
-double tstackEntropies[5][5][5][5];  ther params for terminal mismatches 
-double tstackEnthalpies[5][5][5][5];  ther params for terminal mismatches 
 double tstack2Entropies[5][5][5][5];  ther params for internal terminal mismatches 
 double tstack2Enthalpies[5][5][5][5];  ther params for internal terminal mismatches 
 struct triloop* triloopEntropies;  ther penalties for given triloop seq-s 
@@ -666,319 +664,17 @@ double stackint2Enthalpies[5][5][5][5] = {
 	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
 	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}}}};
 
-double tstackEntropies[5][5][5][5] = {
-	{{{-1.0, -1.0, -1.0, -6.3, 1e-11},
-	{-1.0, -1.0, -1.0, -7.0, 1e-11},
-	{-1.0, -1.0, -1.0, -5.8, 1e-11},
-	{-7.8, -4.0, -4.4, -1.0, 1e-11},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}},
-
-	{{-1.0, -1.0, -22.5, -1.0, 1e-11},
-	{-1.0, -1.0, -7.1, -1.0, 1e-11},
-	{-1.0, -1.0, -11.4, -1.0, 1e-11},
-	{-3.8, -0.5, -1.0, -1.7, 1e-11},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}},
-
-	{{-1.0, -10.7, -1.0, -1.0, 1e-11},
-	{-1.0, -6.0, -1.0, -1.0, 1e-11},
-	{-1.0, -15.5, -1.0, -1.0, 1e-11},
-	{-5.9, -1.0, -2.1, -8.7, 1e-11},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}},
-
-	{{-7.8, -1.0, -1.0, -1.0, 1e-11},
-	{-3.8, -1.0, -1.0, -1.0, 1e-11},
-	{-5.9, -1.0, -1.0, -1.0, 1e-11},
-	{-1.0, -6.3, -9.4, -6.5, 1e-11},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}},
-
-	{{1e-11, 1e-11, 1e-11, 1e-11, 1e-11},
-	{1e-11, 1e-11, 1e-11, 1e-11, 1e-11},
-	{1e-11, 1e-11, 1e-11, 1e-11, 1e-11},
-	{1e-11, 1e-11, 1e-11, 1e-11, 1e-11},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}}},
-
-	{{{-1.0, -1.0, -1.0, -5.9, 1e-11},
-	{-1.0, -1.0, -1.0, -1.3, 1e-11},
-	{-10.7, -5.9, -9.6, -1.0, 1e-11},
-	{-1.0, -1.0, -1.0, -1.2, 1e-11},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}},
-
-	{{-1.0, -1.0, -13.8, -1.0, 1e-11},
-	{-1.0, -1.0, -10.6, -1.0, 1e-11},
-	{-6.0, -5.1, -1.0, -8.0, 1e-11},
-	{-1.0, -1.0, -7.8, -1.0, 1e-11},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}},
-
-	{{-1.0, -5.9, -1.0, -1.0, 1e-11},
-	{-1.0, -5.1, -1.0, -1.0, 1e-11},
-	{-15.5, -1.0, -9.5, -9.0, 1e-11},
-	{-1.0, -10.6, -1.0, -1.0, 1e-11},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}},
-
-	{{-4.0, -1.0, -1.0, -1.0, 1e-11},
-	{-0.5, -1.0, -1.0, -1.0, 1e-11},
-	{-1.0, -10.6, -18.7, -16.9, 1e-11},
-	{-6.3, -1.0, -1.0, -1.0, 1e-11},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}},
-
-	{{1e-11, 1e-11, 1e-11, 1e-11, 1e-11},
-	{1e-11, 1e-11, 1e-11, 1e-11, 1e-11},
-	{1e-11, 1e-11, 1e-11, 1e-11, 1e-11},
-	{1e-11, 1e-11, 1e-11, 1e-11, 1e-11},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}}},
-
-	{{{-1.0, -1.0, -1.0, -4.7, 1e-11},
-	{-22.5, -13.8, -11.1, -1.0, 1e-11},
-	{-1.0, -1.0, -1.0, -2.7, 1e-11},
-	{-1.0, -1.0, -1.0, -9.8, 1e-11},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}},
-
-	{{-1.0, -1.0, -11.1, -1.0, 1e-11},
-	{-7.1, -10.6, -1.0, -13.5, 1e-11},
-	{-1.0, -1.0, -19.2, -1.0, 1e-11},
-	{-1.0, -1.0, -16.1, -1.0, 1e-11},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}},
-
-	{{-1.0, -9.6, -1.0, -1.0, 1e-11},
-	{-11.4, -1.0, -19.2, -15.9, 1e-11},
-	{-1.0, -9.5, -1.0, -1.0, 1e-11},
-	{-1.0, -18.7, -1.0, -1.0, 1e-11},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}},
-
-	{{-4.4, -1.0, -1.0, -1.0, 1e-11},
-	{-1.0, -7.8, -16.1, -21.2, 1e-11},
-	{-2.1, -1.0, -1.0, -1.0, 1e-11},
-	{-9.4, -1.0, -1.0, -1.0, 1e-11},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}},
-
-	{{1e-11, 1e-11, 1e-11, 1e-11, 1e-11},
-	{1e-11, 1e-11, 1e-11, 1e-11, 1e-11},
-	{1e-11, 1e-11, 1e-11, 1e-11, 1e-11},
-	{1e-11, 1e-11, 1e-11, 1e-11, 1e-11},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}}},
-
-	{{{-6.3, -5.9, -4.7, -1.0, 1e-11},
-	{-1.0, -1.0, -1.0, -6.3, 1e-11},
-	{-1.0, -1.0, -1.0, -10.5, 1e-11},
-	{-1.0, -1.0, -1.0, -8.9, 1e-11},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}},
-
-	{{-7.0, -1.3, -1.0, -6.3, 1e-11},
-	{-1.0, -1.0, -13.5, -1.0, 1e-11},
-	{-1.0, -1.0, -15.9, -1.0, 1e-11},
-	{-1.0, -1.0, -21.2, -1.0, 1e-11},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}},
-
-	{{-5.8, -1.0, -2.7, -10.5, 1e-11},
-	{-1.0, -8.0, -1.0, -1.0, 1e-11},
-	{-1.0, -9.0, -1.0, -1.0, 1e-11},
-	{-1.0, -16.9, -1.0, -1.0, 1e-11},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}},
-
-	{{-1.0, -1.2, -9.8, -8.9, 1e-11},
-	{-1.7, -1.0, -1.0, -1.0, 1e-11},
-	{-8.7, -1.0, -1.0, -1.0, 1e-11},
-	{-6.5, -1.0, -1.0, -1.0, 1e-11},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}},
-
-	{{1e-11, 1e-11, 1e-11, 1e-11, 1e-11},
-	{1e-11, 1e-11, 1e-11, 1e-11, 1e-11},
-	{1e-11, 1e-11, 1e-11, 1e-11, 1e-11},
-	{1e-11, 1e-11, 1e-11, 1e-11, 1e-11},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}}},
-
-	{{{-1.0, -1.0, -1.0, -1.0, -1.0},
-	{-1.0, -1.0, -1.0, -1.0, -1.0},
-	{-1.0, -1.0, -1.0, -1.0, -1.0},
-	{-1.0, -1.0, -1.0, -1.0, -1.0},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}},
-
-	{{-1.0, -1.0, -1.0, -1.0, -1.0},
-	{-1.0, -1.0, -1.0, -1.0, -1.0},
-	{-1.0, -1.0, -1.0, -1.0, -1.0},
-	{-1.0, -1.0, -1.0, -1.0, -1.0},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}},
-
-	{{-1.0, -1.0, -1.0, -1.0, -1.0},
-	{-1.0, -1.0, -1.0, -1.0, -1.0},
-	{-1.0, -1.0, -1.0, -1.0, -1.0},
-	{-1.0, -1.0, -1.0, -1.0, -1.0},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}},
-
-	{{-1.0, -1.0, -1.0, -1.0, -1.0},
-	{-1.0, -1.0, -1.0, -1.0, -1.0},
-	{-1.0, -1.0, -1.0, -1.0, -1.0},
-	{-1.0, -1.0, -1.0, -1.0, -1.0},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}},
-
-	{{-1.0, -1.0, -1.0, -1.0, -1.0},
-	{-1.0, -1.0, -1.0, -1.0, -1.0},
-	{-1.0, -1.0, -1.0, -1.0, -1.0},
-	{-1.0, -1.0, -1.0, -1.0, -1.0},
-	{-1.0, -1.0, -1.0, -1.0, -1.0}}}};
-
-double tstackEnthalpies[5][5][5][5] = {
-	{{{_INFINITY, _INFINITY, _INFINITY, -2500.0, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, -2700.0, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, -2400.0, 0.0},
-	{-3100.0, -1600.0, -1900.0, _INFINITY, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
-
-	{{_INFINITY, _INFINITY, -8000.0, _INFINITY, 0.0},
-	{_INFINITY, _INFINITY, -3200.0, _INFINITY, 0.0},
-	{_INFINITY, _INFINITY, -4600.0, _INFINITY, 0.0},
-	{-1800.0, -100.0, _INFINITY, -900.0, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
-
-	{{_INFINITY, -4300.0, _INFINITY, _INFINITY, 0.0},
-	{_INFINITY, -2700.0, _INFINITY, _INFINITY, 0.0},
-	{_INFINITY, -6000.0, _INFINITY, _INFINITY, 0.0},
-	{-2500.0, _INFINITY, -1100.0, -3200.0, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
-
-	{{-3100.0, _INFINITY, _INFINITY, _INFINITY, 0.0},
-	{-1800.0, _INFINITY, _INFINITY, _INFINITY, 0.0},
-	{-2500.0, _INFINITY, _INFINITY, _INFINITY, 0.0},
-	{_INFINITY, -2300.0, -3500.0, -2400.0, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
-
-	{{0.0, 0.0, 0.0, 0.0, 0.0},
-	{0.0, 0.0, 0.0, 0.0, 0.0},
-	{0.0, 0.0, 0.0, 0.0, 0.0},
-	{0.0, 0.0, 0.0, 0.0, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}}},
-
-	{{{_INFINITY, _INFINITY, _INFINITY, -2300.0, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, -700.0, 0.0},
-	{-4300.0, -2600.0, -3900.0, _INFINITY, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, -700.0, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
-
-	{{_INFINITY, _INFINITY, -5000.0, _INFINITY, 0.0},
-	{_INFINITY, _INFINITY, -3900.0, _INFINITY, 0.0},
-	{-2700.0, -2100.0, _INFINITY, -3200.0, 0.0},
-	{_INFINITY, _INFINITY, -3000.0, _INFINITY, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
-
-	{{_INFINITY, -2600.0, _INFINITY, _INFINITY, 0.0},
-	{_INFINITY, -2100.0, _INFINITY, _INFINITY, 0.0},
-	{-6000.0, _INFINITY, -3800.0, -3800.0, 0.0},
-	{_INFINITY, -3900.0, _INFINITY, _INFINITY, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
-
-	{{-1600.0, _INFINITY, _INFINITY, _INFINITY, 0.0},
-	{-100.0, _INFINITY, _INFINITY, _INFINITY, 0.0},
-	{_INFINITY, -3900.0, -6600.0, -6100.0, 0.0},
-	{-2300.0, _INFINITY, _INFINITY, _INFINITY, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
-
-	{{0.0, 0.0, 0.0, 0.0, 0.0},
-	{0.0, 0.0, 0.0, 0.0, 0.0},
-	{0.0, 0.0, 0.0, 0.0, 0.0},
-	{0.0, 0.0, 0.0, 0.0, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}}},
-
-	{{{_INFINITY, _INFINITY, _INFINITY, -2000.0, 0.0},
-	{-8000.0, -5000.0, -4300.0, _INFINITY, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, -1100.0, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, -3600.0, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
-
-	{{_INFINITY, _INFINITY, -4300.0, _INFINITY, 0.0},
-	{-3200.0, -3900.0, _INFINITY, -4900.0, 0.0},
-	{_INFINITY, _INFINITY, -700.0, _INFINITY, 0.0},
-	{_INFINITY, _INFINITY, -5900.0, _INFINITY, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
-
-	{{_INFINITY, -3900.0, _INFINITY, _INFINITY, 0.0},
-	{-4600.0, _INFINITY, -700.0, -5700.0, 0.0},
-	{_INFINITY, -3800.0, _INFINITY, _INFINITY, 0.0},
-	{_INFINITY, -6600.0, _INFINITY, _INFINITY, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
-
-	{{-1900.0, _INFINITY, _INFINITY, _INFINITY, 0.0},
-	{_INFINITY, -3000.0, -5900.0, -7400.0, 0.0},
-	{-1100.0, _INFINITY, _INFINITY, _INFINITY, 0.0},
-	{-3500.0, _INFINITY, _INFINITY, _INFINITY, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
-
-	{{0.0, 0.0, 0.0, 0.0, 0.0},
-	{0.0, 0.0, 0.0, 0.0, 0.0},
-	{0.0, 0.0, 0.0, 0.0, 0.0},
-	{0.0, 0.0, 0.0, 0.0, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}}},
-
-	{{{-2500.0, -2300.0, -2000.0, _INFINITY, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, -2500.0, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, -3900.0, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, -3200.0, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
-
-	{{-2700.0, -700.0, _INFINITY, -2500.0, 0.0},
-	{_INFINITY, _INFINITY, -4900.0, _INFINITY, 0.0},
-	{_INFINITY, _INFINITY, -5700.0, _INFINITY, 0.0},
-	{_INFINITY, _INFINITY, -7400.0, _INFINITY, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
-
-	{{-2400.0, _INFINITY, -1100.0, -3900.0, 0.0},
-	{_INFINITY, -3200.0, _INFINITY, _INFINITY, 0.0},
-	{_INFINITY, -3800.0, _INFINITY, _INFINITY, 0.0},
-	{_INFINITY, -6100.0, _INFINITY, _INFINITY, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
-
-	{{_INFINITY, -700.0, -3600.0, -3200.0, 0.0},
-	{-900.0, _INFINITY, _INFINITY, _INFINITY, 0.0},
-	{-3200.0, _INFINITY, _INFINITY, _INFINITY, 0.0},
-	{-2400.0, _INFINITY, _INFINITY, _INFINITY, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
-
-	{{0.0, 0.0, 0.0, 0.0, 0.0},
-	{0.0, 0.0, 0.0, 0.0, 0.0},
-	{0.0, 0.0, 0.0, 0.0, 0.0},
-	{0.0, 0.0, 0.0, 0.0, 0.0},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}}},
-
-	{{{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
-
-	{{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
-
-	{{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
-
-	{{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
-
-	{{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY},
-	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}}}};
-
 double tstack2Entropies[5][5][5][5] = {
 	{{{-1.0, -1.0, -1.0, -6.3, 1e-11},
 	{-1.0, -1.0, -1.0, -7.0, 1e-11},
 	{-1.0, -1.0, -1.0, -5.8, 1e-11},
-	{-7.8, -4.0, -4.4, -13.5, 1e-11},
+	{-7.8, -4.0, -4.4, -13.2, 1e-11},
 	{-1.0, -1.0, -1.0, -1.0, -1.0}},
 
 	{{-1.0, -1.0, -22.5, -1.0, 1e-11},
 	{-1.0, -1.0, -7.1, -1.0, 1e-11},
 	{-1.0, -1.0, -11.4, -1.0, 1e-11},
-	{-3.8, -0.5, -16.1, -1.7, 1e-11},
+	{-3.8, 0.5, -16.1, -1.7, 1e-11},
 	{-1.0, -1.0, -1.0, -1.0, -1.0}},
 
 	{{-1.0, -10.7, -1.0, -1.0, 1e-11},
@@ -1018,7 +714,7 @@ double tstack2Entropies[5][5][5][5] = {
 	{-1.0, -1.0, -1.0, -1.0, -1.0}},
 
 	{{-4.0, -1.0, -1.0, -1.0, 1e-11},
-	{-0.5, -1.0, -1.0, -1.0, 1e-11},
+	{0.5, -1.0, -1.0, -1.0, 1e-11},
 	{-16.1, -10.6, -18.7, -16.9, 1e-11},
 	{-6.3, -1.0, -1.0, -1.0, 1e-11},
 	{-1.0, -1.0, -1.0, -1.0, -1.0}},
@@ -1188,12 +884,12 @@ double tstack2Enthalpies[5][5][5][5] = {
 
 	{{_INFINITY, _INFINITY, -4300.0, _INFINITY, 0.0},
 	{-3200.0, -3900.0, -7000.0, -4900.0, 0.0},
-	{_INFINITY, _INFINITY, -700.0, _INFINITY, 0.0},
+	{_INFINITY, _INFINITY, -6900.0, _INFINITY, 0.0},
 	{_INFINITY, _INFINITY, -5900.0, _INFINITY, 0.0},
 	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},
 
 	{{_INFINITY, -3900.0, _INFINITY, _INFINITY, 0.0},
-	{-4600.0, -7000.0, -700.0, -5700.0, 0.0},
+	{-4600.0, -7000.0, -6900.0, -5700.0, 0.0},
 	{_INFINITY, -3800.0, _INFINITY, _INFINITY, 0.0},
 	{_INFINITY, -6600.0, _INFINITY, _INFINITY, 0.0},
 	{_INFINITY, _INFINITY, _INFINITY, _INFINITY, _INFINITY}},

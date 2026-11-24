@@ -86,9 +86,6 @@ void getLoop(double hairpinLoopEntropies[30],
              double interiorLoopEnthalpies[30],
              double bulgeLoopEnthalpies[30],
              const thal_parameters *tp, jmp_buf _jmp_buf, thal_results *o);
-void getTstack(double tstackEntropies[5][5][5][5],
-               double tstackEnthalpies[5][5][5][5],
-               const thal_parameters *tp, jmp_buf _jmp_buf, thal_results *o);
 void getTstack2(double tstack2Entropies[5][5][5][5],
                 double tstack2Enthalpies[5][5][5][5],
                 const thal_parameters *tp, jmp_buf _jmp_buf, thal_results *o);
@@ -123,9 +120,6 @@ extern double hairpinLoopEntropies[30];
 extern double interiorLoopEnthalpies[30];
 extern double bulgeLoopEnthalpies[30];
 extern double hairpinLoopEnthalpies[30];
-/* tstack tables: loaded, but not used (see getTstack()) */
-extern double tstackEntropies[5][5][5][5];
-extern double tstackEnthalpies[5][5][5][5];
 extern double tstack2Entropies[5][5][5][5];
 extern double tstack2Enthalpies[5][5][5][5];
 extern int numTriloops;

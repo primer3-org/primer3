@@ -41,14 +41,6 @@ infile = open("./primer3_config/stack.dh", "r")
 stack_dh_values = cleanString(infile.read())
 stack_dh_values = removeFristColumn(stack_dh_values)
 infile.close()
-infile = open("./primer3_config/tstack_tm_inf.ds", "r")
-tstack_ds_values = cleanString(infile.read())
-tstack_ds_values = removeFristColumn(tstack_ds_values)
-infile.close()
-infile = open("./primer3_config/tstack.dh", "r")
-tstack_dh_values = cleanString(infile.read())
-tstack_dh_values = removeFristColumn(tstack_dh_values)
-infile.close()
 infile = open("./primer3_config/tstack2.ds", "r")
 tstack2_ds_values = cleanString(infile.read())
 tstack2_ds_values = removeFristColumn(tstack2_ds_values)
@@ -97,8 +89,6 @@ stack_ds = np.zeros((5,5,5,5), dtype=float)
 stack_dh = np.zeros((5,5,5,5), dtype=float)
 stackmm_ds = np.zeros((5,5,5,5), dtype=float)
 stackmm_dh = np.zeros((5,5,5,5), dtype=float)
-tstack_ds = np.zeros((5,5,5,5), dtype=float)
-tstack_dh = np.zeros((5,5,5,5), dtype=float)
 tstack2_ds = np.zeros((5,5,5,5), dtype=float)
 tstack2_dh = np.zeros((5,5,5,5), dtype=float)
 dangle3_ds = np.zeros((5,5,5), dtype=float)
@@ -113,23 +103,14 @@ for i in range(5):
         for k in range(5):
             for l in range(5):
                 if 4 in [i, k]:
-                    tstack_ds[i][j][k][l] = -1.0
-                    tstack_dh[i][j][k][l] = float('inf')
                     tstack2_ds[i][j][k][l] = -1.0
                     tstack2_dh[i][j][k][l] = float('inf')
                 elif 4 in [j, l]:
-                    tstack_ds[i][j][k][l] = 0.00000000001
-                    tstack_dh[i][j][k][l] = 0.0
                     tstack2_ds[i][j][k][l] = 0.00000000001
                     tstack2_dh[i][j][k][l] = 0.0
                 else:
-                    tstack_ds[i][j][k][l] = float(tstack_ds_values[idx])
-                    tstack_dh[i][j][k][l] = float(tstack_dh_values[idx])
                     tstack2_ds[i][j][k][l] = float(tstack2_ds_values[idx])
                     tstack2_dh[i][j][k][l] = float(tstack2_dh_values[idx])
-                    if float('inf') in [tstack_ds[i][j][k][l], tstack_dh[i][j][k][l]]:
-                        tstack_ds[i][j][k][l] = -1.0
-                        tstack_dh[i][j][k][l] = float('inf')
                     if float('inf') in [tstack2_ds[i][j][k][l], tstack2_dh[i][j][k][l]]:
                         tstack2_ds[i][j][k][l] = -1.0
                         tstack2_dh[i][j][k][l] = float('inf')
@@ -179,8 +160,6 @@ for i in range(5):
 
 stack_ds = stack_ds.flatten()
 stack_dh = stack_dh.flatten()
-tstack_ds = tstack_ds.flatten()
-tstack_dh = tstack_dh.flatten()
 tstack2_ds = tstack2_ds.flatten()
 tstack2_dh = tstack2_dh.flatten()
 stackmm_ds = stackmm_ds.flatten()
@@ -197,8 +176,6 @@ matricies_5_5_5_5.append(["double stackEntropies[5][5][5][5]", stack_ds])
 matricies_5_5_5_5.append(["double stackEnthalpies[5][5][5][5]", stack_dh])
 matricies_5_5_5_5.append(["double stackint2Entropies[5][5][5][5]", stackmm_ds])
 matricies_5_5_5_5.append(["double stackint2Enthalpies[5][5][5][5]", stackmm_dh])
-matricies_5_5_5_5.append(["double tstackEntropies[5][5][5][5]", tstack_ds])
-matricies_5_5_5_5.append(["double tstackEnthalpies[5][5][5][5]", tstack_dh])
 matricies_5_5_5_5.append(["double tstack2Entropies[5][5][5][5]", tstack2_ds])
 matricies_5_5_5_5.append(["double tstack2Enthalpies[5][5][5][5]", tstack2_dh])
 
@@ -426,8 +403,6 @@ double hairpinLoopEntropies[30];  hairpin loop params accordint to length of the
 double interiorLoopEnthalpies[30];  same as interiorLoopEntropies but values of entropy 
 double bulgeLoopEnthalpies[30];  same as bulgeLoopEntropies but values of entropy 
 double hairpinLoopEnthalpies[30];  same as hairpinLoopEntropies but values of entropy 
-double tstackEntropies[5][5][5][5];  ther params for terminal mismatches 
-double tstackEnthalpies[5][5][5][5];  ther params for terminal mismatches 
 double tstack2Entropies[5][5][5][5];  ther params for internal terminal mismatches 
 double tstack2Enthalpies[5][5][5][5];  ther params for internal terminal mismatches 
 struct triloop* triloopEntropies;  ther penalties for given triloop seq-s 

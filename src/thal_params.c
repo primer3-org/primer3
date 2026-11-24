@@ -20,7 +20,9 @@
 
 #define INIT_BUF_SIZE 1024
 
-/* AT-pair penalty used by tableStartATS/ATH via get_thermodynamic_values. */
+/* Terminal AT penalty, used by tableStartATS/ATH via get_thermodynamic_values.
+   Together with dplx_init_H_dimer/dplx_init_S_dimer in thal.c it gives the
+   duplex initiation of SantaLucia (1998). */
 static const double AT_H = 2200.0;
 static const double AT_S = 6.9;
 
@@ -268,7 +270,7 @@ removeComments(char *data)
 }
 
 /* Strip a leading identifier column (e.g. "AA_AT" prefixes on the
-   stack/dangle/tstack tables) from an in-memory parameter file by
+   stack/dangle/tstack2 tables) from an in-memory parameter file by
    dropping every leading character in the [ACTGN_ \t] set. Operates
    in place. */
 static void
@@ -375,8 +377,6 @@ thal_set_null_parameters(thal_parameters *a)
    a->tetraloop_ds = NULL;
    a->triloop_dh = NULL;
    a->triloop_ds = NULL;
-   a->tstack_tm_inf_ds = NULL;
-   a->tstack_dh = NULL;
    a->tstack2_dh = NULL;
    a->tstack2_ds = NULL;
    return 0;
@@ -397,8 +397,6 @@ thal_free_parameters(thal_parameters *a)
    if (NULL != a->tetraloop_ds) { free(a->tetraloop_ds); a->tetraloop_ds = NULL; }
    if (NULL != a->triloop_dh) { free(a->triloop_dh); a->triloop_dh = NULL; }
    if (NULL != a->triloop_ds) { free(a->triloop_ds); a->triloop_ds = NULL; }
-   if (NULL != a->tstack_tm_inf_ds) { free(a->tstack_tm_inf_ds); a->tstack_tm_inf_ds = NULL; }
-   if (NULL != a->tstack_dh) { free(a->tstack_dh); a->tstack_dh = NULL; }
    if (NULL != a->tstack2_dh) { free(a->tstack2_dh); a->tstack2_dh = NULL; }
    if (NULL != a->tstack2_ds) { free(a->tstack2_ds); a->tstack2_ds = NULL; }
    return 0;
@@ -432,10 +430,6 @@ thal_load_parameters(const char *path, thal_parameters *a, thal_results *o)
    a->tetraloop_ds = readParamFile(path, "tetraloop.ds", _jmp_buf, o);
    a->triloop_dh = readParamFile(path, "triloop.dh", _jmp_buf, o);
    a->triloop_ds = readParamFile(path, "triloop.ds", _jmp_buf, o);
-   a->tstack_tm_inf_ds = readParamFile(path, "tstack_tm_inf.ds", _jmp_buf, o);
-   removeFristColumn(a->tstack_tm_inf_ds);
-   a->tstack_dh = readParamFile(path, "tstack.dh", _jmp_buf, o);
-   removeFristColumn(a->tstack_dh);
    a->tstack2_dh = readParamFile(path, "tstack2.dh", _jmp_buf, o);
    removeFristColumn(a->tstack2_dh);
    a->tstack2_ds = readParamFile(path, "tstack2.ds", _jmp_buf, o);
@@ -560,38 +554,6 @@ getLoop(double hairpinLoopEntropies[30], double interiorLoopEntropies[30], doubl
       readLoop(&pt_ds, &interiorLoopEntropies[k], &bulgeLoopEntropies[k], &hairpinLoopEntropies[k], _jmp_buf, o);
       readLoop(&pt_dh, &interiorLoopEnthalpies[k], &bulgeLoopEnthalpies[k], &hairpinLoopEnthalpies[k], _jmp_buf, o);
    }
-}
-
-/* The tstack tables are read but not used in the calculation: thal.c
-   uses only tstack2, because the two tables differ only where both
-   neighboring pairs are complementary (see calc_bulge_internal_dimer() in
-   thal.c). tstack_tm_inf.ds and tstack.dh are still required in a
-   parameter directory. */
-void
-getTstack(double tstackEntropies[5][5][5][5], double tstackEnthalpies[5][5][5][5],
-          const thal_parameters *tp, jmp_buf _jmp_buf, thal_results *o)
-{
-   int i1, j1, i2, j2;
-   char *pt_ds = tp->tstack_tm_inf_ds;
-   char *pt_dh = tp->tstack_dh;
-   for (i1 = 0; i1 < 5; ++i1)
-     for (i2 = 0; i2 < 5; ++i2)
-       for (j1 = 0; j1 < 5; ++j1)
-         for (j2 = 0; j2 < 5; ++j2)
-           if (i1 == 4 || j1 == 4) {
-              tstackEnthalpies[i1][i2][j1][j2] = _INFINITY;
-              tstackEntropies[i1][i2][j1][j2] = -1.0;
-           } else if (i2 == 4 || j2 == 4) {
-              tstackEntropies[i1][i2][j1][j2] = 0.00000000001;
-              tstackEnthalpies[i1][i2][j1][j2] = 0.0;
-           } else {
-              tstackEntropies[i1][i2][j1][j2] = readDouble(&pt_ds, _jmp_buf, o);
-              tstackEnthalpies[i1][i2][j1][j2] = readDouble(&pt_dh, _jmp_buf, o);
-              if (!isFinite(tstackEntropies[i1][i2][j1][j2]) || !isFinite(tstackEnthalpies[i1][i2][j1][j2])) {
-                 tstackEntropies[i1][i2][j1][j2] = -1.0;
-                 tstackEnthalpies[i1][i2][j1][j2] = _INFINITY;
-              }
-           }
 }
 
 void
@@ -776,7 +738,6 @@ get_thermodynamic_values(const thal_parameters *tp, thal_results *o)
    getDangle(dangleEntropies3, dangleEnthalpies3, dangleEntropies5, dangleEnthalpies5, tp, _jmp_buf, o);
    getLoop(hairpinLoopEntropies, interiorLoopEntropies, bulgeLoopEntropies, hairpinLoopEnthalpies,
            interiorLoopEnthalpies, bulgeLoopEnthalpies, tp, _jmp_buf, o);
-   getTstack(tstackEntropies, tstackEnthalpies, tp, _jmp_buf, o);
    getTstack2(tstack2Entropies, tstack2Enthalpies, tp, _jmp_buf, o);
    getTriloop(&triloopEntropies, &triloopEnthalpies, &numTriloops, tp, _jmp_buf, o);
    getTetraloop(&tetraloopEntropies, &tetraloopEnthalpies, &numTetraloops, tp, _jmp_buf, o);
