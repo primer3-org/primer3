@@ -259,7 +259,13 @@ thal(const unsigned char *oligo_f,
    numSeq2 = (unsigned char*) safe_malloc(oligo2_len + 2, _jmp_buf, o);
 
    //Allocate Dynamic Programming Table
-   dpt = allocate_DPT(oligo1_len, oligo2_len, _jmp_buf, o);
+   /* A hairpin uses only oligo1 and indexes dpt up to
+      [oligo1_len][oligo1_len], whatever the second sequence is */
+   if (a->type == thal_hairpin) {
+      dpt = allocate_DPT(oligo1_len, oligo1_len, _jmp_buf, o);
+   } else {
+      dpt = allocate_DPT(oligo1_len, oligo2_len, _jmp_buf, o);
+   }
 
    for(int i = 1; i <= oligo1_len; ++i) numSeq1[i] = str2int(oligo1[i - 1]);
    for(int i = 1; i <= oligo2_len; ++i) numSeq2[i] = str2int(oligo2[i - 1]);
@@ -1199,17 +1205,23 @@ thal_check_errors(const unsigned char *oligo_f, const unsigned char *oligo_r, in
    *len_f = length_unsig_char(oligo_f);
    *len_r = length_unsig_char(oligo_r);
 
+   if(NULL == a){
+      strcpy(o->msg, "NULL 'in' pointer");
+      return 1;
+   }
+
    /* The following error messages will be seen by end users and will
       not be easy to understand. */
-   if((*len_f > THAL_MAX_ALIGN) && (*len_r > THAL_MAX_ALIGN)){
-      /* For a hairpin oligo_r is oligo_f, so there is only one sequence */
-      if (a->type == thal_hairpin) {
+   if (a->type == thal_hairpin) {
+      /* A hairpin uses only the first sequence */
+      if (*len_f > THAL_MAX_ALIGN) {
          strcpy(o->msg, "Sequence longer than " XSTR(THAL_MAX_ALIGN)
             " for hairpin calculation");
-      } else {
-         strcpy(o->msg, "Both sequences longer than " XSTR(THAL_MAX_ALIGN)
-            " for thermodynamic alignment");
+         return 1;
       }
+   } else if ((*len_f > THAL_MAX_ALIGN) && (*len_r > THAL_MAX_ALIGN)) {
+      strcpy(o->msg, "Both sequences longer than " XSTR(THAL_MAX_ALIGN)
+         " for thermodynamic alignment");
       return 1;
    }
    if((*len_f > THAL_MAX_SEQ)){ 
@@ -1221,10 +1233,6 @@ thal_check_errors(const unsigned char *oligo_f, const unsigned char *oligo_r, in
       return 1;
    }
 
-   if(NULL == a){
-      strcpy(o->msg, "NULL 'in' pointer");
-      return 1;
-   }
    if((a->type != thal_any) && (a->type != thal_end1) && (a->type != thal_end2) && (a->type != thal_hairpin)){
       strcpy(o->msg, "Illegal type");
       return 1;

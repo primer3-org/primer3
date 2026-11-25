@@ -195,6 +195,10 @@ void destroy_thal_structures();
    is set to THAL_ERROR_SCORE and a message is put in o->msg.  If thal
    ran out of memory, o->msg is "Out of memory" and errno is ENOMEM
    (thal sets errno to 0 at the start).
+   With a->type == thal_hairpin only oligo1 is folded and may have at
+   most THAL_MAX_ALIGN bases. oligo2 is checked like any sequence (not
+   empty, at most THAL_MAX_SEQ bases) but is otherwise not used;
+   primer3 passes oligo1 twice.
 */
 
 void thal(const unsigned char *oligo1, 

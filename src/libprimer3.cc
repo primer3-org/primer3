@@ -81,6 +81,15 @@ namespace std
 #if (MAX_PRIMER_LENGTH > THAL_MAX_ALIGN)
 # error "MAX_PRIMER_LENGTH must be <= THAL_MAX_ALIGN"
 #endif
+
+/* Shortest oligo accepted: the limit for PRIMER_MIN_SIZE and
+   PRIMER_INTERNAL_MIN_SIZE and for specified and forced oligos, checked
+   in _pr_data_control(). primer_must_match() and the PRIMER_MAX_END_GC
+   check read 5 bases at the ends of every oligo. */
+#define MIN_PRIMER_LENGTH 6
+#if (MIN_PRIMER_LENGTH < 5)
+# error "MIN_PRIMER_LENGTH must be >= 5"
+#endif
 #define MAX_NN_TM_LENGTH 36 /* The maxium length for which to use the
                                nearest neighbor model when calculating
                                oligo Tms. */
@@ -1145,12 +1154,21 @@ destroy_p3retval(p3retval *state)
 
 void 
 destroy_dpal_thal_arg_holder() {
-   if(dpal_arg_to_use)
+   /* Reset the pointers, so that the next call of choose_primers()
+      creates new holders and a second call of this function does
+      nothing. */
+   if (dpal_arg_to_use) {
      destroy_dpal_arg_holder(dpal_arg_to_use);
-   if(thal_arg_to_use)
+     dpal_arg_to_use = NULL;
+   }
+   if (thal_arg_to_use) {
      destroy_thal_arg_holder(thal_arg_to_use);
-   if(thal_oligo_arg_to_use)
+     thal_arg_to_use = NULL;
+   }
+   if (thal_oligo_arg_to_use) {
      destroy_thal_arg_holder(thal_oligo_arg_to_use);
+     thal_oligo_arg_to_use = NULL;
+   }
 }
 
 const oligo_array *
@@ -4571,14 +4589,16 @@ characterize_pair(p3retval *retval,
     int l_start = ppair->left->start, l_end = ppair->left->start + ppair->left->length - 1;
     int r_start = ppair->right->start - ppair->right->length + 1, r_end = ppair->right->start;
     for (i=0; i<sa->ok_regions.count; i++) {
-      if (sa->ok_regions.left_pairs[i][0] == -1) {
+      if (sa->ok_regions.left_pairs[i][0] == -1
+          && sa->ok_regions.left_pairs[i][1] == -1) {
         /* any left primer, check right primer */
         if ((r_start >= sa->ok_regions.right_pairs[i][0]) &&
             (r_end <= sa->ok_regions.right_pairs[i][0] + sa->ok_regions.right_pairs[i][1] - 1)) {
           included = 1;
           break;
         }
-      } else if (sa->ok_regions.right_pairs[i][0] == -1) {
+      } else if (sa->ok_regions.right_pairs[i][0] == -1
+                 && sa->ok_regions.right_pairs[i][1] == -1) {
         /* any right primer, check the left primer */
         if ((l_start >= sa->ok_regions.left_pairs[i][0]) && 
             (l_end <= sa->ok_regions.left_pairs[i][0] + sa->ok_regions.left_pairs[i][1] - 1)) {
@@ -7343,35 +7363,43 @@ _optimize_ok_regions_list(const p3_global_settings *pa,
   for (int i=0; i<sa->ok_regions.count; i++) {
     int ls = -1, le = -1, rs = -1, re = -1;
     int new_ls = -1, new_le = -1, new_rs = -1, new_re = -1;
-    if (sa->ok_regions.left_pairs[i][0] != -1) {
+    /* An empty field is stored as -1,-1. A real region can start or
+       end at -1 (relative to the included region), so the flags and
+       not the values tell whether a side is known. */
+    int have_l = !(sa->ok_regions.left_pairs[i][0] == -1
+                   && sa->ok_regions.left_pairs[i][1] == -1);
+    int have_r = !(sa->ok_regions.right_pairs[i][0] == -1
+                   && sa->ok_regions.right_pairs[i][1] == -1);
+    if (have_l) {
       ls = sa->ok_regions.left_pairs[i][0];
       le = sa->ok_regions.left_pairs[i][0]
         + sa->ok_regions.left_pairs[i][1] - 1;
     }
-    if (sa->ok_regions.right_pairs[i][0] != -1) {
+    if (have_r) {
       rs = sa->ok_regions.right_pairs[i][0];
       re = sa->ok_regions.right_pairs[i][0]
         + sa->ok_regions.right_pairs[i][1] - 1;
     }
     /* Compute new right region based on left range and min/max values
        of product size and oligo length */
-    if (ls != -1) {
+    if (have_l) {
       new_rs = ls + pmin - omax - 1; /* -1 just to be safe */
       new_re = le - omin + pmax + 1; /* +1 just to be safe */
       /* Adjust the ranges */
-      if (((rs == -1) || (new_rs > rs)) && ((new_rs < re - omin) || (re < omin))) { rs = new_rs; }
-      if (((re == -1) || (new_re < re)) && (rs < new_re)) { re = new_re; }
+      if ((!have_r || (new_rs > rs)) && ((new_rs < re - omin) || (re < omin))) { rs = new_rs; }
+      if ((!have_r || (new_re < re)) && (rs < new_re)) { re = new_re; }
       if (rs < 0) { rs = 0; }
       if (re > (signed) strlen(sa->sequence)) { re = strlen(sa->sequence); }
+      have_r = 1;
     }
     /* Compute new left region based on right range and min/max values
        of product size and oligo length */
-    if (rs != -1) {
+    if (have_r) {
       new_ls = rs + omin - pmax - 1; /* -1 just to be safe */
       new_le = re - pmin + omax + 1; /* +1 just to be safe */
       /* Adjust the ranges */
-      if (((ls == -1) || (new_ls > ls)) && ((new_ls < le - omin) || (le < omin))) { ls = new_ls; }
-      if (((le == -1) || (new_le < le)) && (ls < new_le)) { le = new_le; }
+      if ((!have_l || (new_ls > ls)) && ((new_ls < le - omin) || (le < omin))) { ls = new_ls; }
+      if ((!have_l || (new_le < le)) && (ls < new_le)) { le = new_le; }
       if (ls < 0) { ls = 0; }
       if (le > (signed) strlen(sa->sequence)) { le = strlen(sa->sequence); }
     }
@@ -7657,11 +7685,15 @@ _pr_data_control(const p3_global_settings *pa,
   if (pa->o_args.max_template_mispriming_th >= 0 && pa->thermodynamic_template_alignment==1)
     pr_append_new_chunk(glob_err,
                         "PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_TH is not supported");
-  if (pa->p_args.min_size < 1)
-    pr_append_new_chunk(glob_err, "PRIMER_MIN_SIZE must be >= 1");
-  
-  if (pa->o_args.min_size < 1)
-    pr_append_new_chunk(glob_err, "PRIMER_INTERNAL_MIN_SIZE must be >= 1");
+  if (pa->p_args.min_size < MIN_PRIMER_LENGTH) {
+    pr_append_new_chunk(glob_err, "PRIMER_MIN_SIZE must be >= ");
+    pr_append(glob_err, MACRO_VALUE_AS_STRING(MIN_PRIMER_LENGTH));
+  }
+
+  if (pa->o_args.min_size < MIN_PRIMER_LENGTH) {
+    pr_append_new_chunk(glob_err, "PRIMER_INTERNAL_MIN_SIZE must be >= ");
+    pr_append(glob_err, MACRO_VALUE_AS_STRING(MIN_PRIMER_LENGTH));
+  }
 
   if ((pa->pick_left_primer != 0 && pa->pick_left_primer != 1)
       || (pa->pick_right_primer != 0 && pa->pick_right_primer != 1)
@@ -7797,18 +7829,6 @@ _pr_data_control(const p3_global_settings *pa,
   if ((pa->o_args.must_match_three_prime != NULL) && (strlen(pa->o_args.must_match_three_prime) != 5)) {
     pr_append_new_chunk(glob_err,
                         "PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME must have 5 characters");
-    return 1;
-  }
-  if ((pa->p_args.must_match_five_prime != NULL || pa->p_args.must_match_three_prime != NULL)
-      && pa->p_args.min_size < 5) {
-    pr_append_new_chunk(glob_err,
-                        "PRIMER_MUST_MATCH_FIVE_PRIME and PRIMER_MUST_MATCH_THREE_PRIME need PRIMER_MIN_SIZE >= 5");
-    return 1;
-  }
-  if ((pa->o_args.must_match_five_prime != NULL || pa->o_args.must_match_three_prime != NULL)
-      && pa->o_args.min_size < 5) {
-    pr_append_new_chunk(glob_err,
-                        "PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME and PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME need PRIMER_INTERNAL_MIN_SIZE >= 5");
     return 1;
   }
 
@@ -8212,9 +8232,14 @@ _pr_data_control(const p3_global_settings *pa,
       pr_append_new_chunk(warning,
                           "Specified internal oligo > PRIMER_INTERNAL_MAX_SIZE");
 
-    if (strlen(sa->internal_input) < (unsigned) pa->o_args.min_size)
+    if (strlen(sa->internal_input) < MIN_PRIMER_LENGTH) {
+      pr_append_new_chunk(nonfatal_err,
+                          "Specified internal oligo shorter than ");
+      pr_append(nonfatal_err, MACRO_VALUE_AS_STRING(MIN_PRIMER_LENGTH));
+    } else if (strlen(sa->internal_input) < (unsigned) pa->o_args.min_size) {
       pr_append_new_chunk(warning,
                           "Specified internal oligo < PRIMER_INTERNAL_MIN_SIZE");
+    }
 
     /* With PRIMER_INTERNAL_REV_COMP_G_RICH the oligo may also be given
        as the reverse complement, see add_one_primer() */
@@ -8247,9 +8272,14 @@ _pr_data_control(const p3_global_settings *pa,
     if (strlen(sa->left_input) > (unsigned) pa->p_args.max_size)
       pr_append_new_chunk(warning,
                           "Specified left primer > PRIMER_MAX_SIZE");
-    if (strlen(sa->left_input) < (unsigned) pa->p_args.min_size)
+    if (strlen(sa->left_input) < MIN_PRIMER_LENGTH) {
+      pr_append_new_chunk(nonfatal_err,
+                          "Specified left primer shorter than ");
+      pr_append(nonfatal_err, MACRO_VALUE_AS_STRING(MIN_PRIMER_LENGTH));
+    } else if (strlen(sa->left_input) < (unsigned) pa->p_args.min_size) {
       pr_append_new_chunk(warning,
                           "Specified left primer < PRIMER_MIN_SIZE");
+    }
     if (!strstr_nocase(sa->sequence, sa->left_input))
       pr_append_new_chunk(nonfatal_err,
                           "Specified left primer not in sequence");
@@ -8270,9 +8300,14 @@ _pr_data_control(const p3_global_settings *pa,
       pr_append(nonfatal_err, MACRO_VALUE_AS_STRING(THAL_MAX_ALIGN));
       return 1;
     }
-    if (strlen(sa->right_input) < (unsigned) pa->p_args.min_size)
+    if (strlen(sa->right_input) < MIN_PRIMER_LENGTH) {
+      pr_append_new_chunk(nonfatal_err,
+                          "Specified right primer shorter than ");
+      pr_append(nonfatal_err, MACRO_VALUE_AS_STRING(MIN_PRIMER_LENGTH));
+    } else if (strlen(sa->right_input) < (unsigned) pa->p_args.min_size) {
       pr_append_new_chunk(warning,
                           "Specified right primer < PRIMER_MIN_SIZE");
+    }
     if (strlen(sa->right_input) > (unsigned) pa->p_args.max_size)
       pr_append_new_chunk(warning,
                           "Specified right primer > PRIMER_MAX_SIZE");
@@ -8420,9 +8455,16 @@ _pr_data_control(const p3_global_settings *pa,
   }
 
   /* With both ends forced the primer length is taken from the
-     positions, not limited by PRIMER_MAX_SIZE; the primer and the
-     primer with its overhang must fit the oligo buffers. */
+     positions, not limited by PRIMER_MIN_SIZE or PRIMER_MAX_SIZE; the
+     primer must have at least MIN_PRIMER_LENGTH bases, and the primer
+     and the primer with its overhang must fit the oligo buffers. */
   if ((sa->force_left_start != PR_NULL_FORCE_POSITION) && (sa->force_left_end != PR_NULL_FORCE_POSITION)) {
+    if (sa->force_left_end - sa->force_left_start + 1 < MIN_PRIMER_LENGTH) {
+      pr_append_new_chunk(nonfatal_err,
+                          "Forced left primer shorter than ");
+      pr_append(nonfatal_err, MACRO_VALUE_AS_STRING(MIN_PRIMER_LENGTH));
+      return 1;
+    }
     if (sa->force_left_end - sa->force_left_start >= MAX_PRIMER_LENGTH) {
       pr_append_new_chunk(nonfatal_err,
                           "Forced left primer longer than ");
@@ -8439,6 +8481,12 @@ _pr_data_control(const p3_global_settings *pa,
   }
 
   if ((sa->force_right_start != PR_NULL_FORCE_POSITION) && (sa->force_right_end != PR_NULL_FORCE_POSITION)) {
+    if (sa->force_right_start - sa->force_right_end + 1 < MIN_PRIMER_LENGTH) {
+      pr_append_new_chunk(nonfatal_err,
+                          "Forced right primer shorter than ");
+      pr_append(nonfatal_err, MACRO_VALUE_AS_STRING(MIN_PRIMER_LENGTH));
+      return 1;
+    }
     if (sa->force_right_start - sa->force_right_end >= MAX_PRIMER_LENGTH) {
       pr_append_new_chunk(nonfatal_err,
                           "Forced right primer longer than ");
@@ -9092,9 +9140,11 @@ p3_read_line(FILE *file)
     }
     if ((n = strchr(p, '\n')) != NULL) {
       *n = '\0';
-      n--;
-      if ((n >= p) && (*n == '\r')) {
-        *n = '\0';
+      /* Compare with s, not p: the '\r' of a Windows line end can be
+         the last character of the previous piece, with the '\n' alone
+         in this one. */
+      if ((n > s) && (*(n - 1) == '\r')) {
+        *(n - 1) = '\0';
       }
       return s;
     }

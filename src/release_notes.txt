@@ -343,6 +343,16 @@ Minor fixes:
     PRIMER_{LEFT,RIGHT}_n_TEMPLATE_MISPRIMING_STRUCT. Programs that read
     the _STUCT tags have to be changed.
 
+35. Oligos shorter than 6 bases are no longer accepted. PRIMER_MIN_SIZE
+    and PRIMER_INTERNAL_MIN_SIZE must be at least 6 (before: 1), else
+    primer3_core stops with an error. A SEQUENCE_PRIMER,
+    SEQUENCE_PRIMER_REVCOMP or SEQUENCE_INTERNAL_OLIGO shorter than 6
+    bases, or SEQUENCE_FORCE_*_START and _END less than 6 bases apart,
+    give PRIMER_ERROR for that record (before: a warning). With such
+    short oligos PRIMER_MUST_MATCH_FIVE_PRIME/THREE_PRIME (and the
+    INTERNAL variants) read memory before the oligo, and
+    PRIMER_MAX_END_GC counted bases after its end.
+
 
 release 2.6.1 2022-01-26  ===============================================
 This release fixes a small memory bug.

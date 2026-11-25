@@ -1,5 +1,18 @@
 import numpy as np
 import re
+import sys
+
+def sortLoops(lines, fname):
+    # calc_hairpin() looks the loop bonuses up with bsearch(), so the
+    # tables must be sorted by the loop in the order of str2int()
+    # (A < C < G < T < N), like getTriloop()/getTetraloop() sort loaded
+    # files. The lines may be in any order; a loop given twice is an error.
+    order = "ACGTN"
+    lines = sorted(lines, key=lambda l: [order.find(c) for c in l.split()[0]])
+    for i in range(1, len(lines)):
+        if lines[i].split()[0] == lines[i - 1].split()[0]:
+            sys.exit(f"Duplicate entry {lines[i].split()[0]} in {fname}")
+    return lines
 
 def cleanString(data):
     # Remove comments and empty lines
@@ -83,6 +96,10 @@ infile.close()
 infile = open("./primer3_config/tetraloop.dh", "r")
 tetraloop_dh_values = cleanString(infile.read())
 infile.close()
+triloop_ds_values = sortLoops(triloop_ds_values, "triloop.ds")
+triloop_dh_values = sortLoops(triloop_dh_values, "triloop.dh")
+tetraloop_ds_values = sortLoops(tetraloop_ds_values, "tetraloop.ds")
+tetraloop_dh_values = sortLoops(tetraloop_dh_values, "tetraloop.dh")
 
 
 stack_ds = np.zeros((5,5,5,5), dtype=float)

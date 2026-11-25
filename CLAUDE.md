@@ -222,10 +222,13 @@ Don't "fix" these:
 
 `src/primer3_config/*.ds` and `*.dh` hold the nearest-neighbor tables: entropy in `.ds`, enthalpy in `.dh`.
 - Values are read by position. The leading base-pair labels and `#` comments are only there to orient the reader, so reordering lines changes meaning.
+- Exception: in `triloop.*` and `tetraloop.*` each line holds a key and a value, the loop with its closing base pair (5 or 6 bases) and its bonus. `calc_hairpin()` looks the bonus up with `bsearch()`, so the tables must be sorted by key. `getTriloop()`/`getTetraloop()` (loaded files) and the generator (built-in tables) sort them, so the lines may be in any order. A key that appears twice is an error.
 - The tables are compiled in through `src/thal_default_params.h`, which is **generated**. Don't edit it by hand. Edit the config files instead, then run `python3 thal_default_params_create.py` from `src/` (needs numpy).
 - Changing values alters thal and primer3 output, so update the affected golden files in the same commit (see d2844b5).
 - `PRIMER_THERMODYNAMIC_PARAMETERS_PATH` (and `ntthal -path`) load a directory of these files at run time through `thal_load_parameters()` and `get_thermodynamic_values()`. The loaded values replace the process-wide tables for the rest of the run.
 - `test/primer3_config/` is an older copy in which some values differ (for example `stackmm`). Tests that set `PRIMER_THERMODYNAMIC_PARAMETERS_PATH` load it. It is not the source of truth.
+  - It keeps its old values on purpose, including the tstack values corrected in `src/primer3_config/` and the files `tstack.dh` and `tstack_tm_inf.ds`, which were removed there. It tests loading an older parameter set.
+  - Don't carry corrections from `src/primer3_config/` over to it. A change to it alters the output of the tests that load it.
 
 To debug thal:
 - `THAL_DPT_DUMP_MD=-` prints Markdown snapshots of the DP matrix to stderr. `THAL_DPT_DUMP_MD=<path>` writes them to a file.

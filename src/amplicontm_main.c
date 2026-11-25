@@ -281,6 +281,11 @@ main(int argc, char **argv)
     fprintf(stderr, msg, argv[0]);
     exit(P3_EXIT_USAGE);
   }
+  /* Options after the sequence or a second sequence would be ignored */
+  if (i + 1 < argc) {
+    fprintf(stderr, msg, argv[0]);
+    exit(P3_EXIT_USAGE);
+  }
   /* input sequence to uppercase */
   seq = argv[i];
 

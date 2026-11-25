@@ -583,6 +583,63 @@ getTstack2(double tstack2Entropies[5][5][5][5], double tstack2Enthalpies[5][5][5
            }
 }
 
+/* calc_hairpin() looks the loop bonuses up with bsearch(), so the loop
+   tables must be sorted by their loop. The bases are coded 0-4 by
+   str2int(), so memcmp() orders them like comp3loop() and comp4loop().
+   The lines of a parameter file may be in any order. */
+static int
+compTriloop(const void *a, const void *b)
+{
+   return memcmp(((const struct triloop *) a)->loop,
+                 ((const struct triloop *) b)->loop, 5);
+}
+
+static int
+compTetraloop(const void *a, const void *b)
+{
+   return memcmp(((const struct tetraloop *) a)->loop,
+                 ((const struct tetraloop *) b)->loop, 6);
+}
+
+/* A loop given twice would make the bonus depend on which entry
+   bsearch() finds */
+static void
+duplicateLoop(const char *loop, int len, const char *fname,
+              jmp_buf _jmp_buf, thal_results *o)
+{
+   char key[7];
+   for (int i = 0; i < len; i++) {
+      key[i] = "ACGTN"[(unsigned char) loop[i]];
+   }
+   key[len] = '\0';
+   snprintf(o->msg, 255, "Duplicate entry %s in %s", key, fname);
+   longjmp(_jmp_buf, 1);
+}
+
+static void
+sortTriloops(struct triloop *t, int num, const char *fname,
+             jmp_buf _jmp_buf, thal_results *o)
+{
+   qsort(t, num, sizeof(struct triloop), compTriloop);
+   for (int i = 1; i < num; i++) {
+      if (compTriloop(&t[i - 1], &t[i]) == 0) {
+         duplicateLoop(t[i].loop, 5, fname, _jmp_buf, o);
+      }
+   }
+}
+
+static void
+sortTetraloops(struct tetraloop *t, int num, const char *fname,
+               jmp_buf _jmp_buf, thal_results *o)
+{
+   qsort(t, num, sizeof(struct tetraloop), compTetraloop);
+   for (int i = 1; i < num; i++) {
+      if (compTetraloop(&t[i - 1], &t[i]) == 0) {
+         duplicateLoop(t[i].loop, 6, fname, _jmp_buf, o);
+      }
+   }
+}
+
 void
 getTriloop(struct triloop **triloopEntropies, struct triloop **triloopEnthalpies,
            int *num, const thal_parameters *tp, jmp_buf _jmp_buf, thal_results *o)
@@ -611,6 +668,7 @@ getTriloop(struct triloop **triloopEntropies, struct triloop **triloopEnthalpies
    if (*num > 0) {
       *triloopEntropies = (struct triloop *) safe_realloc(*triloopEntropies, *num * sizeof(struct triloop), _jmp_buf, o);
    }
+   sortTriloops(*triloopEntropies, *num, "triloop.ds", _jmp_buf, o);
    int num_ds = *num;
 
    char *pt_dh = tp->triloop_dh;
@@ -635,6 +693,7 @@ getTriloop(struct triloop **triloopEntropies, struct triloop **triloopEnthalpies
    if (*num > 0) {
       *triloopEnthalpies = (struct triloop *) safe_realloc(*triloopEnthalpies, *num * sizeof(struct triloop), _jmp_buf, o);
    }
+   sortTriloops(*triloopEnthalpies, *num, "triloop.dh", _jmp_buf, o);
    /* Both tables are searched with the same count */
    if (*num != num_ds) {
       strcpy(o->msg, "triloop.ds and triloop.dh differ in the number of entries");
@@ -670,6 +729,7 @@ getTetraloop(struct tetraloop **tetraloopEntropies, struct tetraloop **tetraloop
    if (*num > 0) {
       *tetraloopEntropies = (struct tetraloop *) safe_realloc(*tetraloopEntropies, *num * sizeof(struct tetraloop), _jmp_buf, o);
    }
+   sortTetraloops(*tetraloopEntropies, *num, "tetraloop.ds", _jmp_buf, o);
    int num_ds = *num;
 
    char *pt_dh = tp->tetraloop_dh;
@@ -694,6 +754,7 @@ getTetraloop(struct tetraloop **tetraloopEntropies, struct tetraloop **tetraloop
    if (*num > 0) {
       *tetraloopEnthalpies = (struct tetraloop *) safe_realloc(*tetraloopEnthalpies, *num * sizeof(struct tetraloop), _jmp_buf, o);
    }
+   sortTetraloops(*tetraloopEnthalpies, *num, "tetraloop.dh", _jmp_buf, o);
    /* Both tables are searched with the same count */
    if (*num != num_ds) {
       strcpy(o->msg, "tetraloop.ds and tetraloop.dh differ in the number of entries");
@@ -749,20 +810,28 @@ get_thermodynamic_values(const thal_parameters *tp, thal_results *o)
 void
 destroy_thal_structures(void)
 {
+   /* Free loaded loop tables and fall back to the built-in ones,
+      together with their sizes: calc_hairpin() searches the tables
+      whenever numTriloops/numTetraloops is not 0, so thal() can still
+      be called afterwards. */
    if ((triloopEntropies != NULL) && (triloopEntropies != defaultTriloopEntropies)) {
       free(triloopEntropies);
-      triloopEntropies = NULL;
    }
+   triloopEntropies = defaultTriloopEntropies;
    if ((triloopEnthalpies != NULL) && (triloopEnthalpies != defaultTriloopEnthalpies)) {
       free(triloopEnthalpies);
-      triloopEnthalpies = NULL;
    }
+   triloopEnthalpies = defaultTriloopEnthalpies;
    if ((tetraloopEntropies != NULL) && (tetraloopEntropies != defaultTetraloopEntropies)) {
       free(tetraloopEntropies);
-      tetraloopEntropies = NULL;
    }
+   tetraloopEntropies = defaultTetraloopEntropies;
    if ((tetraloopEnthalpies != NULL) && (tetraloopEnthalpies != defaultTetraloopEnthalpies)) {
       free(tetraloopEnthalpies);
-      tetraloopEnthalpies = NULL;
    }
+   tetraloopEnthalpies = defaultTetraloopEnthalpies;
+   numTriloops = (int) (sizeof(defaultTriloopEntropies)
+                        / sizeof(defaultTriloopEntropies[0]));
+   numTetraloops = (int) (sizeof(defaultTetraloopEntropies)
+                          / sizeof(defaultTetraloopEntropies[0]));
 }
