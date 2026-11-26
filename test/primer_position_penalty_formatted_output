@@ -58,6 +58,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    3504     0   289     0     0    16     0   818  1648     0     0     0     0     0   733
 Right   3504     0   289     0     0     0     0   655  1723     0     0     0     0     0   837
+Left Stats:
+considered 3504, overlap target 289, GC content failed 16, low tm 818, high tm 1648, ok 733
+Right Stats:
+considered 3504, overlap target 289, low tm 655, high tm 1723, ok 837
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -141,6 +145,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    6612     0   289     0     0     1     0  1035  3921     0     0     0    22     0  1344
 Right   6657     0   289     0     0   114     0  1327  3439     0     2     0    19     0  1467
+Left Stats:
+considered 6612, overlap target 289, GC content failed 1, low tm 1035, high tm 3921, long poly-x seq 22, ok 1344
+Right Stats:
+considered 6657, overlap target 289, GC content failed 114, low tm 1327, high tm 3439, high end compl 2, long poly-x seq 19, ok 1467
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -215,6 +223,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    5081     0   289     0     0    13     0  1874  1352     0     0     0    25     0  1528
 Right   5254     0   289     0     0   103     0  1706  1557     0     0     0     0     0  1599
+Left Stats:
+considered 5081, overlap target 289, GC content failed 13, low tm 1874, high tm 1352, long poly-x seq 25, ok 1528
+Right Stats:
+considered 5254, overlap target 289, GC content failed 103, low tm 1706, high tm 1557, ok 1599
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -286,6 +298,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4474     0   289     0     0   273     0  1464  1424     0     0    13     0     0  1011
 Right   4294     0   289     0     0   209     0   512  2472     0     0     0    25     0   787
+Left Stats:
+considered 4474, overlap target 289, GC content failed 273, low tm 1464, high tm 1424, high repeat similarity 13, ok 1011
+Right Stats:
+considered 4294, overlap target 289, GC content failed 209, low tm 512, high tm 2472, long poly-x seq 25, ok 787
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -369,6 +385,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    6872     0   289     0     0   226     0  1924  2932     0     0     0    17     0  1484
 Right   7004     0   289     0     0     0     0  1493  3474     0     0     0     0     0  1748
+Left Stats:
+considered 6872, overlap target 289, GC content failed 226, low tm 1924, high tm 2932, long poly-x seq 17, ok 1484
+Right Stats:
+considered 7004, overlap target 289, low tm 1493, high tm 3474, ok 1748
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -437,6 +457,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    3744     0   289     0     0   148     0  1249  1208     0     0     0     0     0   850
 Right   3744     0   289     0     0     0     0   874  1504     0     8     0     0     0  1069
+Left Stats:
+considered 3744, overlap target 289, GC content failed 148, low tm 1249, high tm 1208, ok 850
+Right Stats:
+considered 3744, overlap target 289, low tm 874, high tm 1504, high end compl 8, ok 1069
 Pair Stats:
 considered 21, high end compl 20, ok 1
 primer3 release 2.0.0
@@ -508,6 +532,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4819     0   244     0     0     0     0  1696  1512     0     0     0     0     0  1367
 Right   4414     0   289     0     0   103     0  1578  1288     0     0    14     0     0  1142
+Left Stats:
+considered 4819, overlap target 244, low tm 1696, high tm 1512, ok 1367
+Right Stats:
+considered 4414, overlap target 289, GC content failed 103, low tm 1578, high tm 1288, high repeat similarity 14, ok 1142
 Pair Stats:
 considered 3, high end compl 2, ok 1
 primer3 release 2.0.0
@@ -576,6 +604,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4274     0   289     0     0    68     0   569  2779     0     0     0     0     0   569
 Right   4274     0   289     0     0     0     0   375  2978     0     0     0     0     0   632
+Left Stats:
+considered 4274, overlap target 289, GC content failed 68, low tm 569, high tm 2779, ok 569
+Right Stats:
+considered 4274, overlap target 289, low tm 375, high tm 2978, ok 632
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -638,6 +670,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4078     0   123     0     0     7     0   374  2820     0     0     0     0     0   754
 Right   2584     0   289     0     0     1     0    95  1901     0     0     0     0     0   298
+Left Stats:
+considered 4078, overlap target 123, GC content failed 7, low tm 374, high tm 2820, ok 754
+Right Stats:
+considered 2584, overlap target 289, GC content failed 1, low tm 95, high tm 1901, ok 298
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -709,6 +745,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4444     0   289     0     0     0     0   844  2220     0     0     0     0     0  1091
 Right   4444     0   289     0     0     0     0   400  2950     0     0     0     0     0   805
+Left Stats:
+considered 4444, overlap target 289, low tm 844, high tm 2220, ok 1091
+Right Stats:
+considered 4444, overlap target 289, low tm 400, high tm 2950, ok 805
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -777,6 +817,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    3804     0   289     0     0     0     0   382  2360     0     0     0     0     0   773
 Right   3804     0   289     0     0     0     0   348  2565     0     0     0     0     0   602
+Left Stats:
+considered 3804, overlap target 289, low tm 382, high tm 2360, ok 773
+Right Stats:
+considered 3804, overlap target 289, low tm 348, high tm 2565, ok 602
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -845,6 +889,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    3974     0   289     0     0     0     0   348  2707     0     0     0     0     0   630
 Right   3974     0   289     0     0    34     0   889  1971     0     0     0     0     0   791
+Left Stats:
+considered 3974, overlap target 289, low tm 348, high tm 2707, ok 630
+Right Stats:
+considered 3974, overlap target 289, GC content failed 34, low tm 889, high tm 1971, ok 791
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -913,6 +961,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    3794     0   289     0     0     0     0   681  1966     0     0     0     0     0   858
 Right   3794     0   289     0     0     0     0   274  2616     2     3     0     0     0   610
+Left Stats:
+considered 3794, overlap target 289, low tm 681, high tm 1966, ok 858
+Right Stats:
+considered 3794, overlap target 289, low tm 274, high tm 2616, high any compl 2, high end compl 3, ok 610
 Pair Stats:
 considered 40, high end compl 38, ok 2
 primer3 release 2.0.0
@@ -981,6 +1033,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    3704     0   289     0     0     0     0   262  2572     0     3     0     0     0   578
 Right   3593     0   289     0     0    15     0   752  1654     0     0     0    22     0   861
+Left Stats:
+considered 3704, overlap target 289, low tm 262, high tm 2572, high end compl 3, ok 578
+Right Stats:
+considered 3593, overlap target 289, GC content failed 15, low tm 752, high tm 1654, long poly-x seq 22, ok 861
 Pair Stats:
 considered 102, high any compl 81, high end compl 20, ok 1
 primer3 release 2.0.0
@@ -1049,6 +1105,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4014     0   289     0     0     0     0   645  2223     0     0     0     0     0   857
 Right   3861     0   289     0     0     8     0   269  2629     0     0     0    22     0   644
+Left Stats:
+considered 4014, overlap target 289, low tm 645, high tm 2223, ok 857
+Right Stats:
+considered 3861, overlap target 289, GC content failed 8, low tm 269, high tm 2629, long poly-x seq 22, ok 644
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1114,6 +1174,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    3527     0   272     0     0     0     0   323  2355     0     0     0     0     0   577
 Right   4589     0   154     0     0     0     0   711  2838     0     0     0     0     0   886
+Left Stats:
+considered 3527, overlap target 272, low tm 323, high tm 2355, ok 577
+Right Stats:
+considered 4589, overlap target 154, low tm 711, high tm 2838, ok 886
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1167,6 +1231,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    2785     0   100     0     0     0     0   259  1906     0     0     0     0     0   520
 Right   1498     0   226     0     0     0     0   153   792     0     0     0    22     0   305
+Left Stats:
+considered 2785, overlap target 100, low tm 259, high tm 1906, ok 520
+Right Stats:
+considered 1498, overlap target 226, low tm 153, high tm 792, long poly-x seq 22, ok 305
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1220,6 +1288,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    2831     0   106     0     0    50     0   286  1982     0     0     0     0     0   407
 Right   2741     0   116     0     0    42     0   336  1775     0     0     0     0     0   472
+Left Stats:
+considered 2831, overlap target 106, GC content failed 50, low tm 286, high tm 1982, ok 407
+Right Stats:
+considered 2741, overlap target 116, GC content failed 42, low tm 336, high tm 1775, ok 472
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1288,6 +1360,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    3686     0   289     0     0   114     0   669  1809     0     0     0    14     0   791
 Right   3774     0   289     0     0     0     0   619  2094     0     0     0     0     0   772
+Left Stats:
+considered 3686, overlap target 289, GC content failed 114, low tm 669, high tm 1809, long poly-x seq 14, ok 791
+Right Stats:
+considered 3774, overlap target 289, low tm 619, high tm 2094, ok 772
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1353,6 +1429,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    3282     0   289     0     0     1     0   523  1815     0     0     0    22     0   632
 Right   3434     0   289     0     0     0     0   586  1682     0     0     0     0     0   877
+Left Stats:
+considered 3282, overlap target 289, GC content failed 1, low tm 523, high tm 1815, long poly-x seq 22, ok 632
+Right Stats:
+considered 3434, overlap target 289, low tm 586, high tm 1682, ok 877
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1409,6 +1489,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    3425     0    52     0     0     3     0   235  2489     0     2     0    23     0   621
 Right   1454     0   289     0     0     0     0    83   882     0     0     0     0     0   200
+Left Stats:
+considered 3425, overlap target 52, GC content failed 3, low tm 235, high tm 2489, high end compl 2, long poly-x seq 23, ok 621
+Right Stats:
+considered 1454, overlap target 289, low tm 83, high tm 882, ok 200
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1474,6 +1558,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    3343     0   289     0     0    24     0   488  1840     0     0     0    24     0   678
 Right   3758     0   245     0     0     1     0   356  2464     0     0     3    22     0   667
+Left Stats:
+considered 3343, overlap target 289, GC content failed 24, low tm 488, high tm 1840, long poly-x seq 24, ok 678
+Right Stats:
+considered 3758, overlap target 245, GC content failed 1, low tm 356, high tm 2464, high repeat similarity 3, long poly-x seq 22, ok 667
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1542,6 +1630,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    3689     0   286     0     0     3     0   288  2492     0     0     0    22     0   598
 Right   3637     0   289     0     0     3     0   299  2316     0     0     0    25     0   705
+Left Stats:
+considered 3689, overlap target 286, GC content failed 3, low tm 288, high tm 2492, long poly-x seq 22, ok 598
+Right Stats:
+considered 3637, overlap target 289, GC content failed 3, low tm 299, high tm 2316, long poly-x seq 25, ok 705
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1610,6 +1702,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4041     0   289     0     0    21     0   498  2476     0     0     0    22     0   735
 Right   4194     0   289     0     0     8     0   235  3082     0     0     2     0     0   578
+Left Stats:
+considered 4041, overlap target 289, GC content failed 21, low tm 498, high tm 2476, long poly-x seq 22, ok 735
+Right Stats:
+considered 4194, overlap target 289, GC content failed 8, low tm 235, high tm 3082, high repeat similarity 2, ok 578
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1681,6 +1777,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4542     0   289     0     0    14     0   245  3332     0     0     0    23     0   639
 Right   4704     0   289     0     0    96     0   191  3583     0     4     0     0     0   541
+Left Stats:
+considered 4542, overlap target 289, GC content failed 14, low tm 245, high tm 3332, long poly-x seq 23, ok 639
+Right Stats:
+considered 4704, overlap target 289, GC content failed 96, low tm 191, high tm 3583, high end compl 4, ok 541
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1746,6 +1846,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    3344     0   289     0     0     7     0   659  1679     0     0     0     0     0   710
 Right   3344     0   289     0     0     1     0   379  2040     0     0     0     0     0   635
+Left Stats:
+considered 3344, overlap target 289, GC content failed 7, low tm 659, high tm 1679, ok 710
+Right Stats:
+considered 3344, overlap target 289, GC content failed 1, low tm 379, high tm 2040, ok 635
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1811,6 +1915,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    3604     0   289     0     0     1     0   409  2209     3    14     0     0     0   679
 Right   3497     0   289     0     0   107     0   371  2132     0     0     0    18     0   580
+Left Stats:
+considered 3604, overlap target 289, GC content failed 1, low tm 409, high tm 2209, high any compl 3, high end compl 14, ok 679
+Right Stats:
+considered 3497, overlap target 289, GC content failed 107, low tm 371, high tm 2132, long poly-x seq 18, ok 580
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1879,6 +1987,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4154     0   289     0     0     2     0   468  2494     0     0     0     0     0   901
 Right   4154     0   289     0     0    14     0   310  2916     0     0     0     0     0   625
+Left Stats:
+considered 4154, overlap target 289, GC content failed 2, low tm 468, high tm 2494, ok 901
+Right Stats:
+considered 4154, overlap target 289, GC content failed 14, low tm 310, high tm 2916, ok 625
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1950,6 +2062,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4464     0   289     0     0     2     0   392  2999     0     0     0     0     0   782
 Right   4464     0   289     0     0    40     0   325  3245     0     0     0     0     0   565
+Left Stats:
+considered 4464, overlap target 289, GC content failed 2, low tm 392, high tm 2999, ok 782
+Right Stats:
+considered 4464, overlap target 289, GC content failed 40, low tm 325, high tm 3245, ok 565
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2030,6 +2146,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    6244     0   289     0     0    60     0   973  3795     0     0     0     0     0  1127
 Right   5938     0   289     0     0    51     0   580  3983     0     0     0    44     0   991
+Left Stats:
+considered 6244, overlap target 289, GC content failed 60, low tm 973, high tm 3795, ok 1127
+Right Stats:
+considered 5938, overlap target 289, GC content failed 51, low tm 580, high tm 3983, long poly-x seq 44, ok 991
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2101,6 +2221,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4078     0   289     0     0    87     0   484  2399     0     1     0    44     0   774
 Right   4384     0   289     0     0    97     0   244  3201     0     0     0     0     0   553
+Left Stats:
+considered 4078, overlap target 289, GC content failed 87, low tm 484, high tm 2399, high end compl 1, long poly-x seq 44, ok 774
+Right Stats:
+considered 4384, overlap target 289, GC content failed 97, low tm 244, high tm 3201, ok 553
 Pair Stats:
 considered 14, high end compl 12, ok 2
 primer3 release 2.0.0
@@ -2172,6 +2296,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4212     0   289     0     0   182     0   233  2939     0     0     0    22     0   547
 Right   4248     0   289     0     0    80     0   415  2693     0     0     0    23     0   748
+Left Stats:
+considered 4212, overlap target 289, GC content failed 182, low tm 233, high tm 2939, long poly-x seq 22, ok 547
+Right Stats:
+considered 4248, overlap target 289, GC content failed 80, low tm 415, high tm 2693, long poly-x seq 23, ok 748
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2243,6 +2371,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4774     0   289     0     0   210     0   485  3153     0     0     0     0     0   637
 Right   4621     0   289     0     0     8     0   474  3110     0     0     0    22     0   718
+Left Stats:
+considered 4774, overlap target 289, GC content failed 210, low tm 485, high tm 3153, ok 637
+Right Stats:
+considered 4621, overlap target 289, GC content failed 8, low tm 474, high tm 3110, long poly-x seq 22, ok 718
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2314,6 +2446,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4834     0   289     0     0     0     0   620  3010     0     0     0     0     0   915
 Right   4762     0   289     0     0   176     0   739  2528     0     0     0    13     0  1017
+Left Stats:
+considered 4834, overlap target 289, low tm 620, high tm 3010, ok 915
+Right Stats:
+considered 4762, overlap target 289, GC content failed 176, low tm 739, high tm 2528, long poly-x seq 13, ok 1017
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2388,6 +2524,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4914     0   289     0     0    56     0   524  3341     0     0     0     0     0   704
 Right   4914     0   289     0     0    83     0   976  2660     0     0     0     0     0   906
+Left Stats:
+considered 4914, overlap target 289, GC content failed 56, low tm 524, high tm 3341, ok 704
+Right Stats:
+considered 4914, overlap target 289, GC content failed 83, low tm 976, high tm 2660, ok 906
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2456,6 +2596,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    3804     0   289     0     0    12     0   652  1841     0     0     0     0     0  1010
 Right   3804     0   289     0     0     0     0   873  1715     0     5     0     0     0   922
+Left Stats:
+considered 3804, overlap target 289, GC content failed 12, low tm 652, high tm 1841, ok 1010
+Right Stats:
+considered 3804, overlap target 289, low tm 873, high tm 1715, high end compl 5, ok 922
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2524,6 +2668,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4475     0   230     0     0     0     0   988  2162     0     0     0     0     0  1095
 Right   3944     0   289     0     0    74     0   898  1848     0     2     0     0     0   833
+Left Stats:
+considered 4475, overlap target 230, low tm 988, high tm 2162, ok 1095
+Right Stats:
+considered 3944, overlap target 289, GC content failed 74, low tm 898, high tm 1848, high end compl 2, ok 833
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2574,6 +2722,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    2940     0     0     0     0   829     0    31  1984     0     0     0     0     0    96
 Right    951     0   226     0     0   209     0     0   510     0     0     0     0     0     6
+Left Stats:
+considered 2940, GC content failed 829, low tm 31, high tm 1984, ok 96
+Right Stats:
+considered 951, overlap target 226, GC content failed 209, high tm 510, ok 6
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2642,6 +2794,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    6710     0     0     0     0     4     0  1539  3376     0     0     1     0     0  1790
 Right   6710     0     0     0     0     4     0  1540  3376     0     0     2     0     0  1788
+Left Stats:
+considered 6710, GC content failed 4, low tm 1539, high tm 3376, high repeat similarity 1, ok 1790
+Right Stats:
+considered 6710, GC content failed 4, low tm 1540, high tm 3376, high repeat similarity 2, ok 1788
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2713,6 +2869,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4999     0   227     0     0     0     0  1458  1982     0     0     0    22     0  1310
 Right   6997     0     0     0     0   109     0  2483  2360     0     0     0    22     0  2023
+Left Stats:
+considered 4999, overlap target 227, low tm 1458, high tm 1982, long poly-x seq 22, ok 1310
+Right Stats:
+considered 6997, GC content failed 109, low tm 2483, high tm 2360, long poly-x seq 22, ok 2023
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2781,6 +2941,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4094     0   289     0     0  1473     0    23  2263     0     0     0     0     0    46
 Right   4094     0   289     0     0   716     0   101  2783     0     0     0     0     0   205
+Left Stats:
+considered 4094, overlap target 289, GC content failed 1473, low tm 23, high tm 2263, ok 46
+Right Stats:
+considered 4094, overlap target 289, GC content failed 716, low tm 101, high tm 2783, ok 205
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2849,6 +3013,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4082     0   289     0     0    83     0  1878   779     0     0     1    20     0  1032
 Right   4214     0   289     0     0   232     0  1968   682     0     0     0     0     0  1043
+Left Stats:
+considered 4082, overlap target 289, GC content failed 83, low tm 1878, high tm 779, high repeat similarity 1, long poly-x seq 20, ok 1032
+Right Stats:
+considered 4214, overlap target 289, GC content failed 232, low tm 1968, high tm 682, ok 1043
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2923,6 +3091,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4965     0   289     0     0    54     0  1212  2106     0     0    28    22     0  1254
 Right   5005     0   289     0     0   185     0  1231  1945     0     0     0    11     0  1344
+Left Stats:
+considered 4965, overlap target 289, GC content failed 54, low tm 1212, high tm 2106, high repeat similarity 28, long poly-x seq 22, ok 1254
+Right Stats:
+considered 5005, overlap target 289, GC content failed 185, low tm 1231, high tm 1945, long poly-x seq 11, ok 1344
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -2994,6 +3166,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4884     0   289     0     0   320     0  1911  1322     0     6     0     0     0  1036
 Right   4770     0   289     0     0   176     0  1330  1913     0     0     0    21     0  1041
+Left Stats:
+considered 4884, overlap target 289, GC content failed 320, low tm 1911, high tm 1322, high end compl 6, ok 1036
+Right Stats:
+considered 4770, overlap target 289, GC content failed 176, low tm 1330, high tm 1913, long poly-x seq 21, ok 1041
 Pair Stats:
 considered 36, high end compl 33, ok 3
 primer3 release 2.0.0
@@ -3065,6 +3241,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4694     0   289     0     0     4     0  2035   844     0     0     0     0     0  1522
 Right   4397     0   289     0     0    28     0  1323  1565     0     4     0    44     0  1144
+Left Stats:
+considered 4694, overlap target 289, GC content failed 4, low tm 2035, high tm 844, ok 1522
+Right Stats:
+considered 4397, overlap target 289, GC content failed 28, low tm 1323, high tm 1565, high end compl 4, long poly-x seq 44, ok 1144
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -3136,6 +3316,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4464     0   289     0     0    57     0  1831   878     0     0     0     0     0  1409
 Right   4311     0   289     0     0    51     0  1766   895     0     0     0    22     0  1288
+Left Stats:
+considered 4464, overlap target 289, GC content failed 57, low tm 1831, high tm 878, ok 1409
+Right Stats:
+considered 4311, overlap target 289, GC content failed 51, low tm 1766, high tm 895, long poly-x seq 22, ok 1288
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -3186,6 +3370,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    2597     0    32     0     0   195     0  1010   658     0    23     8     0     0   671
 Right   2435     0    50     0     0     0     0  1068   632     0     0     0     0     0   685
+Left Stats:
+considered 2597, overlap target 32, GC content failed 195, low tm 1010, high tm 658, high end compl 23, high repeat similarity 8, ok 671
+Right Stats:
+considered 2435, overlap target 50, low tm 1068, high tm 632, ok 685
 Pair Stats:
 considered 18, high end compl 16, ok 2
 primer3 release 2.0.0
@@ -3254,6 +3442,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    3572     0   289     0     0     0     0   118  2723     0     0     0    23     0   419
 Right   3734     0   289     0     0    17     0   289  2735     0     1     0     0     0   403
+Left Stats:
+considered 3572, overlap target 289, low tm 118, high tm 2723, long poly-x seq 23, ok 419
+Right Stats:
+considered 3734, overlap target 289, GC content failed 17, low tm 289, high tm 2735, high end compl 1, ok 403
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -3322,6 +3514,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    3301     0   289     0     0    28     0    14  2710     0     1     0    65     0   194
 Right   3601     0   289     0     0    16     0   390  2278     0     0     0    22     0   606
+Left Stats:
+considered 3301, overlap target 289, GC content failed 28, low tm 14, high tm 2710, high end compl 1, long poly-x seq 65, ok 194
+Right Stats:
+considered 3601, overlap target 289, GC content failed 16, low tm 390, high tm 2278, long poly-x seq 22, ok 606
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -3393,6 +3589,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4704     0   289     0     0  1097     0    35  3097     0     6     0     0     0   180
 Right   4704     0   289     0     0  1078     0   138  2874     0     0     0     0     0   325
+Left Stats:
+considered 4704, overlap target 289, GC content failed 1097, low tm 35, high tm 3097, high end compl 6, ok 180
+Right Stats:
+considered 4704, overlap target 289, GC content failed 1078, low tm 138, high tm 2874, ok 325
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -3458,6 +3658,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    3344     0   289     0     0     2     0   424  1910     0     0     0     0     0   719
 Right   3344     0   289     0     0     0     0   284  2312     8    13     7     0     0   431
+Left Stats:
+considered 3344, overlap target 289, GC content failed 2, low tm 424, high tm 1910, ok 719
+Right Stats:
+considered 3344, overlap target 289, low tm 284, high tm 2312, high any compl 8, high end compl 13, high repeat similarity 7, ok 431
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -3526,6 +3730,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4234     0   289     0     0     2     0   537  2588     0     0     0     0     0   818
 Right   4234     0   289     0     0    81     0   378  2891     0     0     0     0     0   595
+Left Stats:
+considered 4234, overlap target 289, GC content failed 2, low tm 537, high tm 2588, ok 818
+Right Stats:
+considered 4234, overlap target 289, GC content failed 81, low tm 378, high tm 2891, ok 595
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -3597,6 +3805,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4351     0   289     0     0   139     0   152  3259     0     0     0    22     0   490
 Right   4504     0   289     0     0     1     0   499  3030     0     0     2     0     0   683
+Left Stats:
+considered 4351, overlap target 289, GC content failed 139, low tm 152, high tm 3259, long poly-x seq 22, ok 490
+Right Stats:
+considered 4504, overlap target 289, GC content failed 1, low tm 499, high tm 3030, high repeat similarity 2, ok 683
 Pair Stats:
 considered 20, high any compl 8, high end compl 10, ok 2
 primer3 release 2.0.0
@@ -3665,6 +3877,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    3891     0   289     0     0    43     0   599  2265     0     0     0    44     0   651
 Right   3894     0   289     0     0    11     0   463  2371     0     1     0    44     0   715
+Left Stats:
+considered 3891, overlap target 289, GC content failed 43, low tm 599, high tm 2265, long poly-x seq 44, ok 651
+Right Stats:
+considered 3894, overlap target 289, GC content failed 11, low tm 463, high tm 2371, high end compl 1, long poly-x seq 44, ok 715
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -3736,6 +3952,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4032     0   289     0     0     6     0   577  2278     0     0     0    44     0   838
 Right   4181     0   289     0     0    10     0   236  3155     0     5     0    22     0   464
+Left Stats:
+considered 4032, overlap target 289, GC content failed 6, low tm 577, high tm 2278, long poly-x seq 44, ok 838
+Right Stats:
+considered 4181, overlap target 289, GC content failed 10, low tm 236, high tm 3155, high end compl 5, long poly-x seq 22, ok 464
 Pair Stats:
 considered 126, high any compl 28, high end compl 97, ok 1
 primer3 release 2.0.0
@@ -3828,6 +4048,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    8901     0   289     0     0    87     0   201  7523     0     0     0    22     0   779
 Right   9054     0   289     0     0    79     0  1105  6374     0     1     0     0     0  1206
+Left Stats:
+considered 8901, overlap target 289, GC content failed 87, low tm 201, high tm 7523, long poly-x seq 22, ok 779
+Right Stats:
+considered 9054, overlap target 289, GC content failed 79, low tm 1105, high tm 6374, high end compl 1, ok 1206
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -3938,6 +4162,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left   12144     0   289     0     0    12     0  3242  5342     0     0     0     0     0  3259
 Right  12144     0   289     0     0    15     0  3651  4687     0     7     0     0     0  3495
+Left Stats:
+considered 12144, overlap target 289, GC content failed 12, low tm 3242, high tm 5342, ok 3259
+Right Stats:
+considered 12144, overlap target 289, GC content failed 15, low tm 3651, high tm 4687, high end compl 7, ok 3495
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4015,6 +4243,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    5543     0   289     0     0     0     0  1266  2461     0     0     0    38     0  1489
 Right   5393     0   289     0     0    28     0  1331  2335    19     7     0    67     0  1317
+Left Stats:
+considered 5543, overlap target 289, low tm 1266, high tm 2461, long poly-x seq 38, ok 1489
+Right Stats:
+considered 5393, overlap target 289, GC content failed 28, low tm 1331, high tm 2335, high any compl 19, high end compl 7, long poly-x seq 67, ok 1317
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4086,6 +4318,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    4391     0   289     0     0   128     0  1570  1096     0     0     0    22     0  1286
 Right   4238     0   289     0     0    20     0   420  2770     0     0     0    44     0   695
+Left Stats:
+considered 4391, overlap target 289, GC content failed 128, low tm 1570, high tm 1096, long poly-x seq 22, ok 1286
+Right Stats:
+considered 4238, overlap target 289, GC content failed 20, low tm 420, high tm 2770, long poly-x seq 44, ok 695
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4193,6 +4429,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left   11554     0   289     0     0     7     0  2490  6121     0     0     0     0     0  2647
 Right  11432     0   289     0     0    57     0  2518  5947     0    12     0    20     0  2589
+Left Stats:
+considered 11554, overlap target 289, GC content failed 7, low tm 2490, high tm 6121, ok 2647
+Right Stats:
+considered 11432, overlap target 289, GC content failed 57, low tm 2518, high tm 5947, high end compl 12, long poly-x seq 20, ok 2589
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4237,6 +4477,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    2030     0     0     0     0    67     0   611   842     3    38     0     0     0   469
 Right   1490     0    65     0     0     0     0   478   584     0     0     0     0     0   363
+Left Stats:
+considered 2030, GC content failed 67, low tm 611, high tm 842, high any compl 3, high end compl 38, ok 469
+Right Stats:
+considered 1490, overlap target 65, low tm 478, high tm 584, ok 363
 Pair Stats:
 considered 11, high end compl 10, ok 1
 primer3 release 2.0.0
@@ -4275,6 +4519,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left     770     0     0     0     0     5     0   460    81     0     0     0     0     0   224
 Right    770     0     0     0     0    11     0   448    81     7     1     0     0     0   222
+Left Stats:
+considered 770, GC content failed 5, low tm 460, high tm 81, ok 224
+Right Stats:
+considered 770, GC content failed 11, low tm 448, high tm 81, high any compl 7, high end compl 1, ok 222
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4313,6 +4561,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left     530     0     0     0     0     1     0   361    44     0     0     0     0     0   124
 Right    530     0     0     0     0     1     0   416     4     0     0     0     0     0   109
+Left Stats:
+considered 530, GC content failed 1, low tm 361, high tm 44, ok 124
+Right Stats:
+considered 530, GC content failed 1, low tm 416, high tm 4, ok 109
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4351,6 +4603,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left     500     0     0     0     0     0     0   151   175     0     0     0     0     0   174
 Right    500     0     0     0     0     0     0   123   202     0     0     0     0     0   175
+Left Stats:
+considered 500, low tm 151, high tm 175, ok 174
+Right Stats:
+considered 500, low tm 123, high tm 202, ok 175
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4389,6 +4645,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left     710     0     0     0     0     0     0   212   246     0     1     0     0     0   251
 Right    710     0     0     0     0     0     0   202   248     0     1     1     0     0   258
+Left Stats:
+considered 710, low tm 212, high tm 246, high end compl 1, ok 251
+Right Stats:
+considered 710, low tm 202, high tm 248, high end compl 1, high repeat similarity 1, ok 258
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4427,6 +4687,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left     720     0     0     0     0     0     0   206   309     0     0     0     0     0   205
 Right    720     0     0     0     0     0     0   181   338     0     0     0     0     0   201
+Left Stats:
+considered 720, low tm 206, high tm 309, ok 205
+Right Stats:
+considered 720, low tm 181, high tm 338, ok 201
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4465,6 +4729,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left     820     0     0     0     0     3     0   162   464     0     0     0     0     0   191
 Right    820     0     0     0     0     3     0   237   349     0     0     0     0     0   231
+Left Stats:
+considered 820, GC content failed 3, low tm 162, high tm 464, ok 191
+Right Stats:
+considered 820, GC content failed 3, low tm 237, high tm 349, ok 231
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4506,6 +4774,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    1260     0     0     0     0     0     0   540   321     0     0     0     0     0   399
 Right   1260     0     0     0     0     0     0   530   315     0     0    20     0     0   395
+Left Stats:
+considered 1260, low tm 540, high tm 321, ok 399
+Right Stats:
+considered 1260, low tm 530, high tm 315, high repeat similarity 20, ok 395
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4553,6 +4825,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    1977     0     0     0     0     1     0  1154   176     0     1     0    22     0   623
 Right   1977     0     0     0     0     0     0  1125   203     0     0     0    22     0   627
+Left Stats:
+considered 1977, GC content failed 1, low tm 1154, high tm 176, high end compl 1, long poly-x seq 22, ok 623
+Right Stats:
+considered 1977, low tm 1125, high tm 203, long poly-x seq 22, ok 627
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4591,6 +4867,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left     550     0     0     0     0     0     0   222   109     0     0     0     0     0   219
 Right    550     0     0     0     0     0     0   227   116     0     0     0     0     0   207
+Left Stats:
+considered 550, low tm 222, high tm 109, ok 219
+Right Stats:
+considered 550, low tm 227, high tm 116, ok 207
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4629,6 +4909,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left     540     0     0     0     0     0     0   135   249     0     1     0     0     0   155
 Right    540     0     0     0     0     0     0   181   215     0     0     0     0     0   144
+Left Stats:
+considered 540, low tm 135, high tm 249, high end compl 1, ok 155
+Right Stats:
+considered 540, low tm 181, high tm 215, ok 144
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4673,6 +4957,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    1600     0     0     0     0     0     0   646   347     0     0     0     0     0   607
 Right   1600     0     0     0     0     0     0   707   324     0     0     0     0     0   569
+Left Stats:
+considered 1600, low tm 646, high tm 347, ok 607
+Right Stats:
+considered 1600, low tm 707, high tm 324, ok 569
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4714,6 +5002,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    1240     0     0     0     0     1     0   314   591     0     0     0     0     0   334
 Right   1240     0     0     0     0     1     0   280   628     0     0     0     0     0   331
+Left Stats:
+considered 1240, GC content failed 1, low tm 314, high tm 591, ok 334
+Right Stats:
+considered 1240, GC content failed 1, low tm 280, high tm 628, ok 331
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4755,6 +5047,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    1230     0     0     0     0     0     0    83   898     0     0     0     0     0   249
 Right   1230     0     0     0     0     0     0   122   805     0     0     0     0     0   303
+Left Stats:
+considered 1230, low tm 83, high tm 898, ok 249
+Right Stats:
+considered 1230, low tm 122, high tm 805, ok 303
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4793,6 +5089,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left     710     0     0     0     0     0     0   257   250     0     0     0     0     0   203
 Right    710     0     0     0     0     0     0   172   343     0     0     0     0     0   195
+Left Stats:
+considered 710, low tm 257, high tm 250, ok 203
+Right Stats:
+considered 710, low tm 172, high tm 343, ok 195
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4834,6 +5134,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    1360     0     0     0     0     0     0   684   181     0     8     2     0     0   485
 Right   1360     0     0     0     0     0     0   616   248     0     1     0     0     0   495
+Left Stats:
+considered 1360, low tm 684, high tm 181, high end compl 8, high repeat similarity 2, ok 485
+Right Stats:
+considered 1360, low tm 616, high tm 248, high end compl 1, ok 495
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4875,6 +5179,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    1060     0     0     0     0     1     0   295   528     0     3     0     0     0   233
 Right   1060     0     0     0     0     1     0   217   601     0     0     0     0     0   241
+Left Stats:
+considered 1060, GC content failed 1, low tm 295, high tm 528, high end compl 3, ok 233
+Right Stats:
+considered 1060, GC content failed 1, low tm 217, high tm 601, ok 241
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4916,6 +5224,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    1240     0     0     0     0    18     0   522   395     0     0     2     0     0   303
 Right   1240     0     0     0     0    18     0   504   411     0     0     0     0     0   307
+Left Stats:
+considered 1240, GC content failed 18, low tm 522, high tm 395, high repeat similarity 2, ok 303
+Right Stats:
+considered 1240, GC content failed 18, low tm 504, high tm 411, ok 307
 Pair Stats:
 considered 62, high end compl 59, ok 3
 primer3 release 2.0.0
@@ -4957,6 +5269,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left    1200     0     0     0     0     0     0   119   823     0     0     0     0     0   258
 Right   1200     0     0     0     0     0     0   167   784     0     0     0     0     0   249
+Left Stats:
+considered 1200, low tm 119, high tm 823, ok 258
+Right Stats:
+considered 1200, low tm 167, high tm 784, ok 249
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -4998,6 +5314,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left     444     0    99     0     0     0     0    91   152     0     0     0     0     0   102
 Right   1150     0     0     0     0    42     0   311   512    26     3     0    20     0   236
+Left Stats:
+considered 444, overlap target 99, low tm 91, high tm 152, ok 102
+Right Stats:
+considered 1150, GC content failed 42, low tm 311, high tm 512, high any compl 26, high end compl 3, long poly-x seq 20, ok 236
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0

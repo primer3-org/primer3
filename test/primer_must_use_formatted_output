@@ -32,6 +32,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left      10     0     0     0     0     0     0     7     0     0     0     0     0     3
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Left Stats:
+considered 10, low tm 7, ok 3
+Right Stats:
+considered 1, ok 1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -72,6 +76,8 @@ Statistics
          sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right Stats:
+considered 1, ok 1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -112,6 +118,8 @@ Statistics
          sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right Stats:
+considered 1, ok 1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -152,6 +160,8 @@ Statistics
          sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Right      3     0     0     0     0     0     0     0     2     0     0     0     0     1
+Right Stats:
+considered 3, high tm 2, ok 1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -194,6 +204,8 @@ Statistics
          sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right Stats:
+considered 1, ok 1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -466,6 +478,8 @@ Statistics
          sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right Stats:
+considered 1, ok 1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -509,6 +523,8 @@ Statistics
          sid  many   tar  excl    ok   bad    GC   too   too   any    3'   lib  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     0     1
+Right Stats:
+considered 1, ok 1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0

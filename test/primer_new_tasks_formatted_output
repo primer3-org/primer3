@@ -2279,6 +2279,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left     954     0     0     0   939     0     0     0     0     0     0     0     0    15
 Right    954     0     0     0   951     0     0     0     0     0     0     0     0     3
+Left Stats:
+considered 954, not in any ok left region 939, ok 15
+Right Stats:
+considered 954, not in any ok right region 951, ok 3
 Pair Stats:
 considered 0, ok 0
 libprimer3 release 2.6.1
@@ -2319,6 +2323,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Left Stats:
+considered 1, ok 1
+Right Stats:
+considered 1, ok 1
 Pair Stats:
 considered 1, primer in pair overlaps a primer in a better pair 1, ok 1
 libprimer3 release 2.6.1
@@ -2676,6 +2684,12 @@ Statistics
 Left   17856     0     0     0     0     9     0     0  8066     0     0     0     0  9781
 Right  17856     0     0     0     0     9     0     0  7973     0     0     0     0  9874
 Intl   14749     0     0     0     0     3     0  2973  7694     0     0    44     0  4035
+Left Stats:
+considered 17856, GC content failed 9, high tm 8066, ok 9781
+Right Stats:
+considered 17856, GC content failed 9, high tm 7973, ok 9874
+Intl Stats:
+considered 14749, GC content failed 3, low tm 2973, high tm 7694, long poly-x seq 44, ok 4035
 Pair Stats:
 considered 4406, unacceptable product size 4245, high end compl 16, no internal oligo 66, primer in pair overlaps a primer in a better pair 2557, ok 79
 libprimer3 release 2.6.1
@@ -3033,6 +3047,12 @@ Statistics
 Left   17856     0     0     0     0     9     0     0  8066     0     0     0     0  9781
 Right  17856     0     0     0     0     9     0     0  7973     0     0     0     0  9874
 Intl   14749     0     0     0     0     3     0  2973  7694     0     0    44     0  4035
+Left Stats:
+considered 17856, GC content failed 9, high tm 8066, ok 9781
+Right Stats:
+considered 17856, GC content failed 9, high tm 7973, ok 9874
+Intl Stats:
+considered 14749, GC content failed 3, low tm 2973, high tm 7694, long poly-x seq 44, ok 4035
 Pair Stats:
 considered 4406, unacceptable product size 4245, high end compl 16, no internal oligo 66, primer in pair overlaps a primer in a better pair 2557, ok 79
 libprimer3 release 2.6.1
@@ -3390,6 +3410,12 @@ Statistics
 Left   17856     0     0     0     0     9     0     0  8066     0     0     0     0  9781
 Right  17856     0     0     0     0     9     0     0  7973     0     0     0     0  9874
 Intl   11350     0     0     0     0     1     0  2251  5931     0     0    43     0  3124
+Left Stats:
+considered 17856, GC content failed 9, high tm 8066, ok 9781
+Right Stats:
+considered 17856, GC content failed 9, high tm 7973, ok 9874
+Intl Stats:
+considered 11350, GC content failed 1, low tm 2251, high tm 5931, long poly-x seq 43, ok 3124
 Pair Stats:
 considered 4458, unacceptable product size 4294, high end compl 15, no internal oligo 69, primer in pair overlaps a primer in a better pair 2533, ok 80
 libprimer3 release 2.6.1
@@ -3747,6 +3773,12 @@ Statistics
 Left   17856     0     0     0     0     9     0     0  8066     0     0     0     0  9781
 Right  17856     0     0     0     0     9     0     0  7973     0     0     0     0  9874
 Intl   12492     0     0     0     0     1     0  2576  6386     0     0    39     0  3490
+Left Stats:
+considered 17856, GC content failed 9, high tm 8066, ok 9781
+Right Stats:
+considered 17856, GC content failed 9, high tm 7973, ok 9874
+Intl Stats:
+considered 12492, GC content failed 1, low tm 2576, high tm 6386, long poly-x seq 39, ok 3490
 Pair Stats:
 considered 4394, unacceptable product size 4226, high end compl 17, no internal oligo 69, primer in pair overlaps a primer in a better pair 2474, ok 82
 libprimer3 release 2.6.1
@@ -3853,6 +3885,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left   18078     0     0     0     0     9     0     0  8076     0     0     0     0  9993
 Intl    5890     0     0     0     0     0     0    47  4955     0     0    44     0   844
+Left Stats:
+considered 18078, GC content failed 9, high tm 8076, ok 9993
+Intl Stats:
+considered 5890, low tm 47, high tm 4955, long poly-x seq 44, ok 844
 libprimer3 release 2.6.1
 
 
@@ -3957,6 +3993,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Right  18078     0     0     0     0     9     0     0  8076     0     0     0     0  9993
 Intl    5890     0     0     0     0     0     0    47  4955     0     0    44     0   844
+Right Stats:
+considered 18078, GC content failed 9, high tm 8076, ok 9993
+Intl Stats:
+considered 5890, low tm 47, high tm 4955, long poly-x seq 44, ok 844
 libprimer3 release 2.6.1
 
 
@@ -4068,6 +4108,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left   18078     0     0     0     0     9     0     0  8076     0     0     0     0  9993
 Intl    5890     0     0     0     0     0     0    47  4955     0     0    44     0   844
+Left Stats:
+considered 18078, GC content failed 9, high tm 8076, ok 9993
+Intl Stats:
+considered 5890, low tm 47, high tm 4955, long poly-x seq 44, ok 844
 libprimer3 release 2.6.1
 
 

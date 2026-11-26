@@ -747,7 +747,25 @@ print_explain(FILE *f,
       && !(pa->pick_anyway && sa->internal_input))
     print_stat_line(f, "Intl", retval->intl.expl, 
                     print_lib_sim, lowercase_masking, pa->thermodynamic_oligo_alignment);
-  
+
+  /* The table above has no columns for some counters, so also print
+     all counters as in PRIMER_LEFT/RIGHT/INTERNAL_EXPLAIN */
+  if (pa->pick_left_primer == 1
+      && !(pa->pick_anyway && sa->left_input)) {
+    fprintf(f, "Left Stats:\n%s\n",
+            p3_get_oligo_array_explain_string(p3_get_rv_fwd(retval)));
+  }
+  if (pa->pick_right_primer == 1
+      && !(pa->pick_anyway && sa->right_input)) {
+    fprintf(f, "Right Stats:\n%s\n",
+            p3_get_oligo_array_explain_string(p3_get_rv_rev(retval)));
+  }
+  if (pa->pick_internal_oligo == 1
+      && !(pa->pick_anyway && sa->internal_input)) {
+    fprintf(f, "Intl Stats:\n%s\n",
+            p3_get_oligo_array_explain_string(p3_get_rv_intl(retval)));
+  }
+
   if (pa->pick_left_primer == 1 && pa->pick_right_primer == 1) {
     fprintf(f, "Pair Stats:\n%s\n",
             p3_get_pair_array_explain_string(p3_get_rv_best_pairs(retval)));

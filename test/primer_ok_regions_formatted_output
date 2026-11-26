@@ -28,6 +28,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Left Stats:
+considered 1, ok 1
+Right Stats:
+considered 1, ok 1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.2.0
@@ -63,6 +67,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Left Stats:
+considered 1, ok 1
+Right Stats:
+considered 1, ok 1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.2.0
@@ -98,6 +106,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Left Stats:
+considered 1, ok 1
+Right Stats:
+considered 1, ok 1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.2.0
@@ -133,6 +145,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Left Stats:
+considered 1, ok 1
+Right Stats:
+considered 1, ok 1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.2.0
@@ -159,6 +175,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     1     0     0     0     0     0     0     0     0     0
 Right      1     0     0     0     1     0     0     0     0     0     0     0     0     0
+Left Stats:
+considered 1, not in any ok left region 1, ok 0
+Right Stats:
+considered 1, not in any ok right region 1, ok 0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.2.0
@@ -194,6 +214,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Left Stats:
+considered 1, ok 1
+Right Stats:
+considered 1, ok 1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.2.0
@@ -220,6 +244,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Left Stats:
+considered 1, ok 1
+Right Stats:
+considered 1, ok 1
 Pair Stats:
 considered 1, not in any ok region 1, ok 0
 primer3 release 2.2.0
@@ -246,6 +274,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     1     0     0     0     0     0     0     0     0     0
+Left Stats:
+considered 1, ok 1
+Right Stats:
+considered 1, not in any ok right region 1, ok 0
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.2.0
@@ -272,6 +304,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     1     0     0     0     0     0     0     0     0     0
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Left Stats:
+considered 1, not in any ok left region 1, ok 0
+Right Stats:
+considered 1, ok 1
 Pair Stats:
 considered 0, ok 0
 primer3 release 2.2.0
@@ -307,6 +343,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Left Stats:
+considered 1, ok 1
+Right Stats:
+considered 1, ok 1
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.2.0

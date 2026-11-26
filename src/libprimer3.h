@@ -303,8 +303,7 @@ typedef struct p3_global_settings {
   /* ================================================== */
   /* Arguments that control behavior of choose_primers() */
 
-  task   primer_task; /* 2 if left primer only, 3 if right primer
-                       * only, 4 if internal oligo only.  */
+  task   primer_task;
 
   int    pick_left_primer;
   int    pick_right_primer;
@@ -316,7 +315,8 @@ typedef struct p3_global_settings {
                                    the 5' end to avoid quenching */
 
   int    file_flag;   /* TO DO, See if this can be factored out. */
-  int    explain_flag; /* Complete statistics if PRIMER_EXPLAIN_FLAG=1. */
+  int    explain_flag; /* 1: print explain strings; 2: also complete
+                          the statistics (PRIMER_EXPLAIN_FLAG). */
 
   int    first_base_index;  /* 
                              * The index of the first base in the input
@@ -381,8 +381,15 @@ typedef struct p3_global_settings {
      RE (1990) "Optimization of the annealing temperature for DNA
      amplification in vitro", Nucleic Acids Res 18:6409-12
      http://www.pubmedcentral.nih.gov/articlerender.fcgi?tool=pubmed&pubmedid=2243783].
-       
-     The default value is 0 only for backward compatibility.
+
+     A value of 2 directs primer3 to use the same method as 1 with the
+     table of thermodynamic values in the paper [SantaLucia JR and
+     Hicks D (2004) "The thermodynamics of DNA structural motifs",
+     Annu Rev Biophys Biomol Struct 33:415-40
+     http://dx.doi.org/10.1146/annurev.biophys.32.110601.141800].
+
+     The default is 1 with p3_create_global_settings() (default
+     version 2) and 0 with p3_create_global_settings_default_version_1().
   */
 
   salt_correction_type salt_corrections; 
@@ -406,7 +413,8 @@ typedef struct p3_global_settings {
      duplex oligomers: Improved predictions of melting temperatures",
      Biochemistry 43:3537-54 http://dx.doi.org/10.1021/bi034621r].
 
-     The default is 0 only for backward compatibility.
+     The default is 1 with p3_create_global_settings() (default
+     version 2) and 0 with p3_create_global_settings_default_version_1().
   */
 
   /* ================================================== */
@@ -527,9 +535,8 @@ typedef struct p3_global_settings {
   */
 
   double max_diff_tm; 
-  /* Maximum allowed difference between temperature of primer and
-     temperature of product.  Cannot be calculated until product is
-     known. */
+  /* Maximum allowed difference between the melting temperatures of
+     the left and the right primer (PRIMER_PAIR_MAX_DIFF_TM). */
 
   pair_weights  pr_pair_weights;
 

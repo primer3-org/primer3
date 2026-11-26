@@ -62,6 +62,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left     877     1     0    91     0     7     0     2   399     0     0     0     0     0   377
 Right   1012    19     0    58     0    25     0     0   702     0     0     0     0     0   208
+Left Stats:
+considered 877, too many Ns 1, overlap excluded region 91, GC content failed 7, low tm 2, high tm 399, ok 377
+Right Stats:
+considered 1012, too many Ns 19, overlap excluded region 58, GC content failed 25, high tm 702, ok 208
 Pair Stats:
 considered 23, unacceptable product size 17, ok 6
 primer3 release 2.0.0
@@ -128,6 +132,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl   sim     X  stab    ok
 Left     728     0     0    69     0     2     0   126     0     0     0     1    23     0   507
 Right    827     0     0    72     0   314     0   236     0     0     0     0     0     0   205
+Left Stats:
+considered 728, overlap excluded region 69, GC content failed 2, low tm 126, high repeat similarity 1, long poly-x seq 23, ok 507
+Right Stats:
+considered 827, overlap excluded region 72, GC content failed 314, low tm 236, ok 205
 Pair Stats:
 considered 9, unacceptable product size 4, ok 5
 primer3 release 2.0.0
@@ -202,6 +210,12 @@ Statistics
 Left     728     0     0    69     0     2     0   126     0     0     0     1    23     0   507
 Right    827     0     0    72     0   314     0   236     0     0     0     0     0     0   205
 Intl    3079     0     0     0     0   316     0   517   178     0     0     0    23     0  2045
+Left Stats:
+considered 728, overlap excluded region 69, GC content failed 2, low tm 126, high repeat similarity 1, long poly-x seq 23, ok 507
+Right Stats:
+considered 827, overlap excluded region 72, GC content failed 314, low tm 236, ok 205
+Intl Stats:
+considered 3079, GC content failed 316, low tm 517, high tm 178, long poly-x seq 23, ok 2045
 Pair Stats:
 considered 9, unacceptable product size 4, ok 5
 primer3 release 2.0.0
@@ -279,6 +293,12 @@ Statistics
 Left     877     1     0    91     0     7     0     2   399     0     0     0     0     0   377
 Right   1012    19     0    58     0    25     0     0   702     0     0     0     0     0   208
 Intl    3237    27     0     0     0    32     0    23  1880     0     0     0     0     0  1275
+Left Stats:
+considered 877, too many Ns 1, overlap excluded region 91, GC content failed 7, low tm 2, high tm 399, ok 377
+Right Stats:
+considered 1012, too many Ns 19, overlap excluded region 58, GC content failed 25, high tm 702, ok 208
+Intl Stats:
+considered 3237, too many Ns 27, GC content failed 32, low tm 23, high tm 1880, ok 1275
 Pair Stats:
 considered 26, unacceptable product size 17, high mispriming library similarity 2, ok 7
 primer3 release 2.0.0
@@ -363,6 +383,12 @@ Statistics
 Left     728     0     0    69     0     2     0   126     0     0     0    14    23     0   494
 Right    827     0     0    72     0   314     0   236     0     0     0    19     0     0   186
 Intl    3079     0     0     0     0   316     0   517   178     0     0     0    23     0  2045
+Left Stats:
+considered 728, overlap excluded region 69, GC content failed 2, low tm 126, high repeat similarity 14, long poly-x seq 23, ok 494
+Right Stats:
+considered 827, overlap excluded region 72, GC content failed 314, low tm 236, high repeat similarity 19, ok 186
+Intl Stats:
+considered 3079, GC content failed 316, low tm 517, high tm 178, long poly-x seq 23, ok 2045
 Pair Stats:
 considered 167, unacceptable product size 101, tm diff too large 12, high mispriming library similarity 46, ok 8
 primer3 release 2.0.0
@@ -409,6 +435,12 @@ Statistics
 Left     728     0     0    69     0     2     0   126     0     0     0   124    23     0   384
 Right    827     0     0    72     0   314     0   236     0     0     0   176     0     0    29
 Intl    3079     0     0     0     0   316     0   517   178     0     0     0    23     0  2045
+Left Stats:
+considered 728, overlap excluded region 69, GC content failed 2, low tm 126, high repeat similarity 124, long poly-x seq 23, ok 384
+Right Stats:
+considered 827, overlap excluded region 72, GC content failed 314, low tm 236, high repeat similarity 176, ok 29
+Intl Stats:
+considered 3079, GC content failed 316, low tm 517, high tm 178, long poly-x seq 23, ok 2045
 Pair Stats:
 considered 12459, unacceptable product size 6872, tm diff too large 4075, high mispriming library similarity 1512, ok 0
 primer3 release 2.0.0

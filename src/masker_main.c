@@ -269,9 +269,9 @@ main (int argc, const char *argv[])
       } else if (!strcmp (argv[idx + 1], "rev")) {
         mp.mdir = rev;
       } else {
-        pr_append_new_chunk_external (&warnings, "Unknown masking direction: ");
-        pr_append_external (&warnings, argv[idx + 1]);
-        pr_append_external (&warnings, ". Masking both strands by default.");
+        pr_append_new_chunk_external (&parse_err, "Unknown masking direction: ");
+        pr_append_external (&parse_err, argv[idx + 1]);
+        print_error_and_help (&parse_err);
       }
       idx += 1;
 
@@ -382,6 +382,10 @@ main (int argc, const char *argv[])
   free(pbuilder.used_lists);
 
   if (debug > 0) fprintf (stderr, "Done!\n");
+  if (fflush(stdout) == EOF || ferror(stdout)) {
+    perror("writing stdout failed");
+    exit(P3_EXIT_OUTPUT_ERROR);
+  }
   return 0;
 }
 

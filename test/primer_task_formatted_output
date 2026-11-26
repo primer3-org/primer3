@@ -42,6 +42,10 @@ Statistics
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left      10     0     0     0     0     0     0     7     0     0     0     0     0     3
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Left Stats:
+considered 10, low tm 7, ok 3
+Right Stats:
+considered 1, ok 1
 Pair Stats:
 considered 3, ok 3
 primer3 release 2.0.0
@@ -111,6 +115,12 @@ Statistics
 Left     281   210     0     0     0     0     0    30    29     0     0     0     0    12
 Right    284   210     0     0     0     0     0     7    44     0     0     0     0    23
 Intl     393   280     0     0     0     0     0    30    46     0     0     3     0    34
+Left Stats:
+considered 281, too many Ns 210, low tm 30, high tm 29, ok 12
+Right Stats:
+considered 284, too many Ns 210, low tm 7, high tm 44, ok 23
+Intl Stats:
+considered 393, too many Ns 280, low tm 30, high tm 46, long poly-x seq 3, ok 34
 Pair Stats:
 considered 5, ok 5
 primer3 release 2.0.0
@@ -152,6 +162,8 @@ Statistics
          sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left    1121    38    23     0     0     0     0    42   866     0     0     0     0   152
+Left Stats:
+considered 1121, too many Ns 38, overlap target 23, low tm 42, high tm 866, ok 152
 primer3 release 2.0.0
 
 
@@ -191,6 +203,8 @@ Statistics
          sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Right    623    27    36     0     0     5     0   230   145     0     6     0     0   174
+Right Stats:
+considered 623, too many Ns 27, overlap target 36, GC content failed 5, low tm 230, high tm 145, high end compl 6, ok 174
 primer3 release 2.0.0
 
 
@@ -230,6 +244,8 @@ Statistics
          sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Intl    1040    27     0    33     0     0     0    44   804     0     0     0     0   132
+Intl Stats:
+considered 1040, too many Ns 27, overlap excluded region 33, low tm 44, high tm 804, ok 132
 primer3 release 2.0.0
 
 
@@ -255,6 +271,8 @@ Statistics
          sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Left Stats:
+considered 1, ok 1
 primer3 release 2.0.0
 
 
@@ -280,6 +298,8 @@ Statistics
          sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Left Stats:
+considered 1, ok 1
 primer3 release 2.0.0
 
 
@@ -305,6 +325,8 @@ Statistics
          sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
+Left Stats:
+considered 1, ok 1
 primer3 release 2.0.0
 
 

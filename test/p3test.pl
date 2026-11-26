@@ -298,6 +298,8 @@ sub main() {
                   'primer_check',
                   'primer_must_use',
                   'primer_must_use_formatted',
+                  'primer_must_use_junction',
+                  'primer_must_use_junction_formatted',
                   'primer_syntax',
                   'primer_end_pathology',
                   'primer_num_best',
@@ -719,11 +721,16 @@ sub test_fatal_errors() {
         }
 
         $r = _nowarn_system($cmd);
-
-        if ($? == 0) {
-            my $r = $? >> 8;
-            print
-                "\nErroneous 0 exit status ($?) from command $cmd\n";
+        if ($winFlag) {
+            $r = $r >> 8;
+        }
+        # P3_EXIT_INPUT_ERROR, or P3_EXIT_EMPTY_INPUT for an empty input
+        my $expected = 4;
+        if ($root =~ /empty_1$/) {
+            $expected = 3;
+        }
+        if ($r != $expected) {
+            print "\nExit status $r instead of $expected from command $cmd\n";
             $fatal_error_problem = 1;
         }
         if (perldiff "$root.tmp", "$root.out") {

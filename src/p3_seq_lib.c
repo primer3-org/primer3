@@ -120,39 +120,6 @@ add_seq_to_seq_lib(seq_lib *sl,
   return 0;
 }
 
-int 
-add_seq_and_rev_comp_to_seq_lib(seq_lib *sl,
-                                char *seq, 
-                                char *seq_id_plus, 
-                                const char *errfrag) {
-  char *rev_seq = NULL;
-  char *rev_seq_id = NULL;
-  int  save_r = 0;
-
-  if (seq == NULL) { save_r = 1; }
-  
-  if (add_seq_to_seq_lib(sl, seq, seq_id_plus, errfrag)) {
-    return 1;
-  }
-  
-  rev_seq_id = (char*) malloc(strlen(seq_id_plus) + 9);
-  if (rev_seq_id == NULL) return 1;
-
-  /* Handle the ID */
-  strcpy(rev_seq_id, "reverse ");
-  strcat(rev_seq_id, seq_id_plus);
-    
-  /* Handle the sequence */
-  rev_seq = (char*) malloc(strlen(seq) + 1);
-  if (rev_seq == NULL) { free(rev_seq_id); return 1; }
-  p3_reverse_complement(seq, rev_seq);
-
-  save_r = add_seq_to_seq_lib(sl, rev_seq, rev_seq_id, errfrag);
-  free(rev_seq_id);
-  free(rev_seq);
-  return save_r;
-}
-
 static seq_lib *
 create_empty_seq_lib(void) {
   seq_lib *lib;

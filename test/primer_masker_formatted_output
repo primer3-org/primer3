@@ -989,6 +989,12 @@ Statistics
 Left  180335     0     0     0     0  8877     0 34005101808     0     2  1117     0   530 33996
 Right 180325     0     0     0     0  8926     0 33987101882     0     1  1108     0   480 33941
 Intl  180500     0     0     0     0  9272     0 34043102015     0     0  1142     0     0 34028
+Left Stats:
+considered 180335, GC content failed 8877, low tm 34005, high tm 101808, high end compl 2, long poly-x seq 1117, lowercase masking of 3' end 530, ok 33996
+Right Stats:
+considered 180325, GC content failed 8926, low tm 33987, high tm 101882, high end compl 1, long poly-x seq 1108, lowercase masking of 3' end 480, ok 33941
+Intl Stats:
+considered 180500, GC content failed 9272, low tm 34043, high tm 102015, long poly-x seq 1142, ok 34028
 Pair Stats:
 considered 338, unacceptable product size 331, high any compl 1, ok 6
 libprimer3 release 2.4.0
@@ -1985,6 +1991,12 @@ Statistics
 Left  180325     0     0     0     0  8877     0 34002101805     0     2  1117     0   530 33992
 Right 180315     0     0     0     0  8926     0 33985101878     0     1  1108     0   480 33937
 Intl  180490     0     0     0     0  9272     0 34040102012     0     0  1142     0     0 34024
+Left Stats:
+considered 180325, GC content failed 8877, low tm 34002, high tm 101805, high end compl 2, long poly-x seq 1117, lowercase masking of 3' end 530, ok 33992
+Right Stats:
+considered 180315, GC content failed 8926, low tm 33985, high tm 101878, high end compl 1, long poly-x seq 1108, lowercase masking of 3' end 480, ok 33937
+Intl Stats:
+considered 180490, GC content failed 9272, low tm 34040, high tm 102012, long poly-x seq 1142, ok 34024
 Pair Stats:
 considered 338, unacceptable product size 331, high any compl 1, ok 6
 libprimer3 release 2.4.0
@@ -2981,6 +2993,12 @@ Statistics
 Left  180335     0     0     0     0  8877     0 34005101808     0     2  1117     0   530 33996
 Right 180325     0     0     0     0  8926     0 33987101882     0     1  1108     0   480 33941
 Intl  180500     0     0     0     0  9272     0 34043102015     0     0  1142     0     0 34028
+Left Stats:
+considered 180335, GC content failed 8877, low tm 34005, high tm 101808, high end compl 2, long poly-x seq 1117, lowercase masking of 3' end 530, ok 33996
+Right Stats:
+considered 180325, GC content failed 8926, low tm 33987, high tm 101882, high end compl 1, long poly-x seq 1108, lowercase masking of 3' end 480, ok 33941
+Intl Stats:
+considered 180500, GC content failed 9272, low tm 34043, high tm 102015, long poly-x seq 1142, ok 34028
 Pair Stats:
 considered 338, unacceptable product size 331, high any compl 1, ok 6
 libprimer3 release 2.4.0
@@ -3977,6 +3995,12 @@ Statistics
 Left  180225     0     0     0     0  9272     0 34005101808     0     2  1142     0     0 33996
 Right 180230     0     0     0     0  9290     0 33987101882     0     1  1129     0     0 33941
 Intl  180500     0     0     0     0  9272     0 34043102015     0     0  1142     0     0 34028
+Left Stats:
+considered 180225, GC content failed 9272, low tm 34005, high tm 101808, high end compl 2, long poly-x seq 1142, ok 33996
+Right Stats:
+considered 180230, GC content failed 9290, low tm 33987, high tm 101882, high end compl 1, long poly-x seq 1129, ok 33941
+Intl Stats:
+considered 180500, GC content failed 9272, low tm 34043, high tm 102015, long poly-x seq 1142, ok 34028
 Pair Stats:
 considered 338, unacceptable product size 331, high any compl 1, ok 6
 libprimer3 release 2.4.0
@@ -4973,6 +4997,12 @@ Statistics
 Left  180225     0     0     0     0  9272     0 34005101808     0     2  1142     0     0 33996
 Right 180230     0     0     0     0  9290     0 33987101882     0     1  1129     0     0 33941
 Intl  180500     0     0     0     0  9272     0 34043102015     0     0  1142     0     0 34028
+Left Stats:
+considered 180225, GC content failed 9272, low tm 34005, high tm 101808, high end compl 2, long poly-x seq 1142, ok 33996
+Right Stats:
+considered 180230, GC content failed 9290, low tm 33987, high tm 101882, high end compl 1, long poly-x seq 1129, ok 33941
+Intl Stats:
+considered 180500, GC content failed 9272, low tm 34043, high tm 102015, long poly-x seq 1142, ok 34028
 Pair Stats:
 considered 338, unacceptable product size 331, high any compl 1, ok 6
 libprimer3 release 2.4.0
@@ -5945,6 +5975,8 @@ Statistics
          sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end  case      
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
 Left  177051     0     0     0     0  8877     0 34043 99580   693  8656  1102     0   530 23570
+Left Stats:
+considered 177051, GC content failed 8877, low tm 34043, high tm 99580, high any compl 693, high end compl 8656, long poly-x seq 1102, lowercase masking of 3' end 530, ok 23570
 libprimer3 release 2.6.1
 
 
@@ -6915,6 +6947,8 @@ Statistics
          sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end  case      
         ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab   end  ok  
 Right 176957     0     0     0     0  8926     0 34043 99467   716  8094  1099     0   480 24132
+Right Stats:
+considered 176957, GC content failed 8926, low tm 34043, high tm 99467, high any compl 716, high end compl 8094, long poly-x seq 1099, lowercase masking of 3' end 480, ok 24132
 libprimer3 release 2.6.1
 
 
@@ -7909,6 +7943,12 @@ Statistics
 Left  180335     0     0     0     0  8877     0 34005101808     0     2  1117     0   530 33996
 Right 180325     0     0     0     0  8926     0 33987101882     0     1  1108     0   480 33941
 Intl  180500     0     0     0     0  9272     0 34043102015     0     0  1142     0     0 34028
+Left Stats:
+considered 180335, GC content failed 8877, low tm 34005, high tm 101808, high end compl 2, long poly-x seq 1117, lowercase masking of 3' end 530, ok 33996
+Right Stats:
+considered 180325, GC content failed 8926, low tm 33987, high tm 101882, high end compl 1, long poly-x seq 1108, lowercase masking of 3' end 480, ok 33941
+Intl Stats:
+considered 180500, GC content failed 9272, low tm 34043, high tm 102015, long poly-x seq 1142, ok 34028
 Pair Stats:
 considered 338, unacceptable product size 331, high any compl 1, ok 6
 libprimer3 release 2.6.1

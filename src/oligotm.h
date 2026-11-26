@@ -55,13 +55,13 @@ typedef struct tm_ret {
 double end_oligodg(const char *oligo, int len, int tm_method);
 
 /* Calculate the melting temperature of substr(seq, start, length) using the
-   formula from Bolton and McCarthy, PNAS 84:1390 (1962) as presented in
+   formula from Bolton and McCarthy, PNAS 48:1390 (1962) as presented in
    Sambrook, Fritsch and Maniatis, Molecular Cloning, p 11.46 (1989, CSHL
    Press).
 
    Tm = 81.5 + 16.6(log10([Na+])) + .41*(%GC) - 600/length
              - [DMSO] * dmso_fact
-             + (0.453 * (GC_fract - 2.88) * [formamide]
+             + (0.453 * GC_fract - 2.88) * [formamide]
 
    Where [Na+] is the molar sodium concentration, (%GC) is the percent of Gs
    and Cs in the sequence, and length is the length of the sequence.
@@ -98,13 +98,11 @@ tm_ret long_seq_tm(const char *seq,
    For olgigotm() and seqtm()
 
    Both functions return the melting temperature of the given oligo
-   calculated as specified by user, but oligotm _should_ only be used on
-   DNA sequences of length <= MAX_PRIMER_LENGTH (which is defined
-   elsewhere).  seqtm uses oligotm for sequences of length <=
-   MAX_PRIMER_LENGTH, and a different, G+C% based formula for longer
-   sequences.  For oligotm(), no error is generated on sequences
-   longer than MAX_PRIMER_LENGTH, but the formula becomes less
-   accurate as the sequence grows longer.  Caveat emptor.
+   calculated as specified by user.  oligotm() returns OLIGOTM_ERROR
+   for sequences shorter than 2 or longer than MAX_PRIMER_LENGTH bases
+   (which is defined elsewhere).  seqtm() uses oligotm() for sequences
+   of length <= nn_max_len, and long_seq_tm(), a G+C% based formula,
+   for longer sequences.
 
    We use the folowing typedefs:
 */
@@ -128,7 +126,13 @@ typedef enum salt_correction_type {
    thermodynamics", Proc Natl Acad Sci 95:1460-65
    http://dx.doi.org/10.1073/pnas.95.4.1460] is used.
    *THIS IS THE RECOMMENDED VALUE*.
-  
+
+   If tm_method==santalucia_2004, then the same method is used with
+   the table of nearest-neighbor thermodynamic parameters in the paper
+   [SantaLucia JR and Hicks D (2004) "The thermodynamics of DNA
+   structural motifs", Annu Rev Biophys Biomol Struct 33:415-40
+   http://dx.doi.org/10.1146/annurev.biophys.32.110601.141800].
+
    If tm_method==breslauer_auto, then method for Tm
    calculations in the paper [Rychlik W, Spencer WJ and Rhoads RE
    (1990) "Optimization of the annealing temperature for DNA
@@ -161,7 +165,13 @@ typedef enum salt_correction_type {
    Behlke, M.A., and Walder, J.A. (2008) "Predicting stability of DNA 
    duplexes in solutions containing magnesium and monovalent cations", 
    Biochemistry 47:5336-53 http://dx.doi.org/10.1021/bi702363u] is used.
- 
+   If sqrt([Mg++]) / [monovalent cations] (both molar) is below 0.22,
+   the monovalent salt correction (Eq 22) in the paper [Owczarzy R,
+   You Y, Moreira BG, Manthey JA, Huang L, Behlke MA and Walder JA
+   (2004) "Effects of sodium ions on DNA duplex oligomers: Improved
+   predictions of melting temperatures", Biochemistry 43:3537-54
+   http://dx.doi.org/10.1021/bi034621r] is used instead.
+
  */
 
 tm_ret oligotm(const  char *seq,     /* The sequence. */
@@ -182,7 +192,7 @@ tm_ret oligotm(const  char *seq,     /* The sequence. */
 */
 tm_ret seqtm(const  char *seq,  /* The sequence. */
              double dna_conc,   /* DNA concentration (nanomolar). */
-             double salt_conc,  /* Concentration of divalent cations (millimolar). */
+             double salt_conc,  /* Concentration of monovalent cations (millimolar). */
              double divalent_conc, /* Concentration of divalent cations (millimolar) */
              double dntp_conc,     /* Concentration of dNTPs (millimolar) */
              double dmso_conc,     /* Concentration of DMSO (%) */

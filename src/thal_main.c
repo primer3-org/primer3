@@ -201,13 +201,16 @@ int main(int argc, char** argv)
          }
          if(strcmp(argv[i+1],"END1")==0) {
             a.type = thal_end1;
+            a.dimer = 1;
          } else if(strcmp(argv[i+1],"END2")==0) {
             a.type = thal_end2;
+            a.dimer = 1;
          } else if(strcmp(argv[i+1],"HAIRPIN")==0) {
             a.type = thal_hairpin;
             a.dimer = 0;
          } else if (strcmp(argv[i+1], "ANY")==0) {
-               a.type = thal_any; /* ANY */  
+            a.type = thal_any; /* ANY */
+            a.dimer = 1;
          } else {
             fprintf(stderr, usage, argv[0]);
             exit(P3_EXIT_USAGE);
@@ -380,7 +383,10 @@ int main(int argc, char** argv)
          printf("%f\n",o.temp);
        free(o.sec_struct);
        o.sec_struct=NULL;
-       fflush(stdout);
+       if (fflush(stdout) == EOF || ferror(stdout)) {
+         perror("writing stdout failed");
+         exit(P3_EXIT_OUTPUT_ERROR);
+       }
      }
      free((void*)oligo_str);
    } else {
@@ -403,5 +409,9 @@ int main(int argc, char** argv)
    /* cleanup */
    destroy_thal_structures();
    thal_free_parameters(&thermodynamic_parameters);
+   if (fflush(stdout) == EOF || ferror(stdout)) {
+     perror("writing stdout failed");
+     exit(P3_EXIT_OUTPUT_ERROR);
+   }
    return EXIT_SUCCESS;
 }

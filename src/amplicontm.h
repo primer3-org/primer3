@@ -144,17 +144,20 @@ typedef enum amp_tm_method_type {
 
 /*
    If tm_formula==bolton_amp, then the formula from Bolton and McCarthy,
-   PNAS 84:1390 (1962) as presented in Sambrook, Fritsch and Maniatis,
+   PNAS 48:1390 (1962) as presented in Sambrook, Fritsch and Maniatis,
    Molecular Cloning, p 11.46 (1989, CSHL Press).
 
    Tm = 81.5 + 16.6*(log10([Na+] + sqrt([Mg++])*3.795)) + 0.41*(%GC) - 600/length
+             - [DMSO] * dmso_fact
+             + (0.453 * GC_fract - 2.88) * [formamide]
 
    Where [Na+] is the molar sodium concentration, [Mg++] is the molar
    magnesium concentration minus the molar dNTP concentration (0 if the
    dNTPs exceed the magnesium), (%GC) is the percent of Gs and Cs in the
-   sequence, and length is the length of the sequence. Be aware that
-   the tm_parameters and salt_corrections are ignored using this
-   formula.
+   sequence, and length is the length of the sequence. [DMSO] is the
+   percent concentration of DMSO and dmso_fact the correction factor,
+   GC_fract is the fraction of Gs and Cs and [formamide] the
+   concentration of formamide in mol/l.
 
    If tm_formula==wright_amp, then the formula from Wright and
    Vetsigian (2016) "DesignSignatures: a tool for designing primers

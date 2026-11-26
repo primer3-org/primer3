@@ -37,6 +37,12 @@ Statistics
 Left      83     0     0     0     0     0     0     0     0     0     0    82     0     0     1
 Right     83     0     0     0     0     0     0     0     0     0     0    31     0     0    52
 Intl     163     0     0     0     0     0     0     0     0     0     0   122     0     0    41
+Left Stats:
+considered 83, high repeat similarity 82, ok 1
+Right Stats:
+considered 83, high repeat similarity 31, ok 52
+Intl Stats:
+considered 163, high repeat similarity 122, ok 41
 Pair Stats:
 considered 2292, unacceptable product size 1783, no internal oligo 508, ok 1
 primer3 release 2.0.0
@@ -65,6 +71,12 @@ Statistics
 Left      64     0     0     0     0     0     0     0     0     0     0     0     0     0    64
 Right     64     0     0     0     0     0     0     0     0     0     0     0     0     0    64
 Intl     144     0     0     0     0     0     0     0     0     0     0   104     0     0    40
+Left Stats:
+considered 64, ok 64
+Right Stats:
+considered 64, ok 64
+Intl Stats:
+considered 144, high repeat similarity 104, ok 40
 Pair Stats:
 considered 4096, unacceptable product size 2016, no internal oligo 2080, ok 0
 primer3 release 2.0.0

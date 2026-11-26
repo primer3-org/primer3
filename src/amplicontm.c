@@ -180,7 +180,7 @@ amplicon_result amplicontm(const  char *inseq,
         return ret;
     }
     for (i = 0 ; i < orilen ; i++) {
-        ret.seq[ret.seq_len]=toupper(inseq[i]);
+        ret.seq[ret.seq_len]=(char) toupper((unsigned char) inseq[i]);
         switch(ret.seq[ret.seq_len]) {
             case 'C':
             case 'G':

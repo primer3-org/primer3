@@ -93,7 +93,7 @@ readDouble(char **str, jmp_buf _jmp_buf, thal_results *o)
    }
    /* Skip leading spaces with p, so that line can still be freed. */
    p = line;
-   while (isspace(*p)) p++;
+   while (isspace((unsigned char) *p)) p++;
    if (!strncmp(p, "inf", 3)) {
       free(line);
       return _INFINITY;
@@ -118,13 +118,13 @@ readLoop(char **str, double *v1, double *v2, double *v3, jmp_buf _jmp_buf, thal_
       longjmp(_jmp_buf, 1);
    }
    p = line;
-   while (isspace(*p)) p++;
-   while (isdigit(*p)) p++;
-   while (isspace(*p)) p++;
+   while (isspace((unsigned char) *p)) p++;
+   while (isdigit((unsigned char) *p)) p++;
+   while (isspace((unsigned char) *p)) p++;
    q = p;
    /* Stop at the end of the line; a line with fewer than three values
       would otherwise be read past its end. */
-   while (*q != '\0' && !isspace(*q)) q++;
+   while (*q != '\0' && !isspace((unsigned char) *q)) q++;
    if (*q == '\0') {
       strcpy(o->msg, "Thermodynamic loop parameter line has too few values");
       free(line);
@@ -138,9 +138,9 @@ readLoop(char **str, double *v1, double *v2, double *v3, jmp_buf _jmp_buf, thal_
       free(line);
       longjmp(_jmp_buf, 1);
    }
-   while (isspace(*q)) q++;
+   while (isspace((unsigned char) *q)) q++;
    p = q;
-   while (*p != '\0' && !isspace(*p)) p++;
+   while (*p != '\0' && !isspace((unsigned char) *p)) p++;
    if (*p == '\0') {
       strcpy(o->msg, "Thermodynamic loop parameter line has too few values");
       free(line);
@@ -154,9 +154,9 @@ readLoop(char **str, double *v1, double *v2, double *v3, jmp_buf _jmp_buf, thal_
       free(line);
       longjmp(_jmp_buf, 1);
    }
-   while (isspace(*p)) p++;
+   while (isspace((unsigned char) *p)) p++;
    q = p;
-   while (!isspace(*q) && (*q != '\0')) q++;
+   while (!isspace((unsigned char) *q) && (*q != '\0')) q++;
    *q = '\0';
    if (!strcmp(p, "inf")) {
       *v3 = _INFINITY;
@@ -177,12 +177,12 @@ readTLoop(char **str, char *s, double *v, int triloop, jmp_buf _jmp_buf, thal_re
    char *line = th_read_str_line(str, _jmp_buf, o);
    if (!line) return -1;
    char *p = line, *q;
-   while (isspace(*p)) p++;
+   while (isspace((unsigned char) *p)) p++;
    q = p;
-   while (isalpha(*q)) q++;
+   while (isalpha((unsigned char) *q)) q++;
    /* The loop sequence must be followed by whitespace and a value;
       without this check q would move past the end of the line */
-   if (!isspace(*q)) {
+   if (!isspace((unsigned char) *q)) {
       snprintf(o->msg, 255, "Illegal line in triloop/tetraloop parameter file: %.200s", p);
       free(line);
       longjmp(_jmp_buf, 1);
@@ -193,9 +193,9 @@ readTLoop(char **str, char *s, double *v, int triloop, jmp_buf _jmp_buf, thal_re
    } else {
       strncpy(s, p, 6);
    }
-   while (isspace(*q)) q++;
+   while (isspace((unsigned char) *q)) q++;
    p = q;
-   while (!isspace(*p) && (*p != '\0')) p++;
+   while (!isspace((unsigned char) *p) && (*p != '\0')) p++;
    *p = '\0';
    if (!strcmp(q, "inf")) {
       *v = _INFINITY;

@@ -1,0 +1,166 @@
+PRIMER PICKING RESULTS FOR probe_anyway_no_overlap
+
+No internal oligo mishyb library specified
+Using 0-based sequence positions
+WARNING: Hybridization probe is unacceptable: Does not overlap a required point
+
+OLIGO            start  len      tm     gc%   any    3' seq
+INTERNAL_OLIGO     158   20   77.07   80.00  6.00  0.00 GAGGCCCGCACCGATCGCCC
+SEQUENCE SIZE: 215
+INCLUDED REGION SIZE: 215
+
+    0 GCTTGCATGCCTGCAGGTCGACTCTAGAGGATCCCCGGGTACCGAGCTCGAATTCACTGG
+                                                                  
+
+   60 CCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTG
+                                                                  
+
+  120 CAGCACATCCCCCTTTCGCCAGCTGGCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTT
+                                            ^^^^^^^^^^^^^^^^^^^^  
+
+  180 CCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGC
+                                         
+
+KEYS (in order of precedence):
+^^^^^^ internal oligo
+
+
+
+Statistics
+libprimer3 release 2.6.1
+
+
+PRIMER PICKING RESULTS FOR probe_anyway_overlap
+
+No internal oligo mishyb library specified
+Using 0-based sequence positions
+OLIGO            start  len      tm     gc%   any    3' seq
+INTERNAL_OLIGO     158   20   77.07   80.00  6.00  0.00 GAGGCCCGCACCGATCGCCC
+SEQUENCE SIZE: 215
+INCLUDED REGION SIZE: 215
+
+    0 GCTTGCATGCCTGCAGGTCGACTCTAGAGGATCCCCGGGTACCGAGCTCGAATTCACTGG
+                                                                  
+
+   60 CCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTG
+                                                                  
+
+  120 CAGCACATCCCCCTTTCGCCAGCTGGCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTT
+                                            ^^^^^^^^^^^^^^^^^^^^  
+
+  180 CCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGC
+                                         
+
+KEYS (in order of precedence):
+^^^^^^ internal oligo
+
+
+
+Statistics
+libprimer3 release 2.6.1
+
+
+PRIMER PICKING RESULTS FOR probe_no_anyway_no_overlap
+
+No internal oligo mishyb library specified
+Using 0-based sequence positions
+NO INTERNAL OLIGO FOUND
+
+    0 GCTTGCATGCCTGCAGGTCGACTCTAGAGGATCCCCGGGTACCGAGCTCGAATTCACTGG
+   60 CCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTG
+  120 CAGCACATCCCCCTTTCGCCAGCTGGCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTT
+  180 CCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGC
+
+
+
+Statistics
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Intl       1     0     0     0     0     0     0     0     0     0     0     0     0     0
+Intl Stats:
+considered 1, no overlap of required point 1, ok 0
+libprimer3 release 2.6.1
+
+
+PRIMER PICKING RESULTS FOR probe_anyway_at_3_prime_limit
+
+No internal oligo mishyb library specified
+Using 0-based sequence positions
+WARNING: Hybridization probe is unacceptable: Does not overlap a required point
+
+OLIGO            start  len      tm     gc%   any    3' seq
+INTERNAL_OLIGO     158   20   77.07   80.00  6.00  0.00 GAGGCCCGCACCGATCGCCC
+SEQUENCE SIZE: 215
+INCLUDED REGION SIZE: 215
+
+    0 GCTTGCATGCCTGCAGGTCGACTCTAGAGGATCCCCGGGTACCGAGCTCGAATTCACTGG
+                                                                  
+
+   60 CCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTG
+                                                                  
+
+  120 CAGCACATCCCCCTTTCGCCAGCTGGCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTT
+                                            ^^^^^^^^^^^^^^^^^^^^  
+
+  180 CCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGC
+                                         
+
+KEYS (in order of precedence):
+^^^^^^ internal oligo
+
+
+
+Statistics
+libprimer3 release 2.6.1
+
+
+PRIMER PICKING RESULTS FOR triple_anyway_no_overlap
+
+No mispriming library specified
+No internal oligo mishyb library specified
+Using 0-based sequence positions
+WARNING: Hybridization probe is unacceptable: Does not overlap a required point
+
+OLIGO            start  len      tm     gc%   any    3' seq
+LEFT PRIMER         72   20   60.01   50.00  5.00  0.00 AACGTCGTGACTGGGAAAAC
+RIGHT PRIMER       211   18   62.14   55.56  3.00  3.00 CCATTCGCCATTCAGGCT
+INTERNAL OLIGO     158   20   77.07   80.00  6.00  0.00 GAGGCCCGCACCGATCGCCC
+SEQUENCE SIZE: 215
+INCLUDED REGION SIZE: 215
+
+PRODUCT SIZE: 140, PAIR ANY COMPL: 6.00, PAIR 3' COMPL: 1.00
+
+    0 GCTTGCATGCCTGCAGGTCGACTCTAGAGGATCCCCGGGTACCGAGCTCGAATTCACTGG
+                                                                  
+
+   60 CCGTCGTTTTACAACGTCGTGACTGGGAAAACCCTGGCGTTACCCAACTTAATCGCCTTG
+                  >>>>>>>>>>>>>>>>>>>>                            
+
+  120 CAGCACATCCCCCTTTCGCCAGCTGGCGTAATAGCGAAGAGGCCCGCACCGATCGCCCTT
+                                            ^^^^^^^^^^^^^^^^^^^^  
+
+  180 CCCAACAGTTGCGCAGCCTGAATGGCGAATGGCGC
+                    <<<<<<<<<<<<<<<<<<   
+
+KEYS (in order of precedence):
+>>>>>> left primer
+<<<<<< right primer
+^^^^^^ internal oligo
+
+
+Statistics
+         con   too    in    in   not          no    tm    tm  high  high        high      
+         sid  many   tar  excl    ok   bad    GC   too   too   any    3'  poly   end      
+        ered    Ns   get   reg   reg   GC% clamp   low  high compl compl     X  stab    ok
+Left    1160     0     0     0     0     0     0    76   848     0     1     0     0   235
+Right   1160     0     0     0     0     1     0    32  1005     0     7     0     0   115
+Left Stats:
+considered 1160, low tm 76, high tm 848, high end compl 1, ok 235
+Right Stats:
+considered 1160, GC content failed 1, low tm 32, high tm 1005, high end compl 7, ok 115
+Pair Stats:
+considered 23327, unacceptable product size 16686, no internal oligo 6640, ok 1
+libprimer3 release 2.6.1
+
+

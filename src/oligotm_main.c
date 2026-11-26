@@ -272,7 +272,7 @@ main(int argc, char **argv)
   /* input sequence to uppercase */
   seq = argv[i];
   len=strlen(seq);
-  for(j=0;j<len;j++) seq[j]=toupper(seq[j]);
+  for(j=0;j<len;j++) seq[j]=(char) toupper((unsigned char) seq[j]);
 
   tm_calc = oligotm(seq, d, mv, dv, n, dmso, dmso_fact, formamide,
                     (tm_method_type) tm_santalucia, (salt_correction_type) salt_corrections, -10.0);
@@ -288,5 +288,9 @@ main(int argc, char **argv)
     return P3_EXIT_INPUT_ERROR;
   }
   fprintf(stdout, "%f\n", tm);
+  if (fflush(stdout) == EOF || ferror(stdout)) {
+    perror("writing stdout failed");
+    exit(P3_EXIT_OUTPUT_ERROR);
+  }
   return 0;
 }

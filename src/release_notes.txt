@@ -353,6 +353,30 @@ Minor fixes:
     INTERNAL variants) read memory before the oligo, and
     PRIMER_MAX_END_GC counted bases after its end.
 
+36. A SEQUENCE_INTERNAL_OLIGO used with PRIMER_PICK_ANYWAY=1 that does
+    not overlap a position in SEQUENCE_INTERNAL_OVERLAP_JUNCTION_LIST
+    is now reported with PRIMER_INTERNAL_n_PROBLEMS= Does not overlap
+    a required point; and a warning in --format_output. Before, it was
+    used without any hint.
+
+37. The warning "SEQUENCE_PRIMER_PAIR_OK_REGION_LIST[...] does not allow
+    products of ..." now gives the region starts as in the input. Before,
+    they were 0-based and relative to SEQUENCE_INCLUDED_REGION, so they
+    were wrong with PRIMER_FIRST_BASE_INDEX other than 0 or with an
+    included region.
+
+38. With SEQUENCE_INTERNAL_OVERLAP_JUNCTION_LIST and
+    PRIMER_INTERNAL_MIN_THREE_PRIME_DISTANCE, a primer pair whose stored
+    internal oligo was already used by a selected triple was dropped.
+    It is now evaluated again with another internal oligo, so better
+    triples are found.
+
+39. --format_output with PRIMER_EXPLAIN_FLAG now also prints Left Stats,
+    Right Stats and Intl Stats lines with all counters of
+    PRIMER_LEFT/RIGHT/INTERNAL_EXPLAIN. The statistics table has no
+    columns for some of them (for example PRIMER_MAX_END_GC, the
+    PRIMER_MUST_MATCH tags and template mispriming).
+
 
 release 2.6.1 2022-01-26  ===============================================
 This release fixes a small memory bug.

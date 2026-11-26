@@ -58,6 +58,12 @@ Statistics
 Left    1290     0     0     0     0    10     0    60  1039      0     0     0     0     0   181
 Right   1290     0     0     0     0    32     0    38  1096      0     0     0     0     0   124
 Intl    1565     0     0     0     0    32     0    22  1378      0     0     2     0     0   131
+Left Stats:
+considered 1290, GC content failed 10, low tm 60, high tm 1039, ok 181
+Right Stats:
+considered 1290, GC content failed 32, low tm 38, high tm 1096, ok 124
+Intl Stats:
+considered 1565, GC content failed 32, low tm 22, high tm 1378, high hairpin stability 2, ok 131
 Pair Stats:
 considered 25, unacceptable product size 20, ok 5
 libprimer3 release 2.3.6
@@ -135,6 +141,12 @@ Statistics
 Left    3397     0     0     0     0     0     0   897  1543      0     0     0    22     0   935
 Right   3397     0     0     0     0     0     0   839  1673      0     0     1    22     0   862
 Intl    3672     0     0     0     0     0     0   649  2188      0     0    31    22     0   782
+Left Stats:
+considered 3397, low tm 897, high tm 1543, long poly-x seq 22, ok 935
+Right Stats:
+considered 3397, low tm 839, high tm 1673, high hairpin stability 1, long poly-x seq 22, ok 862
+Intl Stats:
+considered 3672, low tm 649, high tm 2188, high hairpin stability 31, long poly-x seq 22, ok 782
 Pair Stats:
 considered 58, unacceptable product size 51, ok 7
 libprimer3 release 2.3.6
@@ -212,6 +224,12 @@ Statistics
 Left    3397     0     0     0     0     0     0    52  3139      0     0     1    22     0   183
 Right   3397     0     0     0     0     0     0    59  3137      0     0     0    22     0   179
 Intl    3672     0     0     0     0     0     0   403  2607      0     0    10    22     0   630
+Left Stats:
+considered 3397, low tm 52, high tm 3139, high hairpin stability 1, long poly-x seq 22, ok 183
+Right Stats:
+considered 3397, low tm 59, high tm 3137, long poly-x seq 22, ok 179
+Intl Stats:
+considered 3672, low tm 403, high tm 2607, high hairpin stability 10, long poly-x seq 22, ok 630
 Pair Stats:
 considered 18, unacceptable product size 11, high template mispriming score 1, ok 6
 libprimer3 release 2.3.6
@@ -289,6 +307,12 @@ Statistics
 Left    3397     0     0     0     0     0     0    52  3139      0     0     1    22     0   183
 Right   3397     0     0     0     0     0     0    59  3137      0     0     0    22     0   179
 Intl    3672     0     0     0     0     0     0   403  2607      0     0    10    22     0   630
+Left Stats:
+considered 3397, low tm 52, high tm 3139, high hairpin stability 1, long poly-x seq 22, ok 183
+Right Stats:
+considered 3397, low tm 59, high tm 3137, long poly-x seq 22, ok 179
+Intl Stats:
+considered 3672, low tm 403, high tm 2607, high hairpin stability 10, long poly-x seq 22, ok 630
 Pair Stats:
 considered 20, unacceptable product size 11, high template mispriming score 3, ok 6
 libprimer3 release 2.3.6
@@ -366,6 +390,12 @@ Statistics
 Left    3146     0     0     0     0     0     0    52  2915     33     0     1    22     0   123
 Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
 Intl    3031     0     0     0     0     0     0   403  2125    102     0    10    22     0   369
+Left Stats:
+considered 3146, low tm 52, high tm 2915, high any compl 33, high hairpin stability 1, long poly-x seq 22, ok 123
+Right Stats:
+considered 3209, low tm 59, high tm 2966, high any compl 24, long poly-x seq 18, ok 142
+Intl Stats:
+considered 3031, low tm 403, high tm 2125, high any compl 102, high hairpin stability 10, long poly-x seq 22, ok 369
 Pair Stats:
 considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
 libprimer3 release 2.3.6
@@ -443,6 +473,12 @@ Statistics
 Left    3397     0     0     0     0     0     0    52  3139      0     0     1    22     0   183
 Right   3397     0     0     0     0     0     0    59  3137      0     0     0    22     0   179
 Intl    3672     0     0     0     0     0     0   403  2607     16     0    10    22     0   614
+Left Stats:
+considered 3397, low tm 52, high tm 3139, high hairpin stability 1, long poly-x seq 22, ok 183
+Right Stats:
+considered 3397, low tm 59, high tm 3137, long poly-x seq 22, ok 179
+Intl Stats:
+considered 3672, low tm 403, high tm 2607, high any compl 16, high hairpin stability 10, long poly-x seq 22, ok 614
 Pair Stats:
 considered 18, unacceptable product size 11, high template mispriming score 1, ok 6
 libprimer3 release 2.3.6
@@ -520,6 +556,12 @@ Statistics
 Left    3397     0     0     0     0     0     0    52  3139      0     0     1    22     0   183
 Right   3397     0     0     0     0     0     0    59  3137      0     0     0    22     0   179
 Intl    3672     0     0     0     0     0     0   403  2607     16     0    10    22     0   614
+Left Stats:
+considered 3397, low tm 52, high tm 3139, high hairpin stability 1, long poly-x seq 22, ok 183
+Right Stats:
+considered 3397, low tm 59, high tm 3137, long poly-x seq 22, ok 179
+Intl Stats:
+considered 3672, low tm 403, high tm 2607, high any compl 16, high hairpin stability 10, long poly-x seq 22, ok 614
 Pair Stats:
 considered 18, unacceptable product size 11, high template mispriming score 1, ok 6
 libprimer3 release 2.3.6
@@ -597,6 +639,12 @@ Statistics
 Left    3089     0     0     0     0     0     0    52  2863     40     0     1    22     0   111
 Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
 Intl    2981     0     0     0     0     0     0   403  2084    109     0    10    22     0   353
+Left Stats:
+considered 3089, low tm 52, high tm 2863, high any compl 40, high hairpin stability 1, long poly-x seq 22, ok 111
+Right Stats:
+considered 3209, low tm 59, high tm 2966, high any compl 24, long poly-x seq 18, ok 142
+Intl Stats:
+considered 2981, low tm 403, high tm 2084, high any compl 109, high hairpin stability 10, long poly-x seq 22, ok 353
 Pair Stats:
 considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
 libprimer3 release 2.3.6
@@ -674,6 +722,12 @@ Statistics
 Left    3089     0     0     0     0     0     0    52  2863     40     0     2    22     0   110
 Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
 Intl    2981     0     0     0     0     0     0   403  2084    109     0    29    22     0   334
+Left Stats:
+considered 3089, low tm 52, high tm 2863, high any compl 40, high hairpin stability 2, long poly-x seq 22, ok 110
+Right Stats:
+considered 3209, low tm 59, high tm 2966, high any compl 24, long poly-x seq 18, ok 142
+Intl Stats:
+considered 2981, low tm 403, high tm 2084, high any compl 109, high hairpin stability 29, long poly-x seq 22, ok 334
 Pair Stats:
 considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
 libprimer3 release 2.3.6
@@ -751,6 +805,12 @@ Statistics
 Left    3089     0     0     0     0     0     0    52  2863     40     0     1    22     0   111
 Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
 Intl    2981     0     0     0     0     0     0   403  2084    109     0    14    22     0   349
+Left Stats:
+considered 3089, low tm 52, high tm 2863, high any compl 40, high hairpin stability 1, long poly-x seq 22, ok 111
+Right Stats:
+considered 3209, low tm 59, high tm 2966, high any compl 24, long poly-x seq 18, ok 142
+Intl Stats:
+considered 2981, low tm 403, high tm 2084, high any compl 109, high hairpin stability 14, long poly-x seq 22, ok 349
 Pair Stats:
 considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
 libprimer3 release 2.3.6
@@ -828,6 +888,12 @@ Statistics
 Left    3089     0     0     0     0     0     0    52  2863     40     0     1    22     0   111
 Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
 Intl    2981     0     0     0     0     0     0   403  2084    109     0    29    22     0   334
+Left Stats:
+considered 3089, low tm 52, high tm 2863, high any compl 40, high hairpin stability 1, long poly-x seq 22, ok 111
+Right Stats:
+considered 3209, low tm 59, high tm 2966, high any compl 24, long poly-x seq 18, ok 142
+Intl Stats:
+considered 2981, low tm 403, high tm 2084, high any compl 109, high hairpin stability 29, long poly-x seq 22, ok 334
 Pair Stats:
 considered 23, unacceptable product size 12, high template mispriming score 3, ok 8
 libprimer3 release 2.3.6
@@ -905,6 +971,12 @@ Statistics
 Left    3089     0     0     0     0     0     0    52  2863     40     0     1    22     0   111
 Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
 Intl    2981     0     0     0     0     0     0   403  2084    109     0    29    22     0   334
+Left Stats:
+considered 3089, low tm 52, high tm 2863, high any compl 40, high hairpin stability 1, long poly-x seq 22, ok 111
+Right Stats:
+considered 3209, low tm 59, high tm 2966, high any compl 24, long poly-x seq 18, ok 142
+Intl Stats:
+considered 2981, low tm 403, high tm 2084, high any compl 109, high hairpin stability 29, long poly-x seq 22, ok 334
 Pair Stats:
 considered 20, unacceptable product size 11, high template mispriming score 1, ok 8
 libprimer3 release 2.3.6
@@ -982,6 +1054,12 @@ Statistics
 Left    3089     0     0     0     0     0     0    52  2863     40     0     1    22     0   111
 Right   3209     0     0     0     0     0     0    59  2966     24     0     0    18     0   142
 Intl    2981     0     0     0     0     0     0   403  2084    109     0    29    22     0   334
+Left Stats:
+considered 3089, low tm 52, high tm 2863, high any compl 40, high hairpin stability 1, long poly-x seq 22, ok 111
+Right Stats:
+considered 3209, low tm 59, high tm 2966, high any compl 24, long poly-x seq 18, ok 142
+Intl Stats:
+considered 2981, low tm 403, high tm 2084, high any compl 109, high hairpin stability 29, long poly-x seq 22, ok 334
 Pair Stats:
 considered 23, unacceptable product size 12, ok 11
 libprimer3 release 2.3.6
@@ -1059,6 +1137,12 @@ Statistics
 Left    3089     0     0     0     0     0     0    52  2863     40     0     1     0    22     0   111
 Right   3209     0     0     0     0     0     0    59  2966     24     0     0     0    18     0   142
 Intl    2981     0     0     0     0     0     0   403  2084    109     0    29     0    22     0   334
+Left Stats:
+considered 3089, low tm 52, high tm 2863, high any compl 40, high hairpin stability 1, long poly-x seq 22, ok 111
+Right Stats:
+considered 3209, low tm 59, high tm 2966, high any compl 24, long poly-x seq 18, ok 142
+Intl Stats:
+considered 2981, low tm 403, high tm 2084, high any compl 109, high hairpin stability 29, long poly-x seq 22, ok 334
 Pair Stats:
 considered 23, unacceptable product size 12, ok 11
 libprimer3 release 2.3.6
@@ -1136,6 +1220,12 @@ Statistics
 Left    3089     0     0     0     0     0     0    52  2863     40     0    25     3    22     0    84
 Right   3209     0     0     0     0     0     0    59  2966     24     0    38     0    18     0   104
 Intl    2981     0     0     0     0     0     0   403  2084    109     0    29     0    22     0   334
+Left Stats:
+considered 3089, low tm 52, high tm 2863, high any compl 40, high hairpin stability 25, high repeat similarity 3, long poly-x seq 22, ok 84
+Right Stats:
+considered 3209, low tm 59, high tm 2966, high any compl 24, high hairpin stability 38, long poly-x seq 18, ok 104
+Intl Stats:
+considered 2981, low tm 403, high tm 2084, high any compl 109, high hairpin stability 29, long poly-x seq 22, ok 334
 Pair Stats:
 considered 8972, unacceptable product size 3851, high any compl 38, no internal oligo 645, high template mispriming score 135, ok 4303
 libprimer3 release 2.3.6

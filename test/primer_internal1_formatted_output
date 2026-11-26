@@ -31,6 +31,12 @@ Statistics
 Left      35    33     0     0     0     0     0     0     0     0     0     0     0     2
 Right     35    33     0     0     0     0     0     0     0     0     0     0     0     2
 Intl      60    57     0     0     0     0     0     0     0     0     0     0     0     3
+Left Stats:
+considered 35, too many Ns 33, ok 2
+Right Stats:
+considered 35, too many Ns 33, ok 2
+Intl Stats:
+considered 60, too many Ns 57, ok 3
 Pair Stats:
 considered 4, unacceptable product size 1, no internal oligo 2, ok 1
 primer3 release 2.0.0
@@ -69,6 +75,12 @@ Statistics
 Left      30    28     0     0     0     0     0     0     0     0     0     0     0     2
 Right     30    29     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      60    57     0     0     0     0     0     0     0     0     0     0     0     3
+Left Stats:
+considered 30, too many Ns 28, ok 2
+Right Stats:
+considered 30, too many Ns 29, ok 1
+Intl Stats:
+considered 60, too many Ns 57, ok 3
 Pair Stats:
 considered 2, unacceptable product size 1, ok 1
 primer3 release 2.0.0
@@ -107,6 +119,12 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      60    57     0     0     0     0     0     0     0     0     0     0     0     3
+Left Stats:
+considered 5, too many Ns 4, ok 1
+Right Stats:
+considered 5, too many Ns 4, ok 1
+Intl Stats:
+considered 60, too many Ns 57, ok 3
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -145,6 +163,12 @@ Statistics
 Left       5     3     0     0     0     0     0     0     0     0     0     0     0     2
 Right      5     3     0     0     0     0     0     0     0     0     0     0     0     2
 Intl      60    57     0     0     0     0     0     0     0     0     0     0     0     3
+Left Stats:
+considered 5, too many Ns 3, ok 2
+Right Stats:
+considered 5, too many Ns 3, ok 2
+Intl Stats:
+considered 60, too many Ns 57, ok 3
 Pair Stats:
 considered 4, unacceptable product size 3, ok 1
 primer3 release 2.0.0
@@ -172,6 +196,12 @@ Statistics
 Left       5     3     0     0     0     0     0     0     0     0     0     0     0     2
 Right      5     1     0     0     0     0     0     0     0     0     0     0     0     4
 Intl      60    59     0     0     0     0     0     0     0     0     0     0     0     1
+Left Stats:
+considered 5, too many Ns 3, ok 2
+Right Stats:
+considered 5, too many Ns 1, ok 4
+Intl Stats:
+considered 60, too many Ns 59, ok 1
 Pair Stats:
 considered 8, unacceptable product size 6, no internal oligo 2, ok 0
 primer3 release 2.0.0
@@ -217,6 +247,12 @@ Statistics
 Left       5     3     0     0     0     0     0     0     0     0     0     0     0     2
 Right      5     0     0     0     0     0     0     0     0     0     0     0     0     5
 Intl      60    52     0     0     0     0     0     0     0     0     0     0     0     8
+Left Stats:
+considered 5, too many Ns 3, ok 2
+Right Stats:
+considered 5, ok 5
+Intl Stats:
+considered 60, too many Ns 52, ok 8
 Pair Stats:
 considered 10, unacceptable product size 8, ok 2
 primer3 release 2.0.0
@@ -262,6 +298,12 @@ Statistics
 Left       5     3     0     0     0     0     0     0     0     0     0     0     0     2
 Right      5     0     0     0     0     0     0     0     0     0     0     0     0     5
 Intl      60    52     0     0     0     0     0     0     0     0     0     0     0     8
+Left Stats:
+considered 5, too many Ns 3, ok 2
+Right Stats:
+considered 5, ok 5
+Intl Stats:
+considered 60, too many Ns 52, ok 8
 Pair Stats:
 considered 10, unacceptable product size 8, ok 2
 primer3 release 2.0.0
@@ -300,6 +342,12 @@ Statistics
 Left       5     3     0     0     0     0     0     0     0     0     0     0     0     2
 Right      5     3     0     0     0     0     0     0     0     0     0     0     0     2
 Intl      60    23     0     0     0     0     0     0     0     0     0     0     0    37
+Left Stats:
+considered 5, too many Ns 3, ok 2
+Right Stats:
+considered 5, too many Ns 3, ok 2
+Intl Stats:
+considered 60, too many Ns 23, ok 37
 Pair Stats:
 considered 4, unacceptable product size 3, ok 1
 primer3 release 2.0.0
@@ -338,6 +386,12 @@ Statistics
 Left       5     2     0     0     0     0     0     0     0     0     0     0     0     3
 Right      5     3     0     0     0     0     0     0     0     0     0     0     0     2
 Intl      60    25     0     0     0     0     0     0     0     0     0     0     0    35
+Left Stats:
+considered 5, too many Ns 2, ok 3
+Right Stats:
+considered 5, too many Ns 3, ok 2
+Intl Stats:
+considered 60, too many Ns 25, ok 35
 Pair Stats:
 considered 6, unacceptable product size 5, ok 1
 primer3 release 2.0.0
@@ -376,6 +430,12 @@ Statistics
 Left       5     3     0     0     0     0     0     0     0     0     0     0     0     2
 Right      5     2     0     0     0     0     0     0     0     0     0     0     0     3
 Intl      60    25     0     0     0     0     0     0     0     0     0     0     0    35
+Left Stats:
+considered 5, too many Ns 3, ok 2
+Right Stats:
+considered 5, too many Ns 2, ok 3
+Intl Stats:
+considered 60, too many Ns 25, ok 35
 Pair Stats:
 considered 6, unacceptable product size 5, ok 1
 primer3 release 2.0.0
@@ -402,6 +462,12 @@ Statistics
 Left      10     8     0     0     0     0     0     0     0     0     0     0     0     2
 Right     10     8     0     0     0     0     0     0     0     0     0     0     0     2
 Intl      35     0     0     0     0     0     0     0     0     0     0     0     0    35
+Left Stats:
+considered 10, too many Ns 8, ok 2
+Right Stats:
+considered 10, too many Ns 8, ok 2
+Intl Stats:
+considered 35, ok 35
 Pair Stats:
 considered 4, no internal oligo 4, ok 0
 primer3 release 2.0.0
@@ -429,6 +495,12 @@ Statistics
 Left      35    31     0     0     0     0     0     0     0     0     0     0     0     4
 Right     35    31     0     0     0     0     0     0     0     0     0     0     0     4
 Intl      60     0     0     0     0    29     0     0     0     0     0     0     0    31
+Left Stats:
+considered 35, too many Ns 31, ok 4
+Right Stats:
+considered 35, too many Ns 31, ok 4
+Intl Stats:
+considered 60, GC content failed 29, ok 31
 Pair Stats:
 considered 16, unacceptable product size 4, no internal oligo 12, ok 0
 primer3 release 2.0.0
@@ -463,6 +535,12 @@ Statistics
 Left      62    53     0     0     0     0     0     0     0     0     0     0     0     9
 Right     62    53     0     0     0     0     0     0     0     0     0     0     0     9
 Intl      87    39     0    40     0     0     0     0     0     0     0     0     0     8
+Left Stats:
+considered 62, too many Ns 53, ok 9
+Right Stats:
+considered 62, too many Ns 53, ok 9
+Intl Stats:
+considered 87, too many Ns 39, overlap excluded region 40, ok 8
 Pair Stats:
 considered 81, unacceptable product size 49, no internal oligo 32, ok 0
 primer3 release 2.0.0
@@ -525,6 +603,12 @@ Statistics
 Left      66    57     0     0     0     0     0     0     0     0     0     0     0     9
 Right     66    57     0     0     0     0     0     0     0     0     0     0     0     9
 Intl      91    84     0     5     0     0     0     0     0     0     0     0     0     2
+Left Stats:
+considered 66, too many Ns 57, ok 9
+Right Stats:
+considered 66, too many Ns 57, ok 9
+Intl Stats:
+considered 91, too many Ns 84, overlap excluded region 5, ok 2
 Pair Stats:
 considered 16, unacceptable product size 3, no internal oligo 8, ok 5
 primer3 release 2.0.0
@@ -597,6 +681,12 @@ Statistics
 Left     151    99     0     0     0     0     0     0     0     0     0     0     0    52
 Right    151   148     0     0     0     0     0     0     0     0     0     0     0     3
 Intl     226   175     0    47     0     0     0     0     0     0     0     0     0     4
+Left Stats:
+considered 151, too many Ns 99, ok 52
+Right Stats:
+considered 151, too many Ns 148, ok 3
+Intl Stats:
+considered 226, too many Ns 175, overlap excluded region 47, ok 4
 Pair Stats:
 considered 14, no internal oligo 8, ok 6
 primer3 release 2.0.0
@@ -660,6 +750,12 @@ Statistics
 Left      77    27     0     0     0     0     0     0     0     0     0     0     0    50
 Right     77    28     0     0     0     0     0     0     0     0     0     0     0    49
 Intl     152    57     0     0     0     0     0     1    93     0     0     0     0     1
+Left Stats:
+considered 77, too many Ns 27, ok 50
+Right Stats:
+considered 77, too many Ns 28, ok 49
+Intl Stats:
+considered 152, too many Ns 57, low tm 1, high tm 93, ok 1
 Pair Stats:
 considered 323, unacceptable product size 223, no internal oligo 87, ok 13
 primer3 release 2.0.0
@@ -698,6 +794,12 @@ Statistics
 Left       5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Right      5     4     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      60    57     0     0     0     0     0     0     0     0     0     0     0     3
+Left Stats:
+considered 5, too many Ns 4, ok 1
+Right Stats:
+considered 5, too many Ns 4, ok 1
+Intl Stats:
+considered 60, too many Ns 57, ok 3
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -741,6 +843,12 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      56    53     0     0     0     0     0     0     0     0     0     0     0     3
+Left Stats:
+considered 1, ok 1
+Right Stats:
+considered 1, ok 1
+Intl Stats:
+considered 56, too many Ns 53, ok 3
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -782,6 +890,12 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      56    53     0     1     0     0     0     0     0     0     0     0     0     2
+Left Stats:
+considered 1, ok 1
+Right Stats:
+considered 1, ok 1
+Intl Stats:
+considered 56, too many Ns 53, overlap excluded region 1, ok 2
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -825,6 +939,12 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      56    53     0     1     0     0     0     0     0     0     0     0     0     2
+Left Stats:
+considered 1, ok 1
+Right Stats:
+considered 1, ok 1
+Intl Stats:
+considered 56, too many Ns 53, overlap excluded region 1, ok 2
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -866,6 +986,12 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      56    53     0     0     0     0     0     0     0     0     0     0     0     3
+Left Stats:
+considered 1, ok 1
+Right Stats:
+considered 1, ok 1
+Intl Stats:
+considered 56, too many Ns 53, ok 3
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -901,6 +1027,12 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      56    53     0     1     0     0     0     0     0     0     0     0     0     2
+Left Stats:
+considered 1, ok 1
+Right Stats:
+considered 1, ok 1
+Intl Stats:
+considered 56, too many Ns 53, overlap excluded region 1, ok 2
 Pair Stats:
 considered 1, no internal oligo 1, ok 0
 primer3 release 2.0.0
@@ -936,6 +1068,12 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      56    53     0     1     0     0     0     0     0     0     0     0     0     2
+Left Stats:
+considered 1, ok 1
+Right Stats:
+considered 1, ok 1
+Intl Stats:
+considered 56, too many Ns 53, overlap excluded region 1, ok 2
 Pair Stats:
 considered 1, no internal oligo 1, ok 0
 primer3 release 2.0.0
@@ -977,6 +1115,12 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      56    53     0     0     0     0     0     0     0     0     0     0     0     3
+Left Stats:
+considered 1, ok 1
+Right Stats:
+considered 1, ok 1
+Intl Stats:
+considered 56, too many Ns 53, ok 3
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1018,6 +1162,12 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      56    53     0     1     0     0     0     0     0     0     0     0     0     2
+Left Stats:
+considered 1, ok 1
+Right Stats:
+considered 1, ok 1
+Intl Stats:
+considered 56, too many Ns 53, overlap excluded region 1, ok 2
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1061,6 +1211,12 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      56    53     0     0     0     0     0     0     0     0     0     0     0     3
+Left Stats:
+considered 1, ok 1
+Right Stats:
+considered 1, ok 1
+Intl Stats:
+considered 56, too many Ns 53, ok 3
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1104,6 +1260,12 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      56    53     0     1     0     0     0     0     0     0     0     0     0     2
+Left Stats:
+considered 1, ok 1
+Right Stats:
+considered 1, ok 1
+Intl Stats:
+considered 56, too many Ns 53, overlap excluded region 1, ok 2
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0
@@ -1145,6 +1307,12 @@ Statistics
 Left       1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Right      1     0     0     0     0     0     0     0     0     0     0     0     0     1
 Intl      56    53     0     1     0     0     0     0     0     0     0     0     0     2
+Left Stats:
+considered 1, ok 1
+Right Stats:
+considered 1, ok 1
+Intl Stats:
+considered 56, too many Ns 53, overlap excluded region 1, ok 2
 Pair Stats:
 considered 1, ok 1
 primer3 release 2.0.0

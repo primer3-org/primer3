@@ -441,5 +441,9 @@ main(int argc, char **argv)
       fprintf(stderr, "%s ERROR: no melting temperature found between 60 and 95 C.\n", argv[0]);
       return P3_EXIT_INPUT_ERROR;
   }
+  if (fflush(stdout) == EOF || ferror(stdout)) {
+      perror("writing stdout failed");
+      exit(P3_EXIT_OUTPUT_ERROR);
+  }
   return 0;
 }

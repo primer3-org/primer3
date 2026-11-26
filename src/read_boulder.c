@@ -350,9 +350,9 @@ read_boulder_record(FILE *file_input,
         } else {
            read_start_codon = 1;
            if (datum_len == 3) {
-             sa->start_codon_seq[0] = toupper(s[tag_len + 1]);
-             sa->start_codon_seq[1] = toupper(s[tag_len + 2]);
-             sa->start_codon_seq[2] = toupper(s[tag_len + 3]);
+             sa->start_codon_seq[0] = (char) toupper((unsigned char) s[tag_len + 1]);
+             sa->start_codon_seq[1] = (char) toupper((unsigned char) s[tag_len + 2]);
+             sa->start_codon_seq[2] = (char) toupper((unsigned char) s[tag_len + 3]);
            } else {
              sa->start_codon_seq[0] = 'X';
            }
@@ -439,12 +439,12 @@ read_boulder_record(FILE *file_input,
       COMPARE_FLOAT("PRIMER_PAIR_MAX_COMPL_END", pa->pair_compl_end);
       COMPARE_FLOAT("PRIMER_PAIR_MAX_COMPL_ANY_TH", pa->pair_compl_any_th);
       COMPARE_FLOAT("PRIMER_PAIR_MAX_COMPL_END_TH", pa->pair_compl_end_th);
-      COMPARE_INT("P3_FILE_FLAG", res->file_flag);
-      COMPARE_INT("PRIMER_PICK_ANYWAY", pa->pick_anyway);
+      COMPARE_INT_0_OR_1("P3_FILE_FLAG", res->file_flag);
+      COMPARE_INT_0_OR_1("PRIMER_PICK_ANYWAY", pa->pick_anyway);
       COMPARE_INT("PRIMER_GC_CLAMP", pa->gc_clamp);
       COMPARE_INT("PRIMER_MAX_END_GC", pa->max_end_gc);
       COMPARE_INT("PRIMER_EXPLAIN_FLAG", res->explain_flag);
-      COMPARE_INT("PRIMER_LIBERAL_BASE", pa->liberal_base);
+      COMPARE_INT_0_OR_1("PRIMER_LIBERAL_BASE", pa->liberal_base);
       if (COMPARE("PRIMER_FIRST_BASE_INDEX")) {
         parse_int("PRIMER_FIRST_BASE_INDEX", datum, &pa->first_base_index, parse_err);
         if (pa->first_base_index < PR_NULL_FORCE_POSITION) {
@@ -542,8 +542,9 @@ read_boulder_record(FILE *file_input,
       COMPARE_INT_0_OR_1("PRIMER_PICK_INTERNAL_OLIGO", pa->pick_internal_oligo);
       COMPARE_INT_0_OR_1("PRIMER_PICK_LEFT_PRIMER", pa->pick_left_primer);
 
-      COMPARE_INT("PRIMER_INTERNAL_REV_COMP_G_RICH", pa->rev_comp_internal_oligo_g_c);
-      COMPARE_INT("PRIMER_INTERNAL_NO_5_PRIME_G", pa->no_internal_oligo_5_G);
+      COMPARE_INT_0_OR_1("PRIMER_INTERNAL_REV_COMP_G_RICH",
+                         pa->rev_comp_internal_oligo_g_c);
+      COMPARE_INT_0_OR_1("PRIMER_INTERNAL_NO_5_PRIME_G", pa->no_internal_oligo_5_G);
 
       COMPARE_INT("PRIMER_INTERNAL_OPT_SIZE", pa->o_args.opt_size);
       COMPARE_INT("PRIMER_INTERNAL_MAX_SIZE", pa->o_args.max_size);
@@ -607,8 +608,8 @@ read_boulder_record(FILE *file_input,
                     pa->pair_max_template_mispriming_th);
        /* Control interpretation of ambiguity codes in mispriming
           and mishyb libraries. */
-      COMPARE_INT("PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS",
-                  pa->lib_ambiguity_codes_consensus);
+      COMPARE_INT_0_OR_1("PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS",
+                         pa->lib_ambiguity_codes_consensus);
       COMPARE_FLOAT("PRIMER_INSIDE_PENALTY", pa->inside_penalty);
       COMPARE_FLOAT("PRIMER_OUTSIDE_PENALTY", pa->outside_penalty);
       if (COMPARE("PRIMER_MISPRIMING_LIBRARY")) {
@@ -681,7 +682,8 @@ read_boulder_record(FILE *file_input,
         continue;
       }
       /* added by A. Untergasser */
-      COMPARE_INT("PRIMER_SECONDARY_STRUCTURE_ALIGNMENT", pa->show_secondary_structure_alignment);
+      COMPARE_INT_0_OR_1("PRIMER_SECONDARY_STRUCTURE_ALIGNMENT",
+                         pa->show_secondary_structure_alignment);
       OVERWRITE_COMPARE_AND_MALLOC("PRIMER_MUST_MATCH_FIVE_PRIME", pa->p_args.must_match_five_prime);
       OVERWRITE_COMPARE_AND_MALLOC("PRIMER_MUST_MATCH_THREE_PRIME", pa->p_args.must_match_three_prime);
       OVERWRITE_COMPARE_AND_MALLOC("PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME", pa->o_args.must_match_five_prime);
@@ -1404,7 +1406,7 @@ parse_intron_list(char *s,
     t = strtol(p, &q, 10);
     if (q == p) {
       while (*q != '\0') {
-        if (!isspace(*q)) {
+        if (!isspace((unsigned char) *q)) {
           *count = 0;
           return 0; 
         }
@@ -1497,7 +1499,7 @@ parse_seq_quality(char *s,
     t = strtol(p, &q, 10);
     if (q == p) {
       while (*q != '\0') {
-        if (!isspace(*q)) {
+        if (!isspace((unsigned char) *q)) {
           p3_set_sa_empty_quality(sargs);
           return 0; 
         }

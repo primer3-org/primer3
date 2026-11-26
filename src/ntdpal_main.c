@@ -241,5 +241,9 @@ main(int argc, const char**argv)
         printf("|%d,%d", r.path[i][0],r.path[i][1]);
       printf("|\n");
     }
+    if (fflush(stdout) == EOF || ferror(stdout)) {
+      perror("writing stdout failed");
+      exit(P3_EXIT_OUTPUT_ERROR);
+    }
     return 0;
 }

@@ -527,6 +527,7 @@ static void op_set_overlaps_masked_sequence(primer_rec *);
 static void op_set_too_long(primer_rec *);
 static void op_set_too_short(primer_rec *);
 static void op_set_does_not_amplify_orf(primer_rec *);
+static void op_set_does_not_overlap_junction(primer_rec *);
 /* End functions to set problems in oligos */
 
 /* Global static variables. */
@@ -943,9 +944,9 @@ int
 const int *
   interval_array_t2_get_pair(const interval_array_t2 *array, int i)
 {
-   if (i > array->count) abort();
-      if (i < 0) abort();
-         return array->pairs[i];
+  if (i >= array->count) abort();
+  if (i < 0) abort();
+  return array->pairs[i];
 }                
 
 /* ============================================================ */
@@ -2040,6 +2041,12 @@ choose_pair_or_triple(p3retval *retval,
         }
         if (valid_intl) {
           add_pair(&the_best_pair, best_pairs);
+        } else {
+          /* The stored internal oligo is used by a selected triple;
+             evaluate the primer pair again with another internal oligo */
+          delete best_pp;
+          best_hmap->erase(the_best_j);
+          continue;
         }
       }
 
@@ -2242,6 +2249,7 @@ add_must_use_warnings(pr_append_str *warning,
     { stats->excluded, "Overlaps Excluded Region" },
     { stats->gc, "Unacceptable GC content" },
     { stats->gc_clamp, "No GC clamp" },
+    { stats->gc_end_high, "Too many GCs at 3' end" },
     { stats->temp_min, "Tm too low" },
     { stats->temp_max, "Tm too high" },
     { stats->bound_min, "Fraction bound too low" },
@@ -2253,9 +2261,12 @@ add_must_use_warnings(pr_append_str *warning,
     { stats->poly_x, "Long poly-X" },
     { stats->seq_quality, "Low sequence quality" },
     { stats->stability, "High 3' stability" },
+    { stats->template_mispriming, "High template mispriming score" },
     { stats->no_orf, "Would not amplify any ORF" },
     { stats->not_in_any_left_ok_region, "Not in any ok left region" },
     { stats->not_in_any_right_ok_region, "Not in any ok right region" },
+    { stats->does_not_overlap_a_required_point,
+      "Does not overlap a required point" },
     /* edited by T. Koressaar for lowercase masking: */
     { stats->gmasked, "Masked with lowercase letter" },
     { stats->must_match_fail, "Failed must_match requirements" }
@@ -4032,10 +4043,12 @@ calc_and_check_oligo_features(const p3_global_settings *pa,
         break;
       }
     }
-    if ((!h->overlaps_overlap_position) && (!must_use)) {
+    if (!h->overlaps_overlap_position) {
       stats->does_not_overlap_a_required_point ++;
-      op_set_must_match_err(h);
-      return;
+      op_set_does_not_overlap_junction(h);
+      if (!must_use) {
+        return;
+      }
     }
   }
   /* Calculate failure rate */
@@ -7421,10 +7434,23 @@ _optimize_ok_regions_list(const p3_global_settings *pa,
       sa->ok_regions.right_pairs[i][0] = rs;
       sa->ok_regions.right_pairs[i][1] = re - rs + 1;
     } else {
+      /* Print the starts in input coordinates. An empty field
+         (-1,-1) is printed as it is. */
+      int delta_bp = sa->incl_s + pa->first_base_index;
+      int out_left = sa->ok_regions.left_pairs[i][0];
+      int out_right = sa->ok_regions.right_pairs[i][0];
+      if (!(sa->ok_regions.left_pairs[i][0] == -1
+            && sa->ok_regions.left_pairs[i][1] == -1)) {
+        out_left += delta_bp;
+      }
+      if (!(sa->ok_regions.right_pairs[i][0] == -1
+            && sa->ok_regions.right_pairs[i][1] == -1)) {
+        out_right += delta_bp;
+      }
       snprintf(buffer, 255, "SEQUENCE_PRIMER_PAIR_OK_REGION_LIST[%d,%d,%d,%d] does not allow products of %d-%dbp", \
-               sa->ok_regions.left_pairs[i][0], \
+               out_left, \
                sa->ok_regions.left_pairs[i][1], \
-               sa->ok_regions.right_pairs[i][0], \
+               out_right, \
                sa->ok_regions.right_pairs[i][1], \
                pmin, \
                pmax);
@@ -7888,9 +7914,9 @@ _pr_data_control(const p3_global_settings *pa,
       }
       if (sa->start_codon_pos >= 0) {
         const char *codon = sa->sequence + sa->incl_s + sa->start_codon_pos;
-        if ((toupper(codon[0]) != sa->start_codon_seq[0])
-            || (toupper(codon[1]) != sa->start_codon_seq[1])
-            || (toupper(codon[2]) != sa->start_codon_seq[2])) {
+        if (((char) toupper((unsigned char) codon[0]) != sa->start_codon_seq[0])
+            || ((char) toupper((unsigned char) codon[1]) != sa->start_codon_seq[1])
+            || ((char) toupper((unsigned char) codon[2]) != sa->start_codon_seq[2])) {
           pr_append_new_chunk(nonfatal_err,
                               "No start codon at SEQUENCE_START_CODON_POSITION");
           return 1;
@@ -9250,7 +9276,9 @@ p3_set_sa_sequence(seq_args *sargs, const char *sequence) {
 
 void
 p3_set_sa_primer_sequence_quality(seq_args *sargs, int quality) {
-  sargs->quality[sargs->n_quality++] = quality ;
+  /* Out of memory is not reported here; use
+     p3_sa_add_to_quality_array() to detect it. */
+  (void) p3_sa_add_to_quality_array(sargs, quality);
 }
 
 int
@@ -10402,6 +10430,7 @@ initialize_op(primer_rec *oligo) {
 #define OP_TOO_MANY_GC_AT_END                  (1UL << 28) /* 3prime problem*/
 #define OP_HIGH_HAIRPIN                        (1UL << 29) /* 3prime problem*/
 #define OP_MUST_MATCH_ERR                      (1UL << 30)
+#define OP_DOES_NOT_OVERLAP_JUNCTION           (1UL << 31)
 
 /* Space for more Errors */
 
@@ -10517,6 +10546,8 @@ p3_get_ol_problem_string(const primer_rec *oligo) {
                " Would not amplify an open reading frame;")
     ADD_OP_STR(OP_MUST_MATCH_ERR,
                " Failed must_match requirements;")
+    ADD_OP_STR(OP_DOES_NOT_OVERLAP_JUNCTION,
+               " Does not overlap a required point;")
   }
   return output;
 }
@@ -10581,6 +10612,12 @@ op_set_completely_written(primer_rec *oligo) {
 static void
 op_set_must_match_err(primer_rec *oligo) {
   oligo->problems.prob |= OP_MUST_MATCH_ERR;
+  oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
+}
+
+static void
+op_set_does_not_overlap_junction(primer_rec *oligo) {
+  oligo->problems.prob |= OP_DOES_NOT_OVERLAP_JUNCTION;
   oligo->problems.prob |= OP_PARTIALLY_WRITTEN;
 }
 

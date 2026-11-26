@@ -282,8 +282,9 @@ thal(const unsigned char *oligo_f,
       send5_dump(send5, hend5, oligo1_len, "after calc_terminal_bp");
       mh = hend5[oligo1_len];
       ms = send5[oligo1_len];
-      o->align_end_1 = (int) mh;
-      o->align_end_2 = (int) ms;
+      /* A hairpin has no terminal base pair of two sequences */
+      o->align_end_1 = -1;
+      o->align_end_2 = -1;
       for (int i = 0; i < oligo1_len; ++i) bp[i] = 0;
       if(isFinite(mh)) {
         traceback_monomer(bp, a->maxLoop, (const struct dpt_entry **) dpt, send5, hend5, RC, numSeq1, oligo1_len, _jmp_buf, o);
